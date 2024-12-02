@@ -12,7 +12,7 @@ from dask.utils import parse_bytes
 from packaging.version import Version
 from uritools import uricompose, urisplit
 
-from ...data.dask_utils import cfdm_asanyarray
+from ...data.dask_utils import cfdm_to_memory
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, dirname, integer_dtype
 from .. import IOWrite
@@ -5995,7 +5995,7 @@ class NetCDFWrite(IOWrite):
                 data if there is not a unique value.
 
         """
-        a = cfdm_asanyarray(a)
+        a = cfdm_to_memory(a)
 
         out_shape = (1,) * a.ndim
         a = np.unique(a)
@@ -6106,7 +6106,7 @@ class NetCDFWrite(IOWrite):
             ):
                 # Try to get this Dask chunk's data as a reference to
                 # fragment file
-                fragment = data[index].compute(_asanyarray=False)
+                fragment = data[index].compute(_force_in_memory=False)
                 try:
                     filename, address, is_subspace, f_index = (
                         fragment.get_filename(normalise=normalise),
@@ -6198,7 +6198,7 @@ class NetCDFWrite(IOWrite):
             # more than one unique value then the fragment's value is
             # missing data.
             dx = data.to_dask_array(
-                _apply_mask_hardness=False, _asanyarray=False
+                _force_mask_hardness=False, _force_in_memory=False
             )
             dx_ind = tuple(range(dx.ndim))
             out_ind = dx_ind

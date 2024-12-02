@@ -184,17 +184,17 @@ class AggregatedArray(abstract.FileArray):
         return dx[index].compute()
 
     @property
-    def __asanyarray__(self):
-        """True if the array is accessed by conversion to `numpy`.
+    def __in_memory__(self):
+        """True if the array data is in memory.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
-            `True`
+            `False`
 
         """
-        return True
+        return False
 
     def _parse_fragment_array(self, aggregated_filename, fragment_array):
         """Parse the fragment array dictionary.

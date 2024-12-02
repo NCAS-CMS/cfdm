@@ -1062,26 +1062,31 @@ _docstring_substitution_definitions = {
                   'scaleway-secretkey...', 'endpoint_url':
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``""",
-    # asanyarray
-    "{{asanyarray: `bool` or `None`, optional}": """asanyarray: `bool` or `None`, optional
-                If True then add a final operation (not in-place) to
-                the graph of the returned Dask array that converts a
-                chunk's array object to a `numpy` array if the array
-                object has an `__asanyarray__` attribute that is
-                `True`, or else does nothing. If False then do not add
-                this operation. If `None`, the default, then the final
-                operation is added only if the `Data` object's
-                `__asanyarray__` attribute is `True`.
+    # _force_mask_hardness
+    "{{_force_mask_hardness: `bool`, optional}}": """_force_mask_hardness: `bool`, optional
+                If True (the default) then force the mask hardness of
+                the returned Dask graph to be that given by the
+                `hardmask` attribute. If False then the mask hardness
+                may or may not be correct, depending on the nature of
+                the stack of previously defined lazy operations.
 
-                By default or if *asanyarray* is True, the returned
-                Dask array will always provide the expected result
-                when computed, although if *asanyarray* is True then
-                the Dask graph may have an extra null operation layer
-                that is not requred. Setting *asanyarray* to False
-                should only be done in the case that the returned Dask
-                Array will get further operations which are guaranteed
-                to negate the need for the extra layer in the Dask
-                graph.""",
+                Set to False if the intention is to just inspect the
+                state of the Dask graph, or is to add to the returned
+                Dask graph further operations to which can correctly
+                manage the mask hardness.""",
+    # _force_in_memory
+    "{{_force_in_memory: `bool`, optional}}": """_force_in_memory: `bool`, optional
+                If True (the default) then force the data resulting
+                from computing the returned Dask graph to be in
+                memory. If False then the data resulting from
+                computing the Dask graph may or may not be in memory,
+                depending on the nature of the stack of previously
+                defined lazy operations.
+
+                Set to False if the intention is to just inspect the
+                state of the Dask graph, or is to add to the returned
+                Dask graph further operations to which can handle any
+                required conversion to data in memory.""",
     # chunks
     "{{chunks: `int`, `tuple`, `dict` or `str`, optional}}": """chunks: `int`, `tuple`, `dict` or `str`, optional
                 Specify the chunking of the underlying dask array.

@@ -199,11 +199,6 @@ class DataTest(unittest.TestCase):
             for element in elements:
                 self.assertIn(element, cache)
 
-            #            d += 0
-            #            cache = d._get_cached_elements()
-            #            for element in elements:
-            #                self.assertNotIn(element, cache)
-
             self.assertEqual(str(d), str(array))
             cache = d._get_cached_elements()
             for element in elements:
@@ -1375,14 +1370,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             cfdm.Data(s, mask=mask)
 
-        # # Providing a mask in __init__ forces the sparse array to
-        # # become dense
-        # mask = [[0, 0, 1], [0, 0, 0], [0, 0, 0]]
-        # d = cfdm.Data(s, mask=mask)
-        # self.assertTrue((d.array == np.ma.array(s.toarray(), mask=mask)).all())
-        # with self.assertRaises(AttributeError):
-        #     d.sparse_array
-
     def test_Data_masked_values(self):
         """Test Data.masked_values."""
         array = np.array([[1, 1.1, 2, 1.1, 3]])
@@ -1438,7 +1425,7 @@ class DataTest(unittest.TestCase):
     def test_Data_todict(self):
         """Test Data.todict."""
         d = cfdm.Data([1, 2, 3, 4], chunks=2)
-        key = d.to_dask_array(_apply_mask_hardness=False).name
+        key = d.to_dask_array(_force_mask_hardness=False).name
 
         x = d.todict()
         self.assertIsInstance(x, dict)
@@ -1487,7 +1474,7 @@ class DataTest(unittest.TestCase):
             len(
                 dict(
                     d.to_dask_array(
-                        _apply_mask_hardness=False, _asanyarray=False
+                        _force_mask_hardness=False, _force_in_memory=False
                     ).dask
                 )
             ),
@@ -1500,7 +1487,7 @@ class DataTest(unittest.TestCase):
             len(
                 dict(
                     d.to_dask_array(
-                        _apply_mask_hardness=False, _asanyarray=False
+                        _force_mask_hardness=False, _force_in_memory=False
                     ).dask
                 )
             ),
@@ -2103,6 +2090,7 @@ class DataTest(unittest.TestCase):
         # Chained subspaces reading from disk
         f = cfdm.read(self.filename)[0]
         d = f.data
+        print(cfdm.read(self.filename))
         a = d[:1, [1, 3, 4], :][:, [True, False, True], ::-2].array
         b = d.array[:1, [1, 3, 4], :][:, [True, False, True], ::-2]
         self.assertTrue((a == b).all())
@@ -2422,11 +2410,12 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_filenames(self):
         """Test Data.get_filenames."""
-        d = cfdm.Data.empty((5, 8), float, chunks=4)
+        d = cfdm.Data.empty((5, 8), float, chunks="auto")  # 4)
         self.assertEqual(d.get_filenames(), set())
 
         f = self.f0
         cfdm.write(f, file_A)
+
         d = cfdm.read(file_A, dask_chunks=4)[0].data
         self.assertEqual(d.get_filenames(), set([file_A]))
         d.persist(inplace=True)
