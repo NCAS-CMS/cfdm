@@ -2744,14 +2744,9 @@ class DataTest(unittest.TestCase):
         e = cfdm.Data([4, 5], "km")
         self.assertTrue(d.has_deterministic_name())
         self.assertTrue(e.has_deterministic_name())
-        #        self.assertTrue((d + e).has_deterministic_name())
-        #        self.assertTrue((d + e.array).has_deterministic_name())
-        #        self.assertFalse((d + e.to_dask_array()).has_deterministic_name())
 
         d._update_deterministic(False)
         self.assertFalse(d.has_deterministic_name())
-
-    #        self.assertFalse((d + e).has_deterministic_name())
 
     def test_Data_get_deterministic_name(self):
         """Test Data.get_deterministic_name."""
@@ -2761,11 +2756,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(
             e.get_deterministic_name(), d.get_deterministic_name()
         )
-
-        #        e = d + 1 - 1
-        #        self.assertNotEqual(
-        #            e.get_deterministic_name(), d.get_deterministic_name()
-        #        )
 
         d._update_deterministic(False)
         with self.assertRaises(ValueError):

@@ -5737,6 +5737,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # Update the deterministic status
         d._update_deterministic(condition)
 
+        # Update the deterministic status
+        d._update_deterministic(condition)
+
         return d
 
     @_inplace_enabled(default=False)
