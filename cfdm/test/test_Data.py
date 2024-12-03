@@ -2490,6 +2490,29 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.all())
         self.assertFalse(d.all(keepdims=False))
 
+    def test_Data_has_deterministic_name(self):
+        """Test Data.has_deterministic_name."""
+        d = cfdm.Data([1, 2], "m")
+        e = cfdm.Data([4, 5], "km")
+        self.assertTrue(d.has_deterministic_name())
+        self.assertTrue(e.has_deterministic_name())
+
+        d._update_deterministic(False)
+        self.assertFalse(d.has_deterministic_name())
+
+    def test_Data_get_deterministic_name(self):
+        """Test Data.get_deterministic_name."""
+        d = cfdm.Data([1, 2], "m")
+        e = d.copy()
+        e.Units = cfdm.Units("metre")
+        self.assertEqual(
+            e.get_deterministic_name(), d.get_deterministic_name()
+        )
+
+        d._update_deterministic(False)
+        with self.assertRaises(ValueError):
+            d.get_deterministic_name()
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
