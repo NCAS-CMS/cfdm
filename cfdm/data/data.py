@@ -8,7 +8,7 @@ from os.path import commonprefix
 
 import dask.array as da
 import numpy as np
-from dask.base import collections_to_dsk
+from dask.base import collections_to_dsk, is_dask_collection, tokenize
 from dask.optimization import cull
 from netCDF4 import default_fillvals
 from scipy.sparse import issparse
@@ -159,7 +159,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             array: optional
                 The array of values. May be a scalar or array-like
-                object, including another `{{class}}` instance, anything
+                object, including another `Data` instance, anything
                 with a `!to_dask_array` method, `numpy` array, `dask`
                 array, `xarray` array, `cf.Array` subclass, `list`,
                 `tuple`, scalar.
@@ -230,7 +230,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 Apply this mask to the data given by the *array*
                 parameter. By default, or if *mask* is `None`, no mask
                 is applied. May be any scalar or array-like object
-                (such as a `list`, `numpy` array or `{{class}}` instance)
+                (such as a `list`, `numpy` array or `Data` instance)
                 that is broadcastable to the shape of *array*. Masking
                 will be carried out where the mask elements evaluate
                 to `True`.
@@ -273,7 +273,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 data are computed.
 
                 In general, setting *to_memory* to True is not the same
-                as calling the `persist` of the newly created `{{class}}`
+                as calling the `persist` of the newly created `Data`
                 object, which also decompresses data compressed by
                 convention and computes any data type, mask and
                 date-time modifications.
@@ -310,13 +310,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(5)
-        >>> d = {{package}}.{{class}}([1,2,3], units='K')
+        >>> d = {{package}}.Data(5)
+        >>> d = {{package}}.Data([1,2,3], units='K')
         >>> import numpy
-        >>> d = {{package}}.{{class}}(numpy.arange(10).reshape(2,5),
+        >>> d = {{package}}.Data(numpy.arange(10).reshape(2,5),
         ...             units='m/s', fill_value=-999)
-        >>> d = {{package}}.{{class}}('fly')
-        >>> d = {{package}}.{{class}}(tuple('fly'))
+        >>> d = {{package}}.Data('fly')
+        >>> d = {{package}}.Data(tuple('fly'))
 
         """
         if source is None and isinstance(array, self.__class__):
@@ -395,6 +395,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 source, "__orthogonal_indexing__", True
             )
 
+            # Deterministic name
+            try:
+                deterministic = source.has_deterministic_name()
+            except AttributeError:
+                deterministic = False
+
+            self._custom["has_deterministic_name"] = bool(deterministic)
+
             # File components
             self._initialise_netcdf(source)
             self._initialise_original_filenames(source)
@@ -464,6 +472,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             except AttributeError:
                 pass
 
+        # Deterministic name
+        self._custom["has_deterministic_name"] = not is_dask_collection(array)
+
         if self._is_abstract_Array_subclass(array):
             # Save the input array in case it's useful later. For
             # compressed input arrays this will contain extra
@@ -531,9 +542,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> bool({{package}}.{{class}}(1.5))
+        >>> bool({{package}}.Data(1.5))
         True
-        >>> bool({{package}}.{{class}}([[False]]))
+        >>> bool({{package}}.Data([[False]]))
         False
 
         """
@@ -571,33 +582,33 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(9, 'metres')
+        >>> d = {{package}}.Data(9, 'metres')
         >>> f"{d}"
         '9 metres'
         >>> f"{d!s}"
         '9 metres'
         >>> f"{d!r}"
-        '<{{repr}}{{class}}(): 9 metres>'
+        '<{{repr}}Data(): 9 metres>'
         >>> f"{d:.3f}"
         '9.000'
 
-        >>> d = {{package}}.{{class}}([[9]], 'metres')
+        >>> d = {{package}}.Data([[9]], 'metres')
         >>> f"{d}"
         '[[9]] metres'
         >>> f"{d!s}"
         '[[9]] metres'
         >>> f"{d!r}"
-        '<{{repr}}{{class}}(1, 1): [[9]] metres>'
+        '<{{repr}}Data(1, 1): [[9]] metres>'
         >>> f"{d:.3f}"
         '9.000'
 
-        >>> d = {{package}}.{{class}}([9, 10], 'metres')
+        >>> d = {{package}}.Data([9, 10], 'metres')
         >>> f"{d}"
         >>> '[9, 10] metres'
         >>> f"{d!s}"
         >>> '[9, 10] metres'
         >>> f"{d!r}"
-        '<{{repr}}{{class}}(2): [9, 10] metres>'
+        '<{{repr}}Data(2): [9, 10] metres>'
         >>> f"{d:.3f}"
         Traceback (most recent call last):
             ...
@@ -642,13 +653,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}`
+            `Data`
                 The subspace of the data.
 
         **Examples**
 
         >>> import numpy
-        >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
+        >>> d = {{package}}.Data(numpy.arange(100, 190).reshape(1, 10, 9))
         >>> d.shape
         (1, 10, 9)
         >>> d[:, :, 1].shape
@@ -788,22 +799,22 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3], 'metres')
+        >>> d = {{package}}.Data([1, 2, 3], 'metres')
         >>> for e in d:
         ...     print(repr(e))
         ...
-        <{{repr}}{{class}}(1): [1] metres>
-        <{{repr}}{{class}}(1): [2] metres>
-        <{{repr}}{{class}}(1): [3] metres>
+        <{{repr}}Data(1): [1] metres>
+        <{{repr}}Data(1): [2] metres>
+        <{{repr}}Data(1): [3] metres>
 
-        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]], 'metres')
+        >>> d = {{package}}.Data([[1, 2], [3, 4]], 'metres')
         >>> for e in d:
         ...     print(repr(e))
         ...
-        <{{repr}}{{class}}: [1, 2] metres>
-        <{{repr}}{{class}}: [3, 4] metres>
+        <{{repr}}Data: [1, 2] metres>
+        <{{repr}}Data: [3, 4] metres>
 
-        >>> d = {{package}}.{{class}}(99, 'metres')
+        >>> d = {{package}}.Data(99, 'metres')
         >>> for e in d:
         ...     print(repr(e))
         ...
@@ -838,13 +849,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> len({{package}}.{{class}}([1, 2, 3]))
+        >>> len({{package}}.Data([1, 2, 3]))
         3
-        >>> len({{package}}.{{class}}([[1, 2, 3]]))
+        >>> len({{package}}.Data([[1, 2, 3]]))
         1
-        >>> len({{package}}.{{class}}([[1, 2, 3], [4, 5, 6]]))
+        >>> len({{package}}.Data([[1, 2, 3], [4, 5, 6]]))
         2
-        >>> len({{package}}.{{class}}(1))
+        >>> len({{package}}.Data(1))
         Traceback (most recent call last):
             ...
         TypeError: len() of unsized object
@@ -1348,13 +1359,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3])
+        >>> d = {{package}}.Data([1, 2, 3])
         >>> a = numpy.array(d)
         >>> print(type(a))
         <class 'numpy.ndarray'>
         >>> a[0] = -99
         >>> d
-        <{{repr}}{{class}}(3): [1, 2, 3]>
+        <{{repr}}Data(3): [1, 2, 3]>
         >>> b = numpy.array(d, float)
         >>> print(b)
         [1. 2. 3.]
@@ -1401,7 +1412,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3], [4, 5, 6]])
+        >>> d = {{package}}.Data([[1, 2, 3], [4, 5, 6]])
         >>> d.__keepdims_indexing__
         True
         >>> e = d[0]
@@ -1474,7 +1485,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3],
+        >>> d = {{package}}.Data([[1, 2, 3],
         ...              [4, 5, 6]])
         >>> e = d[[0], [0, 2]]
         >>> e.shape
@@ -1558,20 +1569,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([0, 1, 2, 3])
-        >>> e = {{package}}.{{class}}([1, 1, 3, 4])
+        >>> d = {{package}}.Data([0, 1, 2, 3])
+        >>> e = {{package}}.Data([1, 1, 3, 4])
 
-        >>> f = d._binary_operation(e, '__add__')
+        >>> f = d._binary_operation(e, '__lt__')
         >>> print(f.array)
-        [1 2 5 7]
-
-        >>> e = d._binary_operation(e, '__lt__')
-        >>> print(e.array)
         [ True False  True  True]
-
-        >>> d._binary_operation(2, '__imul__')
-        >>> print(d.array)
-        [0 2 4 6]
 
         """
         inplace = method[2] == "i"
@@ -1629,7 +1632,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         else:
             d = data.copy()
 
-        d._set_dask(result, in_memory=True)
+        d._set_dask(result, clear=cls._ALL, in_memory=True)
 
         if axes is not None:
             d._axes = axes
@@ -1640,6 +1643,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             and d.shape != original_shape
         ):
             d.nc_clear_hdf5_chunksizes()
+
+        # Update the deterministic status
+        d._update_deterministic(other)
 
         return d
 
@@ -1661,16 +1667,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 Specify which components to remove, determined by
                 sequentially combining an integer value of *clear*
                 with the relevant class-level constants (such as
-                ``{{class}}._ARRAY``), using the bitwise AND (&)
+                ``Data._ARRAY``), using the bitwise AND (&)
                 operator. If ``clear & <class-level constant>`` is
                 True then the corresponding component is cleared. The
                 default value of `None` is equivalent to *clear* being
-                set to ``{{class}}._ALL``.
+                set to ``Data._ALL``.
 
                 The bitwise OR (^) operator can be used to retain a
                 component (or components) but remove all others. For
-                instance, if *clear* is ``{{class}}._ALL ^
-                {{class}}._CACHE`` then all components except the
+                instance, if *clear* is ``Data._ALL ^
+                Data._CACHE`` then all components except the
                 cached array values will be removed.
 
         :Returns:
@@ -1715,7 +1721,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            data1: `{{class}}`
+            data1: `Data`
                 Data with units.
 
             units0: `Units`
@@ -1729,7 +1735,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}`
+            `Data`
                 Returns *data1*, possibly modified so that it conforms
                 to *units0*. If *copy* is False and *data1* is
                 modified, then it is done so in-place.
@@ -1769,23 +1775,53 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            concatenated_data: `{{class}}`
+            concatenated_data: `Data`
                 The concatenated data array.
 
             axis: `int`
                 The axis of concatenation.
 
-            conformed_data: sequence of `{{class}}`
+            conformed_data: sequence of `Data`
                 The ordered sequence of data arrays that were
                 concatenated.
 
         :Returns:
 
-            `{{class}}`
+            `Data`
                 Returns *concatenated_data*, possibly modified
                 in-place.
 
         """
+        # ------------------------------------------------------------
+        # Set the aggregation 'aggregated_data' terms
+        # ------------------------------------------------------------
+        if concatenated_data.nc_get_aggregation_write_status():
+            # Set the netCDF aggregated_data terms, giving precedence
+            # to those towards the left hand side of the input
+            # list. If any input Data object has no aggregated_data
+            # terms, then nor will the concatenated data.
+            aggregated_data = {}
+            for d in conformed_data[::-1]:
+                value = d.nc_get_aggregated_data()
+                if not value:
+                    aggregated_data = {}
+                    break
+
+                aggregated_data.update(value)
+
+            concatenated_data.nc_set_aggregated_data(aggregated_data)
+
+        # ------------------------------------------------------------
+        # Update the deterministic status of the concatenated data
+        # ------------------------------------------------------------
+        deterministic = True
+        for d in conformed_data:
+            if not d.has_deterministic_name():
+                deterministic = False
+                break
+
+        concatenated_data._update_deterministic(deterministic)
+
         return concatenated_data
 
     def _del_cached_elements(self):
@@ -1845,7 +1881,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             clear: `int` or None`, optional
                 Specify which components should be removed. The
                 default value of `None` is equivalent to *clear* being
-                set to ``{{class}}._ALL``, which results in all
+                set to ``Data._ALL``, which results in all
                 components being removed. See
                 `_clear_after_dask_update` for details. If there is no
                 Dask array then no components are removed, regardless
@@ -1858,7 +1894,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3])
+        >>> d = {{package}}.Data([1, 2, 3])
         >>> dx = d._del_dask()
         >>> d._del_dask("No dask array")
         'No dask array'
@@ -1938,7 +1974,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3]], 'km')
+        >>> d = {{package}}.Data([[1, 2, 3]], 'km')
         >>> d._item((0, -1))
         array(3)
         >>> d[0, 1] = {{package}}.masked
@@ -1964,7 +2000,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         call the method results in an exception not given by
         *exceptions*, then that exception is raised.
 
-        The `{{class}}` object is modified in-place, but the embedded
+        The `Data` object is modified in-place, but the embedded
         Dask graph is not.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -2022,6 +2058,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=self._NONE, in_memory=None)
 
+            # Update the deterministic status
+            self._update_deterministic(False)
+
     def _parse_axes(self, axes):
         """Parses the data axes and returns valid non-duplicate axes.
 
@@ -2072,7 +2111,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def _set_cached_elements(self, elements):
         """Cache selected element values.
 
-        Updates the `{{class}}` instance in-place to store the given
+        Updates the `Data` instance in-place to store the given
         element values.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -2161,7 +2200,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             clear: `int` or `None`, optional
                 Specify which components should be removed. The
                 default value of `None` is equivalent to *clear* being
-                set to ``{{class}}._ALL``, which results in all
+                set to ``Data._ALL``, which results in all
                 components being removed. See
                 `_clear_after_dask_update` for details.
 
@@ -2238,7 +2277,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         changed in-place.
 
         >>> a = np.arange(40).reshape(5, 8)
-        >>> {{package}}.{{class}}._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        >>> {{package}}.Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
         ...                    np.array([[-1, -2, -3]]))
         >>> print(a)
         [[ 0  1  2  3  4  5  6  7]
@@ -2248,7 +2287,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
          [32 -3 34 35 36 37 -2 -1]]
 
         >>> a = np.arange(40).reshape(5, 8)
-        >>> {{package}}.{{class}}._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        >>> {{package}}.Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
         ...                    np.array([[-1, -2, -3]]),
         ...                    orthogonal_indexing=False)
         >>> print(a)
@@ -2264,7 +2303,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [[-1. -2. -3.]
          [-4. -5. -6.]
          [-7. -8. -9.]]
-        >>> {{package}}.{{class}}._set_subspace(a, [[4, 4 ,1], [7, 6, 1]], value)
+        >>> {{package}}.Data._set_subspace(a, [[4, 4 ,1], [7, 6, 1]], value)
         >>> print(a)
         [[ 0  1  2  3  4  5  6  7]
          [ 8 -9 10 11 12 13 -8 -7]
@@ -2444,12 +2483,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}`
+            `Data`
                 A new Data array.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2, -3, -4, -5]])
+        >>> d = {{package}}.Data([[1, 2, -3, -4, -5]])
 
         >>> e = d._unary_operation('__abs__')
         >>> print(e.array)
@@ -2475,6 +2514,51 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         return out
 
+    def _update_deterministic(self, other):
+        """Update the deterministic name status in-place.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_deterministic_name`,
+                     `has_deterministic_name`
+
+        :Parameters:
+
+            other: `bool` or `Data`
+                If `False`, `Data` with a False deterministic name
+                status, or a Dask collection then set the
+                deterministic name status to `False`.
+
+                If `True`, `Data` with a True deterministic name
+                status, or not a Dask collection then do not change
+                the deterministic name status.
+
+        :Returns:
+
+            `None`
+
+        """
+        if other is True:
+            return
+
+        if other is False:
+            self._custom["has_deterministic_name"] = False
+            return
+
+        custom = self._custom
+        if custom["has_deterministic_name"]:
+            try:
+                deterministic = other._custom.get(
+                    "has_deterministic_name", False
+                )
+            except AttributeError:
+                custom["has_deterministic_name"] = not is_dask_collection(
+                    other
+                )
+            else:
+                if not deterministic:
+                    custom["has_deterministic_name"] = False
+
     @property
     def array(self):
         """A numpy array copy of the data.
@@ -2497,7 +2581,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
+        >>> d = {{package}}.Data([1, 2, 3.0], 'km')
         >>> a = d.array
         >>> isinstance(a, numpy.ndarray)
         True
@@ -2510,7 +2594,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> print(d[0])
         -99.0 km
 
-        >>> d = {{package}}.{{class}}('2000-12-1', units='days since 1999-12-1')
+        >>> d = {{package}}.Data('2000-12-1', units='days since 1999-12-1')
         >>> print(d.array)
         366
         >>> print(d.datetime_array)
@@ -2559,7 +2643,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}.empty((6, 5), chunks=(2, 4))
+        >>> d = {{package}}.Data.empty((6, 5), chunks=(2, 4))
         >>> d.chunks
         ((2, 2, 2), (4, 1))
         >>> d.numblocks
@@ -2582,7 +2666,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}.empty((6, 5), chunks=(2, 4))
+        >>> d = {{package}}.Data.empty((6, 5), chunks=(2, 4))
          >>> d.chunks
         ((2, 2, 2), (4, 1))
         >>> d.chunksize
@@ -2651,7 +2735,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2], 'm')
+        >>> d = {{package}}.Data([1, 2], 'm')
         >>> d.data is d
         True
 
@@ -2733,7 +2817,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2.5, 3.9])
+        >>> d = {{package}}.Data([1, 2.5, 3.9])
         >>> d.dtype
         dtype('float64')
         >>> print(d.array)
@@ -2834,7 +2918,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3])
+        >>> d = {{package}}.Data([1, 2, 3])
         >>> d.hardmask
         True
         >>> d[0] = {{package}}.masked
@@ -2868,7 +2952,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}`
+            `Data`
 
         **Examples**
 
@@ -2907,7 +2991,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 1.5, 2]])
+        >>> d = {{package}}.Data([[1, 1.5, 2]])
         >>> d.dtype
         dtype('float64')
         >>> d.size, d.dtype.itemsize
@@ -2936,23 +3020,23 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3], [4, 5, 6]])
+        >>> d = {{package}}.Data([[1, 2, 3], [4, 5, 6]])
         >>> d.ndim
         2
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3]])
+        >>> d = {{package}}.Data([[1, 2, 3]])
         >>> d.ndim
         2
 
-        >>> d = {{package}}.{{class}}([[3]])
+        >>> d = {{package}}.Data([[3]])
         >>> d.ndim
         2
 
-        >>> d = {{package}}.{{class}}([3])
+        >>> d = {{package}}.Data([3])
         >>> d.ndim
         12
 
-        >>> d = {{package}}.{{class}}(3)
+        >>> d = {{package}}.Data(3)
         >>> d.ndim
         0
 
@@ -2972,7 +3056,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}.empty((6, 5), chunks=(2, 4))
+        >>> d = {{package}}.Data.empty((6, 5), chunks=(2, 4))
         >>> d.chunks
         ((2, 2, 2), (4, 1))
         >>> d.chunksize
@@ -2998,7 +3082,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}.empty((6, 5), chunks=(2, 4))
+        >>> d = {{package}}.Data.empty((6, 5), chunks=(2, 4))
         >>> d.chunks
         ((2, 2, 2), (4, 1))
         >>> d.chunksize
@@ -3025,19 +3109,19 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3], [4, 5, 6]])
+        >>> d = {{package}}.Data([[1, 2, 3], [4, 5, 6]])
         >>> d.shape
         (2, 3)
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3]])
+        >>> d = {{package}}.Data([[1, 2, 3]])
         >>> d.shape
         (1, 3)
 
-        >>> d = {{package}}.{{class}}([[3]])
+        >>> d = {{package}}.Data([[3]])
         >>> d.shape
         (1, 1)
 
-        >>> d = {{package}}.{{class}}(3)
+        >>> d = {{package}}.Data(3)
         >>> d.shape
         ()
 
@@ -3062,23 +3146,23 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3], [4, 5, 6]])
+        >>> d = {{package}}.Data([[1, 2, 3], [4, 5, 6]])
         >>> d.size
         6
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3]])
+        >>> d = {{package}}.Data([[1, 2, 3]])
         >>> d.size
         3
 
-        >>> d = {{package}}.{{class}}([[3]])
+        >>> d = {{package}}.Data([[3]])
         >>> d.size
         1
 
-        >>> d = {{package}}.{{class}}([3])
+        >>> d = {{package}}.Data([3])
         >>> d.size
         1
 
-        >>> d = {{package}}.{{class}}(3)
+        >>> d = {{package}}.Data(3)
         >>> d.size
         1
 
@@ -3142,7 +3226,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3], units='m')
+        >>> d = {{package}}.Data([1, 2, 3], units='m')
         >>> d.Units
         <Units: m>
         >>> d.Units = {{package}}.Units('kilometres')
@@ -3187,12 +3271,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}`
+            `Data`
                 Whether or not all data array elements evaluate to True.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> d = {{package}}.Data([[1, 2], [3, 4]])
         >>> d.all()
         <{{repr}}Data(1, 1): [[True]]>
         >>> d.all(keepdims=False)
@@ -3253,35 +3337,35 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}`
+            `Data`
                 Whether or any data array elements evaluate to True.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[0, 2], [0, 4]])
+        >>> d = {{package}}.Data([[0, 2], [0, 4]])
         >>> d.any()
-        <{{repr}}{{class}}(1, 1): [[True]]>
+        <{{repr}}Data(1, 1): [[True]]>
         >>> d.any(keepdims=False)
-        <{{repr}}{{class}}(1, 1): True>
+        <{{repr}}Data(1, 1): True>
         >>> d.any(axis=0)
-        <{{repr}}{{class}}(1, 2): [[False, True]]>
+        <{{repr}}Data(1, 2): [[False, True]]>
         >>> d.any(axis=1)
-        <{{repr}}{{class}}(2, 1): [[True, True]]>
+        <{{repr}}Data(2, 1): [[True, True]]>
         >>> d.any(axis=())
-        <{{repr}}{{class}}(2, 2): [[False, ..., True]]>
+        <{{repr}}Data(2, 2): [[False, ..., True]]>
 
         >>> d[0] = {{package}}.masked
         >>> print(d.array)
         [[-- --]
          [0 4]]
         >>> d.any(axis=0)
-        <{{repr}}{{class}}(1, 2): [[False, True]]>
+        <{{repr}}Data(1, 2): [[False, True]]>
         >>> d.any(axis=1)
-        <{{repr}}{{class}}(2, 1): [[--, True]]>
+        <{{repr}}Data(2, 1): [[--, True]]>
 
         >>> d[...] = {{package}}.masked
         >>> d.any()
-        <{{repr}}{{class}}(1, 1): [[--]]>
+        <{{repr}}Data(1, 1): [[--]]>
         >>> bool(d.any())
         False
         >>> bool(d.any(keepdims=False))
@@ -3372,14 +3456,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The data with masked values. If the operation was in-place
                 then `None` is returned.
 
         **Examples**
 
         >>> import numpy
-        >>> d = {{package}}.{{class}}(numpy.arange(12).reshape(3, 4), 'm')
+        >>> d = {{package}}.Data(numpy.arange(12).reshape(3, 4), 'm')
         >>> d[1, 1] = {{package}}.masked
         >>> print(d.array)
         [[0 1 2 3]
@@ -3520,7 +3604,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(np.arange(405).reshape(3, 9, 15),
+        >>> d = {{package}}.Data(np.arange(405).reshape(3, 9, 15),
         ...     chunks=((1, 2), (9,), (4, 5, 6)))
         >>> d.npartitions
         6
@@ -3553,7 +3637,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(np.arange(405).reshape(3, 9, 15),
+        >>> d = {{package}}.Data(np.arange(405).reshape(3, 9, 15),
         ...     chunks=((1, 2), (9,), (4, 5, 6)))
         >>> d.npartitions
         6
@@ -3666,12 +3750,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
+        >>> d = {{package}}.Data([1, 2, 3.0], 'km')
         >>> d.compute()
         array([1., 2., 3.])
 
         >>> from scipy.sparse import csr_array
-        >>> d = {{package}}.{{class}}(csr_array((2, 3)))
+        >>> d = {{package}}.Data(csr_array((2, 3)))
         >>> d.compute()
         <2x3 sparse array of type '<class 'numpy.float64'>'
                 with 0 stored elements in Compressed Sparse Row format>
@@ -3754,25 +3838,25 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
-        >>> e = {{package}}.{{class}}([[5.0, 6.0]])
-        >>> f = {{package}}.{{class}}.concatenate((d, e))
+        >>> d = {{package}}.Data([[1, 2], [3, 4]])
+        >>> e = {{package}}.Data([[5.0, 6.0]])
+        >>> f = {{package}}.Data.concatenate((d, e))
         >>> print(f.array)
         [[ 1.     2.   ]
          [ 3.     4.   ]
          [ 5.     6.   ]]
-        >>> f.equals({{package}}.{{class}}.concatenate((d, e), axis=-2))
+        >>> f.equals({{package}}.Data.concatenate((d, e), axis=-2))
         True
 
-        >>> e = {{package}}.{{class}}([[5.0], [6.0]])
-        >>> f = {{package}}.{{class}}.concatenate((d, e), axis=1)
+        >>> e = {{package}}.Data([[5.0], [6.0]])
+        >>> f = {{package}}.Data.concatenate((d, e), axis=1)
         >>> print(f.array)
         [[ 1.     2.     5.]
          [ 3.     4.     6.]]
 
-        >>> d = {{package}}.{{class}}(1)
-        >>> e = {{package}}.{{class}}(50.0)
-        >>> f = {{package}}.{{class}}.concatenate((d, e))
+        >>> d = {{package}}.Data(1)
+        >>> e = {{package}}.Data(50.0)
+        >>> f = {{package}}.Data.concatenate((d, e))
         >>> print(f.array)
         [ 1.    50.]
 
@@ -3895,25 +3979,25 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # ------------------------------------------------------------
         data0._set_dask(dx, clear=cls._ALL ^ CFA, in_memory=in_memory)
 
-        # ------------------------------------------------------------
-        # Set the aggregation 'aggregated_data' terms
-        # ------------------------------------------------------------
-        if data0.nc_get_aggregation_write_status():
-            # Set the netCDF aggregated_data terms, giving precedence
-            # to those towards the left hand side of the input
-            # list. If any input Data object has no aggregated_data
-            # terms, then nor will the concatenated data.
-            aggregated_data = {}
-            for d in conformed_data[::-1]:
-                value = d.nc_get_aggregated_data()
-                if not value:
-                    aggregated_data = {}
-                    break
-
-                aggregated_data.update(value)
-
-            data0.nc_set_aggregated_data(aggregated_data)
-
+        #        # ------------------------------------------------------------
+        #        # Set the aggregation 'aggregated_data' terms
+        #        # ------------------------------------------------------------
+        #        if data0.nc_get_aggregation_write_status():
+        #            # Set the netCDF aggregated_data terms, giving precedence
+        #            # to those towards the left hand side of the input
+        #            # list. If any input Data object has no aggregated_data
+        #            # terms, then nor will the concatenated data.
+        #            aggregated_data = {}
+        #            for d in conformed_data[::-1]:
+        #                value = d.nc_get_aggregated_data()
+        #                if not value:
+        #                    aggregated_data = {}
+        #                    break
+        #
+        #                aggregated_data.update(value)
+        #
+        #            data0.nc_set_aggregated_data(aggregated_data)
+        #
         # ------------------------------------------------------------
         # Re-set appropriate cached elements (after '_set_dask' has
         # just cleared them from data0)
@@ -3965,12 +4049,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]],
+        >>> d = {{package}}.Data([[0.0, 45.0], [45.0, 90.0]],
         ...                           units='degrees_east')
         >>> print(d.creation_commands())
-        data = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
+        data = {{package}}.Data([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
 
-        >>> d = {{package}}.{{class}}(['alpha', 'beta', 'gamma', 'delta'],
+        >>> d = {{package}}.Data(['alpha', 'beta', 'gamma', 'delta'],
         ...                           mask = [1, 0, 0, 0])
         >>> d.creation_commands(name='d', namespace='', string=False)
         ["d = Data(['', 'beta', 'gamma', 'delta'], dtype='U5', mask=Data([True, False, False, False], dtype='b1'))"]
@@ -4063,7 +4147,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3, 4, 5], chunks=3)
+        >>> d = {{package}}.Data([1, 2, 3, 4, 5], chunks=3)
         >>> d = d[:2]
         >>> dict(d.to_dask_array().dask)
         {('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3]),
@@ -4106,17 +4190,17 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(1, "days since 2000-1-1", calendar="noleap")
+        >>> d = {{package}}.Data(1, "days since 2000-1-1", calendar="noleap")
         >>> d.del_calendar()
         'noleap'
         >>> print(d.del_calendar())
         None
 
-        >>> d = {{package}}.{{class}}(1, "days since 2000-1-1")
+        >>> d = {{package}}.Data(1, "days since 2000-1-1")
         >>> print(d.del_calendar())
         None
 
-        >>> d = {{package}}.{{class}}(1, "m")
+        >>> d = {{package}}.Data(1, "m")
         Traceback (most recent call last):
             ...
         ValueError: Units <Units: m> have no calendar
@@ -4155,7 +4239,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(1, "m")
+        >>> d = {{package}}.Data(1, "m")
         >>> d.del_units()
         'm'
         >>> d.Units
@@ -4165,7 +4249,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             ...
         ValueError: Data has no units
 
-        >>> d = {{package}}.{{class}}(1, "days since 2000-1-1", calendar="noleap")
+        >>> d = {{package}}.Data(1, "days since 2000-1-1", calendar="noleap")
         >>> d.del_units()
         'days since 2000-1-1'
         >>> d.Units
@@ -4216,18 +4300,18 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}`
+            `Data`
                 Array of uninitialised (arbitrary) data of the given
                 shape and dtype.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}.empty((2, 2))
+        >>> d = {{package}}.Data.empty((2, 2))
         >>> print(d.array)
         [[ -9.74499359e+001  6.69583040e-309],
          [  2.13182611e-314  3.06959433e-309]]         #uninitialised
 
-        >>> d = {{package}}.{{class}}.empty((2,), dtype=bool)
+        >>> d = {{package}}.Data.empty((2,), dtype=bool)
         >>> print(d.array)
         [ False  True]                                 #uninitialised
 
@@ -4490,12 +4574,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The filled data, or `None` if the operation was in-place.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3]])
+        >>> d = {{package}}.Data([[1, 2, 3]])
         >>> print(d.filled().array)
         [[1 2 3]]
         >>> d[0, 0] = {{package}}.masked
@@ -4548,12 +4632,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(9.0)
+        >>> d = {{package}}.Data(9.0)
         >>> x = d.first_element()
         >>> print(x, type(x))
         9.0 <class 'float'>
 
-        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> d = {{package}}.Data([[1, 2], [3, 4]])
         >>> x = d.first_element()
         >>> print(x, type(x))
         1 <class 'int'>
@@ -4562,7 +4646,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> print(y, type(y))
         -- <class 'numpy.ma.core.MaskedConstant'>
 
-        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> d = {{package}}.Data(['foo', 'bar'])
         >>> x = d.first_element()
         >>> print(x, type(x))
         foo <class 'str'>
@@ -4604,16 +4688,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The flattened data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
         >>> import numpy as np
-        >>> d = {{package}}.{{class}}(np.arange(24).reshape(1, 2, 3, 4))
+        >>> d = {{package}}.Data(np.arange(24).reshape(1, 2, 3, 4))
         >>> d
-        <{{repr}}{{class}}(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+        <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
         >>> print(d.array)
         [[[[ 0  1  2  3]
            [ 4  5  6  7]
@@ -4624,17 +4708,17 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         >>> e = d.flatten()
         >>> e
-        <{{repr}}{{class}}(24): [0, ..., 23]>
+        <{{repr}}Data(24): [0, ..., 23]>
         >>> print(e.array)
         [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23]
 
         >>> e = d.flatten([])
         >>> e
-        <{{repr}}{{class}}(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+        <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
 
         >>> e = d.flatten([1, 3])
         >>> e
-        <{{repr}}{{class}}(1, 8, 3): [[[0, ..., 23]]]>
+        <{{repr}}Data(1, 8, 3): [[[0, ..., 23]]]>
         >>> print(e.array)
         [[[ 0  4  8]
           [ 1  5  9]
@@ -4647,7 +4731,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         >>> d.flatten([0, -1], inplace=True)
         >>> d
-        <{{repr}}{{class}}(4, 2, 3): [[[0, ..., 23]]]>
+        <{{repr}}Data(4, 2, 3): [[[0, ..., 23]]]>
         >>> print(d.array)
         [[[ 0  4  8]
           [12 16 20]]
@@ -4783,18 +4867,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 default, f"{self.__class__.__name__!r} has no count variable"
             )
 
-    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
-        """Returns the data.
-
-        .. versionadded:: 3.0.0
-
-        :Returns:
-
-            `{{class}}`
-
-        """
-        return self
-
     def get_compressed_axes(self):
         """Returns the dimensions that are compressed in the array.
 
@@ -4902,6 +4974,18 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 f"{self.__class__.__name__!r} has no compressed dimension",
             )
 
+    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
+        """Returns the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `Data`
+
+        """
+        return self
+
     def get_dependent_tie_points(self, default=ValueError()):
         """Return the list variable for a compressed array.
 
@@ -4941,6 +5025,76 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "tie point index variables",
             )
 
+    def get_deterministic_name(self):
+        """Get the deterministic name for the data.
+
+        If there is a deterministic name then, **in some sense**, the
+        data may be assumed to be equal to that of another `Data`
+        object with the same deterministic name. This measure of
+        equality is different to that applied by the `equals` method
+        in that:
+
+        * Numerical tolerance is not accounted for.
+        * NaN and inf values are considered equal.
+
+        .. warning:: Two `Data` objects that are considered equal by
+                     their `equals` methods could have different
+                     deterministic names, and two `Data` objects that
+                     are considered unequal by their `equals` methods
+                     could have the same deterministic names.
+
+        **Performance**
+
+        Ascertaining a measure of equality via deterministic names
+        does not require the Dask array to be computed so is, in
+        general, much faster than using the `equals` method.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `has_deterministic_name`
+
+        :Returns:
+
+            `str`
+                The deterministic name.
+
+        **Examples**
+
+        >>> d = {{package}}.Data([1, 2, 3], 'm')
+        >>> d.has_deterministic_name()
+        True
+        >>> d.get_deterministic_name()
+        '6380dd3674fbf10d30561484b084e9b3'
+        >>> d1 = {{package}}.Data([1, 2, 3], 'metre')
+        >>> d1.get_deterministic_name()
+        '6380dd3674fbf10d30561484b084e9b3'
+        >>> d1.get_deterministic_name() == d.get_deterministic_name()
+        True
+        >>> d1.equals(d)
+        True
+
+        >>> e = d + 1 - 1
+        >>> e.get_deterministic_name()
+        '0b83ada62d4b014bae83c3de1c1d3a80'
+        >>> e.get_deterministic_name() == d.get_deterministic_name()
+        False
+        >>> e.equals(d)
+        True
+
+        """
+        if not self.has_deterministic_name():
+            raise ValueError()
+
+        units = self._Units
+
+        return tokenize(
+            self.to_dask_array(
+                _force_mask_hardness=False, _force_to_memory=False
+            ).name,
+            units.formatted(definition=True, names=True),
+            units._canonical_calendar,
+        )
+
     def get_filenames(self, normalise=False, per_chunk=False):
         """The names of files containing parts of the data array.
 
@@ -4971,7 +5125,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}.empty((5, 8), 1, chunks=4)
+        >>> d = {{package}}.Data.empty((5, 8), 1, chunks=4)
         >>> d.get_filenames()
         set()
 
@@ -5242,14 +5396,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3], hardmask=False)
+        >>> d = {{package}}.Data([1, 2, 3], hardmask=False)
         >>> d.hardmask
         False
         >>> d.harden_mask()
         >>> d.hardmask
         True
 
-        >>> d = {{package}}.{{class}}([1, 2, 3], mask=[False, True, False])
+        >>> d = {{package}}.Data([1, 2, 3], mask=[False, True, False])
         >>> d.hardmask
         True
         >>> d[1] = 999
@@ -5278,24 +5432,47 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(1, "days since 2000-1-1", calendar="noleap")
+        >>> d = {{package}}.Data(1, "days since 2000-1-1", calendar="noleap")
         >>> d.has_calendar()
         True
 
-        >>> d = {{package}}.{{class}}(1, calendar="noleap")
+        >>> d = {{package}}.Data(1, calendar="noleap")
         >>> d.has_calendar()
         True
 
-        >>> d = {{package}}.{{class}}(1, "days since 2000-1-1")
+        >>> d = {{package}}.Data(1, "days since 2000-1-1")
         >>> d.has_calendar()
         False
 
-        >>> d = {{package}}.{{class}}(1, "m")
+        >>> d = {{package}}.Data(1, "m")
         >>> d.has_calendar()
         False
 
         """
         return hasattr(self.Units, "calendar")
+
+    def has_deterministic_name(self):
+        """Whether there is a deterministic name for the data.
+
+        See `get_deterministic_name` for details.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_deterministic_name`
+
+        :Returns:
+
+            `bool`
+                Whether or not there is a deterministic name.
+
+        **Examples**
+
+        >>> d = {{package}}.Data([1, 2, 3], 'm')
+        >>> d.has_deterministic_name()
+        True
+
+        """
+        return self._custom.get("has_deterministic_name", False)
 
     def has_units(self):
         """Whether units have been set.
@@ -5310,19 +5487,19 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(1, "")
+        >>> d = {{package}}.Data(1, "")
         >>> d.has_units()
         True
 
-        >>> d = {{package}}.{{class}}(1, "m")
+        >>> d = {{package}}.Data(1, "m")
         >>> d.has_units()
         True
 
-        >>> d = {{package}}.{{class}}(1)
+        >>> d = {{package}}.Data(1)
         >>> d.has_units()
         False
 
-        >>> d = {{package}}.{{class}}(1, calendar='noleap')
+        >>> d = {{package}}.Data(1, calendar='noleap')
         >>> d.has_units()
         False
 
@@ -5348,7 +5525,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The new data with expanded data axes, or `None` if
                 the operation was in-place.
 
@@ -5430,12 +5607,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(9.0)
+        >>> d = {{package}}.Data(9.0)
         >>> x = d.last_element()
         >>> print(x, type(x))
         9.0 <class 'float'>
 
-        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> d = {{package}}.Data([[1, 2], [3, 4]])
         >>> x = d.last_element()
         >>> print(x, type(x))
         4 <class 'int'>
@@ -5444,7 +5621,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> print(y, type(y))
         -- <class 'numpy.ma.core.MaskedConstant'>
 
-        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> d = {{package}}.Data(['foo', 'bar'])
         >>> x = d.last_element()
         >>> print(x, type(x))
         bar <class 'str'>
@@ -5481,14 +5658,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The result of masking the data where approximately
                 equal to *value*, or `None` if the operation was
                 in-place.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 1.1, 2, 1.1, 3])
+        >>> d = {{package}}.Data([1, 1.1, 2, 1.1, 3])
         >>> e = d.masked_values(1.1)
         >>> print(e.array)
         [1.0 -- 2.0 -- 3.0]
@@ -5539,13 +5716,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The result of masking the data, or `None` if the
                 operation was in-place.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3, 4, 5])
+        >>> d = {{package}}.Data([1, 2, 3, 4, 5])
         >>> e = d.masked_where([0, 1, 0, 1, 0])
         >>> print(e.array)
         [1 -- 3 -- 5]
@@ -5556,6 +5733,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         array = cfdm_where(d.array, condition, masked, None, d.hardmask)
         dx = da.from_array(array, chunks=d.chunks)
         d._set_dask(dx, clear=self._ALL, in_memory=True)
+
+        # Update the deterministic status
+        d._update_deterministic(condition)
 
         return d
 
@@ -5593,14 +5773,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The collapsed data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
         >>> a = np.ma.arange(12).reshape(4, 3)
-        >>> d = {{package}}.{{class}}(a, 'K')
+        >>> d = {{package}}.Data(a, 'K')
         >>> d[1, 1] = {{package}}.masked
         >>> print(d.array)
         [[0 1 2]
@@ -5608,7 +5788,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
          [6 7 8]
          [9 10 11]]
         >>> d.max()
-        <{{repr}}{{class}}(1, 1): [[11]] K>
+        <{{repr}}Data(1, 1): [[11]] K>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -5649,14 +5829,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The collapsed data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
         >>> a = np.ma.arange(12).reshape(4, 3)
-        >>> d = {{package}}.{{class}}(a, 'K')
+        >>> d = {{package}}.Data(a, 'K')
         >>> d[1, 1] = {{package}}.masked
         >>> print(d.array)
         [[0 1 2]
@@ -5664,7 +5844,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
          [6 7 8]
          [9 10 11]]
         >>> d.min()
-        <{{repr}}{{class}}(1, 1): [[0]] K>
+        <{{repr}}Data(1, 1): [[0]] K>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -5703,13 +5883,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The padded data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(np.arange(6).reshape(2, 3))
+        >>> d = {{package}}.Data(np.arange(6).reshape(2, 3))
         >>> print(d.array)
         [[0 1 2]
          [3 4 5]]
@@ -5805,7 +5985,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The persisted data. If the operation was in-place then
                 `None` is returned.
 
@@ -5856,13 +6036,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The rechunked data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
-        >>> x = {{package}}.{{class}}.empty((1000, 1000), chunks=(100, 100))
+        >>> x = {{package}}.Data.empty((1000, 1000), chunks=(100, 100))
 
         Specify uniform chunk sizes with a tuple
 
@@ -6068,6 +6248,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
         self._set_dask(dx, clear=self._NONE, in_memory=None)
 
+        # Update the deterministic status
+        self._update_deterministic(False)
+
     @_inplace_enabled(default=False)
     def reshape(self, *shape, merge_chunks=True, limit=None, inplace=False):
         """Change the shape of the data without changing its values.
@@ -6111,7 +6294,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(np.arange(12))
+        >>> d = {{package}}.Data(np.arange(12))
         >>> print(d.array)
         [ 0  1  2  3  4  5  6  7  8  9 10 11]
         >>> print(d.reshape(3, 4).array)
@@ -6179,7 +6362,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> d = {{package}}.Data([[1, 2], [3, 4]])
         >>> x = d.second_element()
         >>> print(x, type(x))
         2 <class 'int'>
@@ -6188,7 +6371,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> print(y, type(y))
         -- <class 'numpy.ma.core.MaskedConstant'>
 
-        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> d = {{package}}.Data(['foo', 'bar'])
         >>> x = d.second_element()
         >>> print(x, type(x))
         bar <class 'str'>
@@ -6272,14 +6455,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3])
+        >>> d = {{package}}.Data([1, 2, 3])
         >>> d.hardmask
         True
         >>> d.soften_mask()
         >>> d.hardmask
         False
 
-        >>> d = {{package}}.{{class}}([1, 2, 3], mask=[False, True, False], hardmask=False)
+        >>> d = {{package}}.Data([1, 2, 3], mask=[False, True, False], hardmask=False)
         >>> d.hardmask
         False
         >>> d[1] = 999
@@ -6317,7 +6500,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The squeezed data array.
 
         **Examples**
@@ -6425,14 +6608,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The collapsed data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
         >>> a = np.ma.arange(12).reshape(4, 3)
-        >>> d = {{package}}.{{class}}(a, 'K')
+        >>> d = {{package}}.Data(a, 'K')
         >>> d[1, 1] = {{package}}.masked
         >>> print(d.array)
         [[0 1 2]
@@ -6440,13 +6623,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
          [6 7 8]
          [9 10 11]]
         >>> d.sum()
-        <{{repr}}{{class}}(1, 1): [[62]] K>
+        <{{repr}}Data(1, 1): [[62]] K>
 
         >>> w = np.linspace(1, 2, 3)
         >>> print(w)
         [1.  1.5 2. ]
-        >>> d.sum(weights={{package}}.{{class}}(w, 'm'))
-        <{{repr}}{{class}}(1, 1): [[97.0]] K>
+        >>> d.sum(weights={{package}}.Data(w, 'm'))
+        <{{repr}}Data(1, 1): [[97.0]] K>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -6473,12 +6656,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         :Returns:
 
             `dask.array.Array`
-                The dask array contained within the `{{class}}`
+                The dask array contained within the `Data`
                 instance.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3, 4], 'm')
+        >>> d = {{package}}.Data([1, 2, 3, 4], 'm')
         >>> dx = d.to_dask_array()
         >>> dx
         >>> dask.array<array, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
@@ -6488,7 +6671,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> d.to_dask_array(_force_mask_hardness=True)
         dask.array<cfdm_harden_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
 
-        >>> d = {{package}}.{{class}}([1, 2, 3, 4], 'm', hardmask=False)
+        >>> d = {{package}}.Data([1, 2, 3, 4], 'm', hardmask=False)
         >>> d.to_dask_array(_force_mask_hardness=True)
         dask.array<cfdm_soften_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
 
@@ -6542,7 +6725,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3, 4], chunks=2)
+        >>> d = {{package}}.Data([1, 2, 3, 4], chunks=2)
         >>> d.todict()
         {('array-1bd38aa2a7096af2b1db281a4309854a', 0): array([1, 2]),
          ('array-1bd38aa2a7096af2b1db281a4309854a', 1): array([3, 4])}
@@ -6587,19 +6770,19 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}(9)
+        >>> d = {{package}}.Data(9)
         >>> d.tolist()
         9
 
-        >>> d = {{package}}.{{class}}([1, 2])
+        >>> d = {{package}}.Data([1, 2])
         >>> d.tolist()
         [1, 2]
 
-        >>> d = {{package}}.{{class}}(([[1, 2], [3, 4]]))
+        >>> d = {{package}}.Data(([[1, 2], [3, 4]]))
         >>> d.tolist()
         [[1, 2], [3, 4]]
 
-        >>> d.equals({{package}}.{{class}}(d.tolist()))
+        >>> d.equals({{package}}.Data(d.tolist()))
         True
 
         """
@@ -6625,7 +6808,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
 
         **Examples**
 
@@ -6704,7 +6887,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The uncompressed data, or `None` if the operation was
                 in-place.
 
@@ -6731,13 +6914,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}` or `None`
+            `Data` or `None`
                 The unique values in a 1-d array, or `None` if the
                 operation was in-place.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[4, 2, 1], [1, 2, 3]], 'm')
+        >>> d = {{package}}.Data([[4, 2, 1], [1, 2, 3]], 'm')
         >>> print(d.array)
         [[4 2 1]
          [1 2 3]]

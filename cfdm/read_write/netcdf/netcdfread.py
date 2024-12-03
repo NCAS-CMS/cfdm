@@ -1,6 +1,5 @@
 import logging
 import operator
-import os
 import re
 import struct
 import subprocess
@@ -539,7 +538,7 @@ class NetCDFRead(IORead):
                     f"    S3: s3fs.S3FileSystem options: {storage_options}\n"
                 )  # pragma: no cover
         elif u.scheme in (None, "file") and self.is_cdl_file(filename):
-            # A CDL file
+            # Convert a CDL file to netCDF
             cdl_filename = filename
             filename = self.cdl_to_netcdf(filename)
             g["filename"] = filename
@@ -557,6 +556,7 @@ class NetCDFRead(IORead):
             netcdf_backend = (netcdf_backend,)
 
         # Loop around backend until we successfully open the file
+        nc = None
         errors = []
         for backend in netcdf_backend:
             try:
@@ -564,19 +564,20 @@ class NetCDFRead(IORead):
             except KeyError:
                 errors.append(f"{backend}: Unknown netCDF backend name")
             except Exception as error:
-                errors.append(f"{backend}: {error}")
+                errors.append(
+                    f"{backend}:\n{error.__class__.__name__}: {error}"
+                )
             else:
-                errors = None
                 break
 
-        if errors:
+        if nc is None:
             if cdl_filename is not None:
                 filename = f"{filename} (created from CDL file {cdl_filename})"
 
-            raise OSError(
+            raise RuntimeError(
                 f"Can't open file {filename} with any of the netCDF backends "
-                f"{netcdf_backend!r}:\n"
-                f"{'\n'.join(errors)}"
+                f"{netcdf_backend!r}:\n\n"
+                f"{'\n\n'.join(errors)}"
             )
 
         # ------------------------------------------------------------
@@ -691,10 +692,8 @@ class NetCDFRead(IORead):
         )
         tmpfile = x.name
 
-        # ----------------------------------------------------------------
         # Need to cache the TemporaryFile object so that it doesn't get
         # deleted too soon
-        # ----------------------------------------------------------------
         _cached_temporary_files[tmpfile] = x
 
         try:
@@ -712,6 +711,40 @@ class NetCDFRead(IORead):
                 )
             else:
                 raise
+
+        return tmpfile
+
+    @classmethod
+    def string_to_cdl(cls, cdl_string):
+        """Create a temporary CDL file from a CDL string.
+
+        .. versionaddedd:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            cdl_string: `str`
+                The CDL string.
+
+        :Returns:
+
+            `str`
+                The name of the new netCDF file.
+
+        """
+        x = tempfile.NamedTemporaryFile(
+            mode="w",
+            dir=tempfile.gettempdir(),
+            prefix="cfdm_",
+            suffix=".cdl",
+        )
+        tmpfile = x.name
+
+        with open(tmpfile, "w") as f:
+            f.write(cdl_string)
+
+        # Need to cache the TemporaryFile object so that it doesn't
+        # get deleted too soon
+        _cached_temporary_files[tmpfile] = x
 
         return tmpfile
 
@@ -825,66 +858,6 @@ class NetCDFRead(IORead):
             pass
 
         return cdl
-
-    @classmethod
-    def is_file(cls, filename):
-        """Return `True` if *filename* is a file.
-
-        Note that a file that starts with ``http:``, ``https:``,
-        ``s3:``, or ``file:`` is always considered as a file.
-
-        .. versionadded:: (cfdm) 1.10.1.1
-
-        :Parameters:
-
-            filename: `str`
-                The name of the file.
-
-        :Returns:
-
-            `bool`
-                Whether or not *filename* is a file.
-
-        **Examples**
-
-        >>> {{package}}.{{class}}.is_file('file.nc')
-        True
-        >>> {{package}}.{{class}}.is_file('http://file.nc')
-        True
-        >>> {{package}}.{{class}}.is_file('https://file.nc')
-        True
-
-        """
-        # Assume that URLs are files
-        u = urisplit(filename)
-        if u.scheme in ("http", "https", "s3", "file"):
-            return True
-
-        return os.path.isfile(filename)
-
-    @classmethod
-    def is_dir(cls, filename):
-        """Return `True` if *filename* is a directory.
-
-        .. versionadded:: (cfdm) 1.10.1.1
-
-        :Parameters:
-
-            filename: `str`
-                The name of the file.
-
-        :Returns:
-
-            `bool`
-                Whether or not *filename* is a directory.
-
-        **Examples**
-
-        >>> {{package}}.{{class}}.is_dir('file.nc')
-        False
-
-        """
-        return os.path.isdir(filename)
 
     def default_netCDF_fill_value(self, ncvar):
         """The default netCDF fill value for a variable.
@@ -1226,6 +1199,16 @@ class NetCDFRead(IORead):
         }
 
         # ------------------------------------------------------------
+        # Parse the 'filename' keyword parameter
+        # ------------------------------------------------------------
+        try:
+            filename = abspath(filename, uri=False)
+        except ValueError:
+            filename = abspath(filename)
+
+        g["filename"] = filename
+
+        # ------------------------------------------------------------
         # Parse the 'external' keyword parameter
         # ------------------------------------------------------------
         if external:
@@ -1322,24 +1305,13 @@ class NetCDFRead(IORead):
 
         g["to_memory"] = tuple(to_memory)
 
+        # ------------------------------------------------------------
         # Parse the 'squeeze' and 'unsqueeze' keyword parameters
+        # ------------------------------------------------------------
         if g["squeeze"] and g["unsqueeze"]:
             raise ValueError(
                 "The 'squeeze' and 'unsqueeze' can not both be True"
             )
-
-        try:
-            filename = abspath(filename, uri=False)
-        except ValueError:
-            filename = abspath(filename)
-
-        g["filename"] = filename
-
-        if self.is_dir(filename):
-            raise IOError(f"Can't read directory {filename}")
-
-        if not self.is_file(filename):
-            raise IOError(f"Can't read non-existent file {filename}")
 
         # ------------------------------------------------------------
         # Open the netCDF file to be read

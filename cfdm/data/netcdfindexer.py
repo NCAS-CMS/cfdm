@@ -244,11 +244,18 @@ class netcdf_indexer:
             # something that likes np.newaxis indices) with the
             # np.newaxis elements reinstated.
             index2 = [i if i is newaxis else slice(None) for i in index]
-            data = data[tuple(index2)]
+            data = self._index(tuple(index2), data=data)
 
             # E.g.     index : (1, np.newaxis, slice(1, 5))
             #      =>  index1: (1, slice(1, 5))
             #      and index2: (slice(None), np.newaxis, slice(None))
+        except ValueError:
+            # Something went wrong (e.g. `h5netcdf` might have
+            # returned "ValueError: Step must be >= 1 (got -2)"), so
+            # we'll just get the entire array as a numpy array, and
+            # then try indexing that.
+            data = self._index(Ellipsis)
+            data = self._index(index, data=data)
 
         # Reset a netCDF4 variable's scale and mask behaviour
         if netCDF4_scale:
@@ -385,7 +392,7 @@ class netcdf_indexer:
 
         return default_fillvals[dtype.str[1:]]
 
-    def _index(self, index):
+    def _index(self, index, data=None):
         """Get a subspace of the variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -397,13 +404,20 @@ class netcdf_indexer:
             index:
                 The indices that define the subspace.
 
+            data: array_like, optional
+                The data to be indexed. If `None` (the default) then
+                the data given by the `variable` attribute will be
+                used.
+
         :Returns:
 
             `numpy.ndarray`
                 The subspace of the variable.
 
         """
-        data = self.variable
+        if data is None:
+            data = self.variable
+
         if index is Ellipsis:
             return data[...]
 

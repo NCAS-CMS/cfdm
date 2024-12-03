@@ -1692,7 +1692,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.chunks, ((4,), (5,)))
         self.assertTrue(e.equals(d))
 
-        # REVIEW: getitem: `test_Data_rechunk`: rechunking after a __getitem__
         # Test rechunking after a __getitem__
         e = d[:2].rechunk((2, 5))
         self.assertTrue(e.equals(d[:2]))
@@ -2086,11 +2085,10 @@ class DataTest(unittest.TestCase):
         f = cfdm.Data([-999, 35], mask=[True, False]).reshape(2, 1)
         self.assertTrue(e.equals(f))
 
-        # REVIEW: getitem: `test_Data__getitem__`: Chained subspaces reading from disk
         # Chained subspaces reading from disk
-        f = cfdm.read(self.filename)[0]
+        f = cfdm.read(self.filename, netcdf_backend="h5netcdf")[0]
         d = f.data
-        print(cfdm.read(self.filename))
+
         a = d[:1, [1, 3, 4], :][:, [True, False, True], ::-2].array
         b = d.array[:1, [1, 3, 4], :][:, [True, False, True], ::-2]
         self.assertTrue((a == b).all())
@@ -2739,6 +2737,39 @@ class DataTest(unittest.TestCase):
                 == new_filenames
             ).all()
         )
+
+    def test_Data_has_deterministic_name(self):
+        """Test Data.has_deterministic_name."""
+        d = cfdm.Data([1, 2], "m")
+        e = cfdm.Data([4, 5], "km")
+        self.assertTrue(d.has_deterministic_name())
+        self.assertTrue(e.has_deterministic_name())
+        #        self.assertTrue((d + e).has_deterministic_name())
+        #        self.assertTrue((d + e.array).has_deterministic_name())
+        #        self.assertFalse((d + e.to_dask_array()).has_deterministic_name())
+
+        d._update_deterministic(False)
+        self.assertFalse(d.has_deterministic_name())
+
+    #        self.assertFalse((d + e).has_deterministic_name())
+
+    def test_Data_get_deterministic_name(self):
+        """Test Data.get_deterministic_name."""
+        d = cfdm.Data([1, 2], "m")
+        e = d.copy()
+        e.Units = cfdm.Units("metre")
+        self.assertEqual(
+            e.get_deterministic_name(), d.get_deterministic_name()
+        )
+
+        #        e = d + 1 - 1
+        #        self.assertNotEqual(
+        #            e.get_deterministic_name(), d.get_deterministic_name()
+        #        )
+
+        d._update_deterministic(False)
+        with self.assertRaises(ValueError):
+            d.get_deterministic_name()
 
 
 if __name__ == "__main__":

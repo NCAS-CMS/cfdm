@@ -178,16 +178,19 @@ class FragmentFileArray(
                 array = FragmentArray(source=self, copy=False)._get_array(
                     index
                 )
-            except Exception as error:
-                errors.append(f"{FragmentArray().__class__.__name__}: {error}")
+            except Exception as error:  # noqa: F841
+                errors.append(
+                    f"{FragmentArray().__class__.__name__}:\n"
+                    "{error.__class__.__name__}: {error}"
+                )
             else:
                 return array
 
         # Still here?
-        errors = "\n".join(errors)
-        raise OSError(
+        raise RuntimeError(
             f"Can't access array index {index} from fragment file "
-            f"{self.get_filename()}:\n{errors}"
+            f"{self.get_filename()}:\n\n"
+            f"{'\n\n'.join(errors)}"
         )
 
     def get_filename(self, normalise=False, default=AttributeError()):

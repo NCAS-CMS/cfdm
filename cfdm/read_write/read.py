@@ -5,7 +5,6 @@ from numpy.ma.core import MaskError
 from ..cfdmimplementation import implementation
 from ..core import DocstringRewriteMeta
 from ..docstring import _docstring_substitution_definitions
-from ..functions import abspath
 from .netcdf import NetCDFRead
 
 
@@ -225,15 +224,8 @@ class read(metaclass=DocstringRewriteMeta):
         netcdf = NetCDFRead(cls.implementation)
         cls.netcdf = netcdf
 
-        #        filename = os.path.expanduser(os.path.expandvars(filename))
-        #
-        #        if netcdf.is_dir(filename):
-        #            raise IOError(f"Can't read directory {filename}")
-        #
-        #        if not netcdf.is_file(filename):
-        #            raise IOError(f"Can't read non-existent file {filename}")
-
         filename = os.path.expanduser(os.path.expandvars(filename))
+
         try:
             fields = netcdf.read(
                 filename,
