@@ -1657,7 +1657,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.chunks, ((4,), (5,)))
         self.assertTrue(e.equals(d))
 
-        # REVIEW: getitem: `test_Data_rechunk`: rechunking after a __getitem__
         # Test rechunking after a __getitem__
         e = d[:2].rechunk((2, 5))
         self.assertTrue(e.equals(d[:2]))
@@ -2051,7 +2050,6 @@ class DataTest(unittest.TestCase):
         f = cfdm.Data([-999, 35], mask=[True, False]).reshape(2, 1)
         self.assertTrue(e.equals(f))
 
-        # REVIEW: getitem: `test_Data__getitem__`: Chained subspaces reading from disk
         # Chained subspaces reading from disk
         f = cfdm.read(self.filename)[0]
         d = f.data

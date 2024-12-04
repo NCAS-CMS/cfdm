@@ -235,7 +235,6 @@ class NetCDF4Array(
 
         # Note: We need to lock because netCDF-C is about to access
         #       the file.
-        #        self._lock.acquire()
         with self._lock:
             netcdf, address = self.open()
             dataset = netcdf
@@ -275,7 +274,6 @@ class NetCDF4Array(
             # Hmm netCDF4 has a thing for making scalar size 1, 1d
             array = array.squeeze()
 
-        #        self._lock.release()
         return array
 
     def _set_attributes(self, var):

@@ -10588,10 +10588,8 @@ class NetCDFRead(IORead):
             #    whilst reducing the other Dask axis elements so that
             #    the total number of Dask chunk elements is preserved.
             continue_iterating = True
-            # print('\nstorage_Chunks =', storage_chunks)
-            while continue_iterating:
-                # print("in    1):", dask_chunks)
 
+            while continue_iterating:
                 continue_iterating = False
 
                 # Index locations of Dask elements which are greater
@@ -10709,8 +10707,6 @@ class NetCDFRead(IORead):
                     # Update the Dask chunk element
                     dask_chunks[i] = c
 
-            # print("after 2):", dask_chunks)
-
             # 3) All Dask elements are now greater than or equal to
             #    their corresponding storage elements, so replace each
             #    Dask element with the largest multiple of the storage
@@ -10739,7 +10735,6 @@ class NetCDFRead(IORead):
                         dask_chunks[i] = c
 
             # Return the storage-aligned Dask chunks
-            # print("aligned:", dask_chunks)
             return dask_chunks
 
         # ------------------------------------------------------------

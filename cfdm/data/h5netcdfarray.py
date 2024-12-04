@@ -188,7 +188,6 @@ class H5netcdfArray(
 
         # Note: We need to lock because HDF5 is about to access the
         #       file.
-        #        self._lock.acquire()
         with self._lock:
             dataset, address = self.open()
             dataset0 = dataset
@@ -217,7 +216,6 @@ class H5netcdfArray(
             self.close(dataset0)
             del dataset, dataset0
 
-        #        self._lock.release()
         return array
 
     def _set_attributes(self, var):
