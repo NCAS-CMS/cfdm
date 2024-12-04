@@ -2645,7 +2645,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `npartitions`, `numblocks`, `rechunk`
+        .. seealso:: `chunksize`, `npartitions`, `numblocks`,
+                     `rechunk`
 
         **Examples**
 
@@ -3601,6 +3602,71 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         If the input *d* has the Data interface (i.e. it has a
         `__data__` method), then the output of this method is used as
         the returned `Data` object. Otherwise, `Data(d)` is returned.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            d: data-like
+                Input data in any form that can be converted to a
+                `Data` object. This includes `Data` and `Field`
+                objects, and objects with the Data interface, numpy
+                arrays and any object which may be converted to a
+                numpy array.
+
+            dtype: data-type, optional
+                By default, the data-type is inferred from the input
+                data.
+
+            copy: `bool`, optional
+                If True and *d* has the Data interface, then a copy of
+                `d.__data__()` is returned.
+
+        :Returns:
+
+            `Data`
+                `Data` interpretation of *d*. No copy is performed on
+                the input if it is already a `Data` object with
+                matching dtype and *copy* is False.
+
+        **Examples**
+
+        >>> d = {{package}}.Data([1, 2])
+        >>> {{package}}.Data.asdata(d) is d
+        True
+        >>> d.asdata(d) is d
+        True
+
+        >>> {{package}}.Data.asdata([1, 2])
+        <{{repr}}Data: [1, 2]>
+
+        >>> {{package}}.Data.asdata(numpy.array([1, 2]))
+        <{{repr}}Data: [1, 2]>
+
+        """
+        data = getattr(d, "__data__", None)
+        if data is None:
+            # d does not have a Data interface
+            data = cls(d)
+            if dtype is not None:
+                data.dtype = dtype
+
+            return data
+
+        # d does have a Data interface
+        data = data()
+        if copy:
+            data = data.copy()
+            if dtype is not None and np.dtype(dtype) != data.dtype:
+                data.dtype = dtype
+        elif dtype is not None and np.dtype(dtype) != data.dtype:
+            data = data.copy()
+            data.dtype = dtype
+
+        return data
+
+    def chunk_indices(self):
+        """Return indices that define each dask chunk.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -6212,7 +6278,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `chunks`, `dask.array.rechunk`
+        .. seealso:: `chunks`, `chunksize`, `dask.array.rechunk`
 
         :Parameters:
 
