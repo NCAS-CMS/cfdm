@@ -2513,6 +2513,73 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.get_deterministic_name()
 
+    def test_Data__data__(self):
+        """Test Data.__data__."""
+        d = cfdm.Data([1, 2, 3], "m")
+        self.assertIs(d, d.__data__())
+
+    def test_Data_asdata(self):
+        """Test Data.asdata."""
+        d = cfdm.Data([1, 2, 3], "m")
+
+        self.assertIs(d.asdata(d), d)
+        self.assertIs(cfdm.Data.asdata(d), d)
+        self.assertIs(d.asdata(d, dtype=d.dtype), d)
+        self.assertIs(cfdm.Data.asdata(d, dtype=d.dtype), d)
+
+        self.assertIsNot(d.asdata(d, dtype="float32"), d)
+        self.assertIsNot(cfdm.Data.asdata(d, dtype="float32"), d)
+        self.assertIsNot(d.asdata(d, dtype=d.dtype, copy=True), d)
+        self.assertIsNot(cfdm.Data.asdata(d, dtype=d.dtype, copy=True), d)
+
+        self.assertTrue(
+            cfdm.Data.asdata(
+                cfdm.Data([1, 2, 3]), dtype=float, copy=True
+            ).equals(cfdm.Data([1.0, 2, 3]), verbose=2)
+        )
+
+        self.assertTrue(
+            cfdm.Data.asdata([1, 2, 3]).equals(cfdm.Data([1, 2, 3]), verbose=2)
+        )
+        self.assertTrue(
+            cfdm.Data.asdata([1, 2, 3], dtype=float).equals(
+                cfdm.Data([1.0, 2, 3]), verbose=2
+            )
+        )
+
+    def test_Data_full(self):
+        """Test Data.full."""
+        fill_value = 999
+        for shape, dtype_in, dtype_out in zip(
+            [(), (2,), (4, 5)], [None, float, bool], [int, float, bool]
+        ):
+            d = cfdm.Data.full(shape, fill_value, dtype=dtype_in, chunks=-1)
+            self.assertEqual(d.shape, shape)
+            self.assertEqual(d.dtype, dtype_out)
+            self.assertTrue(
+                (d.array == np.full(shape, fill_value, dtype=dtype_in)).all()
+            )
+
+    def test_Data_ones(self):
+        """Test Data.ones."""
+        for shape, dtype_in, dtype_out in zip(
+            [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
+        ):
+            d = cfdm.Data.ones(shape, dtype=dtype_in, chunks=-1)
+            self.assertEqual(d.shape, shape)
+            self.assertEqual(d.dtype, dtype_out)
+            self.assertTrue((d.array == np.ones(shape, dtype=dtype_in)).all())
+
+    def test_Data_zeros(self):
+        """Test Data.zeros."""
+        for shape, dtype_in, dtype_out in zip(
+            [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
+        ):
+            d = cfdm.Data.zeros(shape, dtype=dtype_in, chunks=-1)
+            self.assertEqual(d.shape, shape)
+            self.assertEqual(d.dtype, dtype_out)
+            self.assertTrue((d.array == np.zeros(shape, dtype=dtype_in)).all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

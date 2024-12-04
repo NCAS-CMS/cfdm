@@ -763,8 +763,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             else:
                 new.nc_clear_hdf5_chunksizes()
 
-        # CF-PYTHON: __getitem__: cyclic axes and ancillary masks
-
         return new
 
     def __int__(self):
@@ -1375,6 +1373,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         else:
             return array.astype(dtype[0], copy=False)
 
+    def __data__(self):
+        """Returns a new reference to self.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self
+
     @property
     def __in_memory__(self):
         """The in-memory status of chunk data.
@@ -1532,12 +1538,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        # CF-PYTHON: Override
         return self._get_component("axes")
 
     @_axes.setter
     def _axes(self, value):
-        # CF-PYTHON: Override
         self._set_component("axes", tuple(value), copy=False)
 
     @classmethod
@@ -2429,7 +2433,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `npartitions`, `numblocks`, `rechunk`
+        .. seealso:: `chunksize`, `npartitions`, `numblocks`,
+                     `rechunk`
 
         **Examples**
 
@@ -2445,6 +2450,31 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         return self.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=False
         ).chunks
+
+    @property
+    def chunksize(self):
+        """The largest `dask` chunk size for each dimension.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `chunks`, `npartitions`, `numblocks`, `rechunk`
+
+        **Examples**
+
+        >>> d = {{package}}.Data.empty((6, 5), chunks=(2, 4))
+         >>> d.chunks
+        ((2, 2, 2), (4, 1))
+        >>> d.chunksize
+        (2, 4)
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
+
+        """
+        return self.to_dask_array(
+            _force_mask_hardness=False, _force_to_memory=False
+        ).chunksize
 
     @property
     def compressed_array(self):
@@ -2817,7 +2847,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `chunks`, `numblocks`, `rechunk`
+        .. seealso:: `chunks`, `chunksize`, `numblocks`, `rechunk`
 
         **Examples**
 
@@ -2841,7 +2871,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `chunks`, `npartitions`, `rechunk`
+        .. seealso:: `chunks`, `chunksize`, `npartitions`, `rechunk`
 
         **Examples**
 
@@ -3002,12 +3032,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
     @Units.setter
     def Units(self, value):
-        # CF-PYTHON: Override
         self._Units = value
 
     @Units.deleter
     def Units(self):
-        # CF-PYTHON: Override
         del self._Units
 
     def all(self, axis=None, keepdims=True, split_every=None):
@@ -3347,6 +3375,76 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         d._set_dask(dx, in_memory=True)
 
         return d
+
+    @classmethod
+    def asdata(cls, d, dtype=None, copy=False):
+        """Convert the input to a `Data` object.
+
+        If the input *d* has the Data interface (i.e. it has a
+        `__data__` method), then the output of this method is used as
+        the returned `Data` object. Otherwise, `Data(d)` is returned.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            d: data-like
+                Input data in any form that can be converted to a
+                `Data` object. This includes `Data` and `Field`
+                objects, and objects with the Data interface, numpy
+                arrays and any object which may be converted to a
+                numpy array.
+
+            dtype: data-type, optional
+                By default, the data-type is inferred from the input
+                data.
+
+            copy: `bool`, optional
+                If True and *d* has the Data interface, then a copy of
+                `d.__data__()` is returned.
+
+        :Returns:
+
+            `Data`
+                `Data` interpretation of *d*. No copy is performed on
+                the input if it is already a `Data` object with
+                matching dtype and *copy* is False.
+
+        **Examples**
+
+        >>> d = {{package}}.Data([1, 2])
+        >>> {{package}}.Data.asdata(d) is d
+        True
+        >>> d.asdata(d) is d
+        True
+
+        >>> {{package}}.Data.asdata([1, 2])
+        <{{repr}}Data: [1, 2]>
+
+        >>> {{package}}.Data.asdata(numpy.array([1, 2]))
+        <{{repr}}Data: [1, 2]>
+
+        """
+        data = getattr(d, "__data__", None)
+        if data is None:
+            # d does not have a Data interface
+            data = cls(d)
+            if dtype is not None:
+                data.dtype = dtype
+
+            return data
+
+        # d does have a Data interface
+        data = data()
+        if copy:
+            data = data.copy()
+            if dtype is not None and np.dtype(dtype) != data.dtype:
+                data.dtype = dtype
+        elif dtype is not None and np.dtype(dtype) != data.dtype:
+            data = data.copy()
+            data.dtype = dtype
+
+        return data
 
     def chunk_indices(self):
         """Return indices that define each dask chunk.
@@ -4191,6 +4289,74 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             d.nc_clear_hdf5_chunksizes()
 
         return d
+
+    @classmethod
+    def full(
+        cls,
+        shape,
+        fill_value,
+        dtype=None,
+        units=None,
+        calendar=None,
+        chunks="auto",
+    ):
+        """Return new data filled with a fill value.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `empty`, `ones`, `zeros`
+
+        :Parameters:
+
+            shape: `int` or `tuple` of `int`
+                The shape of the new array. e.g. ``(2, 3)`` or ``2``.
+
+            fill_value: scalar
+                The fill value.
+
+            dtype: data-type
+                The desired data-type for the array. The default, `None`,
+                means ``np.array(fill_value).dtype``.
+
+            units: `str` or `Units`
+                The units for the new data array.
+
+            calendar: `str`, optional
+                The calendar for reference time units.
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+        :Returns:
+
+            `Data`
+                Array of *fill_value* with the given shape and data
+                type.
+
+        **Examples**
+
+        >>> d = {{package}}.Data.full((2, 3), -99)
+        >>> print(d.array)
+        [[-99 -99 -99]
+         [-99 -99 -99]]
+
+        >>> d = {{package}}.Data.full(2, 0.0)
+        >>> print(d.array)
+        [0. 0.]
+
+        >>> d = {{package}}.Data.full((2,), 0, dtype=bool)
+        >>> print(d.array)
+        [False False]
+
+        """
+        if dtype is None:
+            # Need to explicitly set the default because dtype is not
+            # a named keyword of da.full
+            dtype = getattr(fill_value, "dtype", None)
+            if dtype is None:
+                dtype = np.array(fill_value).dtype
+
+        dx = da.full(shape, fill_value, dtype=dtype, chunks=chunks)
+        return cls(dx, units=units, calendar=calendar)
 
     def get_calendar(self, default=ValueError()):
         """Return the calendar.
@@ -5169,6 +5335,51 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         )
         return d
 
+    @classmethod
+    def ones(cls, shape, dtype=None, units=None, calendar=None, chunks="auto"):
+        """Returns a new array filled with ones of set shape and type.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `empty`, `full`, `zeros`
+
+        :Parameters:
+
+            shape: `int` or `tuple` of `int`
+                The shape of the new array. e.g. ``(2, 3)`` or ``2``.
+
+            dtype: data-type
+                The desired data-type for the array, e.g.
+                `numpy.int8`. The default is `numpy.float64`.
+
+            units: `str` or `Units`
+                The units for the new data array.
+
+            calendar: `str`, optional
+                The calendar for reference time units.
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+        :Returns:
+
+            `Data`
+                Array of ones with the given shape and data type.
+
+        **Examples**
+
+        >>> d = {{package}}.Data.ones((2, 3))
+        >>> print(d.array)
+        [[1. 1. 1.]
+         [1. 1. 1.]]
+
+        >>> d = {{package}}.Data.ones((2,), dtype=bool)
+        >>> print(d.array)
+        [ True  True]
+
+        """
+        dx = da.ones(shape, dtype=dtype, chunks=chunks)
+        return cls(dx, units=units, calendar=calendar)
+
     @_inplace_enabled(default=False)
     def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
         """Pad an axis with missing data.
@@ -5339,7 +5550,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `chunks`, `dask.array.rechunk`
+        .. seealso:: `chunks`, `chunksize`, `dask.array.rechunk`
 
         :Parameters:
 
@@ -5492,9 +5703,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             and d.shape != original_shape
         ):
             d.nc_clear_hdf5_chunksizes()
-
-        # CF-PYTHON: reshape: Need to clear cyclic axes, as we can't help but
-        #            lose them in this operation
 
         return d
 
@@ -6110,6 +6318,53 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             d.nc_clear_hdf5_chunksizes()
 
         return d
+
+    @classmethod
+    def zeros(
+        cls, shape, dtype=None, units=None, calendar=None, chunks="auto"
+    ):
+        """Returns a new array filled with zeros of set shape and type.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `empty`, `full`, `ones`
+
+        :Parameters:
+
+            shape: `int` or `tuple` of `int`
+                The shape of the new array.
+
+            dtype: data-type
+                The data-type of the new array. By default the
+                data-type is ``float``.
+
+            units: `str` or `Units`
+                The units for the new data array.
+
+            calendar: `str`, optional
+                The calendar for reference time units.
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+        :Returns:
+
+            `Data`
+                Array of zeros with the given shape and data type.
+
+        **Examples**
+
+        >>> d = {{package}}.Data.zeros((2, 3))
+        >>> print(d.array)
+        [[0. 0. 0.]
+         [0. 0. 0.]]
+
+        >>> d = {{package}}.Data.zeros((2,), dtype=bool)
+        >>> print(d.array)
+        [False False]
+
+        """
+        dx = da.zeros(shape, dtype=dtype, chunks=chunks)
+        return cls(dx, units=units, calendar=calendar)
 
     # ----------------------------------------------------------------
     # Aliases
