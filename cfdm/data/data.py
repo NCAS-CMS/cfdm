@@ -93,7 +93,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
     * The indices for each axis work independently.
 
-      When more than one dimension's slice is a 1-d boolean sequence or
+      When more than one dimension's slice is a 1-d Boolean sequence or
       1-d sequence of integers, then these indices work independently
       along each dimension (similar to the way vector subscripts work in
       Fortran), rather than by their elements:

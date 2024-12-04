@@ -23,6 +23,8 @@ Inspection
    ~cfdm.NetCDF4Array.get_compression_type
    ~cfdm.NetCDF4Array.get_subspace
    ~cfdm.NetCDF4Array.get_attributes
+   ~cfdm.NetCDF4Array.get_missing_values
+   ~cfdm.NetCDF4Array.index
 
 .. rubric:: Attributes
 
@@ -36,6 +38,7 @@ Inspection
    ~cfdm.NetCDF4Array.ndim
    ~cfdm.NetCDF4Array.shape
    ~cfdm.NetCDF4Array.size
+   ~cfdm.NetCDF4Array.original_shape
 
 Units
 -----
@@ -49,6 +52,15 @@ Units
 
    ~cfdm.NetCDF4Array.get_calendar
    ~cfdm.NetCDF4Array.get_units
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.NetCDF4Array.Units
 
 File
 ----

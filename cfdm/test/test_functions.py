@@ -520,7 +520,7 @@ class FunctionsTest(unittest.TestCase):
         new["rtol"] = 10 * 2
         new["atol"] = 20 * 2
         new["log_level"] = "DEBUG"
-        #        new = dict(rtol=10 * 2, atol=20 * 2, log_level="DEBUG")
+
         with func(**new):
             self.assertEqual(func(), new)
 
@@ -532,7 +532,7 @@ class FunctionsTest(unittest.TestCase):
         new["rtol"] = cfdm.Constant(10 * 2)
         new["atol"] = 20 * 2
         new["log_level"] = "DEBUG"
-        #        new = dict(rtol=, atol=20 * 2, log_level="DEBUG")
+
         with func(**new):
             self.assertEqual(func(), new)
 

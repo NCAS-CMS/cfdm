@@ -112,15 +112,12 @@ class Data(abstract.Container):
                 fill_value = None
 
         if units is not None:
-            # self.set_units(units)
             self._set_component("units", units, copy=False)
 
         if calendar is not None:
-            # self.set_calendar(calendar)
             self._set_component("calendar", calendar, copy=False)
 
         if fill_value is not None:
-            # self.set_fill_value(fill_value)
             self._set_component("fill_value", fill_value, copy=False)
 
         if _use_array and array is not None:

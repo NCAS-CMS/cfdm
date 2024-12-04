@@ -23,6 +23,8 @@ Inspection
    ~cfdm.H5netcdfArray.get_compression_type
    ~cfdm.H5netcdfArray.get_subspace
    ~cfdm.H5netcdfArray.get_attributes
+   ~cfdm.H5netcdfArray.get_missing_values
+   ~cfdm.H5netcdfArray.index
 
 .. rubric:: Attributes
 
@@ -36,6 +38,7 @@ Inspection
    ~cfdm.H5netcdfArray.ndim
    ~cfdm.H5netcdfArray.shape
    ~cfdm.H5netcdfArray.size
+   ~cfdm.H5netcdfArray.original_shape
 
 Units
 -----
@@ -49,6 +52,15 @@ Units
 
    ~cfdm.H5netcdfArray.get_calendar
    ~cfdm.H5netcdfArray.get_units
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.H5netcdfArray.Units
 
 File
 ----
