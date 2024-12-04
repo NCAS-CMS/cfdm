@@ -1542,12 +1542,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        # CF-PYTHON: Override
         return self._get_component("axes")
 
     @_axes.setter
     def _axes(self, value):
-        # CF-PYTHON: Override
         self._set_component("axes", tuple(value), copy=False)
 
     @classmethod
@@ -3249,12 +3247,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
     @Units.setter
     def Units(self, value):
-        # CF-PYTHON: Override
         self._Units = value
 
     @Units.deleter
     def Units(self):
-        # CF-PYTHON: Override
         del self._Units
 
     def all(self, axis=None, keepdims=True, split_every=None):
