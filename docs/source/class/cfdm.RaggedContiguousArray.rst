@@ -25,6 +25,7 @@ Inspection
    ~cfdm.RaggedContiguousArray.get_compressed_dimension
    ~cfdm.RaggedContiguousArray.get_compression_type
    ~cfdm.RaggedContiguousArray.get_count
+   ~cfdm.RaggedContiguousArray.get_attributes
    
 .. rubric:: Attributes
 
@@ -53,6 +54,15 @@ Units
    ~cfdm.RaggedContiguousArray.get_calendar
    ~cfdm.RaggedContiguousArray.get_units
 
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.RaggedContiguousArray.Units
+
 Miscellaneous
 -------------
 
@@ -75,6 +85,7 @@ Miscellaneous
    ~cfdm.RaggedContiguousArray.get_index
    ~cfdm.RaggedContiguousArray.get_filename
    ~cfdm.RaggedContiguousArray.get_filenames
+   ~cfdm.RaggedContiguousArray.to_dask_array
 
 Special
 -------

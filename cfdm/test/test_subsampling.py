@@ -246,7 +246,7 @@ class SubsamplingTest(unittest.TestCase):
         f = cfdm.read(self.linear)
         q = f[0]
         lat = q.construct("latitude").data
-        self.assertEqual(lat.get_filenames(), set((self.linear,)))
+        self.assertEqual(lat.get_filenames(), set())
 
 
 if __name__ == "__main__":

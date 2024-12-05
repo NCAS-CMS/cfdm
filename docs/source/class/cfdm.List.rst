@@ -110,6 +110,9 @@ NetCDF
    ~cfdm.List.nc_get_variable
    ~cfdm.List.nc_has_variable
    ~cfdm.List.nc_set_variable 
+   ~cfdm.List.nc_clear_hdf5_chunksizes
+   ~cfdm.List.nc_hdf5_chunksizes
+   ~cfdm.List.nc_set_hdf5_chunksizes
 
 Groups
 ^^^^^^

@@ -3663,18 +3663,6 @@ class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         """
         return self._nc_del("subsampled_dimension", default=default)
 
-    #        try:
-    #            return self._get_component("netcdf").pop("subsampled_dimension")
-    #        except KeyError:
-    #            if default is None:
-    #                return default
-    #
-    #            return self._default(
-    #                default,
-    #                f"{self.__class__.__name__} has no netCDF subsampled "
-    #                "dimension name",
-    #            )
-
     def nc_get_subsampled_dimension(self, default=ValueError()):
         """Return the netCDF subsampled dimension name.
 
@@ -3716,19 +3704,6 @@ class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         """
         return self._nc_get("subsampled_dimension", default=default)
 
-    #
-    #        try:
-    #            return self._get_component("netcdf")["subsampled_dimension"]
-    #        except KeyError:
-    #            if default is None:
-    #                return default
-    #
-    #            return self._default(
-    #                default,
-    #                f"{self.__class__.__name__} has no netCDF subsampled "
-    #                "dimension name",
-    #            )
-
     def nc_has_subsampled_dimension(self):
         """Whether the netCDF subsampled dimension name has been set.
 
@@ -3761,7 +3736,6 @@ class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         None
 
         """
-        #        return "subsampled_dimension" in self._get_component("netcdf")
         return self._nc_has("subsampled_dimension")
 
     def nc_set_subsampled_dimension(self, value):
@@ -3806,28 +3780,6 @@ class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
 
         """
         return self._nc_set("subsampled_dimension", value)
-
-    #        if not value or value == "/":
-    #            raise ValueError(
-    #                f"Invalid netCDF subsampled dimension name: {value!r}"
-    #            )
-    #
-    #        if "/" in value:
-    #            if not value.startswith("/"):
-    #                raise ValueError(
-    #                    "A netCDF subsampled dimension name with a group "
-    #                    f"structure must start with a '/'. Got {value!r}"
-    #                )
-    #
-    #            if value.count("/") == 1:
-    #                value = value[1:]
-    #            elif value.endswith("/"):
-    #                raise ValueError(
-    #                    "A netCDF subsampled dimension name with a group "
-    #                    f"structure can't end with a '/'. Got {value!r}"
-    #                )
-    #
-    #        self._get_component("netcdf")["subsampled_dimension"] = value
 
     def nc_subsampled_dimension_groups(self):
         """Return the netCDF subsampled dimension group hierarchy.

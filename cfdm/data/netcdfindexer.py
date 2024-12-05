@@ -478,7 +478,7 @@ class netcdf_indexer:
         if index3:
             data = data[tuple(index3)]
 
-        return data
+        return np.asanyarray(data)
 
     def _mask(self, data, dtype, attributes, dtype_unsigned_int):
         """Mask the data.

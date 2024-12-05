@@ -6,6 +6,7 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
+from ..functions import parse_indices
 from . import PropertiesData
 
 logger = logging.getLogger(__name__)
@@ -180,7 +181,7 @@ class PropertiesDataBounds(PropertiesData):
             data = self_bounds.get_data(None, _units=False, _fill_value=False)
             if data is not None:
                 # There is a bounds array
-                bounds_indices = list(data._parse_indices(indices))
+                bounds_indices = list(parse_indices(data.shape, indices))
 
                 if data.ndim <= 2:
                     index = bounds_indices[0]

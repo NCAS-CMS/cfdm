@@ -13,6 +13,15 @@ cfdm.CompressedArray
 Inspection
 ----------
 
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CompressedArray.get_attributes
+
 .. rubric:: Attributes
 
 .. autosummary::
@@ -40,6 +49,15 @@ Units
    ~cfdm.CompressedArray.get_calendar
    ~cfdm.CompressedArray.get_units
    
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.CompressedArray.Units
+
 Compression
 -----------
 

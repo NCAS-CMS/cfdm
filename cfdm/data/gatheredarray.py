@@ -4,6 +4,7 @@ from numbers import Number
 import numpy as np
 
 from .abstract import CompressedArray
+from .mixin import CompressedArrayMixin
 from .subarray import GatheredSubarray
 
 
@@ -13,7 +14,7 @@ class DeprecationError(Exception):
     pass
 
 
-class GatheredArray(CompressedArray):
+class GatheredArray(CompressedArrayMixin, CompressedArray):
     """An underlying gathered array.
 
     Compression by gathering combines axes of a multidimensional array

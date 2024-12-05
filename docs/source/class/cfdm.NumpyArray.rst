@@ -22,6 +22,7 @@ Inspection
    
    ~cfdm.NumpyArray.get_compression_type
    ~cfdm.NumpyArray.get_subspace
+   ~cfdm.NumpyArray.get_attributes
    
 .. rubric:: Attributes
 
@@ -49,6 +50,15 @@ Units
    ~cfdm.NumpyArray.get_calendar
    ~cfdm.NumpyArray.get_units
    
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.NumpyArray.Units
+
 Miscellaneous
 -------------
 

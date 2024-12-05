@@ -26,6 +26,7 @@ from .decorators import (
     _manage_log_level_via_verbosity,
     _test_decorator_args,
 )
+from .functions import parse_indices
 
 logger = logging.getLogger(__name__)
 
@@ -314,7 +315,7 @@ class Field(
 
         data = self.get_data(_fill_value=False)
 
-        indices = data._parse_indices(indices)
+        indices = parse_indices(data.shape, indices)
         indices = tuple(indices)
 
         data_axes = self.get_data_axes()
@@ -323,13 +324,6 @@ class Field(
         # Subspace the field's data
         # ------------------------------------------------------------
         new_data = data[tuple(indices)]
-
-        if 0 in new_data.shape:
-            raise IndexError(
-                f"Indices {indices!r} result in a subspaced shape of "
-                f"{new_data.shape}, but can't create a subspace of "
-                f"{self.__class__.__name__} that has a size 0 axis"
-            )
 
         # Replace domain axes
         domain_axes = new.domain_axes(todict=True)

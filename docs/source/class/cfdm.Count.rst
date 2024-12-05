@@ -114,6 +114,9 @@ NetCDF
    ~cfdm.Count.nc_get_dimension
    ~cfdm.Count.nc_has_dimension
    ~cfdm.Count.nc_set_dimension
+   ~cfdm.Count.nc_clear_hdf5_chunksizes
+   ~cfdm.Count.nc_hdf5_chunksizes
+   ~cfdm.Count.nc_set_hdf5_chunksizes
 
 Groups
 ^^^^^^

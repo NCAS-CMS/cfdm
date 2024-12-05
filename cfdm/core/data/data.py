@@ -112,13 +112,13 @@ class Data(abstract.Container):
                 fill_value = None
 
         if units is not None:
-            self.set_units(units)
+            self._set_component("units", units, copy=False)
 
         if calendar is not None:
-            self.set_calendar(calendar)
+            self._set_component("calendar", calendar, copy=False)
 
         if fill_value is not None:
-            self.set_fill_value(fill_value)
+            self._set_component("fill_value", fill_value, copy=False)
 
         if _use_array and array is not None:
             self._set_Array(array, copy=copy)
@@ -135,9 +135,6 @@ class Data(abstract.Container):
         """
         return self
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
     @property
     def array(self):
         """Return an independent `numpy` array containing the data.
@@ -282,9 +279,6 @@ class Data(abstract.Container):
         """
         return self._get_Array().size
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def copy(self, array=True):
         """Return a deep copy of the data.
 
@@ -365,14 +359,6 @@ class Data(abstract.Container):
         """
         return self._del_component("calendar", default)
 
-    #        try:
-    #            return self._del_component("calendar")
-    #        except ValueError:
-    #            print(88888, repr(default))
-    #            return self._default(
-    #                default, f"{self.__class__.__name__!r} has no calendar"
-    #            )
-
     def del_fill_value(self, default=ValueError()):
         """Delete the fill value.
 
@@ -414,14 +400,6 @@ class Data(abstract.Container):
         """
         return self._del_component("fill_value", default)
 
-    #        try:
-    #            return self._del_component("fill_value")
-    #        except ValueError:
-    #            return self._default(
-    #                default,
-    #                "{!r} has no fill value".format(self.__class__.__name__),
-    #            )
-
     def del_units(self, default=ValueError()):
         """Delete the units.
 
@@ -459,13 +437,6 @@ class Data(abstract.Container):
 
         """
         return self._del_component("units", default)
-
-    #        try:
-    #            return self._del_component("units")
-    #        except ValueError:
-    #            return self._default(
-    #                default, "{!r} has no units".format(self.__class__.__name__)
-    #            )
 
     def get_calendar(self, default=ValueError()):
         """Return the calendar.
@@ -506,13 +477,6 @@ class Data(abstract.Container):
         """
         return self._get_component("calendar", default)
 
-    #        try:
-    #            return self._get_component("calendar")
-    #        except ValueError:
-    #            return self._default(
-    #                default, "{!r} has no calendar".format(self.__class__.__name__)
-    #            )
-
     def _get_Array(self, default=ValueError()):
         """Return the array object.
 
@@ -536,13 +500,6 @@ class Data(abstract.Container):
 
         """
         return self._get_component("array", default)
-
-    #        try:
-    #            return self._get_component("array")
-    #        except ValueError:
-    #            return self._default(
-    #                default, "{!r} has no array".format(self.__class__.__name__)
-    #            )
 
     def get_fill_value(self, default=ValueError()):
         """Return the missing data value.
@@ -587,14 +544,6 @@ class Data(abstract.Container):
         """
         return self._get_component("fill_value", default)
 
-    #        try:
-    #            return self._get_component("fill_value")
-    #        except ValueError:
-    #            return self._default(
-    #                default,
-    #                "{!r} has no fill value".format(self.__class__.__name__),
-    #            )
-
     def get_units(self, default=ValueError()):
         """Return the units.
 
@@ -632,13 +581,6 @@ class Data(abstract.Container):
 
         """
         return self._get_component("units", default)
-
-    #         try:
-    #            return self._get_component("units")
-    #        except ValueError:
-    #            return self._default(
-    #                default, "{!r} has no units".format(self.__class__.__name__)
-    #            )
 
     def has_units(self):
         """Whether units have been set.
@@ -834,9 +776,6 @@ class Data(abstract.Container):
         False
 
         """
-        #        if value is None:
-        #            self.del_fill_value(None)
-
         self._set_component("fill_value", value, copy=False)
 
     def set_units(self, value):

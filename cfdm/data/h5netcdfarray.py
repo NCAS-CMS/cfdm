@@ -1,20 +1,18 @@
 import logging
 
 import h5netcdf
-import netCDF4
 
 from . import abstract
-from .mixin import FileArrayMixin, NetCDFFileMixin
+from .locks import netcdf_lock
+from .mixin import FileArrayMixin, IndexMixin, NetCDFFileMixin
 from .netcdfindexer import netcdf_indexer
-
-_safecast = netCDF4.utils._safecast
-default_fillvals = netCDF4.default_fillvals.copy()
-default_fillvals["O"] = default_fillvals["S1"]
 
 logger = logging.getLogger(__name__)
 
 
-class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
+class H5netcdfArray(
+    IndexMixin, NetCDFFileMixin, FileArrayMixin, abstract.Array
+):
     """A netCDF array accessed with `h5netcdf`.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -145,40 +143,78 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         # By default, close the file after data array access
         self._set_component("close", True, copy=False)
 
-    def __getitem__(self, indices):
-        """Returns a subspace of the array as a numpy array.
-
-        x.__getitem__(indices) <==> x[indices]
+    def __dask_tokenize__(self):
+        """Return a value fully representative of the object.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        dataset, address = self.open()
-        dataset0 = dataset
+        return super().__dask_tokenize__() + (self.get_mask(),)
 
-        groups, address = self.get_groups(address)
-        if groups:
-            dataset = self._group(dataset, groups)
+    @property
+    def _lock(self):
+        """Return the lock used for netCDF file access.
 
-        # Get the variable by netCDF name
-        variable = dataset.variables[address]
+        Returns a lock object that prevents concurrent reads of netCDF
+        files, which are not currently supported by `h5netcdf`.
 
-        # Get the data, applying masking and scaling as required.
-        array = netcdf_indexer(
-            variable,
-            mask=self.get_mask(),
-            unpack=self.get_unpack(),
-            always_masked_array=False,
-            orthogonal_indexing=True,
-            copy=False,
-        )
-        array = array[indices]
+        .. versionadded:: (cfdm) NEXTVERSION
 
-        # Set the attributes, if they haven't been set already.
-        self._set_attributes(variable)
+        """
+        return netcdf_lock
 
-        self.close(dataset0)
-        del dataset, dataset0
+    def _get_array(self, index=None):
+        """Returns a subspace of the dataset variable.
+
+        The subspace is defined by the `index` attributes, and is
+        applied with `cfdm.netcdf_indexer`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `__array__`, `index`
+
+        :Parameters:
+
+            {{index: `tuple` or `None`, optional}}
+
+        :Returns:
+
+            `numpy.ndarray`
+                The subspace.
+
+        """
+        if index is None:
+            index = self.index()
+
+        # Note: We need to lock because HDF5 is about to access the
+        #       file.
+        with self._lock:
+            dataset, address = self.open()
+            dataset0 = dataset
+
+            groups, address = self.get_groups(address)
+            if groups:
+                dataset = self._group(dataset, groups)
+
+            # Get the variable by netCDF name
+            variable = dataset.variables[address]
+
+            # Get the data, applying masking and scaling as required.
+            array = netcdf_indexer(
+                variable,
+                mask=self.get_mask(),
+                unpack=self.get_unpack(),
+                always_masked_array=False,
+                orthogonal_indexing=True,
+                copy=False,
+            )
+            array = array[index]
+
+            # Set the attributes, if they haven't been set already.
+            self._set_attributes(variable)
+
+            self.close(dataset0)
+            del dataset, dataset0
 
         return array
 

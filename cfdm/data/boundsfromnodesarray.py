@@ -1,8 +1,9 @@
 from .abstract import MeshArray
+from .mixin import CompressedArrayMixin
 from .subarray import BoundsFromNodesSubarray
 
 
-class BoundsFromNodesArray(MeshArray):
+class BoundsFromNodesArray(CompressedArrayMixin, MeshArray):
     """An array of cell bounds defined by UGRID node coordinates.
 
     The UGRID node coordinates contain the locations of the nodes of

@@ -160,10 +160,12 @@ from .functions import (
     RTOL,
     abspath,
     atol,
+    chunksize,
     configuration,
     environment,
     integer_dtype,
     log_level,
+    parse_indices,
     rtol,
     unique_constructs,
     _disable_logging,
@@ -237,6 +239,8 @@ from .bounds import Bounds
 from .coordinateconversion import CoordinateConversion
 from .datum import Datum
 from .interiorring import InteriorRing
+
+from .units import Units
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellconnectivity import CellConnectivity

@@ -744,7 +744,7 @@ def _make_gathered_file(filename):
                 array[index] = i
         return array
 
-    n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
+    n = netCDF4.Dataset(filename, "w")
 
     n.Conventions = f"CF-{VN}"
 
@@ -856,7 +856,13 @@ def _make_gathered_file(filename):
     temp2.coordinates = "aux7 aux8 aux9"
     temp2[...] = np.arange(2 * 3 * 9 * 6).reshape(2, 3, 9, 6)
 
-    temp3 = n.createVariable("temp3", "f8", ("time", "list3", "p"))
+    temp3 = n.createVariable(
+        "temp3",
+        "f8",
+        ("time", "list3", "p"),
+        complevel=1,
+        chunksizes=(2, 6, 4),
+    )
     temp3.long_name = "temp3"
     temp3.units = "K"
     temp3.coordinates = "aux0 aux1 aux2 aux3 aux4 aux5 aux6 aux7 aux8 aux9"
