@@ -6,6 +6,7 @@ import numpy as np
 
 from ..core.utils import cached_property
 from .abstract import CompressedArray
+from .netcdfindexer import netcdf_indexer
 from .subarray import (
     BiLinearSubarray,
     BiQuadraticLatitudeLongitudeSubarray,
@@ -402,10 +403,15 @@ class SubsampledArray(CompressedArray):
             )
             u[u_indices] = subarray[...]
 
-        if indices is Ellipsis:
-            return u
-
-        return self.get_subspace(u, indices, copy=True)
+        u = netcdf_indexer(
+            u,
+            mask=False,
+            unpack=False,
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=False,
+        )
+        return u[indices]
 
     def _conformed_dependent_tie_points(self):
         """Return the dependent tie points.

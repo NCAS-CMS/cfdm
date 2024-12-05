@@ -671,18 +671,19 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_string(self):
         """Test the `string` keyword argument to `read` and `write`."""
-        f = cfdm.read(self.string_filename)
+        fN = cfdm.read(self.string_filename, netcdf_backend="netCDF4")
+        fH = cfdm.read(self.string_filename, netcdf_backend="h5netcdf")
 
-        n = int(len(f) / 2)
+        n = int(len(fN) / 2)
 
         for i in range(0, n):
             j = i + n
-            self.assertTrue(
-                f[i].data.equals(f[j].data, verbose=3), f"{f[i]!r} {f[j]!r}"
-            )
-            self.assertTrue(
-                f[j].data.equals(f[i].data, verbose=3), f"{f[j]!r} {f[i]!r}"
-            )
+            self.assertTrue(fN[i].data.equals(fN[j].data, verbose=3))
+            self.assertTrue(fN[j].data.equals(fN[i].data, verbose=3))
+
+        # Check that netCDF4 and h5netcdf give the same results
+        for i, j in zip(fN, fH):
+            self.assertTrue(i.data.equals(j.data))
 
         # Note: Don't loop round all netCDF formats for better
         #       performance. Just one netCDF3 and one netCDF4 format
@@ -926,8 +927,8 @@ class read_writeTest(unittest.TestCase):
         g = g[0]
 
         # Check that the data are missing
-        self.assertFalse(g.array.count())
-        self.assertFalse(g.construct("grid_latitude").array.count())
+        self.assertFalse(np.ma.count(g.array))
+        self.assertFalse(np.ma.count(g.construct("grid_latitude").array))
 
         # Check that a dump works
         g.dump(display=False)
@@ -937,16 +938,16 @@ class read_writeTest(unittest.TestCase):
 
         # Check that only the field and dimension coordinate data are
         # missing
-        self.assertFalse(g.array.count())
-        self.assertFalse(g.construct("grid_latitude").array.count())
-        self.assertTrue(g.construct("latitude").array.count())
+        self.assertFalse(np.ma.count(g.array))
+        self.assertFalse(np.ma.count(g.construct("grid_latitude").array))
+        self.assertTrue(np.ma.count(g.construct("latitude").array))
 
         cfdm.write(f, tmpfile, omit_data="field")
         g = cfdm.read(tmpfile)[0]
 
         # Check that only the field data are missing
-        self.assertFalse(g.array.count())
-        self.assertTrue(g.construct("grid_latitude").array.count())
+        self.assertFalse(np.ma.count(g.array))
+        self.assertTrue(np.ma.count(g.construct("grid_latitude").array))
 
     def test_read_write_domain_ancillary(self):
         """Test when domain ancillary equals dimension coordinate."""
@@ -1000,6 +1001,74 @@ class read_writeTest(unittest.TestCase):
             # Check that cfdm can access it
             f = cfdm.read(remote)
             self.assertEqual(len(f), 1)
+
+    def test_write_parametric_Z_coordinate(self):
+        """Test write of parametric Z coordinate."""
+        # Thes write when a parametric Z dimension coordinate does not
+        # have a compute_standard_name attribute
+        f = cfdm.example_field(1)
+        f.coordinate("atmosphere_hybrid_height_coordinate").del_property(
+            "computed_standard_name", None
+        )
+        cfdm.write(f, tmpfile)
+
+    def test_write_hdf5_chunks(self):
+        """Test the 'hdf5_chunks' parameter to `cfdm.write`."""
+        f = cfdm.example_field(5)
+        f.nc_set_variable("data")
+
+        # Good hdf5_chunks values
+        for hdf5_chunks, chunking in zip(
+            ("4MiB", "8KiB", "5000", 314.159, 1, "contiguous"),
+            (
+                [118, 5, 8],
+                [25, 5, 8],
+                [15, 5, 8],
+                [3, 3, 3],
+                [1, 1, 1],
+                "contiguous",
+            ),
+        ):
+            cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+            nc = netCDF4.Dataset(tmpfile, "r")
+            self.assertEqual(nc.variables["data"].chunking(), chunking)
+            nc.close()
+
+        # Bad hdf5_chunks values
+        for hdf5_chunks in ("bad_value", None):
+            with self.assertRaises(ValueError):
+                cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+
+        # Check that user-set chunks are not overridden
+        for chunking in ([5, 4, 3], "contiguous"):
+            f.nc_set_hdf5_chunksizes(chunking)
+            for hdf5_chunks in ("4MiB", "contiguous"):
+                cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+                nc = netCDF4.Dataset(tmpfile, "r")
+                self.assertEqual(nc.variables["data"].chunking(), chunking)
+                nc.close()
+
+        f.nc_set_hdf5_chunksizes("120 B")
+        for hdf5_chunks in ("contiguous", "4MiB"):
+            cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+            nc = netCDF4.Dataset(tmpfile, "r")
+            self.assertEqual(nc.variables["data"].chunking(), [2, 2, 2])
+            nc.close()
+
+        # store_hdf5_chunks
+        f = cfdm.read(tmpfile)[0]
+        self.assertEqual(f.nc_hdf5_chunksizes(), (2, 2, 2))
+
+        f = cfdm.read(tmpfile, store_hdf5_chunks=False)[0]
+        self.assertIsNone(f.nc_hdf5_chunksizes())
+
+        # Scalar data is written contiguously
+        f = cfdm.example_field(0)
+        f = f[0, 0].squeeze()
+        cfdm.write(f, tmpfile)
+        nc = netCDF4.Dataset(tmpfile, "r")
+        self.assertEqual(nc.variables["q"].chunking(), "contiguous")
+        nc.close()
 
 
 if __name__ == "__main__":

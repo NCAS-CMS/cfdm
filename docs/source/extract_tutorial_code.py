@@ -1,4 +1,5 @@
 """Extract tutorial Python code into an executable Python script."""
+
 import re
 import sys
 

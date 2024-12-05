@@ -150,7 +150,7 @@ in overridden methods.
       
       Data=cfdm.Data,
       GatheredArray=cfdm.GatheredArray,
-      NetCDFArray=cfdm.NetCDFArray,
+      NetCDF4Array=cfdm.NetCDF4Array,
       RaggedContiguousArray=cfdm.RaggedContiguousArray,
       RaggedIndexedArray=cfdm.RaggedIndexedArray,
       RaggedIndexedContiguousArray=cfdm.RaggedIndexedContiguousArray,

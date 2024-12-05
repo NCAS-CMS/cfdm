@@ -8,6 +8,8 @@ atol
 ATOL
 AuxiliaryCoordinate
 auxiliarycoordinate
+backend
+backends
 basenames
 Booleans
 bool
@@ -77,6 +79,7 @@ hashable
 Hassell
 hdf
 indexable
+init
 initio
 inplace
 instantiation
@@ -105,9 +108,11 @@ ncvars
 nd
 ndim
 ness
-netcdf
 netCDF
+netcdf
 NetCDFArray
+netcdfArray
+NetCDFIndexer
 Nino
 nonzero
 numpy
@@ -168,6 +173,7 @@ uncompresses
 uncompressing
 unicode
 unfilter
+url
 varid
 verboseness
 versionadded
