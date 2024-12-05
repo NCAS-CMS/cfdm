@@ -666,7 +666,7 @@ class Field(
         >>> print(f.cell_methods())
         Constructs:
         {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-        'cellmethod1': <CellMethod: domainaxis3: maximum>}
+         'cellmethod1': <CellMethod: domainaxis3: maximum>}
         >>> print(f.cell_methods('time'))
         Constructs:
         {'cellmethod1': <CellMethod: domainaxis3: maximum>}
