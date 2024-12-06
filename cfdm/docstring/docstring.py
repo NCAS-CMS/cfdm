@@ -633,6 +633,9 @@ _docstring_substitution_definitions = {
             are stored in the dataset. If False (the default) then the
             presence or not of size 1 dimensions is determined by how
             the data are stored in its dataset.""",
+    # read ignore_unknown_format
+    "{{read ignore_unknown_format: `bool`, optional}}": """ignore_unknown_format: `bool`, optional
+            TODOCFA""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully

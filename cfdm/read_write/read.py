@@ -166,6 +166,10 @@ class read(metaclass=DocstringRewriteMeta):
 
             .. versionadded:: (cfdm) NEXTVERSION
 
+        {{read ignore_unknown_format: `bool`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
     :Returns:
 
         `list` of `Field` or `Domain`
@@ -217,6 +221,7 @@ class read(metaclass=DocstringRewriteMeta):
         to_memory=False,
         squeeze=False,
         unsqueeze=False,
+        ignore_unknown_format=False,
         extra_read_vars=None,
     ):
         """Read field or domain constructs from a dataset."""
@@ -247,6 +252,7 @@ class read(metaclass=DocstringRewriteMeta):
                 to_memory=to_memory,
                 squeeze=squeeze,
                 unsqueeze=unsqueeze,
+                ignore_unknown_format=ignore_unknown_format,
                 extra_read_vars=extra_read_vars,
             )
         except MaskError:
