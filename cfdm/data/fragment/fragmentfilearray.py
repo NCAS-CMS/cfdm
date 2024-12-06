@@ -187,10 +187,11 @@ class FragmentFileArray(
                 return array
 
         # Still here?
+        error = "\n\n".join(errors)
         raise RuntimeError(
             f"Can't access array index {index} from fragment file "
             f"{self.get_filename()}:\n\n"
-            f"{'\n\n'.join(errors)}"
+            f"{error}"
         )
 
     def get_filename(self, normalise=False, default=AttributeError()):

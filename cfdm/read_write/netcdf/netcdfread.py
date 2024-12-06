@@ -579,10 +579,11 @@ class NetCDFRead(IORead):
             if cdl_filename is not None:
                 filename = f"{filename} (created from CDL file {cdl_filename})"
 
+            error = "\n\n".join(errors)
             raise RuntimeError(
                 f"Can't open file {filename} with any of the netCDF backends "
                 f"{netcdf_backend!r}:\n\n"
-                f"{'\n\n'.join(errors)}"
+                f"{error}"
             )
 
         # ------------------------------------------------------------
@@ -935,6 +936,7 @@ class NetCDFRead(IORead):
         to_memory=None,
         squeeze=False,
         unsqueeze=False,
+        fmt=None,
         ignore_unknown_format=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
@@ -1072,7 +1074,19 @@ class NetCDFRead(IORead):
 
         # Check the file format
         file_format = self.file_format(filename)
-        if not file_format:
+        if file_format:
+            if fmt is not None and not (
+                file_format == fmt or file_format in fmt
+            ):
+                if debug:
+                    logger.debug(
+                        f"Ignoring {filename}: Does not have one of the "
+                        "requested formats: {fmt}"
+                    )  # pragma: no cover
+
+                return []
+
+        else:
             if ignore_unknown_format:
                 if debug:
                     logger.debug(
