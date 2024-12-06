@@ -1,8 +1,13 @@
 Version NEXTVERSION
 -------------------
 
-**2024-??-??**
+**2024-12-??**
 
+* Introduction of `dask` for all data manipulations
+  https://github.com/NCAS-CMS/cf-python/pull/312)
+* Fix bug that returned incorrect results when an invalid identifer is
+  provided to `cf.Field.cell_methods`
+  (https://github.com/NCAS-CMS/cfdm/issues/299)
 * Upgrades to allow cfdm to work with Python 3.12
   (https://github.com/NCAS-CMS/cfdm/issues/302)
 * Extension to the HDF5 chunks API
