@@ -507,8 +507,6 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        netcdf = False
-        hdf = False
         netcdf_backend = g["netcdf_backend"]
         cdl_filename = None
 
@@ -540,12 +538,12 @@ class NetCDFRead(IORead):
                     f"    S3: s3fs.S3FileSystem options: {storage_options}\n"
                 )  # pragma: no cover
 
-        elif g["format"] == "CDL":
+        elif g["file_format"] == "CDL":
             # --------------------------------------------------------
-            # A CDL file
+            # Convert a CDL to netCDF4
             # --------------------------------------------------------
             cdl_filename = filename
-            filename = self.cdl_to_netcdf(filename, read_vars=g)
+            filename = self.cdl_to_netcdf(filename)
             g["filename"] = filename
 
         # Map backend names to file-open functions
@@ -554,13 +552,14 @@ class NetCDFRead(IORead):
             "netCDF4": self._open_netCDF4,
         }
 
-        if netcdf_backend is None:
-            # By default, try backends in this order:
-            netcdf_backend = ("h5netcdf", "netCDF4")
-        elif isinstance(netcdf_backend, str):
-            netcdf_backend = (netcdf_backend,)
+#        if netcdf_backend is None:
+#            # By default, try netCDF backends in this order:
+#            netcdf_backend = ("h5netcdf", "netCDF4")
+#        elif isinstance(netcdf_backend, str):
+#            netcdf_backend = (netcdf_backend,)
 
-        # Loop around backend until we successfully open the file
+        # Loop around the netCDF backends until we successfully open
+        # the file
         nc = None
         errors = []
         for backend in netcdf_backend:
@@ -616,14 +615,9 @@ class NetCDFRead(IORead):
 
             nc = flat_nc
 
-            netcdf = True
-            hdf = False
-
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
 
-        g["netCDF4"] = netcdf
-        g["h5netcdf"] = hdf
         g["nc"] = nc
         return nc
 
@@ -678,8 +672,7 @@ class NetCDFRead(IORead):
         self.read_vars["file_opened_with"] = "h5netcdf"
         return nc
 
-    @classmethod
-    def cdl_to_netcdf(cls, filename, read_vars=None):
+    def cdl_to_netcdf(self, filename):
         """Create a temporary netCDF-4 file from a CDL text file.
 
         :Parameters:
@@ -700,7 +693,7 @@ class NetCDFRead(IORead):
 
         ncgen_command = ["ncgen", "-knc4", "-o", tmpfile, filename]
 
-        if read_vars and read_vars.get("debug"):
+        if self.read_vars["debug"]:
             logger.debug(
                 f"Converting CDL file {filename} to netCDF file {tmpfile} "
                 f"with `{' '.join(ncgen_command)}`"
@@ -764,13 +757,13 @@ class NetCDFRead(IORead):
 
     @classmethod
     def file_format(cls, filename):  # is_netcdf_file(cls, filename):
-        """Return `True` if the file is a netCDF file.
+        """Return format  of the file.
 
         The file type is determined by inspecting the file's contents
         and any file suffix is not considered. However, file names
         that are non-local URIs (such as those starting ``https:`` or
         ``s3:``) are assumed, without checking, to be netCDF files.
-
+      
         :Parameters:
 
             filename: `str`
@@ -778,23 +771,25 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `bool`
-                `True` if the file is netCDF, otherwise `False`
+            `str` or `None`
+                The file format, or `None` of the file is not a
+                netCDF3, netCDF4, or CDL file.
 
         **Examples**
 
-        >>> {{package}}.{{class}}.is_netcdf_file('file.nc')
-        True
-        >>> {{package}}.{{class}}.is_netcdf_file('https:///data/file.nc')
-        True
+        >>> {{package}}.{{class}}.file_format('file.nc')
+        'netCDF'
+        >>> {{package}}.{{class}}.file_format('file.cdl')
+        'CDL
+        >>> {{package}}.{{class}}.file_format('other.pp')
+        None
 
         """
         # Assume that non-local URIs are in netCDF format
-        u = urisplit(filename)
-        if u.scheme not in (None, "file"):
+        if urisplit(filename).scheme not in (None, "file"):
             return "netCDF"
 
-        fmt = False
+        fmt = None
 
         try:
             fh = open(filename, "rb")
@@ -820,9 +815,10 @@ class NetCDFRead(IORead):
                 except Exception:
                     pass
                 else:
-                    # Match comment and blank lines at the top of the file
                     netcdf = line.startswith("netcdf ")
                     if not netcdf:
+                        # Match comment and blank lines at the top of
+                        # the file
                         while re.match(r"^\s*//|^\s*$", line):
                             line = fh.readline().decode("utf-8")
                             if not line:
@@ -1072,7 +1068,15 @@ class NetCDFRead(IORead):
         except ValueError:
             filename = abspath(filename)
 
+        if netcdf_backend is None:
+            # By default, try netCDF backends in this order:
+            netcdf_backend = ("h5netcdf", "netCDF4")
+        elif isinstance(netcdf_backend, str):
+            netcdf_backend = (netcdf_backend,)
+
+        # ------------------------------------------------------------
         # Check the file format
+        # ------------------------------------------------------------
         file_format = self.file_format(filename)
         if file_format:
             if fmt is not None and not (
@@ -1087,16 +1091,18 @@ class NetCDFRead(IORead):
                 return []
 
         else:
-            if ignore_unknown_format:
-                if debug:
-                    logger.debug(
-                        f"Ignoring {filename}: Could not interpret as a "
-                        "netCDF dataset"
-                    )  # pragma: no cover
+            if not ignore_unknown_format:
+                raise RuntimeError(
+                    f"Can't open file {filename} with any of the netCDF "
+                    f"backends {netcdf_backend!r}"
+)
+            if debug:
+                logger.debug(
+                    f"Ignoring {filename}: Could not interpret as a "
+                    "netCDF dataset"
+                )  # pragma: no cover
 
-                return []
-
-            raise RuntimeError("TODOCFA")
+            return []
 
         # ------------------------------------------------------------
         # Initialise netCDF read parameters
@@ -1106,7 +1112,7 @@ class NetCDFRead(IORead):
             # File
             # --------------------------------------------------------
             "filename": filename,
-            "format": file_format,
+            "file_format": file_format,
             # --------------------------------------------------------
             # Verbosity
             # --------------------------------------------------------
