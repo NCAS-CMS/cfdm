@@ -13,6 +13,7 @@ import numpy as np
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
+from cfdm.read_write.exceptions import UnknownFileFormatError
 
 warnings = False
 
@@ -642,7 +643,7 @@ class read_writeTest(unittest.TestCase):
             )
         )
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(UnknownFileFormatError):
             cfdm.read("test_read_write.py")
 
         # TODO: make portable instead of skipping on Mac OS (see Issue #25):
@@ -884,7 +885,7 @@ class read_writeTest(unittest.TestCase):
         tmpfiles.append(tmpfile)
         subprocess.run(f"touch {tmpfile}", shell=True, check=True)
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(UnknownFileFormatError):
             cfdm.read(tmpfile)
 
     def test_read_subsampled_coordinates(self):

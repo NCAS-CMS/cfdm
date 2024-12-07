@@ -26,6 +26,7 @@ from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
+from ..exceptions import UnknownFileFormatError
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -552,12 +553,6 @@ class NetCDFRead(IORead):
             "netCDF4": self._open_netCDF4,
         }
 
-#        if netcdf_backend is None:
-#            # By default, try netCDF backends in this order:
-#            netcdf_backend = ("h5netcdf", "netCDF4")
-#        elif isinstance(netcdf_backend, str):
-#            netcdf_backend = (netcdf_backend,)
-
         # Loop around the netCDF backends until we successfully open
         # the file
         nc = None
@@ -579,8 +574,8 @@ class NetCDFRead(IORead):
                 filename = f"{filename} (created from CDL file {cdl_filename})"
 
             error = "\n\n".join(errors)
-            raise RuntimeError(
-                f"Can't open file {filename} with any of the netCDF backends "
+            raise UnknownFileFormatError(
+                f"Can't open {filename} with any of the netCDF backends "
                 f"{netcdf_backend!r}:\n\n"
                 f"{error}"
             )
@@ -763,7 +758,7 @@ class NetCDFRead(IORead):
         and any file suffix is not considered. However, file names
         that are non-local URIs (such as those starting ``https:`` or
         ``s3:``) are assumed, without checking, to be netCDF files.
-      
+
         :Parameters:
 
             filename: `str`
@@ -1068,6 +1063,9 @@ class NetCDFRead(IORead):
         except ValueError:
             filename = abspath(filename)
 
+        # ------------------------------------------------------------
+        # Parse the 'netcdf_backend' keyword parameter
+        # ------------------------------------------------------------
         if netcdf_backend is None:
             # By default, try netCDF backends in this order:
             netcdf_backend = ("h5netcdf", "netCDF4")
@@ -1075,7 +1073,8 @@ class NetCDFRead(IORead):
             netcdf_backend = (netcdf_backend,)
 
         # ------------------------------------------------------------
-        # Check the file format
+        # Check the file format, returning/failing now if the format
+        # is not recognised
         # ------------------------------------------------------------
         file_format = self.file_format(filename)
         if file_format:
@@ -1092,13 +1091,14 @@ class NetCDFRead(IORead):
 
         else:
             if not ignore_unknown_format:
-                raise RuntimeError(
-                    f"Can't open file {filename} with any of the netCDF "
+                raise UnknownFileFormatError(
+                    f"Can't open {filename} with any of the netCDF "
                     f"backends {netcdf_backend!r}"
-)
+                )
+
             if debug:
                 logger.debug(
-                    f"Ignoring {filename}: Could not interpret as a "
+                    f"Ignoring {filename}: Can not interpret as a "
                     "netCDF dataset"
                 )  # pragma: no cover
 
@@ -1396,7 +1396,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         try:
             nc = self.file_open(filename, flatten=True, verbose=None)
-        except RuntimeError:
+        except UnknownFileFormatError:
             if not g["ignore_unknown_format"]:
                 raise
 
