@@ -834,55 +834,6 @@ class NetCDFRead(IORead):
 
         return f_type
 
-    #    def is_cdl_file(cls, filename):
-    #        """True if the file is in CDL format.
-    #
-    #        Return True if the file is a CDL text representation of a
-    #        netCDF file.
-    #
-    #        Note that the file type is determined by inspecting the file's
-    #        contents and any file suffix is not not considered. The file is
-    #        assumed to be a CDL file if it is a text file that starts with
-    #        "netcdf ".
-    #
-    #        .. versionaddedd:: (cfdm) 1.7.8
-    #
-    #        :Parameters:
-    #
-    #            filename: `str`
-    #                The name of the file.
-    #
-    #        :Returns:
-    #
-    #            `bool`
-    #                `True` if the file is CDL, otherwise `False`
-    #
-    #        **Examples**
-    #
-    #        >>> {{package}}.NetCDFRead.is_cdl_file('file.nc')
-    #        False
-    #
-    #        """
-    #        cdl = False
-    #        try:
-    #            with open(filename, "rt") as fh:
-    #                try:
-    #                    line = fh.readline()
-    #                    # Match comment and blank lines at the top of the file
-    #                    while re.match(r"^\s*//|^\s*$", line):
-    #                        line = fh.readline()
-    #                        if not line:
-    #                            break
-    #
-    #                    if line.startswith("netcdf "):
-    #                        cdl = True
-    #                except UnicodeDecodeError:
-    #                    pass
-    #        except Exception:
-    #            pass
-    #
-    #        return cdl
-
     def default_netCDF_fill_value(self, ncvar):
         """The default netCDF fill value for a variable.
 
