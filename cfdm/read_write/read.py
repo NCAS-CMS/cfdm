@@ -221,7 +221,7 @@ class read(metaclass=DocstringRewriteMeta):
         to_memory=False,
         squeeze=False,
         unsqueeze=False,
-        fmt=None,
+        file_type=None,
         ignore_unknown_format=False,
         extra_read_vars=None,
     ):
@@ -253,7 +253,7 @@ class read(metaclass=DocstringRewriteMeta):
                 to_memory=to_memory,
                 squeeze=squeeze,
                 unsqueeze=unsqueeze,
-                fmt=fmt,
+                file_type=file_type,
                 ignore_unknown_format=ignore_unknown_format,
                 extra_read_vars=extra_read_vars,
             )

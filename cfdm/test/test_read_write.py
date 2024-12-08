@@ -165,7 +165,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(f), 14, "\n" + str(f))
 
     def test_read_write_format(self):
-        """Test the `fmt` keyword argument of the `read` function."""
+        """Test the cfdm.write 'fmt' keyword."""
         f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
@@ -683,15 +683,15 @@ class read_writeTest(unittest.TestCase):
                 cfdm.read(tmpfileh)[0]
 
         # Finally test an invalid CDL input
-        with open(tmpfilec3, "w") as file:
-            file.write("netcdf test_file {\n  add badness\n}")
+        with open(tmpfilec3, "w") as fh:
+            fh.write("netcdf test_file {\n  add badness\n}")
         # TODO: work out (if it is even possible in a farily simple way) how
         # to suppress the expected error in stderr of the ncdump command
         # called by cfdm.read under the hood. Note that it can be easily
         # suppressed at subprocess call-time (but we don't want to do that in
         # case of genuine errors) and the following doesn't work as it doesn't
         # influence the subprocess: with contextlib.redirect_stdout(os.devnull)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(RuntimeError):
             cfdm.read(tmpfilec3)
 
     def test_read_write_string(self):
@@ -1207,6 +1207,48 @@ class read_writeTest(unittest.TestCase):
                 else:
                     # Field
                     self.assertFalse(in_memory)
+
+    def test_read_file_type(self):
+        """Test the cfdm.read 'file_type' keyword."""
+        # netCDF file
+        for file_type in (
+            None,
+            "netCDF",
+            ("netCDF",),
+            ("netCDF", "CDL"),
+            ("netCDF", "CDL", "bad value"),
+        ):
+            f = cfdm.read(self.filename, file_type=file_type)
+            self.assertEqual(len(f), 1)
+
+        for file_type in ("CDL", "bad value"):
+            f = cfdm.read(self.filename, file_type=file_type)
+            self.assertEqual(len(f), 0)
+
+        # CDL file
+        subprocess.run(
+            " ".join(["ncdump", self.filename, ">", tmpfile]),
+            shell=True,
+            check=True,
+        )
+        for file_type in (
+            None,
+            "CDL",
+            ("CDL",),
+            ("netCDF", "CDL"),
+            ("netCDF", "CDL", "bad value"),
+        ):
+            f = cfdm.read(tmpfile, file_type=file_type)
+            self.assertEqual(len(f), 1)
+
+        for file_type in ("netCDF", "bad value"):
+            f = cfdm.read(tmpfile, file_type=file_type)
+            self.assertEqual(len(f), 0)
+
+        # Not a netCDF nor CDL file
+        for file_type in (None, "netCDF", "CDL", "bad value"):
+            with self.assertRaises(UnknownFileFormatError):
+                f = cfdm.read("test_read_write.py", file_type=file_type)
 
 
 if __name__ == "__main__":

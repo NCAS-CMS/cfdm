@@ -509,7 +509,16 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         netcdf_backend = g["netcdf_backend"]
-        cdl_filename = None
+
+        if g["ftype"] == "CDL":
+            # --------------------------------------------------------
+            # Convert a CDL file to a local netCDF4 file
+            # --------------------------------------------------------
+            cdl_filename = filename
+            filename = self.cdl_to_netcdf(filename)
+            g["filename"] = filename
+        else:
+            cdl_filename = None
 
         u = urisplit(filename)
         storage_options = self._get_storage_options(filename, u)
@@ -538,14 +547,6 @@ class NetCDFRead(IORead):
                 logger.detail(
                     f"    S3: s3fs.S3FileSystem options: {storage_options}\n"
                 )  # pragma: no cover
-
-        elif g["file_format"] == "CDL":
-            # --------------------------------------------------------
-            # Convert a CDL to netCDF4
-            # --------------------------------------------------------
-            cdl_filename = filename
-            filename = self.cdl_to_netcdf(filename)
-            g["filename"] = filename
 
         # Map backend names to file-open functions
         file_open_function = {
@@ -701,7 +702,7 @@ class NetCDFRead(IORead):
             if msg.startswith(
                 "Command '['ncgen', '-knc4', '-o'"
             ) and msg.endswith("returned non-zero exit status 1."):
-                raise ValueError(
+                raise RuntimeError(
                     f"The CDL file {filename} is invalid so cannot be "
                     f"converted to netCDF with `{' '.join(ncgen_command)}`. "
                     "ncgen output:\n\n"
@@ -751,8 +752,8 @@ class NetCDFRead(IORead):
         return tmpfile
 
     @classmethod
-    def file_format(cls, filename):  # is_netcdf_file(cls, filename):
-        """Return format  of the file.
+    def ftype(cls, filename):
+        """Return type of the file.
 
         The file type is determined by inspecting the file's contents
         and any file suffix is not considered. However, file names
@@ -767,16 +768,16 @@ class NetCDFRead(IORead):
         :Returns:
 
             `str` or `None`
-                The file format, or `None` of the file is not a
-                netCDF3, netCDF4, or CDL file.
+                The file type (``'netCDF'`` or ``'CDL'``), or `None`
+                of the file something else.
 
         **Examples**
 
-        >>> {{package}}.{{class}}.file_format('file.nc')
+        >>> {{package}}.NetCDFRead.ftype('file.nc')
         'netCDF'
-        >>> {{package}}.{{class}}.file_format('file.cdl')
+        >>> {{package}}.NetCDFRead.ftype('file.cdl')
         'CDL
-        >>> {{package}}.{{class}}.file_format('other.pp')
+        >>> {{package}}.NetCDFRead.ftype('other.pp')
         None
 
         """
@@ -784,13 +785,15 @@ class NetCDFRead(IORead):
         if urisplit(filename).scheme not in (None, "file"):
             return "netCDF"
 
-        fmt = None
+        f_type = None
 
         try:
+            # Read the first 4 bytes from the file
             fh = open(filename, "rb")
-            # Read the magic number
             magic_number = struct.unpack("=L", fh.read(4))[0]
         except Exception:
+            # Can't read 4 bytes from the file, so it can't be netCDF
+            # or CDL.
             pass
         else:
             # Is it a netCDF-C binary file?
@@ -801,7 +804,7 @@ class NetCDFRead(IORead):
                 38159427,
                 88491075,
             ):
-                fmt = "netCDF"
+                f_type = "netCDF"
             else:
                 # Is it a CDL text file?
                 fh.seek(0)
@@ -822,63 +825,63 @@ class NetCDFRead(IORead):
                         netcdf = line.startswith("netcdf ")
 
                     if netcdf:
-                        fmt = "CDL"
+                        f_type = "CDL"
 
         try:
             fh.close()
         except Exception:
             pass
 
-        return fmt
+        return f_type
 
-    def is_cdl_file(cls, filename):
-        """True if the file is in CDL format.
-
-        Return True if the file is a CDL text representation of a
-        netCDF file.
-
-        Note that the file type is determined by inspecting the file's
-        contents and any file suffix is not not considered. The file is
-        assumed to be a CDL file if it is a text file that starts with
-        "netcdf ".
-
-        .. versionaddedd:: (cfdm) 1.7.8
-
-        :Parameters:
-
-            filename: `str`
-                The name of the file.
-
-        :Returns:
-
-            `bool`
-                `True` if the file is CDL, otherwise `False`
-
-        **Examples**
-
-        >>> {{package}}.{{class}}.is_cdl_file('file.nc')
-        False
-
-        """
-        cdl = False
-        try:
-            with open(filename, "rt") as fh:
-                try:
-                    line = fh.readline()
-                    # Match comment and blank lines at the top of the file
-                    while re.match(r"^\s*//|^\s*$", line):
-                        line = fh.readline()
-                        if not line:
-                            break
-
-                    if line.startswith("netcdf "):
-                        cdl = True
-                except UnicodeDecodeError:
-                    pass
-        except Exception:
-            pass
-
-        return cdl
+    #    def is_cdl_file(cls, filename):
+    #        """True if the file is in CDL format.
+    #
+    #        Return True if the file is a CDL text representation of a
+    #        netCDF file.
+    #
+    #        Note that the file type is determined by inspecting the file's
+    #        contents and any file suffix is not not considered. The file is
+    #        assumed to be a CDL file if it is a text file that starts with
+    #        "netcdf ".
+    #
+    #        .. versionaddedd:: (cfdm) 1.7.8
+    #
+    #        :Parameters:
+    #
+    #            filename: `str`
+    #                The name of the file.
+    #
+    #        :Returns:
+    #
+    #            `bool`
+    #                `True` if the file is CDL, otherwise `False`
+    #
+    #        **Examples**
+    #
+    #        >>> {{package}}.NetCDFRead.is_cdl_file('file.nc')
+    #        False
+    #
+    #        """
+    #        cdl = False
+    #        try:
+    #            with open(filename, "rt") as fh:
+    #                try:
+    #                    line = fh.readline()
+    #                    # Match comment and blank lines at the top of the file
+    #                    while re.match(r"^\s*//|^\s*$", line):
+    #                        line = fh.readline()
+    #                        if not line:
+    #                            break
+    #
+    #                    if line.startswith("netcdf "):
+    #                        cdl = True
+    #                except UnicodeDecodeError:
+    #                    pass
+    #        except Exception:
+    #            pass
+    #
+    #        return cdl
 
     def default_netCDF_fill_value(self, ncvar):
         """The default netCDF fill value for a variable.
@@ -927,7 +930,7 @@ class NetCDFRead(IORead):
         to_memory=None,
         squeeze=False,
         unsqueeze=False,
-        fmt=None,
+        file_type=None,
         ignore_unknown_format=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
@@ -1064,6 +1067,43 @@ class NetCDFRead(IORead):
             filename = abspath(filename)
 
         # ------------------------------------------------------------
+        # Parse the 'file_type' keyword parameter
+        # ------------------------------------------------------------
+        if file_type is None:
+            file_type = ("netCDF", "CDL")
+        elif isinstance(file_type, str):
+            file_type = (file_type,)
+
+        # ------------------------------------------------------------
+        # Check the file format, returning/failing now if the format
+        # is not recognised
+        # ------------------------------------------------------------
+        ftype = self.ftype(filename)
+        if ftype:
+            if ftype not in file_type:
+                if debug:
+                    logger.debug(
+                        f"Ignoring {filename}: {ftype} format is not "
+                        f"one of the requested formats: {file_type}"
+                    )  # pragma: no cover
+
+                return []
+
+        else:
+            if not ignore_unknown_format:
+                raise UnknownFileFormatError(
+                    f"Can't interpret {filename} as a netCDF dataset"
+                )
+
+            if debug:
+                logger.debug(
+                    f"Ignoring {filename}: Can't interpret as a "
+                    "netCDF dataset"
+                )  # pragma: no cover
+
+            return []
+
+        # ------------------------------------------------------------
         # Parse the 'netcdf_backend' keyword parameter
         # ------------------------------------------------------------
         if netcdf_backend is None:
@@ -1073,38 +1113,6 @@ class NetCDFRead(IORead):
             netcdf_backend = (netcdf_backend,)
 
         # ------------------------------------------------------------
-        # Check the file format, returning/failing now if the format
-        # is not recognised
-        # ------------------------------------------------------------
-        file_format = self.file_format(filename)
-        if file_format:
-            if fmt is not None and not (
-                file_format == fmt or file_format in fmt
-            ):
-                if debug:
-                    logger.debug(
-                        f"Ignoring {filename}: Does not have one of the "
-                        "requested formats: {fmt}"
-                    )  # pragma: no cover
-
-                return []
-
-        else:
-            if not ignore_unknown_format:
-                raise UnknownFileFormatError(
-                    f"Can't open {filename} with any of the netCDF "
-                    f"backends {netcdf_backend!r}"
-                )
-
-            if debug:
-                logger.debug(
-                    f"Ignoring {filename}: Can not interpret as a "
-                    "netCDF dataset"
-                )  # pragma: no cover
-
-            return []
-
-        # ------------------------------------------------------------
         # Initialise netCDF read parameters
         # ------------------------------------------------------------
         self.read_vars = {
@@ -1112,7 +1120,7 @@ class NetCDFRead(IORead):
             # File
             # --------------------------------------------------------
             "filename": filename,
-            "file_format": file_format,
+            "ftype": ftype,
             # --------------------------------------------------------
             # Verbosity
             # --------------------------------------------------------
@@ -10786,10 +10794,6 @@ class NetCDFRead(IORead):
                 authority = ""
 
             storage_options["endpoint_url"] = f"https://{authority}"
-
-        #            storage_options["endpoint_url"] = (
-        #                f"https://{parsed_filename.netloc}"
-        #            )
 
         g["file_system_storage_options"].setdefault(filename, storage_options)
 
