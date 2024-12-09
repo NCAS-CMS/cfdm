@@ -5,6 +5,7 @@ from numpy.ma.core import MaskError
 from ..cfdmimplementation import implementation
 from ..core import DocstringRewriteMeta
 from ..docstring import _docstring_substitution_definitions
+from .exceptions import UnknownFileFormatError as FileTypeError 
 from .netcdf import NetCDFRead
 
 
@@ -166,7 +167,20 @@ class read(metaclass=DocstringRewriteMeta):
 
             .. versionadded:: (cfdm) NEXTVERSION
 
-        {{read ignore_unknown_format: `bool`, optional}}
+        {{read file_type: `None` or (sequence of) `str`, optional}}
+
+            Valid files types are:
+
+            ============  ============================================
+            *file_type*   Description
+            ============  ============================================
+            ``'netCDF'``  Binary netCDF-3 or netCDF-4 file
+            ``'CDL'``     Text CDL representation of a netCDF file
+            ============  ============================================
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
+        {{read ignore_unknown_type: `bool`, optional}}
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -222,7 +236,7 @@ class read(metaclass=DocstringRewriteMeta):
         squeeze=False,
         unsqueeze=False,
         file_type=None,
-        ignore_unknown_format=False,
+        ignore_unknown_type=False,
         extra_read_vars=None,
     ):
         """Read field or domain constructs from a dataset."""
@@ -254,9 +268,14 @@ class read(metaclass=DocstringRewriteMeta):
                 squeeze=squeeze,
                 unsqueeze=unsqueeze,
                 file_type=file_type,
-                ignore_unknown_format=ignore_unknown_format,
+                ignore_unknown_type=ignore_unknown_type,
                 extra_read_vars=extra_read_vars,
             )
+        except FileTypeError:
+            if file_type is None:
+                raise
+
+            fields = []
         except MaskError:
             # Some data required for field interpretation is
             # missing, manifesting downstream as a NumPy

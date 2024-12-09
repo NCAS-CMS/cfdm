@@ -633,9 +633,20 @@ _docstring_substitution_definitions = {
             are stored in the dataset. If False (the default) then the
             presence or not of size 1 dimensions is determined by how
             the data are stored in its dataset.""",
-    # read ignore_unknown_format
-    "{{read ignore_unknown_format: `bool`, optional}}": """ignore_unknown_format: `bool`, optional
-            TODOCFA""",
+    # read file_type
+    "{{read file_type: `None` or (sequence of) `str`, optional}}": """file_type: `None` or (sequence of) `str`, optional
+             Only read files of the given type(s). All other file
+             types are ignored. If `None` (the default) then files of
+             any valid type are read. If there are no files of the
+             given type(s), or *file_type* is empty sequence, then an
+             empty list is returned.""",
+    # read ignore_unknown_type
+    "{{read ignore_unknown_type: `bool`, optional}}": """ignore_unknown_type: `bool`, optional
+             If True then ignore any file which does not have one of
+             the valid types specified by the *file_type*
+             parameter. If False (the default) then attempting to read
+             a file with an unrecognised type will result in an
+             error.""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully

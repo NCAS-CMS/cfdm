@@ -837,7 +837,7 @@ class write(metaclass=DocstringRewriteMeta):
 
         See `_docstring_substitutions` for details.
 
-        .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -852,7 +852,7 @@ class write(metaclass=DocstringRewriteMeta):
 
         See `_docstring_package_depth` for details.
 
-        .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) NEXTVERSION
 
         """
         return 0
@@ -860,6 +860,8 @@ class write(metaclass=DocstringRewriteMeta):
     @classmethod
     def _flat(cls, x):
         """Return an iterator over an arbitrarily nested sequence.
+
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 

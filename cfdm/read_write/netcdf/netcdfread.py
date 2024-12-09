@@ -26,7 +26,7 @@ from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
-from ..exceptions import UnknownFileFormatError
+from ..exceptions import UnknownFileFormatError as FileTypeError
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -575,9 +575,9 @@ class NetCDFRead(IORead):
                 filename = f"{filename} (created from CDL file {cdl_filename})"
 
             error = "\n\n".join(errors)
-            raise UnknownFileFormatError(
-                f"Can't open {filename} with any of the netCDF backends "
-                f"{netcdf_backend!r}:\n\n"
+            raise FileTypeError(
+                f"Can't interpret {filename} as a netCDF dataset"
+                f"with any of the netCDF backends {netcdf_backend!r}:\n\n"
                 f"{error}"
             )
 
@@ -768,17 +768,11 @@ class NetCDFRead(IORead):
         :Returns:
 
             `str` or `None`
-                The file type (``'netCDF'`` or ``'CDL'``), or `None`
-                of the file something else.
+                The file type:
 
-        **Examples**
-
-        >>> {{package}}.NetCDFRead.ftype('file.nc')
-        'netCDF'
-        >>> {{package}}.NetCDFRead.ftype('file.cdl')
-        'CDL
-        >>> {{package}}.NetCDFRead.ftype('other.pp')
-        None
+                * ``'netCDF'`` for a binary netCDF-3 or netCDF-4 file,
+                * ``'CDL'`` a text CDL file,
+                * `None` for anything else.
 
         """
         # Assume that non-local URIs are in netCDF format
@@ -882,7 +876,7 @@ class NetCDFRead(IORead):
         squeeze=False,
         unsqueeze=False,
         file_type=None,
-        ignore_unknown_format=False,
+        ignore_unknown_type=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -991,8 +985,16 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            ignore_unknown_format: `bool`, optional
-                TODOCFA
+            file_type: `None` or (sequence of) `str`, optional
+                Only read files of the given type(s). See `cfdm.read`
+                for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            ignore_unknown_type: `bool`, optional
+                If True then ignore any file which does not have one
+                of the valid types specified by the *file_type*
+                parameter. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1020,40 +1022,26 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Parse the 'file_type' keyword parameter
         # ------------------------------------------------------------
-        if file_type is None:
-            file_type = ("netCDF", "CDL")
-        elif isinstance(file_type, str):
+        if isinstance(file_type, str):
             file_type = (file_type,)
 
         # ------------------------------------------------------------
-        # Check the file format, returning/failing now if the format
-        # is not recognised
+        # Check the file type, returning/failing now if the type is
+        # not recognised. (It is much faster to do this with `ftype`
+        # than waiting for `file_open` to fail.)
         # ------------------------------------------------------------
         ftype = self.ftype(filename)
-        if ftype:
-            if ftype not in file_type:
-                if debug:
-                    logger.debug(
-                        f"Ignoring {filename}: {ftype} format is not "
-                        f"one of the requested formats: {file_type}"
-                    )  # pragma: no cover
+        if not ftype:
+            raise FileTypeError(
+                f"Can't interpret {filename} as a netCDF or CDL dataset"
+            )
 
-                return []
-
-        else:
-            if not ignore_unknown_format:
-                raise UnknownFileFormatError(
-                    f"Can't interpret {filename} as a netCDF dataset"
-                )
-
-            if debug:
-                logger.debug(
-                    f"Ignoring {filename}: Can't interpret as a "
-                    "netCDF dataset"
-                )  # pragma: no cover
-
-            return []
-
+        if file_type and ftype not in file_type:
+            raise FileTypeError(
+                f"Can't interpret {filename} as one of the "
+                f"requested types: {file_type}"
+            )
+        
         # ------------------------------------------------------------
         # Parse the 'netcdf_backend' keyword parameter
         # ------------------------------------------------------------
@@ -1064,6 +1052,127 @@ class NetCDFRead(IORead):
             netcdf_backend = (netcdf_backend,)
 
         # ------------------------------------------------------------
+        # Parse the 'external' keyword parameter
+        # ------------------------------------------------------------
+        if external:
+            if isinstance(external, str):
+                external = (external,)
+
+            external = set(external)
+        else:
+            external = set()
+
+        # ------------------------------------------------------------
+        # Parse 'extra' keyword parameter
+        # ------------------------------------------------------------
+        get_constructs = {
+            "auxiliary_coordinate": self.implementation.get_auxiliary_coordinates,
+            "cell_measure": self.implementation.get_cell_measures,
+            "dimension_coordinate": self.implementation.get_dimension_coordinates,
+            "domain_ancillary": self.implementation.get_domain_ancillaries,
+            "field_ancillary": self.implementation.get_field_ancillaries,
+        }
+
+        if extra:
+            if isinstance(extra, str):
+                extra = (extra,)
+
+            for f in extra:
+                if f not in get_constructs:
+                    raise ValueError(
+                        f"Can't read: Bad parameter value: extra={extra!r}"
+                    )
+
+            extra = set(extra)
+        else:
+            extra = set()
+
+        # ------------------------------------------------------------
+        # Parse 'dask_chunks' keyword parameter
+        # ------------------------------------------------------------
+        if dask_chunks is not None and not isinstance(
+            dask_chunks, (str, Integral, dict)
+        ):
+            raise ValueError(
+                "The 'dask_chunks' keyword must be of type str, int, None or "
+                f"dict. Got: {dask_chunks!r}"
+            )
+
+        # ------------------------------------------------------------
+        # Parse the 'cfa' keyword parameter
+        # ------------------------------------------------------------
+        if cfa is None:
+            cfa = {}
+        else:
+            cfa = cfa.copy()
+            keys = ("replace_directory",)
+            if not set(cfa).issubset(keys):
+                raise ValueError(
+                    "Invalid dictionary key to the 'cfa' parameter."
+                    f"Valid keys are {keys}. Got: {cfa}"
+                )
+
+            if not isinstance(cfa.get("replace_directory", {}), dict):
+                raise ValueError(
+                    "The 'replace_directory' key of the 'cfa' parameter "
+                    "must have a dictionary value. "
+                    f"Got: {cfa['replace_directory']!r}"
+                )
+
+        # ------------------------------------------------------------
+        # Parse the 'cfa_write' keyword parameter
+        # ------------------------------------------------------------
+        if cfa_write:
+            if isinstance(cfa_write, str):
+                cfa_write = (cfa_write,)
+            else:
+                cfa_write = tuple(cfa_write)
+        else:
+            cfa_write = ()
+
+        # ------------------------------------------------------------
+        # Parse the 'squeeze' and 'unsqueeze' keyword parameters
+        # ------------------------------------------------------------
+        if squeeze and unsqueeze:
+            raise ValueError(
+                "'squeeze' and 'unsqueeze' parameters can not both be True"
+            )
+
+        # ------------------------------------------------------------
+        # Parse the 'to_memory' keyword parameter
+        # ------------------------------------------------------------
+        if to_memory:
+            if isinstance(to_memory, str):
+                to_memory = (to_memory,)
+
+            if "metadata" in to_memory:
+                to_memory = tuple(to_memory) + (
+                    "field_ancillary",
+                    "domain_ancillary",
+                    "dimension_coordinate",
+                    "auxiliary_coordinate",
+                    "cell_measure",
+                    "domain_topology",
+                    "cell_connectivity",
+                )
+                to_memory = set(to_memory)
+                to_memory.remove("metadata")
+        else:
+            to_memory = ()
+
+        # ------------------------------------------------------------
+        # Parse the 'storage_options' keyword parameter
+        # ------------------------------------------------------------
+        if storage_options is None:
+            storage_options = {}
+
+        # ------------------------------------------------------------
+        # Parse the '_file_systems' keyword parameter
+        # ------------------------------------------------------------
+        if _file_systems is None:
+            _file_systems = {}
+
+        # ------------------------------------------------------------
         # Initialise netCDF read parameters
         # ------------------------------------------------------------
         self.read_vars = {
@@ -1072,6 +1181,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "filename": filename,
             "ftype": ftype,
+            "ignore_unknown_type": bool(ignore_unknown_type),
             # --------------------------------------------------------
             # Verbosity
             # --------------------------------------------------------
@@ -1109,10 +1219,17 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Variables listed by the global external_variables
             # attribute
+            "external_files": external,
             "external_variables": set(),
             # External variables that are actually referenced from
             # within the parent file
             "referenced_external_variables": set(),
+            # --------------------------------------------------------
+            # Create extra, independent fields from netCDF variables
+            # that correspond to particular types metadata constructs
+            # --------------------------------------------------------
+            "extra": extra,
+            "get_constructs": get_constructs,
             # --------------------------------------------------------
             # Coordinate references
             # --------------------------------------------------------
@@ -1175,7 +1292,7 @@ class NetCDFRead(IORead):
             # File system storage options for each file
             "file_system_storage_options": {},
             # Cached s3fs.S3FileSystem objects
-            "file_systems": {},
+            "file_systems": _file_systems,
             # Cache of open s3fs.File objects
             "s3fs_File_objects": [],
             # --------------------------------------------------------
@@ -1193,9 +1310,9 @@ class NetCDFRead(IORead):
             # fragment_array_variables as numpy arrays
             "fragment_array_variables": {},
             # Aggregation configuration overrides
-            "cfa": None,
+            "cfa": cfa,
             # Dask chunking of aggregated data for selected constructs
-            "cfa_write": None,
+            "cfa_write": cfa_write,
             # --------------------------------------------------------
             # Whether or not to store HDF chunks
             # --------------------------------------------------------
@@ -1203,33 +1320,19 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Constructs to read into memory
             # --------------------------------------------------------
-            "to_memory": None,
+            "to_memory": to_memory,
             # --------------------------------------------------------
             # Squeeze/unsqueeze fields
             # --------------------------------------------------------
             "squeeze": bool(squeeze),
             "unsqueeze": bool(unsqueeze),
-            # --------------------------------------------------------
-            # TODOCFA
-            # --------------------------------------------------------
-            "ignore_unknown_format": bool(ignore_unknown_format),
         }
 
         g = self.read_vars
 
-        debug = g["debug"]
-
         # Set versions
         for version in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11", "1.12"):
             g["version"][version] = Version(version)
-
-        if storage_options is None:
-            g["storage_options"] = {}
-
-        if _file_systems is not None:
-            # Update S3 file systems with those passed in as keyword
-            # parameter
-            g["file_systems"] = _file_systems
 
         # ------------------------------------------------------------
         # Add custom read vars
@@ -1237,135 +1340,22 @@ class NetCDFRead(IORead):
         if extra_read_vars:
             g.update(deepcopy(extra_read_vars))
 
-        g["get_constructs"] = {
-            "auxiliary_coordinate": self.implementation.get_auxiliary_coordinates,
-            "cell_measure": self.implementation.get_cell_measures,
-            "dimension_coordinate": self.implementation.get_dimension_coordinates,
-            "domain_ancillary": self.implementation.get_domain_ancillaries,
-            "field_ancillary": self.implementation.get_field_ancillaries,
-        }
-
-        # ------------------------------------------------------------
-        # Parse the 'external' keyword parameter
-        # ------------------------------------------------------------
-        if external:
-            if isinstance(external, str):
-                external = (external,)
-        else:
-            external = ()
-
-        g["external_files"] = set(external)
-
-        # ------------------------------------------------------------
-        # Parse 'extra' keyword parameter
-        # ------------------------------------------------------------
-        if extra:
-            if isinstance(extra, str):
-                extra = (extra,)
-
-            for f in extra:
-                if f not in g["get_constructs"]:
-                    raise ValueError(
-                        f"Can't read: Bad parameter value: extra={extra!r}"
-                    )
-        else:
-            extra = ()
-
-        g["extra"] = extra
-
-        # ------------------------------------------------------------
-        # Parse 'dask_chunks' keyword parameter
-        # ------------------------------------------------------------
-        if dask_chunks is not None and not isinstance(
-            dask_chunks, (str, Integral, dict)
-        ):
-            raise ValueError(
-                "The 'dask_chunks' keyword must be of type str, int, None or "
-                f"dict. Got: {dask_chunks!r}"
-            )
-
-        # ------------------------------------------------------------
-        # Parse the 'cfa' keyword parameter
-        # ------------------------------------------------------------
-        if cfa is None:
-            cfa = {}
-        else:
-            cfa = cfa.copy()
-            keys = ("replace_directory",)
-            if not set(cfa).issubset(keys):
-                raise ValueError(
-                    "Invalid dictionary key to the 'cfa' parameter."
-                    f"Valid keys are {keys}. Got: {cfa}"
-                )
-
-            if not isinstance(cfa.get("replace_directory", {}), dict):
-                raise ValueError(
-                    "The 'replace_directory' key of the 'cfa' parameter "
-                    "must have a dictionary value. "
-                    f"Got: {cfa['replace_directory']!r}"
-                )
-
-        g["cfa"] = cfa
-
-        # ------------------------------------------------------------
-        # Parse the 'cfa_write' keyword parameter
-        # ------------------------------------------------------------
-        if cfa_write:
-            if isinstance(cfa_write, str):
-                cfa_write = (cfa_write,)
-        else:
-            cfa_write = ()
-
-        g["cfa_write"] = tuple(cfa_write)
-
-        # ------------------------------------------------------------
-        # Parse the 'to_memory' keyword parameter
-        # ------------------------------------------------------------
-        if to_memory:
-            if isinstance(to_memory, str):
-                to_memory = (to_memory,)
-
-            if "metadata" in to_memory:
-                to_memory = tuple(to_memory) + (
-                    "field_ancillary",
-                    "domain_ancillary",
-                    "dimension_coordinate",
-                    "auxiliary_coordinate",
-                    "cell_measure",
-                    "domain_topology",
-                    "cell_connectivity",
-                )
-                to_memory = set(to_memory)
-                to_memory.remove("metadata")
-        else:
-            to_memory = ()
-
-        g["to_memory"] = tuple(to_memory)
-
-        # ------------------------------------------------------------
-        # Parse the 'squeeze' and 'unsqueeze' keyword parameters
-        # ------------------------------------------------------------
-        if g["squeeze"] and g["unsqueeze"]:
-            raise ValueError(
-                "The 'squeeze' and 'unsqueeze' can not both be True"
-            )
-
         # ------------------------------------------------------------
         # Open the netCDF file to be read
         # ------------------------------------------------------------
         try:
             nc = self.file_open(filename, flatten=True, verbose=None)
-        except UnknownFileFormatError:
-            if not g["ignore_unknown_format"]:
+        except FileTypeError:
+            if not g["ignore_unknown_type"]:
                 raise
 
             if debug:
                 logger.debug(
-                    f"Ignoring {filename}: Could not interpret as a "
+                    f"Ignoring {filename}: Can't interpret as a "
                     "netCDF dataset"
                 )  # pragma: no cover
 
-            return []
+                return []
 
         logger.info(
             f"Reading netCDF file: {g['filename']}\n"
@@ -1563,7 +1553,7 @@ class NetCDFRead(IORead):
                     # structure that was prepended to the netCDF
                     # variable name by the netCDF flattener.
                     ncvar_basename = re.sub(
-                        f"^{flattener_separator.join(groups)}{flattener_separator}",
+                        rf"^{flattener_separator.join(groups)}{flattener_separator}",
                         "",
                         ncvar_flat,
                     )
@@ -1630,7 +1620,7 @@ class NetCDFRead(IORead):
                 if groups:
                     # This dimension is in a group.
                     ncdim_basename = re.sub(
-                        "^{flattener_separator.join(groups)}{flattener_separator}",
+                        r"^{flattener_separator.join(groups)}{flattener_separator}",
                         "",
                         ncdim_flat,
                     )
@@ -5768,11 +5758,6 @@ class NetCDFRead(IORead):
         if tie_points:
             # Add interpolation variable properties (CF>=1.9)
             pass
-        #            nc = geometry.get("node_count")
-        #            if nc is not None:
-        #               self.implementation.set_interpolation_properties(
-        #                   parent=c, interpolation=i
-        #               )
 
         # Store the netCDF variable name
         self.implementation.nc_set_variable(c, ncvar)
@@ -9125,16 +9110,16 @@ class NetCDFRead(IORead):
 
         out = []
 
-        pat_value = subst("(?P<value>WORD)SEP")
+        pat_value = subst(r"(?P<value>WORD)SEP")
         pat_values = f"({pat_value})+"
 
         pat_mapping = subst(
-            f"(?P<mapping_name>WORD):SEP(?P<values>{pat_values})"
+            rf"(?P<mapping_name>WORD):SEP(?P<values>{pat_values})"
         )
         pat_mapping_list = f"({pat_mapping})+"
 
         pat_all = subst(
-            f"((?P<sole_mapping>WORD)|(?P<mapping_list>{pat_mapping_list}))$"
+            rf"((?P<sole_mapping>WORD)|(?P<mapping_list>{pat_mapping_list}))$"
         )
 
         m = re.match(pat_all, string)
