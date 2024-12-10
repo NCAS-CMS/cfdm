@@ -1,7 +1,9 @@
 """Exceptions used for read/write errors."""
 
 
-class UnknownFileFormatError(Exception):
-    """Raised when an input dataset has an unknown format."""
+class FileTypeError(Exception):
+    """Raised when an input dataset of unknown type."""
 
-    pass
+
+class CFReadError(Exception):
+    """TODOREAD."""

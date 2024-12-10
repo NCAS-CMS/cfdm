@@ -1,15 +1,15 @@
-import os
+from glob import iglob
+from os import walk
+from os.path import expanduser, expandvars, isdir, join
 
-from numpy.ma.core import MaskError
+from uritools import urisplit
 
-from ..cfdmimplementation import implementation
-from ..core import DocstringRewriteMeta
-from ..docstring import _docstring_substitution_definitions
-from .exceptions import UnknownFileFormatError as FileTypeError 
+from .abstract import ReadWrite
+from .exceptions import FileTypeError
 from .netcdf import NetCDFRead
 
 
-class read(metaclass=DocstringRewriteMeta):
+class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
     The following file formats are supported: netCDF and CDL.
@@ -169,18 +169,14 @@ class read(metaclass=DocstringRewriteMeta):
 
         {{read file_type: `None` or (sequence of) `str`, optional}}
 
-            Valid files types are:
+            Valid file types are:
 
             ============  ============================================
-            *file_type*   Description
+            file type     Description
             ============  ============================================
-            ``'netCDF'``  Binary netCDF-3 or netCDF-4 file
-            ``'CDL'``     Text CDL representation of a netCDF file
+            ``'netCDF'``  Binary netCDF-3 or netCDF-4 files
+            ``'CDL'``     Text CDL representations of netCDF files
             ============  ============================================
-
-            .. versionadded:: (cfdm) NEXTVERSION
-
-        {{read ignore_unknown_type: `bool`, optional}}
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -212,11 +208,9 @@ class read(metaclass=DocstringRewriteMeta):
 
     """
 
-    implementation = implementation()
-
     def __new__(
         cls,
-        filename,
+        files,
         external=None,
         extra=None,
         verbose=None,
@@ -236,86 +230,103 @@ class read(metaclass=DocstringRewriteMeta):
         squeeze=False,
         unsqueeze=False,
         file_type=None,
-        ignore_unknown_type=False,
+        recursive=False,
+        followlinks=False,
         extra_read_vars=None,
     ):
         """Read field or domain constructs from a dataset."""
+        cls._pre_process()
         # Initialise a netCDF read object
         netcdf = NetCDFRead(cls.implementation)
-        cls.netcdf = netcdf
 
-        filename = os.path.expanduser(os.path.expandvars(filename))
+        out = []
+        for filename in cls._filenames(
+            files, recursive=recursive, followlinks=followlinks
+        ):
+            try:
+                file_contents = netcdf.read(
+                    filename,
+                    external=external,
+                    extra=extra,
+                    verbose=verbose,
+                    warnings=warnings,
+                    warn_valid=warn_valid,
+                    mask=mask,
+                    unpack=unpack,
+                    domain=domain,
+                    storage_options=storage_options,
+                    netcdf_backend=netcdf_backend,
+                    cache=cache,
+                    dask_chunks=dask_chunks,
+                    store_hdf5_chunks=store_hdf5_chunks,
+                    cfa=cfa,
+                    cfa_write=cfa_write,
+                    to_memory=to_memory,
+                    squeeze=squeeze,
+                    unsqueeze=unsqueeze,
+                    file_type=file_type,
+                    extra_read_vars=extra_read_vars,
+                )
+            except FileTypeError:
+                if file_type is None:
+                    raise
+            else:
+                out.extend(file_contents)
 
-        try:
-            fields = netcdf.read(
-                filename,
-                external=external,
-                extra=extra,
-                verbose=verbose,
-                warnings=warnings,
-                warn_valid=warn_valid,
-                mask=mask,
-                unpack=unpack,
-                domain=domain,
-                storage_options=storage_options,
-                netcdf_backend=netcdf_backend,
-                cache=cache,
-                dask_chunks=dask_chunks,
-                store_hdf5_chunks=store_hdf5_chunks,
-                cfa=cfa,
-                cfa_write=cfa_write,
-                to_memory=to_memory,
-                squeeze=squeeze,
-                unsqueeze=unsqueeze,
-                file_type=file_type,
-                ignore_unknown_type=ignore_unknown_type,
-                extra_read_vars=extra_read_vars,
-            )
-        except FileTypeError:
-            if file_type is None:
-                raise
-
-            fields = []
-        except MaskError:
-            # Some data required for field interpretation is
-            # missing, manifesting downstream as a NumPy
-            # MaskError.
-            raise ValueError(
-                f"Unable to read {filename} because some netCDF "
-                "variable arrays that are required for construct "
-                "creation contain missing values when they shouldn't"
-            )
+        cls._post_process()
 
         # Return the field or domain constructs
-        return fields
+        return out
 
-    def __docstring_substitutions__(self):
-        """Defines applicable docstring substitutions.
+    @classmethod
+    def _filenames(cls, files, recursive=False, followlinks=False):
+        """TODOCFA."""
+        for files1 in cls._flat(files):
+            files1 = expanduser(expandvars(files1))
 
-        Substitutons are considered applicable if they apply to this
-        class as well as all of its subclasses.
+            u = urisplit(files1)
+            scheme = u.scheme
+            if scheme not in (None, "file"):
+                # Assume that remote URIs are not directories, and do
+                # not glob them.
+                yield files1
+                continue
 
-        These are in addtion to, and take precendence over, docstring
-        substitutions defined by the base classes of this class.
+            # Glob files on disk
+            if scheme == "file":
+                files1 = u.path
 
-        See `_docstring_substitutions` for details.
+            n_files = 0
+            for x in iglob(files1):
+                if isdir(x):
+                    # Walk through directories, possibly recursively
+                    for path, _, filenames in walk(x, followlinks=followlinks):
+                        for f in filenames:
+                            # File in this directory
+                            n_files += 1
+                            yield join(path, f)
 
-        .. versionaddedd:: (cfdm) NEXTVERSION
+                        if not recursive:
+                            break
+                else:
+                    # File, not a directory
+                    n_files += 1
+                    yield x
 
-        :Returns:
+            if not n_files:
+                raise FileNotFoundError(f"No such file or directory: {files1}")
 
-            `dict`
-                The docstring substitutions that have been applied.
+    @classmethod
+    def _read_file(cls):
+        """TODOCFA."""
+        pass
 
-        """
-        return _docstring_substitution_definitions
+    @classmethod
+    def _post_process(cls):
+        """TODOCFA."""
+        pass
 
-    def __docstring_package_depth__(self):
-        """Returns the package depth for {{package}} substitutions.
-
-        See `_docstring_package_depth` for details.
-
-        .. versionaddedd:: (cfdm) NEXTVERSION
-
-        """
-        return 0
+    @classmethod
+    def _pre_process(cls):
+        """TODOCFA."""
+        pass
