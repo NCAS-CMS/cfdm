@@ -210,7 +210,7 @@ class read(ReadWrite):
 
     def __new__(
         cls,
-        files,
+        datasets,
         external=None,
         extra=None,
         verbose=None,
@@ -235,91 +235,103 @@ class read(ReadWrite):
         extra_read_vars=None,
     ):
         """Read field or domain constructs from a dataset."""
-        cls._pre_process()
-        # Initialise a netCDF read object
-        netcdf = NetCDFRead(cls.implementation)
+        cls._pre_process(locals())
 
-        out = []
-        for filename in cls._filenames(
-            files, recursive=recursive, followlinks=followlinks
-        ):
-            try:
-                file_contents = netcdf.read(
-                    filename,
-                    external=external,
-                    extra=extra,
-                    verbose=verbose,
-                    warnings=warnings,
-                    warn_valid=warn_valid,
-                    mask=mask,
-                    unpack=unpack,
-                    domain=domain,
-                    storage_options=storage_options,
-                    netcdf_backend=netcdf_backend,
-                    cache=cache,
-                    dask_chunks=dask_chunks,
-                    store_hdf5_chunks=store_hdf5_chunks,
-                    cfa=cfa,
-                    cfa_write=cfa_write,
-                    to_memory=to_memory,
-                    squeeze=squeeze,
-                    unsqueeze=unsqueeze,
-                    file_type=file_type,
-                    extra_read_vars=extra_read_vars,
-                )
-            except FileTypeError:
-                if file_type is None:
-                    raise
-            else:
-                out.extend(file_contents)
+        for dataset in cls._datasets():
+            cls._pre_read_dataset(dataset)
+            cls._read_dataset(dataset)
+            cls._post_read_dataset(dataset)
+
+            # Add this dataset's contents to that already read from
+            # other files
+            cls.out.extend(cls.file_contents)
 
         cls._post_process()
 
         # Return the field or domain constructs
-        return out
+        return cls.out
 
     @classmethod
-    def _filenames(cls, files, recursive=False, followlinks=False):
+    def _datasets(cls):
         """TODOCFA."""
-        for files1 in cls._flat(files):
-            files1 = expanduser(expandvars(files1))
+        kwargs = cls.kwargs
+        datasets = kwargs["datasets"]
+        recursive = kwargs.get("recursive", False)
+        followlinks = kwargs.get("followlinks", False)
 
-            u = urisplit(files1)
+        for datasets1 in cls._flat(datasets):
+            datasets1 = expanduser(expandvars(datasets1))
+
+            u = urisplit(datasets1)
             scheme = u.scheme
             if scheme not in (None, "file"):
                 # Assume that remote URIs are not directories, and do
                 # not glob them.
-                yield files1
+                yield datasets1
                 continue
 
-            # Glob files on disk
+            # Glob files/directories on disk
             if scheme == "file":
-                files1 = u.path
+                datasets1 = u.path
 
-            n_files = 0
-            for x in iglob(files1):
+            n_datasets = 0
+            for x in iglob(datasets1):
                 if isdir(x):
                     # Walk through directories, possibly recursively
                     for path, _, filenames in walk(x, followlinks=followlinks):
                         for f in filenames:
                             # File in this directory
-                            n_files += 1
+                            n_datasets += 1
                             yield join(path, f)
 
                         if not recursive:
                             break
                 else:
                     # File, not a directory
-                    n_files += 1
+                    n_datasets += 1
                     yield x
 
-            if not n_files:
-                raise FileNotFoundError(f"No such file or directory: {files1}")
+            if not n_datasets:
+                raise FileNotFoundError(
+                    f"No such file or directory: {datasets}"
+                )
 
     @classmethod
-    def _read_file(cls):
+    def _pre_process(cls, kwargs):
         """TODOCFA."""
-        pass
+        cls.kwargs = kwargs
+        cls.file_type = kwargs.get("file_type")
+
+        # Initialise netCDF read
+        cls.netcdf_read = NetCDFRead(cls.implementation).read
+        cls.netcdf_kwargs = {
+            key: kwargs[key]
+            for key in (
+                "external",
+                "extra",
+                "verbose",
+                "warnings",
+                "warn_valid",
+                "mask",
+                "unpack",
+                "domain",
+                "storage_options",
+                "netcdf_backend",
+                "cache",
+                "dask_chunks",
+                "store_hdf5_chunks",
+                "cfa",
+                "cfa_write",
+                "to_memory",
+                "squeeze",
+                "unsqueeze",
+                "file_type",
+                "extra_read_vars",
+            )
+        }
+
+        # Initialise output fields/domains
+        cls.out = []
 
     @classmethod
     def _post_process(cls):
@@ -327,6 +339,32 @@ class read(ReadWrite):
         pass
 
     @classmethod
-    def _pre_process(cls):
+    def _pre_read_dataset(cls, dataset):
         """TODOCFA."""
-        pass
+        cls.file_contents = []
+        cls.file_format_errors = []
+        cls.ftype = None
+
+    @classmethod
+    def _read_dataset(cls, dataset):
+        """TODOCFA."""
+        try:
+            cls.file_contents = cls.netcdf_read(dataset, **cls.netcdf_kwargs)
+        except FileTypeError as error:
+            if cls.file_type is None:
+                cls.file_format_errors.append(error)
+        else:
+            cls.file_format_errors = []
+            cls.ftype = "netCDF"
+
+    @classmethod
+    def _post_read_dataset(cls, dataset):
+        """TODOCFA."""
+        file_format_errors = cls.file_format_errors
+        if file_format_errors:
+            error = "\n".join(map(str, file_format_errors))
+            raise FileTypeError(f"\n{error}")
+
+#        ftype = cls.ftype
+#        if ftype:
+#            cls.ftypes.add(ftype)
