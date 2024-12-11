@@ -234,32 +234,53 @@ class read(ReadWrite):
         followlinks=False,
         extra_read_vars=None,
     ):
-        """Read field or domain constructs from a dataset."""
-        cls._pre_process(locals())
+        """Read field or domain constructs from datasets.
 
-        for dataset in cls._datasets():
-            cls._pre_read_dataset(dataset)
-            cls._read_dataset(dataset)
-            cls._post_read_dataset(dataset)
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        kwargs = locals()
+        self = super().__new__(cls)
+
+        self.kwargs = kwargs
+
+        self._initialise()
+
+        for dataset in self._datasets():
+            self._pre_read_dataset(dataset)
+            self._read_dataset(dataset)
+            self._post_read_dataset(dataset)
 
             # Add this dataset's contents to that already read from
-            # other files
-            cls.out.extend(cls.file_contents)
+            # other files.
+            #
+            # Note that `self.out` is defined in `_initialise`; and
+            # `self.file_contents` is defined in `_pre_read_dataset`
+            # and updated in `_read_dataset`
+            self.out.extend(self.file_contents)
 
-        cls._post_process()
+        self._finalise()
 
         # Return the field or domain constructs
-        return cls.out
+        return self.out
 
-    @classmethod
-    def _datasets(cls):
-        """TODOCFA."""
-        kwargs = cls.kwargs
-        datasets = kwargs["datasets"]
+    def _datasets(self):
+        """TODOREAD.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        kwargs = self.kwargs
         recursive = kwargs.get("recursive", False)
         followlinks = kwargs.get("followlinks", False)
 
-        for datasets1 in cls._flat(datasets):
+        if followlinks and not recursive:
+            raise ValueError(
+                f"Can't set followlinks={followlinks!r} when "
+                f"recursive={recursive!r}"
+            )
+
+        for datasets1 in self._flat(kwargs["datasets"]):
             datasets1 = expanduser(expandvars(datasets1))
 
             u = urisplit(datasets1)
@@ -292,19 +313,43 @@ class read(ReadWrite):
                     yield x
 
             if not n_datasets:
-                raise FileNotFoundError(
-                    f"No such file or directory: {datasets}"
-                )
+                raise FileNotFoundError(f"No such dataset(s): {datasets1}")
 
-    @classmethod
-    def _pre_process(cls, kwargs):
-        """TODOCFA."""
-        cls.kwargs = kwargs
-        cls.file_type = kwargs.get("file_type")
+    def _finalise(self):
+        """TODOREAD.
 
-        # Initialise netCDF read
-        cls.netcdf_read = NetCDFRead(cls.implementation).read
-        cls.netcdf_kwargs = {
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        # Sort by netCDF variable name
+        out = self.out
+        if len(out) > 1:
+            out.sort(key=lambda f: f.nc_get_variable(""))
+
+    def _initialise(self):
+        """TODOREAD.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        kwargs = self.kwargs
+
+        # ------------------------------------------------------------
+        # Parse the 'file_type' keyword parameter
+        # ------------------------------------------------------------
+        file_type = kwargs.get("file_type")
+        if file_type is not None:
+            if isinstance(file_type, str):
+                file_type = (file_type,)
+
+            self.file_type = set(file_type)
+        else:
+            self.file_type = file_type
+
+        # Set the netCDF read function and its keyword arguments
+        self.netCDF_file_types = set(("netCDF", "CDL"))
+        self.netcdf_read = NetCDFRead(self.implementation).read
+        self.netcdf_kwargs = {
             key: kwargs[key]
             for key in (
                 "external",
@@ -330,41 +375,54 @@ class read(ReadWrite):
             )
         }
 
-        # Initialise output fields/domains
-        cls.out = []
+        # Initialise the list of output fields/domains
+        self.out = []
 
-    @classmethod
-    def _post_process(cls):
-        """TODOCFA."""
-        pass
+    @staticmethod
+    def _plural(n):
+        """Return a suffix which reflects a word's plural.
 
-    @classmethod
-    def _pre_read_dataset(cls, dataset):
-        """TODOCFA."""
-        cls.file_contents = []
-        cls.file_format_errors = []
-        cls.ftype = None
+        .. versionadded:: (cfdm) NEXTVERSION
 
-    @classmethod
-    def _read_dataset(cls, dataset):
-        """TODOCFA."""
-        try:
-            cls.file_contents = cls.netcdf_read(dataset, **cls.netcdf_kwargs)
-        except FileTypeError as error:
-            if cls.file_type is None:
-                cls.file_format_errors.append(error)
-        else:
-            cls.file_format_errors = []
-            cls.ftype = "netCDF"
+        """
+        return "s" if n != 1 else ""
 
-    @classmethod
-    def _post_read_dataset(cls, dataset):
-        """TODOCFA."""
-        file_format_errors = cls.file_format_errors
-        if file_format_errors:
-            error = "\n".join(map(str, file_format_errors))
+    def _pre_read_dataset(self, dataset):
+        """TODOREAD.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        self.file_contents = []
+        self.file_format_errors = []
+        self.ftype = None
+
+    def _read_dataset(self, dataset):
+        """TODOREAD.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        # Try to read as netCDF dataset
+        file_type = self.file_type
+        if file_type is None or file_type.intersection(self.netCDF_file_types):
+            try:
+                self.file_contents = self.netcdf_read(
+                    dataset, **self.netcdf_kwargs
+                )
+            except FileTypeError as error:
+                if file_type is None:
+                    self.file_format_errors.append(error)
+            else:
+                self.file_format_errors = []
+                self.ftype = "netCDF"
+
+    def _post_read_dataset(self, dataset):
+        """TODOREAD.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        if self.file_format_errors:
+            error = "\n".join(map(str, self.file_format_errors))
             raise FileTypeError(f"\n{error}")
-
-#        ftype = cls.ftype
-#        if ftype:
-#            cls.ftypes.add(ftype)
