@@ -518,7 +518,7 @@ class NetCDFRead(IORead):
             filename = self.cdl_to_netcdf(filename)
             g["filename"] = filename
         else:
-            cdl_filename = None
+            cdl_filename = None 
 
         g["cdl_filename"] = cdl_filename
 
@@ -754,7 +754,7 @@ class NetCDFRead(IORead):
         return tmpfile
 
     @classmethod
-    def ftype(cls, filename):
+    def ftype(cls, filename, cdl_string=False):
         """Return type of the file.
 
         The file type is determined by inspecting the file's contents
@@ -781,6 +781,11 @@ class NetCDFRead(IORead):
         if urisplit(filename).scheme not in (None, "file"):
             return "netCDF"
 
+        # TODOREAD
+        if cdl_string:
+            return 'netCDF'       
+
+        
         f_type = None
 
         try:
@@ -878,6 +883,7 @@ class NetCDFRead(IORead):
         squeeze=False,
         unsqueeze=False,
         file_type=None,
+            cdl_string=False,
         ignore_unknown_type=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
@@ -1024,7 +1030,7 @@ class NetCDFRead(IORead):
 
             file_type = set(file_type)
             if not file_type.intersection(("netCDF", "CDL")):
-                # Return now if there are valid file types
+                # Return now if there are no valid file types
                 return []
 
         # ------------------------------------------------------------
@@ -1174,6 +1180,14 @@ class NetCDFRead(IORead):
             _file_systems = {}
 
         # ------------------------------------------------------------
+        # Parse the 'cdl_string' keyword parameter
+        # ------------------------------------------------------------
+        if cdl_string and (file_type is not None or "CDL" not in file_type):
+            raise ValueError(
+                f"When cdl_string=True, can't set file_type={file_type}"
+            )
+
+        # ------------------------------------------------------------
         # Initialise netCDF read parameters
         # ------------------------------------------------------------
         self.read_vars = {
@@ -1182,6 +1196,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "filename": filename,
             "ftype": ftype,
+            "cdl_string":bool(cdl_string),
             "ignore_unknown_type": bool(ignore_unknown_type),
             # --------------------------------------------------------
             # Verbosity

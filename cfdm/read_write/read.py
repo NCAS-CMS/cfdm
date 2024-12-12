@@ -232,6 +232,7 @@ class read(ReadWrite):
         file_type=None,
         recursive=False,
         followlinks=False,
+        cdl_string=False,
         extra_read_vars=None,
         **kwargs,
     ):
