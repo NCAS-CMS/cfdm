@@ -233,6 +233,7 @@ class read(ReadWrite):
         recursive=False,
         followlinks=False,
         extra_read_vars=None,
+        **kwargs,
     ):
         """Read field or domain constructs from datasets.
 
@@ -240,6 +241,8 @@ class read(ReadWrite):
 
         """
         kwargs = locals()
+        kwargs.update(kwargs.pop("kwargs"))
+
         self = super().__new__(cls)
 
         self.kwargs = kwargs
@@ -247,16 +250,16 @@ class read(ReadWrite):
         self._initialise()
 
         for dataset in self._datasets():
-            self._pre_read_dataset(dataset)
-            self._read_dataset(dataset)
-            self._post_read_dataset(dataset)
+            self._pre_read(dataset)
+            self._read(dataset)
+            self._post_read(dataset)
 
             # Add this dataset's contents to that already read from
-            # other files.
+            # other datasets.
             #
             # Note that `self.out` is defined in `_initialise`; and
-            # `self.file_contents` is defined in `_pre_read_dataset`
-            # and updated in `_read_dataset`
+            # `self.file_contents` is defined in `_pre_read` and
+            # updated in `_read`
             self.out.extend(self.file_contents)
 
         self._finalise()
@@ -323,8 +326,17 @@ class read(ReadWrite):
         """
         # Sort by netCDF variable name
         out = self.out
-        if len(out) > 1:
+        n = len(out)
+
+        if n > 1:
             out.sort(key=lambda f: f.nc_get_variable(""))
+
+        # if True: # info: TODOREAD
+        # logger.info(
+
+    #                f"Read {n} field{self._plural(n)} "
+    #                f"from {self.n_datasets} file{self._plural(self.n_datasets)}"
+    #            )  # pragma: no cover
 
     def _initialise(self):
         """TODOREAD.
@@ -346,37 +358,15 @@ class read(ReadWrite):
         else:
             self.file_type = file_type
 
-        # Set the netCDF read function and its keyword arguments
+        #  TODOREAD Set the netCDF read function and its keyword arguments
         self.netCDF_file_types = set(("netCDF", "CDL"))
-        self.netcdf_read = NetCDFRead(self.implementation).read
-        self.netcdf_kwargs = {
-            key: kwargs[key]
-            for key in (
-                "external",
-                "extra",
-                "verbose",
-                "warnings",
-                "warn_valid",
-                "mask",
-                "unpack",
-                "domain",
-                "storage_options",
-                "netcdf_backend",
-                "cache",
-                "dask_chunks",
-                "store_hdf5_chunks",
-                "cfa",
-                "cfa_write",
-                "to_memory",
-                "squeeze",
-                "unsqueeze",
-                "file_type",
-                "extra_read_vars",
-            )
-        }
 
         # Initialise the list of output fields/domains
         self.out = []
+
+        self.n_datasets = 0
+        self.domain = kwargs["domain"]
+        self.construct = "domain" if self.domain else "field"
 
     @staticmethod
     def _plural(n):
@@ -387,7 +377,17 @@ class read(ReadWrite):
         """
         return "s" if n != 1 else ""
 
-    def _pre_read_dataset(self, dataset):
+    def _post_read(self, dataset):
+        """TODOREAD.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        if self.file_format_errors:
+            error = "\n".join(map(str, self.file_format_errors))
+            raise FileTypeError(f"\n{error}")
+
+    def _pre_read(self, dataset):
         """TODOREAD.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -397,15 +397,47 @@ class read(ReadWrite):
         self.file_format_errors = []
         self.ftype = None
 
-    def _read_dataset(self, dataset):
+    def _read(self, dataset):
         """TODOREAD.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        # Try to read as netCDF dataset
         file_type = self.file_type
         if file_type is None or file_type.intersection(self.netCDF_file_types):
+            if not hasattr(self, "netcdf_read"):
+                # Initialise the netCDF read function
+                kwargs = self.kwargs
+                self.netcdf_kwargs = {
+                    key: kwargs[key]
+                    for key in (
+                        "external",
+                        "extra",
+                        "verbose",
+                        "warnings",
+                        "warn_valid",
+                        "mask",
+                        "unpack",
+                        "domain",
+                        "storage_options",
+                        "netcdf_backend",
+                        "cache",
+                        "dask_chunks",
+                        "store_hdf5_chunks",
+                        "cfa",
+                        "cfa_write",
+                        "to_memory",
+                        "squeeze",
+                        "unsqueeze",
+                        "file_type",
+                        "extra_read_vars",
+                    )
+                }
+                self.netcdf_read = NetCDFRead(self.implementation).read
+
+            # --------------------------------------------------------
+            # Try to read as a netCDF dataset
+            # --------------------------------------------------------      
             try:
                 self.file_contents = self.netcdf_read(
                     dataset, **self.netcdf_kwargs
@@ -415,14 +447,5 @@ class read(ReadWrite):
                     self.file_format_errors.append(error)
             else:
                 self.file_format_errors = []
+                self.n_datasets += 1
                 self.ftype = "netCDF"
-
-    def _post_read_dataset(self, dataset):
-        """TODOREAD.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        if self.file_format_errors:
-            error = "\n".join(map(str, self.file_format_errors))
-            raise FileTypeError(f"\n{error}")
