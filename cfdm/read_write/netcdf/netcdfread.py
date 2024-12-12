@@ -10,12 +10,14 @@ from dataclasses import dataclass, field
 from functools import reduce
 from math import log, nan, prod
 from numbers import Integral
+from os.path import isdir
 from typing import Any
 from uuid import uuid4
 
 import h5netcdf
 import netCDF4
 import numpy as np
+import zarr
 from dask.array.core import normalize_chunks
 from dask.base import tokenize
 from packaging.version import Version
@@ -34,6 +36,7 @@ from .flatten.config import (
     flattener_separator,
     flattener_variable_map,
 )
+from .zarr import ZarrDimension
 
 logger = logging.getLogger(__name__)
 
@@ -461,6 +464,9 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
+        if g["file_opened_with"] == "zarr":
+            return
+
         for nc in g["datasets"]:
             nc.close()
 
@@ -552,6 +558,7 @@ class NetCDFRead(IORead):
         file_open_function = {
             "h5netcdf": self._open_h5netcdf,
             "netCDF4": self._open_netCDF4,
+            "zarr": self._open_zarr,
         }
 
         # Loop around the netCDF backends until we successfully open
@@ -584,6 +591,9 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
+        if g["file_opened_with"] == "zarr":
+            flatten = False
+
         if flatten and nc.groups:
             # Create a diskless, non-persistent container for the
             # flattened file
@@ -666,6 +676,25 @@ class NetCDFRead(IORead):
             rdcc_nslots=4133,
         )
         self.read_vars["file_opened_with"] = "h5netcdf"
+        return nc
+
+    def _open_zarr(self, filename):
+        """Return an open `netCDF4.Dataset`.  TODOZARR.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            filename: `str`
+                The file to open
+
+        :Returns:
+
+            `zarr.hierarchy.Group`
+
+        """
+        nc = zarr.open(filename)
+        self.read_vars["file_opened_with"] = "zarr"
         return nc
 
     def cdl_to_netcdf(self, filename):
@@ -777,7 +806,10 @@ class NetCDFRead(IORead):
         """
         # Assume that non-local URIs are in netCDF format
         if urisplit(filename).scheme not in (None, "file"):
-            return "netCDF"
+            return "netCDF"  # TODOZARR
+
+        if isdir(filename):
+            return "zarr"
 
         f_type = None
 
@@ -869,7 +901,7 @@ class NetCDFRead(IORead):
         netcdf_backend=None,
         cache=True,
         dask_chunks="storage-aligned",
-        store_hdf5_chunks=True,
+        store_dataset_chunks=True,
         cfa=None,
         cfa_write=None,
         to_memory=None,
@@ -949,8 +981,8 @@ class NetCDFRead(IORead):
                 .. versionadded:: (cfdm) NEXTVERSION
 
             store_hdf_chunks: `bool`, optional
-                 Storing the HDF5 chunking strategy. See `cfdm.read`
-                 for details.
+                 Storing the dataset chunking strategy. See
+                 `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1033,7 +1065,7 @@ class NetCDFRead(IORead):
         ftype = self.ftype(filename)
         if not ftype:
             raise FileTypeError(
-                f"Can't interpret {filename} as a netCDF or CDL dataset"
+                f"Can't interpret {filename} as a netCDF, CDL, or zarr dataset"
             )
 
         if file_type and ftype not in file_type:
@@ -1041,13 +1073,15 @@ class NetCDFRead(IORead):
                 f"Can't interpret {filename} as one of the "
                 f"requested types: {file_type}"
             )
-        
+
         # ------------------------------------------------------------
         # Parse the 'netcdf_backend' keyword parameter
         # ------------------------------------------------------------
-        if netcdf_backend is None:
+        if ftype == "zarr":
+            netcdf_backend = ("zarr",)
+        elif netcdf_backend is None:
             # By default, try netCDF backends in this order:
-            netcdf_backend = ("h5netcdf", "netCDF4")
+            netcdf_backend = ("h5netcdf", "netCDF4", "zarr")
         elif isinstance(netcdf_backend, str):
             netcdf_backend = (netcdf_backend,)
 
@@ -1316,7 +1350,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Whether or not to store HDF chunks
             # --------------------------------------------------------
-            "store_hdf5_chunks": bool(store_hdf5_chunks),
+            "store_dataset_chunks": bool(store_dataset_chunks),
             # --------------------------------------------------------
             # Constructs to read into memory
             # --------------------------------------------------------
@@ -6415,6 +6449,8 @@ class NetCDFRead(IORead):
                 array = self.implementation.initialise_NetCDF4Array(**kwargs)
             elif file_opened_with == "h5netcdf":
                 array = self.implementation.initialise_H5netcdfArray(**kwargs)
+            elif file_opened_with == "zarr":
+                array = self.implementation.initialise_ZarrArray(**kwargs)
 
             return array, kwargs
 
@@ -7916,14 +7952,15 @@ class NetCDFRead(IORead):
             **kwargs,
         )
 
-        # Store the HDF5 chunking
-        if self.read_vars["store_hdf5_chunks"] and ncvar is not None:
-            # Only store the HDF chunking if 'data' has the same shape
-            # as its netCDF variable. This may not be the case for
-            # variables compressed by convention (e.g. some DSG
+        # Store the dataset chunking
+        if self.read_vars["store_dataset_chunks"] and ncvar is not None:
+            # Only store the dataset chunking if 'data' has the same
+            # shape as its netCDF variable. This may not be the case
+            # for variables compressed by convention (e.g. some DSG
             # variables).
-            chunks, shape = self._get_hdf5_chunks(ncvar)
+            chunks, shape = self._get_dataset_chunks(ncvar)
             if shape == data.shape:
+                # TODOZARR
                 self.implementation.nc_set_hdf5_chunksizes(data, chunks)
 
         return data
@@ -10486,7 +10523,7 @@ class NetCDFRead(IORead):
             # netCDF4
             return nc.getncattr(attr)
         except AttributeError:
-            # h5netcdf
+            # h5netcdf, zarr
             return nc.attrs[attr]
 
     def _file_global_attributes(self, nc):
@@ -10507,7 +10544,7 @@ class NetCDFRead(IORead):
 
         """
         try:
-            # h5netcdf
+            # h5netcdf, zarr
             return nc.attrs
         except AttributeError:
             # netCDF4
@@ -10524,7 +10561,24 @@ class NetCDFRead(IORead):
                 A dictionary of the dimensions keyed by their names.
 
         """
-        return nc.dimensions
+        try:
+            # netCDF4, h5netcdf
+            return nc.dimensions
+        except AttributeError:
+            # zarr
+            dimensions = {}
+            for var in self._file_variables(nc).values():
+                dimensions.update(
+                    {
+                        name: ZarrDimension(name, size)
+                        for name, size in zip(
+                            self._file_variable_dimensions(var), var.shape
+                        )
+                        if name not in dimensions
+                    }
+                )
+
+            return dimensions
 
     def _file_dimension(self, nc, dim_name):
         """Return a dimension from the root group of a dataset.
@@ -10545,6 +10599,7 @@ class NetCDFRead(IORead):
                 The dimension.
 
         """
+        # netCDF5, h5netcdf, zarr
         return self._file_dimensions(nc)[dim_name]
 
     def _file_dimension_isunlimited(self, nc, dim_name):
@@ -10566,7 +10621,12 @@ class NetCDFRead(IORead):
                 Whether the dimension is unlimited.
 
         """
-        return self._file_dimension(nc, dim_name).isunlimited()
+        try:
+            # netCDF4, h5netcdf
+            return self._file_dimension(nc, dim_name).isunlimited()
+        except Exception:
+            # zarr
+            return False
 
     def _file_dimension_size(self, nc, dim_name):
         """Return a dimension's size.
@@ -10587,6 +10647,7 @@ class NetCDFRead(IORead):
                 The dimension size.
 
         """
+        # netCDF5, h5netcdf, zarr
         return self._file_dimension(nc, dim_name).size
 
     def _file_variables(self, nc):
@@ -10605,7 +10666,12 @@ class NetCDFRead(IORead):
                 A dictionary of the variables keyed by their names.
 
         """
-        return nc.variables
+        try:
+            # netCDF4, h5netcdf
+            return nc.variables
+        except AttributeError:
+            # zarr
+            return nc
 
     def _file_variable(self, nc, var_name):
         """Return a variable.
@@ -10614,7 +10680,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
+            nc: `netCDF4.Dataset`, `h5netcdf.File`, `zarr.Group`
                 The dataset.
 
             var_name: `str`
@@ -10622,10 +10688,11 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `netCDF4.Variable` or `h5netcdf.Variable`
+            `netCDF4.Variable`, `h5netcdf.Variable` or `zarr.Array`
                 The variable.
 
         """
+        # netCDF5, h5netcdf, zarr
         return self._file_variables(nc)[var_name]
 
     def _file_variable_attributes(self, var):
@@ -10646,11 +10713,17 @@ class NetCDFRead(IORead):
 
         """
         try:
-            # h5netcdf
-            return dict(var.attrs)
+            # h5netcdf, zarr
+            attrs = dict(var.attrs)
         except AttributeError:
             # netCDF4
             return {attr: var.getncattr(attr) for attr in var.ncattrs()}
+        else:
+            if self.read_vars["file_opened_with"] == "zarr":
+                # zarr: Remove the special _ARRAY_DIMENSIONS attribute
+                attrs.pop("_ARRAY_DIMENSIONS", None)
+
+            return attrs
 
     def _file_variable_dimensions(self, var):
         """Return the variable dimension names.
@@ -10664,11 +10737,16 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `tuple` or `str`
+            `tuple` of `str`
                 The dimension names.
 
         """
-        return var.dimensions
+        try:
+            # netCDF4, h5netcdf
+            return var.dimensions
+        except AttributeError:
+            # zarr
+            return var.attrs["_ARRAY_DIMENSIONS"]
 
     def _file_variable_size(self, var):
         """Return the size of a variable's array.
@@ -10689,7 +10767,7 @@ class NetCDFRead(IORead):
         # Use try/except here because the variable type could differ
         # from that implied by the value of self.read_vars["netCDF4"]
         try:
-            # netCDF4
+            # netCDF4, zarr
             return var.size
         except AttributeError:
             # h5netcdf
@@ -10735,8 +10813,8 @@ class NetCDFRead(IORead):
 
         return storage_options
 
-    def _get_hdf5_chunks(self, ncvar):
-        """Return a netCDF variable's HDF5 chunks.
+    def _get_dataset_chunks(self, ncvar):
+        """Return a netCDF variable's dataset storage chunks.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -10749,16 +10827,16 @@ class NetCDFRead(IORead):
 
             2-tuple:
                 The variable's chunking strategy (`None` for netCDF3,
-                ``'contiguous'`` or a sequence of `int`) and its
+                ``'contiguous'``, or a sequence of `int`) and its
                 shape.
 
         **Examples**
 
-        >>> n._get_hdf5_chunks('tas')
+        >>> n._get_dataset_chunks('tas')
         [1, 324, 432], (12, 324, 432)
-        >>> n._get_hdf5_chunks('pr')
+        >>> n._get_dataset_chunks('pr')
         'contiguous', (12, 324, 432)
-        >>> n._get_hdf5_chunks('ua')
+        >>> n._get_dataset_chunks('ua')
         None, (12, 324, 432)
 
         """
@@ -10776,7 +10854,7 @@ class NetCDFRead(IORead):
             # netCDF4
             chunks = var.chunking()
         except AttributeError:
-            # h5netcdf
+            # h5netcdf, zarr
             chunks = var.chunks
             if chunks is None:
                 chunks = "contiguous"

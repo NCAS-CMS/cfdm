@@ -1256,6 +1256,7 @@ class read_writeTest(unittest.TestCase):
             f = cfdm.read("test_read_write.py", file_type=file_type)
             self.assertEqual(len(f), 0)
 
+
 #    def test_read_ignore_unknown_type(self):
 #        """Test the cfdm.read 'ignore_unknown_type' keyword."""
 #        # netCDF file

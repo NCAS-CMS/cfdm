@@ -5,7 +5,7 @@ from numpy.ma.core import MaskError
 from ..cfdmimplementation import implementation
 from ..core import DocstringRewriteMeta
 from ..docstring import _docstring_substitution_definitions
-from .exceptions import UnknownFileFormatError as FileTypeError 
+from .exceptions import UnknownFileFormatError as FileTypeError
 from .netcdf import NetCDFRead
 
 
@@ -143,7 +143,7 @@ class read(metaclass=DocstringRewriteMeta):
 
               .. versionadded:: (cfdm) NEXTVERSION
 
-        {{read store_hdf5_chunks: `bool`, optional}}
+        {{read store_dataset_chunks: `bool`, optional}}
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -229,7 +229,7 @@ class read(metaclass=DocstringRewriteMeta):
         storage_options=None,
         cache=True,
         dask_chunks="storage-aligned",
-        store_hdf5_chunks=True,
+        store_dataset_chunks=True,
         cfa=None,
         cfa_write=None,
         to_memory=False,
@@ -261,7 +261,7 @@ class read(metaclass=DocstringRewriteMeta):
                 netcdf_backend=netcdf_backend,
                 cache=cache,
                 dask_chunks=dask_chunks,
-                store_hdf5_chunks=store_hdf5_chunks,
+                store_dataset_chunks=store_dataset_chunks,
                 cfa=cfa,
                 cfa_write=cfa_write,
                 to_memory=to_memory,

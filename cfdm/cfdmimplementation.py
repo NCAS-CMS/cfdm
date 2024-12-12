@@ -38,6 +38,7 @@ from .data import (
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+    ZarrArray,
 )
 
 
@@ -2374,6 +2375,24 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("H5netcdfArray")
         return cls(**kwargs)
 
+    def initialise_ZarrArray(self, **kwargs):
+        """Return a `NetCDF4Array` instance. TODOZARR.
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `NetCDF4Array`
+
+        """
+        cls = self.get_class("ZarrArray")
+        return cls(**kwargs)
+
     def initialise_BoundsFromNodesArray(self, **kwargs):
         """Return a node bounds array.
 
@@ -3770,6 +3789,7 @@ _implementation = CFDMImplementation(
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
     SubsampledArray=SubsampledArray,
     TiePointIndex=TiePointIndex,
+    ZarrArray=ZarrArray,
 )
 
 
