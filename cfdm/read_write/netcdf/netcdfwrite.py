@@ -2730,7 +2730,7 @@ class NetCDFWrite(IOWrite):
         else:
             lsd = None
 
-        # Set the HDF5 chunk strategy
+        # Set the dataset chunk strategy
         if chunking:
             contiguous, chunksizes = chunking
         else:
@@ -2739,8 +2739,8 @@ class NetCDFWrite(IOWrite):
             )
 
         logger.debug(
-            f"      HDF5 chunksizes: {chunksizes}\n"
-            f"      HDF5 contiguous: {contiguous}"
+            f"      chunksizes: {chunksizes}\n"
+            f"      contiguous: {contiguous}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -2805,11 +2805,11 @@ class NetCDFWrite(IOWrite):
                 g["cfa_write_status"][ncvar] = False
             else:
                 # We're going to create a scalar aggregation variable,
-                # so override dimensions and HDF5 chunking strategy
+                # so override dimensions and dataset chunking strategy
                 # keyword arguments. This is necessary because the
-                # dimensions and HDF5 chunking strategy will otherwise
-                # reflect the aggregated data in memory, rather than
-                # the scalar variable in the file.
+                # dimensions and dataset chunking strategy will
+                # otherwise reflect the aggregated data in memory,
+                # rather than the scalar variable in the file.
                 kwargs["dimensions"] = ()
                 kwargs["contiguous"] = True
                 kwargs["chunksizes"] = None
@@ -4595,7 +4595,7 @@ class NetCDFWrite(IOWrite):
         group=True,
         coordinates=False,
         omit_data=None,
-        hdf5_chunks="4MiB",
+        dataset_chunks="4MiB",
         cfa="auto",
         reference_datetime=None,
     ):
@@ -4824,11 +4824,9 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
-            hdf5_chunks: `str`, `int`, or `float`, optional
-                The HDF5 chunking strategy. The default
-                value is "4MiB".
-
-                See `cfdm.write` for details.
+            dataset_chunks: `str`, `int`, or `float`, optional
+                The dataset chunking strategy. The default value is
+                "4MiB". See `cfdm.write` for details.
 
             cfa: `dict` or `None`, optional
                 Configure the creation of aggregation variables. See
@@ -4962,9 +4960,9 @@ class NetCDFWrite(IOWrite):
             # netCDF variable
             "cfa_write_status": {},
             # --------------------------------------------------------
-            # HDF5 chunking stategy
+            # Dataset chunking stategy
             # --------------------------------------------------------
-            "hdf5_chunks": hdf5_chunks,
+            "dataset_chunks": dataset_chunks,
         }
 
         if mode not in ("w", "a", "r+"):
@@ -4977,14 +4975,14 @@ class NetCDFWrite(IOWrite):
 
         self.write_vars["mode"] = mode
 
-        # Parse the 'hdf5_chunks' parameter
-        if hdf5_chunks != "contiguous":
+        # Parse the 'dataset_chunks' parameter
+        if dataset_chunks != "contiguous":
             try:
-                self.write_vars["hdf5_chunks"] = parse_bytes(hdf5_chunks)
+                self.write_vars["dataset_chunks"] = parse_bytes(dataset_chunks)
             except (ValueError, AttributeError):
                 raise ValueError(
-                    "Invalid value for the 'hdf5_chunks' keyword: "
-                    f"{hdf5_chunks!r}."
+                    "Invalid value for the 'dataset_chunks' keyword: "
+                    f"{dataset_chunks!r}."
                 )
 
         # ------------------------------------------------------------
@@ -5510,8 +5508,8 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         # ------------------------------------------------------------
-        # HDF5 chunk strategy: Either use that provided on the data,
-        # or else work it out.
+        # Dataset chunk strategy: Either use that provided on the
+        # data, or else work it out.
         # ------------------------------------------------------------
         # Get the chunking strategy defined by the data itself
         chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
@@ -5520,25 +5518,25 @@ class NetCDFWrite(IOWrite):
             return True, None
 
         # Still here?
-        hdf5_chunks = g["hdf5_chunks"]
+        dataset_chunks = g["dataset_chunks"]
         if isinstance(chunksizes, int):
-            # Reset hdf_chunks to the integer given by 'data'
-            hdf5_chunks = chunksizes
+            # Reset dataset chunks to the integer given by 'data'
+            dataset_chunks = chunksizes
         elif chunksizes is not None:
             # Chunked as defined by the tuple of int given by 'data'
             return False, chunksizes
 
         # Still here? Then work out the chunking strategy from the
-        # hdf5_chunks
-        if hdf5_chunks == "contiguous":
-            # Contiguous as defined by 'hdf_chunks'
+        # dataset_chunks
+        if dataset_chunks == "contiguous":
+            # Contiguous as defined by 'dataset_chunks'
             return True, None
 
         # Still here? Then work out the chunks from both the
-        # size-in-bytes given by hdf5_chunks (e.g. 1024, or '1 KiB'),
-        # and the data shape (e.g. (12, 73, 96)).
+        # size-in-bytes given by dataset_chunks (e.g. 1024, or '1
+        # KiB'), and the data shape (e.g. (12, 73, 96)).
         if self._compressed_data(ncdimensions):
-            # Base the HDF5 chunks on the compressed data that is
+            # Base the dataset chunks on the compressed data that is
             # going into the file
             d = self.implementation.get_compressed_array(data)
         else:
@@ -5547,7 +5545,7 @@ class NetCDFWrite(IOWrite):
         d_dtype = d.dtype
         dtype = g["datatype"].get(d_dtype, d_dtype)
 
-        with dask_config.set({"array.chunk-size": hdf5_chunks}):
+        with dask_config.set({"array.chunk-size": dataset_chunks}):
             chunksizes = normalize_chunks("auto", shape=d.shape, dtype=dtype)
 
         if chunksizes:

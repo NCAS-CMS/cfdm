@@ -1041,13 +1041,13 @@ class read_writeTest(unittest.TestCase):
         )
         cfdm.write(f, tmpfile)
 
-    def test_write_hdf5_chunks(self):
-        """Test the 'hdf5_chunks' parameter to `cfdm.write`."""
+    def test_write_dataset_chunks(self):
+        """Test the 'dataset_chunks' parameter to `cfdm.write`."""
         f = cfdm.example_field(5)
         f.nc_set_variable("data")
 
-        # Good hdf5_chunks values
-        for hdf5_chunks, chunking in zip(
+        # Good dataset_chunks values
+        for dataset_chunks, chunking in zip(
             ("4MiB", "8KiB", "5000", 314.159, 1, "contiguous"),
             (
                 [118, 5, 8],
@@ -1058,37 +1058,37 @@ class read_writeTest(unittest.TestCase):
                 "contiguous",
             ),
         ):
-            cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+            cfdm.write(f, tmpfile, dataset_chunks=dataset_chunks)
             nc = netCDF4.Dataset(tmpfile, "r")
             self.assertEqual(nc.variables["data"].chunking(), chunking)
             nc.close()
 
-        # Bad hdf5_chunks values
-        for hdf5_chunks in ("bad_value", None):
+        # Bad dataset_chunks values
+        for dataset_chunks in ("bad_value", None):
             with self.assertRaises(ValueError):
-                cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+                cfdm.write(f, tmpfile, dataset_chunks=dataset_chunks)
 
         # Check that user-set chunks are not overridden
         for chunking in ([5, 4, 3], "contiguous"):
             f.nc_set_hdf5_chunksizes(chunking)
-            for hdf5_chunks in ("4MiB", "contiguous"):
-                cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+            for dataset_chunks in ("4MiB", "contiguous"):
+                cfdm.write(f, tmpfile, dataset_chunks=dataset_chunks)
                 nc = netCDF4.Dataset(tmpfile, "r")
                 self.assertEqual(nc.variables["data"].chunking(), chunking)
                 nc.close()
 
         f.nc_set_hdf5_chunksizes("120 B")
-        for hdf5_chunks in ("contiguous", "4MiB"):
-            cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+        for dataset_chunks in ("contiguous", "4MiB"):
+            cfdm.write(f, tmpfile, dataset_chunks=dataset_chunks)
             nc = netCDF4.Dataset(tmpfile, "r")
             self.assertEqual(nc.variables["data"].chunking(), [2, 2, 2])
             nc.close()
 
-        # store_hdf5_chunks
+        # store_dataset_chunks
         f = cfdm.read(tmpfile)[0]
         self.assertEqual(f.nc_hdf5_chunksizes(), (2, 2, 2))
 
-        f = cfdm.read(tmpfile, store_hdf5_chunks=False)[0]
+        f = cfdm.read(tmpfile, store_dataset_chunks=False)[0]
         self.assertIsNone(f.nc_hdf5_chunksizes())
 
         # Scalar data is written contiguously
@@ -1255,6 +1255,7 @@ class read_writeTest(unittest.TestCase):
         for file_type in ("netCDF", "CDL", "bad value"):
             f = cfdm.read("test_read_write.py", file_type=file_type)
             self.assertEqual(len(f), 0)
+
 
 #    def test_read_ignore_unknown_type(self):
 #        """Test the cfdm.read 'ignore_unknown_type' keyword."""

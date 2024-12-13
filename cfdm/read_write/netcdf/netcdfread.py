@@ -869,7 +869,7 @@ class NetCDFRead(IORead):
         netcdf_backend=None,
         cache=True,
         dask_chunks="storage-aligned",
-        store_hdf5_chunks=True,
+        store_dataset_chunks=True,
         cfa=None,
         cfa_write=None,
         to_memory=None,
@@ -948,9 +948,9 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            store_hdf_chunks: `bool`, optional
-                 Storing the HDF5 chunking strategy. See `cfdm.read`
-                 for details.
+            store_dataset_chunks: `bool`, optional
+                 Storing the dataset chunking strategy. See
+                 `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1041,7 +1041,7 @@ class NetCDFRead(IORead):
                 f"Can't interpret {filename} as one of the "
                 f"requested types: {file_type}"
             )
-        
+
         # ------------------------------------------------------------
         # Parse the 'netcdf_backend' keyword parameter
         # ------------------------------------------------------------
@@ -1314,9 +1314,9 @@ class NetCDFRead(IORead):
             # Dask chunking of aggregated data for selected constructs
             "cfa_write": cfa_write,
             # --------------------------------------------------------
-            # Whether or not to store HDF chunks
+            # Whether or not to store the dataset chunking strategy
             # --------------------------------------------------------
-            "store_hdf5_chunks": bool(store_hdf5_chunks),
+            "store_dataset_chunks": bool(store_dataset_chunks),
             # --------------------------------------------------------
             # Constructs to read into memory
             # --------------------------------------------------------
@@ -7916,13 +7916,13 @@ class NetCDFRead(IORead):
             **kwargs,
         )
 
-        # Store the HDF5 chunking
-        if self.read_vars["store_hdf5_chunks"] and ncvar is not None:
-            # Only store the HDF chunking if 'data' has the same shape
-            # as its netCDF variable. This may not be the case for
-            # variables compressed by convention (e.g. some DSG
+        # Store the dataset chunking
+        if self.read_vars["store_dataset_chunks"] and ncvar is not None:
+            # Only store the dataset chunking if 'data' has the same
+            # shape as its netCDF variable. This may not be the case
+            # for variables compressed by convention (e.g. some DSG
             # variables).
-            chunks, shape = self._get_hdf5_chunks(ncvar)
+            chunks, shape = self._get_dataset_chunks(ncvar)
             if shape == data.shape:
                 self.implementation.nc_set_hdf5_chunksizes(data, chunks)
 
@@ -10735,8 +10735,8 @@ class NetCDFRead(IORead):
 
         return storage_options
 
-    def _get_hdf5_chunks(self, ncvar):
-        """Return a netCDF variable's HDF5 chunks.
+    def _get_dataset_chunks(self, ncvar):
+        """Return a netCDF variable's dataset chunks.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -10754,11 +10754,11 @@ class NetCDFRead(IORead):
 
         **Examples**
 
-        >>> n._get_hdf5_chunks('tas')
+        >>> n._get_dataset_chunks('tas')
         [1, 324, 432], (12, 324, 432)
-        >>> n._get_hdf5_chunks('pr')
+        >>> n._get_dataset_chunks('pr')
         'contiguous', (12, 324, 432)
-        >>> n._get_hdf5_chunks('ua')
+        >>> n._get_dataset_chunks('ua')
         None, (12, 324, 432)
 
         """

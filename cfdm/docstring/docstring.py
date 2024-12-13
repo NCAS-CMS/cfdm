@@ -491,25 +491,25 @@ _docstring_substitution_definitions = {
                 or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
                 None}``.""",
     # read store_hdf5_chunks
-    "{{read store_hdf5_chunks: `bool`, optional}}": """store_hdf5_chunks: `bool`, optional
-            If True (the default) then store the HDF5 chunking
-            strategy for each returned data array. The HDF5 chunking
-            strategy is then accessible via an object's
-            `nc_hdf5_chunksizes` method. When the HDF5 chunking
+    "{{read store_dataset_chunks: `bool`, optional}}": """store_dataset_chunks: `bool`, optional
+            If True (the default) then store the dataset chunking
+            strategy for each returned data array. The dataset
+            chunking strategy is then accessible via an object's
+            `nc_hdf5_chunksizes` method. When the dataset chunking
             strategy is stored, it will be used when the data is
             written to a new netCDF4 file with `{{package}}.write`
-            (unless the strategy was modified prior to writing).
+            (unless the strategy is modified prior to writing).
 
-            If False, or if the file being read is not in netCDF4
-            format, then no HDF5 chunking strategy is stored.
+            If False, or if the dataset format does not support
+            chunking, then no dataset chunking strategy is stored.
             (i.e. an `nc_hdf5_chunksizes` method will return `None`
             for all `Data` objects). In this case, when the data is
-            written to a new netCDF4 file, the HDF5 chunking strategy
-            will be determined by `{{package}}.write`.
+            written to a new netCDF4 file, the dataset chunking
+            strategy will be determined by `{{package}}.write`.
 
             See the `{{package}}.write` *hdf5_chunks* parameter for
-            details on how the HDF5 chunking strategy is determined at
-            the time of writing.""",
+            details on how the dataset chunking strategy is determined
+            at the time of writing.""",
     # read cfa
     "{{read cfa: `dict`, optional}}": """cfa: `dict`, optional
             Configure the reading of CF-netCDF aggregation files.
