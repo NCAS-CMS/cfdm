@@ -591,10 +591,11 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
-        if g["file_opened_with"] == "zarr":
-            flatten = False
+#        if g["file_opened_with"] == "zarr":
+#            flatten = False
 
-        if flatten and nc.groups:
+        if flatten and self._file_has_groups(nc):
+            print ( 'HERE faltten')
             # Create a diskless, non-persistent container for the
             # flattened file
             flat_file = tempfile.NamedTemporaryFile(
@@ -10501,6 +10502,16 @@ class NetCDFRead(IORead):
 
         return ok
 
+    def _file_has_groups(self, nc):
+        """TODOZARR"""
+        if self.read_vars['file_opened_with'] == 'zarr':
+            # zarr
+            return bool(nc.groups())
+        
+        # netcdf4, h5netcdf
+        return bool(nc.groups)
+        
+    
     def _file_global_attribute(self, nc, attr):
         """Return a global attribute from a dataset.
 
@@ -10730,7 +10741,8 @@ class NetCDFRead(IORead):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        :Parameters:
+     
+   :Parameters:
 
             var: `netCDF4.Variable` or `h5netcdf.Variable`
                 The variable.
@@ -10741,6 +10753,7 @@ class NetCDFRead(IORead):
                 The dimension names.
 
         """
+        print('var=',var)
         try:
             # netCDF4, h5netcdf
             return var.dimensions

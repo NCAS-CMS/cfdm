@@ -565,6 +565,15 @@ class _Flattener:
             # h5netcdf
             return x._parent
 
+    def grouo_dimensions(self, group):
+        """TODOZARR"""
+        try:
+            # netCDF4, h5netcdf
+            return input_group.dimensions
+        except AttributeError:
+            # zarr TODOZARR
+            pass # meaningless?
+        
     def name(self, x):
         """Return the netCDF name, without its groups.
 
@@ -577,7 +586,7 @@ class _Flattener:
         """
         out = x.name
         if group_separator in out:
-            # h5netcdf
+            # h5netcdf, zarr
             out = x.name.split(group_separator)[-1]
 
         return out
