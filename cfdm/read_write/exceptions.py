@@ -1,7 +1,7 @@
-"""Exceptions used for read/write errors."""
+"""Custom exceptions for read/write errors."""
 
 
-class UnknownFileFormatError(Exception):
-    """Raised when an input dataset has an unknown format."""
+class FileTypeError(Exception):
+    """Raised when an input dataset is of an inknown type."""
 
     pass

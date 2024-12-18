@@ -28,7 +28,7 @@ from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
-from ..exceptions import UnknownFileFormatError as FileTypeError
+from ..exceptions import FileTypeError
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -464,15 +464,17 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        if g["file_opened_with"] == "zarr":
-            return
-
-        for nc in g["datasets"]:
-            nc.close()
-
         # Close temporary flattened files
         for flat_file in g["flat_files"]:
             flat_file.close()
+
+        if g["file_opened_with"] == "zarr":
+            # zarr
+            return
+
+        # netCDF4, h5netcdf
+        for nc in g["datasets"]:
+            nc.close()
 
         # Close the original grouped file (v1.8.8.1)
         if "nc_grouped" in g:
@@ -591,11 +593,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
-#        if g["file_opened_with"] == "zarr":
-#            flatten = False
-
         if flatten and self._file_has_groups(nc):
-            print ( 'HERE faltten')
             # Create a diskless, non-persistent container for the
             # flattened file
             flat_file = tempfile.NamedTemporaryFile(
@@ -624,7 +622,10 @@ class NetCDFRead(IORead):
 
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
-
+            g['nc_opened_with'] = 'netCDF4'
+        else:
+            g['nc_opened_with'] = g["file_opened_with"]
+            
         g["nc"] = nc
         return nc
 
@@ -810,7 +811,7 @@ class NetCDFRead(IORead):
             return "netCDF"  # TODOZARR
 
         if isdir(filename):
-            return "zarr"
+            return "zarr" # TODOZARR
 
         f_type = None
 
@@ -1066,7 +1067,8 @@ class NetCDFRead(IORead):
         ftype = self.ftype(filename)
         if not ftype:
             raise FileTypeError(
-                f"Can't interpret {filename} as a netCDF, CDL, or zarr dataset"
+                f"Can't interpret {filename} as a netCDF, CDL, or "
+                "Zarr dataset"
             )
 
         if file_type and ftype not in file_type:
@@ -1082,7 +1084,7 @@ class NetCDFRead(IORead):
             netcdf_backend = ("zarr",)
         elif netcdf_backend is None:
             # By default, try netCDF backends in this order:
-            netcdf_backend = ("h5netcdf", "netCDF4", "zarr")
+            netcdf_backend = ("h5netcdf", "netCDF4")
         elif isinstance(netcdf_backend, str):
             netcdf_backend = (netcdf_backend,)
 
@@ -10506,9 +10508,15 @@ class NetCDFRead(IORead):
         """TODOZARR"""
         if self.read_vars['file_opened_with'] == 'zarr':
             # zarr
-            return bool(nc.groups())
+            if len(tuple(nc.groups())) > 1:
+                raise ValueError(
+                    "Can't read Zarr dataset "
+                    f"{self.read_vars['filename']} that has groups"
+                )
+
+            return False
         
-        # netcdf4, h5netcdf
+        # netCDF4, h5netcdf
         return bool(nc.groups)
         
     
@@ -10519,7 +10527,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
+            nc: `netCDF4.Dataset`, `h5netcdf.File`, or `zarr.Group`
                 The dataset.
 
             attr: `str`
@@ -10544,7 +10552,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
+            nc: `netCDF4.Dataset`, `h5netcdf.File`, or `zarr.Group`
                 The dataset.
 
         :Returns:
@@ -10581,9 +10589,10 @@ class NetCDFRead(IORead):
             for var in self._file_variables(nc).values():
                 dimensions.update(
                     {
-                        name: ZarrDimension(name, size)
+                        name: ZarrDimension(name, size, nc)
                         for name, size in zip(
-                            self._file_variable_dimensions(var), var.shape
+                                self._file_variable_dimensions(var),
+                                var.shape
                         )
                         if name not in dimensions
                     }
@@ -10598,7 +10607,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
+            nc: `netCDF4.Dataset`, `h5netcdf.File`, or `zarr.Group`
                 The dataset.
 
             dim_name: `str`
@@ -10646,7 +10655,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
+            nc: `netCDF4.Dataset`, `h5netcdf.File`, or `zarr.Group`
                 The dataset.
 
             dim_name: `str`
@@ -10668,7 +10677,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
+            nc: `netCDF4.Dataset`, `h5netcdf.File` or `zarr.Group`
                 The dataset.
 
         :Returns:
@@ -10682,7 +10691,7 @@ class NetCDFRead(IORead):
             return nc.variables
         except AttributeError:
             # zarr
-            return nc
+            return dict(nc.arrays())
 
     def _file_variable(self, nc, var_name):
         """Return a variable.
@@ -10691,7 +10700,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset`, `h5netcdf.File`, `zarr.Group`
+            nc: `netCDF4.Dataset`, `h5netcdf.File`, or `zarr.Group`
                 The dataset.
 
             var_name: `str`
@@ -10699,7 +10708,7 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `netCDF4.Variable`, `h5netcdf.Variable` or `zarr.Array`
+            `netCDF4.Variable`, `h5netcdf.Variable`, or `zarr.Array`
                 The variable.
 
         """
@@ -10713,7 +10722,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
+            var: `netCDF4.Variable`, `h5netcdf.Variable`, or `zarr.Array`
                 The variable.
 
         :Returns:
@@ -10740,11 +10749,10 @@ class NetCDFRead(IORead):
         """Return the variable dimension names.
 
         .. versionadded:: (cfdm) NEXTVERSION
-
      
-   :Parameters:
+       :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
+            var: `netCDF4.Variable`, `h5netcdf.Variable`, or `zarr.Array`
                 The variable.
 
         :Returns:
@@ -10753,7 +10761,6 @@ class NetCDFRead(IORead):
                 The dimension names.
 
         """
-        print('var=',var)
         try:
             # netCDF4, h5netcdf
             return var.dimensions
@@ -10768,7 +10775,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
+            var: `netCDF4.Variable`, `h5netcdf.Variable`, or `zarr.Array`
                 The variable.
 
         :Returns:
@@ -10778,7 +10785,8 @@ class NetCDFRead(IORead):
 
         """
         # Use try/except here because the variable type could differ
-        # from that implied by the value of self.read_vars["netCDF4"]
+        # from that implied by the value of
+        # read_vars["file_opened_with"]
         try:
             # netCDF4, zarr
             return var.size
@@ -10993,7 +11001,6 @@ class NetCDFRead(IORead):
             dask_chunks = normalize_chunks(
                 "auto", shape=array.shape, dtype=array.dtype
             )
-
             dask_chunks = [sizes[0] for sizes in dask_chunks]
             n_dask_elements = prod(dask_chunks)
 
@@ -11055,8 +11062,8 @@ class NetCDFRead(IORead):
                 #      p_storage_ge_dask * p_dask_gt_storage**x = n_dask_elements
                 #  =>  x = log(n_dask_elements / p_storage_ge_dask) / log(p_dask_gt_storage)
                 #
-                # E.g. if the storage chunk shape is (40, 20, 15, 5)
-                #      and the Dask chunk shape is (20, 25, 10, 30),
+                # E.g. if the storage chunk shape is (40, 20, 15,  5)
+                #      and the Dask chunk shape is   (20, 25, 10, 30),
                 #      then x is such that
                 #
                 #      (40 * 15) * (25 * 30)**x = 20 * 25 * 10 * 30
@@ -11086,6 +11093,7 @@ class NetCDFRead(IORead):
                 x = log(n_dask_elements / p_storage_ge_dask) / log(
                     p_dask_gt_storage
                 )
+
                 for i, (sc, dc) in enumerate(
                     zip(storage_chunks, dask_chunks[:])
                 ):
@@ -11131,12 +11139,13 @@ class NetCDFRead(IORead):
             #      current Dask chunk is (12, 64, 128), then the Dask
             #      chunk will be modified to be (12, 40, 120).
             if dask_gt_storage:
-                for i, (sc, dc) in enumerate(
-                    zip(storage_chunks, dask_chunks[:])
+                for i, (sc, dc, axis_size) in enumerate(
+                    zip(storage_chunks, dask_chunks[:], array.shape)
                 ):
-                    if i in dask_gt_storage:
+                    if i in dask_gt_storage and dc < axis_size:
                         # Dask element is strictly greater than the
-                        # corresponding storage element
+                        # corresponding storage element, and smaller
+                        # that the axis size.
                         dc = int(dc)
                         c = dc - (dc % sc)
                         if not c:

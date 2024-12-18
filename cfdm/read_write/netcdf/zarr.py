@@ -1,24 +1,52 @@
 class ZarrDimension:
-    """TODOZARR.
-
-    The current maximum size of the dimension can be obtained by
-    calling the python `len` function on the `ZarrDimension`
-    instance. The `isunlimited` method of a `Dimension` instance can
-    be used to determine if the dimension is unlimited.
+    """A named Zarr dimension.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
-    def __init__(self, name, size):
-        """TODOZARR."""
+    def __init__(self, name, size, group):
+        """**Initialisation**
+
+        :Parameters:
+
+            name: `str`
+                The dimension name.
+        
+            size: `int`
+                The dimension size.
+
+            group: `zarr.Group`
+                The group that the dimension is a member of.
+
+        """
         self.name = name
         self.size = size
+        self.group = group
 
     def __len__(self):
-        """TODOZARR."""
+        """The size of the dimension.
+
+        x.__len__() <==> len(x)
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
         return self.size
 
+    def group(self):
+        """Return the group that the dimension is a member of.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `zarr.Group`
+                The group containing the dimension.
+
+        """
+        return self.group
+        
     def isunlimited(self):
         """Whether or not the dimension is unlimited.
 

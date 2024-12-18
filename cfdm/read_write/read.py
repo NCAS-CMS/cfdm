@@ -5,7 +5,7 @@ from numpy.ma.core import MaskError
 from ..cfdmimplementation import implementation
 from ..core import DocstringRewriteMeta
 from ..docstring import _docstring_substitution_definitions
-from .exceptions import UnknownFileFormatError as FileTypeError
+from .exceptions import FileTypeError
 from .netcdf import NetCDFRead
 
 
