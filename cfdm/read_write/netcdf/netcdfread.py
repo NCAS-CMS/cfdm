@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from functools import reduce
 from math import log, nan, prod
 from numbers import Integral
-from os.path import isdir
+from os.path import isdir, isfile, join
 from typing import Any
 from uuid import uuid4
 
@@ -560,7 +560,7 @@ class NetCDFRead(IORead):
         file_open_function = {
             "h5netcdf": self._open_h5netcdf,
             "netCDF4": self._open_netCDF4,
-            "zarr": self._open_zarr,
+            "Zarr": self._open_zarr,
         }
 
         # Loop around the netCDF backends until we successfully open
@@ -783,7 +783,7 @@ class NetCDFRead(IORead):
         return tmpfile
 
     @classmethod
-    def ftype(cls, filename):
+    def ftype(cls, filename, file_type):
         """Return type of the file.
 
         The file type is determined by inspecting the file's contents
@@ -796,22 +796,34 @@ class NetCDFRead(IORead):
             filename: `str`
                 The name of the file.
 
+            file_type: `None` or sequence of `str`
+                The allowed file types.
+
         :Returns:
 
             `str` or `None`
                 The file type:
 
                 * ``'netCDF'`` for a binary netCDF-3 or netCDF-4 file,
-                * ``'CDL'`` a text CDL file,
-                * `None` for anything else.
+                * ``'CDL'`` for a text CDL file,
+                * ``'Zarr'`` for a Zarr dataset,
+                * `None` for anything else
 
         """
-        # Assume that non-local URIs are in netCDF format
-        if urisplit(filename).scheme not in (None, "file"):
-            return "netCDF"  # TODOZARR
+        # Assume that non-local URIs are netCDF or zarr
+        u =  urisplit(filename)
+        if u.scheme not in (None, "file"):
+            if file_type and len(file_type) == 1 and file_type[0] == 'Zarr':
+                # Assume that a non-local URI is zarr if 'file_type'
+                # indicates Zarr
+                return 'Zarr'
+            
+            # Assume that a non-local URI is netCDF if it's not Zarr
+            return "netCDF"
 
-        if isdir(filename) and isfile(join(fileanme, '.zgroup'):
-            return "zarr" # TODOZARR
+        filename = u.path
+        if isdir(filename) and isfile(join(filename, '.zgroup')):
+            return "Zarr" # TODOZARR
 
         f_type = None
 
@@ -1064,7 +1076,7 @@ class NetCDFRead(IORead):
         # not recognised. (It is much faster to do this with `ftype`
         # than waiting for `file_open` to fail.)
         # ------------------------------------------------------------
-        ftype = self.ftype(filename)
+        ftype = self.ftype(filename, file_type)
         if not ftype:
             raise FileTypeError(
                 f"Can't interpret {filename} as a netCDF, CDL, or "
@@ -1080,8 +1092,8 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Parse the 'netcdf_backend' keyword parameter
         # ------------------------------------------------------------
-        if ftype == "zarr":
-            netcdf_backend = ("zarr",)
+        if ftype == "Zarr":
+            netcdf_backend = ("Zarr",)
         elif netcdf_backend is None:
             # By default, try netCDF backends in this order:
             netcdf_backend = ("h5netcdf", "netCDF4")

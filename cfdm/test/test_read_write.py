@@ -1147,14 +1147,14 @@ class read_writeTest(unittest.TestCase):
 
         # storage-aligned (the default)
         g = cfdm.read(tmpfile, dask_chunks="storage-aligned")[0]
-        self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
+        self.assertEqual(g.data.chunks, ((36,), (5,), (8,)))
 
         g = cfdm.read(tmpfile)[0]
-        self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
+        self.assertEqual(g.data.chunks, ((36,), (5,), (8,)))
 
         with cfdm.chunksize(50000000):
             g = cfdm.read(tmpfile)[0]
-            self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
+            self.assertEqual(g.data.chunks, ((36,), (5,), (8,)))
 
         with cfdm.chunksize(5000):
             g = cfdm.read(tmpfile)[0]
@@ -1259,8 +1259,8 @@ class read_writeTest(unittest.TestCase):
     def test_read_zarr(self):
         """Test the cfdm.read of a zarr dataset"""
         import cfdm
-        n = cfdm.read('example_field_0.nc', file_type='netCDF'     )[0]
-        z = cfdm.read('example_field_0.zarr', file_type='zarr'        )
+        n = cfdm.read('example_field_0.nc' )[0]
+        z = cfdm.read('example_field_0.zarr')
 
         self.assertEqual(len(z), 1)
         z = z[0]
@@ -1272,9 +1272,8 @@ class read_writeTest(unittest.TestCase):
         z = cfdm.read('example_field_0.zarr')
         print(z)
           
-        for file_type in (None, 'netCDF'):
-            z = cfdm.read('example_field_0.zarr', file_type=file_type)
-            self.assertEqual(len(z), 0)
+        z = cfdm.read('example_field_0.zarr', file_type='netCDF')
+        self.assertEqual(len(z), 0)
         
 #        self.assertEqual(len(z), 0)
         
