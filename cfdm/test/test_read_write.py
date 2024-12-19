@@ -13,7 +13,7 @@ import numpy as np
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-from cfdm.read_write.exceptions import UnknownFileFormatError
+from cfdm.read_write.exceptions import FileTypeError
 
 warnings = False
 
@@ -1256,7 +1256,28 @@ class read_writeTest(unittest.TestCase):
             f = cfdm.read("test_read_write.py", file_type=file_type)
             self.assertEqual(len(f), 0)
 
+    def test_read_zarr(self):
+        """Test the cfdm.read of a zarr dataset"""
+        import cfdm
+        n = cfdm.read('example_field_0.nc', file_type='netCDF'     )[0]
+        z = cfdm.read('example_field_0.zarr', file_type='zarr'        )
 
+        self.assertEqual(len(z), 1)
+        z = z[0]
+        self.assertTrue(z.equals(n))
+
+        cfdm.write(z, tmpfile)
+        zn = cfdm.read(tmpfile)[0]
+        self.assertTrue(zn.equals(n))
+        z = cfdm.read('example_field_0.zarr')
+        print(z)
+          
+        for file_type in (None, 'netCDF'):
+            z = cfdm.read('example_field_0.zarr', file_type=file_type)
+            self.assertEqual(len(z), 0)
+        
+#        self.assertEqual(len(z), 0)
+        
 #    def test_read_ignore_unknown_type(self):
 #        """Test the cfdm.read 'ignore_unknown_type' keyword."""
 #        # netCDF file

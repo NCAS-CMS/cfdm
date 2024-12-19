@@ -810,7 +810,7 @@ class NetCDFRead(IORead):
         if urisplit(filename).scheme not in (None, "file"):
             return "netCDF"  # TODOZARR
 
-        if isdir(filename):
+        if isdir(filename) and isfile(join(fileanme, '.zgroup'):
             return "zarr" # TODOZARR
 
         f_type = None
