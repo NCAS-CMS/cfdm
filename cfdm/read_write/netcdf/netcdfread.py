@@ -814,16 +814,17 @@ class NetCDFRead(IORead):
         u =  urisplit(filename)
         if u.scheme not in (None, "file"):
             if file_type and len(file_type) == 1 and file_type[0] == 'Zarr':
-                # Assume that a non-local URI is zarr if 'file_type'
-                # indicates Zarr
+                # Assume that a non-local URI is zarr if 'file_type is
+                # Zarr
                 return 'Zarr'
             
             # Assume that a non-local URI is netCDF if it's not Zarr
             return "netCDF"
 
         filename = u.path
-        if isdir(filename) and isfile(join(filename, '.zgroup')):
-            return "Zarr" # TODOZARR
+        if isdir(filename) and (isfile(join(filename, '.zgroup')) or
+                                isfile(join(filename, '.zarray'))):
+            return "Zarr"
 
         f_type = None
 
