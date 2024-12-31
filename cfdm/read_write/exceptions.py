@@ -4,4 +4,6 @@
 class FileTypeError(Exception):
     """Raised when an input dataset is of an inknown type."""
 
-    pass
+
+class CFReadError(Exception):
+    """TODOREAD."""

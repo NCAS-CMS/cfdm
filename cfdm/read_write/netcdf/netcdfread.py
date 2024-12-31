@@ -28,7 +28,7 @@ from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
-from ..exceptions import FileTypeError
+from ..exceptions import CFReadError, FileTypeError
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -526,7 +526,9 @@ class NetCDFRead(IORead):
             filename = self.cdl_to_netcdf(filename)
             g["filename"] = filename
         else:
-            cdl_filename = None
+            cdl_filename = None 
+
+        g["cdl_filename"] = cdl_filename
 
         u = urisplit(filename)
         storage_options = self._get_storage_options(filename, u)
@@ -783,7 +785,7 @@ class NetCDFRead(IORead):
         return tmpfile
 
     @classmethod
-    def ftype(cls, filename, file_type):
+    def ftype(cls, filename, file_type, cdl_string=False):
         """Return type of the file.
 
         The file type is determined by inspecting the file's contents
@@ -810,6 +812,10 @@ class NetCDFRead(IORead):
                 * `None` for anything else
 
         """
+        # TODOREAD
+        if cdl_string:
+            return 'netCDF'       
+
         # Assume that non-local URIs are netCDF or zarr
         u =  urisplit(filename)
         if u.scheme not in (None, "file"):
@@ -923,6 +929,7 @@ class NetCDFRead(IORead):
         squeeze=False,
         unsqueeze=False,
         file_type=None,
+            cdl_string=False,
         ignore_unknown_type=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
@@ -1038,13 +1045,6 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            ignore_unknown_type: `bool`, optional
-                If True then ignore any file which does not have one
-                of the valid types specified by the *file_type*
-                parameter. See `cfdm.read` for details.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
             _file_systems: `dict`, optional
                 Provide any already-open S3 file systems.
 
@@ -1056,6 +1056,7 @@ class NetCDFRead(IORead):
                 The field or domain constructs in the file.
 
         """
+        #        info = is_log_level_info(logger)
         debug = is_log_level_debug(logger)
 
         # ------------------------------------------------------------
@@ -1069,13 +1070,18 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Parse the 'file_type' keyword parameter
         # ------------------------------------------------------------
-        if isinstance(file_type, str):
-            file_type = (file_type,)
+        if file_type is not None:
+            if isinstance(file_type, str):
+                file_type = (file_type,)
+
+            file_type = set(file_type)
+            if not file_type.intersection(("netCDF", "CDL")):
+                # Return now if there are no valid file types
+                return []
 
         # ------------------------------------------------------------
-        # Check the file type, returning/failing now if the type is
-        # not recognised. (It is much faster to do this with `ftype`
-        # than waiting for `file_open` to fail.)
+        # Check the file type, raising an exception if the type is not
+        # valid. Note that `ftype` is much faster than `file_open`.
         # ------------------------------------------------------------
         ftype = self.ftype(filename, file_type)
         if not ftype:
@@ -1223,6 +1229,14 @@ class NetCDFRead(IORead):
             _file_systems = {}
 
         # ------------------------------------------------------------
+        # Parse the 'cdl_string' keyword parameter
+        # ------------------------------------------------------------
+        if cdl_string and (file_type is not None or "CDL" not in file_type):
+            raise ValueError(
+                f"When cdl_string=True, can't set file_type={file_type}"
+            )
+
+        # ------------------------------------------------------------
         # Initialise netCDF read parameters
         # ------------------------------------------------------------
         self.read_vars = {
@@ -1231,6 +1245,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "filename": filename,
             "ftype": ftype,
+            "cdl_string":bool(cdl_string),
             "ignore_unknown_type": bool(ignore_unknown_type),
             # --------------------------------------------------------
             # Verbosity
@@ -2758,9 +2773,18 @@ class NetCDFRead(IORead):
         instance_dimension_size = indexed["instance_dimension_size"]
 
         element_dimension_1_size = int(profiles_per_instance.max())
-        element_dimension_2_size = int(
-            self.implementation.get_data_maximum(elements_per_profile)
-        )
+        try:
+            element_dimension_2_size = int(
+                self.implementation.get_data_maximum(elements_per_profile)
+            )
+        except np.ma.MaskError:
+            raise CFReadError(
+                "Can't create an indexed contiguous ragged array when the "
+                "CF-netCDF count variable in "
+                f"{g['ftype']} file "
+                f"{g.get('cdl_filename', g['filename'])!r} "
+                "contains missing data"
+            )
 
         g["compression"][sample_dimension]["ragged_indexed_contiguous"] = {
             "count_variable": elements_per_profile,
@@ -3018,11 +3042,20 @@ class NetCDFRead(IORead):
             for cell_no in range(
                 self.implementation.get_data_size(nodes_per_geometry)
             ):
-                n_nodes_in_this_cell = int(
-                    self.implementation.get_array(
-                        nodes_per_geometry_data[cell_no]
-                    )[0]
-                )
+                try:
+                    n_nodes_in_this_cell = int(
+                        self.implementation.get_array(
+                            nodes_per_geometry_data[cell_no]
+                        )[0]
+                    )
+                except np.ma.MaskError:
+                    raise CFReadError(
+                        "Can't create geometry cells when the CF-netCDF "
+                        f"node count variable {node_count!r} in "
+                        f"{g['ftype']} file "
+                        f"{g.get('cdl_filename', g['filename'])!r} "
+                        "contains missing data"
+                    )
 
                 # Initialise partial_node_count, a running count of
                 # how many nodes there are in this geometry
@@ -3030,9 +3063,19 @@ class NetCDFRead(IORead):
 
                 for k in range(i, total_number_of_parts):
                     index.data[k] = instance_index
-                    n_nodes += int(
-                        self.implementation.get_array(parts_data[k])[0]
-                    )
+                    try:
+                        n_nodes += int(
+                            self.implementation.get_array(parts_data[k])[0]
+                        )
+                    except np.ma.MaskError:
+                        raise CFReadError(
+                            "Can't create geometry cells when the CF-netCDF "
+                            f"part node count variable {part_node_count!r} in "
+                            f"{g['ftype']} file "
+                            f"{g.get('cdl_filename', g['filename'])!r} "
+                            "contains missing data"
+                        )
+
                     if n_nodes >= n_nodes_in_this_cell:
                         instance_index += 1
                         i += k + 1
@@ -3153,9 +3196,18 @@ class NetCDFRead(IORead):
         instance_dimension_size = self.implementation.get_data_size(
             elements_per_instance
         )
-        element_dimension_size = int(
-            self.implementation.get_data_maximum(elements_per_instance)
-        )
+        try:
+            element_dimension_size = int(
+                self.implementation.get_data_maximum(elements_per_instance)
+            )
+        except np.ma.MaskError:
+            raise CFReadError(
+                "Can't create a contiguous ragged array when the CF-netCDF "
+                f"count variable in "
+                f"{g['ftype']} file "
+                f"{g.get('cdl_filename', g['filename'])!r} "
+                "contains missing data"
+            )
 
         # Make sure that the element dimension name is unique
         element_dimension = self._new_ncdimension(
@@ -3203,7 +3255,8 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        (_, count) = np.unique(index.data.array, return_counts=True)
+        index_array = self.implementation.get_array(index)
+        (_, count) = np.unique(index_array, return_counts=True)
 
         # The number of elements per instance. For the instances array
         # example above, the elements_per_instance array is [7, 5, 7].
@@ -3654,7 +3707,7 @@ class NetCDFRead(IORead):
         # construct from a URGID mesh topology variable
         mesh_topology = domain and field_ncvar in g["mesh"]
         if mesh_topology and location is None:
-            raise ValueError(
+            raise CFReadError(
                 "Must set 'location' to create a domain construct from "
                 "a URGID mesh topology variable"
             )
@@ -4441,7 +4494,7 @@ class NetCDFRead(IORead):
                 # the data variable
                 geometry_dimension = geometry["geometry_dimension"]
                 if geometry_dimension not in g["ncdim_to_axis"]:
-                    raise ValueError(
+                    raise CFReadError(
                         f"Geometry dimension {geometry_dimension!r} is not in "
                         f"read_vars['ncdim_to_axis']: {g['ncdim_to_axis']}"
                     )
@@ -5906,7 +5959,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         if ncvar not in g["variable_attributes"]:
-            raise ValueError(
+            raise CFReadError(
                 "Can't initialise a subsampled coordinate with specified "
                 f"interpolation parameter ({term}: {ncvar}) that is missing "
                 "from the dataset"
@@ -6666,7 +6719,7 @@ class NetCDFRead(IORead):
 
                     # i = dimensions.index(ncdim)
                     if dimensions.index(ncdim) != 0:
-                        raise ValueError(
+                        raise CFReadError(
                             "Data can only be created when the netCDF "
                             "dimension spanned by the data variable is the "
                             "left-most dimension in the ragged array."
@@ -6690,7 +6743,7 @@ class NetCDFRead(IORead):
 
                     # i = dimensions.index(ncdim)
                     if dimensions.index(ncdim) != 0:
-                        raise ValueError(
+                        raise CFReadError(
                             "Data can only be created when the netCDF "
                             "dimension spanned by the data variable is "
                             "the left-most dimension in the ragged array."
@@ -6713,7 +6766,7 @@ class NetCDFRead(IORead):
 
                     # i = dimensions.index(ncdim)
                     if dimensions.index(ncdim) != 0:
-                        raise ValueError(
+                        raise CFReadError(
                             "Data can only be created when the netCDF "
                             "dimension spanned by the data variable is "
                             "the left-most dimension in the ragged array."
@@ -7072,7 +7125,7 @@ class NetCDFRead(IORead):
                             parsed_interval = literal_eval(interval)
                         except (SyntaxError, ValueError):
                             if not field_ncvar:
-                                raise ValueError(incorrect_interval)
+                                raise CFReadError(incorrect_interval)
 
                             self._add_message(
                                 field_ncvar,
@@ -7087,7 +7140,7 @@ class NetCDFRead(IORead):
                             )
                         except Exception:
                             if not field_ncvar:
-                                raise ValueError(incorrect_interval)
+                                raise CFReadError(incorrect_interval)
 
                             self._add_message(
                                 field_ncvar,
@@ -7117,7 +7170,7 @@ class NetCDFRead(IORead):
             n_intervals = len(intervals)
             if n_intervals > 1 and n_intervals != len(axes):
                 if not field_ncvar:
-                    raise ValueError(incorrect_interval)
+                    raise CFReadError(incorrect_interval)
 
                 self._add_message(
                     field_ncvar,
@@ -7529,7 +7582,7 @@ class NetCDFRead(IORead):
             elif ncdim in g["new_dimension_sizes"]:
                 sizes.append(g["new_dimension_sizes"][ncdim])
             else:
-                raise ValueError(
+                raise CFReadError(
                     f"Can't get the size of netCDF dimension {ncdim}"
                 )
 

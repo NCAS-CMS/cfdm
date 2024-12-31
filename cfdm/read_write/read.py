@@ -1,15 +1,20 @@
-import os
+from glob import iglob
+from logging import getLogger
+from os import walk
+from os.path import expanduser, expandvars, isdir, join, isfile
 
-from numpy.ma.core import MaskError
+from uritools import urisplit
 
-from ..cfdmimplementation import implementation
-from ..core import DocstringRewriteMeta
-from ..docstring import _docstring_substitution_definitions
+from .abstract import ReadWrite
 from .exceptions import FileTypeError
 from .netcdf import NetCDFRead
 
+from ..functions import is_log_level_info
 
-class read(metaclass=DocstringRewriteMeta):
+logger = getLogger(__name__)
+
+
+class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
     The following file formats are supported: netCDF and CDL.
@@ -169,18 +174,14 @@ class read(metaclass=DocstringRewriteMeta):
 
         {{read file_type: `None` or (sequence of) `str`, optional}}
 
-            Valid files types are:
+            Valid file types are:
 
             ============  ============================================
-            *file_type*   Description
+            file type     Description
             ============  ============================================
-            ``'netCDF'``  Binary netCDF-3 or netCDF-4 file
-            ``'CDL'``     Text CDL representation of a netCDF file
+            ``'netCDF'``  Binary netCDF-3 or netCDF-4 files
+            ``'CDL'``     Text CDL representations of netCDF files
             ============  ============================================
-
-            .. versionadded:: (cfdm) NEXTVERSION
-
-        {{read ignore_unknown_type: `bool`, optional}}
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -212,11 +213,9 @@ class read(metaclass=DocstringRewriteMeta):
 
     """
 
-    implementation = implementation()
-
     def __new__(
         cls,
-        filename,
+        datasets,
         external=None,
         extra=None,
         verbose=None,
@@ -236,86 +235,282 @@ class read(metaclass=DocstringRewriteMeta):
         squeeze=False,
         unsqueeze=False,
         file_type=None,
-        ignore_unknown_type=False,
+        recursive=False,
+        followlinks=False,
+        cdl_string=False,
         extra_read_vars=None,
+        **kwargs,
     ):
-        """Read field or domain constructs from a dataset."""
-        # Initialise a netCDF read object
-        netcdf = NetCDFRead(cls.implementation)
-        cls.netcdf = netcdf
+        """Read field or domain constructs from datasets.
 
-        filename = os.path.expanduser(os.path.expandvars(filename))
+        .. versionadded:: (cfdm) NEXTVERSION
 
-        try:
-            fields = netcdf.read(
-                filename,
-                external=external,
-                extra=extra,
-                verbose=verbose,
-                warnings=warnings,
-                warn_valid=warn_valid,
-                mask=mask,
-                unpack=unpack,
-                domain=domain,
-                storage_options=storage_options,
-                netcdf_backend=netcdf_backend,
-                cache=cache,
-                dask_chunks=dask_chunks,
-                store_dataset_chunks=store_dataset_chunks,
-                cfa=cfa,
-                cfa_write=cfa_write,
-                to_memory=to_memory,
-                squeeze=squeeze,
-                unsqueeze=unsqueeze,
-                file_type=file_type,
-                ignore_unknown_type=ignore_unknown_type,
-                extra_read_vars=extra_read_vars,
-            )
-        except FileTypeError:
-            if file_type is None:
-                raise
+        """
+        kwargs = locals()
+        kwargs.update(kwargs.pop("kwargs"))
 
-            fields = []
-        except MaskError:
-            # Some data required for field interpretation is
-            # missing, manifesting downstream as a NumPy
-            # MaskError.
-            raise ValueError(
-                f"Unable to read {filename} because some netCDF "
-                "variable arrays that are required for construct "
-                "creation contain missing values when they shouldn't"
-            )
+        self = super().__new__(cls)
+        self.kwargs = kwargs
 
+        self._initialise()
+
+        for dataset in self._datasets():
+            self._pre_read(dataset)
+            self._read(dataset)
+            self._post_read(dataset)
+
+            # Add this dataset's contents to that already read from
+            # other datasets.
+            #
+            # Note:
+            #
+            # * 'self.out' is defined in `_initialise`
+            # * 'self.file_contents' is initialised in `_pre_read` and
+            #    updated in `_read`
+            self.out.extend(self.file_contents)
+
+        self._finalise()
+
+        if is_log_level_info(logger):
+             n = len(out)
+             n_datasets = self.n_datasets             
+             logger.info(
+                 f"Read {n} {self.construct}{'s' if n != 1 else ''} "
+                 f"from {n_datasets} dataset{'s' if n_datasets != 1 else ''}"
+             )  # pragma: no cover
+             
         # Return the field or domain constructs
-        return fields
+        return self.out
 
-    def __docstring_substitutions__(self):
-        """Defines applicable docstring substitutions.
+    def _datasets(self):
+        """Find all of the datasets.
+                
+        The datset pathnames are defined by
+        ``self.kwargs['datasets']``.
 
-        Substitutons are considered applicable if they apply to this
-        class as well as all of its subclasses.
+        Each pathname has tilde and environment variables exapanded,
+        and is then replaced by all of the pathnames matching glob
+        patterns used by the Unix shell.
 
-        These are in addtion to, and take precendence over, docstring
-        substitutions defined by the base classes of this class.
+        A directory is replaced the pathnames of the files it
+        contains. If ``self.kwargs['recursive']`` is True then
+        subdirectories are recursively searched through. If
+        ``self.kwargs['followlinks']`` is True then subdirectories
+        pointed to by symlinks are included.
 
-        See `_docstring_substitutions` for details.
-
-        .. versionaddedd:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
-            `dict`
-                The docstring substitutions that have been applied.
+            generator
+                An iterator over the dataset pathnames.
 
         """
-        return _docstring_substitution_definitions
+        kwargs = self.kwargs
+        recursive = kwargs.get("recursive", False)
+        followlinks = kwargs.get("followlinks", False)
 
-    def __docstring_package_depth__(self):
-        """Returns the package depth for {{package}} substitutions.
+        if followlinks and not recursive:
+            raise ValueError(
+                f"Can't set followlinks={followlinks!r} when "
+                f"recursive={recursive!r}"
+            )
 
-        See `_docstring_package_depth` for details.
+        for datasets1 in self._flat(kwargs["datasets"]):
+            datasets1 = expanduser(expandvars(datasets1))
 
-        .. versionaddedd:: (cfdm) NEXTVERSION
+            u = urisplit(datasets1)
+            if u.scheme not in (None, "file"):
+                # Do not glob a remote URI, and assume that it defines
+                # a single dataset.
+                yield datasets1
+                continue
+
+            # Glob files/directories on disk
+            datasets1 = u.path
+
+            n_datasets = 0
+            for x in iglob(datasets1):
+                if isdir(x):
+                    if isfile(join(x, '.zgroup')) or isfile(join(x, '.zarray')):
+                        # This directory is a Zarr dataset. Don't look
+                        # in any subdirectories.
+                        n_datasets += 1
+                        yield path
+                        continue
+                                                
+                    # Walk through directories, possibly recursively
+                    for path, _, filenames in walk(x, followlinks=followlinks):
+                        if isfile(join(path, '.zgroup')) or isfile(join(path, '.zarray')):
+                            # This directory is a Zarr dataset. Don't
+                            # look in any subdirectories.
+                            n_datasets += 1
+                            yield path
+                            break
+                            
+                        for f in filenames:
+                            # This file is a dataset
+                            n_datasets += 1
+                            yield join(path, f)
+
+                        if not recursive:
+                            # Don't look in any subdirectories
+                            break
+                else:
+                    # This file is a dataset
+                    n_datasets += 1
+                    yield x
+
+            if not n_datasets:
+                raise FileNotFoundError(
+                    f"No datasets found from {kwargs['datasets']}"
+                )
+
+    def _finalise(self):
+        """Actions to take after all datasets have been read.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns: 
+
+            `None`
 
         """
-        return 0
+        # Sort the output contructs by netCDF variable name
+        out = self.out
+        n = len(out)
+        if n > 1:
+            out.sort(key=lambda f: f.nc_get_variable(""))
+
+    def _initialise(self):
+        """Actions to take before any datasets have been read.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns: 
+
+            `None`
+
+        """
+        kwargs = self.kwargs
+
+        # Parse the 'file_type' keyword parameter
+        file_type = kwargs.get("file_type")
+        if file_type is None:
+            self.file_type  = None
+        else:
+            if isinstance(file_type, str):
+                file_type = (file_type,)
+
+            self.file_type = set(file_type)
+
+        self.netCDF_file_types = set(("netCDF", "CDL"))
+        self.domain = kwargs["domain"]
+        self.construct = "domain" if self.domain else "field"
+
+        # Initialise the count of datasets
+        self.n_datasets = 0
+        
+        # Initialise the list of output constructs
+        self.out = []
+
+    def _post_read(self, dataset):
+        """Actions to take immediately after reading a given dataset.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset: `str`
+                The pathname of the dataset that has just been read.
+
+        :Returns: 
+
+            `None`
+
+        """
+        if self.file_format_errors:
+            # Raise any FileTypeError exceptions
+            error = "\n".join(map(str, self.file_format_errors))
+            raise FileTypeError(f"\n{error}")
+
+    def _pre_read(self, dataset):
+        """Actions to take immediately before reading a given dataset.        
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset: `str`
+                The pathname of the dataset to be read.
+
+        :Returns: 
+
+            `None`
+
+        """
+        self.file_contents = []
+        self.file_format_errors = []
+        self.dataset_type = None
+
+    def _read(self, dataset):
+        """Read a given dataset into field or domain constructs.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset: `str`
+                The pathname of the dataset to be read.
+
+        :Returns: 
+
+            `None`
+
+        """
+        file_type = self.file_type
+        if file_type is None or file_type.intersection(self.netCDF_file_types):
+            if not hasattr(self, "netcdf_read"):
+                # Initialise the netCDF read function
+                kwargs = self.kwargs
+                self.netcdf_kwargs = {
+                    key: kwargs[key]
+                    for key in (
+                        "external",
+                        "extra",
+                        "verbose",
+                        "warnings",
+                        "warn_valid",
+                        "mask",
+                        "unpack",
+                        "domain",
+                        "storage_options",
+                        "netcdf_backend",
+                        "cache",
+                        "dask_chunks",
+                        "store_hdf5_chunks",
+                        "cfa",
+                        "cfa_write",
+                        "to_memory",
+                        "squeeze",
+                        "unsqueeze",
+                        "file_type",
+                        "extra_read_vars",
+                    )
+                }
+                self.netcdf_read = NetCDFRead(self.implementation).read
+
+            # --------------------------------------------------------
+            # Try to read as a netCDF dataset
+            # --------------------------------------------------------      
+            try:
+                self.file_contents = self.netcdf_read(
+                    dataset, **self.netcdf_kwargs
+                )
+            except FileTypeError as error:
+                if file_type is None:
+                    self.file_format_errors.append(error)
+            else:
+                self.file_format_errors = []
+                self.n_datasets += 1
+                self.dataset_type = "netCDF"
