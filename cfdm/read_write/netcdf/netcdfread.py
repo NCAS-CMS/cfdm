@@ -28,7 +28,7 @@ from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
-from ..exceptions import CFReadError, FileTypeError
+from ..exceptions import FileTypeError, ReadError
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -526,7 +526,7 @@ class NetCDFRead(IORead):
             filename = self.cdl_to_netcdf(filename)
             g["filename"] = filename
         else:
-            cdl_filename = None 
+            cdl_filename = None
 
         g["cdl_filename"] = cdl_filename
 
@@ -624,10 +624,10 @@ class NetCDFRead(IORead):
 
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
-            g['nc_opened_with'] = 'netCDF4'
+            g["nc_opened_with"] = "netCDF4"
         else:
-            g['nc_opened_with'] = g["file_opened_with"]
-            
+            g["nc_opened_with"] = g["file_opened_with"]
+
         g["nc"] = nc
         return nc
 
@@ -785,7 +785,7 @@ class NetCDFRead(IORead):
         return tmpfile
 
     @classmethod
-    def ftype(cls, filename, file_type, cdl_string=False):
+    def ftype(cls, filename, dataset_type, cdl_string=False):
         """Return type of the file.
 
         The file type is determined by inspecting the file's contents
@@ -798,8 +798,8 @@ class NetCDFRead(IORead):
             filename: `str`
                 The name of the file.
 
-            file_type: `None` or sequence of `str`
-                The allowed file types.
+            dataset_type: `None` or sequence of `str`
+                The allowed dataset types.
 
         :Returns:
 
@@ -814,22 +814,24 @@ class NetCDFRead(IORead):
         """
         # TODOREAD
         if cdl_string:
-            return 'netCDF'       
+            return "netCDF"
 
         # Assume that non-local URIs are netCDF or zarr
-        u =  urisplit(filename)
+        u = urisplit(filename)
         if u.scheme not in (None, "file"):
-            if file_type and len(file_type) == 1 and file_type[0] == 'Zarr':
-                # Assume that a non-local URI is zarr if 'file_type is
-                # Zarr
-                return 'Zarr'
-            
+            if dataset_type and len(dataset_type) == 1 and dataset_type[0] == "Zarr":
+                # Assume that a non-local URI is zarr if 'dataset_type
+                # is Zarr
+                return "Zarr"
+
             # Assume that a non-local URI is netCDF if it's not Zarr
             return "netCDF"
 
         filename = u.path
-        if isdir(filename) and (isfile(join(filename, '.zgroup')) or
-                                isfile(join(filename, '.zarray'))):
+        if isdir(filename) and (
+            isfile(join(filename, ".zgroup"))
+            or isfile(join(filename, ".zarray"))
+        ):
             return "Zarr"
 
         f_type = None
@@ -928,8 +930,8 @@ class NetCDFRead(IORead):
         to_memory=None,
         squeeze=False,
         unsqueeze=False,
-        file_type=None,
-            cdl_string=False,
+        dataset_type=None,
+        cdl_string=False,
         ignore_unknown_type=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
@@ -1039,7 +1041,7 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            file_type: `None` or (sequence of) `str`, optional
+            dataset_type: `None` or (sequence of) `str`, optional
                 Only read files of the given type(s). See `cfdm.read`
                 for details.
 
@@ -1068,32 +1070,32 @@ class NetCDFRead(IORead):
             filename = abspath(filename)
 
         # ------------------------------------------------------------
-        # Parse the 'file_type' keyword parameter
+        # Parse the 'dataset_type' keyword parameter
         # ------------------------------------------------------------
-        if file_type is not None:
-            if isinstance(file_type, str):
-                file_type = (file_type,)
+        if dataset_type is not None:
+            if isinstance(dataset_type, str):
+                dataset_type = (dataset_type,)
 
-            file_type = set(file_type)
-            if not file_type.intersection(("netCDF", "CDL")):
-                # Return now if there are no valid file types
+            dataset_type = set(dataset_type)
+            if not dataset_type.intersection(("netCDF", "CDL", "Zarr")):
+                # Return now if there are no valid dataset types
                 return []
 
         # ------------------------------------------------------------
         # Check the file type, raising an exception if the type is not
         # valid. Note that `ftype` is much faster than `file_open`.
         # ------------------------------------------------------------
-        ftype = self.ftype(filename, file_type)
+        ftype = self.ftype(filename, dataset_type)
         if not ftype:
             raise FileTypeError(
                 f"Can't interpret {filename} as a netCDF, CDL, or "
                 "Zarr dataset"
             )
 
-        if file_type and ftype not in file_type:
+        if dataset_type and ftype not in dataset_type:
             raise FileTypeError(
                 f"Can't interpret {filename} as one of the "
-                f"requested types: {file_type}"
+                f"requested types: {dataset_type}"
             )
 
         # ------------------------------------------------------------
@@ -1231,9 +1233,9 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Parse the 'cdl_string' keyword parameter
         # ------------------------------------------------------------
-        if cdl_string and (file_type is not None or "CDL" not in file_type):
+        if cdl_string and (dataset_type is not None or "CDL" not in dataset_type):
             raise ValueError(
-                f"When cdl_string=True, can't set file_type={file_type}"
+                f"When cdl_string=True, can't set dataset_type={dataset_type}"
             )
 
         # ------------------------------------------------------------
@@ -1245,7 +1247,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "filename": filename,
             "ftype": ftype,
-            "cdl_string":bool(cdl_string),
+            "cdl_string": bool(cdl_string),
             "ignore_unknown_type": bool(ignore_unknown_type),
             # --------------------------------------------------------
             # Verbosity
@@ -2778,7 +2780,7 @@ class NetCDFRead(IORead):
                 self.implementation.get_data_maximum(elements_per_profile)
             )
         except np.ma.MaskError:
-            raise CFReadError(
+            raise ReadError(
                 "Can't create an indexed contiguous ragged array when the "
                 "CF-netCDF count variable in "
                 f"{g['ftype']} file "
@@ -3049,7 +3051,7 @@ class NetCDFRead(IORead):
                         )[0]
                     )
                 except np.ma.MaskError:
-                    raise CFReadError(
+                    raise ReadError(
                         "Can't create geometry cells when the CF-netCDF "
                         f"node count variable {node_count!r} in "
                         f"{g['ftype']} file "
@@ -3068,7 +3070,7 @@ class NetCDFRead(IORead):
                             self.implementation.get_array(parts_data[k])[0]
                         )
                     except np.ma.MaskError:
-                        raise CFReadError(
+                        raise ReadError(
                             "Can't create geometry cells when the CF-netCDF "
                             f"part node count variable {part_node_count!r} in "
                             f"{g['ftype']} file "
@@ -3201,7 +3203,7 @@ class NetCDFRead(IORead):
                 self.implementation.get_data_maximum(elements_per_instance)
             )
         except np.ma.MaskError:
-            raise CFReadError(
+            raise ReadError(
                 "Can't create a contiguous ragged array when the CF-netCDF "
                 f"count variable in "
                 f"{g['ftype']} file "
@@ -3707,7 +3709,7 @@ class NetCDFRead(IORead):
         # construct from a URGID mesh topology variable
         mesh_topology = domain and field_ncvar in g["mesh"]
         if mesh_topology and location is None:
-            raise CFReadError(
+            raise ReadError(
                 "Must set 'location' to create a domain construct from "
                 "a URGID mesh topology variable"
             )
@@ -4494,7 +4496,7 @@ class NetCDFRead(IORead):
                 # the data variable
                 geometry_dimension = geometry["geometry_dimension"]
                 if geometry_dimension not in g["ncdim_to_axis"]:
-                    raise CFReadError(
+                    raise ReadError(
                         f"Geometry dimension {geometry_dimension!r} is not in "
                         f"read_vars['ncdim_to_axis']: {g['ncdim_to_axis']}"
                     )
@@ -5959,7 +5961,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         if ncvar not in g["variable_attributes"]:
-            raise CFReadError(
+            raise ReadError(
                 "Can't initialise a subsampled coordinate with specified "
                 f"interpolation parameter ({term}: {ncvar}) that is missing "
                 "from the dataset"
@@ -6719,7 +6721,7 @@ class NetCDFRead(IORead):
 
                     # i = dimensions.index(ncdim)
                     if dimensions.index(ncdim) != 0:
-                        raise CFReadError(
+                        raise ReadError(
                             "Data can only be created when the netCDF "
                             "dimension spanned by the data variable is the "
                             "left-most dimension in the ragged array."
@@ -6743,7 +6745,7 @@ class NetCDFRead(IORead):
 
                     # i = dimensions.index(ncdim)
                     if dimensions.index(ncdim) != 0:
-                        raise CFReadError(
+                        raise ReadError(
                             "Data can only be created when the netCDF "
                             "dimension spanned by the data variable is "
                             "the left-most dimension in the ragged array."
@@ -6766,7 +6768,7 @@ class NetCDFRead(IORead):
 
                     # i = dimensions.index(ncdim)
                     if dimensions.index(ncdim) != 0:
-                        raise CFReadError(
+                        raise ReadError(
                             "Data can only be created when the netCDF "
                             "dimension spanned by the data variable is "
                             "the left-most dimension in the ragged array."
@@ -7125,7 +7127,7 @@ class NetCDFRead(IORead):
                             parsed_interval = literal_eval(interval)
                         except (SyntaxError, ValueError):
                             if not field_ncvar:
-                                raise CFReadError(incorrect_interval)
+                                raise ReadError(incorrect_interval)
 
                             self._add_message(
                                 field_ncvar,
@@ -7140,7 +7142,7 @@ class NetCDFRead(IORead):
                             )
                         except Exception:
                             if not field_ncvar:
-                                raise CFReadError(incorrect_interval)
+                                raise ReadError(incorrect_interval)
 
                             self._add_message(
                                 field_ncvar,
@@ -7170,7 +7172,7 @@ class NetCDFRead(IORead):
             n_intervals = len(intervals)
             if n_intervals > 1 and n_intervals != len(axes):
                 if not field_ncvar:
-                    raise CFReadError(incorrect_interval)
+                    raise ReadError(incorrect_interval)
 
                 self._add_message(
                     field_ncvar,
@@ -7582,7 +7584,7 @@ class NetCDFRead(IORead):
             elif ncdim in g["new_dimension_sizes"]:
                 sizes.append(g["new_dimension_sizes"][ncdim])
             else:
-                raise CFReadError(
+                raise ReadError(
                     f"Can't get the size of netCDF dimension {ncdim}"
                 )
 
@@ -10571,8 +10573,8 @@ class NetCDFRead(IORead):
         return ok
 
     def _file_has_groups(self, nc):
-        """TODOZARR"""
-        if self.read_vars['file_opened_with'] == 'zarr':
+        """TODOZARR."""
+        if self.read_vars["file_opened_with"] == "zarr":
             # zarr
             if len(tuple(nc.groups())) > 1:
                 raise ValueError(
@@ -10581,11 +10583,10 @@ class NetCDFRead(IORead):
                 )
 
             return False
-        
+
         # netCDF4, h5netcdf
         return bool(nc.groups)
-        
-    
+
     def _file_global_attribute(self, nc, attr):
         """Return a global attribute from a dataset.
 
@@ -10657,8 +10658,7 @@ class NetCDFRead(IORead):
                     {
                         name: ZarrDimension(name, size, nc)
                         for name, size in zip(
-                                self._file_variable_dimensions(var),
-                                var.shape
+                            self._file_variable_dimensions(var), var.shape
                         )
                         if name not in dimensions
                     }
@@ -10814,17 +10814,17 @@ class NetCDFRead(IORead):
     def _file_variable_dimensions(self, var):
         """Return the variable dimension names.
 
-        .. versionadded:: (cfdm) NEXTVERSION
-     
-       :Parameters:
+         .. versionadded:: (cfdm) NEXTVERSION
 
-            var: `netCDF4.Variable`, `h5netcdf.Variable`, or `zarr.Array`
-                The variable.
+        :Parameters:
 
-        :Returns:
+             var: `netCDF4.Variable`, `h5netcdf.Variable`, or `zarr.Array`
+                 The variable.
 
-            `tuple` of `str`
-                The dimension names.
+         :Returns:
+
+             `tuple` of `str`
+                 The dimension names.
 
         """
         try:

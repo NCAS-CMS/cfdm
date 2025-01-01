@@ -13,11 +13,7 @@ import numpy as np
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-<<<<<<< HEAD
-from cfdm.read_write.exceptions import FileTypeError
-=======
-from cfdm.read_write.exceptions import CFReadError, FileTypeError
->>>>>>> read-multiple_files
+from cfdm.read_write.exceptions import FileTypeError, ReadError
 
 warnings = False
 
@@ -632,10 +628,10 @@ class read_writeTest(unittest.TestCase):
         c = cfdm.read(tmpfilec)[0]
 
         # Case (2) as above, so the right error should be raised on read
-        with self.assertRaises(CFReadError):
+        with self.assertRaises(ReadError):
             cfdm.read(tmpfileh2)[0]
 
-        with self.assertRaises(CFReadError):
+        with self.assertRaises(ReadError):
             cfdm.read(tmpfilec2)[0]
 
         self.assertTrue(f0.equals(f, verbose=3))
@@ -1083,11 +1079,11 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(nc.variables["data"].chunking(), [2, 2, 2])
             nc.close()
 
-        # store_hdf5_chunks
+        # store_dataset_chunks
         f = cfdm.read(tmpfile)[0]
         self.assertEqual(f.nc_hdf5_chunksizes(), (2, 2, 2))
 
-        f = cfdm.read(tmpfile, store_hdf5_chunks=False)[0]
+        f = cfdm.read(tmpfile, store_dataset_chunks=False)[0]
         self.assertIsNone(f.nc_hdf5_chunksizes())
 
         # Scalar data is written contiguously
@@ -1210,21 +1206,21 @@ class read_writeTest(unittest.TestCase):
                     # Field
                     self.assertFalse(in_memory)
 
-    def test_read_file_type(self):
-        """Test the cfdm.read 'file_type' keyword."""
-        # netCDF file
-        for file_type in (
+    def test_read_dataset_type(self):
+        """Test the cfdm.read 'dataset_type' keyword."""
+        # netCDF dataset
+        for dataset_type in (
             None,
             "netCDF",
             ("netCDF",),
             ("netCDF", "CDL"),
             ("netCDF", "CDL", "bad value"),
         ):
-            f = cfdm.read(self.filename, file_type=file_type)
+            f = cfdm.read(self.filename, dataset_type=dataset_type)
             self.assertEqual(len(f), 1)
 
-        for file_type in ("CDL", "bad value", ()):
-            f = cfdm.read(self.filename, file_type=file_type)
+        for dataset_type in ("CDL", "bad value", ()):
+            f = cfdm.read(self.filename, dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
 
         # CDL file
@@ -1233,65 +1229,53 @@ class read_writeTest(unittest.TestCase):
             shell=True,
             check=True,
         )
-        for file_type in (
+        for dataset_type in (
             None,
             "CDL",
             ("CDL",),
             ("netCDF", "CDL"),
             ("netCDF", "CDL", "bad value"),
         ):
-            f = cfdm.read(tmpfile, file_type=file_type)
+            f = cfdm.read(tmpfile, dataset_type=dataset_type)
             self.assertEqual(len(f), 1)
 
-        for file_type in ("netCDF", "bad value", ()):
-            f = cfdm.read(tmpfile, file_type=file_type)
+        for dataset_type in ("netCDF", "bad value", ()):
+            f = cfdm.read(tmpfile, dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
 
         # Not a netCDF or CDL file
         with self.assertRaises(FileTypeError):
             f = cfdm.read("test_read_write.py")
 
-        for file_type in ("netCDF", "CDL", "bad value", ()):
-            f = cfdm.read("test_read_write.py", file_type=file_type)
+        for dataset_type in ("netCDF", "CDL", "bad value", ()):
+            f = cfdm.read("test_read_write.py", dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
 
-<<<<<<< HEAD
     def test_read_zarr(self):
-        """Test the cfdm.read of a zarr dataset"""
+        """Test the cfdm.read of a zarr dataset."""
         import cfdm
-        n = cfdm.read('example_field_0.nc' )[0]
-        z = cfdm.read('example_field_0.zarr')
+
+        n = cfdm.read("example_field_0.nc")[0]
+        z = cfdm.read("example_field_0.zarr")
 
         self.assertEqual(len(z), 1)
         z = z[0]
         self.assertTrue(z.equals(n))
 
-        cfdm.write(z, tmpfile)
-        zn = cfdm.read(tmpfile)[0]
-        self.assertTrue(zn.equals(n))
-        z = cfdm.read('example_field_0.zarr')
-        print(z)
-          
-        z = cfdm.read('example_field_0.zarr', file_type='netCDF')
-        self.assertEqual(len(z), 0)
-        
-#        self.assertEqual(len(z), 0)
-        
-#    def test_read_ignore_unknown_type(self):
-#        """Test the cfdm.read 'ignore_unknown_type' keyword."""
-#        # netCDF file
-#        f = cfdm.read(self.filename)
-#        self.assertEqual(len(f), 1)
-#
-#        # Unresocgnised type
-#        f = cfdm.read("test_read_write.py", ignore_unknown_type=True)
-#        self.assertEqual(len(f), 0)
-#
-#        with self.assertRaises(UnknownFileFormatError):
-#            cfdm.read("test_read_write.py")
+        nz = cfdm.read(["example_field_0.nc", "example_field_0.zarr"])
+        self.assertEqual(len(nz), 2)
+        self.assertTrue(nz[0].equals(nz[1]))
 
-=======
->>>>>>> read-multiple_files
+        cfdm.write(z, tmpfile)
+        n2 = cfdm.read(tmpfile)[0]
+        self.assertTrue(n2.equals(n))
+
+        z = cfdm.read("example_field_0.zarr", dataset_type="netCDF")
+        self.assertEqual(len(z), 0)
+
+        z = cfdm.read("example_field_0.zarr", dataset_type="Zarr")
+        self.assertEqual(len(z), 1)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

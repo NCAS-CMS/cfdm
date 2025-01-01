@@ -566,14 +566,14 @@ class _Flattener:
             return x._parent
 
     def grouo_dimensions(self, group):
-        """TODOZARR"""
+        """TODOZARR."""
         try:
             # netCDF4, h5netcdf
-            return input_group.dimensions
+            return group.dimensions
         except AttributeError:
             # zarr TODOZARR
-            pass # meaningless?
-        
+            pass  # meaningless?
+
     def name(self, x):
         """Return the netCDF name, without its groups.
 
