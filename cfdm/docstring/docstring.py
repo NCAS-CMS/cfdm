@@ -119,6 +119,33 @@ _docstring_substitution_definitions = {
         was produced by combining other objects that also store their
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
+    # read dataset
+    "{{dataset: (arbitrarily nested sequence of) `str`}}": """dataset: (arbitrarily nested sequence of) `str`
+            A string, or arbitrarily nested sequence of strings,
+            giving the dataset names, or directory names, from which
+            to read field or doman constructs. Relative paths are
+            allowed.
+
+            Local files will have tilde and shell environment
+            variables expansions applied to them.
+
+            Directories will be walked through to find their contents
+            (recursively if *recursive* is True), unless the directory
+            contains a Zarr dataset (which is ascertained by presence
+            in the directory of appropriate Zarr metadata files).
+
+            Dataset names containing UNIX wildcard characters (``*``,
+            ``?``, ``[a-z]``, etc.) will be replaced the corresponding
+            list of matching dataset names.
+
+            Remote datasets are assumed to be binary netCDF files,
+            unless *dataset_type* is set to ``'Zarr'``.
+
+            *Example:*
+              The local file ``file.nc`` in the user's home directory
+              could be described by any of the following dataset
+              names: ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
+              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.""",
     # read external
     "{{read external: (sequence of) `str`, optional}}": """external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by

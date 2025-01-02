@@ -1214,12 +1214,11 @@ class read_writeTest(unittest.TestCase):
             "netCDF",
             ("netCDF",),
             ("netCDF", "CDL"),
-            ("netCDF", "CDL", "bad value"),
         ):
             f = cfdm.read(self.filename, dataset_type=dataset_type)
             self.assertEqual(len(f), 1)
 
-        for dataset_type in ("CDL", "bad value", ()):
+        for dataset_type in ("CDL", ("CDL", "Zarr"), ()):
             f = cfdm.read(self.filename, dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
 
@@ -1232,14 +1231,12 @@ class read_writeTest(unittest.TestCase):
         for dataset_type in (
             None,
             "CDL",
-            ("CDL",),
-            ("netCDF", "CDL"),
-            ("netCDF", "CDL", "bad value"),
+            ("CDL", "netCDF"),
         ):
             f = cfdm.read(tmpfile, dataset_type=dataset_type)
             self.assertEqual(len(f), 1)
 
-        for dataset_type in ("netCDF", "bad value", ()):
+        for dataset_type in ("netCDF", ()):
             f = cfdm.read(tmpfile, dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
 
@@ -1247,9 +1244,14 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(FileTypeError):
             f = cfdm.read("test_read_write.py")
 
-        for dataset_type in ("netCDF", "CDL", "bad value", ()):
+        for dataset_type in ("netCDF", ()):
             f = cfdm.read("test_read_write.py", dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
+
+        # Bad values
+        for dataset_type in ("bad value", ("bad value", "netCDF")):
+            with self.assertRaises(ValueError):
+                cfdm.read(self.filename, dataset_type=dataset_type)
 
     def test_read_zarr(self):
         """Test the cfdm.read of a zarr dataset."""
@@ -1275,6 +1277,49 @@ class read_writeTest(unittest.TestCase):
 
         z = cfdm.read("example_field_0.zarr", dataset_type="Zarr")
         self.assertEqual(len(z), 1)
+
+    def test_read_cdl_string(self):
+        """Test the cfdm.read 'cdl_string' keyword."""
+        f = cfdm.read("example_field_0.nc")[0]
+
+        # Test CDL in full, header-only and coordinate-only type:
+        tempfile_to_option_mapping = {
+            tmpfile: None,
+            tmpfileh: "-h",
+            tmpfilec: "-c",
+        }
+
+        for tempf, option in tempfile_to_option_mapping.items():
+            # Set up the CDL string to test...
+            command_to_run = ["ncdump", "example_field_0.nc", ">", tempf]
+            if option:
+                command_to_run.insert(1, option)
+
+            subprocess.run(" ".join(command_to_run), shell=True, check=True)
+            with open(tempf, "rt") as fh:
+                cdl_string_1 = fh.read()
+
+            for cdl_input in (cdl_string_1, (cdl_string_1,)):
+                f_from_str = cfdm.read(cdl_input, cdl_string=True)
+                self.assertEqual(len(f_from_str), 1)
+                if not option:
+                    self.assertTrue(f_from_str[0].equals(f))
+
+        # Check compatibility with the 'dataset_type' kwarg.
+        f_from_str = cfdm.read(
+            cdl_string_1, cdl_string=True, dataset_type="CDL"
+        )
+        self.assertEqual(len(f_from_str), 1)
+
+        with self.assertRaises(ValueError):
+            cfdm.read(cdl_string_1, cdl_string=True, dataset_type="netCDF")
+
+        # If the user forgets the cdl_string=True argument they will
+        # accidentally attempt to create a file with a very long name
+        # of the CDL string, which will in most, if not all, cases
+        # result in an "OSError: [Errno 36] File name too long" error:
+        with self.assertRaises(OSError):
+            cfdm.read(cdl_string_1)
 
 
 if __name__ == "__main__":

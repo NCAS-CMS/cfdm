@@ -24,22 +24,6 @@ class read(ReadWrite):
     The returned constructs are sorted by the netCDF variable names of
     their corresponding data or domain variables.
 
-    **CDL files**
-
-    A file is considered to be a CDL representation of a netCDF
-    dataset if it is a text file whose first non-comment line starts
-    with the seven characters "netcdf " (six letters followed by a
-    space). A comment line is identified as one which starts with any
-    amount white space (including none) followed by "//" (two
-    slashes). It is converted to a temporary netCDF4 file using the
-    external ``ncgen`` command, and the temporary file persists until
-    the end of the Python session, at which time it is automatically
-    deleted. The CDL file may omit data array values (as would be the
-    case, for example, if the file was created with the ``-h`` or
-    ``-c`` option to ``ncdump``), in which case the the relevant
-    constructs in memory will be created with data with all missing
-    values.
-
     **NetCDF unlimited dimensions**
 
     Domain axis constructs that correspond to NetCDF unlimited
@@ -81,6 +65,25 @@ class read(ReadWrite):
     constructs, as well as optionally displayed when the dataset is
     read by setting the *warnings* parameter.
 
+    **CDL files**
+
+    A file is considered to be a CDL representation of a netCDF
+    dataset if it is a text file whose first non-comment line starts
+    with the seven characters "netcdf " (six letters followed by a
+    space). A comment line is identified as one which starts with any
+    amount white space (including none) followed by "//" (two
+    slashes). It is converted to a temporary netCDF4 file using the
+    external ``ncgen`` command, and the temporary file persists until
+    the end of the Python session, at which time it is automatically
+    deleted. The CDL file may omit data array values (as would be the
+    case, for example, if the file was created with the ``-h`` or
+    ``-c`` option to ``ncdump``), in which case the the relevant
+    constructs in memory will be created with data with all missing
+    values.
+
+    **Zarr files**
+
+    TODOZARR
 
     **Performance**
 
@@ -95,17 +98,7 @@ class read(ReadWrite):
 
     :Parameters:
 
-        filename: `str`
-            The file name or OPenDAP URL of the dataset.
-
-            Relative paths are allowed, and standard tilde and shell
-            parameter expansions are applied to the string.
-
-            *Parameter example:*
-              The file ``file.nc`` in the user's home directory could
-              be described by any of the following:
-              ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
-              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
+        {{read dataset: (arbitrarily nested sequence of) `str`}}
 
         {{read external: (sequence of) `str`, optional}}
 
@@ -251,6 +244,7 @@ class read(ReadWrite):
         self = super().__new__(cls)
         self.kwargs = kwargs
 
+        # Actions to take before any datasets have been read
         self._initialise()
 
         # Loop round the input datasets
@@ -260,16 +254,10 @@ class read(ReadWrite):
             self._read(dataset)
             self._post_read(dataset)
 
-            # Add this dataset's contents to that already read from
-            # other datasets.
-            #
-            # Note:
-            #
-            # * 'self.constructs' is defined in `_initialise`
-            # * 'self.dataset_contents' is initialised in `_pre_read` and
-            #    updated in `_read`
+            # Add its contents to the output list
             self.constructs.extend(self.dataset_contents)
-
+        
+        # Actions to take after all datasets have been read
         self._finalise()
 
         if is_log_level_info(logger):
@@ -311,13 +299,22 @@ class read(ReadWrite):
         recursive = kwargs.get("recursive", False)
         followlinks = kwargs.get("followlinks", False)
 
+        datasets = self._flat(kwargs["datasets"])
+        if kwargs["cdl_string"]:
+            # Return CDL strings as they are
+            for dataset1 in datasets:
+                # This is a CDL string
+                yield dataset1
+
+            return
+
         if followlinks and not recursive:
             raise ValueError(
                 f"Can't set followlinks={followlinks!r} when "
                 f"recursive={recursive!r}"
             )
 
-        for datasets1 in self._flat(kwargs["datasets"]):
+        for datasets1 in datasets:
             datasets1 = expanduser(expandvars(datasets1))
 
             u = urisplit(datasets1)
@@ -399,7 +396,7 @@ class read(ReadWrite):
         """
         kwargs = self.kwargs
 
-        # Parse the 'file_type' keyword parameter
+        # Parse the 'dataset_type' keyword parameter
         dataset_type = kwargs.get("dataset_type")
         if dataset_type is None:
             self.dataset_type = None
@@ -410,7 +407,7 @@ class read(ReadWrite):
             self.dataset_type = set(dataset_type)
 
         # Recognised netCDF datsets formats
-        self.netCDF_file_types = set(("netCDF", "CDL", "Zarr"))
+        self.netCDF_dataset_types = set(("netCDF", "CDL", "Zarr"))
 
         # The output construct type
         self.domain = bool(kwargs["domain"])
@@ -483,7 +480,9 @@ class read(ReadWrite):
 
         """
         dataset_type = self.dataset_type
-        if dataset_type is None or dataset_type.intersection(self.netCDF_file_types):
+        if dataset_type is None or dataset_type.intersection(
+            self.netCDF_dataset_types
+        ):
             # --------------------------------------------------------
             # Try to read as a netCDF dataset
             # --------------------------------------------------------
@@ -512,6 +511,7 @@ class read(ReadWrite):
                         "squeeze",
                         "unsqueeze",
                         "dataset_type",
+                        "cdl_string",
                         "extra_read_vars",
                     )
                 }
