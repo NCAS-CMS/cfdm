@@ -73,7 +73,7 @@ def cfdm_harden_mask(a):
     :Parameters:
 
         a: `numpy.ndarray`
-            The array to have a hardened mask.
+            The array to give a hardened mask.
 
     :Returns:
 
@@ -103,7 +103,7 @@ def cfdm_soften_mask(a):
     :Parameters:
 
         a: `numpy.ndarray`
-            The array to have a softened mask.
+            The array to give a softened mask.
 
     :Returns:
 

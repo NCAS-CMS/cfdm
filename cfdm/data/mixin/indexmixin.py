@@ -15,7 +15,7 @@ class IndexMixin:
 
     **Examples**
 
-    >>> a = cf.{{class}}(....)
+    >>> a = {{package}}.{{class}}(...)
     >>> a.shape
     (6, 5)
     >>> print(np.asanyarray(a)

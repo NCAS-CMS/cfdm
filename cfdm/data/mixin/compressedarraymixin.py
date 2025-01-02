@@ -64,7 +64,7 @@ class CompressedArrayMixin:
 
                 The chunk sizes implied by *chunks* for a dimension that
                 has been fragmented are ignored and replaced with values
-                that are implied by that dimensions fragment sizes.
+                that are implied by that dimension's fragment sizes.
 
         :Returns:
 

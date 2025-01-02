@@ -585,7 +585,7 @@ _docstring_substitution_definitions = {
 
                 By default, ``"auto"`` is used to specify the array
                 chunking, which uses a chunk size in bytes defined by
-                the `cf.chunksize` function, preferring square-like
+                the `{{package}}.chunksize` function, preferring square-like
                 chunk shapes.
 
                 *Parameter example:*
@@ -620,7 +620,7 @@ _docstring_substitution_definitions = {
     # block_size_limit
     "{{block_size_limit: `int`, optional}}": """block_size_limit: `int`, optional
                 The maximum block size (in bytes) we want to produce,
-                as defined by the `cf.chunksize` function.""",
+                as defined by the `{{package}}.chunksize` function.""",
     # balance
     "{{balance: `bool`, optional}}": """balance: `bool`, optional
                 If True, try to make each chunk the same size. By

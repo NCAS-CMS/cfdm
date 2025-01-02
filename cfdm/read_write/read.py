@@ -347,7 +347,7 @@ def read(
             * ``'storage-aligned'``
 
               This is the default. The Dask chunk size in bytes will
-              be as close as possible the size given by
+              be as close as possible to the size given by
               `cfdm.chunksize`, favouring square-like chunk shapes,
               with the added restriction that the entirety of each
               storage chunk must also lie within exactly one Dask
