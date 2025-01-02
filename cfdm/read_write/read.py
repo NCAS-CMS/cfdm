@@ -12,6 +12,7 @@ from .netcdf import NetCDFRead
 
 logger = getLogger(__name__)
 
+
 class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
@@ -255,7 +256,7 @@ class read(ReadWrite):
 
             # Add its contents to the output list
             self.constructs.extend(self.dataset_contents)
-        
+
         # Actions to take after all datasets have been read
         self._finalise()
 
@@ -436,7 +437,7 @@ class read(ReadWrite):
         # Raise any unknown-format errors
         if self.dataset_format_errors:
             error = "\n".join(map(str, self.dataset_format_errors))
-            raise FileTypeError(f"\n{error}")
+            raise DatasetTypeError(f"\n{error}")
 
     def _pre_read(self, dataset):
         """Actions to take immediately before reading a given dataset.
@@ -520,7 +521,7 @@ class read(ReadWrite):
                 self.dataset_contents = self.netcdf_read(
                     dataset, **self.netcdf_kwargs
                 )
-            except FileTypeError as error:
+            except DatasetTypeError as error:
                 if dataset_type is None:
                     self.dataset_format_errors.append(error)
             else:

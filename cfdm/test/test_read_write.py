@@ -1321,6 +1321,7 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(OSError):
             cfdm.read(cdl_string_1)
 
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()

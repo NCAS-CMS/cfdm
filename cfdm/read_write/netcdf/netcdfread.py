@@ -1119,7 +1119,7 @@ class NetCDFRead(IORead):
             # Can't interpret the dataset as a recognised type, so
             # either raise an exception or return an empty list.
             if dataset_type is None:
-                raise FileTypeError(
+                raise DatasetTypeError(
                     f"Can't interpret {dataset} as a dataset of one of the "
                     f"valid types: {valid_dataset_types!r}"
                 )

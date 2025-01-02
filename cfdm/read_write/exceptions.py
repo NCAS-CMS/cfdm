@@ -1,7 +1,7 @@
 """Custom exceptions for read/write errors."""
 
 
-class DatasetypeError(Exception):
+class DatasetTypeError(Exception):
     """Raised when an input dataset is of an unknown type."""
 
 
