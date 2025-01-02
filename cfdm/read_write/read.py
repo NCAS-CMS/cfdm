@@ -7,11 +7,10 @@ from uritools import urisplit
 
 from ..functions import is_log_level_info
 from .abstract import ReadWrite
-from .exceptions import FileTypeError
+from .exceptions import DatasetTypeError
 from .netcdf import NetCDFRead
 
 logger = getLogger(__name__)
-
 
 class read(ReadWrite):
     """Read field or domain constructs from a dataset.

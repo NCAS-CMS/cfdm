@@ -28,7 +28,7 @@ from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
-from ..exceptions import FileTypeError, ReadError
+from ..exceptions import DatasetTypeError, ReadError
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -586,7 +586,7 @@ class NetCDFRead(IORead):
                 dataset = f"{dataset} (created from CDL file {cdl_filename})"
 
             error = "\n\n".join(errors)
-            raise FileTypeError(
+            raise DatasetTypeError(
                 f"Can't interpret {dataset} as a netCDF dataset"
                 f"with any of the netCDF backends {netcdf_backend!r}:\n\n"
                 f"{error}"
@@ -1009,9 +1009,9 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            store_hdf_chunks: `bool`, optional
-                 Storing the dataset chunking strategy. See
-                 `cfdm.read` for details.
+            store_dataset_chunks: `bool`, optional
+                 Store the dataset chunking strategy. See `cfdm.read`
+                 for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1423,7 +1423,7 @@ class NetCDFRead(IORead):
             # Dask chunking of aggregated data for selected constructs
             "cfa_write": cfa_write,
             # --------------------------------------------------------
-            # Whether or not to store HDF chunks
+            # Whether or not to store the dataset chunking strategy
             # --------------------------------------------------------
             "store_dataset_chunks": bool(store_dataset_chunks),
             # --------------------------------------------------------
@@ -1454,7 +1454,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         try:
             nc = self.file_open(dataset, flatten=True, verbose=None)
-        except FileTypeError:
+        except DatasetTypeError:
             if not g["ignore_unknown_type"]:
                 raise
 
@@ -11361,10 +11361,7 @@ class NetCDFRead(IORead):
         the first and last elements of a large array on disk
         (e.g. shape (1, 75, 1207, 1442)) is slow (e.g. ~2 seconds) and
         doesn't scale well with array size (i.e. it takes
-        disproportionally longer for larger arrays). Such arrays are
-        usually in field constructs, for which `cf.aggregate` does not
-        need to know any array values, so this method should be used
-        with caution, if at all, on field construct data.
+        disproportionally longer for larger arrays).
 
         .. versionadded:: (cfdm) NEXTVERSION
 

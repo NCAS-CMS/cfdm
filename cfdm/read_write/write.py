@@ -1,14 +1,11 @@
-from collections.abc import Iterable
-
 import numpy as np
 
 from ..cfdmimplementation import implementation
-from ..core import DocstringRewriteMeta
-from ..docstring import _docstring_substitution_definitions
+from .abstract import ReadWrite
 from .netcdf import NetCDFWrite
 
 
-class write(metaclass=DocstringRewriteMeta):
+class write(ReadWrite):
     """Write field and domain constructs to a netCDF file.
 
     **File format**
@@ -67,12 +64,12 @@ class write(metaclass=DocstringRewriteMeta):
     netCDF interface will, by default, be recreated in the output
     dataset. See the *group* parameter for details.
 
-    **NetCDF4 HDF5 chunks**
+    **NetCDF4 dataset chunks**
 
-    HDF5 chunking is configured by the *hdf5_chunks* parameter, which
-    defines the chunking strategy for all output data, including the
-    option of no chunking. However, this will be overridden for any
-    data that defines its own chunking strategy. See
+    Dataset chunking is configured by the *dataset_chunks* parameter,
+    which defines the chunking strategy for all output data, including
+    the option of no chunking. However, this will be overridden for
+    any data that defines its own chunking strategy. See
     `{{package}}.Field.nc_set_hdf5_chunksizes`,
     `{{package}}.Data.nc_set_hdf5_chunksizes`, and `{{package}}.read`.
 
@@ -511,34 +508,34 @@ class write(metaclass=DocstringRewriteMeta):
 
             .. versionadded:: (cfdm) 1.10.0.1
 
-        hdf5_chunks: `str` or `int` or `float`, optional
-            The HDF5 chunking strategy for data arrays being written
+        dataset_chunks: `str` or `int` or `float`, optional
+            The dataset chunking strategy for data arrays being written
             to the file.
 
-            By default, *hdf5_chunks* is ``'4 MiB'``, i.e. 4194304
+            By default, *dataset_chunks* is ``'4 MiB'``, i.e. 4194304
             bytes.
 
-            If any `Data` being written already stores its own
+            If any `Data` being written already stores its own dataset
             chunking strategy (i.e. its `Data.nc_hdf5_chunksizes`
             method returns something other than `None`) then, for that
             data array alone, it is used in preference to the strategy
-            defined by the *hdf5_chunks* parameter.
+            defined by the *dataset_chunks* parameter.
 
             Ignored for netCDF3 output formats, for which all data is
             always written out contiguously.
 
             .. note:: By default, a data array returned by
-                      `{{package}}.read` stores its HDF5 chunking
+                      `{{package}}.read` stores its dataset chunking
                       strategy from the file being read. When this
-                      happens that same HDF5 chunking strategy will be
-                      used when the data is written to a new netCDF4
-                      file, unless the strategy was modified or
-                      removed prior to writing. To prevent the HDF5
-                      chunking strategy from the original file being
-                      stored, see the *store_hdf5_chunks* parameter to
-                      `{{package}}.read`.
+                      happens that same dataset chunking strategy will
+                      be used when the data is written to a new
+                      netCDF4 file, unless the strategy was modified
+                      or removed prior to writing. To prevent the
+                      dataset chunking strategy from the original file
+                      being stored, see the *store_dataset_chunks*
+                      parameter to `{{package}}.read`.
 
-            The *hdf5_chunks* parameter may be one of:
+            The *dataset_chunks* parameter may be one of:
 
             * ``'contiguous'``
 
@@ -547,9 +544,9 @@ class write(metaclass=DocstringRewriteMeta):
 
             * `int` or `float` or `str`
 
-              The size in bytes of the HDF5 chunks. A floating point
-              value is rounded down to the nearest integer, and a
-              string represents a quantity of byte
+              The size in bytes of the dataset chunks. A floating
+              point value is rounded down to the nearest integer, and
+              a string represents a quantity of byte
               units. "Square-like" chunk shapes are preferred,
               maximising the amount of chunks that are completely
               filled with data values. For instance a chunksize of
@@ -560,29 +557,31 @@ class write(metaclass=DocstringRewriteMeta):
               ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
               ``TB``, and ``PB``. Spaces in strings are optional.
 
-            .. note:: When the HDF5 chunk size is defined by a number
-                      of bytes (taken either from the *hdf5_chunks*
-                      parameter, or as stored by the data itself),
-                      "square-like" HDF5 chunk shapes are preferred
-                      that maximise the amount of chunks that are
-                      completely filled with data values. For example,
-                      with *hdf_chunks* of ``'4 MiB'``, a data array
-                      of 64-bit floats with shape (400, 300, 60) will
-                      be written with 20 HDF5 chunks, each of which
-                      contians (93, 93, 60) elements. The first axis
-                      is split across 5 chunks, the second axis across
-                      4 chunks, and the third axis across 1 chunk
-                      containing 60 elements. 12 of these chunks are
-                      completely filled with 93*93*60 data values
-                      (93*93*60*8 B = 3.9592 MiB), whilst the
-                      remaining 8 chunks at the "edges" of the array
-                      contain only 93*21*60, 28*93*60, or 28*21*60
-                      data values. The shape of the HDF5 chunks is
-                      based on the shape of the data aray and its data
-                      type, and is calculated internally with the
-                      `dask.array.core.bormalize_chunks` function. The
+            .. note:: When the dataset chunk size is defined by a
+                      number of bytes (taken either from the
+                      *dataset_chunks* parameter, or as stored by the
+                      data itself), "square-like" dataset chunk shapes
+                      are preferred that maximise the amount of chunks
+                      that are completely filled with data values. For
+                      example, with *dataset_chunks* of ``'4 MiB'``, a
+                      data array of 64-bit floats with shape (400,
+                      300, 60) will be written with 20 dataset chunks,
+                      each of which contians (93, 93, 60)
+                      elements. The first axis is split across 5
+                      chunks, the second axis across 4 chunks, and the
+                      third axis across 1 chunk containing 60
+                      elements. 12 of these chunks are completely
+                      filled with 93*93*60 data values (93*93*60*8 B =
+                      3.9592 MiB), whilst the remaining 8 chunks at
+                      the "edges" of the array contain only 93*21*60,
+                      28*93*60, or 28*21*60 data values. The shape of
+                      the dataset chunks is based on the shape of the
+                      data aray and its data type, and is calculated
+                      internally with the
+                      `dask.array.core.normalize_chunks` function. The
                       use of native compression (see the *compress*
-                      parameter) does not affect the HDF5 chunk size.
+                      parameter) does not affect the dataset chunk
+                      size.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -760,7 +759,7 @@ class write(metaclass=DocstringRewriteMeta):
         group=True,
         coordinates=False,
         omit_data=None,
-        hdf5_chunks="4 MiB",
+        dataset_chunks="4 MiB",
         cfa="auto",
         extra_write_vars=None,
     ):
@@ -822,78 +821,6 @@ class write(metaclass=DocstringRewriteMeta):
             coordinates=coordinates,
             extra_write_vars=extra_write_vars,
             omit_data=omit_data,
-            hdf5_chunks=hdf5_chunks,
+            dataset_chunks=dataset_chunks,
             cfa=cfa,
         )
-
-    def __docstring_substitutions__(self):
-        """Defines applicable docstring substitutions.
-
-        Substitutons are considered applicable if they apply to this
-        class as well as all of its subclasses.
-
-        These are in addtion to, and take precendence over, docstring
-        substitutions defined by the base classes of this class.
-
-        See `_docstring_substitutions` for details.
-
-        .. versionaddedd:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `dict`
-                The docstring substitutions that have been applied.
-
-        """
-        return _docstring_substitution_definitions
-
-    def __docstring_package_depth__(self):
-        """Returns the package depth for {{package}} substitutions.
-
-        See `_docstring_package_depth` for details.
-
-        .. versionaddedd:: (cfdm) NEXTVERSION
-
-        """
-        return 0
-
-    @classmethod
-    def _flat(cls, x):
-        """Return an iterator over an arbitrarily nested sequence.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            x: scalar or arbitrarily nested sequence
-                The arbitrarily nested sequence to be flattened. Note
-                that a If *x* is a string or a scalar then this is
-                equivalent to passing a single element sequence
-                containing *x*.
-
-        :Returns:
-
-            generator
-                An iterator over the flattened sequence.
-
-        **Examples**
-
-        >>> list({{package}}.write._flat([1, (2, [3, 4])]))
-        [1, 2, 3, 4]
-
-        >>> list({{package}}.write._flat(['a', ['bc', ['def', 'ghij']]]))
-        ['a', 'bc', 'def', 'ghij']
-
-        >>> list({{package}}.write._flat(2004))
-        [2004]
-
-        """
-        if not isinstance(x, Iterable) or isinstance(x, str):
-            x = (x,)
-
-        for a in x:
-            if not isinstance(a, str) and isinstance(a, Iterable):
-                for sub in cls._flat(a):
-                    yield sub
-            else:
-                yield a

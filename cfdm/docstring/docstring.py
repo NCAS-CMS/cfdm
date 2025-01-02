@@ -524,11 +524,12 @@ _docstring_substitution_definitions = {
             chunking strategy is then accessible via an object's
             `nc_hdf5_chunksizes` method. When the dataset chunking
             strategy is stored, it will be used when the data is
+
             written to a new netCDF file with `{{package}}.write`
             (unless the strategy is modified prior to writing).
 
             If False, or if the dataset being read does not support
-            chunking (such as a netCDF3 dataset), then no dataset
+            chunking (such as a netCDF-3 dataset), then no dataset
             chunking strategy is stored (i.e. an `nc_hdf5_chunksizes`
             method will return `None` for all `Data` objects). In this
             case, when the data is written to a new netCDF file, the
@@ -1131,7 +1132,7 @@ _docstring_substitution_definitions = {
 
                 By default, ``"auto"`` is used to specify the array
                 chunking, which uses a chunk size in bytes defined by
-                the `cf.chunksize` function, preferring square-like
+                the `{{package}}.chunksize` function, preferring square-like
                 chunk shapes.
 
                 *Parameter example:*
@@ -1166,7 +1167,7 @@ _docstring_substitution_definitions = {
     # block_size_limit
     "{{block_size_limit: `int`, optional}}": """block_size_limit: `int`, optional
                 The maximum block size (in bytes) we want to produce,
-                as defined by the `cf.chunksize` function.""",
+                as defined by the `{{package}}.chunksize` function.""",
     # balance
     "{{balance: `bool`, optional}}": """balance: `bool`, optional
                 If True, try to make each chunk the same size. By

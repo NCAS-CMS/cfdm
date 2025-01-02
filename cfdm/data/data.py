@@ -66,7 +66,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
     **Indexing**
 
-    A data array is indexable in a similar way to numpy array:
+    A data array is indexable in a similar way to a numpy array:
 
     >>> d.shape
     (12, 19, 73, 96)
@@ -161,7 +161,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 The array of values. May be a scalar or array-like
                 object, including another `Data` instance, anything
                 with a `!to_dask_array` method, `numpy` array, `dask`
-                array, `xarray` array, `cf.Array` subclass, `list`,
+                array, `xarray` array, `{{package}}.Array` subclass, `list`,
                 `tuple`, scalar.
 
                 *Parameter example:*
@@ -1587,7 +1587,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         # ------------------------------------------------------------
         # Ensure other is an independent Data object, for example
-        # so that combination with cf.Query objects works.
+        # so that combination with downstream cf.Query objects works.
         # ------------------------------------------------------------
         if not isinstance(other, cls):
             if other is None:
@@ -2709,7 +2709,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         ca = self._get_Array(None)
         if ca is None or not ca.get_compression_type():
-            raise ValueError("not compressed: can't get compressed array")
+            raise ValueError("Not compressed: can't get compressed array")
 
         return ca.compressed_array
 
@@ -3041,7 +3041,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         >>> d = {{package}}.Data([3])
         >>> d.ndim
-        12
+        1
 
         >>> d = {{package}}.Data(3)
         >>> d.ndim
@@ -3293,7 +3293,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> d.all(axis=())
         <{{repr}}Data(2, 2): [[True, ..., True]]>
 
-        >>> d[0] = cf.masked
+        >>> d[0] = {{package}}.masked
         >>> d[1, 0] = 0
         >>> print(d.array)
         [[-- --]
@@ -3303,7 +3303,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> d.all(axis=1)
         <{{repr}}Data(2, 1): [[--, False]]>
 
-        >>> d[...] = cf.masked
+        >>> d[...] = {{package}}.masked
         >>> d.all()
         <{{repr}}Data(1, 1): [[--]]>
         >>> bool(d.all())
@@ -6473,7 +6473,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             limit: int, optional
                 The maximum block size to target in bytes. If no limit
                 is provided, it defaults to a size in bytes defined by
-                the `cf.chunksize` function.
+                the `{{package}}.chunksize` function.
 
             {{inplace: `bool`, optional}}
 

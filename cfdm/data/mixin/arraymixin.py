@@ -7,7 +7,7 @@ from cfunits import Units
 class ArrayMixin:
     """Mixin class for a container of an array.
 
-    .. versionadded::  (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
