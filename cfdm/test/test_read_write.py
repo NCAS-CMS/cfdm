@@ -996,7 +996,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_url(self):
         """Test reading urls."""
-        return
+        return  # skip flaky test until it is made robust
         for scheme in ("http", "https"):
             remote = f"{scheme}://psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
             # Check that cfdm can access it
