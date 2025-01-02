@@ -362,7 +362,7 @@ def convert_to_reftime(a, units=None, first_value=None):
             units = Units(d_units, calendar=d_calendar)
 
         # Convert the date-time objects to reference times
-        a = a.map_blocks(dt2rt, units_in=None, units_out=units, dtype=float)
+        a = a.map_blocks(dt2rt, units_out=units, dtype=float)
 
     if not units.isreftime:
         raise ValueError(
@@ -755,7 +755,7 @@ def normalize_chunks(chunks, shape=None, dtype=None):
     return tuple(out)
 
 
-def dt2rt(array, units_in, units_out, dummy1=None):
+def dt2rt(array, units_out):
     """Return numeric time values from datetime objects.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -768,16 +768,10 @@ def dt2rt(array, units_in, units_out, dummy1=None):
             The datetime objects must be in UTC with no time-zone
             offset.
 
-      units_in:
-            Ignored.
-
         units_out: `Units`
             The units of the numeric time values. If there is a
             time-zone offset in *units_out*, it will be applied to the
             returned numeric values.
-
-        dummy1:
-            Ignored.
 
     :Returns:
 
@@ -789,7 +783,6 @@ def dt2rt(array, units_in, units_out, dummy1=None):
     >>> print(
     ...   cfdm.data.utils.dt2rt(
     ...     np.ma.array([0, cftime.DatetimeGregorian(2001, 11, 16, 12)], mask=[True, False]),
-    ...     None,
     ...     units_out=cfdm.Units('days since 2000-01-01')
     ...   )
     ... )
@@ -811,7 +804,7 @@ def dt2rt(array, units_in, units_out, dummy1=None):
     return array
 
 
-def rt2dt(array, units_in, units_out=None, dummy1=None):
+def rt2dt(array, units_in):
     """Convert reference times to date-time objects.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -825,12 +818,6 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
         array: numpy array-like
 
         units_in: `Units`
-
-        units_out: *optional*
-            Ignored.
-
-        dummy1:
-            Ignored.
 
     :Returns:
 
@@ -904,7 +891,7 @@ def st2datetime(date_string, calendar=None):
     )
 
 
-def st2dt(array, units_in=None, dummy0=None, dummy1=None):
+def st2dt(array, units_in=None):
     """The returned array is always independent.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -914,12 +901,6 @@ def st2dt(array, units_in=None, dummy0=None, dummy1=None):
         array: numpy array-like
 
         units_in: `Units`, optional
-
-        dummy0: optional
-            Ignored.
-
-        dummy1: optional
-            Ignored.
 
     :Returns:
 
@@ -934,7 +915,7 @@ def st2dt(array, units_in=None, dummy0=None, dummy1=None):
     return np.vectorize(func, otypes=[object])(array)
 
 
-def st2rt(array, units_in, units_out, dummy1=None):
+def st2rt(array, units_in, units_out):
     """The returned array is always independent.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -947,9 +928,6 @@ def st2rt(array, units_in, units_out, dummy1=None):
 
         units_out: `Units`
 
-        dummy1:
-            Ignored.
-
     :Returns:
 
         `numpy.ndarray`
@@ -957,4 +935,4 @@ def st2rt(array, units_in, units_out, dummy1=None):
 
     """
     array = st2dt(array, units_in)
-    return dt2rt(array, None, units_out)
+    return dt2rt(array, units_out)

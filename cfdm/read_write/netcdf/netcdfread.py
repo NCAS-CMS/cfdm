@@ -26,7 +26,7 @@ from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
-from ..exceptions import UnknownFileFormatError as FileTypeError
+from ..exceptions import DatasetTypeError
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -575,7 +575,7 @@ class NetCDFRead(IORead):
                 filename = f"{filename} (created from CDL file {cdl_filename})"
 
             error = "\n\n".join(errors)
-            raise FileTypeError(
+            raise DatasetTypeError(
                 f"Can't interpret {filename} as a netCDF dataset"
                 f"with any of the netCDF backends {netcdf_backend!r}:\n\n"
                 f"{error}"
@@ -1032,12 +1032,12 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         ftype = self.ftype(filename)
         if not ftype:
-            raise FileTypeError(
+            raise DatasetTypeError(
                 f"Can't interpret {filename} as a netCDF or CDL dataset"
             )
 
         if file_type and ftype not in file_type:
-            raise FileTypeError(
+            raise DatasetTypeError(
                 f"Can't interpret {filename} as one of the "
                 f"requested types: {file_type}"
             )
@@ -1345,7 +1345,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         try:
             nc = self.file_open(filename, flatten=True, verbose=None)
-        except FileTypeError:
+        except DatasetTypeError:
             if not g["ignore_unknown_type"]:
                 raise
 
@@ -11138,10 +11138,7 @@ class NetCDFRead(IORead):
         the first and last elements of a large array on disk
         (e.g. shape (1, 75, 1207, 1442)) is slow (e.g. ~2 seconds) and
         doesn't scale well with array size (i.e. it takes
-        disproportionally longer for larger arrays). Such arrays are
-        usually in field constructs, for which `cf.aggregate` does not
-        need to know any array values, so this method should be used
-        with caution, if at all, on field construct data.
+        disproportionally longer for larger arrays).
 
         .. versionadded:: (cfdm) NEXTVERSION
 

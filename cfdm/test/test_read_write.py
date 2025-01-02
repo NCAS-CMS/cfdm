@@ -13,7 +13,7 @@ import numpy as np
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-from cfdm.read_write.exceptions import UnknownFileFormatError
+from cfdm.read_write.exceptions import DatasetTypeError
 
 warnings = False
 
@@ -646,7 +646,7 @@ class read_writeTest(unittest.TestCase):
             )
         )
 
-        with self.assertRaises(UnknownFileFormatError):
+        with self.assertRaises(DatasetTypeError):
             cfdm.read("test_read_write.py")
 
         # TODO: make portable instead of skipping on Mac OS (see Issue #25):
@@ -888,7 +888,7 @@ class read_writeTest(unittest.TestCase):
         tmpfiles.append(tmpfile)
         subprocess.run(f"touch {tmpfile}", shell=True, check=True)
 
-        with self.assertRaises(UnknownFileFormatError):
+        with self.assertRaises(DatasetTypeError):
             cfdm.read(tmpfile)
 
     def test_read_subsampled_coordinates(self):
@@ -1024,7 +1024,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_url(self):
         """Test reading urls."""
-        return
+        return  # skip flaky test until it is made robust
         for scheme in ("http", "https"):
             remote = f"{scheme}://psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
             # Check that cfdm can access it
@@ -1249,26 +1249,12 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(len(f), 0)
 
         # Not a netCDF or CDL file
-        with self.assertRaises(UnknownFileFormatError):
+        with self.assertRaises(DatasetTypeError):
             f = cfdm.read("test_read_write.py")
 
         for file_type in ("netCDF", "CDL", "bad value"):
             f = cfdm.read("test_read_write.py", file_type=file_type)
             self.assertEqual(len(f), 0)
-
-
-#    def test_read_ignore_unknown_type(self):
-#        """Test the cfdm.read 'ignore_unknown_type' keyword."""
-#        # netCDF file
-#        f = cfdm.read(self.filename)
-#        self.assertEqual(len(f), 1)
-#
-#        # Unresocgnised type
-#        f = cfdm.read("test_read_write.py", ignore_unknown_type=True)
-#        self.assertEqual(len(f), 0)
-#
-#        with self.assertRaises(UnknownFileFormatError):
-#            cfdm.read("test_read_write.py")
 
 
 if __name__ == "__main__":
