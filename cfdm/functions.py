@@ -1804,20 +1804,20 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
     **Examples**
 
-    >>> cf._numpy_allclose([1, 2], [1, 2])
+    >>> cfdm._numpy_allclose([1, 2], [1, 2])
     True
-    >>> cf._numpy_allclose(numpy.array([1, 2]), numpy.array([1, 2]))
+    >>> cfdm._numpy_allclose(numpy.array([1, 2]), numpy.array([1, 2]))
     True
-    >>> cf._numpy_allclose([1, 2], [1, 2, 3])
+    >>> cfdm._numpy_allclose([1, 2], [1, 2, 3])
     False
-    >>> cf._numpy_allclose([1, 2], [1, 4])
+    >>> cfdm._numpy_allclose([1, 2], [1, 4])
     False
 
     >>> a = numpy.ma.array([1])
     >>> b = numpy.ma.array([2])
     >>> a[0] = numpy.ma.masked
     >>> b[0] = numpy.ma.masked
-    >>> cf._numpy_allclose(a, b)
+    >>> cfdm._numpy_allclose(a, b)
     True
 
     """
@@ -1878,7 +1878,7 @@ def indices_shape(indices, full_shape, keepdims=True):
 
     .. versionadded:: (cfdm) NEXTVERSION
 
-    .. seealso:: `cf.parse_indices`
+    .. seealso:: `cfdm.parse_indices`
 
     :Parameters:
 
@@ -1903,46 +1903,46 @@ def indices_shape(indices, full_shape, keepdims=True):
     >>> import numpy as np
     >>> import dask.array as da
 
-    >>> cf.indices_shape((slice(2, 5), 4), (10, 20))
+    >>> cfdm.indices_shape((slice(2, 5), 4), (10, 20))
     [3, 1]
-    >>> cf.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
+    >>> cfdm.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
     [3, 5]
 
     >>> index0 = [False] * 5
     >>> index0[2:5] = [True] * 3
-    >>> cf.indices_shape((index0, da.arange(1, 6)), (10, 20))
+    >>> cfdm.indices_shape((index0, da.arange(1, 6)), (10, 20))
     [3, 5]
 
     >>> index0 = da.full((5,), False, dtype=bool)
     >>> index0[2:5] = True
     >>> index1 = np.full((6,), False, dtype=bool)
     >>> index1[1:6] = True
-    >>> cf.indices_shape((index0, index1), (10, 20))
+    >>> cfdm.indices_shape((index0, index1), (10, 20))
     [3, 5]
 
     >>> index0 = da.arange(5)
     >>> index0 = index0[index0 < 3]
-    >>> cf.indices_shape((index0, []), (10, 20))
+    >>> cfdm.indices_shape((index0, []), (10, 20))
     [3, 0]
 
-    >>> cf.indices_shape((da.from_array(2), np.array(3)), (10, 20))
+    >>> cfdm.indices_shape((da.from_array(2), np.array(3)), (10, 20))
     [1, 1]
-    >>> cf.indices_shape((da.from_array([]), np.array(())), (10, 20))
+    >>> cfdm.indices_shape((da.from_array([]), np.array(())), (10, 20))
     [0, 0]
-    >>> cf.indices_shape((slice(1, 5, 3), 3), (10, 20))
+    >>> cfdm.indices_shape((slice(1, 5, 3), 3), (10, 20))
     [2, 1]
-    >>> cf.indices_shape((slice(5, 1, -2), 3), (10, 20))
+    >>> cfdm.indices_shape((slice(5, 1, -2), 3), (10, 20))
     [2, 1]
-    >>> cf.indices_shape((slice(5, 1, 3), 3), (10, 20))
+    >>> cfdm.indices_shape((slice(5, 1, 3), 3), (10, 20))
     [0, 1]
-    >>> cf.indices_shape((slice(1, 5, -3), 3), (10, 20))
+    >>> cfdm.indices_shape((slice(1, 5, -3), 3), (10, 20))
     [0, 1]
 
-    >>> cf.indices_shape((slice(2, 5), 4), (10, 20), keepdims=False)
+    >>> cfdm.indices_shape((slice(2, 5), 4), (10, 20), keepdims=False)
     [3]
-    >>> cf.indices_shape((da.from_array(2), 3), (10, 20), keepdims=False)
+    >>> cfdm.indices_shape((da.from_array(2), 3), (10, 20), keepdims=False)
     []
-    >>> cf.indices_shape((2, np.array(3)), (10, 20), keepdims=False)
+    >>> cfdm.indices_shape((2, np.array(3)), (10, 20), keepdims=False)
     []
 
     """
@@ -2016,17 +2016,17 @@ def parse_indices(shape, indices, keepdims=True):
 
     **Examples**
 
-    >>> cf.parse_indices((5, 8), ([1, 2, 4, 6],))
+    >>> cfdm.parse_indices((5, 8), ([1, 2, 4, 6],))
     [array([1, 2, 4, 6]), slice(None, None, None)]
-    >>> cf.parse_indices((5, 8), (Ellipsis, [2, 4, 6]))
+    >>> cfdm.parse_indices((5, 8), (Ellipsis, [2, 4, 6]))
     [slice(None, None, None), [2, 4, 6]]
-    >>> cf.parse_indices((5, 8), (Ellipsis, 4))
+    >>> cfdm.parse_indices((5, 8), (Ellipsis, 4))
     [slice(None, None, None), slice(4, 5, 1)]
-    >>> cf.parse_indices((5, 8), (Ellipsis, 4), keepdims=False)
+    >>> cfdm.parse_indices((5, 8), (Ellipsis, 4), keepdims=False)
     [slice(None, None, None), 4]
-    >>> cf.parse_indices((5, 8), (slice(-2, 2)))
+    >>> cfdm.parse_indices((5, 8), (slice(-2, 2)))
     [slice(-2, 2, None), slice(None, None, None)]
-    >>> cf.parse_indices((5, 8), (cf.Data([1, 3]),))
+    >>> cfdm.parse_indices((5, 8), (cfdm.Data([1, 3]),))
     [dask.array<array, shape=(2,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>, slice(None, None, None)]
 
     """
