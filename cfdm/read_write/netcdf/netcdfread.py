@@ -10821,10 +10821,7 @@ class NetCDFRead(IORead):
         the first and last elements of a large array on disk
         (e.g. shape (1, 75, 1207, 1442)) is slow (e.g. ~2 seconds) and
         doesn't scale well with array size (i.e. it takes
-        disproportionally longer for larger arrays). Such arrays are
-        usually in field constructs, for which `cf.aggregate` does not
-        need to know any array values, so this method should be used
-        with caution, if at all, on field construct data.
+        disproportionally longer for larger arrays).
 
         .. versionadded:: (cfdm) NEXTVERSION
 

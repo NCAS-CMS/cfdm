@@ -1591,7 +1591,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         # ------------------------------------------------------------
         # Ensure other is an independent Data object, for example
-        # so that combination with cf.Query objects works.
+        # so that combination with downstream cf.Query objects works.
         # ------------------------------------------------------------
         if not isinstance(other, cls):
             if other is None:

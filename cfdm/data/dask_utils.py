@@ -141,8 +141,8 @@ def cfdm_where(array, condition, x, y, hardmask):
     elements in the array will not be assigned to, regardless of the
     contents of *x* and *y*.
 
-    .. note:: This function correctly sets the mask hardness of the
-              output array.
+    .. note:: This function sets the mask hardness of the output
+              array appropriately.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
