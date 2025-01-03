@@ -6,17 +6,14 @@ from .netcdfindexer import netcdf_indexer
 
 
 class ZarrArray(IndexMixin, abstract.FileArray):
-    """A netCDF array accessed with `netCDF4`. TODOZARR.
+    """A Zarr array accessed with `zarr`.
 
-    .. versionadded:: (cfdm) TODOZARR
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
-
-        The subspace is defined by the `index` attributes, and is
-        applied with `cfdm.netcdf_indexer`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -35,10 +32,10 @@ class ZarrArray(IndexMixin, abstract.FileArray):
         if index is None:
             index = self.index()
 
-        netcdf, address = self.open()
+        zr, address = self.open()
 
-        # Get the variable by netCDF name
-        variable = netcdf[address]
+        # Get the variable by Zarr name
+        variable = zr[address]
 
         # Get the data, applying masking and scaling as required.
         array = netcdf_indexer(
@@ -54,15 +51,13 @@ class ZarrArray(IndexMixin, abstract.FileArray):
         # Set the attributes, if they haven't been set already.
         self._set_attributes(variable)
 
-        self.close(netcdf)
-        del netcdf
-
+        self.close(zr)
         return array
 
     def _set_attributes(self, var):
-        """Set the netCDF variable attributes.
+        """Set the Zarr variable attributes.
 
-        These are set from the netCDF variable attributes, but only if
+        These are set from the Zarr variable attributes, but only if
         they have not already been defined, either during `{{class}}`
         instantiation or by a previous call to `_set_attributes`.
 
@@ -70,8 +65,8 @@ class ZarrArray(IndexMixin, abstract.FileArray):
 
         :Parameters:
 
-            var: `netCDF4.Variable`
-                The netCDF variable.
+            var: `zarr.Array`
+                The Zarr variable.
 
         :Returns:
 
@@ -88,7 +83,7 @@ class ZarrArray(IndexMixin, abstract.FileArray):
     def close(self, dataset):
         """Close the dataset containing the data.
 
-        .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -100,64 +95,19 @@ class ZarrArray(IndexMixin, abstract.FileArray):
             `None`
 
         """
+        # `zarr.Group` objects don't need closing
         pass
-
-    def get_groups(self, address):
-        """The netCDF4 group structure of a netCDF variable.
-
-        .. versionadded:: (cfdm) 1.8.6.0
-
-        :Parameters:
-
-            address: `str` or `int`
-                The netCDF variable name, or integer varid, from which
-                to get the groups.
-
-                .. versionadded:: (cfdm) 1.10.1.0
-
-        :Returns:
-
-            (`list`, `str`) or (`list`, `int`)
-                The group structure and the name within the group. If
-                *address* is a varid then an empty list and the varid
-                are returned.
-
-        **Examples**
-
-        >>> n.get_groups('tas')
-        ([], 'tas')
-
-        >>> n.get_groups('/tas')
-        ([], 'tas')
-
-        >>> n.get_groups('/data/model/tas')
-        (['data', 'model'], 'tas')
-
-        >>> n.get_groups(9)
-        ([], 9)
-
-        """
-        try:
-            if "/" not in address:
-                return [], address
-        except TypeError:
-            return [], address
-
-        out = address.split("/")[1:]
-        return out[:-1], out[-1]
 
     def open(self):
         """Return a dataset file object and address.
 
-        When multiple files have been provided an attempt is made to
-        open each one, in the order stored, and a file object is
-        returned from the first file that exists.
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
-            (`zarr.hierarchy.Group`, `str`)
-                The file object open in read-only mode, and the
-                address of the data within the file.
+            (`zarr.Group`, `str`)
+                The dataset object open in read-only mode, and the
+                variable name of the data within the dataset.
 
         """
         return super().open(zarr.open, mode="r")

@@ -1,7 +1,7 @@
 from glob import iglob
 from logging import getLogger
 from os import walk
-from os.path import expanduser, expandvars, isdir, isfile, join
+from os.path import expanduser, expandvars, isdir, join
 
 from uritools import urisplit
 
@@ -330,9 +330,7 @@ class read(ReadWrite):
             n_datasets = 0
             for x in iglob(datasets1):
                 if isdir(x):
-                    if isfile(join(x, ".zgroup")) or isfile(
-                        join(x, ".zarray")
-                    ):
+                    if NetCDFRead._is_zarr(x):
                         # This directory is a Zarr dataset. Don't look
                         # in any subdirectories.
                         n_datasets += 1
@@ -341,9 +339,7 @@ class read(ReadWrite):
 
                     # Walk through directories, possibly recursively
                     for path, _, filenames in walk(x, followlinks=followlinks):
-                        if isfile(join(path, ".zgroup")) or isfile(
-                            join(path, ".zarray")
-                        ):
+                        if NetCDFRead.is_zarr(path):
                             # This directory is a Zarr dataset. Don't
                             # look in any subdirectories.
                             n_datasets += 1

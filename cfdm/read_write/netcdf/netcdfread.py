@@ -812,8 +812,8 @@ class NetCDFRead(IORead):
 
                 * ``'netCDF'`` for a binary netCDF-3 or netCDF-4 file,
                 * ``'CDL'`` for a text CDL file,
-                * ``'Zarr'`` for a Zarr dataset,
-                * `None` for anything else
+                * ``'Zarr'`` for a Zarr dataset directory,
+                * `None` for anything else.
 
         """
         # Assume that non-local URIs are netCDF or zarr
@@ -831,13 +831,12 @@ class NetCDFRead(IORead):
             # Assume that a non-local URI is netCDF if it's not Zarr
             return "netCDF"
 
+        # Still here? Then check for a local Zarr dataset
         dataset = u.path
-        if isdir(dataset) and (
-            isfile(join(dataset, ".zgroup"))
-            or isfile(join(dataset, ".zarray"))
-        ):
+        if isdir(dataset) and cls._is_zarr(dataset):
             return "Zarr"
 
+        # Still here? Then check for a local netCDF or CDL file
         try:
             # Read the first 4 bytes from the file
             fh = open(dataset, "rb")
@@ -11609,3 +11608,23 @@ class NetCDFRead(IORead):
 
         g["parsed_aggregated_data"][ncvar] = out
         return out
+
+    @classmethod
+    def _is_zarr(cls, path):
+        """Whether or not a directory contains a Zarr dataset.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            path: `str`
+                A directory pathname.
+
+        :Returns:
+
+            `bool`
+                `True` if *path* contains a Zarr dataset, otherwise
+                `False`.
+
+        """
+        return isfile(join(path, ".zgroup")) or isfile(join(path, ".zarray"))

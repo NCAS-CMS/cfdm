@@ -76,8 +76,8 @@ to add more sophisticated methods.
 The cfdm package can
 
 * read :term:`field constructs <field construct>` and :term:`domain
-  constructs <domain construct>` from netCDF and CDL datasets with a
-  choice of netCDF backends,
+  constructs <domain construct>` from netCDF, CDL, and Zarr datasets
+  with a choice of netCDF backends,
 
 * be fully flexible with respect to HDF5 chunking,
 
