@@ -1076,6 +1076,9 @@ _docstring_substitution_definitions = {
                   'scaleway-secretkey...', 'endpoint_url':
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``""",
+    # init variable TODOVAR
+    "{{init variable: TODOVAR or `None`, optional}}": """variable: TODOVAR or `None`, optional
+                TODOVAR""",
     # _force_mask_hardness
     "{{_force_mask_hardness: `bool`, optional}}": """_force_mask_hardness: `bool`, optional
                 If True (the default) then force the mask hardness of

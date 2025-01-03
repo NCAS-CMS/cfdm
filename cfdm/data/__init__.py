@@ -31,5 +31,6 @@ from .raggedindexedarray import RaggedIndexedArray
 from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray
 from .sparsearray import SparseArray
 from .subsampledarray import SubsampledArray
+from .variablearray import VariableArray
 
 from .data import Data

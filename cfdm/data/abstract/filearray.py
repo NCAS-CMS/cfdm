@@ -27,6 +27,7 @@ class FileArray(Array):
         unpack=True,
         attributes=None,
         storage_options=None,
+        variable=None,
         source=None,
         copy=True,
     ):
@@ -59,6 +60,8 @@ class FileArray(Array):
                 call.
 
             {{init storage_options: `dict` or `None`, optional}}
+
+            {{init variable: TODOVAR or `None`, optional}}
 
             {{init source: optional}}
 
@@ -110,6 +113,11 @@ class FileArray(Array):
             except AttributeError:
                 storage_options = None
 
+            try:
+                variable = source._get_component("variable", None)
+            except AttributeError:
+                variable = None
+
         if shape is not None:
             self._set_component("shape", shape, copy=False)
 
@@ -128,6 +136,9 @@ class FileArray(Array):
 
         if attributes is not None:
             self._set_component("attributes", attributes, copy=copy)
+
+        if variable is not None:
+            self._set_component("variable", variable, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)

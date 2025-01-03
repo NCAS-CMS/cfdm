@@ -24,9 +24,9 @@ class FragmentArrayMixin:
 
             {{index: `tuple` or `None`, optional}}
 
-               It is important that there is a distinct value for each
-               fragment dimension, which is guaranteed when the
-               default of the `index` attribute is being used.
+                It is important that there is a distinct element for
+                each fragment dimension, which is guaranteed when the
+                default of the `index` attribute is being used.
 
         :Returns:
 

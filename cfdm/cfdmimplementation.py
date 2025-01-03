@@ -38,6 +38,7 @@ from .data import (
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+    VariableArray,
 )
 
 
@@ -2374,6 +2375,24 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("H5netcdfArray")
         return cls(**kwargs)
 
+    def initialise_VariableArray(self, **kwargs):
+        """Return a `TODOVAR` instance.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+        :Returns:
+
+            `TODOVAR`
+
+        """
+        cls = self.get_class("VariableArray")
+        return cls(**kwargs)
+
     def initialise_BoundsFromNodesArray(self, **kwargs):
         """Return a node bounds array.
 
@@ -3770,6 +3789,7 @@ _implementation = CFDMImplementation(
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
     SubsampledArray=SubsampledArray,
     TiePointIndex=TiePointIndex,
+    VariableArray=VariableArray,
 )
 
 
@@ -3808,6 +3828,7 @@ def implementation():
      'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
      'H5netcdfArray': <class 'cfdm.data.h5netcdfarray.H5netcdfArray'>,
      'NetCDF4Array': <class 'cfdm.data.netcdf4array.NetCDF4Array'>,
+     'VariableArray': <class 'cfdm.data.variablearray.VariableArray'>, TODOVAR
      'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
      'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
@@ -3817,7 +3838,8 @@ def implementation():
      'Count': <class 'cfdm.count.Count'>,
      'Index': <class 'cfdm.index.Index'>,
      'NodeCountProperties': <class 'cfdm.nodecountproperties.NodeCountProperties'>,
-     'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>}
+     'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>
+  }
 
     """
     return _implementation.copy()
