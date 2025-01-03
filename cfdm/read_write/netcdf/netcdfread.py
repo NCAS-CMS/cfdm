@@ -550,7 +550,11 @@ class NetCDFRead(IORead):
 
         # Map backend names to file-open functions
         file_open_function = {
+            # netCDF-4
             "h5netcdf": self._open_h5netcdf,
+            # netCDF-3
+            "netcdf_file": self._open_netcdf_file,
+            # netCDF-3 and netCDF-4
             "netCDF4": self._open_netCDF4,
         }
 
@@ -568,6 +572,8 @@ class NetCDFRead(IORead):
                     f"{backend}:\n{error.__class__.__name__}: {error}"
                 )
             else:
+                g['netcdf_backend'] = backend
+                g['nc_opened_with'] = backend
                 break
 
         if nc is None:
@@ -584,7 +590,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
-        if flatten and nc.groups:
+        if flatten and self._dataset_has_groups(nc):
             # Create a diskless, non-persistent container for the
             # flattened file
             flat_file = tempfile.NamedTemporaryFile(
@@ -602,7 +608,7 @@ class NetCDFRead(IORead):
 
             # Flatten the file
             netcdf_flatten(nc, flat_nc, strict=False, omit_data=True)
-
+           
             # Store the original grouped file. This is primarily
             # because the unlimited dimensions in the flattened
             # dataset have size 0, since it contains no
@@ -611,11 +617,29 @@ class NetCDFRead(IORead):
 
             nc = flat_nc
 
+            g['nc_opened_with'] = 'netCDF4'
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
 
         g["nc"] = nc
         return nc
+
+    def _open_netcdf_file(self, filename):
+        """Return an open `scipy.io.netcdf_file`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            filename: `str`
+                The file to open
+
+        :Returns:
+
+            `scipy.io.netcdf_file`
+
+        """
+        return netcdf_file(filename, mode="r", mmap=True)
 
     def _open_netCDF4(self, filename):
         """Return an open `netCDF4.Dataset`.
@@ -632,9 +656,7 @@ class NetCDFRead(IORead):
             `netCDF4.Dataset`
 
         """
-        nc = netCDF4.Dataset(filename, "r")
-        self.read_vars["file_opened_with"] = "netCDF4"
-        return nc
+        return netCDF4.Dataset(filename, mode="r")
 
     def _open_h5netcdf(self, filename):
         """Return an open `h5netcdf.File`.
@@ -657,7 +679,7 @@ class NetCDFRead(IORead):
             `h5netcdf.File`
 
         """
-        nc = h5netcdf.File(
+        return h5netcdf.File(
             filename,
             "r",
             decode_vlen_strings=True,
@@ -665,8 +687,6 @@ class NetCDFRead(IORead):
             rdcc_w0=0.75,
             rdcc_nslots=4133,
         )
-        self.read_vars["file_opened_with"] = "h5netcdf"
-        return nc
 
     def cdl_to_netcdf(self, filename):
         """Create a temporary netCDF-4 file from a CDL text file.
@@ -6410,12 +6430,14 @@ class NetCDFRead(IORead):
             if return_kwargs_only:
                 return kwargs
 
-            file_opened_with = g["file_opened_with"]
-            if file_opened_with == "netCDF4":
-                array = self.implementation.initialise_NetCDF4Array(**kwargs)
-            elif file_opened_with == "h5netcdf":
+            netcdf_backend = g["netcdf_backend"]
+            if netcdf_backend == "h5netcdf":
                 array = self.implementation.initialise_H5netcdfArray(**kwargs)
-
+            elif netcdf_backend == "netcdf_file":
+                array = self.implementation.initialise_Netcdf_fileArray(**kwargs)
+            elif netcdf_backend == "netCDF4":
+                array = self.implementation.initialise_NetCDF4Array(**kwargs)
+         
             return array, kwargs
 
         # ------------------------------------------------------------
@@ -10464,6 +10486,30 @@ class NetCDFRead(IORead):
 
         return ok
 
+    def _dataset_has_groups(self, nc):
+        """True if the dataset has groups other than the root group.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            nc:
+                The dataset. One of `netCDF4.Dataset`,
+                `scipy.io.netcdf_file`, or `h5netcdf.File`.
+
+        :Returns:
+
+            `bool`
+
+        """
+        nc_opened_with = self.read_vars["nc_opened_with"]
+        if nc_opened_with == "netcdf_file":
+            # NetCDF-3 files have no groups
+            return False
+        
+        # netCDF4, h5netcdf
+        return bool(nc.groups)
+
     def _file_global_attribute(self, nc, attr):
         """Return a global attribute from a dataset.
 
@@ -10471,8 +10517,9 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
-                The dataset.
+            nc:
+                The dataset. One of `netCDF4.Dataset`,
+                `scipy.io.netcdf_file`, or `h5netcdf.File`.
 
             attr: `str`
                 The global attribute name.
@@ -10486,8 +10533,12 @@ class NetCDFRead(IORead):
             # netCDF4
             return nc.getncattr(attr)
         except AttributeError:
-            # h5netcdf
-            return nc.attrs[attr]
+            try:
+                # h5netcdf
+                return nc.attrs[attr]
+            except AttributeError:
+                # netcdf_file
+                return nc._attributes[attr]
 
     def _file_global_attributes(self, nc):
         """Return the global attributes from a dataset.
@@ -10496,8 +10547,9 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
-                The dataset.
+            nc: 
+                The dataset. One of `netCDF4.Dataset`,
+                `scipy.io.netcdf_file`, or `h5netcdf.File`.
 
         :Returns:
 
@@ -10508,10 +10560,14 @@ class NetCDFRead(IORead):
         """
         try:
             # h5netcdf
-            return nc.attrs
+            return nc.attrs 
         except AttributeError:
-            # netCDF4
-            return {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
+            try:
+                # netcdf_file
+                return nc._attributes
+            except AttributeError:
+                # netCDF4
+                return {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
 
     def _file_dimensions(self, nc):
         """Return all dimensions in the root group.
@@ -10521,10 +10577,22 @@ class NetCDFRead(IORead):
         :Returns:
 
             `dict`-like
-                A dictionary of the dimensions keyed by their names.
+                A dictionary of the dimension objects keyed by their
+                names.
 
         """
-        return nc.dimensions
+        nc_opened_with = self.read_vars['nc_opened_with']
+        if nc_opened_with == 'netcdf_file':
+            # netcdf_file
+            dimensions = {
+                name: Dimension(name, size, nc)
+                for name, size in nc.dimensions.items()
+            }
+        else:
+            # netCDF4, h5netcdf
+            dimensions = nc.dimensions
+            
+        return dimensions
 
     def _file_dimension(self, nc, dim_name):
         """Return a dimension from the root group of a dataset.
@@ -10533,15 +10601,16 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
-                The dataset.
+            nc: 
+                The dataset. One of `netCDF4.Dataset`,
+                `scipy.io.netcdf_file`, or `h5netcdf.File`.
 
             dim_name: `str`
                 The dimension name.
 
         :Returns:
 
-            `netCDF.Dimension` or `h5netcdf.Dimension`
+            `netCDF.Dimension`, `h5netcdf.Dimension` or `Dimension`
                 The dimension.
 
         """
@@ -10554,8 +10623,9 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
-                The dataset.
+            nc: 
+                The dataset. One of `netCDF4.Dataset`,
+                `scipy.io.netcdf_file`, or `h5netcdf.File`.
 
             dim_name: `str`
                 The dimension name.
@@ -10575,8 +10645,9 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
-                The dataset.
+            nc:
+                The dataset. One of `netCDF4.Dataset`,
+                `scipy.io.netcdf_file`, or `h5netcdf.File`.
 
             dim_name: `str`
                 The dimension name.
@@ -10596,13 +10667,15 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4.Dataset` or `h5netcdf.File`
-                The dataset.
+            nc:
+                The dataset. One of `netCDF4.Dataset`,
+                `scipy.io.netcdf_file`, or `h5netcdf.File`.
 
         :Returns:
 
             `dict`-like
-                A dictionary of the variables keyed by their names.
+                A dictionary of the variable objects keyed by their
+                names.
 
         """
         return nc.variables
@@ -10622,8 +10695,8 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable.
+                The variable. One of `netCDF4.Variable`,
+                `scipy.io.netcdf_file`, or `h5netcdf.Variable`.
 
         """
         return self._file_variables(nc)[var_name]
@@ -10635,8 +10708,9 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable.
+            var:
+                The variable. One of `netCDF4.Variable`,
+               `scipy.io.netcdf_variable`, or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -10659,8 +10733,9 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable.
+            var:
+                The variable. One of `netCDF4.Variable`,
+               `scipy.io.netcdf_variable`, or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -10677,8 +10752,9 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable.
+            var:
+                The variable. One of `netCDF4.Variable`,
+               `scipy.io.netcdf_variable`, or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -10686,13 +10762,11 @@ class NetCDFRead(IORead):
                 The array size.
 
         """
-        # Use try/except here because the variable type could differ
-        # from that implied by the value of self.read_vars["netCDF4"]
         try:
             # netCDF4
             return var.size
         except AttributeError:
-            # h5netcdf
+            # h5netcdf, netcdf_file
             return prod(var.shape)
 
     def _get_storage_options(self, filename, parsed_filename):
