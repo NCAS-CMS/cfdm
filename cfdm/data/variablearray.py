@@ -30,8 +30,24 @@ class VariableArray(IndexMixin, FileArray):
         if index is None:
             index = self.index()
 
-        variable, _ = self.open()
+        # Get the variable for subspacing
+        variable =  self.get_variable()
+        if variable is None:
+            dataset, address = self.open()            
+            dataset0 = dataset
+            
+            groups, address = self.get_groups(address)
+            if groups:
+                dataset = self._group(dataset, groups)
 
+            variable = dataset.variables[address]
+
+            # Cache the variable
+            self._set_variable(variable)
+
+            self.close(dataset0)
+            del dataset, dataset0
+                    
         # Get the data, applying masking and scaling as required.
         array = netcdf_indexer(
             variable,
@@ -44,9 +60,34 @@ class VariableArray(IndexMixin, FileArray):
         )
         array = array[index]
 
-        self.close(variable)
-
         return array
+
+    def _group(self, dataset, groups):
+        """Return the group object containing a variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset: `h5netcdf.File`
+                The dataset containing the variable.
+
+            groups: sequence of `str`
+                The definition of which group the variable is in. For
+                instance, of the variable is in group
+                ``/forecast/model`` then *groups* would be
+                ``['forecast', 'model']``.
+
+        :Returns:
+
+            `h5netcdf.File` or `h5netcdf.Group`
+                The group object, which might be the root group.
+
+        """
+        for g in groups:
+            dataset = dataset.groups[g]
+
+        return dataset
 
     def _set_attributes(self, var):
         """Set the netCDF variable attributes. TODOVAR
@@ -92,105 +133,61 @@ class VariableArray(IndexMixin, FileArray):
             `None`
 
         """
-        # TODOVAR
-        pass
+        if self._get_component("close"):
+            dataset.close()
 
-    def open(self):
+    def get_groups(self, address):
+        """The netCDF4 group structure of a netCDF variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            address: `str` or `int`
+                The netCDF variable name, or integer varid, from which
+                to get the groups.
+
+        :Returns:
+
+            (`list`, `str`) or (`list`, `int`)
+                The group structure and the name within the group. If
+                *address* is a varid then an empty list and the varid
+                are returned.
+
+        **Examples**
+
+        >>> n.get_groups('tas')
+        ([], 'tas')
+
+        >>> n.get_groups('/tas')
+        ([], 'tas')
+
+        >>> n.get_groups('/data/model/tas')
+        (['data', 'model'], 'tas')
+
+        >>> n.get_groups(9)
+        ([], 9)
+
+        """
+        try:
+            if "/" not in address:
+                return [], address
+        except TypeError:
+            return [], address
+
+        out = address.split("/")[1:]
+        return out[:-1], out[-1]
+
+    def open(self, **kwargs):
         """Return a dataset file object and address.
 
         :Returns:
 
-            (`netCDF4.Dataset`, `str`) TODOVAR
-                The file object open in read-only mode, and the
-                address of the data within the file.
+            (`h5netcdf.File`, `str`)
+                The open file object, and the address of the data
+                within the file.
 
         """
-        variable =  getattr(self, '_variable', None)
-        if variable is not None:
-            return variable, self.get_address()
-        
-        variable, address =  super().open(Variable, mode="r") # TODOVAR
-        self._variable = variable
-        return variable, address
-
-    def replace_directory(self, old=None, new=None, normalise=False):
-        """Replace the file directory.
-
-        Modifies the name of the file.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `file_directory`, `get_filename`
-
-        :Parameters:
-
-            old: `str` or `None`, optional
-                The base directory structure to be replaced by
-                *new*. If `None` (the default) or an empty string, and
-                *normalise* is False, then *new* is prepended to each
-                file name.
-
-            new: `str` or `None`, optional
-                The new directory that replaces the base directory
-                structure identified by *old*. If `None` (the default)
-                or an empty string, then *old* is replaced with an
-                empty string. Otherwise,
-
-            normalise: `bool`, optional
-                If True then *old*, *new*, and the file name are
-                normalised to absolute paths prior to the
-                replacement. If False (the default) then no
-                normalisation is done.
-
-        :Returns:
-
-            `{{class}}`
-                A new `{{class}}` with modified file locations.
-
-        **Examples**
-
-        >>> a.get_filename()
-        '/data/file1.nc'
-        >>> b = a.replace_directory('/data', '/new/data/path/')
-        >>> b.get_filename()
-        '/new/data/path/file1.nc'
-        >>> c = b.replace_directory('/new/data', None)
-        >>> c.get_filename()
-        'path/file1.nc'
-        >>> c = b.replace_directory('path', '../new_path', normalise=False)
-        >>> c.get_filename()
-        '../new_path/file1.nc'
-        >>> c = b.replace_directory(None, '/data')
-        >>> c.get_filename()
-        '/data/../new_path/file1.nc'
-        >>> c = b.replace_directory('/new_path/', None, normalise=True)
-        >>> c.get_filename()
-        'file1.nc'
-
-        """
-        a = super().replace_directory(old=old, new=new, normalise=normalise)
-        a._variable = None
-        return a
-
-    def replace_filename(self, filename):
-        """Replace the file location.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `file_directory`, `get_filename`,
-                     `replace_directory`
-
-        :Parameters:
-
-            filename: `str`
-                The new file location.
-
-        :Returns:
-
-            `{{class}}`
-                A new `{{class}}` with modified file name.
-
-        """
-        a = super().replace_directory(filename)
-        a._variable = None
-        return a
+        return super().open(
+            h5netcdf.File, mode="r", decode_vlen_strings=True, **kwargs
+        )

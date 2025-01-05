@@ -137,8 +137,7 @@ class FileArray(Array):
         if attributes is not None:
             self._set_component("attributes", attributes, copy=copy)
 
-        if variable is not None:
-            self._set_component("variable", variable, copy=False)
+        self._set_component("variable", variable, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
@@ -201,6 +200,23 @@ class FileArray(Array):
         raise NotImplementedError(
             f"Must implement {self.__class__.__name__}._get_array"
         )  # pragma: no cover
+
+    def _set_variable(self, variable):
+        """TODOVAR
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            variable: TODOVAR
+
+        :Returns:
+
+            `str`TODOVAR
+                The file name.TODOVAR
+
+        """
+        return self._set_component('variable', variable, copy=False)
 
     @property
     def array(self):
@@ -434,6 +450,18 @@ class FileArray(Array):
 
         return storage_options
 
+    def get_variable(self)
+        """TODOVAR
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+                The file name.TODOVAR
+
+        """
+        return self._get_component('variable', None)
+
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
 
@@ -575,6 +603,10 @@ class FileArray(Array):
                 filename = join(new, filename)
 
         a._set_component("filename", filename, copy=False)
+
+        # Remove an obselete variable
+        a._set_variable(None)
+
         return a
 
     def get_missing_values(self):
@@ -666,4 +698,8 @@ class FileArray(Array):
         """
         a = self.copy()
         a._set_component("filename", filename, copy=False)
+
+        # Remove an obselete variable
+        a._set_variable(None)
+        
         return a

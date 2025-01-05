@@ -508,8 +508,6 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        netcdf_backend = g["netcdf_backend"]
-
         if g["ftype"] == "CDL":
             # --------------------------------------------------------
             # Convert a CDL file to a local netCDF4 file
@@ -562,7 +560,7 @@ class NetCDFRead(IORead):
         # the file
         nc = None
         errors = []
-        for backend in netcdf_backend:
+        for backend in  g["netcdf_backend"]:
             try:
                 nc = file_open_function[backend](filename)
             except KeyError:
@@ -6432,6 +6430,7 @@ class NetCDFRead(IORead):
 
             netcdf_backend = g["netcdf_backend"]
             if netcdf_backend == "h5netcdf":
+#                kwargs['variable'] = variable
                 array = self.implementation.initialise_H5netcdfArray(**kwargs)
             elif netcdf_backend == "netcdf_file":
                 array = self.implementation.initialise_Netcdf_fileArray(**kwargs)
