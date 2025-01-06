@@ -812,11 +812,13 @@ class NetCDFRead(IORead):
             # Read the first 4 bytes from the file
             fh = open(filename, "rb")
             magic_number = struct.unpack("=L", fh.read(4))[0]
-        except Exception:
+        except Exception as error:
             # Can't read 4 bytes from the file, so it can't be netCDF
             # or CDL.
+            print (8888, error)
             pass
         else:
+            print ( magic_number)
             # Is it a netCDF-C binary file?
             if magic_number in (
                 21382211,  # netCDF-3
@@ -825,6 +827,7 @@ class NetCDFRead(IORead):
                 38159427,
                 88491075,
             ):
+                print ( magic_number)
                 f_type = "netCDF"
             else:
                 # Is it a CDL text file?

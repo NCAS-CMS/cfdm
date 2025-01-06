@@ -211,7 +211,7 @@ class netcdf_indexer:
         variable = self.variable
         unpack = self.unpack
         attributes = self.attributes()
-        dtype = variable.dtype
+        dtype = self.dtype
 
         # Prevent a netCDF4 variable from doing its own masking and
         # unpacking during the indexing
@@ -816,7 +816,13 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return self.variable.dtype
+        variable = self.variable
+        try:
+            # numpy, netCDF4, h5py
+            return variable.dtype
+        except AttributeError:
+            # netcdf_file
+            return variable[(slice(0, 1),) * len(variable.shape)].dtype
 
     @property
     def ndim(self):
@@ -825,8 +831,13 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return self.variable.ndim
-
+        try:  
+            # numpy, netCDF4, h5py          
+            return self.variable.ndim
+        except AttributeError:
+            # netcdf_file
+            return len  (self.variable.shape)
+      
     @property
     def shape(self):
         """Tuple of the data dimension sizes.
@@ -843,8 +854,13 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return self.variable.size
-
+        try:  
+            # numpy, netCDF4, h5py          
+            return self.variable.size
+        except AttributeError:
+            # netcdf_file
+            return prod  (self.variable.shape)
+      
     def attributes(self):
         """Return the netCDF attributes for the data.
 

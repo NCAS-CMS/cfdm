@@ -4,12 +4,41 @@ from .netcdfindexer import netcdf_indexer
 
 
 class VariableArray(IndexMixin, FileArray):
-    """A netCDF array accessed with `???`. TODOVAR
+    """A netCDF array accessed with `TODOVAR`.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
+    def _attributes(self, var):
+        """Get the netCDF variable attributes.
+
+        If the attributes have not been set, then they are retrieved
+        from the netCDF variable *var* and stored in `{{class}}`
+        instance for fast future access.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            var: `TODOVAR`
+                The netCDF variable.
+
+        :Returns:
+
+            `dict`
+                The attributes. The returned attributes are not a copy
+                of the cached dictionary.
+
+        """
+        attributes = self._get_component("attributes", None)
+        if attributes is None:
+            # TODOVAR: modify, if necessary, for the 'Variable' API
+            attributes = dict(var.attrs)
+            self._set_component("attributes", attributes, copy=False)
+            
+        return attributes
+    
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -33,6 +62,7 @@ class VariableArray(IndexMixin, FileArray):
         # Get the variable for subspacing
         variable =  self.get_variable()
         if variable is None:
+            # The variable has not been provided, so get it.
             dataset, address = self.open()            
             dataset0 = dataset
             
@@ -43,7 +73,7 @@ class VariableArray(IndexMixin, FileArray):
             variable = dataset.variables[address]
 
             # Cache the variable
-            self._set_variable(variable)
+            self._set_component('variable', variable, copy=False)
 
             self.close(dataset0)
             del dataset, dataset0
@@ -55,7 +85,7 @@ class VariableArray(IndexMixin, FileArray):
             unpack=self.get_unpack(),
             always_masked_array=False,
             orthogonal_indexing=True,
-            attributes=self._set_attributes(variable),
+            attributes=self._attributes(variable),
             copy=False,
         )
         array = array[index]
@@ -89,34 +119,6 @@ class VariableArray(IndexMixin, FileArray):
 
         return dataset
 
-    def _set_attributes(self, var):
-        """Set the netCDF variable attributes. TODOVAR
-
-        These are set from the netCDF TODOVAR variable attributes, but
-        only if they have not already been defined, either during
-        `{{class}}` instantiation or by a previous call to
-        `_set_attributes`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            var: `netCDF4.Variable` TODOVAR
-                The netCDF variable. TODOVAR
-
-        :Returns:
-
-            `dict`
-                The attributes.
-
-        """
-        # TODOVAR ; modify for 'Variable' API
-        attributes = self._get_component("attributes", None)
-        if attributes is None:
-            attributes = {attr: var.getncattr(attr) for attr in var.ncattrs()}
-            self._set_component("attributes", attributes, copy=False)
-            
-        return attributes
 
     def close(self, dataset):
         """Close the dataset containing the data.

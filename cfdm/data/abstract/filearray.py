@@ -318,6 +318,27 @@ class FileArray(Array):
 
         return dirname(filename)
 
+    def get_attributes(self, default=AttributeError()):
+        """Get the netCDF variable attributes.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                attributes have not been set. If set to an `Exception`
+                instance then it will be raised instead.
+
+        :Returns:
+
+            `dict`
+                The attributes. The returned attributes are not a copy
+                of the stored dictionary.
+
+        """
+        return self._get_component("attributes", default)
+
     def get_filename(self, normalise=False, default=AttributeError()):
         """The name of the file containing the array.
 
@@ -640,28 +661,29 @@ class FileArray(Array):
         """
         return self.array
 
-    def _set_attributes(self, var):
-        """Set the netCDF variable attributes.
+    def _attributes(self, var):
+        """Get the netCDF variable attributes.
 
-        These are set from the netCDF variable attributes, but only if
-        they have not already been defined, either during {{class}}
-        instantiation or by a previous call to `_set_attributes`.
+        If the attributes have not been set, then they are retrieved
+        from the netCDF variable *var* and stored in `{{class}}`
+        instance for fast future access.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
+            var:
                 The netCDF variable.
 
         :Returns:
 
             `dict`
-                The attributes.
+                The attributes. The returned attributes are not a copy
+                of the cached dictionary.
 
         """
         raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}._set_attributes"
+            f"Must implement {self.__class__.__name__}._attributes"
         )  # pragma: no cover
 
     def get_unpack(self):
