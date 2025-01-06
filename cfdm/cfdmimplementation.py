@@ -33,6 +33,7 @@ from .data import (
     GatheredArray,
     H5netcdfArray,
     NetCDF4Array,
+    Netcdf_fileArray,
     PointTopologyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
@@ -2375,6 +2376,24 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("H5netcdfArray")
         return cls(**kwargs)
 
+    def initialise_Netcdf_fileArray(self, **kwargs):
+        """Return a `NetCDF4Array` instance.
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `Netcdf_fileArray`
+
+        """
+        cls = self.get_class("Netcdf_fileArray")
+        return cls(**kwargs)
+
     def initialise_VariableArray(self, **kwargs):
         """Return a `TODOVAR` instance.
 
@@ -3783,6 +3802,7 @@ _implementation = CFDMImplementation(
     GatheredArray=GatheredArray,
     H5netcdfArray=H5netcdfArray,
     NetCDF4Array=NetCDF4Array,
+    Netcdf_fileArray=Netcdf_fileArray,
     PointTopologyArray=PointTopologyArray,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
@@ -3828,6 +3848,7 @@ def implementation():
      'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
      'H5netcdfArray': <class 'cfdm.data.h5netcdfarray.H5netcdfArray'>,
      'NetCDF4Array': <class 'cfdm.data.netcdf4array.NetCDF4Array'>,
+     'Netcdf_fileArray': <class 'cfdm.data.netcdf4array.Netcdf_fileArray'>,
      'VariableArray': <class 'cfdm.data.variablearray.VariableArray'>, TODOVAR
      'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,

@@ -29,6 +29,7 @@ class Netcdf_fileArray(IndexMixin, FileArray):
                 The subspace.
 
         """
+        print (99999999999999)
         if index is None:
             index = self.index()
 
@@ -52,7 +53,7 @@ class Netcdf_fileArray(IndexMixin, FileArray):
         array = array.copy()
 
         self.close(dataset)
-        del dataset, variable
+        del variable, dataset
 
         return array
 

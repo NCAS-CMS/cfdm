@@ -450,7 +450,7 @@ class FileArray(Array):
 
         return storage_options
 
-    def get_variable(self)
+    def get_variable(self):
         """TODOVAR
 
         .. versionadded:: (cfdm) NEXTVERSION
