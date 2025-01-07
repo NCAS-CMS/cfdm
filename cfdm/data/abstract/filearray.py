@@ -202,7 +202,7 @@ class FileArray(Array):
         )  # pragma: no cover
 
     def _set_variable(self, variable):
-        """TODOVAR
+        """TODOVAR.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -216,7 +216,7 @@ class FileArray(Array):
                 The file name.TODOVAR
 
         """
-        return self._set_component('variable', variable, copy=False)
+        return self._set_component("variable", variable, copy=False)
 
     @property
     def array(self):
@@ -451,7 +451,7 @@ class FileArray(Array):
         return storage_options
 
     def get_variable(self):
-        """TODOVAR
+        """TODOVAR.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -460,7 +460,7 @@ class FileArray(Array):
                 The file name.TODOVAR
 
         """
-        return self._get_component('variable', None)
+        return self._get_component("variable", None)
 
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
@@ -640,18 +640,21 @@ class FileArray(Array):
         """
         return self.array
 
-    def _set_attributes(self, var):
-        """Set the netCDF variable attributes.
+    def _attributes(self, var):
+        """Get the netCDF variable attributes.
 
-        These are set from the netCDF variable attributes, but only if
-        they have not already been defined, either during {{class}}
-        instantiation or by a previous call to `_set_attributes`.
+        If the attributes haven't been set then they are retrived from
+        *variable* and stored for future use. This differs from
+        `get_attributes`, which will return an empty dictionary if the
+        attributes haven't been set.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
+        .. seealso:: `get_attributes`
+
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
+            var:
                 The netCDF variable.
 
         :Returns:
@@ -661,7 +664,7 @@ class FileArray(Array):
 
         """
         raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}._set_attributes"
+            f"Must implement {self.__class__.__name__}._attributes"
         )  # pragma: no cover
 
     def get_unpack(self):
@@ -701,5 +704,5 @@ class FileArray(Array):
 
         # Remove an obselete variable
         a._set_variable(None)
-        
+
         return a

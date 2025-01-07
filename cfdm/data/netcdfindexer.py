@@ -211,7 +211,10 @@ class netcdf_indexer:
         variable = self.variable
         unpack = self.unpack
         attributes = self.attributes()
-        dtype = variable.dtype
+        dtype = self.dtype
+        #        dtype = variable._h5ds.id.dtype
+        print("TYPE V", type(variable), repr(dtype))
+        #        dtype = np.dtype(float)
 
         # Prevent a netCDF4 variable from doing its own masking and
         # unpacking during the indexing
@@ -816,7 +819,13 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return self.variable.dtype
+        var = self.variable
+        try:
+            # numpy. netCDF4, h5netcdf
+            return var.dtype
+        except AttributeError:
+            # scipy.io.netcdf_file
+            return var[(slice(0, 1),) * len(var.shape)].dtype
 
     @property
     def ndim(self):

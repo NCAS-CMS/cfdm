@@ -29,6 +29,36 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         """
         return netcdf_lock
 
+    def _attributes(self, var):
+        """Set the netCDF variable attributes.
+
+        If the attributes haven't been set then they are retrived from
+        *variable* and stored for future use. This differs from
+        `get_attributes`, which will return an empty dictionary if the
+        attributes haven't been set.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_attributes`
+
+        :Parameters:
+
+            var: `h5netcdf.Variable`
+                The netCDF variable.
+
+        :Returns:
+
+            `dict`
+                The attributes.
+
+        """
+        attributes = self._get_component("attributes", None)
+        if attributes is None:
+            attributes = dict(var.attrs)
+            self._set_component("attributes", attributes, copy=False)
+
+        return attributes
+
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -72,12 +102,10 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
                 unpack=self.get_unpack(),
                 always_masked_array=False,
                 orthogonal_indexing=True,
+                attribtues=self._attributes(variable),
                 copy=False,
             )
             array = array[index]
-
-            # Set the attributes, if they haven't been set already.
-            self._set_attributes(variable)
 
             self.close(dataset0)
             del dataset, dataset0
@@ -110,30 +138,6 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
             dataset = dataset.groups[g]
 
         return dataset
-
-    def _set_attributes(self, var):
-        """Set the netCDF variable attributes.
-
-        These are set from the netCDF variable attributes, but only if
-        they have not already been defined, either during `{{class}}`
-        instantiation or by a previous call to `_set_attributes`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            var: `h5netcdf.Variable`
-                The netCDF variable.
-
-        :Returns:
-
-            `None`
-
-        """
-        if self._get_component("attributes", None) is not None:
-            return
-
-        self._set_component("attributes", dict(var.attrs), copy=False)
 
     def close(self, dataset):
         """Close the dataset containing the data.
