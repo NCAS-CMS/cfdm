@@ -213,7 +213,7 @@ class netcdf_indexer:
         attributes = self.attributes()
         dtype = self.dtype
         #        dtype = variable._h5ds.id.dtype
-        print("TYPE V", type(variable), repr(dtype))
+#        print("TYPE V", type(variable), repr(dtype))
         #        dtype = np.dtype(float)
 
         # Prevent a netCDF4 variable from doing its own masking and
