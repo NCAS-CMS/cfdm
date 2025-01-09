@@ -16,7 +16,6 @@ from uuid import uuid4
 import h5netcdf
 import netCDF4
 import numpy as np
-import pyfive
 from dask.array.core import normalize_chunks
 from dask.base import tokenize
 from packaging.version import Version
@@ -585,9 +584,8 @@ class NetCDFRead(IORead):
             try:
                 nc = file_open_function[backend](filename)
             except KeyError:
-                errors.append(f"{backend}: Unknown netCDF backend name")      
+                errors.append(f"{backend}: Unknown netCDF backend name")
             except Exception as error:
-                print ('ERROR', error)
                 errors.append(
                     f"{backend}:\n{error.__class__.__name__}: {error}"
                 )
@@ -707,6 +705,8 @@ class NetCDFRead(IORead):
             rdcc_w0=0.75,
             rdcc_nslots=4133,
             backend="pyfive",
+            phony_dims='sort'
+#            phony_dims='access'
         )
 
     def cdl_to_netcdf(self, filename):
@@ -829,10 +829,8 @@ class NetCDFRead(IORead):
         except Exception as error:
             # Can't read 4 bytes from the file, so it can't be netCDF
             # or CDL.
-            print (8888, error)
             pass
         else:
-            print ( magic_number)
             # Is it a netCDF-C binary file?
             if magic_number in (
                 21382211,  # netCDF-3
@@ -841,7 +839,6 @@ class NetCDFRead(IORead):
                 38159427,
                 88491075,
             ):
-                print ( magic_number)
                 f_type = "netCDF"
             else:
                 # Is it a CDL text file?
@@ -2237,7 +2234,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Close all opened netCDF files (last thing before returning)
         # ------------------------------------------------------------
-#        self.file_close()
+        # self.file_close()
 
         # ------------------------------------------------------------
         # Return the fields/domains
@@ -6382,17 +6379,16 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        if g["has_groups"]: # ppp
+        if g["has_groups"]:  # ppp
             # Get the variable from the original grouped file. This is
             # primarily so that unlimited dimensions don't come out
             # with size 0 (v1.8.8.1)
             variable = g["variable_grouped_dataset"][ncvar][ncvar]
-#            
-#            print ('ncvar=', ncvar)
-#            group, name = self._netCDF4_group(
-#                g["variable_grouped_dataset"][ncvar], ncvar
-#            )
-#            variable = group.variables.get(name)
+        #
+        #            group, name = self._netCDF4_group(
+        #                g["variable_grouped_dataset"][ncvar], ncvar
+        #            )
+        #            variable = group.variables.get(name)
         else:
             variable = g["variables"].get(ncvar)
 
@@ -6461,9 +6457,9 @@ class NetCDFRead(IORead):
             netcdf_backend = g["netcdf_backend"]
             if netcdf_backend == "h5netcdf":
                 if g["has_groups"]:
-                    hdf5_dataset = g['variable_grouped_dataset'][ncvar]
+                    hdf5_dataset = g["variable_grouped_dataset"][ncvar]
                 else:
-                    hdf5_dataset = g['nc']
+                    hdf5_dataset = g["nc"]
 
                 kwargs["variable"] = hdf5_dataset._h5file[ncvar]
                 array = self.implementation.initialise_VariableArray(**kwargs)
@@ -7929,11 +7925,11 @@ class NetCDFRead(IORead):
             g = self.read_vars
             if g["has_groups"]:
                 variable = g["variable_grouped_dataset"][ncvar][ncvar]
-#         
-#                group, name = self._netCDF4_group(
-#                    g["variable_grouped_dataset"][ncvar], ncvar
-#                )
-#                variable = group.variables.get(name)
+            #
+            #                group, name = self._netCDF4_group(
+            #                    g["variable_grouped_dataset"][ncvar], ncvar
+            #                )
+            #                variable = group.variables.get(name)
             else:
                 variable = g["variables"].get(ncvar)
 
@@ -10550,18 +10546,18 @@ class NetCDFRead(IORead):
 
         # netCDF4, h5netcdf
         return bool(nc.groups)
-#        except AttributeError:
-#            # h5netcdf (pyfive backend)
-#            #
-#            # TODO: This is a workaround until pyfive gets a 'groups'
-#            #       attribute. When it does we can use the same
-#            #       technique as for the h5py backend.
-#            for v in nc._h5file.values():
-#                print (type(v))
-#                if isinstance(v, pyfive.Group):
-#                    return True
-#
-#            return False
+
+    #        except AttributeError:
+    #            # h5netcdf (pyfive backend)
+    #            #
+    #            # TODO: This is a workaround until pyfive gets a 'groups'
+    #            #       attribute. When it does we can use the same
+    #            #       technique as for the h5py backend.
+    #            for v in nc._h5file.values():
+    #                if isinstance(v, pyfive.Group):
+    #                    return True
+    #
+    #            return False
 
     def _file_global_attribute(self, nc, attr):
         """Return a global attribute from a dataset.
@@ -11377,11 +11373,11 @@ class NetCDFRead(IORead):
         # Get the netCDF4.Variable for the data
         if g["has_groups"]:
             variable = g["variable_grouped_dataset"][ncvar][ncvar]
-#         
-#            group, name = self._netCDF4_group(
-#                g["variable_grouped_dataset"][ncvar], ncvar
-#            )
-#            variable = group.variables.get(name)
+        #
+        #            group, name = self._netCDF4_group(
+        #                g["variable_grouped_dataset"][ncvar], ncvar
+        #            )
+        #            variable = group.variables.get(name)
         else:
             variable = g["variables"].get(ncvar)
 

@@ -831,13 +831,13 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        try:  
-            # numpy, netCDF4, h5py          
+        try:
+            # numpy, netCDF4, h5py
             return self.variable.ndim
         except AttributeError:
             # netcdf_file
-            return len  (self.variable.shape)
-      
+            return len(self.variable.shape)
+
     @property
     def shape(self):
         """Tuple of the data dimension sizes.
@@ -854,13 +854,13 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        try:  
-            # numpy, netCDF4, h5py          
+        try:
+            # numpy, netCDF4, h5py
             return self.variable.size
         except AttributeError:
             # netcdf_file
-            return prod  (self.variable.shape)
-      
+            return prod(self.variable.shape)
+
     def attributes(self):
         """Return the netCDF attributes for the data.
 

@@ -37,7 +37,7 @@ class VariableArray(IndexMixin, FileArray):
         if attributes is None:
             attributes = dict(var.attrs)
             self._set_component("attributes", attributes, copy=False)
-            
+
         return attributes
 
     def _get_array(self, index=None):
@@ -64,7 +64,7 @@ class VariableArray(IndexMixin, FileArray):
         variable = self.get_variable()
         if variable is None:
             # The variable has not been provided, so get it.
-            dataset, address = self.open()            
+            dataset, address = self.open()
             dataset0 = dataset
 
             groups, address = self.get_groups(address)
@@ -74,7 +74,7 @@ class VariableArray(IndexMixin, FileArray):
             variable = dataset.variables[address]
 
             # Cache the variable
-            self._set_component('variable', variable, copy=False)
+            self._set_component("variable", variable, copy=False)
 
             self.close(dataset0)
             del dataset, dataset0

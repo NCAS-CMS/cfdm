@@ -11,6 +11,7 @@ class Netcdf_fileArray(IndexMixin, FileArray):
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
+
     def _attributes(self, var):
         """Get the netCDF variable attributes.
 
@@ -30,36 +31,6 @@ class Netcdf_fileArray(IndexMixin, FileArray):
             `dict`
                 The attributes. The returned attributes are not a copy
                 of the cached dictionary.
-
-        """
-        attributes = self._get_component("attributes", None)
-        if attributes is None:
-            attributes = var._attributes
-            self._set_component("attributes", attributes, copy=False)
-            
-        return attributes
-
-    def _attributes(self, var):
-        """Get the netCDF variable attributes.
-
-        If the attributes haven't been set then they are retrived from
-        *variable* and stored for future use. This differs from
-        `get_attributes`, which will return an empty dictionary if the
-        attributes haven't been set.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `get_attributes`
-
-        :Parameters:
-
-            var: `scipy.io.netcdf_variable`
-                The netCDF variable.
-
-        :Returns:
-
-            `dict`
-                The attributes.
 
         """
         attributes = self._get_component("attributes", None)

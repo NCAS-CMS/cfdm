@@ -52,9 +52,9 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         """
         attributes = self._get_component("attributes", None)
         if attributes is None:
-            attributes =  dict(var.attrs)
+            attributes = dict(var.attrs)
             self._set_component("attributes", attributes, copy=False)
-            
+
         return attributes
 
     def _get_array(self, index=None):
