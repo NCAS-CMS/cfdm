@@ -1,3 +1,5 @@
+import h5netcdf
+
 from .abstract import FileArray
 from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
@@ -33,12 +35,11 @@ class VariableArray(IndexMixin, FileArray):
         """
         attributes = self._get_component("attributes", None)
         if attributes is None:
-            # TODOVAR: modify, if necessary, for the 'Variable' API
             attributes = dict(var.attrs)
             self._set_component("attributes", attributes, copy=False)
             
         return attributes
-    
+
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -60,12 +61,12 @@ class VariableArray(IndexMixin, FileArray):
             index = self.index()
 
         # Get the variable for subspacing
-        variable =  self.get_variable()
+        variable = self.get_variable()
         if variable is None:
             # The variable has not been provided, so get it.
             dataset, address = self.open()            
             dataset0 = dataset
-            
+
             groups, address = self.get_groups(address)
             if groups:
                 dataset = self._group(dataset, groups)
@@ -77,7 +78,7 @@ class VariableArray(IndexMixin, FileArray):
 
             self.close(dataset0)
             del dataset, dataset0
-                    
+
         # Get the data, applying masking and scaling as required.
         array = netcdf_indexer(
             variable,
@@ -118,7 +119,6 @@ class VariableArray(IndexMixin, FileArray):
             dataset = dataset.groups[g]
 
         return dataset
-
 
     def close(self, dataset):
         """Close the dataset containing the data.

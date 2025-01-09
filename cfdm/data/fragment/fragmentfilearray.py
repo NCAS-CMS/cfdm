@@ -27,7 +27,11 @@ class FragmentFileArray(
         """
         # Import fragment classes. Do this here (as opposed to outside
         # the class) to aid subclassing.
-        from . import FragmentH5netcdfArray, FragmentNetCDF4Array, FragmentVariableArray
+        from . import (
+            FragmentH5netcdfArray,
+            FragmentNetCDF4Array,
+            FragmentVariableArray,
+        )
 
         instance = super().__new__(cls)
         instance._FragmentArrays = (

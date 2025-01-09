@@ -2234,7 +2234,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "run at definition time in order to ascertain "
                 "suitability (such as data type casting, "
                 "broadcasting, etc.). Note that the exception may be "
-                "difficult to diagnose, as dask will have silently "
+                "difficult to diagnose, as dask might have silently "
                 "trapped it and returned NotImplemented (see , for "
                 "instance, dask.array.core.elemwise). Print "
                 "statements in a local copy of dask are possibly the "
@@ -3860,7 +3860,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         a = dx.compute()
 
         if np.ma.isMA(a) and a is not np.ma.masked:
-            a.set_fill_value(999)
             if self.hardmask:
                 a.harden_mask()
             else:

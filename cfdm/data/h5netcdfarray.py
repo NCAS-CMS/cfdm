@@ -100,7 +100,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
                 unpack=self.get_unpack(),
                 always_masked_array=False,
                 orthogonal_indexing=True,
-                attributes=self._attributes(variable)
+                attribtues=self._attributes(variable),
                 copy=False,
             )
             array = array[index]

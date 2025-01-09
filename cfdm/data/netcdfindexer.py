@@ -816,13 +816,13 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        variable = self.variable
+        var = self.variable
         try:
-            # numpy, netCDF4, h5py
-            return variable.dtype
+            # numpy, netCDF4, h5netcdf
+            return var.dtype
         except AttributeError:
-            # netcdf_file
-            return variable[(slice(0, 1),) * len(variable.shape)].dtype
+            # scipy.io.netcdf_file
+            return var[(slice(0, 1),) * len(var.shape)].dtype
 
     @property
     def ndim(self):

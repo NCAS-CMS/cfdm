@@ -119,10 +119,11 @@ class ArrayMixin:
 
         :Parameters:
 
-            default: optional
-                Return the value of the *default* parameter if the
-                attributes have not been set. If set to an `Exception`
-                instance then it will be raised instead.
+            copy: `bool`, optional
+                If True then the returned attribute dictionary is a
+                deep copy of those stored. If False (the default) then
+                the any in-place changes to dictionary or attributes
+                will also affect the stored attirbutes.
 
         :Returns:
 

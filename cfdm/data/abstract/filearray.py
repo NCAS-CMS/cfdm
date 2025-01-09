@@ -202,7 +202,7 @@ class FileArray(Array):
         )  # pragma: no cover
 
     def _set_variable(self, variable):
-        """TODOVAR
+        """TODOVAR.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -216,7 +216,7 @@ class FileArray(Array):
                 The file name.TODOVAR
 
         """
-        return self._set_component('variable', variable, copy=False)
+        return self._set_component("variable", variable, copy=False)
 
     @property
     def array(self):
@@ -472,7 +472,7 @@ class FileArray(Array):
         return storage_options
 
     def get_variable(self):
-        """TODOVAR
+        """TODOVAR.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -481,7 +481,7 @@ class FileArray(Array):
                 The file name.TODOVAR
 
         """
-        return self._get_component('variable', None)
+        return self._get_component("variable", None)
 
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
@@ -670,6 +670,8 @@ class FileArray(Array):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
+        .. seealso:: `get_attributes`
+
         :Parameters:
 
             var:
@@ -723,5 +725,5 @@ class FileArray(Array):
 
         # Remove an obselete variable
         a._set_variable(None)
-        
+
         return a

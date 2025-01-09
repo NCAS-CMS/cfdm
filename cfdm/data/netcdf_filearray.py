@@ -39,6 +39,36 @@ class Netcdf_fileArray(IndexMixin, FileArray):
             
         return attributes
 
+    def _attributes(self, var):
+        """Get the netCDF variable attributes.
+
+        If the attributes haven't been set then they are retrived from
+        *variable* and stored for future use. This differs from
+        `get_attributes`, which will return an empty dictionary if the
+        attributes haven't been set.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_attributes`
+
+        :Parameters:
+
+            var: `scipy.io.netcdf_variable`
+                The netCDF variable.
+
+        :Returns:
+
+            `dict`
+                The attributes.
+
+        """
+        attributes = self._get_component("attributes", None)
+        if attributes is None:
+            attributes = var._attributes
+            self._set_component("attributes", attributes, copy=False)
+
+        return attributes
+
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -58,6 +88,7 @@ class Netcdf_fileArray(IndexMixin, FileArray):
         """
         if index is None:
             index = self.index()
+        print(self.__class__.__name__, "_get_array", index)
 
         dataset, address = self.open()
         variable = dataset.variables[address]
