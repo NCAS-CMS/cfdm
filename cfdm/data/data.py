@@ -2613,6 +2613,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         elif not isinstance(a, np.ndarray):
             a = np.asanyarray(a)
 
+        # TODOVAR
+        a = a.view(type=np.ndarray)
+
         ndim = a.ndim
         shape = a.shape
         size = a.size

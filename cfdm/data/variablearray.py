@@ -1,5 +1,7 @@
 import h5netcdf
 
+import numpy as np
+
 from .abstract import FileArray
 from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
@@ -90,6 +92,8 @@ class VariableArray(IndexMixin, FileArray):
             copy=False,
         )
         array = array[index]
+
+        # TODOVAR        array = array.view(type=type(array))
 
         return array
 
@@ -191,5 +195,5 @@ class VariableArray(IndexMixin, FileArray):
 
         """
         return super().open(
-            h5netcdf.File, mode="r", decode_vlen_strings=True, **kwargs
+            h5netcdf.File, mode="r", decode_vlen_strings=True, netcdf_backend='pyfive', **kwargs
         )
