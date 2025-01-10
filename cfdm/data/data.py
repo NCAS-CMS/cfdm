@@ -1587,7 +1587,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         [0 2 4 6]
 
         """
-        # Note: This method is a classmethod to allow it's
+        # Note: This method is a classmethod to allow its
         #       functionality to be used with a LHS operand that is
         #       not 'self'. This is not currently needed here, but
         #       could be useful in subclasses which overload this
