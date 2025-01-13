@@ -22,6 +22,9 @@ Version NEXTVERSION
 * Fix bug that caused `cfdm.write` to fail when a parametric Z
   dimension coordinate did not have a ``computed_standard_name``
   attribute (https://github.com/NCAS-CMS/cfdm/issues/303)
+* Fix bug that caused `cfdm.read` to fail to read at all
+  datasets including variables with badly-encoded UGRID meshes
+  (https://github.com/NCAS-CMS/cfdm/issues/315)
 * New class `cfdm.H5netcdfArray`
 * New class `cfdm.NetCDF4Array`
 * New dependency: ``h5netcdf>=1.3.0``
