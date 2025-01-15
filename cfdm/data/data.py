@@ -1583,7 +1583,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [ True False  True  True]
 
         """
-        # Note: This method is a classmethod to allow it's
+        # Note: This method is a classmethod to allow its
         #       functionality to be used with a LHS operand that is
         #       not 'self'. This is not currently needed here, but
         #       could be useful in subclasses which overload this
