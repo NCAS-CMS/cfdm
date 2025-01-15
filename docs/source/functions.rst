@@ -21,23 +21,29 @@ Reading and writing
    cfdm.read 
    cfdm.write
    cfdm.netcdf_flatten
+   cfdm.netcdf_index
 
-Constants
----------
+Mathematical operations
+-----------------------
 
 .. autosummary::
    :nosignatures:
    :toctree: function/
    :template: function.rst
 
-   cfdm.CF
-   cfdm.atol
-   cfdm.rtol
-   cfdm.log_level
-   cfdm.configuration
-   cfdm.ATOL
-   cfdm.RTOL
-   cfdm.LOG_LEVEL
+   cf.atol
+   cf.rtol
+
+Resource management
+-------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: function/
+   :template: function.rst
+
+   cf.configuration
+   cf.chunksize
 
 Miscellaneous
 -------------
@@ -47,6 +53,7 @@ Miscellaneous
    :toctree: function/
    :template: function.rst
 
+   cfdm.CF
    cfdm.abspath
    cfdm.environment
    cfdm.example_field
@@ -54,4 +61,5 @@ Miscellaneous
    cfdm.example_domain
    cfdm.implementation
    cfdm.integer_dtype
+   cfdm.log_level
    cfdm.unique_constructs

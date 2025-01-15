@@ -24,6 +24,7 @@ Inspection
    ~cfdm.Data.ndim
    ~cfdm.Data.shape
    ~cfdm.Data.size
+   ~cfdm.Data.nbytes
    
 Units
 -----
@@ -38,6 +39,15 @@ Units
    ~cfdm.Data.has_units
    ~cfdm.Data.set_units
 
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.Data.Units
+   
 Date-time support
 -----------------
 
@@ -59,8 +69,40 @@ Date-time support
    :template: attribute.rst
 
    ~cfdm.Data.datetime_array
+   ~cfdm.Data.dtarray
    ~cfdm.Data.datetime_as_string
 
+Dask
+----
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.compute
+   ~cfdm.Data.persist
+   ~cfdm.Data.cull_graph
+   ~cfdm.Data.dask_compressed_array
+   ~cfdm.Data.rechunk
+   ~cfdm.Data.chunk_indices
+   ~cfdm.Data.todict
+   ~cfdm.Data.to_dask_array
+   ~cfdm.Data.get_deterministic_name
+   ~cfdm.Data.has_deterministic_name
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.Data.chunks
+   ~cfdm.Data.chunksize
+   ~cfdm.Data.npartitions
+   ~cfdm.Data.numblocks
+   
 Data creation routines
 ----------------------
 
@@ -72,6 +114,9 @@ Ones and zeros
    :template: method.rst
 
    ~cfdm.Data.empty
+   ~cfdm.Data.ones
+   ~cfdm.Data.zeros
+   ~cfdm.Data.full
 
 From existing data
 ^^^^^^^^^^^^^^^^^^
@@ -81,6 +126,7 @@ From existing data
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Data.asdata
    ~cfdm.Data.copy
 
 Data manipulation routines
@@ -95,6 +141,7 @@ Changing data shape
    :template: method.rst
 
    ~cfdm.Data.flatten
+   ~cfdm.Data.reshape
 
 
 Transpose-like operations
@@ -126,7 +173,17 @@ Adding and removing elements
    :template: method.rst
 
    ~cfdm.Data.unique
- 
+
+Expanding the data
+^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.pad_missing
+	    
 Indexing routines
 -----------------
 
@@ -152,6 +209,7 @@ Truth value testing
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Data.all
    ~cfdm.Data.any
 
 Comparison
@@ -172,7 +230,10 @@ Mask support
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Data.harden_mask
+   ~cfdm.Data.soften_mask
    ~cfdm.Data.apply_masking
+   ~cfdm.Data.masked_where
    ~cfdm.Data.filled
    ~cfdm.Data.masked_values
    ~cfdm.Data.del_fill_value
@@ -187,7 +248,9 @@ Mask support
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.Data.hardmask
    ~cfdm.Data.mask
+   ~cfdm.Data.fill_value
 
 Mathematical functions
 ----------------------
@@ -284,6 +347,7 @@ Miscellaneous
    ~cfdm.Data.get_filenames
    ~cfdm.Data.get_original_filenames
    ~cfdm.Data.source
+   ~cfdm.Data.chunk_indices
 
 .. rubric:: Attributes
 	    
@@ -293,6 +357,7 @@ Miscellaneous
    :template: attribute.rst
 
     ~cfdm.Data.data
+    ~cfdm.Data.tolist
 
 Performance
 -----------
@@ -306,7 +371,7 @@ Performance
    ~cfdm.Data.nc_hdf5_chunksizes
    ~cfdm.Data.nc_set_hdf5_chunksizes
    ~cfdm.Data.to_memory
- 
+
 Special
 -------
 

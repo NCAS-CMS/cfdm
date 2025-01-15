@@ -1,8 +1,9 @@
 from .abstract import MeshArray
+from .mixin import CompressedArrayMixin
 from .subarray import CellConnectivitySubarray
 
 
-class CellConnectivityArray(MeshArray):
+class CellConnectivityArray(CompressedArrayMixin, MeshArray):
     """A connectivity array derived from a UGRID connectivity variable.
 
     A UGRID connectivity variable contains indices which map each cell

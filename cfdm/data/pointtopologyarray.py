@@ -1,11 +1,12 @@
 from .abstract import MeshArray
+from .mixin import CompressedArrayMixin
 from .subarray import (
     PointTopologyFromEdgesSubarray,
     PointTopologyFromFacesSubarray,
 )
 
 
-class PointTopologyArray(MeshArray):
+class PointTopologyArray(CompressedArrayMixin, MeshArray):
     """A point cell domain topology array derived from a UGRID variable.
 
     A point cell domain topology array derived from an underlying

@@ -88,25 +88,21 @@ class FunctionsTest(unittest.TestCase):
 
     def test_atol_rtol(self):
         """Test the atol and rtol functions."""
-        org = cfdm.RTOL()
-        self.assertEqual(cfdm.RTOL(1e-5), org)
-        self.assertEqual(cfdm.RTOL(), 1e-5)
-        self.assertEqual(cfdm.RTOL(org), 1e-5)
-        self.assertEqual(cfdm.RTOL(), org)
-
-        org = cfdm.ATOL()
-        self.assertEqual(cfdm.ATOL(1e-5), org)
-        self.assertEqual(cfdm.ATOL(), 1e-5)
-        self.assertEqual(cfdm.ATOL(org), 1e-5)
-        self.assertEqual(cfdm.ATOL(), org)
+        org = cfdm.rtol()
+        self.assertEqual(cfdm.rtol(1e-5), org)
+        self.assertEqual(cfdm.rtol(), 1e-5)
+        self.assertEqual(cfdm.rtol(org), 1e-5)
+        self.assertEqual(cfdm.rtol(), org)
 
         org = cfdm.atol()
-        self.assertTrue(org == cfdm.ATOL())  # check alias
+        self.assertEqual(cfdm.atol(1e-5), org)
+        self.assertEqual(cfdm.atol(), 1e-5)
+        self.assertEqual(cfdm.atol(org), 1e-5)
+        self.assertEqual(cfdm.atol(), org)
 
-        self.assertTrue(cfdm.atol(1e-5) == org)
-        self.assertTrue(cfdm.atol() == 1e-5)
-        self.assertTrue(cfdm.atol(org) == 1e-5)
-        self.assertTrue(cfdm.atol() == org)
+        # Check aliases
+        self.assertTrue(cfdm.atol() == cfdm.ATOL())
+        self.assertTrue(cfdm.rtol() == cfdm.RTOL())
 
     def test_log_level(self):
         """Test the `log_level` function."""
@@ -273,13 +269,15 @@ class FunctionsTest(unittest.TestCase):
         # Test getting of all config. and store original values to test on:
         org = cfdm.configuration()
         self.assertIsInstance(org, dict)
-        self.assertEqual(len(org), 3)
+        self.assertEqual(len(org), 4)
         org_atol = org["atol"]
         self.assertIsInstance(org_atol, float)
         org_rtol = org["rtol"]
         self.assertIsInstance(org_rtol, float)
         org_ll = org["log_level"]  # will be 'DISABLE' as disable for test
         self.assertIsInstance(org_ll, str)
+        org_chunksize = org["chunksize"]
+        self.assertIsInstance(org_chunksize, int)
 
         # Store some sensible values to reset items to for testing,
         # ensure these are kept to be different to the defaults:
@@ -299,6 +297,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(post_set["atol"], org_atol)
         self.assertEqual(post_set["rtol"], atol_rtol_reset_value)
         self.assertEqual(post_set["log_level"], org_ll)
+        self.assertEqual(post_set["chunksize"], org_chunksize)
         # don't reset to org this time to test change persisting...
 
         # Note setting of previous items persist, e.g. atol above
@@ -370,6 +369,10 @@ class FunctionsTest(unittest.TestCase):
             raise RuntimeError(
                 "A ValueError should have been raised, but wasn't"
             )
+
+        # Reset configuration
+        cfdm.configuration(**org)
+        self.assertEqual(cfdm.configuration(), org)
 
     def test_unique_constructs(self):
         """Test the `unique_constructs` function."""
@@ -472,7 +475,11 @@ class FunctionsTest(unittest.TestCase):
 
         org = func(rtol=10, atol=20, log_level="DETAIL")
         old = func()
-        new = dict(rtol=10 * 2, atol=20 * 2, log_level="DEBUG")
+        new = dict(old)
+        new["rtol"] = 10 * 2
+        new["atol"] = 20 * 2
+        new["log_level"] = "DEBUG"
+
         with func(**new):
             self.assertEqual(func(), new)
 
@@ -481,7 +488,10 @@ class FunctionsTest(unittest.TestCase):
 
         org = func(rtol=cfdm.Constant(10), atol=20, log_level="DETAIL")
         old = func()
-        new = dict(rtol=cfdm.Constant(10 * 2), atol=20 * 2, log_level="DEBUG")
+        new["rtol"] = cfdm.Constant(10 * 2)
+        new["atol"] = 20 * 2
+        new["log_level"] = "DEBUG"
+
         with func(**new):
             self.assertEqual(func(), new)
 
