@@ -176,6 +176,9 @@ The cfdm package requires:
 
 * `scipy <https://scipy.org/>`_, version 1.10.0 or newer.
 
+* `uritools <https://pypi.org/project/uritools>`_, version 4.0.3 or
+  newer.
+
 ----
 
 .. _Code-repository:
