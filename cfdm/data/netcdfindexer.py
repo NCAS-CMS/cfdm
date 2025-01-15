@@ -703,10 +703,10 @@ class netcdf_indexer:
         elif np.ma.isMA(data):
             if not (self.always_masked_array or np.ma.is_masked(data)):
                 # Return a non-masked array
-                data = np.array(data, copy=False)
+                data = np.array(data)
         elif self.always_masked_array:
             # Return a masked array
-            data = np.ma.masked_array(data, copy=False)
+            data = np.ma.masked_array(data)
 
         return data
 

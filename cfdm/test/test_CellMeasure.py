@@ -28,7 +28,7 @@ class CellMeasureTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
         )
         f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, f"f={f!r}")
+        self.assertEqual(len(f), 1)
         self.f = f[0]
 
     def test_CellMeasure__init__(self):

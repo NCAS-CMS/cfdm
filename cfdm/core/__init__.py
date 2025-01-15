@@ -52,7 +52,13 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-_minimum_vn = "1.15"
+_minimum_vn = "2.0.0"
+if not Version(_minimum_vn) < Version(np.__version__):
+    raise ValueError(
+        "Bad numpy version: cfdm requires {_minimum_vn}<=numpy. "
+        f"Got {Version(np.__version__)} at {np.__file__}"
+    )
+
 if Version(np.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad numpy version: cfdm.core requires numpy>={_minimum_vn}. "

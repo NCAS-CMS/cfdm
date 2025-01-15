@@ -1342,7 +1342,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         return self._unary_operation("__pos__")
 
-    def __array__(self, *dtype):
+    def __array__(self, dtype=None, copy=None):
         """The numpy array interface.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1351,6 +1351,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             dtype: optional
                 Typecode or data-type to which the array is cast.
+
+            copy: `None` or `bool`
+                Included to match the v2 `numpy.ndarray.__array__`
+                API, but ignored. The return numpy array is always
+                independent.
+
+                .. versionadded:: NEXTVERSION
 
         :Returns:
 
@@ -1372,10 +1379,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         array = self.array
-        if not dtype:
+        if dtype is None:
             return array
-        else:
-            return array.astype(dtype[0], copy=False)
+
+        return array.astype(dtype, copy=False)
 
     def __data__(self):
         """Returns a new reference to self.
@@ -1583,7 +1590,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [ True False  True  True]
 
         """
-        # Note: This method is a classmethod to allow it's
+        # Note: This method is a classmethod to allow its
         #       functionality to be used with a LHS operand that is
         #       not 'self'. This is not currently needed here, but
         #       could be useful in subclasses which overload this

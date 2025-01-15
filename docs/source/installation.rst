@@ -154,27 +154,32 @@ The cfdm package requires:
 
 * `Python <https://www.python.org>`_, version 3.8 or newer.
 
-* `numpy <http://www.numpy.org>`_, version 1.15 or newer.
+* `numpy <http://www.numpy.org>`_, versions 1.15 up to, but not
+  including, 2.0.
 
-* `netCDF4 <https://pypi.org/project/netCDF4>`_, version 1.5.4 or
+* `netCDF4 <https://pypi.org/project/netCDF4>`_, version 1.7.2 or
   newer.
 
-* `cftime <https://pypi.org/project/cftime>`_, version 1.6.0 or
+* `cftime <https://pypi.org/project/cftime>`_, version 1.6.4 or
   newer.
 
 * `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
   newer.
 
-* `h5py <https://pypi.org/project/h5py>`_, version 3.10.0 or newer.
+* `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.
 
-* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.2.0 or newer.
+* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 
-* `dask <https://pypi.org/project/dask>`_, version 2024.2.1 or newer.
+* `dask <https://pypi.org/project/dask>`_, versions 2024.6.0 to
+  2024.7.1 inclusive.
 
 * `packaging <https://pypi.org/project/packaging>`_, version 20.0 or
   newer.
 
 * `scipy <https://scipy.org/>`_, version 1.10.0 or newer.
+
+* `uritools <https://pypi.org/project/uritools>`_, version 4.0.3 or
+  newer.
 
 ----
 
