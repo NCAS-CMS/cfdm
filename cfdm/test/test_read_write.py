@@ -703,6 +703,96 @@ class read_writeTest(unittest.TestCase):
                         ):
                             self.assertTrue(i.equals(j, verbose=3))
 
+    def test_read_write_Conventions_version(self):
+        """Test processing of `Conventions` attribute to field property."""
+        from packaging.version import Version
+
+        f = cfdm.read(self.filename)[0]
+
+        # Construct single valid values for standards
+        valid_version_ends = ["1.11", "1", "2.30.4"]
+        cf_valid_conv = [f"CF-{v}" for v in valid_version_ends]
+        ugrid_valid_conv = [f"UGRID-{v}" for v in valid_version_ends]
+        cfa_valid_conv = [f"CFA-{v}" for v in valid_version_ends]
+        other_valid_conv = [f"somestandard-{v}" for v in valid_version_ends]
+
+        # Construct some mixed compound valid values for standards. Reverse
+        # one list to make version IDs differ on at least one standard.
+        zip_valid = list(zip(
+            cf_valid_conv, reversed(ugrid_valid_conv), cfa_valid_conv,
+            other_valid_conv
+        ))
+        # Only space and comma delimiters are valid (see Conformance doc.)
+        combinations_comma_delim = [",".join(c) for c in zip_valid]
+        combinations_space_delim = [" ".join(c) for c in zip_valid]
+
+        all_valid_conv = (
+            cf_valid_conv + ugrid_valid_conv + cfa_valid_conv +
+            other_valid_conv + combinations_comma_delim +
+            combinations_space_delim
+        )
+
+        # Check that valid Conventions version specifications get set as the
+        # corresponding version on the Conventions property.
+        for set_conv_value in all_valid_conv:
+            cfdm.write(f, tmpfile)
+
+            # Can't use cfdm to change Conventions property so must use netCDF4
+            # Open with append mode, just want to update the global attribute
+            n = netCDF4.Dataset(tmpfile, "a")
+            n.Conventions = set_conv_value
+            n.close()
+
+            g = cfdm.read(tmpfile)[0]
+            self.assertEqual(g.get_property("Conventions"), set_conv_value)
+
+        invalid_version_ends = ["1.1/1.2", "bad", ".11", ""]
+        cf_invalid_conv = [f"CF-{v}" for v in invalid_version_ends]
+        ugrid_invalid_conv = [f"UGRID-{v}" for v in invalid_version_ends]
+        cfa_invalid_conv = [f"CFA-{v}" for v in invalid_version_ends]
+        other_invalid_conv = [f"somestandard-{v}" for v in invalid_version_ends]
+        zip_invalid = zip(
+            cf_invalid_conv, ugrid_invalid_conv, cfa_invalid_conv,
+            other_invalid_conv
+        )
+        bad_combinations_good_delim = [",".join(c) for c in zip_invalid]
+        # Include valid values with bad (unsupported) delimiters
+        good_combinations_bad_delim = ["- ".join(c) for c in zip_valid]
+
+        all_invalid_conv = (
+            cf_invalid_conv + ugrid_invalid_conv + cfa_invalid_conv +
+            other_invalid_conv + bad_combinations_good_delim +
+            good_combinations_bad_delim
+        )
+
+        # Include a mixture of valid and invalid version specifiers
+        some_valid_some_invalid_conv = [
+            " ".join(c) for c in zip(
+                cf_invalid_conv, reversed(ugrid_valid_conv), cfa_invalid_conv,
+                other_valid_conv)
+        ]
+
+        # Check that invalid version specifications get ignored, so that the
+        # file is successfully read in, but is given default-logic version.
+        for set_conv_value in (
+                all_invalid_conv + some_valid_some_invalid_conv):
+            get_conv_value = f.get_property("Conventions")
+            cfdm.write(f, tmpfile)
+
+            # Can't use cfdm to change Conventions property so must use netCDF4
+            n = netCDF4.Dataset(tmpfile, "a")
+            n.Conventions = set_conv_value
+            n.close()
+
+            self.assertEqual(
+                cfdm.read(tmpfile, _scan_only=True)["file_version"],
+                Version(get_conv_value.lstrip("CF-"))
+            )
+            g = cfdm.read(tmpfile)[0]
+            # TODO: do we want to re-set the Conventions property as well,
+            # given it is invalid?
+            self.assertEqual(g.get_property("Conventions"), set_conv_value)
+
     def test_read_write_Conventions(self):
         """Test the `Conventions` keyword argument to `write`."""
         f = cfdm.read(self.filename)[0]

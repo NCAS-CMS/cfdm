@@ -1238,9 +1238,10 @@ class NetCDFRead(IORead):
 
         # ------------------------------------------------------------
         # Find the CF version for the file, and the CFA version.
+        # (See '2.6.1 Identification of Conventions' in the CF Conformance
+        # document for valid inputs for the 'Conventions' property.)
         # ------------------------------------------------------------
         Conventions = g["global_attributes"].get("Conventions", "")
-
         # If the string contains any commas, it is assumed to be a
         # comma-separated list.
         all_conventions = re.split(r",\s*", Conventions)
@@ -1249,15 +1250,29 @@ class NetCDFRead(IORead):
 
         file_version = None
         for c in all_conventions:
-            if c.startswith("CF-"):
-                file_version = c.replace("CF-", "", 1)
-            elif c.startswith("UGRID-"):
+            # Be particularly strict with the regex to account for ambiguous
+            # values e.g. CF-<badversionformat> or CF-1.X/CF-1.Y. Note that:
+            #   * the '^' and '$' start and end of string tokens ensure that
+            #     only zero or one match can be found per given string c;
+            #   * the regex below ensures a valid input to
+            #     Version(), allowing any level of versioning identifier
+            #     detail e.g. 1.23.34.45.6 (for future-proofing).
+            #     See https://packaging.python.org/en/latest/specifications/
+            #         version-specifiers/ for more on valid input to Version()
+            v_id = r"^{}-(\d+(\.\d+)*)$"
+            cf_v = re.search(v_id.format("CF"), c)
+            u_v = re.search(v_id.format("UGRID"), c)
+            cfa_v = re.search(v_id.format("CFA"), c)
+
+            if cf_v:
+                file_version = cf_v.group(1)
+            elif u_v:
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.
-                g["UGRID_version"] = Version(c.replace("UGRID-", "", 1))
-            elif c.startswith("CFA-"):
+                g["UGRID_version"] = Version(u_v.group(1))
+            elif cfa_v:
                 g["cfa"] = True
-                g["CFA_version"] = Version(c.replace("CFA-", "", 1))
+                g["CFA_version"] = Version(cfa_v.group(1))
             elif c == "CFA":
                 g["cfa"] = True
                 g["CFA_version"] = Version("0.4")
@@ -1272,6 +1287,11 @@ class NetCDFRead(IORead):
                 file_version = self.implementation.get_cf_version()
 
         g["file_version"] = Version(file_version)
+        if is_log_level_debug(logger):
+            logger.debug(
+                "    Versioning:\n        read_vars['file_version'] ="
+                f"{g['file_version']}"
+            )  # pragma: no cover
 
         # Set minimum/maximum versions
         for vn in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11"):
