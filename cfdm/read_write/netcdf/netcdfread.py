@@ -10895,7 +10895,10 @@ class NetCDFRead(IORead):
         if self.read_vars["netcdf_backend"] == "netcdf_file":
             # scipy.io.netcdf_file
             array = array.copy()
-
+        elif self.read_vars["netcdf_backend"] == "h5netcdf": # TODOVAR
+            array = array.view(type=np.ndarray) # flakey (mising values)!!
+            print (88888888, index, type(array))
+            
         return array
 
     def _get_storage_options(self, filename, parsed_filename):
@@ -11491,6 +11494,7 @@ class NetCDFRead(IORead):
             elements[index] = value
 
         # Store the elements in the data object
+        print (repr(elements))
         data._set_cached_elements(elements)
 
     def _netcdf_chunksizes(self, variable):

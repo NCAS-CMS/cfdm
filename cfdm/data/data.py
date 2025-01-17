@@ -2153,13 +2153,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             return
 
         # Parse the new elements
-        elements = elements.copy()
+        elements = elements.copy()        
         for i, x in elements.items():
             if np.ma.is_masked(x):
                 x = np.ma.masked
             else:
-                x = np.squeeze(x)
-
+                print ('x=',type(x))
+                x = x.squeeze()
+                print (999999999)
+            
             elements[i] = x
 
         cache = self._get_component("cached_elements", None)
@@ -2621,8 +2623,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         elif not isinstance(a, np.ndarray):
             a = np.asanyarray(a)
 
-        # TODOVAR
-        a = a.view(type=np.ndarray)
+        # TODOVAR - for memmap
+        a = a.view(type=type(a))
+#        if np.ma.isMA(a):
+#            a = a.view(type=np.ma.MaskedArray)
+#        else:
+#            a = a.view(type=np.ndarray)
 
         ndim = a.ndim
         shape = a.shape

@@ -93,7 +93,7 @@ class VariableArray(IndexMixin, FileArray):
         )
         array = array[index]
 
-        # TODOVAR        array = array.view(type=type(array))
+        array = array.view(type=type(array))
 
         return array
 
