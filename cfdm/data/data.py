@@ -3868,7 +3868,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         a = dx.compute()
 
         if np.ma.isMA(a) and a is not np.ma.masked:
-            a.set_fill_value(999)
             if self.hardmask:
                 a.harden_mask()
             else:
