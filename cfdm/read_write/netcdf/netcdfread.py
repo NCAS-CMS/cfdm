@@ -2234,7 +2234,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Close all opened netCDF files (last thing before returning)
         # ------------------------------------------------------------
-        # self.file_close()
+        self.file_close()
 
         # ------------------------------------------------------------
         # Return the fields/domains
