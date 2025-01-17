@@ -1583,6 +1583,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [ True False  True  True]
 
         """
+        # Note: This method is a classmethod to allow its
+        #       functionality to be used with a LHS operand that is
+        #       not 'self'. This is not currently needed here, but
+        #       could be useful in subclasses which overload this
+        #       method, yet still want to access the parent method
+        #       functionality via `super`. For instance, cf-python's
+        #       `cf.Data._binary_operation` sometimes needs to apply
+        #       the binary operation to a modified copy of its 'self'.
         inplace = method[2] == "i"
 
         # ------------------------------------------------------------
