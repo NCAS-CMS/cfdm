@@ -41,6 +41,19 @@ class FileArrayMixin:
 
         return f"{filenames}, {addresses}"
 
+    def __dask_tokenize__(self):
+        """Return a value fully representative of the object.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return (
+            self.__class__,
+            self.shape,
+            self.get_filenames(),
+            self.get_addresses(),
+        )
+
     @property
     def dtype(self):
         """Data-type of the array."""

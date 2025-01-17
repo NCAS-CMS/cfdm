@@ -1,10 +1,13 @@
 from copy import deepcopy
 
+import numpy as np
+from cfunits import Units
+
 
 class ArrayMixin:
     """Mixin class for a container of an array.
 
-    .. versionadded:: (cfdm) 1.8.7.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
@@ -32,6 +35,14 @@ class ArrayMixin:
             return array
         else:
             return array.astype(dtype[0], copy=False)
+
+    def __array_function__(self, func, types, args, kwargs):
+        """Implement the `numpy` ``__array_function__`` protocol.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return NotImplemented
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed subarray.
@@ -75,6 +86,31 @@ class ArrayMixin:
 
         """
         return 0
+
+    @property
+    def _meta(self):
+        """Normalize the array to an appropriate Dask meta object.
+
+        The Dask meta can be thought of as a suggestion to Dask. Dask
+        uses this meta to generate the task graph until it can infer
+        the actual metadata from the values. It does not force the
+        output to have the structure or dtype of the specified meta.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `dask.utils.meta_from_array`
+
+        """
+        return np.array((), dtype=self.dtype)
+
+    @property
+    def Units(self):
+        """The `Units` object containing the units of the array.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return Units(self.get_units(None), self.get_calendar(None))
 
     def get_attributes(self, default=ValueError()):
         """The attributes of the array.

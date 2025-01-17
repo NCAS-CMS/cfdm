@@ -3,6 +3,11 @@ import sys
 from enum import Enum
 
 import numpy as np
+from dask import config
+from dask.utils import parse_bytes
+
+_CHUNKSIZE = "128 MiB"
+config.set({"array.chunk-size": _CHUNKSIZE})
 
 """A dictionary of useful constants.
 
@@ -23,11 +28,15 @@ retrieve and set the values with the dedicated get-and-set functions.
       The minimal level of seriousness for which log messages are
       shown.  See `cfdm.log_level`.
 
+    CHUNKSIZE: `int`
+      The Dask chunk size (in bytes). See `cfdm.chunksize`.
+
 """
 CONSTANTS = {
     "ATOL": sys.float_info.epsilon,
     "RTOL": sys.float_info.epsilon,
     "LOG_LEVEL": logging.getLevelName(logging.getLogger().level),
+    "CHUNKSIZE": parse_bytes(_CHUNKSIZE),
 }
 
 

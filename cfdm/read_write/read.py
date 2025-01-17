@@ -20,6 +20,8 @@ def read(
     domain=False,
     netcdf_backend=None,
     storage_options=None,
+    cache=True,
+    dask_chunks="storage-aligned",
     store_hdf5_chunks=True,
     _implementation=_implementation,
 ):
@@ -327,6 +329,191 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
+        cache: `bool`, optional
+            If True, the default, then cache the first and last array
+            elements of metadata constructs (not field constructs) for
+            fast future access. In addition, the second and
+            penultimate array elements will be cached from coordinate
+            bounds when there are two bounds per cell. For remote
+            data, setting *cache* to False may speed up the parsing of
+            the file.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
+        dask_chunks: `str`, `int`, `None`, or `dict`, optional
+            Specify the Dask chunking for data. May be one of the
+            following:
+
+            * ``'storage-aligned'``
+
+              This is the default. The Dask chunk size in bytes will
+              be as close as possible to the size given by
+              `cfdm.chunksize`, favouring square-like chunk shapes,
+              with the added restriction that the entirety of each
+              storage chunk must also lie within exactly one Dask
+              chunk.
+
+              When reading the data from disk, an entire storage chunk
+              will be read once per Dask storage chunk that contains
+              any part of it, so ensuring that a storage chunk lies
+              within only one Dask chunk can increase performance by
+              reducing the amount of disk access (particularly when
+              the data are stored remotely to the client).
+
+              For instance, consider a file variable that has an array
+              of 64-bit floats with shape (400, 300, 60) and a storage
+              chunk shape of (100, 5, 60), giving 240 storage chunks
+              each of size 100*5*60*8 bytes = 0.23 MiB. Then:
+
+              * If `cfdm.chunksize` returned 134217728 (i.e. 128 MiB),
+                then the storage-aligned Dask chunks will have shape
+                (400, 300, 60), giving 1 Dask chunk with size of 54.93
+                MiB (compare with a Dask chunk shape of (400, 300, 60)
+                and size 54.93 MiB, if *dask_chunks* were ``'auto'``.)
+
+              * If `cfdm.chunksize` returned 33554432 (i.e. 32 MiB),
+                then the storage-aligned Dask chunks will have shape
+                (200, 260, 60), giving 4 Dask chunks with a maximum
+                size of 23.80 MiB (compare with a Dask chunk shape of
+                (264, 264, 60) and maximum size 31.90 MiB, if
+                *dask_chunks* were ``'auto'``.)
+
+              * If `cfdm.chunksize` returned 4194304 (i.e. 4 MiB),
+                then the storage-aligned Dask chunks will have shape
+                (100, 85, 60), giving 16 Dask chunks with a maximum
+                size of 3.89 MiB (compare with a Dask chunk shape of
+                (93, 93, 60) and maximum size 3.96 MiB, if
+                *dask_chunks* were ``'auto'``.)
+
+              There are, however, some occasions when, for particular
+              data arrays in the file, the ``'auto'`` option will
+              automatically be used instead of storage-aligned Dask
+              chunks. This occurs when:
+
+              * The data array in the file is stored contiguously.
+
+              * The data array in the file is compressed by convention
+                (e.g. ragged array representations, compression by
+                gathering, subsampled coordinates, etc.). In this case
+                the Dask chunks are for the uncompressed data, and so
+                cannot be aligned with the storage chunks of the
+                compressed array in the file.
+
+            * ``'storage-exact'``
+
+              Each Dask chunk will contain exactly one storage chunk
+              and each storage chunk will lie within exactly one Dask
+              chunk.
+
+              For instance, consider a file variable that has an array
+              of 64-bit floats with shape (400, 300, 60) and a storage
+              chunk shape of (100, 5, 60) (i.e. there are 240 storage
+              chunks, each of size 0.23 MiB). Then the storage-exact
+              Dask chunks will also have shape (100, 5, 60) giving 240
+              Dask chunks with a maximum size of 0.23 MiB.
+
+              There are, however, some occasions when, for particular
+              data arrays in the file, the ``'auto'`` option will
+              automatically be used instead of storage-exact Dask
+              chunks. This occurs when:
+
+              * The data array in the file is stored contiguously.
+
+              * The data array in the file is compressed by convention
+                (e.g. ragged array representations, compression by
+                gathering, subsampled coordinates, etc.). In this case
+                the Dask chunks are for the uncompressed data, and so
+                cannot be aligned with the storage chunks of the
+                compressed array in the file.
+
+            * ``auto``
+
+              The Dask chunk size in bytes will be as close as
+              possible to the size given by `cfdm.chunksize`,
+              favouring square-like chunk shapes. This may give
+              similar Dask chunk shapes as the ``'storage-aligned'``
+              option, but without the guarantee that each storage
+              chunk will lie within exactly one Dask chunk.
+
+            * A byte-size given by a `str`
+
+              The Dask chunk size in bytes will be as close as
+              possible to the given byte-size, favouring square-like
+              chunk shapes. Any string value, accepted by the *chunks*
+              parameter of the `dask.array.from_array` function is
+              permitted.
+
+              *Example:*
+                A Dask chunksize of 2 MiB may be specified as
+                ``'2097152'`` or ``'2 MiB'``.
+
+            * `-1` or `None`
+
+              There is no Dask chunking, i.e. every data array has one
+              Dask chunk regardless of its size.
+
+            * Positive `int`
+
+              Every dimension of all Dask chunks has this number of
+              elements.
+
+              *Example:*
+                For 3-dimensional data, *dask_chunks* of `10` will
+                give Dask chunks with shape (10, 10, 10).
+
+            * `dict`
+
+              Each of dictionary key identifies a file dimension, with
+              a value that defines the Dask chunking for that
+              dimension whenever it is spanned by a data array. A file
+              dimension is identified in one of three ways:
+
+              1. the netCDF dimension name, preceded by ``ncdim%``
+                (e.g. ``'ncdim%lat'``);
+
+              2. the value of the "standard name" attribute of a
+                 CF-netCDF coordinate variable that spans the
+                 dimension (e.g. ``'latitude'``);
+
+              3. the value of the "axis" attribute of a CF-netCDF
+                 coordinate variable that spans the dimension
+                 (e.g. ``'Y'``).
+
+              The dictionary values may be a byte-size string,
+              ``'auto'``, `int` or `None`, with the same meanings as
+              those types for the *dask_chunks* parameter itself, but
+              applying only to the specified dimension. In addition, a
+              dictionary value may be a `tuple` or `list` of integers
+              that sum to the dimension size.
+
+              Not specifying a file dimension in the dictionary is
+              equivalent to it being defined with a value of
+              ``'auto'``.
+
+              *Example:*
+                ``{'T': '0.5 MiB', 'Z': 'auto', 'Y': [36, 37], 'X':
+                None}``
+
+              *Example:*
+                If a netCDF file contains dimensions ``time``, ``z``,
+                ``lat`` and ``lon``, then ``{'ncdim%time': 12,
+                'ncdim%lat', None, 'ncdim%lon': None}`` will ensure
+                that, for all applicable data arrays, all ``time``
+                axes have a `dask` chunksize of 12; all ``lat`` and
+                ``lon`` axes are not `dask` chunked; and all ``z``
+                axes are `dask` chunked to comply as closely as
+                possible with the default `dask` chunk size.
+
+                If the netCDF file also contains a ``time`` coordinate
+                variable with a "standard_name" attribute of
+                ``'time'`` and an "axis" attribute of ``'T'``, then
+                the same `dask` chunking could be specified with
+                either ``{'time': 12, 'ncdim%lat', None, 'ncdim%lon':
+                None}`` or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
+                None}``.
+
+              .. versionadded:: (cfdm) NEXTVERSION
+
         store_hdf5_chunks: `bool`, optional
             If True (the default) then store the HDF5 chunking
             strategy for each returned data array. The HDF5 chunking
@@ -425,6 +612,8 @@ def read(
                 domain=domain,
                 storage_options=storage_options,
                 netcdf_backend=netcdf_backend,
+                cache=cache,
+                dask_chunks=dask_chunks,
                 store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,
             )

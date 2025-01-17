@@ -143,10 +143,12 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
 _minimum_vn = "2024.6.0"
-if Version(dask.__version__) < Version(_minimum_vn):
+_maximum_vn = "2024.7.1"
+_dask_version = Version(dask.__version__)
+if not Version(_minimum_vn) <= _dask_version <= Version(_maximum_vn):
     raise ValueError(
-        f"Bad scipy version: cfdm requires dask>={_minimum_vn}. "
-        f"Got {dask.__version__} at {dask.__file__}"
+        f"Bad dask version: cfdm requires {_minimum_vn}<=dask<={_maximum_vn}. "
+        f"Got {_dask_version} at {dask.__file__}"
     )
 
 from .constants import masked
@@ -160,10 +162,12 @@ from .functions import (
     RTOL,
     abspath,
     atol,
+    chunksize,
     configuration,
     environment,
     integer_dtype,
     log_level,
+    parse_indices,
     rtol,
     unique_constructs,
     _disable_logging,
@@ -237,6 +241,8 @@ from .bounds import Bounds
 from .coordinateconversion import CoordinateConversion
 from .datum import Datum
 from .interiorring import InteriorRing
+
+from .units import Units
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellconnectivity import CellConnectivity

@@ -11,6 +11,8 @@ from dataclasses import dataclass, field
 from functools import reduce
 from math import nan, prod
 from pprint import pformat
+from math import log, nan, prod
+from numbers import Integral
 from typing import Any
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -18,6 +20,7 @@ from uuid import uuid4
 import h5netcdf
 import netCDF4
 import numpy as np
+from dask.array.core import normalize_chunks
 from dask.base import tokenize
 from packaging.version import Version
 from s3fs import S3FileSystem
@@ -914,6 +917,8 @@ class NetCDFRead(IORead):
         storage_options=None,
         _file_systems=None,
         netcdf_backend=None,
+        cache=True,
+        dask_chunks="storage-aligned",
         store_hdf5_chunks=True,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
@@ -974,14 +979,26 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            _file_systems: `dict`, optional
-                Provide any already-open S3 file systems.
+            cache: `bool`, optional
+                Control array element caching. See `cfdm.read` for
+                details
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            dask_chunks: `str`, `int`, `None`, or `dict`, optional
+                Specify the `dask` chunking of dimensions for data in
+                the input files. See `cfdm.read` for details
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
             store_hdf_chunks: `bool`, optional
                  Storing the HDF5 chunking strategy. See `cfdm.read`
                  for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            _file_systems: `dict`, optional
+                Provide any already-open S3 file systems.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1106,6 +1123,14 @@ class NetCDFRead(IORead):
             # Cache of open s3fs.File objects
             "s3fs_File_objects": [],
             # --------------------------------------------------------
+            # Array element caching
+            # --------------------------------------------------------
+            "cache": bool(cache),
+            # --------------------------------------------------------
+            # Dask
+            # --------------------------------------------------------
+            "dask_chunks": dask_chunks,
+            # --------------------------------------------------------
             # Whether or not to store HDF chunks
             # --------------------------------------------------------
             "store_hdf5_chunks": bool(store_hdf5_chunks),
@@ -1163,6 +1188,15 @@ class NetCDFRead(IORead):
                     raise ValueError(
                         f"Can't read: Bad parameter value: extra={extra!r}"
                     )
+
+        # Check dask_chunks
+        if dask_chunks is not None and not isinstance(
+            dask_chunks, (str, Integral, dict)
+        ):
+            raise ValueError(
+                "The 'dask_chunks' keyword must be of type str, int, None or "
+                f"dict. Got: {dask_chunks!r}"
+            )
 
         g["extra"] = extra
 
@@ -2949,7 +2983,7 @@ class NetCDFRead(IORead):
 
         # The number of elements per instance. For the instances array
         # example above, the elements_per_instance array is [7, 5, 7].
-        elements_per_instance = count  # self._create_Data(array=count)
+        elements_per_instance = count
 
         instance_dimension_size = g["internal_dimension_sizes"][
             instance_dimension
@@ -4844,8 +4878,8 @@ class NetCDFRead(IORead):
 
         **Examples**
 
-            >>> n._is_char('regions')
-            True
+        >>> n._is_char('regions')
+        True
 
         """
         datatype = self.read_vars["variables"][ncvar].dtype
@@ -6281,12 +6315,14 @@ class NetCDFRead(IORead):
         ):
             # The array is not compressed (or is not to be
             # uncompressed)
-            pass
+            compressed = False
 
         else:
             # The array might be compressed
+            compressed = False
 
             # Get the shape and ndim of the uncompressed data
+
             uncompressed_shape = tuple(
                 self._dimension_sizes(ncvar, parent_ncvar=parent_ncvar)
             )
@@ -6336,6 +6372,8 @@ class NetCDFRead(IORead):
                         compressed_dimensions=compressed_dimensions,
                         list_variable=c["list_variable"],
                     )
+                    compressed = True
+
                 elif "ragged_indexed_contiguous" in c:
                     # ------------------------------------------------
                     # Contiguous indexed ragged array
@@ -6361,6 +6399,7 @@ class NetCDFRead(IORead):
                         count_variable=c["count_variable"],
                         index_variable=c["index_variable"],
                     )
+                    compressed = True
 
                 elif "ragged_contiguous" in c:
                     # ------------------------------------------------
@@ -6383,6 +6422,7 @@ class NetCDFRead(IORead):
                         uncompressed_shape=uncompressed_shape,
                         count_variable=c["count_variable"],
                     )
+                    compressed = True
 
                 elif "ragged_indexed" in c:
                     # ------------------------------------------------
@@ -6405,6 +6445,7 @@ class NetCDFRead(IORead):
                         uncompressed_shape=uncompressed_shape,
                         index_variable=c["index_variable"],
                     )
+                    compressed = True
 
                 elif (
                     parent_ncvar is not None
@@ -6482,14 +6523,34 @@ class NetCDFRead(IORead):
                     interpolation_description=rec["interpolation_description"],
                     computational_precision=rec["computational_precision"],
                 )
+                compressed = True
 
         data = self._create_Data(
             array,
             units=units,
             calendar=calendar,
             ncvar=ncvar,
+            compressed=compressed,
         )
         data._original_filenames(define=filename)
+
+        # ------------------------------------------------------------
+        # Cache selected values from disk
+        # ------------------------------------------------------------
+        if (
+            not compression_index
+            and g.get("cache")
+            and self.implementation.get_construct_type(construct) != "field"
+        ):
+            # Only cache values from non-field data and
+            # non-compression-index data, on the assumptions that:
+            #
+            # a) Field data is, in general, so large that finding the
+            #    cached values takes too long.
+            #
+            # b) Cached values are never really required for
+            #    compression index data.
+            self._cache_data_elements(data, ncvar)
 
         return data
 
@@ -7473,6 +7534,8 @@ class NetCDFRead(IORead):
         ncvar,
         units=None,
         calendar=None,
+        ncdimensions=None,
+        compressed=False,
         **kwargs,
     ):
         """Create a Data object from a netCDF variable.
@@ -7496,6 +7559,11 @@ class NetCDFRead(IORead):
                 The calendar of *array*. By default, or if `None`, it is
                 assumed that there is no calendar.
 
+            ncdimensions: sequence of `str`, optional
+                The netCDF dimensions spanned by the array.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
                 returned `Data` object.
@@ -7505,22 +7573,62 @@ class NetCDFRead(IORead):
             `Data`
 
         """
+        if array.dtype is None:
+            # The array is based on a netCDF VLEN variable, and
+            # therefore has unknown data type. To find the correct
+            # data type (e.g. "<U7"), we need to read the entire array
+            # from its netCDF variable into memory to find the longest
+            # string.
+            g = self.read_vars
+            if g["has_groups"]:
+                group, name = self._netCDF4_group(
+                    g["variable_grouped_dataset"][ncvar], ncvar
+                )
+                variable = group.variables.get(name)
+            else:
+                variable = g["variables"].get(ncvar)
+
+            array = variable[...]
+
+            string_type = isinstance(array, str)
+            if string_type:
+                # A netCDF string type scalar variable comes out as Python
+                # str object, so convert it to a numpy array.
+                array = np.array(array, dtype=f"U{len(array)}")
+
+            if not variable.ndim:
+                # NetCDF4 has a thing for making scalar size 1
+                # variables into 1d arrays
+                array = array.squeeze()
+
+            if not string_type:
+                # An N-d (N>=1) netCDF string type variable comes out
+                # as a numpy object array, so convert it to numpy
+                # string array.
+                array = array.astype("U", copy=False)
+                # NetCDF4 doesn't auto-mask VLEN variables
+                array = np.ma.where(array == "", np.ma.masked, array)
+
+        # Set the dask chunking strategy
+        chunks = self._dask_chunks(array, ncvar, compressed)
+
         data = self.implementation.initialise_Data(
             array=array,
             units=units,
             calendar=calendar,
+            chunks=chunks,
             copy=False,
             **kwargs,
         )
 
         # Store the HDF5 chunking
         if self.read_vars["store_hdf5_chunks"] and ncvar is not None:
+            # Only store the HDF chunking if 'data' has the same shape
+            # as its netCDF variable. This may not be the case for
+            # variables compressed by convention (e.g. some DSG
+            # variables).
             chunks, shape = self._get_hdf5_chunks(ncvar)
             if shape == data.shape:
-                # Only store the HDF chunking if 'data' has the same
-                # shape as its netCDF variable. This may not be the
-                # case for variables compressed by convention
-                # (e.g. some DSG variables).
                 self.implementation.nc_set_hdf5_chunksizes(data, chunks)
 
         return data
@@ -9196,6 +9304,7 @@ class NetCDFRead(IORead):
             units=properties.get("units"),
             calendar=properties.get("calendar"),
             ncvar=node_ncvar,
+            compressed=True,
         )
         self.implementation.set_data(bounds, bounds_data, copy=False)
 
@@ -9299,6 +9408,7 @@ class NetCDFRead(IORead):
                 units=attributes.get("units"),
                 calendar=attributes.get("calendar"),
                 ncvar=connectivity_ncvar,
+                compressed=True,
             )
         else:
             # Edge or face cells
@@ -9405,6 +9515,7 @@ class NetCDFRead(IORead):
             units=attributes.get("units"),
             calendar=attributes.get("calendar"),
             ncvar=connectivity_ncvar,
+            compressed=True,
         )
 
         # Initialise the cell connectivity construct
@@ -10335,7 +10446,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            ncvar: `str`
+           ncvar: `str`
                 The netCDF variable name.
 
         :Returns:
@@ -10375,3 +10486,510 @@ class NetCDFRead(IORead):
                 chunks = "contiguous"
 
         return chunks, var.shape
+
+    def _dask_chunks(self, array, ncvar, compressed):
+        """Set the Dask chunking strategy for a netCDF variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            array:
+                The variable data. If the netCDF variable is
+                compressed by convention, then *array* is in its
+                uncompressed form.
+
+            ncvar: `str`
+                The name of the netCDF variable containing the array.
+
+            compressed: `bool`
+                Whether or not the netCDF variable is compressed by
+                convention.
+
+        :Returns:
+
+            `str` or `int` or `list`
+                The chunks that are suitable for passing to a `Data`
+                object containing the variable's array.
+
+        """
+        g = self.read_vars
+
+        dask_chunks = g.get("dask_chunks", "storage-aligned")
+        storage_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
+
+        ndim = array.ndim
+        if (
+            storage_chunks is not None
+            and not compressed
+            and len(storage_chunks) > ndim
+        ):
+            # Remove irrelevant trailing dimensions (e.g. as used by
+            # char data-type variables)
+            storage_chunks = storage_chunks[:ndim]
+
+        # ------------------------------------------------------------
+        # storage-aligned
+        # ------------------------------------------------------------
+        if dask_chunks == "storage-aligned":
+            if compressed or storage_chunks is None:
+                # Use "auto" Dask chunking for contiguous variables
+                # and variables compressed by convention. (In the
+                # latter case, the Dask chunks reflect the
+                # uncompressed data, rather than the compressed data
+                # found in the file.)
+                return "auto"
+
+            # --------------------------------------------------------
+            # Strategy for creating storage-aligned Dask chunks:
+            #
+            # 1) Initialise the Dask chunk as the Dask's "auto" shape.
+            #
+            # 2) Whilst there are Dask elements that are strictly less
+            #    than their corresponding storage elements,
+            #    iteratively increase those Dask axis elements whilst
+            #    reducing the other Dask axis elements in a manner
+            #    such that the total number of Dask chunk elements is
+            #    preserved.
+            #
+            # 3) When all Dask elements have become greater than or
+            #    equal to their corresponding storage elements,
+            #    replace each Dask element with the largest multiple
+            #    of the storage element that doesn't exceed the
+            #    current Dask element.
+            #
+            # Note: If the number of elements in the storage chunk is
+            #       less than or equal to the number of elements in
+            #       the original Dask chunk, then the storage-aligned
+            #       chunk also will also have an amount of elements
+            #       that is less than or equal to the number of
+            #       elements in the original Dask chunk. Otherwise,
+            #       the storage-aligned chunk will have more elements
+            #       than the original Dask chunk:
+            #
+            #                        Chunk shape              Elements
+            #       ---------------- ----------------------- ---------
+            #       storage:         (50, 100, 150, 20,   5)  75000000
+            #       original Dask:   (49, 101, 150,  5, 160) 593880000
+            #       storage-aligned: (50, 100, 150, 20,  35) 525000000
+            #       ---------------- ----------------------- ---------
+            #       storage:         (50, 100, 150, 20,   5)  75000000
+            #       original Dask:   (5,   15, 150,  5, 160)   9000000
+            #       storage-aligned: (50, 100, 150, 20,   5)  75000000
+            # --------------------------------------------------------
+
+            # 1) Initialise the Dask chunk shape
+            dask_chunks = normalize_chunks(
+                "auto", shape=array.shape, dtype=array.dtype
+            )
+            dask_chunks = [sizes[0] for sizes in dask_chunks]
+            n_dask_elements = prod(dask_chunks)
+
+            # 2) While there are Dask axis elements that are less than
+            #    their corresponding storage axis elements,
+            #    iteratively increase the those Dask axis elements
+            #    whilst reducing the other Dask axis elements so that
+            #    the total number of Dask chunk elements is preserved.
+            continue_iterating = True
+
+            while continue_iterating:
+                continue_iterating = False
+
+                # Index locations of Dask elements which are greater
+                # than their corresponding storage elements
+                dask_gt_storage = []
+
+                # Product of Dask elements which are greater than
+                # their corresponding storage element
+                p_dask_gt_storage = 1
+
+                # Product of storage elements which are less than or
+                # equal to their corresponding Dask element
+                p_storage_ge_dask = 1
+                for i, (sc, dc) in enumerate(
+                    zip(storage_chunks, dask_chunks[:])
+                ):
+                    if dc > sc:
+                        # Dask element is greater than the storage
+                        # element
+                        dask_gt_storage.append(i)
+                        p_dask_gt_storage *= dc
+                    else:
+                        # Dask element is less than or equal to the
+                        # storage element
+                        p_storage_ge_dask *= sc
+
+                if not dask_gt_storage:
+                    # All Dask elements are less than or equal to
+                    # their corresponding storage elements => we can
+                    # stop the iteration, after setting the Dask chunk
+                    # to the storage chunk.
+                    dask_chunks[:] = storage_chunks
+                    break
+
+                # Calculate the x that preserves the Dask chunk size
+                # (i.e. the number of elements in the Dask chunk) when
+                #
+                #  i) All Dask elements that are strictly less than
+                #     their corresponding storage axis elements have
+                #     been replaced with those corresponding larger
+                #     values.
+                #
+                # ii) All other Dask elements have been reduced by
+                #     being raised to the power of x.
+                #
+                # I.e. x is such that
+                #
+                #      p_storage_ge_dask * p_dask_gt_storage**x = n_dask_elements
+                #  =>  x = log(n_dask_elements / p_storage_ge_dask) / log(p_dask_gt_storage)
+                #
+                # E.g. if the storage chunk shape is (40, 20, 15, 5)
+                #      and the Dask chunk shape is (20, 25, 10, 30),
+                #      then x is such that
+                #
+                #      (40 * 15) * (25 * 30)**x = 20 * 25 * 10 * 30
+                #   => 600 * 750**x = 150000
+                #   => x = log(150000 / 600) / log(750)
+                #   => x = 0.834048317232446
+                #
+                # Note: If we have reached here to calculate x, then
+                #       it must be the case that p_dask_gt_storage > 1
+                #       and n_dask_elements >
+                #       p_storage_ge_dask. Therefore:
+                #
+                #       a) log(p_dask_gt_storage) > 0
+                #       b) x is in the range (-inf, 1], excluding 0
+                #       c) x is 1 if no Dask element is less than its
+                #          corresponding storage element
+                #
+                # Note: There are other reasonable methods for
+                #       reducing Dask elements. With the method used
+                #       here (i.e. using a power of x that is <= 1),
+                #       larger values get reduced by a greater factor
+                #       than smaller values, thereby promoting the
+                #       Dask preference for square-like chunk shapes
+                #       (although I suspect that in many cases,
+                #       different approaches will give the same
+                #       result).
+                x = log(n_dask_elements / p_storage_ge_dask) / log(
+                    p_dask_gt_storage
+                )
+                for i, (sc, dc) in enumerate(
+                    zip(storage_chunks, dask_chunks[:])
+                ):
+                    if i in dask_gt_storage:
+                        # The Dask element is greater than the storage
+                        # element => raise the Dask element to the
+                        # power of x.
+                        if x == 1:
+                            # After being raised to the power of x (=
+                            # 1), the Dask element will still be
+                            # greater than the storage element, so we
+                            # don't need to change it.
+                            c = dc
+                        else:
+                            # x < 1
+                            c = dc**x
+                            if c < sc:
+                                # After being raised to the power of
+                                # x, the Dask element has become less
+                                # than the storage element => we need
+                                # to go round the 2) iteration again,
+                                # because this new Dask element will
+                                # need increasing to its corresponding
+                                # storage element value, with the
+                                # possibility of further reductions to
+                                # other Dask elements.
+                                continue_iterating = True
+                    else:
+                        # The Dask element is less than or equal to
+                        # the storage element, so replace it with the
+                        # storage element.
+                        c = sc
+
+                    # Update the Dask chunk element
+                    dask_chunks[i] = c
+
+            # 3) All Dask elements are now greater than or equal to
+            #    their corresponding storage elements, so replace each
+            #    Dask element with the largest multiple of the storage
+            #    element that doesn't exceed the current Dask element.
+            #
+            # E.g. if the storage chunk is (12, 40, 40) and the
+            #      current Dask chunk is (12, 64, 128), then the Dask
+            #      chunk will be modified to be (12, 40, 120).
+            if dask_gt_storage:
+                for i, (sc, dc) in enumerate(
+                    zip(storage_chunks, dask_chunks[:])
+                ):
+                    if i in dask_gt_storage:
+                        # Dask element is strictly greater than the
+                        # corresponding storage element
+                        dc = int(dc)
+                        c = dc - (dc % sc)
+                        if not c:
+                            # Analytically, c must be a positive
+                            # integer multiple of sc, but it's
+                            # conceivable that rounding errors could
+                            # result in c being 0 when it should be
+                            # sc.
+                            c = sc
+
+                        dask_chunks[i] = c
+
+            # Return the storage-aligned Dask chunks
+            return dask_chunks
+
+        # ------------------------------------------------------------
+        # storage-exact
+        # ------------------------------------------------------------
+        if dask_chunks == "storage-exact":
+            if compressed or storage_chunks is None:
+                # Use "auto" Dask chunking for contiguous variables
+                # and variables compressed by convention. (In the
+                # latter case, the Dask chunks reflect the
+                # uncompressed data, rather than the compressed data
+                # found in the file.)
+                return "auto"
+
+            # Set the Dask chunks to be exactly the storage chunks for
+            # chunked variables.
+            return storage_chunks
+
+        # ------------------------------------------------------------
+        # None
+        # ------------------------------------------------------------
+        if dask_chunks is None:
+            # No Dask chunking
+            return -1
+
+        # ------------------------------------------------------------
+        # dict
+        # ------------------------------------------------------------
+        if isinstance(dask_chunks, dict):
+            # For ncdimensions = ('t', 'lat'):
+            #
+            # {}                                         -> ["auto", "auto"]
+            # {'ncdim%t': 12}                            -> [12, "auto"]
+            # {'ncdim%t': 12, 'ncdim%lat': 10000}        -> [12, 10000]
+            # {'ncdim%t': 12, 'ncdim%lat': "20MB"}       -> [12, "20MB"]
+            # {'ncdim%t': 12, 'latitude': -1}            -> [12, -1]
+            # {'ncdim%t': 12, 'Y': None}                 -> [12, None]
+            # {'ncdim%t': 12, 'ncdim%lat': (30, 90)}     -> [12, (30, 90)]
+            # {'ncdim%t': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
+            if not dask_chunks:
+                return "auto"
+
+            attributes = g["variable_attributes"]
+            chunks = []
+            for ncdim in g["variable_dimensions"][ncvar]:
+                key = f"ncdim%{ncdim}"
+                if key in dask_chunks:
+                    chunks.append(dask_chunks[key])
+                    continue
+
+                found_coord_attr = False
+                dim_coord_attrs = attributes.get(ncdim)
+                if dim_coord_attrs is not None:
+                    for attr in ("standard_name", "axis"):
+                        key = dim_coord_attrs.get(attr)
+                        if key in dask_chunks:
+                            found_coord_attr = True
+                            chunks.append(dask_chunks[key])
+                            break
+
+                if not found_coord_attr:
+                    # Use "auto" chunks for this dimension
+                    chunks.append("auto")
+
+            dask_chunks = chunks
+
+        # ------------------------------------------------------------
+        # Return the Dask chunks
+        # ------------------------------------------------------------
+        return dask_chunks
+
+    def _cache_data_elements(self, data, ncvar):
+        """Cache selected element values.
+
+        Updates *data* in-place to store its first, second,
+        penultimate, and last element values (as appropriate).
+
+        Doing this here is quite cheap because only the individual
+        elements are read from the already-open file, as opposed to
+        being retrieved from *data* (which would require a whole dask
+        chunk to be read to get each single value).
+
+        However, empirical evidence shows that using netCDF4 to access
+        the first and last elements of a large array on disk
+        (e.g. shape (1, 75, 1207, 1442)) is slow (e.g. ~2 seconds) and
+        doesn't scale well with array size (i.e. it takes
+        disproportionally longer for larger arrays).
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `Data`
+                The data to be updated with its cached values.
+
+            ncvar: `str`
+                The name of the netCDF variable that contains the
+                data.
+
+        :Returns:
+
+            `None`
+
+        """
+        if data.data.get_compression_type():
+            # Don't get cached elements from arrays compressed by
+            # convention, as they'll likely be wrong.
+            return
+
+        g = self.read_vars
+
+        # Get the netCDF4.Variable for the data
+        if g["has_groups"]:
+            group, name = self._netCDF4_group(
+                g["variable_grouped_dataset"][ncvar], ncvar
+            )
+            variable = group.variables.get(name)
+        else:
+            variable = g["variables"].get(ncvar)
+
+        # Get the required element values
+        size = data.size
+        ndim = data.ndim
+
+        # Whether or not this is an array of strings
+        dtype = variable.dtype
+        string = dtype == str
+        obj = not string and dtype.kind == "O"
+
+        # Whether or not this is an array of chars
+        if (
+            not (string or obj)
+            and dtype.kind in "SU"
+            and variable.ndim == ndim + 1
+        ):
+            # This variable is a netCDF classic style char array with
+            # a trailing dimension that needs to be collapsed
+            char = True
+        else:
+            char = False
+
+        if ndim == 1:
+            # Also cache the second element for 1-d data, on the
+            # assumption that they may well be dimension coordinate
+            # data.
+            if size == 1:
+                indices = (0, -1)
+                value = variable[...]
+                values = (value, value)
+            elif size == 2:
+                indices = (0, 1, -1)
+                value = variable[-1:]
+                values = (variable[:1], value, value)
+            else:
+                indices = (0, 1, -1)
+                values = (variable[:1], variable[1:2], variable[-1:])
+        elif ndim == 2 and data.shape[-1] == 2:
+            # Assume that 2-d data with a last dimension of size 2
+            # contains coordinate bounds, for which it is useful to
+            # cache the upper and lower bounds of the the first and
+            # last cells.
+            indices = (0, 1, -2, -1)
+            ndim1 = ndim - 1
+            values = (
+                variable[(slice(0, 1),) * ndim1 + (slice(0, 1),)],
+                variable[(slice(0, 1),) * ndim1 + (slice(1, 2),)],
+            )
+            if data.size == 2:
+                values = values + values
+            else:
+                values += (
+                    variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)],
+                    variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
+                )
+        elif size == 1:
+            indices = (0, -1)
+            value = variable[...]
+            values = (value, value)
+        elif size == 3:
+            indices = (0, 1, -1)
+            if char:
+                values = variable[...].reshape(3, variable.shape[-1])
+            else:
+                values = variable[...].flatten()
+        else:
+            indices = (0, -1)
+            values = (
+                variable[(slice(0, 1),) * ndim],
+                variable[(slice(-1, None, 1),) * ndim],
+            )
+
+        # Create a dictionary of the element values
+        elements = {}
+        for index, value in zip(indices, values):
+            if obj:
+                value = value.astype(str)
+            elif string:
+                # Convert an array of objects to an array of strings
+                value = np.array(value, dtype="U")
+            elif char:
+                # Variable is a netCDF classic style char array, so
+                # collapse (by concatenation) the outermost (fastest
+                # varying) dimension. E.g. [['a','b','c']] becomes
+                # ['abc']
+                if dtype.kind == "U":
+                    value = value.astype("S")
+
+                a = netCDF4.chartostring(value)
+                shape = a.shape
+                a = np.array([x.rstrip() for x in a.flat])
+                a = np.reshape(a, shape)
+                value = np.ma.masked_where(a == "", a)
+
+            elements[index] = value
+
+        # Store the elements in the data object
+        data._set_cached_elements(elements)
+
+    def _netcdf_chunksizes(self, variable):
+        """Return the variable chunk sizes.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            variable:
+                The variable, that has the same API as
+                `netCDF4.Variable` or `h5netcdf.Variable`.
+
+        :Returns:
+
+            sequence of `int`
+                The chunksizes. If the variable is contiguous
+                (i.e. not chunked) then the variable's shape is
+                returned.
+
+        **Examples**
+
+        >>> f.chunksizes(variable)
+        [1, 324, 432]
+
+        >>> f.chunksizes(variable)
+        None
+
+        """
+        try:
+            # netCDF4
+            chunks = variable.chunking()
+            if chunks == "contiguous":
+                chunks = None
+        except AttributeError:
+            # h5netcdf
+            chunks = variable.chunks
+
+        return chunks
