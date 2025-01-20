@@ -1,9 +1,10 @@
 import logging
+
+from copy import deepcopy
 from itertools import zip_longest
 from re import Pattern
 
 from . import core, mixin
-from .core.functions import deepcopy
 from .decorators import _manage_log_level_via_verbosity
 
 logger = logging.getLogger(__name__)

@@ -1,5 +1,6 @@
+from copy import deepcopy
+
 from ..docstring import _docstring_substitution_definitions
-from ..functions import deepcopy
 from ..meta import DocstringRewriteMeta
 
 

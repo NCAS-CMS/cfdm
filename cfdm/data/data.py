@@ -2158,9 +2158,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             if np.ma.is_masked(x):
                 x = np.ma.masked
             else:
-                print ('x=',type(x))
                 x = x.squeeze()
-                print (999999999)
             
             elements[i] = x
 
