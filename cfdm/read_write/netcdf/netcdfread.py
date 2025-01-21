@@ -9,7 +9,6 @@ from ast import literal_eval
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
-from math import nan, prod
 from pprint import pformat
 from math import log, nan, prod
 from numbers import Integral
