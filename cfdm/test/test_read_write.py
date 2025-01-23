@@ -608,6 +608,7 @@ class read_writeTest(unittest.TestCase):
         geometry_1_file = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "geometry_1.nc"
         )
+        tmpfileh2 = 'delme.cdl'
         subprocess.run(
             " ".join(["ncdump", "-h", geometry_1_file, ">", tmpfileh2]),
             shell=True,
@@ -627,6 +628,9 @@ class read_writeTest(unittest.TestCase):
         c = cfdm.read(tmpfilec)[0]
 
         # Case (2) as above, so the right error should be raised on read
+        f = cfdm.read(tmpfileh2, netcdf_backend='netCDF4')[0]
+        print (f.dump())
+
         with self.assertRaises(ValueError):
             cfdm.read(tmpfileh2)[0]
 

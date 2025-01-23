@@ -182,7 +182,7 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual(len(f), 2, "f = " + repr(f))
 
         for g in f:
-            self.assertTrue(g.equals(g.copy(), verbose=3))
+            self.assertTrue(g.equals(g.copy()))
             self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         for axis in ("X", "Y"):
@@ -198,7 +198,7 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual(len(f2), 2, "f2 = " + repr(f2))
 
         for a, b in zip(f, f2):
-            self.assertTrue(a.equals(b, verbose=3))
+            self.assertTrue(a.equals(b))
 
         # Setting of node count properties
         coord = f[0].construct("axis=X")

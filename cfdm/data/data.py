@@ -4494,10 +4494,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         self_is_numeric = is_numeric_dtype(self_dx)
         other_is_numeric = is_numeric_dtype(other_dx)
         
-        
         if (
             not ignore_data_type
             and (self_is_numeric or other_is_numeric)
+#                and self.dtype != other.dtype
         ):
             # Test the dtypes with np.issubdtype so that dtypes that
             # are the same but with different endianness are
@@ -4507,7 +4507,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             if not (np.issubdtype(dtype0, dtype1) and np.issubdtype(dtype1, dtype0)):
                 logger.info(
                     f"{self.__class__.__name__}: Different data types: "
-                    f"{dtype0}, {dtype1}"
+                    f"{self.dtype}, {other.dtype}"
                 )  # pragma: no cover
                 return False
 

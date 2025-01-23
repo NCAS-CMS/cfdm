@@ -6481,7 +6481,7 @@ class NetCDFRead(IORead):
                 return kwargs
 
             netcdf_backend = g["netcdf_backend"]
-            if netcdf_backend.startswith("h5netcdf")
+            if netcdf_backend.startswith("h5netcdf"):
                 if g["has_groups"]:
                     hdf5_dataset = g["variable_grouped_dataset"][ncvar]
                 else:
@@ -6490,6 +6490,7 @@ class NetCDFRead(IORead):
                 kwargs["variable"] = hdf5_dataset._h5file[ncvar]
                 array = self.implementation.initialise_VariableArray(**kwargs)
             elif netcdf_backend == "netcdf_file":
+                print ('netCDF-3!')
                 array = self.implementation.initialise_Netcdf_fileArray(
                     **kwargs
                 )
