@@ -4493,16 +4493,23 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # Check that each instance has the same data type
         self_is_numeric = is_numeric_dtype(self_dx)
         other_is_numeric = is_numeric_dtype(other_dx)
+        
+        
         if (
             not ignore_data_type
             and (self_is_numeric or other_is_numeric)
-            and self.dtype != other.dtype
         ):
-            logger.info(
-                f"{self.__class__.__name__}: Different data types: "
-                f"{self.dtype} != {other.dtype}"
-            )  # pragma: no cover
-            return False
+            # Test the dtypes with np.issubdtype so that dtypes that
+            # are the same but with different endianness are
+            # considered equal. E,g. '<f8' and 'float64'.
+            dtype0 = self.dtype
+            dtype1 = other.dtype
+            if not (np.issubdtype(dtype0, dtype1) and np.issubdtype(dtype1, dtype0)):
+                logger.info(
+                    f"{self.__class__.__name__}: Different data types: "
+                    f"{dtype0}, {dtype1}"
+                )  # pragma: no cover
+                return False
 
         # Check that each instance has the same units.
         self_Units = self.Units
@@ -4512,7 +4519,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 logger.info(
                     f"{self.__class__.__name__}: Different Units "
                     f"({self_Units!r}, {other_Units!r})"
-                )
+                )  # pragma: no cover
 
             return False
 

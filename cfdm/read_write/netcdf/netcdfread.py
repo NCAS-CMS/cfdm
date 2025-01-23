@@ -709,6 +709,32 @@ class NetCDFRead(IORead):
 #            phony_dims='access'
         )
 
+    def _open_h5netcdf_pyfive(self, filename):
+        """Return an open `h5netcdf.File` with the `pyfive` backend.
+
+        TODOVAR
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            filename: `str`
+                The file to open.
+
+        :Returns:
+
+            `h5netcdf.File`
+
+        """
+        return h5netcdf.File(
+            filename,
+            "r",
+            decode_vlen_strings=True,
+            backend="pyfive",
+            phony_dims='sort'
+#            phony_dims='access'
+        )
+
     def cdl_to_netcdf(self, filename):
         """Create a temporary netCDF-4 file from a CDL text file.
 
@@ -1089,7 +1115,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         if netcdf_backend is None:
             # By default, try netCDF backends in this order:
-            netcdf_backend = ("h5netcdf", "netcdf_file", "netCDF4")
+            netcdf_backend = ("h5netcdf-pyfive", "h5netcdf", "netcdf_file", "netCDF4")
         elif isinstance(netcdf_backend, str):
             netcdf_backend = (netcdf_backend,)
 
@@ -6455,7 +6481,7 @@ class NetCDFRead(IORead):
                 return kwargs
 
             netcdf_backend = g["netcdf_backend"]
-            if netcdf_backend == "h5netcdf":
+            if netcdf_backend.startswith("h5netcdf")
                 if g["has_groups"]:
                     hdf5_dataset = g["variable_grouped_dataset"][ncvar]
                 else:
