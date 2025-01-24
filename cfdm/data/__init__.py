@@ -27,11 +27,11 @@ from .netcdf4array import NetCDF4Array
 from .netcdfindexer import netcdf_indexer
 from .numpyarray import NumpyArray
 from .pointtopologyarray import PointTopologyArray
+from .pyfivearray import PyfiveArray
 from .raggedcontiguousarray import RaggedContiguousArray
 from .raggedindexedarray import RaggedIndexedArray
 from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray
 from .sparsearray import SparseArray
 from .subsampledarray import SubsampledArray
-from .variablearray import VariableArray
 
 from .data import Data

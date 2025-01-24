@@ -569,6 +569,7 @@ class NetCDFRead(IORead):
         # Map backend names to file-open functions
         file_open_function = {
             # netCDF-4
+            "h5netcdf-pyfive": self._open_h5netcdf_pyfive,
             "h5netcdf": self._open_h5netcdf,
             # netCDF-3
             "netcdf_file": self._open_netcdf_file,
@@ -852,7 +853,7 @@ class NetCDFRead(IORead):
             # Read the first 4 bytes from the file
             fh = open(filename, "rb")
             magic_number = struct.unpack("=L", fh.read(4))[0]
-        except Exception as error:
+        except Exception:
             # Can't read 4 bytes from the file, so it can't be netCDF
             # or CDL.
             pass
@@ -5124,7 +5125,7 @@ class NetCDFRead(IORead):
 
         """
         datatype = self._dtype(self.read_vars["variables"][ncvar])
-        return datatype != str and datatype.kind in "SU"
+        return datatype is not str and datatype.kind in "SU"
 
     def _has_identity(self, construct, identity):
         """TODO.
@@ -6409,13 +6410,17 @@ class NetCDFRead(IORead):
             # Get the variable from the original grouped file. This is
             # primarily so that unlimited dimensions don't come out
             # with size 0 (v1.8.8.1)
-            variable = g["variable_grouped_dataset"][ncvar][ncvar]
+            dataset = g["variable_grouped_dataset"][ncvar]
+            variable = dataset[ncvar]
+
+#            variable = g["variable_grouped_dataset"][ncvar][ncvar]
         #
         #            group, name = self._netCDF4_group(
         #                g["variable_grouped_dataset"][ncvar], ncvar
         #            )
         #            variable = group.variables.get(name)
         else:
+            dataset = g["nc"]
             variable = g["variables"].get(ncvar)
 
         if variable is None:
@@ -6482,19 +6487,27 @@ class NetCDFRead(IORead):
 
             netcdf_backend = g["netcdf_backend"]
             if netcdf_backend.startswith("h5netcdf"):
-                if g["has_groups"]:
-                    hdf5_dataset = g["variable_grouped_dataset"][ncvar]
+                if netcdf_backend.endswith("pyfive"):
+                    # Backend h5netcdf-pyfive: Get the relevant
+                    # pyfive.Variable object and store it inside a
+                    # PyfiveArray object.
+                    kwargs["variable"] = dataset._h5file[ncvar]
+                    array = self.implementation.initialise_PyfiveArray(
+                        **kwargs
+                    )
                 else:
-                    hdf5_dataset = g["nc"]
-
-                kwargs["variable"] = hdf5_dataset._h5file[ncvar]
-                array = self.implementation.initialise_VariableArray(**kwargs)
+                    # Backend: h5netcdf
+                    array = self.implementation.initialise_H5netcdfArray(
+                        **kwargs
+                    )
             elif netcdf_backend == "netcdf_file":
+                # Backend scipy.io.netcdf_file
                 print ('netCDF-3!')
                 array = self.implementation.initialise_Netcdf_fileArray(
                     **kwargs
                 )
             elif netcdf_backend == "netCDF4":
+                # Backend netCDF4
                 array = self.implementation.initialise_NetCDF4Array(**kwargs)
 
             return array, kwargs
@@ -10874,7 +10887,7 @@ class NetCDFRead(IORead):
             return len(var.shape)
 
     def _dtype(self, var):
-        """Return the variable attributes.
+        """Return the variable attributes.TODOVAR
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -10886,18 +10899,23 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `dict`
+            `dict` TODOVAR
                 A dictionary of the attribute values keyed by their
-                names.
+                names.TODOVAR
 
         """
         try:
             # h5netcdf, netCDF4
-            return var.dtype
+            dtype = var.dtype
         except AttributeError:
             # scipy.io.netcdf_file
             x = self._index(var, (slice(0, 1),) * len(var.shape))
-            return x.dtype
+            dtype = x.dtype
+
+#        if dtype == object and not len(var.shape):
+#            dtype = str
+
+        return dtype
 
     def _index(self, variable, index):
         """Return a global attribute from a dataset. TODOVAR.

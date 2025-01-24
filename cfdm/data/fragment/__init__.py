@@ -1,5 +1,5 @@
 from .fragmentfilearray import FragmentFileArray
 from .fragmenth5netcdfarray import FragmentH5netcdfArray
 from .fragmentnetcdf4array import FragmentNetCDF4Array
+from .fragmentpyfivearray import FragmentPyfiveArray
 from .fragmentuniquevaluearray import FragmentUniqueValueArray
-from .fragmentvariablearray import FragmentVariableArray

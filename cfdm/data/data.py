@@ -2622,7 +2622,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             a = np.asanyarray(a)
 
         # TODOVAR - for memmap
-        a = a.view(type=type(a))
+#        a = a.view(type=type(a))
 #        if np.ma.isMA(a):
 #            a = a.view(type=np.ma.MaskedArray)
 #        else:
@@ -4499,9 +4499,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             and (self_is_numeric or other_is_numeric)
 #                and self.dtype != other.dtype
         ):
-            # Test the dtypes with np.issubdtype so that dtypes that
-            # are the same but with different endianness are
-            # considered equal. E,g. '<f8' and 'float64'.
+            # Test the dtypes with np.issubdtype, instead of !=, so
+            # that dtypes that have different endianness but are
+            # otherwise the same considered equal. E.g. '<f8' and
+            # 'float64'.
+            #
+            # TODONUMPY2: Maybe use np.isdtype instead of np.issubdtype ?
             dtype0 = self.dtype
             dtype1 = other.dtype
             if not (np.issubdtype(dtype0, dtype1) and np.issubdtype(dtype1, dtype0)):

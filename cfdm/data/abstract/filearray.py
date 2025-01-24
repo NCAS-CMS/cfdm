@@ -318,27 +318,6 @@ class FileArray(Array):
 
         return dirname(filename)
 
- #   def get_attributes(self, default=AttributeError()):
- #       """Get the netCDF variable attributes.
- #
- #       .. versionadded:: (cfdm) NEXTVERSION
- #
- #       :Parameters:
- #
- #           default: optional
- #               Return the value of the *default* parameter if the
- #               attributes have not been set. If set to an `Exception`
- #               instance then it will be raised instead.
- #
- #       :Returns:
- #
- #           `dict`
- #               The attributes. The returned attributes are not a copy
- #               of the stored dictionary.
- #
- #       """
- #       return self._get_component("attributes", default)
-
     def get_filename(self, normalise=False, default=AttributeError()):
         """The name of the file containing the array.
 
@@ -487,7 +466,7 @@ class FileArray(Array):
         """Return a dataset file object and address.
 
         When multiple files have been provided an attempt is made 
-to
+        TODOVAR to
         open each one, in the order stored, and a file object is
         returned from the first file that exists.
 

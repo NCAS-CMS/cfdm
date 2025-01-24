@@ -209,6 +209,7 @@ from .data import (
     netcdf_indexer,
     NumpyArray,
     PointTopologyArray,
+    PyfiveArray,
     RaggedArray,
     RaggedContiguousArray,
     RaggedIndexedArray,

@@ -1,33 +1,16 @@
-import logging
-
 import h5netcdf
 
-from . import abstract
-from .locks import netcdf_lock
+from .abstract import FileArray
 from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
 
-logger = logging.getLogger(__name__)
 
-
-class H5netcdfArray(IndexMixin, abstract.FileArray):
-    """A netCDF array accessed with `h5netcdf`.
+class PyfiveArray(IndexMixin, FileArray):
+    """A netCDF array accessed with `TODOVAR`.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
-
-    @property
-    def _lock(self):
-        """Return the lock used for netCDF file access.
-
-        Returns a lock object that prevents concurrent reads of netCDF
-        files, which are not currently supported by `h5netcdf`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        return netcdf_lock
 
     def _attributes(self, var):
         """Get the netCDF variable attributes.
@@ -40,7 +23,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
 
         :Parameters:
 
-            var: `h5netcdf.Variable`
+            var: `TODOVAR`
                 The netCDF variable.
 
         :Returns:
@@ -60,9 +43,6 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        The subspace is defined by the `index` attributes, and is
-        applied with `cfdm.netcdf_indexer`.
-
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `__array__`, `index`
@@ -80,9 +60,12 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         if index is None:
             index = self.index()
 
-        # Note: We need to lock because HDF5 is about to access the
-        #       file.
-        with self._lock:
+        # Get the variable for subspacing
+        variable = self.get_variable()
+
+        dataset = None
+        if variable is None:
+            # The variable has not been provided, so get it.
             dataset, address = self.open()
             dataset0 = dataset
 
@@ -90,21 +73,27 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
             if groups:
                 dataset = self._group(dataset, groups)
 
-            # Get the variable by netCDF name
             variable = dataset.variables[address]
 
-            # Get the data, applying masking and scaling as required.
-            array = netcdf_indexer(
-                variable,
-                mask=self.get_mask(),
-                unpack=self.get_unpack(),
-                always_masked_array=False,
-                orthogonal_indexing=True,
-                attributes=self._attributes(variable),
-                copy=False,
-            )
-            array = array[index]
+            # Cache the variable
+            self._set_component("variable", variable, copy=False)
 
+            self.close(dataset0)
+            del dataset, dataset0
+
+        # Get the data, applying masking and scaling as required.
+        array = netcdf_indexer(
+            variable,
+            mask=self.get_mask(),
+            unpack=self.get_unpack(),
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            attributes=self._attributes(variable),
+            copy=False,
+        )
+        array = array[index]
+
+        if dataset is not None:
             self.close(dataset0)
 
         return array
@@ -143,8 +132,8 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
 
         :Parameters:
 
-            dataset: `h5netcdf.File`
-                The netCDF dataset to be closed.
+            dataset:
+                The dataset to be closed.
 
         :Returns:
 
@@ -199,12 +188,6 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
     def open(self, **kwargs):
         """Return a dataset file object and address.
 
-        When multiple files have been provided an attempt is made to
-        open each one, in the order stored, and a file object is
-        returned from the first file that exists.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
         :Returns:
 
             (`h5netcdf.File`, `str`)
@@ -213,5 +196,5 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
 
         """
         return super().open(
-            h5netcdf.File, mode="r", decode_vlen_strings=True, **kwargs
+            h5netcdf.File, mode="r", decode_vlen_strings=True, netcdf_backend='pyfive', **kwargs
         )
