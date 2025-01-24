@@ -59,7 +59,7 @@ class Netcdf_fileArray(IndexMixin, FileArray):
         """
         if index is None:
             index = self.index()
-#        print(self.__class__.__name__, "_get_array", index)
+        #        print(self.__class__.__name__, "_get_array", index)
 
         dataset, address = self.open()
         variable = dataset.variables[address]

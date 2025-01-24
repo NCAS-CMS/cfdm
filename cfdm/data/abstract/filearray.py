@@ -465,7 +465,7 @@ class FileArray(Array):
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
 
-        When multiple files have been provided an attempt is made 
+        When multiple files have been provided an attempt is made
         TODOVAR to
         open each one, in the order stored, and a file object is
         returned from the first file that exists.

@@ -2724,7 +2724,7 @@ class NetCDFWrite(IOWrite):
             )
         else:
             fill_value = None
-
+        
         if data_variable:
             lsd = g["least_significant_digit"]
         else:

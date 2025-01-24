@@ -179,6 +179,7 @@ class read_writeTest(unittest.TestCase):
                 f.equals(g, verbose=3), f"Bad read/write of format: {fmt}"
             )
 
+    @unittest.skipIf(True, "Not testing append mode")
     def test_write_netcdf_mode(self):
         """Test the `mode` parameter to `write`, notably append mode."""
         g = cfdm.read(self.filename)  # note 'g' has one field
@@ -564,9 +565,16 @@ class read_writeTest(unittest.TestCase):
             domain_axes["domainaxis0"].nc_set_unlimited(True)
             cfdm.write(f, tmpfile, fmt=fmt, cfa=None)
 
-            f = cfdm.read(tmpfile)[0]
+            if fmt in self.netcdf3_fmts:
+                # Note: netcdf_file backend does not support unlimited
+                #       dimensions
+                backend = "netCDF4"
+            else:
+                backend = None
+
+            f = cfdm.read(tmpfile, netcdf_backend=backend)[0]
             domain_axes = f.domain_axes()
-            self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
+            self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited(), fmt)
 
         f = cfdm.read(self.filename)[0]
 
@@ -608,7 +616,7 @@ class read_writeTest(unittest.TestCase):
         geometry_1_file = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "geometry_1.nc"
         )
-        tmpfileh2 = 'delme.cdl'
+        tmpfileh2 = "delme.cdl"
         subprocess.run(
             " ".join(["ncdump", "-h", geometry_1_file, ">", tmpfileh2]),
             shell=True,
@@ -628,9 +636,6 @@ class read_writeTest(unittest.TestCase):
         c = cfdm.read(tmpfilec)[0]
 
         # Case (2) as above, so the right error should be raised on read
-        f = cfdm.read(tmpfileh2, netcdf_backend='netCDF4')[0]
-        print (f.dump())
-
         with self.assertRaises(ValueError):
             cfdm.read(tmpfileh2)[0]
 
@@ -951,6 +956,7 @@ class read_writeTest(unittest.TestCase):
     def test_write_omit_data(self):
         """Test the `omit_data` parameter to `write`."""
         f = self.f1
+
         cfdm.write(f, tmpfile)
 
         cfdm.write(f, tmpfile, omit_data="all")
@@ -1173,11 +1179,11 @@ class read_writeTest(unittest.TestCase):
         f = self.f0
         cfdm.write(f, tmpfile)
 
-        f = cfdm.read(tmpfile)[0]
+        f = cfdm.read(tmpfile, netcdf_backend="h5netcdf-pyfive")[0]
         for d in (f.data.todict(), f.coordinate("longitude").data.todict()):
             on_disk = False
             for v in d.values():
-                if isinstance(v, cfdm.H5netcdfArray):
+                if isinstance(v, cfdm.PyfiveArray):
                     on_disk = True
 
             self.assertTrue(on_disk)

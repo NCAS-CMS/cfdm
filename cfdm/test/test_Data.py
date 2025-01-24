@@ -1007,8 +1007,7 @@ class DataTest(unittest.TestCase):
                 self.assertFalse(d2.equals(d, verbose=verbosity_level))
                 self.assertIs(
                     any(
-                        "Data: Different data types: float32, int64"
-                        in log_msg
+                        "Data: Different data types: float32, int64" in log_msg
                         for log_msg in catch.output
                     ),
                     expect_to_see_msg,
