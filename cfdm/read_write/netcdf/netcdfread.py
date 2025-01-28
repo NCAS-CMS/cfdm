@@ -614,7 +614,7 @@ class NetCDFRead(IORead):
     def _open_netCDF4(self, filename):
         """Return an open `netCDF4.Dataset`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -637,7 +637,7 @@ class NetCDFRead(IORead):
         parameters ``size``, ``nelems``, and ``preemption``,
         respectively.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -955,7 +955,7 @@ class NetCDFRead(IORead):
             unpack: `bool`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             warn_valid: `bool`, optional
                 See `cfdm.read` for details
@@ -970,35 +970,35 @@ class NetCDFRead(IORead):
             storage_options: `bool`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             netcdf_backend: `None` or `str`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             cache: `bool`, optional
                 Control array element caching. See `cfdm.read` for
                 details
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             dask_chunks: `str`, `int`, `None`, or `dict`, optional
                 Specify the `dask` chunking of dimensions for data in
                 the input files. See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             store_hdf_chunks: `bool`, optional
                  Storing the HDF5 chunking strategy. See `cfdm.read`
                  for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             _file_systems: `dict`, optional
                 Provide any already-open S3 file systems.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -7559,7 +7559,7 @@ class NetCDFRead(IORead):
             ncdimensions: sequence of `str`, optional
                 The netCDF dimensions spanned by the array.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
@@ -10169,7 +10169,7 @@ class NetCDFRead(IORead):
     def _file_global_attribute(self, nc, attr):
         """Return a global attribute from a dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10194,7 +10194,7 @@ class NetCDFRead(IORead):
     def _file_global_attributes(self, nc):
         """Return the global attributes from a dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10218,7 +10218,7 @@ class NetCDFRead(IORead):
     def _file_dimensions(self, nc):
         """Return all dimensions in the root group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -10231,7 +10231,7 @@ class NetCDFRead(IORead):
     def _file_dimension(self, nc, dim_name):
         """Return a dimension from the root group of a dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10252,7 +10252,7 @@ class NetCDFRead(IORead):
     def _file_dimension_isunlimited(self, nc, dim_name):
         """Return whether a dimension is unlimited.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10273,7 +10273,7 @@ class NetCDFRead(IORead):
     def _file_dimension_size(self, nc, dim_name):
         """Return a dimension's size.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10294,7 +10294,7 @@ class NetCDFRead(IORead):
     def _file_variables(self, nc):
         """Return all variables in the root group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10312,7 +10312,7 @@ class NetCDFRead(IORead):
     def _file_variable(self, nc, var_name):
         """Return a variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10333,7 +10333,7 @@ class NetCDFRead(IORead):
     def _file_variable_attributes(self, var):
         """Return the variable attributes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10357,7 +10357,7 @@ class NetCDFRead(IORead):
     def _file_variable_dimensions(self, var):
         """Return the variable dimension names.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10375,7 +10375,7 @@ class NetCDFRead(IORead):
     def _file_variable_size(self, var):
         """Return the size of a variable's array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10403,7 +10403,7 @@ class NetCDFRead(IORead):
         If returned storage options will always include an
         ``'endpoint_url'`` key.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10439,7 +10439,7 @@ class NetCDFRead(IORead):
     def _get_hdf5_chunks(self, ncvar):
         """Return a netCDF variable's HDF5 chunks.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10487,7 +10487,7 @@ class NetCDFRead(IORead):
     def _dask_chunks(self, array, ncvar, compressed):
         """Set the Dask chunking strategy for a netCDF variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10823,7 +10823,7 @@ class NetCDFRead(IORead):
         doesn't scale well with array size (i.e. it takes
         disproportionally longer for larger arrays).
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10956,7 +10956,7 @@ class NetCDFRead(IORead):
     def _netcdf_chunksizes(self, variable):
         """Return the variable chunk sizes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 

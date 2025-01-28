@@ -7,7 +7,7 @@ class DeprecationError(Exception):
 class NetCDFArray:
     """A netCDF array accessed with `netCDF4`.
 
-    Deprecated at version NEXTVERSION and is no longer available. Use
+    Deprecated at version 1.11.2.0 and is no longer available. Use
     `cfdm.NetCDF4Array` instead.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -84,7 +84,7 @@ class NetCDFArray:
 
                 .. versionadded:: (cfdm) 1.10.0.0
 
-            missing_values: Deprecated at version NEXTVERSION
+            missing_values: Deprecated at version 1.11.2.0
                 The missing value indicators defined by the netCDF
                 variable attributes. They may now be recorded via the
                 *attributes* parameter
@@ -100,6 +100,6 @@ class NetCDFArray:
 
         """
         raise DeprecationError(
-            f"{self.__class__.__name__} was deprecated at version NEXTVERSION "
+            f"{self.__class__.__name__} was deprecated at version 1.11.2.0 "
             "and is no longer available. Use cfdm.NetCDF4Array instead."
         )

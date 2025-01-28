@@ -56,7 +56,7 @@ class NetCDF4Array(
 
             {{init unpack: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             {{init attributes: `dict` or `None`, optional}}
 
@@ -64,11 +64,11 @@ class NetCDF4Array(
                 attributes will be set from the netCDF variable during
                 the first `__getitem__` call.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             {{init storage_options: `dict` or `None`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             {{init source: optional}}
 
@@ -78,7 +78,7 @@ class NetCDF4Array(
 
                 .. versionadded:: (cfdm) 1.10.0.0
 
-            missing_values: Deprecated at version NEXTVERSION
+            missing_values: Deprecated at version 1.11.2.0
                 The missing value indicators defined by the netCDF
                 variable attributes. They may now be recorded via the
                 *attributes* parameter
@@ -93,11 +93,11 @@ class NetCDF4Array(
                 Use the *address* parameter instead.
 
             units: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
+                Deprecated at version 1.11.2.0. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
+                Deprecated at version 1.11.2.0. Use the
                 *attributes* parameter instead.
 
         """
@@ -193,7 +193,7 @@ class NetCDF4Array(
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return super().__dask_tokenize__() + (self.get_mask(),)
@@ -205,7 +205,7 @@ class NetCDF4Array(
         Returns a lock object that prevents concurrent reads of netCDF
         files, which are not currently supported by `netCDF4`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return netcdf_lock
@@ -216,7 +216,7 @@ class NetCDF4Array(
         The subspace is defined by the `index` attributes, and is
         applied with `cfdm.netcdf_indexer`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `__array__`, `index`
 
@@ -283,7 +283,7 @@ class NetCDF4Array(
         they have not already been defined, either during `{{class}}`
         instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 

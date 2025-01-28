@@ -595,7 +595,7 @@ def write(
             native compression (see the *compress* parameter) does not
             affect the HDF5 chunk size.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field

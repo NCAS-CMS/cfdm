@@ -29,7 +29,7 @@ def allclose(x, y, masked_equal=True, rtol=None, atol=None):
     the corresponding NumPy method (see the `numpy.ma.allclose` API
     reference).
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -106,7 +106,7 @@ def collapse(
 ):
     """Collapse data in-place using a given funcion.
 
-     .. versionadded:: (cfdm) NEXTVERSION
+     .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -183,7 +183,7 @@ def collapse(
 def is_numeric_dtype(array):
     """True if the given array is of a numeric or boolean data type.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -231,7 +231,7 @@ def is_numeric_dtype(array):
 def convert_to_datetime(a, units):
     """Convert a dask array of numbers to one of date-time objects.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso `convert_to_reftime`
 
@@ -268,7 +268,7 @@ def convert_to_datetime(a, units):
 def convert_to_reftime(a, units=None, first_value=None):
     """Convert date-times to floating point reference times.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso `convert_to_datetime`
 
@@ -375,7 +375,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 def first_non_missing_value(a, cached=None, method="index"):
     """Return the first non-missing value of a dask array.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -483,7 +483,7 @@ def generate_axis_identifiers(n):
 
     The names are arbitrary and have no semantic meaning.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -514,7 +514,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 
     The name is arbitrary and has no semantic meaning.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -570,7 +570,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 def chunk_positions(chunks):
     """Find the position of each chunk.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso:: `chunk_indices`, `chunk_locations`, `chunk_shapes`
 
@@ -600,7 +600,7 @@ def chunk_positions(chunks):
 def chunk_shapes(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso:: `chunk_indices`, `chunk_locations`, `chunk_positions`
 
@@ -630,7 +630,7 @@ def chunk_shapes(chunks):
 def chunk_locations(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso:: `chunk_indices`, `chunk_positions`, `chunk_shapes`
 
@@ -675,7 +675,7 @@ def normalize_chunks(chunks, shape=None, dtype=None):
     identical to `dask.array.core.normalize_chunks`. If it does, then
     the output chunks for each such axis will be ``(nan,)``.
 
-    .. versionadded (cfdm) NEXTVERSION
+    .. versionadded (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -716,7 +716,7 @@ def normalize_chunks(chunks, shape=None, dtype=None):
 def dt2rt(array, units_out):
     """Return numeric time values from datetime objects.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso:: `rt2dt`
 
@@ -765,7 +765,7 @@ def dt2rt(array, units_out):
 def rt2dt(array, units_in):
     """Convert reference times to date-time objects.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     The returned array is always independent.
 
@@ -817,7 +817,7 @@ def rt2dt(array, units_in):
 def st2datetime(date_string, calendar=None):
     """Parse an ISO 8601 date-time string into a `cftime` object.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -852,7 +852,7 @@ def st2datetime(date_string, calendar=None):
 def st2dt(array, units_in=None):
     """The returned array is always independent.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -876,7 +876,7 @@ def st2dt(array, units_in=None):
 def st2rt(array, units_in, units_out):
     """The returned array is always independent.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 

@@ -4,14 +4,14 @@ import dask.array as da
 class CompressedArrayMixin:
     """Mixin class for compressed arrays.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 
     def _lock_file_read(self, array):
         """Try to return an array that doesn't support concurrent reads.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -52,7 +52,7 @@ class CompressedArrayMixin:
     def to_dask_array(self, chunks="auto"):
         """Convert the data to a `dask` array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 

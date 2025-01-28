@@ -1172,7 +1172,7 @@ class CFDMImplementation(Implementation):
     def nc_set_hdf5_chunksizes(self, data, chunksizes):
         """Set the HDF5 chunking strategy for the data.
 
-        ..versionadded:: (cfdm) NEXTVERSION
+        ..versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -2316,7 +2316,7 @@ class CFDMImplementation(Implementation):
             kwargs: optional
                 Initialisation parameters to pass to the new instance.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -2329,7 +2329,7 @@ class CFDMImplementation(Implementation):
     def initialise_H5netcdfArray(self, **kwargs):
         """Return a `H5netcdfArray` instance.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 

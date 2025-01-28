@@ -1368,7 +1368,7 @@ class PropertiesDataBounds(PropertiesData):
     def nc_clear_hdf5_chunksizes(self, bounds=True, interior_ring=True):
         """Clear the HDF5 chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
@@ -1412,7 +1412,7 @@ class PropertiesDataBounds(PropertiesData):
     ):
         """Set the HDF5 chunking strategy.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`

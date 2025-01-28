@@ -10,14 +10,14 @@ class DeprecationError(Exception):
 class NetCDFFileMixin:
     """Mixin class for netCDF file arrays.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 
     def _group(self, dataset, groups):
         """Return the group object containing a variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -49,7 +49,7 @@ class NetCDFFileMixin:
         they have not already been defined, either during {{class}}
         instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -139,7 +139,7 @@ class NetCDFFileMixin:
     def get_missing_values(self, default=ValueError()):
         """The missing value indicators from the netCDF variable.
 
-        Deprecated at version NEXTVERSION. Use `get_attributes` instead.
+        Deprecated at version 1.11.2.0. Use `get_attributes` instead.
 
         .. versionadded:: (cfdm) 1.10.0.3
 
@@ -180,14 +180,14 @@ class NetCDFFileMixin:
         """
         raise DeprecationError(
             f"{self.__class__.__name__}.get_missing_values was deprecated "
-            "at version NEXTVERSION and is no longer available. "
+            "at version 1.11.2.0 and is no longer available. "
             f"Use {self.__class__.__name__}.get_attributes instead."
         )
 
     def get_unpack(self):
         """Whether or not to automatically unpack the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         **Examples**
 

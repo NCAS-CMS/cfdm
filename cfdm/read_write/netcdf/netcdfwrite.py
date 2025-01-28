@@ -4721,7 +4721,7 @@ class NetCDFWrite(IOWrite):
 
                 See `cfdm.write` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -5310,7 +5310,7 @@ class NetCDFWrite(IOWrite):
     def _chunking_parameters(self, data, ncdimensions):
         """Set chunking parameters for `netCDF4.createVariable`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -5387,7 +5387,7 @@ class NetCDFWrite(IOWrite):
     def _compressed_data(self, ncdimensions):
         """Whether or not the data is being written in compressed form.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 

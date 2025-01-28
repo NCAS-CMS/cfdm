@@ -44,7 +44,7 @@ class FileArrayMixin:
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return (
@@ -210,12 +210,12 @@ class FileArrayMixin:
     def get_missing_values(self):
         """The missing values of the data.
 
-        Deprecated at version NEXTVERSION. Use `get_attributes` instead.
+        Deprecated at version 1.11.2.0. Use `get_attributes` instead.
 
         """
         raise DeprecationError(
             f"{self.__class__.__name__}.get_missing_values was deprecated "
-            "at version NEXTVERSION and is no longer available. "
+            "at version 1.11.2.0 and is no longer available. "
             f"Use {self.__class__.__name__}.get_attributes instead."
         )  # pragma: no cover
 
@@ -224,7 +224,7 @@ class FileArrayMixin:
     ):
         """Return `s3fs.S3FileSystem` options for accessing S3 files.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 

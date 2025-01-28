@@ -253,7 +253,7 @@ def read(
             following variable attributes: ``add_offset``,
             ``scale_factor``, and ``_Unsigned``.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -285,7 +285,7 @@ def read(
             ``'netCDF4'`` and ``'h5netcdf'`` will force the use of
             that library.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         storage_options: `dict` or `None`, optional
             Pass parameters to the backend file system driver, such as
@@ -327,7 +327,7 @@ def read(
                 'https://s3.fr-par.scw.cloud', 'client_kwargs':
                 {'region_name': 'fr-par'}}``
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         cache: `bool`, optional
             If True, the default, then cache the first and last array
@@ -338,7 +338,7 @@ def read(
             data, setting *cache* to False may speed up the parsing of
             the file.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         dask_chunks: `str`, `int`, `None`, or `dict`, optional
             Specify the Dask chunking for data. May be one of the
@@ -512,7 +512,7 @@ def read(
                 None}`` or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
                 None}``.
 
-              .. versionadded:: (cfdm) NEXTVERSION
+              .. versionadded:: (cfdm) 1.11.2.0
 
         store_hdf5_chunks: `bool`, optional
             If True (the default) then store the HDF5 chunking
@@ -534,7 +534,7 @@ def read(
             on how the HDF5 chunking strategy is determined at the
             time of writing.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the

@@ -7,7 +7,7 @@ from cfunits import Units
 class ArrayMixin:
     """Mixin class for a container of an array.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 
@@ -39,7 +39,7 @@ class ArrayMixin:
     def __array_function__(self, func, types, args, kwargs):
         """Implement the `numpy` ``__array_function__`` protocol.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return NotImplemented
@@ -96,7 +96,7 @@ class ArrayMixin:
         the actual metadata from the values. It does not force the
         output to have the structure or dtype of the specified meta.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `dask.utils.meta_from_array`
 
@@ -107,7 +107,7 @@ class ArrayMixin:
     def Units(self):
         """The `Units` object containing the units of the array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return Units(self.get_units(None), self.get_calendar(None))
@@ -115,7 +115,7 @@ class ArrayMixin:
     def get_attributes(self, default=ValueError()):
         """The attributes of the array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 

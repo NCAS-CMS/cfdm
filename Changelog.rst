@@ -1,7 +1,7 @@
-Version NEXTVERSION
--------------------
+Version 1.11.2.0
+----------------
 
-**2024-12-??**
+**2025-01-28**
 
 * Introduction of `dask` for all data manipulations
   https://github.com/NCAS-CMS/cfdm/issues/317)

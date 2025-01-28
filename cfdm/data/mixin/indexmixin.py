@@ -33,14 +33,14 @@ class IndexMixin:
     [[ 1,  2,  4],
      [21, 22, 24]]
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 
     def __array__(self, *dtype):
         """Convert the `{{class}}` into a `numpy` array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -85,7 +85,7 @@ class IndexMixin:
         96]`` will be retrieved from the data when `__array__` is
         called.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `index`, `original_shape`, `__array__`,
                      `__getitem__`
@@ -210,7 +210,7 @@ class IndexMixin:
     def __in_memory__(self):
         """True if the array data is in memory.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -225,7 +225,7 @@ class IndexMixin:
         The subspace is defined by the `index` attributes, and is
         applied with `cfdm.netcdf_indexer`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `__array__`, `index`
 
@@ -249,7 +249,7 @@ class IndexMixin:
         The `shape` is defined by the `index` applied to the
         `original_shape`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `shape`, `original_shape`
 
@@ -351,7 +351,7 @@ class IndexMixin:
         The `shape` is defined by the result of subspacing the data in
         its original shape with the indices given by `index`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `index`, `shape`
 
