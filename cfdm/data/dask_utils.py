@@ -11,7 +11,7 @@ import numpy as np
 def cfdm_to_memory(a):
     """Return an in-memory version of *a*.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -34,7 +34,7 @@ def cfdm_to_memory(a):
 def cfdm_filled(a, fill_value=None):
     """Replace masked elements with a fill value.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -68,7 +68,7 @@ def cfdm_harden_mask(a):
 
     Has no effect if the array is not a masked array.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -98,7 +98,7 @@ def cfdm_soften_mask(a):
 
     Has no effect if the array is not a masked array.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -144,7 +144,7 @@ def cfdm_where(array, condition, x, y, hardmask):
     .. note:: This function sets the mask hardness of the output
               array appropriately.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 

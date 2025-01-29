@@ -93,7 +93,7 @@ def configuration(
             The new chunksize in bytes. The default is to not change
             the current behaviour.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
     :Returns:
 
@@ -360,7 +360,7 @@ def environment(display=True, paths=True):
     Python: 3.11.4
     packaging: 23.0
     numpy: 1.25.2
-    cfdm.core: NEXTVERSION
+    cfdm.core: 1.11.2.0
     HDF5 library: 1.14.2
     netcdf library: 4.9.2
     netCDF4: 1.6.4
@@ -370,14 +370,14 @@ def environment(display=True, paths=True):
     dask: 2024.7.0
     scipy: 1.11.3
     cftime: 1.6.2
-    cfdm: NEXTVERSION
+    cfdm: 1.11.2.0
 
     >>> cfdm.environment()
     Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
     Python: 3.11.4 /home/miniconda3/bin/python
     packaging: 23.0 /home/miniconda3/lib/python3.11/site-packages/packaging/__init__.py
     numpy: 1.25.2 /home/miniconda3/lib/python3.11/site-packages/numpy/__init__.py
-    cfdm.core: NEXTVERSION /home/cfdm/cfdm/core/__init__.py
+    cfdm.core: 1.11.2.0 /home/cfdm/cfdm/core/__init__.py
     HDF5 library: 1.14.2
     netcdf library: 4.9.2
     netCDF4: 1.6.4 /home/miniconda3/lib/python3.11/site-packages/netCDF4/__init__.py
@@ -387,7 +387,7 @@ def environment(display=True, paths=True):
     scipy: 1.11.3 /home/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
     dask: 2024.7.0 /home/miniconda3/lib/python3.11/site-packages/dask/__init__.py
     cftime: 1.6.2 /home/miniconda3/lib/python3.11/site-packages/cftime/__init__.py
-    cfdm: NEXTVERSION /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
+    cfdm: 1.11.2.0 /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
 
     """
     import cftime
@@ -1669,7 +1669,7 @@ class chunksize(ConstantAccess):
               configuration API will affect subsequent data creation,
               but will *not* change the value of `chunksize`.
 
-    .. versionaddedd:: (cfdm) NEXTVERSION
+    .. versionaddedd:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -1721,7 +1721,7 @@ class chunksize(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: (cfdm) NEXTVERSION
+        .. versionaddedd:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -2004,7 +2004,7 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
     ``atol`` are added together to compare against the absolute difference
     between ``a`` and ``b``.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -2098,7 +2098,7 @@ def indices_shape(indices, full_shape, keepdims=True):
     Boolean `dask` arrays will be computed, and `dask` arrays with
     unknown size will have their chunk sizes computed.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso:: `cfdm.parse_indices`
 
@@ -2226,7 +2226,7 @@ def indices_shape(indices, full_shape, keepdims=True):
 def parse_indices(shape, indices, keepdims=True, newaxis=False):
     """Parse indices for array access and assignment.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 

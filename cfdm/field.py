@@ -2770,7 +2770,7 @@ class Field(
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `nc_clear_hdf5_chunksizes`,
                      `nc_set_hdf5_chunksizes`, `{{package}}.read`,
@@ -2821,7 +2821,7 @@ class Field(
     def nc_clear_hdf5_chunksizes(self, constructs=False):
         """Clear the HDF5 chunking strategy.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
@@ -2881,7 +2881,7 @@ class Field(
         .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
