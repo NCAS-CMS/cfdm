@@ -155,22 +155,18 @@ def parse_attribute(name, attribute):
         )
 
     # Regex for 'dict form': "k1: v1 v2 k2: v3"
-    pat_value = subst("(?P<value>WORD)SEP")
-    pat_values = "({})*".format(pat_value)
-    pat_mapping = subst(
-        "(?P<mapping_name>WORD):SEP(?P<values>{})".format(pat_values)
-    )
-    pat_mapping_list = "({})+".format(pat_mapping)
+    pat_value = subst(r"(?P<value>WORD)SEP")
+    pat_values = f"({pat_value})*"
+    pat_mapping = subst(rf"(?P<mapping_name>WORD):SEP(?P<values>{pat_values})")
+    pat_mapping_list = f"({pat_mapping})+"
 
     # Regex for 'list form': "v1 v2 v3" (including single-item form)
-    pat_list_item = subst("(?P<list_item>WORD)SEP")
-    pat_list = "({})+".format(pat_list_item)
+    pat_list_item = subst(r"(?P<list_item>WORD)SEP")
+    pat_list = f"({pat_list_item})+"
 
     # Regex for any form:
     pat_all = subst(
-        "((?P<list>{})|(?P<mapping_list>{}))$".format(
-            pat_list, pat_mapping_list
-        )
+        rf"((?P<list>{pat_list})|(?P<mapping_list>{pat_mapping_list}))$"
     )
 
     m = re.match(pat_all, attribute)

@@ -263,20 +263,38 @@ class Subarray(Array):
 
         return c.copy()
 
-    def get_filenames(self):
-        """Return the names of any files containing the data.
+    def get_filename(self, normalise=True, default=AttributeError()):
+        """Return the name of the file containing the data.
 
         .. versionadded:: (cfdm) 1.10.0.2
 
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no file name.
+
+                {{default Exception}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
         :Returns:
 
-            `set`
-                The file names in normalised, absolute form. If the
-                data are all in memory then an empty `set` is
-                returned.
+            `str`
+                The file name.
 
         """
-        try:
-            return tuple(self.data.get_filenames())
-        except AttributeError:
-            return ()
+        filenames = self.data.get_filenames(normalise=normalise)
+        if len(filenames) != 1:
+            if default is None:
+                return
+
+            return self._default(
+                default, f"{self.__class__.__name__} has no unique file name"
+            )
+
+        return filenames[0]

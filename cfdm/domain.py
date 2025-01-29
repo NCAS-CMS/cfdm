@@ -940,8 +940,14 @@ class Domain(
 
         return axes
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=True):
         """Return the file names containing the metadata construct data.
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -962,7 +968,7 @@ class Domain(
         out = set()
 
         for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.get_filenames())
+            out.update(c.get_filenames(normalise=normalise))
 
         return out
 
@@ -1074,6 +1080,38 @@ class Domain(
             out.append(f"ncvar%{n}")
 
         return out
+
+    @_inplace_enabled(default=False)
+    def persist(self, inplace=False):
+        """Persist data into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `{{package}}.Data.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The domain construct with persisted metadata. If the
+                operation was in-place then `None` is returned.
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        for c in d.constructs.filter_by_data(todict=True).values():
+            c.persist(inplace=True)
+
+        return d
 
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):

@@ -112,7 +112,7 @@ class ArrayMixin:
         """
         return Units(self.get_units(None), self.get_calendar(None))
 
-    def get_attributes(self, default=ValueError()):
+    def get_attributes(self, copy=True):
         """The attributes of the array.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -132,15 +132,11 @@ class ArrayMixin:
         """
         attributes = self._get_component("attributes", None)
         if attributes is None:
-            if default is None:
-                return
+            attributes = {}
+        elif copy:
+            attributes = deepcopy(attributes)
 
-            return self._default(
-                default,
-                f"{self.__class__.__name__} attributes have not yet been set",
-            )
-
-        return deepcopy(attributes)
+        return attributes
 
     def get_calendar(self, default=ValueError()):
         """The calendar of the array.

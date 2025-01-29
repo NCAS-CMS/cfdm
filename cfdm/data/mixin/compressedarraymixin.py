@@ -41,7 +41,7 @@ class CompressedArrayMixin:
             pass
 
         try:
-            array.get_filenames()
+            array.get_filename()
         except AttributeError:
             pass
         else:
