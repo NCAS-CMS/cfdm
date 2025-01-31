@@ -71,7 +71,7 @@ class PropertiesData(Properties):
 
             copy: `None` or `bool`
                 Included to match the v2 `numpy.ndarray.__array__`
-                API, but ignored. The return numpy array is always
+                API, but ignored. The returned numpy array is always
                 independent.
 
                 .. versionadded:: NEXTVERSION
