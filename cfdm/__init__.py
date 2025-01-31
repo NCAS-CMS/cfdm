@@ -64,7 +64,7 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-_minimum_vn = "1.6.0"
+_minimum_vn = "1.6.4"
 if Version(cftime.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad cftime version: cfdm requires cftime>={_minimum_vn}. "
@@ -77,7 +77,7 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-_minimum_vn = "1.5.4"
+_minimum_vn = "1.7.2"
 if Version(netCDF4.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad netCDF4 version: cfdm requires netCDF4>={_minimum_vn}. "

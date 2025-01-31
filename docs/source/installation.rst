@@ -154,8 +154,7 @@ The cfdm package requires:
 
 * `Python <https://www.python.org>`_, version 3.8 or newer.
 
-* `numpy <http://www.numpy.org>`_, versions 1.15 up to, but not
-  including, 2.0.
+* `numpy <http://www.numpy.org>`_, version 2.0.0 or newer.
 
 * `netCDF4 <https://pypi.org/project/netCDF4>`_, version 1.7.2 or
   newer.
