@@ -1,6 +1,6 @@
 """Configuration for netCDF group flattening.
 
-.. versionadded:: (cfdm) NEXTVERSION
+.. versionadded:: (cfdm) 1.11.2.0
 
 Portions of this code were adapted from the `netcdf_flattener`
 library, which carries the following Apache 2.0 License:
@@ -52,7 +52,7 @@ class FlatteningRules:
     that the ``ancillary_variables`` attribute contains the names of
     other netCDF variables.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 

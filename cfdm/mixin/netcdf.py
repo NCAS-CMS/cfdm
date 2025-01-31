@@ -2494,7 +2494,7 @@ class NetCDFHDF5(NetCDF):
 
             {{hdf5 todict: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 

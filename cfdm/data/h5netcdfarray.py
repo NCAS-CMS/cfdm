@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class H5netcdfArray(IndexMixin, abstract.FileArray):
     """A netCDF array accessed with `h5netcdf`.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 
@@ -24,7 +24,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         Returns a lock object that prevents concurrent reads of netCDF
         files, which are not currently supported by `h5netcdf`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return netcdf_lock
@@ -35,7 +35,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         The subspace is defined by the `index` attributes, and is
         applied with `cfdm.netcdf_indexer`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `__array__`, `index`
 
@@ -118,7 +118,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         they have not already been defined, either during `{{class}}`
         instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -138,7 +138,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
     def close(self, dataset):
         """Close the dataset containing the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -156,7 +156,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
     def get_groups(self, address):
         """The netCDF4 group structure of a netCDF variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -202,7 +202,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         open each one, in the order stored, and a file object is
         returned from the first file that exists.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 

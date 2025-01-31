@@ -708,7 +708,7 @@ class write(ReadWrite):
               the ``'constructs'`` option. If False then a normal,
               non-aggregation variable will be written in this case.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field

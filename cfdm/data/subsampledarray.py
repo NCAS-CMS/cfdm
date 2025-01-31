@@ -1255,7 +1255,7 @@ class SubsampledArray(CompressedArrayMixin, CompressedArray):
     def to_dask_array(self, chunks="auto"):
         """Convert the data to a `dask` array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 

@@ -120,7 +120,7 @@ class read(ReadWrite):
 
         {{read unpack: `bool`}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         {{read domain: `bool`, optional}}
 
@@ -128,23 +128,23 @@ class read(ReadWrite):
 
         {{read netcdf_backend: `None` or (sequence of) `str`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         {{read storage_options: `dict` or `None`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         {{read cache: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         {{read dask_chunks: `str`, `int`, `None`, or `dict`, optional}}
 
-              .. versionadded:: (cfdm) NEXTVERSION
+              .. versionadded:: (cfdm) 1.11.2.0
 
         {{read store_dataset_chunks: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         {{read cfa: `dict`, optional}}
 
