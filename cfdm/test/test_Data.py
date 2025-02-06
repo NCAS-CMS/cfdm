@@ -1433,11 +1433,12 @@ class DataTest(unittest.TestCase):
         self.assertIn((key, 1), x)
 
         e = d[0]
-        x = e.todict()
+        x = e.todict(graph="cull")
         self.assertIn((key, 0), x)
         self.assertNotIn((key, 1), x)
 
-        x = e.todict(optimize_graph=False)
+        e = d[0]
+        x = e.todict(graph=None)
         self.assertIsInstance(x, dict)
         self.assertIn((key, 0), x)
         self.assertIn((key, 1), x)
@@ -2103,6 +2104,15 @@ class DataTest(unittest.TestCase):
         d.nc_set_hdf5_chunksizes((1, 4, 3))
         e = d[0, :2, :]
         self.assertEqual(e.nc_hdf5_chunksizes(), (1, 2, 3))
+
+        # Integer-list indices that trigger dask optimisation (e.g. a
+        # non-monotonic integer list that spans multiple chunks, and
+        # applies to underlying cfdm Array objects).
+        cfdm.write(self.f0, file_A)
+        d = cfdm.read(file_A, dask_chunks=3)[0].data
+        self.assertTrue(
+            (d[0, [4, 0, 3, 1]].array == [[0.018, 0.007, 0.014, 0.034]]).all()
+        )
 
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
         """Test arithmetic, logical and comparison operators on Data."""

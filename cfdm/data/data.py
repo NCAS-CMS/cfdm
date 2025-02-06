@@ -2056,7 +2056,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         updated = False
 
         dsk = self.todict(
-            optimize_graph=True,
             _force_mask_hardness=False,
             _force_to_memory=False,
         )
@@ -4215,7 +4214,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         return out
 
-    def cull_graph(self):
+    @_inplace_enabled(default=True)
+    def cull_graph(self, inplace=True):
         """Remove unnecessary tasks from the dask graph in-place.
 
         **Performance**
@@ -4229,6 +4229,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `dask.optimization.cull`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -4252,12 +4258,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
          ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
 
         """
-        dx = self.to_dask_array(
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=False
         )
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        self._set_dask(dx, clear=self._NONE, in_memory=None)
+        d._set_dask(dx, clear=d._NONE, in_memory=None)
+
+        return d
 
     def del_calendar(self, default=ValueError()):
         """Delete the calendar.
@@ -6898,9 +6908,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
     def todict(
         self,
-        optimize_graph=True,
+        graph="cull",
         _force_mask_hardness=True,
         _force_to_memory=True,
+        optimize_graph=None,
     ):
         """Return a dictionary of the dask graph key/value pairs.
 
@@ -6910,15 +6921,33 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            optimize_graph: `bool`
-                If True, the default, then prior to being converted to
-                a dictionary, the graph is optimised to remove unused
-                chunks. Note that optimising the graph can sometimes
-                add a considerable performance overhead.
+            graph: `str` or `None`
+                Specify graph optimisations to be applied before
+                converting to a dictionary. Must be one of:
+
+                * ``'cull'``
+
+                  This is the default. Remove unnecessary tasks which
+                  do not contribute to the computed result, equivalent
+                  to applying `dask.optimization.cull` to the graph.
+
+                * ``'optimise'``
+
+                  Apply all available graph optimisations, equivalent
+                  to applying `dask.optimize` to the graph.
+
+                * `None`
+
+                  Do not apply any optimisations.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             {{_force_mask_hardness: `bool`, optional}}
 
             {{_force_to_memory: `bool`, optional}}
+
+            optimize_graph: Deprecated at version NEXTVERSION
+                Use the *graph* parameter instead.
 
         :Returns:
 
@@ -6941,12 +6970,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
          ('getitem-bb4a18fba86eac0dd2c489748b2b3e2d', 0): (<function dask.array.chunk.getitem(obj, index)>, ('array-1bd38aa2a7096af2b1db281a4309854a', 0), (slice(0, 1, 1),))}
 
         """
+        if graph == "cull":
+            self.cull_graph()
+
         dx = self.to_dask_array(
             _force_mask_hardness=_force_mask_hardness,
             _force_to_memory=_force_to_memory,
         )
 
-        if optimize_graph:
+        if graph == "optimise":
             return collections_to_dsk((dx,), optimize_graph=True)
 
         return dict(collections_to_dsk((dx,), optimize_graph=False))

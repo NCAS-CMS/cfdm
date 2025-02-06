@@ -142,13 +142,11 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-_minimum_vn = "2024.6.0"
-_maximum_vn = "2024.7.1"
-_dask_version = Version(dask.__version__)
-if not Version(_minimum_vn) <= _dask_version <= Version(_maximum_vn):
+_minimum_vn = "2024.12.0"
+if Version(dask.__version__) < Version(_minimum_vn):
     raise ValueError(
-        f"Bad dask version: cfdm requires {_minimum_vn}<=dask<={_maximum_vn}. "
-        f"Got {_dask_version} at {dask.__file__}"
+        f"Bad dask version: cfdm requires dask>={_minimum_vn}. "
+        f"Got {dask.__version__} at {dask.__file__}"
     )
 
 from .constants import masked

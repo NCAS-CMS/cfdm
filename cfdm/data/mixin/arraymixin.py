@@ -11,6 +11,8 @@ class ArrayMixin:
 
     """
 
+    _ARRAY_HANDLED_FUNCTIONS = {}
+
     def __array__(self, dtype=None, copy=None):
         """The numpy array interface.
 
@@ -54,7 +56,15 @@ class ArrayMixin:
         .. versionadded:: (cfdm) 1.11.2.0
 
         """
-        return NotImplemented
+        if func not in self._ARRAY_HANDLED_FUNCTIONS:
+            return NotImplemented
+
+        # Note: This allows subclasses that don't override
+        #       __array_function__ to handle Array objects
+        if not all(issubclass(t, self.__class__) for t in types):
+            return NotImplemented
+
+        return self._ARRAY_HANDLED_FUNCTIONS[func](*args, **kwargs)
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed subarray.
@@ -244,3 +254,33 @@ class ArrayMixin:
             )
 
         return attributes["units"]
+
+
+# --------------------------------------------------------------------
+# __array_function__ implementations
+# --------------------------------------------------------------------
+def array_implements(cls, numpy_function):
+    """An __array_function__ implementation for `Array` objects.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+
+    def decorator(func):
+        cls._ARRAY_HANDLED_FUNCTIONS[numpy_function] = func
+        return func
+
+    return decorator
+
+
+@array_implements(ArrayMixin, np.concatenate)
+def concatenate(arrays, axis=0, out=None, dtype=None, casting="same_kind"):
+    """Version of `np.concatenate` that works for `Array` objects.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+    # Convert to numpy arrays, and concatenate those.
+    return np.concatenate(
+        tuple(map(np.array, arrays)), axis=axis, dtype=dtype, casting=casting
+    )
