@@ -6917,24 +6917,25 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `to_dask_array`
+        .. seealso:: `cull_graph`, `to_dask_array`
 
         :Parameters:
 
             graph: `str` or `None`
-                Specify graph optimisations to be applied before
+                Specify treatment to apply to the graph before
                 converting to a dictionary. Must be one of:
 
                 * ``'cull'``
 
                   This is the default. Remove unnecessary tasks which
-                  do not contribute to the computed result, equivalent
-                  to applying `dask.optimization.cull` to the graph.
+                  do not contribute to the computed result.
 
                 * ``'optimise'``
 
-                  Apply all available graph optimisations, equivalent
-                  to applying `dask.optimize` to the graph.
+                  Apply all possible graph optimisations. These will
+                  include removal unnecessary tasks (see ``'cull'``),
+                  and is equivalent to applying `dask.optimize` to the
+                  graph.
 
                 * `None`
 
@@ -6952,22 +6953,33 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         :Returns:
 
             `dict`
-                The dictionary of the dask graph key/value pairs.
+                The dictionary of the dask graph's key/value pairs.
 
         **Examples**
 
         >>> d = {{package}}.Data([1, 2, 3, 4], chunks=2)
         >>> d.todict()
-        {('array-1bd38aa2a7096af2b1db281a4309854a', 0): array([1, 2]),
-         ('array-1bd38aa2a7096af2b1db281a4309854a', 1): array([3, 4])}
+        {('array-58934a19a81f97038351581dea42e32f', 0): array([1, 2]),
+         ('array-58934a19a81f97038351581dea42e32f', 1): array([3, 4]),
+         ('cfdm_harden_mask-23375a35009f4d3ec84b767640370152',
+          0): <Task ('cfdm_harden_mask-23375a35009f4d3ec84b767640370152', 0) cfdm_harden_mask(...)>,
+         ('cfdm_harden_mask-23375a35009f4d3ec84b767640370152',
+          1): <Task ('cfdm_harden_mask-23375a35009f4d3ec84b767640370152', 1) cfdm_harden_mask(...)>}
+
         >>> e = d[0]
-        >>> e.todict()
-        {('getitem-bb4a18fba86eac0dd2c489748b2b3e2d', 0): (<function dask.array.chunk.getitem(obj, index)>, ('array-1bd38aa2a7096af2b1db281a4309854a', 0), (slice(0, 1, 1),)),
-         ('array-1bd38aa2a7096af2b1db281a4309854a', 0): array([1, 2])}
-        >>> e.todict(optimize_graph=False)
-        {('array-1bd38aa2a7096af2b1db281a4309854a', 0): array([1, 2]),
-         ('array-1bd38aa2a7096af2b1db281a4309854a', 1): array([3, 4]),
-         ('getitem-bb4a18fba86eac0dd2c489748b2b3e2d', 0): (<function dask.array.chunk.getitem(obj, index)>, ('array-1bd38aa2a7096af2b1db281a4309854a', 0), (slice(0, 1, 1),))}
+        >>> e.todict(graph=None)
+        {('array-58934a19a81f97038351581dea42e32f', 0): array([1, 2]),
+         ('array-58934a19a81f97038351581dea42e32f', 1): array([3, 4]),
+         ('getitem-4d1949dc1e18d336e215bc226cd7b109',
+          0): <Task ('getitem-4d1949dc1e18d336e215bc226cd7b109', 0) getitem(...)>,
+         ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e',
+          0): <Task ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e', 0) cfdm_harden_mask(...)>}
+        >>> e.todict(graph='cull')
+        {('getitem-4d1949dc1e18d336e215bc226cd7b109',
+          0): <Task ('getitem-4d1949dc1e18d336e215bc226cd7b109', 0) getitem(...)>,
+         ('array-58934a19a81f97038351581dea42e32f', 0): array([1, 2]),
+         ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e',
+          0): <Task ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e', 0) cfdm_harden_mask(...)>}
 
         """
         if graph == "cull":

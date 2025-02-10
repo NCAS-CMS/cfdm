@@ -274,13 +274,11 @@ def array_implements(cls, numpy_function):
 
 
 @array_implements(ArrayMixin, np.concatenate)
-def concatenate(arrays, axis=0, out=None, dtype=None, casting="same_kind"):
+def concatenate(arrays, axis=0):
     """Version of `np.concatenate` that works for `Array` objects.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
     # Convert to numpy arrays, and concatenate those.
-    return np.concatenate(
-        tuple(map(np.array, arrays)), axis=axis, dtype=dtype, casting=casting
-    )
+    return np.ma.concatenate(tuple(map(np.asanyarray, arrays)), axis=axis)

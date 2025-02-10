@@ -1471,29 +1471,16 @@ class DataTest(unittest.TestCase):
         """Test Data.cull_graph."""
         d = cfdm.Data([1, 2, 3, 4, 5], chunks=3)
         d = d[:2]
-        self.assertEqual(
-            len(
-                dict(
-                    d.to_dask_array(
-                        _force_mask_hardness=False, _force_to_memory=False
-                    ).dask
-                )
-            ),
-            3,
-        )
+        nkeys = len(dict(d.to_dask_array().dask))
 
         # Check that there are fewer keys after culling
-        d.cull_graph()
-        self.assertEqual(
-            len(
-                dict(
-                    d.to_dask_array(
-                        _force_mask_hardness=False, _force_to_memory=False
-                    ).dask
-                )
-            ),
-            2,
-        )
+        e = d.cull_graph(inplace=False)
+        self.assertIsInstance(e, cfdm.Data)
+        self.assertLess(len(dict(e.to_dask_array().dask)), nkeys)
+
+        # Check in-place (the default)
+        self.assertIsNone(d.cull_graph())
+        self.assertLess(len(dict(d.to_dask_array().dask)), nkeys)
 
     def test_Data_npartitions(self):
         """Test Data.npartitions."""

@@ -319,6 +319,25 @@ class NetCDF4ArrayTest(unittest.TestCase):
         m = n.replace_directory("/new_path/", normalise=True)
         self.assertEqual(m.get_filename(), "basename.nc")
 
+    def test_NetCDF4Array_concatenate(self):
+        """Test np.concatenate on NetCDF4Array objects."""
+        f = self.f0
+        f.data[0] = np.ma.masked
+        cfdm.write(f, tmpfile)
+
+        array = f.array
+        c0 = np.ma.concatenate((array, array), axis=0)
+
+        n = cfdm.NetCDF4Array(
+            tmpfile, f.nc_get_variable(), shape=f.shape, dtype=f.dtype
+        )
+
+        c1 = np.concatenate((n, n), axis=0)
+        self.assertTrue(np.ma.is_masked(c1))
+
+        self.assertTrue((c0.mask == c1.mask).all())
+        self.assertTrue((c0 == c1).all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
