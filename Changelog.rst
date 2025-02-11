@@ -4,7 +4,7 @@ Version NEXTVERSION
 **2025-??-??**
 
 * Introduction of reading and writing of aggregation datasets (for
-  CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319
+  CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319)
 
 ----
 
@@ -14,7 +14,7 @@ Version 1.11.2.0
 **2025-01-28**
 
 * Introduction of `dask` for all data manipulations
-  (https://github.com/NCAS-CMS/cfdm/issue/317)
+  (https://github.com/NCAS-CMS/cfdm/issues/317)
 * Fix bug that returned incorrect results when an invalid identifer is
   provided to `cf.Field.cell_methods`
   (https://github.com/NCAS-CMS/cfdm/issues/299)

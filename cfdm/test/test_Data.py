@@ -69,7 +69,7 @@ class DataTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
         )
 
-        expexted_warning_msgs = [
+        expected_warning_msgs = [
             "divide by zero encountered in " + np_method
             for np_method in (
                 "arctanh",
@@ -89,7 +89,7 @@ class DataTest(unittest.TestCase):
                 "true_divide",
             )
         ]
-        for expected_warning in expexted_warning_msgs:
+        for expected_warning in expected_warning_msgs:
             warnings.filterwarnings(
                 "ignore", category=RuntimeWarning, message=expected_warning
             )

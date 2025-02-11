@@ -363,7 +363,7 @@ class PropertiesData(Properties):
             variables: sequence of constructs.
 
             axis: `int`, optional
-                Select the axis to along which to concatenate, defined
+                Select the axis along which to concatenate, defined
                 by its position in the data array. By default
                 concatenatoin is along the axis in position 0.
 

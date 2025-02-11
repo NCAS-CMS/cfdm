@@ -576,7 +576,7 @@ class NetCDFRead(IORead):
 
             error = "\n\n".join(errors)
             raise DatasetTypeError(
-                f"Can't interpret {filename} as a netCDF dataset"
+                f"Can't interpret {filename} as a netCDF dataset "
                 f"with any of the netCDF backends {netcdf_backend!r}:\n\n"
                 f"{error}"
             )

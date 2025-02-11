@@ -393,7 +393,7 @@ class PropertiesDataBounds(PropertiesData):
         relaxed_units=False,
         copy=True,
     ):
-        """Join a together sequence of '{{class}}`.
+        """Join a together sequence of `{{class}}`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -406,7 +406,7 @@ class PropertiesDataBounds(PropertiesData):
             axis: `int`, optional
                 Select the axis to along which to concatenate, defined
                 by its position in the data array. By default
-                concatenatoin is along the axis in position 0.
+                concatenation is along the axis in position 0.
 
             {{cull_graph: `bool`, optional}}
 

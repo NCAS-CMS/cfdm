@@ -51,7 +51,7 @@ class ReadWrite(metaclass=DocstringRewriteMeta):
 
             x: scalar or arbitrarily nested sequence
                 The arbitrarily nested sequence to be flattened. Note
-                that a If *x* is a string or a scalar then this is
+                that if *x* is a string or a scalar then this is
                 equivalent to passing a single element sequence
                 containing *x*.
 

@@ -1,4 +1,4 @@
-"""Descufine docstring substitutions.
+"""Define docstring substitutions.
 
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
@@ -146,7 +146,7 @@ _docstring_substitution_definitions = {
     # read extra
     "{{read extra: (sequence of) `str`, optional}}": """extra: (sequence of) `str`, optional
             Create extra, independent fields from netCDF variables
-            that correspond to particular types metadata constructs.
+            that correspond to particular types of metadata constructs.
             Ignored if *domain* is True.
 
             The *extra* parameter may be one, or a sequence, of:

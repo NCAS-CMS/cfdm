@@ -406,7 +406,7 @@ class IndexMixin:
         """The shape of the data in the file with added dimensions.
 
         This is the same as `original_shape`, but with added size 1
-        dimensions if `index` has has new dimensions added with index
+        dimensions if `index` has new dimensions added with index
         values of `numpy.newaxis`.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -446,7 +446,7 @@ class IndexMixin:
         """True if the index represents a subspace of the data.
 
         The presence of `numpy.newaxis` (i.e. added size 1 dimensions)
-        in `index` will not, on their own cause `is_subspace` to
+        in `index` will not, on their own, cause `is_subspace` to
         return `False`
 
         .. versionadded:: (cfdm) NEXTVERSION

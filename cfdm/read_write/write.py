@@ -129,7 +129,7 @@ class write(ReadWrite):
 
             ``'NETCDF3_64BIT_DATA'`` is a format that requires version
             4.4.0 or newer of the C library (use
-            `{{package}}.environment` to see which version if the
+            `{{package}}.environment` to see which version of the
             netCDF-C library is in use). It extends the
             ``'NETCDF3_64BIT_OFFSET'`` binary format to allow for
             unsigned 64 bit integer data types and 64-bit dimension
@@ -674,7 +674,7 @@ class write(ReadWrite):
                 {'auxiliary_coordinate': 2}}``.
 
               *Example:*
-                Write two-dimensionsal auxiliary coordinate constructs
+                Write two-dimensional auxiliary coordinate constructs
                 as aggregation variables, and also all field
                 constructs: ``{'constructs': {'auxiliary_coordinate':
                 2, 'field': None}}``.
@@ -768,7 +768,7 @@ class write(ReadWrite):
         fields = tuple(cls._flat(fields))
         if not fields:
             raise ValueError(
-                "Must provaide at least one Field or Domain to be written "
+                "Must provide at least one Field or Domain to be written "
             )
 
         # Parse double and single

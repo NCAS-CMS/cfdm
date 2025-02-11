@@ -490,7 +490,7 @@ def abspath(path, uri=None):
     '/data/file.nc'
     >>> cfdm.abspath('file:///file.nc')
     'file:///file.nc'
-    >>> cfdm.abspath('file://file.nc'),
+    >>> cfdm.abspath('file://file.nc')
     'file:///data/archive'
     >>> cfdm.abspath('file:/file.nc')
     'file:///file.nc'
@@ -586,7 +586,7 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
             a file.
 
         sep: `bool`, optional
-            Set to True to add a trailing path seperator to the
+            Set to True to add a trailing path separator to the
             returned directory.
 
     :Returns:
@@ -2314,7 +2314,7 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
         if not newaxis and index is np.newaxis:
             raise IndexError(
-                "Invalid indices {indices!r} for array with shape {shape}: "
+                f"Invalid indices {indices!r} for array with shape {shape}: "
                 "New axis indices are not allowed"
             )
 

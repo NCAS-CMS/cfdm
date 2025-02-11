@@ -65,7 +65,7 @@ class FragmentArrayMixin:
                 if array.size > prod(self.original_shape):
                     raise ValueError(
                         f"Can't get fragment data from ({self}) when "
-                        "the the fragment has two or more missing size 1 "
+                        "the fragment has two or more missing size 1 "
                         "dimensions, whilst also spanning two or more "
                         "Dask compute chunks."
                         "\n\n"

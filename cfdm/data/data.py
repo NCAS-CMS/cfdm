@@ -1726,7 +1726,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """Check and conform the units of data prior to concatenation.
 
         This is a helper function for `concatenate` that may be easily
-        overridden in sublcasses, to allow for customisation of the
+        overridden in subclasses, to allow for customisation of the
         concatenation process.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -1780,7 +1780,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """Post-process concatenated data.
 
         This is a helper function for `concatenate` that may be easily
-        overridden in sublcasses, to allow for customisation of the
+        overridden in subclasses, to allow for customisation of the
         concatenation process.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -3944,7 +3944,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         if isinstance(data, cls):
-            raise ValueError("Must provied a sequence of Data objects")
+            raise ValueError("Must provide a sequence of Data objects")
 
         data = tuple(data)
         n_data = len(data)
@@ -5322,8 +5322,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         if filename:
                             if position in filenames:
                                 raise ValueError(
-                                    f"Can't return 'per_chunk' file names: "
-                                    "The Dask chunk in position {position} "
+                                    "Can't return 'per_chunk' file names: "
+                                    f"The Dask chunk in position {position} "
                                     f"(defined by {index!r}) has multiple "
                                     "file locations"
                                 )
@@ -6294,7 +6294,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     ):
         """Replace file directories in-place.
 
-        Modifies the names of files that are be required to deliver
+        Modifies the names of files that are required to deliver
         the computed data array.
 
         .. versionadded:: (cfdm) NEXTVERSION

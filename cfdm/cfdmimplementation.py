@@ -1356,7 +1356,7 @@ class CFDMImplementation(Implementation):
 
             normalise: `bool`, optional
                 If True (the default) then normalise the filenames by
-                applying any text substitutions and reslving the name
+                applying any text substitutions and resolving the name
                 to an absolute path. If False then neither of these is
                 carried out.
 
@@ -3699,7 +3699,7 @@ class CFDMImplementation(Implementation):
                 If True then do the operation in-place and return
                 `None`.
 
-                .. versionadded:: (Cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
