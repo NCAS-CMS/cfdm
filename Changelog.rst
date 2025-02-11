@@ -5,6 +5,7 @@ Version NEXTVERSION
 
 * Introduction of reading and writing of aggregation datasets (for
   CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319)
+* Changed dependency: ``h5py>=3.12.0``
 
 ----
 
