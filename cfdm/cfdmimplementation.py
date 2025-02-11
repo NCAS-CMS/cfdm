@@ -3712,7 +3712,7 @@ class CFDMImplementation(Implementation):
     def unsqueeze(self, field, inplace=False):
         """Insert size 1 axes into the field data array.
 
-        .. versionadded:: (Cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
