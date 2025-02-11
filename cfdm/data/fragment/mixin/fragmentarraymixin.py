@@ -141,8 +141,6 @@ class FragmentArrayMixin:
 
         .. seealso:: `_parse_indices`, `__getitem__`
 
-        :Paramealso:: `_parse_indices`, `__getitem__`
-
         :Parameters:
 
             indices: sequence of index
