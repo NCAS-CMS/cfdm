@@ -204,7 +204,7 @@ class FileArray(Array):
 
         **Examples**
 
-        >>> n = numpy.asanyarray(a)
+        >>> n = {{package}}.{{class}}.array(a)
         >>> isinstance(n, numpy.ndarray)
         True
 
