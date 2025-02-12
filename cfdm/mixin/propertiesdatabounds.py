@@ -1488,8 +1488,8 @@ class PropertiesDataBounds(PropertiesData):
         :Parameters:
 
             bounds: `bool`, optional
-                If False then do not persist any bounds data. By
-                default any bounds data are also persisted.
+                If True, the default, then also persist any bounds
+                data.
 
             {{inplace: `bool`, optional}}
 
