@@ -5721,7 +5721,7 @@ class NetCDFWrite(IOWrite):
 
         :Returns:
 
-            `None`
+            `True`
 
         """
         g = self.write_vars
