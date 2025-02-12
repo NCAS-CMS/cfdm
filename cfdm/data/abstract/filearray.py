@@ -485,17 +485,9 @@ class FileArray(Array):
 
         :Parameters:
 
-            old: `str` or `None`, optional
-                The base directory structure to be replaced by
-                *new*. If `None` (the default) or an empty string, and
-                *normalise* is False, then *new* is prepended to each
-                file name.
+            {{old: `str` or `None`, optional}}
 
-            new: `str` or `None`, optional
-                The new directory that replaces the base directory
-                structure identified by *old*. If `None` (the default)
-                or an empty string, then *old* is replaced with an
-                empty string. Otherwise,
+            {{new: `str` or `None`, optional}}
 
             normalise: `bool`, optional
                 If True then *old*, *new*, and the file name are
@@ -565,6 +557,9 @@ class FileArray(Array):
 
                     filename = filename.replace(old, new)
             elif new:
+                if filename.startswith(sep):
+                    filename = filename[1:]
+                 
                 filename = join(new, filename)
 
         a._set_component("filename", filename, copy=False)

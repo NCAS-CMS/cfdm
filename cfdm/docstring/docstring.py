@@ -1238,6 +1238,24 @@ _docstring_substitution_definitions = {
     "{{normalise: `bool`, optional}}": """normalise: `bool`, optional
                 If True then normalise to an absolute path. If False
                 (the default) then no normalisation is done.""",
+    # old
+    "{{old: `str` or `None`, optional}}": """old: `str` or `None`, optional
+                The base directory structure to be replaced by
+                *new*. If `None` (the default) or an empty string, and
+                *normalise* is False, then *new* (if set) is prepended
+                to each file name.""",
+    # new
+    "{{new: `str` or `None`, optional}}": """new: `str` or `None`, optional
+                The new directory that replaces the base directory
+                structure identified by *old*. If `None` (the default)
+                or an empty string, then *old* (if set) is replaced
+                with an empty string.""",
+    # replace normalise
+    "{{replace normalise: `bool`, optional}}": """normalise: `bool`, optional
+                If True then *old* and *new* directories, and the file
+                names, are normalised to absolute paths prior to the
+                replacement. If False (the default) then no
+                normalisation is done.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

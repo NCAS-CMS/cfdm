@@ -1531,23 +1531,11 @@ class PropertiesDataBounds(PropertiesData):
 
         :Parameters:
 
-            old: `str` or `None`, optional
-                The base directory structure to be replaced by
-                *new*. If `None` (the default) or an empty string, and
-                *normalise* is False, then *new* is prepended to each
-                file name.
+            {{old: `str` or `None`, optional}}
 
-            new: `str` or `None`, optional
-                The new directory that replaces the base directory
-                structure identified by *old*. If `None` (the default)
-                or an empty string, then *old* is replaced with an
-                empty string. Otherwise,
+            {{new: `str` or `None`, optional}}
 
-            normalise: `bool`, optional
-                If True then *old* and *new* directories, and the file
-                names, are normalised to absolute paths prior to the
-                replacement. If False (the default) then no
-                normalisation is done.
+            {{replace normalise: `bool`, optional}}
 
             common: `bool`, optional
                 If True the base directory structure that is common to

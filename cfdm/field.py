@@ -2733,11 +2733,15 @@ class Field(
 
         :Parameters:
 
-            old_directory: `str`
-                The new directory to be replaced.
+            {{old: `str` or `None`, optional}}
 
-            new_directory: `str`
-                The new directory.
+            {{new: `str` or `None`, optional}}
+
+            {{replace normalise: `bool`, optional}}
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
 
             constructs: `bool`, optional
                 If True (the default) then add also the directory to
