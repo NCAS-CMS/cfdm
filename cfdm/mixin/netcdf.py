@@ -1,4 +1,5 @@
 from numbers import Integral
+from re import split
 
 from dask.utils import parse_bytes
 
@@ -4603,3 +4604,397 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
             nc_set=self.nc_set_node_coordinate_variable,
             nc_groups=self.nc_node_coordinate_variable_groups,
         )
+
+
+class NetCDFAggregation(NetCDFMixin):
+    """Mixin class for netCDF aggregated variables.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+
+    def nc_del_aggregated_data(self):
+        """Remove the netCDF aggregated_data terms.
+
+        The aggregated data terms define the names of the fragment
+        array variables, and are stored in a netCDF file in an
+        "aggregated_data" attribute.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_get_aggregated_data`,
+                     `nc_has_aggregated_data`,
+                     `nc_set_aggregated_data`
+
+        :Returns:
+
+            `dict`
+                The removed netCDF aggregated_data elements in a
+                dictionary whose key/value pairs are the feature names
+                and their corresponding fragment array variable names.
+
+        **Examples**
+
+        >>> f.nc_set_aggregated_data(
+        ...     {'shape': 'shape',
+        ...      'location': 'location',
+        ...      'address': 'address'}
+        ... )
+        >>> f.nc_has_aggregated_data()
+        True
+        >>> f.nc_get_aggregated_data()
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
+        >>> f.nc_del_aggregated_data()
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
+        >>> f.nc_has_aggregated_data()
+        False
+        >>> f.nc_del_aggregated_data()
+        {}
+        >>> f.nc_get_aggregated_data()
+        {}
+        >>> f.nc_set_aggregated_data(
+        ...     'shape: shape, location: location address: address'
+        ... )
+
+        """
+        out = self._nc_del("aggregated_data", None)
+        if out is None:
+            return {}
+
+        return out.copy()
+
+    def nc_get_aggregated_data(self):
+        """Return the netCDF aggregated data terms.
+
+        The aggregated data terms define the names of the fragment
+        array variables, and are stored in a netCDF file in an
+        "aggregated_data" attribute.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregated_data`,
+                     `nc_has_aggregated_data`,
+                     `nc_set_aggregated_data`
+
+        :Returns:
+
+            `dict`
+                The netCDF aggregated_data terms in a dictionary whose
+                key/value pairs are the feature names and their
+                corresponding fragment array variable names.
+
+        **Examples**
+
+        >>> f.nc_set_aggregated_data(
+        ...     {'shape': 'shape',
+        ...      'location': 'location',
+        ...      'address': 'address'}
+        ... )
+        >>> f.nc_has_aggregated_data()
+        True
+        >>> f.nc_get_aggregated_data()
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
+        >>> f.nc_del_aggregated_data()
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
+        >>> f.nc_has_aggregated_data()
+        False
+        >>> f.nc_del_aggregated_data()
+        {}
+        >>> f.nc_get_aggregated_data()
+        {}
+        >>> f.nc_set_aggregated_data(
+        ...     'shape: shape, location: location address: address'
+        ... )
+
+        """
+        out = self._nc_get("aggregated_data", None)
+        if out is None:
+            return {}
+
+        return out.copy()
+
+    def nc_has_aggregated_data(self):
+        """Whether any netCDF aggregated_data terms have been set.
+
+        The aggregated data terms define the names of the fragment
+        array variables, and are stored in a netCDF file in an
+        "aggregated_data" attribute.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregated_data`,
+                     `nc_get_aggregated_data`,
+                     `nc_set_aggregated_data`
+
+        :Returns:
+
+            `bool`
+                `True` if the netCDF aggregated_data terms have been
+                set, otherwise `False`.
+
+        **Examples**
+
+        >>> f.nc_set_aggregated_data(
+        ...     {'shape': 'shape',
+        ...      'location': 'location',
+        ...      'address': 'address'}
+        ... )
+        >>> f.nc_has_aggregated_data()
+        True
+        >>> f.nc_get_aggregated_data()
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
+        >>> f.nc_del_aggregated_data()
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
+        >>> f.nc_has_aggregated_data()
+        False
+        >>> f.nc_del_aggregated_data()
+        {}
+        >>> f.nc_get_aggregated_data()
+        {}
+        >>> f.nc_set_aggregated_data(
+        ...     'shape: shape, location: location address: address'
+        ... )
+
+        """
+        return self._nc_has("aggregated_data")
+
+    def nc_set_aggregated_data(self, value):
+        """Set the netCDF aggregated_data elements.
+
+        The aggregated data terms define the names of the fragment
+        array variables, and are stored in a netCDF file in an
+        "aggregated_data" attribute.
+
+        If there are any ``/`` (slash) characters in the netCDF
+        variable names then these act as delimiters for a group
+        hierarchy. By default, or if the name starts with a ``/``
+        character and contains no others, the name is assumed to be in
+        the root group.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregated_data`,
+                     `nc_get_aggregated_data`,
+                     `nc_has_aggregated_data`
+
+        :Parameters:
+
+            value: `dict` or `str`
+                The netCDF aggregated_data terms in a dictionary whose
+                key/value pairs are the feature names and their
+                corresponding fragment array variable names; or else
+                an equivalent string formated with the the CF-netCDF
+                encoding.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.nc_set_aggregated_data(
+        ...     {'shape': 'shape',
+        ...      'location': 'location',
+        ...      'address': 'address'}
+        ... )
+        >>> f.nc_has_aggregated_data()
+        True
+        >>> f.nc_get_aggregated_data()
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
+        >>> f.nc_del_aggregated_data()
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
+        >>> f.nc_has_aggregated_data()
+        False
+        >>> f.nc_del_aggregated_data()
+        {}
+        >>> f.nc_get_aggregated_data()
+        {}
+        >>> f.nc_set_aggregated_data(
+        ...     'shape: shape, location: location address: address'
+        ... )
+
+        """
+        if not value:
+            self.nc_del_aggregated_data()
+
+        if isinstance(value, str):
+            v = split(r"\s+", value)
+            value = {term[:-1]: var for term, var in zip(v[::2], v[1::2])}
+        else:
+            # 'value' is a dictionary
+            value = value.copy()
+
+        self._get_component("netcdf")["aggregated_data"] = value
+
+    def _nc_del_aggregation_fragment_type(self):
+        """Remove the type of fragments in the aggregated data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `str` or `None`
+                The removed fragment type, either ``'location'`` for
+                fragment files, or ``'value'`` for fragment unique
+                values, or `None` if no fragment type was set.
+
+        """
+        return self._nc_del("aggregation_fragment_type", None)
+
+    def nc_get_aggregation_fragment_type(self):
+        """The type of fragments in the aggregated data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `str`
+                The fragment type, either ``'location'`` for fragment
+                files, or ``'value'`` for fragment unique values.
+
+        """
+        return self._nc_get("aggregation_fragment_type", None)
+
+    def _nc_set_aggregation_fragment_type(self, value):
+        """Set the type of fragments in the aggregated data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            value: `str` or `None`
+                The fragment type, either ``'location'`` for fragment
+                files, ``'value'`` for fragment unique values, or
+                `None` for an unspecified fragment type.
+
+        :Returns:
+
+            `None`
+
+        """
+        self._get_component("netcdf")["aggregation_fragment_type"] = value
+        if value == "unique_value":
+            self._nc_set_aggregation_write_status(True)
+
+    def nc_del_aggregation_write_status(self):
+        """Set the netCDF aggregation write status to `False`.
+
+        A necessary (but not sufficient) condition for writing the
+        data as CF-netCDF aggregated data is that the write status is
+        True.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_get_aggregation_write_status`,
+                     `nc_set_aggregation_write_status`
+
+        :Returns:
+
+            `bool`
+                The netCDF aggregation write status prior to deletion.
+
+        """
+        return self._nc_del("aggregation_write_status", False)
+
+    def nc_get_aggregation_write_status(self):
+        """Get the netCDF aggregation write status.
+
+        A necessary (but not sufficient) condition for writing the
+        data as CF-netCDF aggregated data is that the write status is
+        True.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregation_write_status`,
+                     `nc_set_aggregation_write_status`
+
+        :Returns:
+
+            `bool`
+                The netCDF aggregation write status.
+
+        """
+        status = self._nc_get("aggregation_write_status", False)
+        if (
+            not status
+            and self.nc_get_aggregation_fragment_type() == "unique_value"
+        ):
+            status = True
+            self._nc_set_aggregation_write_status(status)
+
+        return status
+
+    def _nc_set_aggregation_write_status(self, status):
+        """Set the netCDF aggregation write status.
+
+        A necessary (but not sufficient) condition for writing the
+        data as CF-netCDF aggregated data is that the write status is
+        True.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregation_write_status`,
+                     `nc_get_aggregation_write_status`,
+                     `nc_set_aggregation_write_status`
+
+        :Parameters:
+
+            status: `bool`
+                The new write status.
+
+        :Returns:
+
+            `None`
+
+        """
+        self._get_component("netcdf")["aggregation_write_status"] = bool(
+            status
+        )
+
+    def nc_set_aggregation_write_status(self, status):
+        """Set the netCDF aggregation write status.
+
+        A necessary (but not sufficient) condition for writing the
+        data as CF-netCDF aggregated data is that the write status is
+        True.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregation_write_status`,
+                     `nc_get_aggregation_write_status`
+
+        :Parameters:
+
+            status: `bool`
+                The new write status.
+
+        :Returns:
+
+            `None`
+
+        """
+        if status:
+            raise ValueError(
+                "'nc_set_aggregation_write_status' only allows the netCDF "
+                "aggregation write status to be set to False. At your own "
+                "risk you may use '_nc_set_aggregation_write_status' to set "
+                "the status to True."
+            )
+
+        self._nc_set_aggregation_write_status(status)

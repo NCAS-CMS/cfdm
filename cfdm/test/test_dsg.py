@@ -212,7 +212,7 @@ class DSGTest(unittest.TestCase):
 
         # Create the contiguous ragged array object
         array = cfdm.RaggedContiguousArray(
-            compressed_array=cfdm.NumpyArray(ragged_array),
+            compressed_array=ragged_array,
             shape=(2, 4),
             size=8,
             ndim=2,

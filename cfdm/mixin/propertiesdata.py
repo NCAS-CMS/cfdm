@@ -343,6 +343,60 @@ class PropertiesData(Properties):
 
         return v
 
+    @classmethod
+    def concatenate(
+        cls,
+        variables,
+        axis=0,
+        cull_graph=False,
+        relaxed_units=False,
+        copy=True,
+    ):
+        """Join a together sequence of `{{class}}`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `Data.concatenate`, `Data.cull_graph`
+
+        :Parameters:
+
+            variables: sequence of constructs.
+
+            axis: `int`, optional
+                Select the axis along which to concatenate, defined
+                by its position in the data array. By default
+                concatenatoin is along the axis in position 0.
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            {{concatenate copy: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}`
+                The concatenated construct.
+
+        """
+        out = variables[0]
+        if copy:
+            out = out.copy()
+
+        if len(variables) == 1:
+            return out
+
+        data = out.get_data(_fill_value=False, _units=False)
+        new_data = type(data).concatenate(
+            [v.get_data(_fill_value=False) for v in variables],
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
+        out.set_data(new_data, copy=False)
+        return out
+
     def creation_commands(
         self,
         representative_data=False,
@@ -654,8 +708,40 @@ class PropertiesData(Properties):
 
         return True
 
-    def get_filenames(self):
+    def file_directories(self):
+        """The directories of files containing parts of the data.
+
+        Returns the locations of any files referenced by the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_filenames`, `replace_directory`
+
+        :Returns:
+
+            `set`
+                The unique set of file directories as absolute paths.
+
+        **Examples**
+
+        >>> d.file_directories()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.file_directories()
+
+        return set()
+
+    def get_filenames(self, normalise=True):
         """Return the name of the file or files containing the data.
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -665,7 +751,7 @@ class PropertiesData(Properties):
         """
         data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
-            return data.get_filenames()
+            return data.get_filenames(normalise=normalise)
 
         return set()
 
@@ -719,6 +805,25 @@ class PropertiesData(Properties):
 
         return v
 
+    def nc_clear_hdf5_chunksizes(self):
+        """Clear the HDF5 chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_hdf5_chunksizes`.
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.nc_clear_hdf5_chunksizes()
+
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
@@ -740,25 +845,6 @@ class PropertiesData(Properties):
         data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             return data.nc_hdf5_chunksizes(todict=todict)
-
-    def nc_clear_hdf5_chunksizes(self):
-        """Clear the HDF5 chunking strategy for the data.
-
-        .. versionadded:: (cfdm) 1.11.2.0
-
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
-
-        :Returns:
-
-            `None` or `str` or `int` or `tuple` of `int`
-                The chunking strategy prior to being cleared, as would
-                be returned by `nc_hdf5_chunksizes`.
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.nc_clear_hdf5_chunksizes()
 
     def nc_set_hdf5_chunksizes(self, chunksizes):
         """Set the HDF5 chunking strategy.
@@ -782,6 +868,76 @@ class PropertiesData(Properties):
         data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             data.nc_set_hdf5_chunksizes(chunksizes)
+
+    @_inplace_enabled(default=False)
+    def persist(self, inplace=False):
+        """Persist data into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `array`, `datetime_array`,
+                     `{{package}}.Data.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with persisted data. If the operation
+                was in-place then `None` is returned.
+
+        """
+        v = _inplace_enabled_define_and_cleanup(self)
+
+        data = v.get_data(None)
+        if data is not None:
+            data.persist(inplace=True)
+
+        return v
+
+    def replace_directory(
+        self,
+        old=None,
+        new=None,
+        normalise=False,
+        common=False,
+    ):
+        """Replace a file directory in-place.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `file_directories`, `get_filenames`
+
+        :Parameters:
+
+            {{replace old: `str` or `None`, optional}}
+
+            {{replace new: `str` or `None`, optional}}
+
+            {{replace normalise: `bool`, optional}}
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
+
+        :Returns:
+
+            `None`
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.replace_directory(
+                old=old, new=new, normalise=normalise, common=common
+            )
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

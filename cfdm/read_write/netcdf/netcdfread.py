@@ -1,6 +1,5 @@
 import logging
 import operator
-import os
 import re
 import struct
 import subprocess
@@ -13,7 +12,6 @@ from pprint import pformat
 from math import log, nan, prod
 from numbers import Integral
 from typing import Any
-from urllib.parse import urlparse
 from uuid import uuid4
 
 import h5netcdf
@@ -23,10 +21,13 @@ from dask.array.core import normalize_chunks
 from dask.base import tokenize
 from packaging.version import Version
 from s3fs import S3FileSystem
+from uritools import urisplit
 
+from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
-from ...functions import is_log_level_debug, is_log_level_detail
+from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
+from ..exceptions import DatasetTypeError
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -508,15 +509,26 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        netcdf = False
-        hdf = False
         netcdf_backend = g["netcdf_backend"]
 
-        # Deal with a file in an S3 object store
-        u = urlparse(filename)
+        if g["ftype"] == "CDL":
+            # --------------------------------------------------------
+            # Convert a CDL file to a local netCDF4 file
+            # --------------------------------------------------------
+            cdl_filename = filename
+            filename = self.cdl_to_netcdf(filename)
+            g["filename"] = filename
+        else:
+            cdl_filename = None
+
+        u = urisplit(filename)
         storage_options = self._get_storage_options(filename, u)
 
         if u.scheme == "s3":
+            # --------------------------------------------------------
+            # A file in an S3 object store
+            # --------------------------------------------------------
+
             # Create an openable S3 file object
             fs_key = tokenize(("s3", storage_options))
             file_systems = g["file_systems"]
@@ -537,39 +549,38 @@ class NetCDFRead(IORead):
                     f"    S3: s3fs.S3FileSystem options: {storage_options}\n"
                 )  # pragma: no cover
 
-        if netcdf_backend is None:
-            try:
-                # Try opening the file with netCDF4
-                nc = self._open_netCDF4(filename)
-                netcdf = True
-            except Exception:
-                # The file could not be read by netCDF4 so try opening
-                # it with h5netcdf
-                try:
-                    nc = self._open_h5netcdf(filename)
-                    hdf = True
-                except Exception as error:
-                    raise error
+        # Map backend names to file-open functions
+        file_open_function = {
+            "h5netcdf": self._open_h5netcdf,
+            "netCDF4": self._open_netCDF4,
+        }
 
-        elif netcdf_backend == "netCDF4":
+        # Loop around the netCDF backends until we successfully open
+        # the file
+        nc = None
+        errors = []
+        for backend in netcdf_backend:
             try:
-                nc = self._open_netCDF4(filename)
-                netcdf = True
+                nc = file_open_function[backend](filename)
+            except KeyError:
+                errors.append(f"{backend}: Unknown netCDF backend name")
             except Exception as error:
-                raise error
+                errors.append(
+                    f"{backend}:\n{error.__class__.__name__}: {error}"
+                )
+            else:
+                break
 
-        elif netcdf_backend == "h5netcdf":
-            try:
-                nc = self._open_h5netcdf(filename)
-                hdf = True
-            except Exception as error:
-                raise error
+        if nc is None:
+            if cdl_filename is not None:
+                filename = f"{filename} (created from CDL file {cdl_filename})"
 
-        else:
-            raise ValueError(f"Unknown netCDF backend: {netcdf_backend!r}")
-
-        g["original_h5netcdf"] = hdf
-        g["original_netCDF4"] = netcdf
+            error = "\n\n".join(errors)
+            raise DatasetTypeError(
+                f"Can't interpret {filename} as a netCDF dataset "
+                f"with any of the netCDF backends {netcdf_backend!r}:\n\n"
+                f"{error}"
+            )
 
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
@@ -601,14 +612,9 @@ class NetCDFRead(IORead):
 
             nc = flat_nc
 
-            netcdf = True
-            hdf = False
-
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
 
-        g["netCDF4"] = netcdf
-        g["h5netcdf"] = hdf
         g["nc"] = nc
         return nc
 
@@ -627,7 +633,9 @@ class NetCDFRead(IORead):
             `netCDF4.Dataset`
 
         """
-        return netCDF4.Dataset(filename, "r")
+        nc = netCDF4.Dataset(filename, "r")
+        self.read_vars["file_opened_with"] = "netCDF4"
+        return nc
 
     def _open_h5netcdf(self, filename):
         """Return an open `h5netcdf.File`.
@@ -650,7 +658,7 @@ class NetCDFRead(IORead):
             `h5netcdf.File`
 
         """
-        return h5netcdf.File(
+        nc = h5netcdf.File(
             filename,
             "r",
             decode_vlen_strings=True,
@@ -658,9 +666,10 @@ class NetCDFRead(IORead):
             rdcc_w0=0.75,
             rdcc_nslots=4133,
         )
+        self.read_vars["file_opened_with"] = "h5netcdf"
+        return nc
 
-    @classmethod
-    def cdl_to_netcdf(cls, filename):
+    def cdl_to_netcdf(self, filename):
         """Create a temporary netCDF-4 file from a CDL text file.
 
         :Parameters:
@@ -679,38 +688,78 @@ class NetCDFRead(IORead):
         )
         tmpfile = x.name
 
-        # ----------------------------------------------------------------
-        # Need to cache the TemporaryFile object so that it doesn't get
-        # deleted too soon
-        # ----------------------------------------------------------------
-        _cached_temporary_files[tmpfile] = x
+        ncgen_command = ["ncgen", "-knc4", "-o", tmpfile, filename]
+
+        if self.read_vars["debug"]:
+            logger.debug(
+                f"Converting CDL file {filename} to netCDF file {tmpfile} "
+                f"with `{' '.join(ncgen_command)}`"
+            )  # pragma: no cover
 
         try:
-            subprocess.run(
-                ["ncgen", "-knc4", "-o", tmpfile, filename], check=True
-            )
+            subprocess.run(ncgen_command, check=True)
         except subprocess.CalledProcessError as error:
             msg = str(error)
             if msg.startswith(
                 "Command '['ncgen', '-knc4', '-o'"
             ) and msg.endswith("returned non-zero exit status 1."):
-                raise ValueError(
-                    "The CDL provided is invalid so cannot be converted "
-                    "to netCDF."
+                raise RuntimeError(
+                    f"The CDL file {filename} is invalid so cannot be "
+                    f"converted to netCDF with `{' '.join(ncgen_command)}`. "
+                    "ncgen output:\n\n"
+                    f"{msg}"
                 )
             else:
                 raise
 
+        # Need to cache the TemporaryFile object so that it doesn't get
+        # deleted too soon
+        _cached_temporary_files[tmpfile] = x
+
         return tmpfile
 
     @classmethod
-    def is_netcdf_file(cls, filename):
-        """Return `True` if the file is a netCDF file.
+    def string_to_cdl(cls, cdl_string):
+        """Create a temporary CDL file from a CDL string.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            cdl_string: `str`
+                The CDL string.
+
+        :Returns:
+
+            `str`
+                The name of the new netCDF file.
+
+        """
+        x = tempfile.NamedTemporaryFile(
+            mode="w",
+            dir=tempfile.gettempdir(),
+            prefix="cfdm_",
+            suffix=".cdl",
+        )
+        tmpfile = x.name
+
+        with open(tmpfile, "w") as f:
+            f.write(cdl_string)
+
+        # Need to cache the TemporaryFile object so that it doesn't
+        # get deleted too soon
+        _cached_temporary_files[tmpfile] = x
+
+        return tmpfile
+
+    @classmethod
+    def ftype(cls, filename):
+        """Return type of the file.
 
         The file type is determined by inspecting the file's contents
-        and any file suffix is not not considered. However, file names
-        starting ``https://`` or ``http://`` are assumed, without
-        checking, to be netCDF files.
+        and any file suffix is not considered. However, file names
+        that are non-local URIs (such as those starting ``https:`` or
+        ``s3:``) are assumed, without checking, to be netCDF files.
 
         :Parameters:
 
@@ -719,163 +768,66 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `bool`
-                `True` if the file is netCDF, otherwise `False`
+            `str` or `None`
+                The file type:
 
-        **Examples**
-
-        >>> {{package}}.{{class}}.is_netcdf_file('file.nc')
-        True
+                * ``'netCDF'`` for a binary netCDF-3 or netCDF-4 file,
+                * ``'CDL'`` a text CDL file,
+                * `None` for anything else.
 
         """
-        # Assume that URLs are in netCDF format
-        if (
-            filename.startswith("https://")
-            or filename.startswith("http://")
-            or filename.startswith("s3://")
-        ):
-            return True
+        # Assume that non-local URIs are in netCDF format
+        if urisplit(filename).scheme not in (None, "file"):
+            return "netCDF"
 
-        # Read the magic number
+        f_type = None
+
         try:
+            # Read the first 4 bytes from the file
             fh = open(filename, "rb")
             magic_number = struct.unpack("=L", fh.read(4))[0]
         except Exception:
-            magic_number = None
+            # Can't read 4 bytes from the file, so it can't be netCDF
+            # or CDL.
+            pass
+        else:
+            # Is it a netCDF-C binary file?
+            if magic_number in (
+                21382211,
+                1128547841,
+                1178880137,
+                38159427,
+                88491075,
+            ):
+                f_type = "netCDF"
+            else:
+                # Is it a CDL text file?
+                fh.seek(0)
+                try:
+                    line = fh.readline().decode("utf-8")
+                except Exception:
+                    pass
+                else:
+                    netcdf = line.startswith("netcdf ")
+                    if not netcdf:
+                        # Match comment and blank lines at the top of
+                        # the file
+                        while re.match(r"^\s*//|^\s*$", line):
+                            line = fh.readline().decode("utf-8")
+                            if not line:
+                                break
+
+                        netcdf = line.startswith("netcdf ")
+
+                    if netcdf:
+                        f_type = "CDL"
 
         try:
             fh.close()
         except Exception:
             pass
 
-        if magic_number in (
-            21382211,
-            1128547841,
-            1178880137,
-            38159427,
-            88491075,
-        ):
-            return True
-        else:
-            return False
-
-    def is_cdl_file(cls, filename):
-        """True if the file is in CDL format.
-
-        Return True if the file is a CDL text representation of a
-        netCDF file.
-
-        Note that the file type is determined by inspecting the file's
-        contents and any file suffix is not not considered. The file is
-        assumed to be a CDL file if it is a text file that starts with
-        "netcdf ".
-
-        .. versionaddedd:: (cfdm) 1.7.8
-
-        :Parameters:
-
-            filename: `str`
-                The name of the file.
-
-        :Returns:
-
-            `bool`
-                `True` if the file is CDL, otherwise `False`
-
-        **Examples**
-
-        >>> {{package}}.{{class}}.is_cdl_file('file.nc')
-        False
-
-        """
-        # Read the magic number
-        cdl = False
-        try:
-            fh = open(filename, "rt")
-        except UnicodeDecodeError:
-            pass
-        except Exception:
-            pass
-        else:
-            try:
-                line = fh.readline()
-                # Match comment and blank lines at the top of the file
-                while re.match(r"^\s*//|^\s*$", line):
-                    line = fh.readline()
-                    if not line:
-                        break
-
-                if line.startswith("netcdf "):
-                    cdl = True
-            except UnicodeDecodeError:
-                pass
-
-        try:
-            fh.close()
-        except Exception:
-            pass
-
-        return cdl
-
-    @classmethod
-    def is_file(cls, filename):
-        """Return `True` if *filename* is a file.
-
-        Note that a remote URL starting with ``http://`` or
-        ``https://`` is always considered as a file.
-
-        .. versionadded:: (cfdm) 1.10.1.1
-
-        :Parameters:
-
-            filename: `str`
-                The name of the file.
-
-        :Returns:
-
-            `bool`
-                Whether or not *filename* is a file.
-
-        **Examples**
-
-        >>> {{package}}.{{class}}.is_file('file.nc')
-        True
-        >>> {{package}}.{{class}}.is_file('http://file.nc')
-        True
-        >>> {{package}}.{{class}}.is_file('https://file.nc')
-        True
-
-        """
-        # Assume that URLs are files
-        u = urlparse(filename)
-        if u.scheme in ("http", "https", "s3"):
-            return True
-
-        return os.path.isfile(filename)
-
-    @classmethod
-    def is_dir(cls, filename):
-        """Return `True` if *filename* is a directory.
-
-        .. versionadded:: (cfdm) 1.10.1.1
-
-        :Parameters:
-
-            filename: `str`
-                The name of the file.
-
-        :Returns:
-
-            `bool`
-                Whether or not *filename* is a directory.
-
-        **Examples**
-
-        >>> {{package}}.{{class}}.is_dir('file.nc')
-        False
-
-        """
-        return os.path.isdir(filename)
+        return f_type
 
     def default_netCDF_fill_value(self, ncvar):
         """The default netCDF fill value for a variable.
@@ -918,7 +870,14 @@ class NetCDFRead(IORead):
         netcdf_backend=None,
         cache=True,
         dask_chunks="storage-aligned",
-        store_hdf5_chunks=True,
+        store_dataset_chunks=True,
+        cfa=None,
+        cfa_write=None,
+        to_memory=None,
+        squeeze=False,
+        unsqueeze=False,
+        file_type=None,
+        ignore_unknown_type=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -969,30 +928,74 @@ class NetCDFRead(IORead):
                 .. versionadded:: (cfdm) 1.9.0.0
 
             storage_options: `bool`, optional
-                See `cfdm.read` for details
+                See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.11.2.0
 
             netcdf_backend: `None` or `str`, optional
-                See `cfdm.read` for details
+                See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.11.2.0
 
             cache: `bool`, optional
                 Control array element caching. See `cfdm.read` for
-                details
+                details.
 
                 .. versionadded:: (cfdm) 1.11.2.0
 
             dask_chunks: `str`, `int`, `None`, or `dict`, optional
                 Specify the `dask` chunking of dimensions for data in
-                the input files. See `cfdm.read` for details
+                the input files. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.11.2.0
 
-            store_hdf_chunks: `bool`, optional
-                 Storing the HDF5 chunking strategy. See `cfdm.read`
-                 for details.
+            store_dataset_chunks: `bool`, optional
+                 Storing the dataset chunking strategy. See
+                 `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            cfa: `dict`, optional
+                Configure the reading of CF-netCDF aggregation files.
+                See `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            cfa_write: sequence of `str`, optional
+                Configure the reading of CF-netCDF aggregation files.
+                See `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            to_memory: (sequence) of `str`, optional
+                Whether or not to bring data arrays into memory.  See
+                `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            squeeze: `bool`, optional
+                Whether or not to remove all size 1 axes from field
+                construct data arrays. See `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            unsqueeze: `bool`, optional
+                Whether or not to ensure that all size 1 axes are
+                spanned by field construct data arrays. See
+                `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            file_type: `None` or (sequence of) `str`, optional
+                Only read files of the given type(s). See `cfdm.read`
+                for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            ignore_unknown_type: `bool`, optional
+                If True then ignore any file which does not have one
+                of the valid types specified by the *file_type*
+                parameter. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.11.2.0
 
@@ -1007,14 +1010,183 @@ class NetCDFRead(IORead):
                 The field or domain constructs in the file.
 
         """
+        debug = is_log_level_debug(logger)
+
+        # ------------------------------------------------------------
+        # Parse the 'filename' keyword parameter
+        # ------------------------------------------------------------
+        try:
+            filename = abspath(filename, uri=False)
+        except ValueError:
+            filename = abspath(filename)
+
+        # ------------------------------------------------------------
+        # Parse the 'file_type' keyword parameter
+        # ------------------------------------------------------------
+        if isinstance(file_type, str):
+            file_type = (file_type,)
+
+        # ------------------------------------------------------------
+        # Check the file type, returning/failing now if the type is
+        # not recognised. (It is much faster to do this with `ftype`
+        # than waiting for `file_open` to fail.)
+        # ------------------------------------------------------------
+        ftype = self.ftype(filename)
+        if not ftype:
+            raise DatasetTypeError(
+                f"Can't interpret {filename} as a netCDF or CDL dataset"
+            )
+
+        if file_type and ftype not in file_type:
+            raise DatasetTypeError(
+                f"Can't interpret {filename} as one of the "
+                f"requested types: {file_type}"
+            )
+
+        # ------------------------------------------------------------
+        # Parse the 'netcdf_backend' keyword parameter
+        # ------------------------------------------------------------
+        if netcdf_backend is None:
+            # By default, try netCDF backends in this order:
+            netcdf_backend = ("h5netcdf", "netCDF4")
+        elif isinstance(netcdf_backend, str):
+            netcdf_backend = (netcdf_backend,)
+
+        # ------------------------------------------------------------
+        # Parse the 'external' keyword parameter
+        # ------------------------------------------------------------
+        if external:
+            if isinstance(external, str):
+                external = (external,)
+
+            external = set(external)
+        else:
+            external = set()
+
+        # ------------------------------------------------------------
+        # Parse 'extra' keyword parameter
+        # ------------------------------------------------------------
+        get_constructs = {
+            "auxiliary_coordinate": self.implementation.get_auxiliary_coordinates,
+            "cell_measure": self.implementation.get_cell_measures,
+            "dimension_coordinate": self.implementation.get_dimension_coordinates,
+            "domain_ancillary": self.implementation.get_domain_ancillaries,
+            "field_ancillary": self.implementation.get_field_ancillaries,
+        }
+
+        if extra:
+            if isinstance(extra, str):
+                extra = (extra,)
+
+            for f in extra:
+                if f not in get_constructs:
+                    raise ValueError(
+                        f"Can't read: Bad parameter value: extra={extra!r}"
+                    )
+
+            extra = set(extra)
+        else:
+            extra = set()
+
+        # ------------------------------------------------------------
+        # Parse 'dask_chunks' keyword parameter
+        # ------------------------------------------------------------
+        if dask_chunks is not None and not isinstance(
+            dask_chunks, (str, Integral, dict)
+        ):
+            raise ValueError(
+                "The 'dask_chunks' keyword must be of type str, int, None or "
+                f"dict. Got: {dask_chunks!r}"
+            )
+
+        # ------------------------------------------------------------
+        # Parse the 'cfa' keyword parameter
+        # ------------------------------------------------------------
+        if cfa is None:
+            cfa = {}
+        else:
+            cfa = cfa.copy()
+            keys = ("replace_directory",)
+            if not set(cfa).issubset(keys):
+                raise ValueError(
+                    "Invalid dictionary key to the 'cfa' parameter."
+                    f"Valid keys are {keys}. Got: {cfa}"
+                )
+
+            if not isinstance(cfa.get("replace_directory", {}), dict):
+                raise ValueError(
+                    "The 'replace_directory' key of the 'cfa' parameter "
+                    "must have a dictionary value. "
+                    f"Got: {cfa['replace_directory']!r}"
+                )
+
+        # ------------------------------------------------------------
+        # Parse the 'cfa_write' keyword parameter
+        # ------------------------------------------------------------
+        if cfa_write:
+            if isinstance(cfa_write, str):
+                cfa_write = (cfa_write,)
+            else:
+                cfa_write = tuple(cfa_write)
+        else:
+            cfa_write = ()
+
+        # ------------------------------------------------------------
+        # Parse the 'squeeze' and 'unsqueeze' keyword parameters
+        # ------------------------------------------------------------
+        if squeeze and unsqueeze:
+            raise ValueError(
+                "'squeeze' and 'unsqueeze' parameters can not both be True"
+            )
+
+        # ------------------------------------------------------------
+        # Parse the 'to_memory' keyword parameter
+        # ------------------------------------------------------------
+        if to_memory:
+            if isinstance(to_memory, str):
+                to_memory = (to_memory,)
+
+            if "metadata" in to_memory:
+                to_memory = tuple(to_memory) + (
+                    "field_ancillary",
+                    "domain_ancillary",
+                    "dimension_coordinate",
+                    "auxiliary_coordinate",
+                    "cell_measure",
+                    "domain_topology",
+                    "cell_connectivity",
+                )
+                to_memory = set(to_memory)
+                to_memory.remove("metadata")
+        else:
+            to_memory = ()
+
+        # ------------------------------------------------------------
+        # Parse the 'storage_options' keyword parameter
+        # ------------------------------------------------------------
+        if storage_options is None:
+            storage_options = {}
+
+        # ------------------------------------------------------------
+        # Parse the '_file_systems' keyword parameter
+        # ------------------------------------------------------------
+        if _file_systems is None:
+            _file_systems = {}
+
         # ------------------------------------------------------------
         # Initialise netCDF read parameters
         # ------------------------------------------------------------
         self.read_vars = {
             # --------------------------------------------------------
+            # File
+            # --------------------------------------------------------
+            "filename": filename,
+            "ftype": ftype,
+            "ignore_unknown_type": bool(ignore_unknown_type),
+            # --------------------------------------------------------
             # Verbosity
             # --------------------------------------------------------
-            "debug": is_log_level_debug(logger),
+            "debug": debug,
             #
             "new_dimension_sizes": {},
             "formula_terms": {},
@@ -1048,10 +1220,17 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Variables listed by the global external_variables
             # attribute
+            "external_files": external,
             "external_variables": set(),
             # External variables that are actually referenced from
             # within the parent file
             "referenced_external_variables": set(),
+            # --------------------------------------------------------
+            # Create extra, independent fields from netCDF variables
+            # that correspond to particular types metadata constructs
+            # --------------------------------------------------------
+            "extra": extra,
+            "get_constructs": get_constructs,
             # --------------------------------------------------------
             # Coordinate references
             # --------------------------------------------------------
@@ -1103,10 +1282,6 @@ class NetCDFRead(IORead):
             # Interpolation parameter variables
             "interpolation_parameter": {},
             # --------------------------------------------------------
-            # CFA
-            # --------------------------------------------------------
-            "cfa": False,
-            # --------------------------------------------------------
             # NetCDF backend
             # --------------------------------------------------------
             "netcdf_backend": netcdf_backend,
@@ -1118,7 +1293,7 @@ class NetCDFRead(IORead):
             # File system storage options for each file
             "file_system_storage_options": {},
             # Cached s3fs.S3FileSystem objects
-            "file_systems": {},
+            "file_systems": _file_systems,
             # Cache of open s3fs.File objects
             "s3fs_File_objects": [],
             # --------------------------------------------------------
@@ -1130,26 +1305,35 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "dask_chunks": dask_chunks,
             # --------------------------------------------------------
-            # Whether or not to store HDF chunks
+            # Aggregation
             # --------------------------------------------------------
-            "store_hdf5_chunks": bool(store_hdf5_chunks),
+            "parsed_aggregated_data": {},
+            # fragment_array_variables as numpy arrays
+            "fragment_array_variables": {},
+            # Aggregation configuration overrides
+            "cfa": cfa,
+            # Dask chunking of aggregated data for selected constructs
+            "cfa_write": cfa_write,
+            # --------------------------------------------------------
+            # Whether or not to store the dataset chunking strategy
+            # --------------------------------------------------------
+            "store_dataset_chunks": bool(store_dataset_chunks),
+            # --------------------------------------------------------
+            # Constructs to read into memory
+            # --------------------------------------------------------
+            "to_memory": to_memory,
+            # --------------------------------------------------------
+            # Squeeze/unsqueeze fields
+            # --------------------------------------------------------
+            "squeeze": bool(squeeze),
+            "unsqueeze": bool(unsqueeze),
         }
 
         g = self.read_vars
 
-        debug = g["debug"]
-
         # Set versions
-        for version in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11"):
+        for version in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11", "1.12"):
             g["version"][version] = Version(version)
-
-        if storage_options is None:
-            g["storage_options"] = {}
-
-        if _file_systems is not None:
-            # Update S3 file systems with those passed in as keyword
-            # parameter
-            g["file_systems"] = _file_systems
 
         # ------------------------------------------------------------
         # Add custom read vars
@@ -1158,62 +1342,25 @@ class NetCDFRead(IORead):
             g.update(deepcopy(extra_read_vars))
 
         # ------------------------------------------------------------
-        # Parse field parameter
-        # ------------------------------------------------------------
-        g["get_constructs"] = {
-            "auxiliary_coordinate": self.implementation.get_auxiliary_coordinates,
-            "cell_measure": self.implementation.get_cell_measures,
-            "dimension_coordinate": self.implementation.get_dimension_coordinates,
-            "domain_ancillary": self.implementation.get_domain_ancillaries,
-            "field_ancillary": self.implementation.get_field_ancillaries,
-        }
-
-        # Parse the 'external' keyword parameter
-        if external:
-            if isinstance(external, str):
-                external = (external,)
-        else:
-            external = ()
-
-        g["external_files"] = set(external)
-
-        # Parse 'extra' keyword parameter
-        if extra:
-            if isinstance(extra, str):
-                extra = (extra,)
-
-            for f in extra:
-                if f not in g["get_constructs"]:
-                    raise ValueError(
-                        f"Can't read: Bad parameter value: extra={extra!r}"
-                    )
-
-        # Check dask_chunks
-        if dask_chunks is not None and not isinstance(
-            dask_chunks, (str, Integral, dict)
-        ):
-            raise ValueError(
-                "The 'dask_chunks' keyword must be of type str, int, None or "
-                f"dict. Got: {dask_chunks!r}"
-            )
-
-        g["extra"] = extra
-
-        filename = os.path.expanduser(os.path.expandvars(filename))
-
-        if self.is_dir(filename):
-            raise IOError(f"Can't read directory {filename}")
-
-        if not self.is_file(filename):
-            raise IOError(f"Can't read non-existent file {filename}")
-
-        g["filename"] = filename
-
-        # ------------------------------------------------------------
         # Open the netCDF file to be read
         # ------------------------------------------------------------
-        nc = self.file_open(filename, flatten=True, verbose=None)
-        logger.info(f"Reading netCDF file: {filename}\n")  # pragma: no cover
+        try:
+            nc = self.file_open(filename, flatten=True, verbose=None)
+        except DatasetTypeError:
+            if not g["ignore_unknown_type"]:
+                raise
+
+            if debug:
+                logger.debug(
+                    f"Ignoring {filename}: Can't interpret as a "
+                    "netCDF dataset"
+                )  # pragma: no cover
+
+                return []
+
+        logger.info(
+            f"Reading netCDF file: {g['filename']}\n"
+        )  # pragma: no cover
         if debug:
             logger.debug(
                 f"    Input netCDF dataset:\n        {nc}\n"
@@ -1238,7 +1385,7 @@ class NetCDFRead(IORead):
             )  # pragma: no cover
 
         # ------------------------------------------------------------
-        # Find the CF version for the file, and the CFA version.
+        # Find the CF version for the file
         # ------------------------------------------------------------
         Conventions = g["global_attributes"].get("Conventions", "")
 
@@ -1256,12 +1403,6 @@ class NetCDFRead(IORead):
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.
                 g["UGRID_version"] = Version(c.replace("UGRID-", "", 1))
-            elif c.startswith("CFA-"):
-                g["cfa"] = True
-                g["CFA_version"] = Version(c.replace("CFA-", "", 1))
-            elif c == "CFA":
-                g["cfa"] = True
-                g["CFA_version"] = Version("0.4")
 
         if file_version is None:
             if default_version is not None:
@@ -1275,7 +1416,7 @@ class NetCDFRead(IORead):
         g["file_version"] = Version(file_version)
 
         # Set minimum/maximum versions
-        for vn in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11"):
+        for vn in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11", "1.12"):
             g["CF>=" + vn] = g["file_version"] >= g["version"][vn]
 
         # From CF-1.11 we can assume UGRID-1.0
@@ -1413,7 +1554,7 @@ class NetCDFRead(IORead):
                     # structure that was prepended to the netCDF
                     # variable name by the netCDF flattener.
                     ncvar_basename = re.sub(
-                        f"^{flattener_separator.join(groups)}{flattener_separator}",
+                        rf"^{flattener_separator.join(groups)}{flattener_separator}",
                         "",
                         ncvar_flat,
                     )
@@ -1480,7 +1621,7 @@ class NetCDFRead(IORead):
                 if groups:
                     # This dimension is in a group.
                     ncdim_basename = re.sub(
-                        "^{flattener_separator.join(groups)}{flattener_separator}",
+                        r"^{flattener_separator.join(groups)}{flattener_separator}",
                         "",
                         ncdim_flat,
                     )
@@ -1638,6 +1779,30 @@ class NetCDFRead(IORead):
         # Now that all of the variables have been scanned, customise
         # the read parameters.
         self._customise_read_vars()
+
+        # ------------------------------------------------------------
+        # Aggregation variables (CF>=1.12)
+        # ------------------------------------------------------------
+        if g["CF>=1.12"]:
+            for ncvar, attributes in variable_attributes.items():
+                aggregated_dimensions = attributes.get("aggregated_dimensions")
+                if aggregated_dimensions is None:
+                    # This is not an aggregated variable
+                    continue
+
+                # Set the aggregated variable's dimensions as its
+                # aggregated dimensions
+                ncdimensions = aggregated_dimensions.split()
+                variable_dimensions[ncvar] = tuple(map(str, ncdimensions))
+
+                # Parse the fragment array variables
+                self._cfa_parse_aggregated_data(
+                    ncvar, attributes.get("aggregated_data")
+                )
+
+            # Do not create fields/domains from fragment array
+            # variables
+            g["do_not_create_field"].update(g["fragment_array_variables"])
 
         # ------------------------------------------------------------
         # List variables
@@ -2018,6 +2183,17 @@ class NetCDFRead(IORead):
         # Close all opened netCDF files
         # ------------------------------------------------------------
         self.file_close()
+
+        # ------------------------------------------------------------
+        # Squeeze/unsqueeze size 1 axes in field constructs
+        # ------------------------------------------------------------
+        if not g["domain"]:
+            if g["unsqueeze"]:
+                for f in out:
+                    self.implementation.unsqueeze(f, inplace=True)
+            elif g["squeeze"]:
+                for f in out:
+                    self.implementation.squeeze(f, inplace=True)
 
         # ------------------------------------------------------------
         # Return the fields/domains
@@ -5584,11 +5760,6 @@ class NetCDFRead(IORead):
         if tie_points:
             # Add interpolation variable properties (CF>=1.9)
             pass
-        #            nc = geometry.get("node_count")
-        #            if nc is not None:
-        #               self.implementation.set_interpolation_properties(
-        #                   parent=c, interpolation=i
-        #               )
 
         # Store the netCDF variable name
         self.implementation.nc_set_variable(c, ncvar)
@@ -6236,15 +6407,69 @@ class NetCDFRead(IORead):
             "storage_options": g["file_system_storage_options"].get(filename),
         }
 
+        if not self._cfa_is_aggregation_variable(ncvar):
+            # Normal (non-aggregation) variable
+            if return_kwargs_only:
+                return kwargs
+
+            file_opened_with = g["file_opened_with"]
+            if file_opened_with == "netCDF4":
+                array = self.implementation.initialise_NetCDF4Array(**kwargs)
+            elif file_opened_with == "h5netcdf":
+                array = self.implementation.initialise_H5netcdfArray(**kwargs)
+
+            return array, kwargs
+
+        # ------------------------------------------------------------
+        # Still here? Then create a netCDF array for an
+        # aggregation variable
+        # ------------------------------------------------------------
+
+        # Only keep the relevant attributes
+        a = {}
+        for attr in ("units", "calendar", "add_offset", "scale_factor"):
+            value = attributes.get(attr)
+            if value is not None:
+                a[attr] = value
+
+        kwargs["attributes"] = a
+
+        # Get rid of the incorrect shape. This will end up getting set
+        # correctly by the AggregatedArray instance.
+        kwargs.pop("shape", None)
+
+        # 'mask' must be True, to indicate that the aggregated data is
+        # to be masked by convention.
+        kwargs["mask"] = True
+
+        fragment_array_variables = g["fragment_array_variables"]
+        standardised_terms = ("map", "location", "variable", "unique_value")
+
+        fragment_array = {}
+        for term, term_ncvar in g["parsed_aggregated_data"][ncvar].items():
+            if term not in standardised_terms:
+                logger.warning(
+                    "Ignoring non-standardised fragment array feature found "
+                    "in the aggregated_data attribute of variable "
+                    f"{ncvar!r}: {term!r}"
+                )
+                continue
+
+            fragment_array_variable = fragment_array_variables[term_ncvar]
+            fragment_array[term] = fragment_array_variable
+
+            if term == "unique_value" and kwargs["dtype"] is None:
+                # This is a string-valued aggregation variable with a
+                # 'value' fragment array variable, so set the correct
+                # numpy data type.
+                kwargs["dtype"] = fragment_array_variable.dtype
+
+        kwargs["fragment_array"] = fragment_array
         if return_kwargs_only:
             return kwargs
 
-        if g["original_netCDF4"]:
-            array = self.implementation.initialise_NetCDF4Array(**kwargs)
-        else:
-            # h5netcdf
-            array = self.implementation.initialise_H5netcdfArray(**kwargs)
-
+        # Use the kwargs to create a AggregatedArray instance
+        array = self.implementation.initialise_AggregatedArray(**kwargs)
         return array, kwargs
 
     def _create_data(
@@ -6291,15 +6516,22 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        array, kwargs = self._create_netcdfarray(
-            ncvar, unpacked_dtype=unpacked_dtype, coord_ncvar=coord_ncvar
+        construct_type = self.implementation.get_construct_type(construct)
+
+        netcdf_array, netcdf_kwargs = self._create_netcdfarray(
+            ncvar,
+            unpacked_dtype=unpacked_dtype,
+            coord_ncvar=coord_ncvar,
         )
-        if array is None:
+
+        if netcdf_array is None:
             return None
 
-        filename = kwargs["filename"]
+        array = netcdf_array
 
-        attributes = kwargs["attributes"]
+        filename = netcdf_kwargs["filename"]
+
+        attributes = netcdf_kwargs["attributes"]
         units = attributes.get("units")
         calendar = attributes.get("calendar")
 
@@ -6530,16 +6762,19 @@ class NetCDFRead(IORead):
             calendar=calendar,
             ncvar=ncvar,
             compressed=compressed,
+            construct_type=construct_type,
         )
         data._original_filenames(define=filename)
 
         # ------------------------------------------------------------
         # Cache selected values from disk
         # ------------------------------------------------------------
+        aggregation_variable = self._cfa_is_aggregation_variable(ncvar)
         if (
             not compression_index
             and g.get("cache")
-            and self.implementation.get_construct_type(construct) != "field"
+            and construct_type != "field"
+            and not aggregation_variable
         ):
             # Only cache values from non-field data and
             # non-compression-index data, on the assumptions that:
@@ -6551,6 +6786,60 @@ class NetCDFRead(IORead):
             #    compression index data.
             self._cache_data_elements(data, ncvar)
 
+        # ------------------------------------------------------------
+        # Set data aggregation parameters
+        # ------------------------------------------------------------
+        if not aggregation_variable:
+            # For non-aggregation variables, set the aggregated write
+            # status to True when there is exactly one dask chunk.
+            if data.npartitions == 1:
+                data._nc_set_aggregation_write_status(True)
+                data._nc_set_aggregation_fragment_type("location")
+        else:
+            if construct is not None:
+                # Remove the aggregation attributes from the construct
+                self.implementation.del_property(
+                    construct, "aggregated_dimensions", None
+                )
+                aggregated_data = self.implementation.del_property(
+                    construct, "aggregated_data", None
+                )
+                # Store the 'aggregated_data' attribute information
+                if aggregated_data:
+                    data.nc_set_aggregated_data(aggregated_data)
+
+            # Set the aggregated write status to True iff each
+            # non-aggregated axis has exactly one Dask chunk
+            cfa_write_status = True
+            for n, numblocks in zip(
+                netcdf_array.get_fragment_array_shape(), data.numblocks
+            ):
+                if n == 1 and numblocks > 1:
+                    # Note: n is always 1 for non-aggregated axes
+                    cfa_write_status = False
+                    break
+
+            data._nc_set_aggregation_write_status(cfa_write_status)
+
+            # Store the fragment type
+            fragment_type = netcdf_array.get_fragment_type()
+            data._nc_set_aggregation_fragment_type(fragment_type)
+
+            # Replace the directories of fragment locations
+            if fragment_type == "location":
+                replace_directory = g["cfa"].get("replace_directory")
+                if replace_directory:
+                    try:
+                        data.replace_directory(**replace_directory)
+                    except TypeError:
+                        raise TypeError(
+                            "The 'replace_directory' key of the 'cfa' "
+                            "parameter must provide valid parameters to "
+                            "the 'Data.replace_directory' method. "
+                            f"Got: {replace_directory!r}"
+                        )
+
+        # Return the data object
         return data
 
     def _create_domain_axis(self, size, ncdim=None):
@@ -7535,6 +7824,7 @@ class NetCDFRead(IORead):
         calendar=None,
         ncdimensions=None,
         compressed=False,
+        construct_type=None,
         **kwargs,
     ):
         """Create a Data object from a netCDF variable.
@@ -7563,6 +7853,12 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) 1.11.2.0
 
+            construct_type: `str` or `None`, optional
+                The type of the construct that contains *array*. Set
+                to `None` if the array does not belong to a construct.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
                 returned `Data` object.
@@ -7573,11 +7869,6 @@ class NetCDFRead(IORead):
 
         """
         if array.dtype is None:
-            # The array is based on a netCDF VLEN variable, and
-            # therefore has unknown data type. To find the correct
-            # data type (e.g. "<U7"), we need to read the entire array
-            # from its netCDF variable into memory to find the longest
-            # string.
             g = self.read_vars
             if g["has_groups"]:
                 group, name = self._netCDF4_group(
@@ -7609,24 +7900,31 @@ class NetCDFRead(IORead):
                 array = np.ma.where(array == "", np.ma.masked, array)
 
         # Set the dask chunking strategy
-        chunks = self._dask_chunks(array, ncvar, compressed)
+        chunks = self._dask_chunks(
+            array, ncvar, compressed, construct_type=construct_type
+        )
+
+        # Set whether or not to read the data into memory
+        to_memory = self.read_vars["to_memory"]
+        to_memory = "all" in to_memory or construct_type in to_memory
 
         data = self.implementation.initialise_Data(
             array=array,
             units=units,
             calendar=calendar,
             chunks=chunks,
+            to_memory=to_memory,
             copy=False,
             **kwargs,
         )
 
-        # Store the HDF5 chunking
-        if self.read_vars["store_hdf5_chunks"] and ncvar is not None:
-            # Only store the HDF chunking if 'data' has the same shape
-            # as its netCDF variable. This may not be the case for
-            # variables compressed by convention (e.g. some DSG
+        # Store the dataset chunking
+        if self.read_vars["store_dataset_chunks"] and ncvar is not None:
+            # Only store the dataset chunking if 'data' has the same
+            # shape as its netCDF variable. This may not be the case
+            # for variables compressed by convention (e.g. some DSG
             # variables).
-            chunks, shape = self._get_hdf5_chunks(ncvar)
+            chunks, shape = self._get_dataset_chunks(ncvar)
             if shape == data.shape:
                 self.implementation.nc_set_hdf5_chunksizes(data, chunks)
 
@@ -8814,16 +9112,16 @@ class NetCDFRead(IORead):
 
         out = []
 
-        pat_value = subst("(?P<value>WORD)SEP")
+        pat_value = subst(r"(?P<value>WORD)SEP")
         pat_values = f"({pat_value})+"
 
         pat_mapping = subst(
-            f"(?P<mapping_name>WORD):SEP(?P<values>{pat_values})"
+            rf"(?P<mapping_name>WORD):SEP(?P<values>{pat_values})"
         )
         pat_mapping_list = f"({pat_mapping})+"
 
         pat_all = subst(
-            f"((?P<sole_mapping>WORD)|(?P<mapping_list>{pat_mapping_list}))$"
+            rf"((?P<sole_mapping>WORD)|(?P<mapping_list>{pat_mapping_list}))$"
         )
 
         m = re.match(pat_all, string)
@@ -10412,9 +10710,8 @@ class NetCDFRead(IORead):
             filename: `str`
                 The name of the file.
 
-            parsed_filename: `urllib.parse.ParseResult`
-                The parsed file name, as returned by
-                ``urllib.parse.urlparse(filename)``.
+            parsed_filename: `uritools.SplitResultString`
+                The parsed file name.
 
         :Returns:
 
@@ -10430,16 +10727,18 @@ class NetCDFRead(IORead):
             "endpoint_url" not in storage_options
             and "endpoint_url" not in client_kwargs
         ):
-            storage_options["endpoint_url"] = (
-                f"https://{parsed_filename.netloc}"
-            )
+            authority = parsed_filename.authority
+            if not authority:
+                authority = ""
+
+            storage_options["endpoint_url"] = f"https://{authority}"
 
         g["file_system_storage_options"].setdefault(filename, storage_options)
 
         return storage_options
 
-    def _get_hdf5_chunks(self, ncvar):
-        """Return a netCDF variable's HDF5 chunks.
+    def _get_dataset_chunks(self, ncvar):
+        """Return a netCDF variable's dataset chunks.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
@@ -10457,11 +10756,11 @@ class NetCDFRead(IORead):
 
         **Examples**
 
-        >>> n._get_hdf5_chunks('tas')
+        >>> n._get_dataset_chunks('tas')
         [1, 324, 432], (12, 324, 432)
-        >>> n._get_hdf5_chunks('pr')
+        >>> n._get_dataset_chunks('pr')
         'contiguous', (12, 324, 432)
-        >>> n._get_hdf5_chunks('ua')
+        >>> n._get_dataset_chunks('ua')
         None, (12, 324, 432)
 
         """
@@ -10486,7 +10785,7 @@ class NetCDFRead(IORead):
 
         return chunks, var.shape
 
-    def _dask_chunks(self, array, ncvar, compressed):
+    def _dask_chunks(self, array, ncvar, compressed, construct_type=None):
         """Set the Dask chunking strategy for a netCDF variable.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -10505,6 +10804,10 @@ class NetCDFRead(IORead):
                 Whether or not the netCDF variable is compressed by
                 convention.
 
+            construct_type: `str` or `None`
+                The type of the construct that contains *array*. Set
+                to `None` if the array does not belong to a construct.
+
         :Returns:
 
             `str` or `int` or `list`
@@ -10514,8 +10817,29 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        dask_chunks = g.get("dask_chunks", "storage-aligned")
+        cfa_write = g["cfa_write"]
+        if (
+            cfa_write
+            and construct_type is not None
+            and construct_type in cfa_write
+            or "all" in cfa_write
+        ):
+            # The intention is for this array to be written out as an
+            # aggregation variable, so set dask_chunks=None to ensure
+            # that each Dask chunk contains exactly one complete
+            # fragment.
+            dask_chunks = None
+        else:
+            dask_chunks = g.get("dask_chunks", "storage-aligned")
+
         storage_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
+
+        # ------------------------------------------------------------
+        # None
+        # ------------------------------------------------------------
+        if dask_chunks is None:
+            # No Dask chunking
+            return -1
 
         ndim = array.ndim
         if (
@@ -10576,11 +10900,11 @@ class NetCDFRead(IORead):
             #       original Dask:   (5,   15, 150,  5, 160)   9000000
             #       storage-aligned: (50, 100, 150, 20,   5)  75000000
             # --------------------------------------------------------
-
             # 1) Initialise the Dask chunk shape
             dask_chunks = normalize_chunks(
                 "auto", shape=array.shape, dtype=array.dtype
             )
+
             dask_chunks = [sizes[0] for sizes in dask_chunks]
             n_dask_elements = prod(dask_chunks)
 
@@ -10754,13 +11078,6 @@ class NetCDFRead(IORead):
             # Set the Dask chunks to be exactly the storage chunks for
             # chunked variables.
             return storage_chunks
-
-        # ------------------------------------------------------------
-        # None
-        # ------------------------------------------------------------
-        if dask_chunks is None:
-            # No Dask chunking
-            return -1
 
         # ------------------------------------------------------------
         # dict
@@ -10962,7 +11279,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            variable:
+        variable:
                 The variable, that has the same API as
                 `netCDF4.Variable` or `h5netcdf.Variable`.
 
@@ -10992,3 +11309,82 @@ class NetCDFRead(IORead):
             chunks = variable.chunks
 
         return chunks
+
+    def _cfa_is_aggregation_variable(self, ncvar):
+        """Return True if *ncvar* is a CF-netCDF aggregated variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            ncvar: `str`
+                The name of the netCDF variable.
+
+        :Returns:
+
+            `bool`
+                Whether or not *ncvar* is an aggregated variable.
+
+        """
+        g = self.read_vars
+        return (
+            ncvar in g["parsed_aggregated_data"]
+            and ncvar not in g["external_variables"]
+        )
+
+    def _cfa_parse_aggregated_data(self, ncvar, aggregated_data):
+        """Parse a CF-netCDF 'aggregated_data' attribute.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            ncvar: `str`
+                The netCDF variable name.
+
+            aggregated_data: `str` or `None`
+                The CF-netCDF ``aggregated_data`` attribute.
+
+        :Returns:
+
+            `dict`
+                The parsed attribute.
+
+        """
+        if not aggregated_data:
+            return {}
+
+        g = self.read_vars
+        fragment_array_variables = g["fragment_array_variables"]
+        variables = g["variables"]
+        variable_attributes = g["variable_attributes"]
+
+        # Loop round aggregation instruction terms
+        out = {}
+        for x in self._parse_x(
+            ncvar,
+            aggregated_data,
+            keys_are_variables=True,
+        ):
+            term, term_ncvar = tuple(x.items())[0]
+            term_ncvar = term_ncvar[0]
+            out[term] = term_ncvar
+
+            if term_ncvar in fragment_array_variables:
+                # We've already processed this term
+                continue
+
+            attributes = variable_attributes[term_ncvar]
+            array = netcdf_indexer(
+                variables[term_ncvar],
+                mask=True,
+                unpack=True,
+                always_masked_array=False,
+                orthogonal_indexing=False,
+                attributes=attributes,
+                copy=False,
+            )
+            fragment_array_variables[term_ncvar] = array[...]
+
+        g["parsed_aggregated_data"][ncvar] = out
+        return out

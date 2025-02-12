@@ -4,12 +4,16 @@ from copy import deepcopy
 from functools import total_ordering
 from math import isnan
 from numbers import Integral
-from urllib.parse import urlparse
+from os import sep as os_sep
+from os.path import abspath as os_abspath
+from os.path import dirname as os_dirname
+from os.path import join
 
 import numpy as np
 from dask import config as _config
 from dask.base import is_dask_collection
 from dask.utils import parse_bytes
+from uritools import uricompose, urisplit
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
@@ -442,52 +446,270 @@ def CF():
     **Examples**
 
     >>> CF()
-    '1.11'
+    '1.12'
 
     """
     return __cf_version__
 
 
-def abspath(filename):
-    """Return a normalised absolute version of a file name.
-
-    If a string containing URL is provided then it is returned
-    unchanged.
+def abspath(path, uri=None):
+    """Return a normalised absolute version of a path.
 
     .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
-        filename: `str`
-            The name of the file.
+        path: `str`
+            The file or directory path.
+
+        uri: `None` or `bool`, optional
+            If True then the returned path will begin with a URI
+            scheme component followed by a ``:`` character, such as
+            ``file://data/file.nc``, ``https://remote/data/file.nc``,
+            etc.). If False then the returned path will not begin with
+            a URI scheme component only if the input *path* does. If
+            `None` (the default) then the returned path will begin
+            with a URI scheme component if the input *path* does.
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
     :Returns:
 
         `str`
-            The normalised absolutised version of *filename*.
+            The normalised absolutised version of the path.
 
     **Examples**
 
     >>> import os
     >>> os.getcwd()
     '/data/archive'
+
     >>> cfdm.abspath('file.nc')
     '/data/archive/file.nc'
-    >>> cfdm.abspath('..//archive///file.nc')
+    >>> cfdm.abspath('../file.nc')
+    '/data/file.nc'
+    >>> cfdm.abspath('file:///file.nc')
+    'file:///file.nc'
+    >>> cfdm.abspath('file://file.nc')
+    'file:///data/archive'
+    >>> cfdm.abspath('file:/file.nc')
+    'file:///file.nc'
+
+    >>> cfdm.abspath('http:///file.nc')
+    'http:///file.nc'
+    >>> cfdm.abspath('http://file.nc')
+    'http://'
+    >>> cfdm.abspath('http:/file.nc')
+    'http:///file.nc'
+
+    >>> cfdm.abspath('file.nc', uri=True)
+    'file:///data/archive/file.nc'
+    >>> cfdm.abspath('../file.nc', uri=True)
+    'file:///data/file.nc'
+    >>> cfdm.abspath('file:///file.nc', uri=True)
+    'file:///file.nc'
+    >>> cfdm.abspath('file://file.nc', uri=True)
+    'file:///data/archive'
+    >>> cfdm.abspath('file:/file.nc', uri=True)
+    'file:///file.nc'
+
+    >>> cfdm.abspath('http:///file.nc', uri=True)
+    'http:///file.nc'
+    >>> cfdm.abspath('http://file.nc', uri=True)
+    'http://'
+    >>> cfdm.abspath('http:/file.nc', uri=True)
+    'http:///file.nc'
+
+    >>> cfdm.abspath('file.nc', uri=False)
     '/data/archive/file.nc'
-    >>> cfdm.abspath('http://data/archive/file.nc')
-    'http://data/archive/file.nc'
+
+    >>> cfdm.abspath('../file.nc', uri=False)
+    '/data/file.nc'
+    >>> cfdm.abspath('file:///file.nc', uri=False)
+    '/file.nc'
+    >>> cfdm.abspath('file://file.nc', uri=False)
+    '/data/archive'
+    >>> cfdm.abspath('file:/file.nc', uri=False)
+    '/file.nc'
+
+    >>> cfdm.abspath('')
+    '/data/archive"
 
     """
-    u = urlparse(filename)
+    u = urisplit(path)
     scheme = u.scheme
-    if not scheme:
-        return os.path.abspath(filename)
+    path = u.path
+    if scheme:
+        if scheme == "file" or path.startswith(os_sep):
+            path = os_abspath(path)
 
-    if scheme == "file":
-        return u.path
+        if uri or uri is None:
+            path = uricompose(scheme=scheme, authority="", path=path)
+        elif scheme != "file":
+            raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
-    return filename
+        return path
+
+    path = os_abspath(path)
+    if uri:
+        path = uricompose(scheme="file", authority="", path=path)
+
+    return path
+
+
+def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
+    """Return the directory of a path.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    :Parameters:
+
+        path: `str`
+            The name of the path.
+
+        normalise: `bool`, optional
+            If True then normalise the path by resolving it to an
+            absolute path. If False (the default) then no
+            normalisation is done.
+
+        uri: `None` or `bool`, optional
+            If True then the returned directory will begin with a URI
+            scheme component followed by a ``:`` character, such as
+            ``file://data/file.nc``, ``https://remote/data/file.nc``,
+            etc.). If False then the returned directory will not begin
+            with a URI scheme component. If `None` (the default) then
+            the returned directory will begin with a URI scheme
+            component if the input *path* does.
+
+        isdir: `bool`, optional
+            Set to True if *path* represents a directory, rather than
+            a file.
+
+        sep: `bool`, optional
+            Set to True to add a trailing path separator to the
+            returned directory.
+
+    :Returns:
+
+        `str`
+            The directory of the path.
+
+    **Examples**
+
+    >>> import os
+    >>> os.getcwd()
+    '/data/archive'
+
+    >>> cfdm.dirname('file.nc')
+    '/data/archive'
+    >>> cfdm.dirname('file.nc', normalise=True)
+    '/data/archive'
+    >>> cfdm.dirname('file.nc', normalise=True, uri=True)
+    'file:///data/archive'
+    >>> cfdm.dirname('file.nc', normalise=True, uri=False)
+    '/data/archive'
+    >>> cfdm.dirname('file.nc', normalise=True, sep=True)
+    '/data/archive/'
+
+    >>> cfdm.dirname('model/file.nc')
+    'model'
+    >>> cfdm.dirname('model/file.nc', normalise=True)
+    /data/archive/model'
+    >>> cfdm.dirname('model/file.nc', normalise=True, uri=True)
+    'file:///data/archive/model'
+    >>> cfdm.dirname('model/file.nc', normalise=True, uri=False)
+    /data/archive/model'
+
+    >>> cfdm.dirname('../file.nc')
+    '..'
+    >>> cfdm.dirname('../file.nc', normalise=True)
+    '/data'
+    >>> cfdm.dirname('../file.nc', normalise=True, uri=True)
+    'file:///data'
+    >>> cfdm.dirname('../file.nc', normalise=True, uri=False)
+    '/data'
+
+    >>> cfdm.dirname('/model/file.nc')
+    '/model'
+    >>> cfdm.dirname('/model/file.nc', normalise=True)
+    '/model'
+    >>> cfdm.dirname('/model/file.nc', normalise=True, uri=True)
+    'file:///model'
+    >>> cfdm.dirname('/model/file.nc', normalise=True, uri=False)
+    '/model'
+
+    >>> cfdm.dirname('')
+    ''
+    >>> cfdm.dirname('', normalise=True)
+    '/data/archive'
+    >>> cfdm.dirname('', normalise=True, uri=True)
+    'file:///data/archive'
+    >>> cfdm.dirname('', normalise=True, uri=False)
+    '/data/archive'
+
+    >>> cfdm.dirname('https:///data/archive/file.nc')
+    'https:///data/archive'
+    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True)
+    'https:///data/archive'
+    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=True)
+    'https:///data/archive'
+    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=False)
+    ValueError: Can't set uri=False for path='https:///data/archive/file.nc'
+
+    >>> cfdm.dirname('file:///data/archive/file.nc')
+    'file:///data/archive'
+    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True)
+    'file:///data/archive'
+    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=True)
+    'file:///data/archive'
+    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=False)
+    '/data/archive'
+
+    >>> cfdm.dirname('file:///data/archive/../file.nc')
+    'file:///data/archive/..'
+    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True)
+    'file::///data'
+    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=True)
+    'file::///data'
+    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=False)
+    '/data'
+
+    """
+    u = urisplit(path)
+    scheme = u.scheme
+    path = u.path
+    if scheme:
+        # Remote (or "file:")
+        if normalise and (scheme == "file" or path.startswith(os_sep)):
+            path = os_abspath(path)
+
+        if not isdir:
+            path = os_dirname(path)
+
+        if sep:
+            path = join(path, "")
+
+        if uri or uri is None:
+            path = uricompose(scheme=scheme, authority="", path=path)
+        elif scheme != "file":
+            raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
+
+        return path
+
+    # Local file
+    if not isdir:
+        path = os_dirname(path)
+
+    if normalise:
+        path = os_abspath(path)
+
+    if uri:
+        path = uricompose(scheme="file", authority="", path=path)
+
+    if sep:
+        path = join(path, "")
+
+    return path
 
 
 def unique_constructs(constructs, ignore_properties=None, copy=True):
@@ -1947,7 +2169,16 @@ def indices_shape(indices, full_shape, keepdims=True):
 
     """
     shape = []
+    #    i = 0
     for index, full_size in zip(indices, full_shape):
+        #    for index in indices:
+        if index is None:
+            shape.append(1)
+            continue
+
+        #        full_size = full_shape[i]
+        #        i += 1
+
         if isinstance(index, slice):
             start, stop, step = index.indices(full_size)
             if (stop - start) * step < 0:
@@ -1992,7 +2223,7 @@ def indices_shape(indices, full_shape, keepdims=True):
     return shape
 
 
-def parse_indices(shape, indices, keepdims=True):
+def parse_indices(shape, indices, keepdims=True, newaxis=False):
     """Parse indices for array access and assignment.
 
     .. versionadded:: (cfdm) 1.11.2.0
@@ -2008,6 +2239,11 @@ def parse_indices(shape, indices, keepdims=True):
         keepdims: `bool`, optional
             If True then an integral index is converted to a
             slice. For instance, ``3`` would become ``slice(3, 4)``.
+
+        newaxis: `bool`, optional
+            If True then allow *indices* to include one or more
+            `numpy.newaxis` elements. If False (the default) then
+            these elements are not allowed.
 
     :Returns:
 
@@ -2040,22 +2276,31 @@ def parse_indices(shape, indices, keepdims=True):
     length = len(indices)
     n = len(shape)
     ndim = n
-    for index in indices:
+    for i, index in enumerate(indices):
         if index is Ellipsis:
             m = n - length + 1
+            try:
+                if indices[i + 1] is np.newaxis:
+                    m += 1
+            except IndexError:
+                pass
+
             parsed_indices.extend([slice(None)] * m)
             n -= m
         else:
             parsed_indices.append(index)
-            n -= 1
+            if index is np.newaxis:
+                ndim += 1
+                length += 1
+            else:
+                n -= 1
 
         length -= 1
 
     len_parsed_indices = len(parsed_indices)
-
     if ndim and len_parsed_indices > ndim:
         raise IndexError(
-            f"Invalid indices {parsed_indices} for array with shape {shape}"
+            f"Invalid indices {indices!r} for array with shape {shape}"
         )
 
     if len_parsed_indices < ndim:
@@ -2067,6 +2312,12 @@ def parse_indices(shape, indices, keepdims=True):
         )
 
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
+        if not newaxis and index is np.newaxis:
+            raise IndexError(
+                f"Invalid indices {indices!r} for array with shape {shape}: "
+                "New axis indices are not allowed"
+            )
+
         if keepdims and isinstance(index, Integral):
             # Convert an integral index to a slice
             if index == -1:

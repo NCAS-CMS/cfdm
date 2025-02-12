@@ -1421,6 +1421,136 @@ class Field(
 
         return f
 
+    @classmethod
+    def concatenate(
+        cls, fields, axis, cull_graph=False, relaxed_units=False, copy=True
+    ):
+        """Join together a sequence of Field constructs.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `Data.concatenate`, `Data.cull_graph`
+
+        :Parameters:
+
+            fields: sequence of `{{class}}`
+                The fields to concatenate.
+
+            axis:
+                Select the domain axis to along which to concatenate,
+                defined by that which would be selected by passing
+                *axis* to a call of the field construct's
+                `domain_axis` method. For example, for a value of
+                'time', the domain axis construct returned by
+                ``f.domain_axis('time')`` is selected.
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            {{concatenate copy: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}`
+                The concatenated construct.
+
+        """
+        if isinstance(fields, cls):
+            raise ValueError("Must provide a sequence of Field constructs")
+
+        fields = tuple(fields)
+        field0 = fields[0]
+        data_axes = field0.get_data_axes()
+        axis_key = field0.domain_axis(
+            axis,
+            key=True,
+            default=ValueError(
+                f"Can't identify a unique concatenation axis from {axis!r}"
+            ),
+        )
+        try:
+            axis = data_axes.index(axis_key)
+        except ValueError:
+            raise ValueError(
+                "The field's data must span the concatenation axis"
+            )
+
+        out = field0
+        if copy:
+            out = out.copy()
+
+        if len(fields) == 1:
+            return out
+
+        new_data = out._Data.concatenate(
+            [f.get_data(_fill_value=False) for f in fields],
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
+
+        # Change the domain axis size
+        out.set_construct(
+            out._DomainAxis(size=new_data.shape[axis]), key=axis_key
+        )
+
+        # Insert the concatenated data
+        out.set_data(new_data, axes=data_axes, copy=False)
+
+        # ------------------------------------------------------------
+        # Concatenate constructs with data
+        # ------------------------------------------------------------
+        for key, construct in field0.constructs.filter_by_data(
+            todict=True
+        ).items():
+            construct_axes = field0.get_data_axes(key)
+
+            if axis_key not in construct_axes:
+                # This construct does not span the concatenating axis
+                # in the first field
+                continue
+
+            constructs = [construct]
+            for f in fields[1:]:
+                c = f.constructs.get(key)
+                if c is None:
+                    # This field does not have this construct
+                    constructs = None
+                    break
+
+                constructs.append(c)
+
+            if not constructs:
+                # Not every field has this construct, so remove it
+                # from the output field.
+                out.del_construct(key)
+                continue
+
+            # Still here? Then try concatenating the constructs from
+            # each field.
+            try:
+                construct = construct.concatenate(
+                    constructs,
+                    axis=construct_axes.index(axis_key),
+                    cull_graph=cull_graph,
+                    relaxed_units=relaxed_units,
+                    copy=copy,
+                )
+            except ValueError:
+                # Couldn't concatenate this construct, so remove it from
+                # the output field.
+                out.del_construct(key)
+            else:
+                # Successfully concatenated this construct, so insert
+                # it into the output field.
+                out.set_construct(
+                    construct, key=key, axes=construct_axes, copy=False
+                )
+
+        return out
+
     def creation_commands(
         self,
         representative_data=False,
@@ -1798,6 +1928,40 @@ class Field(
 
         return "\n".join(string)
 
+    def file_directories(self, constructs=True):
+        """The directories of files containing parts of the data.
+
+        Returns the locations of any files referenced by the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `replace_directory`
+
+        :Parameters:
+
+            constructs: `bool`, optional
+                If True (the default) then add also the directory to
+                the data of metadata constructs. If False then don't
+                do this.
+
+        :Returns:
+
+            `set`
+                The unique set of file directories as absolute paths.
+
+        **Examples**
+
+        >>> d.file_directories()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        directories = super().file_directories()
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                directories.update(c.file_directories())
+
+        return directories
+
     def get_data_axes(self, *identity, default=ValueError(), **filter_kwargs):
         """Gets the keys of the axes spanned by the construct data.
 
@@ -1912,11 +2076,17 @@ class Field(
 
         return domain
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=True):
         """Return the names of the files containing the data.
 
         The names of the files containing the data of the field
         constructs and of any metadata constructs are returned.
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -1934,10 +2104,10 @@ class Field(
         {'temp_file.nc'}
 
         """
-        out = super().get_filenames()
+        out = super().get_filenames(normalise=normalise)
 
         for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.get_filenames())
+            out.update(c.get_filenames(normalise=normalise))
 
         return out
 
@@ -2135,36 +2305,27 @@ class Field(
     ):
         """Expand the shape of the data array.
 
-        Inserts a new size 1 axis, corresponding to an existing domain
-        axis construct, into the data array.
-
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `squeeze`, `transpose`
+        .. seealso:: `squeeze`, `transpose`, `unsqueeze`
 
         :Parameters:
 
-            axis: `str`
-                The identifier of the domain axis construct
-                corresponding to the inserted axis.
+            axis:
+                Select the domain axis to insert, generally defined by that
+                which would be selected by passing the given axis description
+                to a call of the field construct's `domain_axis` method. For
+                example, for a value of ``'time'``, the domain axis construct
+                returned by ``f.domain_axis('time')`` is selected.
 
                 If *axis* is `None` then a new domain axis construct
                 will be created for the inserted dimension.
-
-                *Parameter example:*
-                  ``axis='domainaxis2'``
 
             position: `int`, optional
                 Specify the position that the new axis will have in
                 the data array. By default the new axis has position
                 0, the slowest varying position. Negative integers
                 counting from the last position are allowed.
-
-                *Parameter example:*
-                  ``position=2``
-
-                *Parameter example:*
-                  ``position=-1``
 
             constructs: `bool`
                 If True then also insert the new axis into all
@@ -2177,24 +2338,43 @@ class Field(
 
         :Returns:
 
-            `Field` or `None`
-                The new field construct with expanded data axes. If
-                the operation was in-place then `None` is returned.
+            `{{class}}` or `None`
+                The field construct with expanded data, or `None` if the
+                operation was in-place.
 
         **Examples**
 
-        >>> f.data.shape
-        (19, 73, 96)
-        >>> f.insert_dimension('domainaxis3').data.shape
-        (1, 96, 73, 19)
-        >>> f.insert_dimension('domainaxis3', position=3).data.shape
-        (19, 73, 96, 1)
-        >>> f.insert_dimension('domainaxis3', position=-1, inplace=True)
-        (19, 73, 1, 96)
-        >>> f.data.shape
-        (19, 73, 1, 96)
-        >>> f.insert_dimension(None, 1).data.shape
-        (19, 1, 73, 1, 96)
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> g = f.insert_dimension('time', 0)
+        >>> print(g)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(time(1), latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        A previously non-existent size 1 axis must be created prior to
+        insertion:
+
+        >>> f.insert_dimension(None, 1, inplace=True)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(time(1), key%domainaxis3(1), latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
@@ -2213,6 +2393,9 @@ class Field(
                     f"Can only insert axis of size 1. Axis {axis!r} has size "
                     f"{domain_axis.get_size()}"
                 )
+
+        if position < 0:
+            position = position + f.ndim + 1
 
         data_axes = f.get_data_axes(default=None)
         if data_axes is not None:
@@ -2455,6 +2638,138 @@ class Field(
                             )
 
         return f
+
+    @_inplace_enabled(default=False)
+    def persist(self, metadata=False, inplace=False):
+        """Persist the data into memory.
+
+        This turns the underlying lazy dask array into an equivalent
+        chunked dask array, but now with the results fully computed
+        and in memory. This can avoid the expense of re-reading the
+        data from disk, or re-computing it, when the data is accessed
+        on multiple occassions.
+
+        **Performance**
+
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `persist_metadata`, `array`, `datetime_array`,
+                     `{{package}}.Data.persist`
+
+        :Parameters:
+
+            metadata: `bool`
+                If True then also persist the metadata constructs. By
+                default, metadata constructs are not changed.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Field` or `None`
+                The field construct with persisted data. If the
+                operation was in-place then `None` is returned.
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        super(Field, f).persist(inplace=True)
+        if metadata:
+            f.persist_metadata(inplace=True)
+
+        return f
+
+    @_inplace_enabled(default=False)
+    def persist_metadata(self, inplace=False):
+        """Persist the data of metadata constructs into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist_metadata` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `persist`, `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Field` or `None`
+                The field construct with persisted metadata. If the
+                operation was in-place then `None` is returned.
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        for c in f.constructs.filter_by_data(todict=True).values():
+            c.persist(inplace=True)
+
+        return f
+
+    def replace_directory(
+        self,
+        old=None,
+        new=None,
+        normalise=False,
+        common=False,
+        constructs=True,
+    ):
+        """Replace a file directory in-place.
+
+        Every file in *old_directory* that is referenced by the data
+        is redefined to be in *new*.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `file_directories`, `get_filenames`
+
+        :Parameters:
+
+            {{replace old: `str` or `None`, optional}}
+
+            {{replace new: `str` or `None`, optional}}
+
+            {{replace normalise: `bool`, optional}}
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
+
+            constructs: `bool`, optional
+                If True (the default) then add also the directory to
+                the data of metadata constructs. If False then don't
+                do this.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> d.replace_directory('/data', '/new/data/path/')
+        '/new/data/path'
+        >>> d.get_filenames()
+        {'/new/data/path/file1.nc', '/home/file2.nc'}
+
+        """
+        super().replace_directory(
+            old=old, new=new, normalise=normalise, common=common
+        )
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.replace_directory(
+                    old=old, new=new, normalise=normalise, common=common
+                )
 
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
@@ -2764,59 +3079,73 @@ class Field(
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
-        """Remove size one axes from the data.
+        """Remove size 1 axes from the data.
 
         By default all size one axes are removed, but particular size
         one axes may be selected for removal.
 
+        Squeezed domain axis constructs are not removed from the metadata
+        constructs, nor from the domain of the field construct.
+
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `insert_dimension`, `transpose`
+        .. seealso:: `insert_dimension`, `transpose`, `unsqueeze`
 
         :Parameters:
 
-            axes: (sequence of) `int`, optional
-                The positions of the size one axes to be removed. By
-                default all size one axes are removed.
+            axes:
+                Select the domain axes to squeeze, defined by the
+                domain axes that would be selected by passing each
+                given axis description to a call of the field
+                construct's `domain_axis` method. For example, for a
+                value of ``'time'``, the domain axis construct
+                returned by ``f.domain_axis('time')`` is selected.
 
-                {{axes int examples}}
+                If *axes* is `None` (the default) then all size 1 axes
+                are removed.
 
             {{inplace: `bool`, optional}}
 
         :Returns:
 
-            `Field` or `None`
-                The field construct with removed data axes. If the
-                operation was in-place then `None` is returned.
+            `{{class}}` or `None`
+                The field construct with squeezed data, or `None` if the
+                operation was in-place.
 
         **Examples**
 
-        >>> f.data.shape
-        (1, 73, 1, 96)
-        >>> f.squeeze().data.shape
-        (73, 96)
-        >>> f.squeeze(0).data.shape
-        (73, 1, 96)
-        >>> f.squeeze([-3, 2], inplace=True)
-        >>> f.data.shape
-        (73, 96)
+        >>> g = f.squeeze()
+        >>> g = f.squeeze('time')
+        >>> g = f.squeeze(1)
+        >>> g = f.squeeze(['time', 1, 'dim2'])
+        >>> f.squeeze(['dim2'], inplace=True)
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        if axes is None:
-            iaxes = [i for i, n in enumerate(f.data.shape) if n == 1]
-        else:
-            try:
-                iaxes = f.data._parse_axes(axes)
-            except ValueError as error:
-                raise ValueError(f"Can't squeeze data: {error}")
-
         data_axes = f.get_data_axes(default=None)
-        if data_axes is not None:
-            new_data_axes = [
-                data_axes[i] for i in range(f.data.ndim) if i not in iaxes
+        if data_axes is None:
+            return f
+
+        if axes is None:
+            domain_axes = f.domain_axes(todict=True)
+            axes = [
+                axis
+                for axis in data_axes
+                if domain_axes[axis].get_size(None) == 1
             ]
+        else:
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+
+            axes = [f.domain_axis(x, key=True) for x in axes]
+            axes = set(axes).intersection(data_axes)
+
+        iaxes = [data_axes.index(axis) for axis in axes]
+
+        new_data_axes = [
+            data_axes[i] for i in range(f.data.ndim) if i not in iaxes
+        ]
 
         # Squeeze the field's data array
         super(Field, f).squeeze(iaxes, inplace=True)
@@ -2832,14 +3161,21 @@ class Field(
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `insert_dimension`, `squeeze`
+        .. seealso:: `insert_dimension`, `squeeze`, `unsqueeze`
 
         :Parameters:
 
-            axes: (sequence of) `int`, optional
-                The new axis order. By default the order is reversed.
+            axes: sequence or `None`
+                Select the domain axis order, defined by the domain
+                axes that would be selected by passing each given axis
+                description to a call of the field construct's
+                `domain_axis` method. For example, for a value of
+                ``'time'``, the domain axis construct returned by
+                ``f.domain_axis('time')`` is selected.
 
-                {{axes int examples}}
+                Each dimension of the field construct's data must be
+                provided, or if *axes* is `None` (the default) then
+                the axis order is reversed.
 
             constructs: `bool`
                 If True then transpose the metadata constructs to have
@@ -2870,13 +3206,22 @@ class Field(
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        try:
-            iaxes = f.data._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError(f"Can't transpose data: {error}")
-
-        if iaxes is None:
+        if axes is None:
             iaxes = tuple(range(f.data.ndim - 1, -1, -1))
+        else:
+            data_axes = self.get_data_axes(default=())
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+
+            axes2 = [f.domain_axis(axis, key=True) for axis in axes]
+
+            if sorted(axes2) != sorted(data_axes):
+                raise ValueError(
+                    f"Can't transpose {self.__class__.__name__}: "
+                    f"Bad axis specification: {axes!r}"
+                )
+
+            iaxes = [data_axes.index(axis) for axis in axes2]
 
         data_axes = f.get_data_axes(default=None)
 
@@ -2994,5 +3339,58 @@ class Field(
             "field_ancillary", todict=True
         ).values():
             c.uncompress(inplace=True)
+
+        return f
+
+    @_inplace_enabled(default=False)
+    def unsqueeze(self, inplace=None):
+        """Insert size 1 axes into the data array.
+
+        All size 1 domain axes which are not spanned by the field
+        construct's data are inserted.
+
+        The axes are inserted into the slowest varying data array positions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `insert_dimension`, `squeeze`, `transpose`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Field` or `None`
+                The field construct with size-1 axes inserted in its
+                data, or `None` if the operation was in-place.
+
+        **Examples**
+
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> g = f.unsqueeze()
+        >>> print(g)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(time(1), latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        size_1_axes = self.domain_axes(filter_by_size=(1,), todict=True)
+        for axis in set(size_1_axes).difference(self.get_data_axes()):
+            f.insert_dimension(axis, position=0, inplace=True)
 
         return f

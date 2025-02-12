@@ -79,7 +79,7 @@ class FieldTest(unittest.TestCase):
         """Test the Field constructor and source keyword."""
         cfdm.Field(source="qwerty")
 
-    def test_Field___getitem__(self):
+    def test_Field__getitem__(self):
         """Test the access of field subspsaces from Field."""
         f = self.f1
         f = f.squeeze()
@@ -156,57 +156,16 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(IndexError):
             f[..., [False] * f.shape[-1]]
 
-    #    def test_Field___setitem__(self):
-    #        f = self.f.squeeze()
-    #
-    #        f[...] = 0
-    #        self.assertTrue((f.data.array == 0).all())
-    #
-    #        f[:, :] = 0
-    #        self.assertTrue((f.data.array == 0).all())
-    #
-    #
-    #        for indices in [
-    #                (slice(None)    , slice(None)),
-    #                (slice(3, 7)    , slice(None)),
-    #                (slice(None)    , slice(2, 5)),
-    #                (slice(3, 7)    , slice(2, 5)),
-    #                (slice(6, 2, -1), slice(4, 1, -1)),
-    #                (slice(2, 6)    , slice(4, 1, -1)),
-    #                ([0, 3, 8]      , [1, 7, 8]),
-    #                ([7, 4, 1]      , slice(6, 8)),
-    #        ]:
-    #            f[...] = 0
-    #            f[indices] = -1
-    #            array = f[indices].data.array
-    #            self.assertTrue((array == -1).all())
-    #
-    #            values, counts = np.unique(f.data.array, return_counts=True)
-    #            self.assertEqual(counts[0], array.size)
+    def test_Field_get_filenames(self):
+        """Test Field.get_filenames."""
+        cfdm.write(self.f0, tmpfile)
+        f = cfdm.read(tmpfile)[0]
 
-    #    def test_Field_get_filenames(self):
-    #        """Test the `get_filenames` Field method."""
-    #        cfdm.write(self.f0, tmpfile)
-    #        g = cfdm.read(tmpfile)[0]
-    #
-    #        abspath_tmpfile = os.path.abspath(tmpfile)
-    #        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
-    #
-    #        g.data[...] = -99
-    #        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
-    #
-    #        for c in g.constructs.filter_by_data().values():
-    #            c.data[...] = -99
-    #
-    #        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
-    #
-    #        for c in g.constructs.filter_by_data().values():
-    #            if c.has_bounds():
-    #                c.bounds.data[...] = -99
-    #
-    #        self.assertEqual(g.get_filenames(), set())
-    #
-    #        os.remove(tmpfile)
+        abspath_tmpfile = os.path.abspath(tmpfile)
+        self.assertEqual(f.get_filenames(), set([abspath_tmpfile]))
+
+        f.persist(inplace=True, metadata=True)
+        self.assertEqual(f.get_filenames(), set())
 
     def test_Field_apply_masking(self):
         """Test the `apply_masking` Field method."""
@@ -543,23 +502,36 @@ class FieldTest(unittest.TestCase):
         f.set_construct(cfdm.DomainAxis(0), key="")
         self.assertTrue(f.has_construct(""))
 
-    def test_Field_squeeze_transpose(self):
-        """Test squeeze and transpose methods."""
+    def test_Field_squeeze(self):
+        """Test Field.squeeze."""
+        f = self.f1
+
+        for axes in (None, "atmosphere_hybrid_height_coordinate"):
+            g = f.squeeze(axes)
+            self.assertEqual(g.data.shape, f.data.shape[1:])
+            self.assertEqual(g.get_data_axes(), f.get_data_axes()[1:])
+
+        self.assertIsNone(g.squeeze(inplace=True))
+
+    def test_Field_transpose(self):
+        """Test Field.transpose."""
         f = self.f1
 
         g = f.transpose()
         self.assertEqual(g.data.shape, f.data.shape[::-1])
         self.assertEqual(g.get_data_axes(), f.get_data_axes()[::-1])
 
-        g = f.squeeze()
-        self.assertEqual(g.data.shape, f.data.shape[1:])
-        self.assertEqual(
-            g.get_data_axes(),
-            f.get_data_axes()[1:],
-            (g.get_data_axes(), f.get_data_axes()),
+        g = g.transpose(
+            [
+                "atmosphere_hybrid_height_coordinate",
+                "grid_latitude",
+                "grid_longitude",
+            ]
         )
+        self.assertEqual(g.shape, f.shape)
+        self.assertEqual(g.get_data_axes(), f.get_data_axes())
 
-    def test_Field_insert_dimension(self):
+    def test_Field_AAAinsert_dimension(self):
         """Test cfdm.Field.insert_dimension method."""
         f = self.f1
         g = f.copy()
@@ -577,6 +549,14 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(g.cell_measure().ndim, 2)
         h = g.insert_dimension(None, constructs=True)
         self.assertEqual(h.cell_measure().ndim, 3)
+
+        f = f.squeeze()
+        array = f.array
+        for i in tuple(range(f.ndim + 1)) + tuple(range(-1, -f.ndim - 2, -1)):
+            self.assertEqual(
+                f.insert_dimension(None, i).shape,
+                np.expand_dims(array, i).shape,
+            )
 
     def test_Field_compress_uncompress(self):
         """Test the compress and uncompress Field methods."""
@@ -639,8 +619,8 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(f.equals(c, verbose=3), message)
 
     def test_Field_creation_commands(self):
-        """Test the `creation_commands` Field method."""
-        for i in range(7):
+        """Test the Field.creation_commands."""
+        for i in range(12):
             f = cfdm.example_field(i)
 
         f = self.f1
@@ -658,7 +638,7 @@ class FieldTest(unittest.TestCase):
             f.creation_commands(namespace=ns)
 
     def test_Field_has_geometry(self):
-        """Test the `creation_commands` Field method."""
+        """Test Field.has_geometry."""
         f = self.f1
         self.assertFalse(f.has_geometry())
 
@@ -667,7 +647,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_climatological_time_axes(self):
         """Test the `climatological_time_axes` method of Field."""
-        f = cfdm.example_field(0)
+        f = self.f0.copy()
         self.assertEqual(f.climatological_time_axes(), set())
 
         f.set_construct(
@@ -685,7 +665,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_bounds(self):
         """Test that Field instances do not have cell bounds."""
-        f = cfdm.example_field(0)
+        f = self.f0
         self.assertFalse(f.has_bounds())
 
     def test_Field_auxiliary_coordinate(self):
@@ -830,7 +810,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_indices(self):
         """Test Field.indices."""
-        f = cfdm.example_field(0)
+        f = self.f0
 
         g = f[f.indices(longitude=112.5)]
         self.assertEqual(g.shape, (5, 1))
@@ -866,7 +846,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_get_original_filenames(self):
         """Test Field.orignal_filenames."""
-        f = cfdm.example_field(0)
+        f = self.f0
         f._original_filenames(define=["file1.nc", "file2.nc"])
         x = f.coordinate("longitude")
         x._original_filenames(define=["file1.nc", "file3.nc"])
@@ -909,7 +889,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_hdf5_chunksizes(self):
         """Test the HDF5 chunk size methods of a Field."""
-        f = cfdm.example_field(0)
+        f = self.f0.copy()
 
         f.nc_set_hdf5_chunksizes({"latitude": 1})
         self.assertEqual(f.nc_hdf5_chunksizes(), (1, 8))
@@ -1011,6 +991,80 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(
             f.dimension_coordinate("latitude").nc_hdf5_chunksizes()
         )
+
+    def test_Field_concatenate(self):
+        """Test Field.concatenate."""
+        f = self.f1.copy()
+
+        g = cfdm.Field.concatenate([f.copy()], axis=0)
+        self.assertEqual(g.shape, (1, 10, 9))
+
+        x = [f.copy() for i in range(8)]
+
+        g = cfdm.Field.concatenate(x, axis=0)
+        self.assertEqual(g.shape, (8, 10, 9))
+
+        key = x[3].construct_key("latitude")
+        x[3].del_construct(key)
+        g = cfdm.Field.concatenate(x, axis=0)
+        self.assertEqual(g.shape, (8, 10, 9))
+
+        with self.assertRaises(Exception):
+            g = cfdm.Field.concatenate([], axis=0)
+
+    def test_Field_persist(self):
+        """Test Field.persist."""
+        f = self.f0.copy()
+        cfdm.write(f, tmpfile)
+        f = cfdm.read(tmpfile)[0]
+
+        for d in (f.data.todict(), f.coordinate("longitude").data.todict()):
+            on_disk = False
+            for v in d.values():
+                if isinstance(v, cfdm.data.abstract.FileArray):
+                    on_disk = True
+
+            self.assertTrue(on_disk)
+
+        g = f.persist()
+        d = g.data.todict()
+        in_memory = False
+        for v in d.values():
+            if isinstance(v, np.ndarray):
+                in_memory = True
+
+        self.assertTrue(in_memory)
+
+        d = g.coordinate("longitude").data.todict()
+        on_disk = False
+        for v in d.values():
+            if isinstance(v, cfdm.data.abstract.FileArray):
+                on_disk = True
+
+        self.assertTrue(on_disk)
+
+        # In-place and metdata
+        f = cfdm.read(tmpfile)[0]
+        self.assertIsNone(f.persist(metadata=True, inplace=True))
+        for d in (
+            f.data.todict(),
+            f.coordinate("longitude").data.todict(),
+        ):
+            in_memory = False
+            for v in d.values():
+                if isinstance(v, np.ndarray):
+                    in_memory = True
+
+            self.assertTrue(in_memory)
+
+    def test_Field_unsqueeze(self):
+        """Test Field.unsqueeze."""
+        f = self.f0.copy()
+        self.assertEqual(f.shape, (5, 8))
+        g = f.unsqueeze()
+        self.assertEqual(g.shape, (1, 5, 8))
+        self.assertIsNone(g.unsqueeze(inplace=True))
+        self.assertEqual(g.shape, (1, 5, 8))
 
 
 if __name__ == "__main__":

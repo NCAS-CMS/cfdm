@@ -26,6 +26,7 @@ from . import (
 )
 from .abstract import Implementation
 from .data import (
+    AggregatedArray,
     BoundsFromNodesArray,
     CellConnectivityArray,
     Data,
@@ -1346,19 +1347,27 @@ class CFDMImplementation(Implementation):
         """
         return field.get_data_axes()
 
-    def get_filenames(self, parent):
+    def get_filenames(self, parent, normalise=True):
         """Return the name of the file or files containing the data.
 
         :Parameters:
 
             parent:
 
+            normalise: `bool`, optional
+                If True (the default) then normalise the filenames by
+                applying any text substitutions and resolving the name
+                to an absolute path. If False then neither of these is
+                carried out.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
         :Returns:
 
             `set`
 
         """
-        return parent.get_filenames()
+        return parent.get_filenames(normalise=normalise)
 
     def get_data_max(self, parent):
         """Use `get_data_maximum` instead (since cfdm version 1.8.0)."""
@@ -1726,7 +1735,10 @@ class CFDMImplementation(Implementation):
         <Data(180, 2): [[0, ..., 359]] degrees_north>
 
         """
-        return parent.get_data(default=default)
+        try:
+            return parent.get_data(default=default)
+        except AttributeError:
+            return default
 
     def get_data_axes(self, parent, key, default=None):
         """Get domain axis identifiers.
@@ -1867,6 +1879,24 @@ class CFDMImplementation(Implementation):
         """
         cls = self.get_class("CellMethod")
         return cls(axes=axes, method=method, qualifiers=qualifiers)
+
+    def initialise_AggregatedArray(self, **kwargs):
+        """Return a `AggregatedArray` instance.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+        :Returns:
+
+            `AggregatedArray`
+
+        """
+        cls = self.get_class("AggregatedArray")
+        return cls(**kwargs)
 
     def initialise_CoordinateConversion(
         self, domain_ancillaries=None, parameters=None
@@ -3653,25 +3683,59 @@ class CFDMImplementation(Implementation):
         """
         return parent.has_property(prop)
 
-    def squeeze(self, construct, axes=None):
+    def squeeze(self, construct, axes=None, inplace=False):
         """Remove size 1 axes from construct data.
 
         :Parameters:
 
             construct:
+                The construct.
 
             axes: optional
+                The axes to squeeze. If `None` then all size 1 axes
+                are removed from the data.
+
+            inplace: `bool`, optional
+                If True then do the operation in-place and return
+                `None`.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
-                The construct with removed axes.
+                The construct with removed axes, or `None` if the
+                operation was in-place.
 
         """
-        return construct.squeeze(axes=axes)
+        return construct.squeeze(axes=axes, inplace=inplace)
+
+    def unsqueeze(self, field, inplace=False):
+        """Insert size 1 axes into the field data array.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            field: `Field`
+                The field construct.
+
+            inplace: `bool`, optional
+                If True then do the operation in-place and return
+                `None`.
+
+        :Returns:
+
+            `Field` or `None`
+                The field with inserted axes, or `None` if the
+                operation was in-place.
+
+        """
+        return field.unsqueeze(inplace=inplace)
 
 
 _implementation = CFDMImplementation(
     cf_version=CF(),
+    AggregatedArray=AggregatedArray,
     AuxiliaryCoordinate=AuxiliaryCoordinate,
     CellConnectivity=CellConnectivity,
     CellConnectivityArray=CellConnectivityArray,

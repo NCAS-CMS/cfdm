@@ -1,10 +1,21 @@
+Version NEXTVERSION
+----------------
+
+**2025-??-??**
+
+* Introduction of reading and writing of aggregation datasets (for
+  CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319)
+* Changed dependency: ``h5py>=3.12.0``
+
+----
+
 Version 1.11.2.0
 ----------------
 
 **2025-01-28**
 
 * Introduction of `dask` for all data manipulations
-  https://github.com/NCAS-CMS/cfdm/issues/317)
+  (https://github.com/NCAS-CMS/cfdm/issues/317)
 * Fix bug that returned incorrect results when an invalid identifer is
   provided to `cf.Field.cell_methods`
   (https://github.com/NCAS-CMS/cfdm/issues/299)
@@ -34,6 +45,7 @@ Version 1.11.2.0
 * New dependency: ``h5py>=3.10.0``
 * New dependency: ``s3fs>=2024.6.0``
 * New dependency: ``dask>=2024.6.0,<=2024.7.1``
+* New dependency: ``uritools>=4.0.3``
 * Removed dependency: ``netcdf_flattener``
 
 ----

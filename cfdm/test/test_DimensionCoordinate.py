@@ -45,6 +45,8 @@ class DimensionCoordinateTest(unittest.TestCase):
     bounds.set_data(cfdm.Data(b))
     dim.set_bounds(bounds)
 
+    f0 = cfdm.example_field(0)
+
     def setUp(self):
         """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
@@ -110,14 +112,14 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     def test_DimensiconCoordinate_array(self):
         """Test the `DimensionCoordinate.array` method."""
-        f = cfdm.example_field(0)
+        f = self.f0
         t = f.construct("time")
         self.assertEqual(t.array, 31)
         self.assertEqual(t.array, t.data.array)
 
     def test_DimensiconCoordinate_datetime_array(self):
         """Test the `DimensionCoordinate.datetime_array` method."""
-        f = cfdm.example_field(0)
+        f = self.f0
         t = f.construct("time")
         self.assertEqual(
             t.datetime_array,
