@@ -191,7 +191,7 @@ class AggregatedArray(abstract.FileArray):
 
         :Returns:
 
-            `False`
+            `bool`
 
         """
         return False
