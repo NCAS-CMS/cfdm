@@ -658,8 +658,8 @@ class write(ReadWrite):
               *Example:*
                 Equivalent ways to only write cell measure constructs
                 as aggregation variables: ``{'constructs':
-                'cell_measure``, ``{'constructs': ['cell_measure']}``,
-                ``{'cell_measure': None}}``.
+                'cell_measure'}``, ``{'constructs': ['cell_measure']}``,
+                ``{'cell_measure': None}``.
 
               *Example:*
                 Equivalent ways to only write field and auxiliary
