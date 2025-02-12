@@ -253,7 +253,7 @@ _docstring_substitution_definitions = {
             so older datasets automatically contain no CF-netCDF
             domain variables.
 
-            The unique domain constructs of the dataset are easily
+            The unique domain constructs of the dataset are
             found with the `{{package}}.unique_constructs`
             function. For example::
 
