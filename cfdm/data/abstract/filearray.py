@@ -365,7 +365,7 @@ class FileArray(Array):
                 *parsed_filename* parameter has been set.
 
             parsed_filename: `urllib.parse.ParseResult`, optional
-                Used to set the ``'endpoint_url'`` dif it has was not
+                Used to set the ``'endpoint_url'`` if it has was not
                 set during object initialisation and
                 *create_endpoint_url* is True. Ignored if the
                 *filename* parameter has been set.
