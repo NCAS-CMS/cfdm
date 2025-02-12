@@ -316,8 +316,8 @@ class NetCDF4ArrayTest(unittest.TestCase):
         )
 
         n = cfdm.NetCDF4Array("path/basename.nc")
-        m = n.replace_directory('path', '../new_path')
-        self.assertEqual(m.get_filename(), '../new_path/basename.nc')
+        m = n.replace_directory("path", "../new_path")
+        self.assertEqual(m.get_filename(), "../new_path/basename.nc")
 
         n = cfdm.NetCDF4Array("/data/../new_path/basename.nc")
         m = n.replace_directory("/new_path/", normalise=True)

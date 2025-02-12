@@ -6303,15 +6303,11 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            {{old: `str` or `None`, optional}}
+            {{replace old: `str` or `None`, optional}}
 
-            {{new: `str` or `None`, optional}}
+            {{replace new: `str` or `None`, optional}}
 
-            normalise: `bool`, optional
-                If True then *old* and *new* directories, and the file
-                names, are normalised to absolute paths prior to the
-                replacement. If False (the default) then no
-                normalisation is done.
+            {{replace normalise: `bool`, optional}}
 
             common: `bool`, optional
                 If True the base directory structure that is common to

@@ -485,15 +485,11 @@ class FileArray(Array):
 
         :Parameters:
 
-            {{old: `str` or `None`, optional}}
+            {{replace old: `str` or `None`, optional}}
 
-            {{new: `str` or `None`, optional}}
+            {{replace new: `str` or `None`, optional}}
 
-            normalise: `bool`, optional
-                If True then *old*, *new*, and the file name are
-                normalised to absolute paths prior to the
-                replacement. If False (the default) then no
-                normalisation is done.
+            {{replace normalise: `bool`, optional}}
 
         :Returns:
 
@@ -559,7 +555,7 @@ class FileArray(Array):
             elif new:
                 if filename.startswith(sep):
                     filename = filename[1:]
-                 
+
                 filename = join(new, filename)
 
         a._set_component("filename", filename, copy=False)

@@ -2733,9 +2733,9 @@ class Field(
 
         :Parameters:
 
-            {{old: `str` or `None`, optional}}
+            {{replace old: `str` or `None`, optional}}
 
-            {{new: `str` or `None`, optional}}
+            {{replace new: `str` or `None`, optional}}
 
             {{replace normalise: `bool`, optional}}
 
