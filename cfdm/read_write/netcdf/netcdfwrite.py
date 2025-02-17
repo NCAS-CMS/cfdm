@@ -5634,7 +5634,7 @@ class NetCDFWrite(IOWrite):
 
             cfvar:
                 Construct (e.g. `DimensionCoordinate`), or construct
-                component e.g. (`Bounds`) contains the data.
+                component e.g. (`Bounds`) that contains the data.
 
             construct_type: `str`
                 The construct type of the *cfvar*, or of its parent if
@@ -5721,7 +5721,7 @@ class NetCDFWrite(IOWrite):
 
         :Returns:
 
-            `None`
+            `True`
 
         """
         g = self.write_vars
@@ -5903,7 +5903,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `numpy.ndarray`
-                The string array array with any missing data replaced
+                The string array with any missing data replaced
                 by the fill value.
 
         """
@@ -5971,7 +5971,7 @@ class NetCDFWrite(IOWrite):
     def _cfa_unique_value(cls, a, strict=True):
         """Return the unique value of an array.
 
-        If there are multiple unique vales then missing data is
+        If there are multiple unique values then missing data is
         returned.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -5983,7 +5983,7 @@ class NetCDFWrite(IOWrite):
 
              strict: `bool`, optional
                  If True then raise an exception if there is more than
-                 one unique value. If False the a unique value of
+                 one unique value. If False then a unique value of
                  missing data will be returned in this case.
 
         :Returns:

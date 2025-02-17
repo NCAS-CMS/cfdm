@@ -402,7 +402,7 @@ class GroupsTest(unittest.TestCase):
 
     def test_groups_dimension(self):
         """Test the dimensions of hierarchical groups."""
-        f = self.f0.copy()  # TODOCFA copy necessary?
+        f = self.f0.copy()
 
         ungrouped_file = ungrouped_file4
         grouped_file = grouped_file4

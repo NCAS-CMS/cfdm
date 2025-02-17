@@ -15,7 +15,9 @@ class FullArray(IndexMixin, Array):
 
     """
 
-    _ARRAY_HANDLED_FUNCTIONS = Array._ARRAY_HANDLED_FUNCTIONS.copy()
+    # Copy the numpy handled functions (numpy NEP 18) so that they can
+    # be added to locally.
+    _HANDLED_FUNCTIONS = Array._HANDLED_FUNCTIONS.copy()
 
     def __init__(
         self,
@@ -196,7 +198,7 @@ class FullArray(IndexMixin, Array):
 
 
 # --------------------------------------------------------------------
-# __array_function__ implementations
+# __array_function__ implementations (numpy NEP 18)
 # --------------------------------------------------------------------
 @array_implements(FullArray, np.unique)
 def unique(

@@ -845,12 +845,29 @@ def rt2dt(array, units_in):
     units = units_in.units
     calendar = getattr(units_in, "calendar", "standard")
 
+    if np.ma.isMA(array):
+        # Note: We're going to apply `cftime.num2date` to a non-masked
+        #       array and the reset the mask afterwards, because numpy
+        #       currently (numpy==2.2.3) has a bug that produces a
+        #       RuntimeWarning: "numpy/ma/core.py:502: RuntimeWarning:
+        #       invalid value encountered in cast fill_value =
+        #       np.asarray(fill_value, dtype=ndtype)". See
+        #       https://github.com/numpy/numpy/issues/28255 for more
+        #       details.
+        mask = array.mask
+        array = np.array(array)
+    else:
+        mask = None
+
     array = cftime.num2date(
         array, units, calendar, only_use_cftime_datetimes=True
     )
 
     if not isinstance(array, np.ndarray):
         array = np.array(array, dtype=object)
+
+    if mask is not None:
+        array = np.ma.array(array, mask=mask)
 
     return array
 

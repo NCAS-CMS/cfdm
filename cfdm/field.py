@@ -1425,7 +1425,7 @@ class Field(
     def concatenate(
         cls, fields, axis, cull_graph=False, relaxed_units=False, copy=True
     ):
-        """Join together a sequence of Field constricts`.
+        """Join together a sequence of Field constructs.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1941,7 +1941,7 @@ class Field(
 
             constructs: `bool`, optional
                 If True (the default) then add also the directory to
-                the data of metadata constructs. IF False then don't
+                the data of metadata constructs. If False then don't
                 do this.
 
         :Returns:
@@ -2319,7 +2319,7 @@ class Field(
                 returned by ``f.domain_axis('time')`` is selected.
 
                 If *axis* is `None` then a new domain axis construct
-                will created for the inserted dimension.
+                will be created for the inserted dimension.
 
             position: `int`, optional
                 Specify the position that the new axis will have in
@@ -2669,8 +2669,8 @@ class Field(
         :Returns:
 
             `Field` or `None`
-                The field construct with persisted. If the operation
-                was in-place then `None` is returned.
+                The field construct with persisted data. If the
+                operation was in-place then `None` is returned.
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
@@ -2733,15 +2733,19 @@ class Field(
 
         :Parameters:
 
-            old_directory: `str`
-                The new directory to be replaced.
+            {{replace old: `str` or `None`, optional}}
 
-            new_directory: `str`
-                The new directory.
+            {{replace new: `str` or `None`, optional}}
+
+            {{replace normalise: `bool`, optional}}
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
 
             constructs: `bool`, optional
                 If True (the default) then add also the directory to
-                the data of metadata constructs. IF False then don't
+                the data of metadata constructs. If False then don't
                 do this.
 
         :Returns:

@@ -4,7 +4,9 @@ Version NEXTVERSION
 **2025-??-??**
 
 * Introduction of reading and writing of aggregation datasets (for
-  CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319
+  CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319)
+* Changed dependency: ``h5py>=3.12.0``
+* Changed dependency: ``dask>=2025.12.0``
 
 ----
 
@@ -34,6 +36,9 @@ Version 1.11.2.0
 * Fix bug that caused `cfdm.write` to fail when a parametric Z
   dimension coordinate did not have a ``computed_standard_name``
   attribute (https://github.com/NCAS-CMS/cfdm/issues/303)
+* Fix bug that caused `cfdm.read` to fail to read at all
+  datasets including variables with badly-encoded UGRID meshes
+  (https://github.com/NCAS-CMS/cfdm/issues/315)
 * New class `cfdm.H5netcdfArray`
 * New class `cfdm.NetCDF4Array`
 * Changed dependency: ``numpy>=2.0.0``

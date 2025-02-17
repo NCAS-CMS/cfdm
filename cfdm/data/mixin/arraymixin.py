@@ -11,7 +11,8 @@ class ArrayMixin:
 
     """
 
-    _ARRAY_HANDLED_FUNCTIONS = {}
+    # Numpy handled functions (numpy NEP 18)
+    _HANDLED_FUNCTIONS = {}
 
     def __array__(self, dtype=None, copy=None):
         """The numpy array interface.
@@ -53,10 +54,12 @@ class ArrayMixin:
     def __array_function__(self, func, types, args, kwargs):
         """Implement the `numpy` ``__array_function__`` protocol.
 
+        See numpy NEP 18 for details.
+
         .. versionadded:: (cfdm) 1.11.2.0
 
         """
-        if func not in self._ARRAY_HANDLED_FUNCTIONS:
+        if func not in self._HANDLED_FUNCTIONS:
             return NotImplemented
 
         # Note: This allows subclasses that don't override
@@ -64,7 +67,7 @@ class ArrayMixin:
         if not all(issubclass(t, self.__class__) for t in types):
             return NotImplemented
 
-        return self._ARRAY_HANDLED_FUNCTIONS[func](*args, **kwargs)
+        return self._HANDLED_FUNCTIONS[func](*args, **kwargs)
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed subarray.
@@ -257,7 +260,7 @@ class ArrayMixin:
 
 
 # --------------------------------------------------------------------
-# __array_function__ implementations
+# __array_function__ implementations (numpy NEP 18)
 # --------------------------------------------------------------------
 def array_implements(cls, numpy_function):
     """An __array_function__ implementation for `Array` objects.
@@ -267,7 +270,7 @@ def array_implements(cls, numpy_function):
     """
 
     def decorator(func):
-        cls._ARRAY_HANDLED_FUNCTIONS[numpy_function] = func
+        cls._HANDLED_FUNCTIONS[numpy_function] = func
         return func
 
     return decorator

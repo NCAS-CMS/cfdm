@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from functools import reduce
 from math import log, nan, prod
 from numbers import Integral
+from pprint import pformat
 from typing import Any
 from uuid import uuid4
 
@@ -576,7 +577,7 @@ class NetCDFRead(IORead):
 
             error = "\n\n".join(errors)
             raise DatasetTypeError(
-                f"Can't interpret {filename} as a netCDF dataset"
+                f"Can't interpret {filename} as a netCDF dataset "
                 f"with any of the netCDF backends {netcdf_backend!r}:\n\n"
                 f"{error}"
             )
@@ -3996,9 +3997,13 @@ class NetCDFRead(IORead):
                     ugrid = False
                     logger.warning(
                         "There was a problem parsing the UGRID mesh "
-                        f"topology variable {mesh.mesh_ncvar!r}: "
-                        f"Ignoring the UGRID mesh for {field_ncvar!r}."
+                        "topology variable. Ignoring the UGRID mesh "
+                        f"for {field_ncvar!r}."
                     )
+                    if is_log_level_debug(logger):
+                        logger.debug(
+                            f"Mesh dictionary is: {pformat(g['mesh'])}"
+                        )
 
             if ugrid:
                 # The UGRID specification is OK, so get the auxiliary

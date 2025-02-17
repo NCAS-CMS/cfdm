@@ -181,7 +181,7 @@ class FragmentFileArray(
             except Exception as error:  # noqa: F841
                 errors.append(
                     f"{FragmentArray().__class__.__name__}:\n"
-                    "{error.__class__.__name__}: {error}"
+                    f"{error.__class__.__name__}: {error}"
                 )
             else:
                 return array

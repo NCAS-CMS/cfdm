@@ -14,6 +14,7 @@ import numpy as np
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
+from cfdm.functions import DeprecationError
 
 # To facilitate the testing of logging outputs (see comment tag
 # 'Logging note')
@@ -69,7 +70,7 @@ class DataTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
         )
 
-        expexted_warning_msgs = [
+        expected_warning_msgs = [
             "divide by zero encountered in " + np_method
             for np_method in (
                 "arctanh",
@@ -89,7 +90,7 @@ class DataTest(unittest.TestCase):
                 "true_divide",
             )
         ]
-        for expected_warning in expexted_warning_msgs:
+        for expected_warning in expected_warning_msgs:
             warnings.filterwarnings(
                 "ignore", category=RuntimeWarning, message=expected_warning
             )
@@ -1442,6 +1443,10 @@ class DataTest(unittest.TestCase):
         self.assertIsInstance(x, dict)
         self.assertIn((key, 0), x)
         self.assertIn((key, 1), x)
+
+        # Deprecated kwargs
+        with self.assertRaises(DeprecationError):
+            d.todict(optimize_graph=True)
 
     def test_Data_to_dask_array(self):
         """Test Data.to_dask_array."""

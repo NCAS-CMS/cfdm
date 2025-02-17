@@ -250,10 +250,12 @@ class netcdf_indexer:
             #      =>  index1: (1, slice(1, 5))
             #      and index2: (slice(None), np.newaxis, slice(None))
         except ValueError:
-            # Something went wrong (e.g. `h5netcdf` might have
-            # returned "ValueError: Step must be >= 1 (got -2)"), so
-            # we'll just get the entire array as a numpy array, and
-            # then try indexing that.
+            # Something went wrong, which is indicative of the
+            # variable not supporting the appropriate slicing method
+            # (e.g. `h5netcdf` might have returned "ValueError: Step
+            # must be >= 1 (got -2)"). Therefore we'll just get the
+            # entire array as a numpy array, and then try indexing
+            # that.
             data = self._index(Ellipsis)
             data = self._index(index, data=data)
 

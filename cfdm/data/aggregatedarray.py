@@ -191,7 +191,7 @@ class AggregatedArray(abstract.FileArray):
 
         :Returns:
 
-            `False`
+            `bool`
 
         """
         return False
@@ -301,7 +301,7 @@ class AggregatedArray(abstract.FileArray):
         The aggregation data dictionary contains the definitions of
         the fragments and the instructions on how to aggregate them.
         The keys are indices of the fragment array dimensions,
-        e.g. ``(1, 0, 0 ,0)``.
+        e.g. ``(1, 0, 0, 0)``.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -375,7 +375,7 @@ class AggregatedArray(abstract.FileArray):
         """The type of fragments in the fragment array.
 
         Either ``'location'`` to indicate that the fragments are
-        files, or else ``'unique_value'`` to indicate that the they
+        files, or else ``'unique_value'`` to indicate that they
         are represented by their unique data values.
 
         .. versionadded:: (cfdm) NEXTVERSION

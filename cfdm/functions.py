@@ -34,6 +34,10 @@ _docstring_substitution_definitions = _subs
 del _subs
 
 
+class DeprecationError(Exception):
+    pass
+
+
 def configuration(
     atol=None,
     rtol=None,
@@ -490,7 +494,7 @@ def abspath(path, uri=None):
     '/data/file.nc'
     >>> cfdm.abspath('file:///file.nc')
     'file:///file.nc'
-    >>> cfdm.abspath('file://file.nc'),
+    >>> cfdm.abspath('file://file.nc')
     'file:///data/archive'
     >>> cfdm.abspath('file:/file.nc')
     'file:///file.nc'
@@ -586,7 +590,7 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
             a file.
 
         sep: `bool`, optional
-            Set to True to add a trailing path seperator to the
+            Set to True to add a trailing path separator to the
             returned directory.
 
     :Returns:
@@ -2314,7 +2318,7 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
         if not newaxis and index is np.newaxis:
             raise IndexError(
-                "Invalid indices {indices!r} for array with shape {shape}: "
+                f"Invalid indices {indices!r} for array with shape {shape}: "
                 "New axis indices are not allowed"
             )
 
@@ -2334,3 +2338,31 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
         parsed_indices[i] = index
 
     return parsed_indices
+
+
+def _DEPRECATION_ERROR_KWARGS(
+    instance,
+    method,
+    kwargs=None,
+    message="",
+    version=None,
+    removed_at=None,
+):
+    """Error handling for deprecated kwargs.
+
+    .. versionadded:: NEXTVERSION
+
+    """
+    if removed_at:
+        removed_at = f" and will be removed at cfdm version {removed_at}"
+
+    if not kwargs:
+        kwargs = {}
+
+    for key in kwargs:
+        raise DeprecationError(
+            f"Keyword {key!r} of method "
+            f"'{instance.__class__.__name__}.{method}' has been deprecated "
+            f"at cfdm version {version} and is no longer "
+            f"available{removed_at}. {message}"
+        )
