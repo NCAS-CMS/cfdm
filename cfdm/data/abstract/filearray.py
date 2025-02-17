@@ -204,7 +204,7 @@ class FileArray(Array):
 
         **Examples**
 
-        >>> n = numpy.asanyarray(a)
+        >>> n = {{package}}.{{class}}.array(a)
         >>> isinstance(n, numpy.ndarray)
         True
 
@@ -351,20 +351,24 @@ class FileArray(Array):
 
             create_endpoint_url: `bool`, optional
                 If True, the default, then create an
-                ``'endpoint_url'`` option if and only if one has not
-                already been provided. See *filename* and
-                *parsed_filename* for details.
+                ``'endpoint_url'`` option if and only if one was not
+                set during object initialisation. In this case the
+                ``'endpoint_url'`` will be set from the file name
+                returned by `get_filename`, unless either of the
+                *filename* or *parsed_filename* parameters is also
+                set.
 
             filename: `str`, optional
-                Used to set the ``'endpoint_url'`` option if it has
-                not been previously defined. Ignored if
-                *parsed_filename* has been set.
+                Used to set the ``'endpoint_url'`` if it was not
+                set during object initialisation and
+                *create_endpoint_url* is True. Ignored if the
+                *parsed_filename* parameter has been set.
 
             parsed_filename: `urllib.parse.ParseResult`, optional
-                Used to set the ``'endpoint_url'`` option if it has
-                not been previously defined. By default the
-                ``'endpoint_url'`` option, if required, is set from
-                the file name returned by `get_filename`.
+                Used to set the ``'endpoint_url'`` if it was not
+                set during object initialisation and
+                *create_endpoint_url* is True. Ignored if the
+                *filename* parameter has been set.
 
         :Returns:
 
@@ -481,23 +485,11 @@ class FileArray(Array):
 
         :Parameters:
 
-            old: `str` or `None`, optional
-                The base directory structure to be replaced by
-                *new*. If `None` (the default) or an empty string, and
-                *normalise* is False, then *new* is prepended to each
-                file name.
+            {{replace old: `str` or `None`, optional}}
 
-            new: `str` or `None`, optional
-                The new directory that replaces the base directory
-                structure identified by *old*. If `None` (the default)
-                or an empty string, then *old* is replaced with an
-                empty string. Otherwise,
+            {{replace new: `str` or `None`, optional}}
 
-            normalise: `bool`, optional
-                If True then *old*, *new*, and the file name are
-                normalised to absolute paths prior to the
-                replacement. If False (the default) then no
-                normalisation is done.
+            {{replace normalise: `bool`, optional}}
 
         :Returns:
 
@@ -561,6 +553,9 @@ class FileArray(Array):
 
                     filename = filename.replace(old, new)
             elif new:
+                if filename.startswith(sep):
+                    filename = filename[1:]
+
                 filename = join(new, filename)
 
         a._set_component("filename", filename, copy=False)

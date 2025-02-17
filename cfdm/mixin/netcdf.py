@@ -4617,7 +4617,7 @@ class NetCDFAggregation(NetCDFMixin):
         """Remove the netCDF aggregated_data terms.
 
         The aggregated data terms define the names of the fragment
-        array variables, and are stored in the a netCDF file in an
+        array variables, and are stored in a netCDF file in an
         "aggregated_data" attribute.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -4671,7 +4671,7 @@ class NetCDFAggregation(NetCDFMixin):
         """Return the netCDF aggregated data terms.
 
         The aggregated data terms define the names of the fragment
-        array variables, and are stored in the a netCDF file in an
+        array variables, and are stored in a netCDF file in an
         "aggregated_data" attribute.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -4725,7 +4725,7 @@ class NetCDFAggregation(NetCDFMixin):
         """Whether any netCDF aggregated_data terms have been set.
 
         The aggregated data terms define the names of the fragment
-        array variables, and are stored in the a netCDF file in an
+        array variables, and are stored in a netCDF file in an
         "aggregated_data" attribute.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -4774,7 +4774,7 @@ class NetCDFAggregation(NetCDFMixin):
         """Set the netCDF aggregated_data elements.
 
         The aggregated data terms define the names of the fragment
-        array variables, and are stored in the a netCDF file in an
+        array variables, and are stored in a netCDF file in an
         "aggregated_data" attribute.
 
         If there are any ``/`` (slash) characters in the netCDF

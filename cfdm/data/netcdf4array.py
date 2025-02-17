@@ -103,7 +103,7 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
 
             groups: sequence of `str`
                 The definition of which group the variable is in. For
-                instance, of the variable is in group
+                instance, if the variable is in group
                 ``/forecast/model`` then *groups* would be
                 ``['forecast', 'model']``.
 
