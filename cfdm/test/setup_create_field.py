@@ -227,7 +227,7 @@ class create_fieldTest(unittest.TestCase):
             "Field f not equal to a copy of itself",
         )
 
-        cfdm.write(f, self.filename, fmt="NETCDF3_CLASSIC", verbose=verbose)
+        cfdm.write(f, self.filename, verbose=verbose)
 
         g = cfdm.read(self.filename, verbose=1)
 

@@ -278,10 +278,10 @@ def convert_to_reftime(a, units=None, first_value=None):
             An array of string or object date-times
 
         units: `Units`, optional
-             Specify the units for the output reference time
-             values. By default the units are inferred from the first
-             non-missing value in the array, or set to ``<Units: days
-             since 1970-01-01 gregorian>`` if all values are missing.
+            Specify the units for the output reference time values. By
+            default the units are inferred from the first non-missing
+            value in the array, or set to ``<Units: days since
+            1970-01-01 gregorian>`` if all values are missing.
 
         first_value: optional
             If set, then assumed to be equal to the first non-missing
@@ -567,6 +567,48 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
     return axis
 
 
+def chunk_indices(chunks):
+    """Return indices that define each dask chunk.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    .. seealso:: `chunks`
+
+    :Parameters:
+
+        chunks: `tuple`
+            The chunk sizes along each dimension, as output by
+            `dask.array.Array.chunks`.
+
+    :Returns:
+
+        `itertools.product`
+            An iterator over tuples of indices of the data array.
+
+    **Examples**
+
+    >>> chunks = ((1, 2), (9,), (4, 5, 6)))
+    >>> for index in cfdm.data.utils.chunk_indices():
+    ...     print(index)
+    ...
+    (slice(0, 1, None), slice(0, 9, None), slice(0, 4, None))
+    (slice(0, 1, None), slice(0, 9, None), slice(4, 9, None))
+    (slice(0, 1, None), slice(0, 9, None), slice(9, 15, None))
+    (slice(1, 3, None), slice(0, 9, None), slice(0, 4, None))
+    (slice(1, 3, None), slice(0, 9, None), slice(4, 9, None))
+    (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None))
+
+    """
+    from dask.utils import cached_cumsum
+
+    cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
+    indices = [
+        [slice(s, s + dim) for s, dim in zip(starts, shapes)]
+        for starts, shapes in zip(cumdims, chunks)
+    ]
+    return product(*indices)
+
+
 def chunk_positions(chunks):
     """Find the position of each chunk.
 
@@ -582,7 +624,7 @@ def chunk_positions(chunks):
 
     **Examples**
 
-    >>> chunks = ((1, 2), (9,), (44, 55, 66))
+    >>> chunks = ((1, 2), (9,), (4, 5, 6))
     >>> for position in cfdm.data.utils.chunk_positions(chunks):
     ...     print(position)
     ...

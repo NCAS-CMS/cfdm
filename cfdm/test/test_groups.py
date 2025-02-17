@@ -46,6 +46,8 @@ atexit.register(_remove_tmpfiles)
 class GroupsTest(unittest.TestCase):
     """Test treatment of netCDF4 files with hierarchical groups."""
 
+    f0 = cfdm.example_field(0)
+
     def _check_h5netcdf_groups(self, h5, nc):
         """Check that an h5netcdf read gives same results as netCDF4.
 
@@ -400,7 +402,7 @@ class GroupsTest(unittest.TestCase):
 
     def test_groups_dimension(self):
         """Test the dimensions of hierarchical groups."""
-        f = cfdm.example_field(0)
+        f = self.f0.copy()
 
         ungrouped_file = ungrouped_file4
         grouped_file = grouped_file4

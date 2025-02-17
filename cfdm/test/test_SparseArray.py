@@ -1,17 +1,22 @@
-import copy
 import datetime
 import faulthandler
 import unittest
 
 import numpy as np
+from scipy.sparse import coo_array
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
+row = np.array([0, 3, 1, 0])
+col = np.array([0, 3, 1, 2])
+data = np.array([4, 5, 7, 9])
+s = coo_array((data, (row, col)), shape=(4, 4))
 
-class NumpyArrayTest(unittest.TestCase):
-    """Unit test for the NumpyArray class."""
+
+class SparseArrayTest(unittest.TestCase):
+    """Unit test for the SparseArray class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -25,33 +30,25 @@ class NumpyArrayTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-    def test_NumpyArray_copy(self):
-        """Test the copy module copying behaviour of NumpyArray."""
-        a = np.array([1, 2, 3, 4])
+    def test_SparseArray_copy(self):
+        """Test the copy module copying behaviour of SparseArray."""
+        x = cfdm.SparseArray(s)
+        self.assertTrue((s.toarray() == x.array).all())
 
-        x = cfdm.NumpyArray(a)
-        y = copy.deepcopy(x)
-        self.assertTrue((x.array == a).all())
-        self.assertTrue((x.array == y.array).all())
+    def test_SparseArray__array__(self):
+        """Test the numpy array conversion of SparseArray."""
+        x = cfdm.SparseArray(s)
+        self.assertTrue((np.array(x) == x.array).all())
 
-    def test_NumpyArray__array__(self):
-        """Test the NumPy array conversion of NumpyArray."""
-        a = np.array([1, 2, 3, 4])
-
-        x = cfdm.NumpyArray(a)
-
-        b = np.array(x)
-        self.assertTrue((b == a).all())
-
-    def test_NumpyArray_get_filename(self):
-        """Test NumpyArray.get_filename."""
-        x = cfdm.NumpyArray()
+    def test_SparseArray_get_filename(self):
+        """Test SparseArray.get_filename."""
+        x = cfdm.SparseArray()
         with self.assertRaises(AttributeError):
             x.get_filename()
 
-    def test_NumpyArray_get_filenames(self):
-        """Test NumpyArray.get_filenames."""
-        x = cfdm.NumpyArray()
+    def test_SparseArray_get_filenames(self):
+        """Test SparseArray.get_filenames."""
+        x = cfdm.SparseArray()
         with self.assertRaises(AttributeError):
             x.get_filenames()
 

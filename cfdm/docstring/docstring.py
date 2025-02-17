@@ -119,6 +119,540 @@ _docstring_substitution_definitions = {
         was produced by combining other objects that also store their
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
+    # read external
+    "{{read external: (sequence of) `str`, optional}}": """external: (sequence of) `str`, optional
+            Read external variables (i.e. variables which are named by
+            attributes, but are not present, in the parent file given
+            by the *filename* parameter) from the given external
+            files. Ignored if the parent file does not contain a
+            global ``external_variables`` attribute. Multiple external
+            files may be provided, which are searched in random order
+            for the required external variables.
+
+            If an external variable is not found in any external
+            files, or is found in multiple external files, then the
+            relevant metadata construct is still created, but without
+            any metadata or data. In this case the construct's
+            `!is_external` method will return `True`.
+
+            *Parameter example:*
+              ``external='cell_measure.nc'``
+
+            *Parameter example:*
+              ``external=['cell_measure.nc']``
+
+            *Parameter example:*
+              ``external=('cell_measure_A.nc', 'cell_measure_O.nc')``""",
+    # read extra
+    "{{read extra: (sequence of) `str`, optional}}": """extra: (sequence of) `str`, optional
+            Create extra, independent fields from netCDF variables
+            that correspond to particular types of metadata constructs.
+            Ignored if *domain* is True.
+
+            The *extra* parameter may be one, or a sequence, of:
+
+            ==========================  ===============================
+            *extra*                     Metadata constructs
+            ==========================  ===============================
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ==========================  ===============================
+
+            *Parameter example:*
+              To create fields from auxiliary coordinate constructs:
+              ``extra='auxiliary_coordinate'`` or
+              ``extra=['auxiliary_coordinate']``.
+
+            *Parameter example:*
+              To create fields from domain ancillary and cell measure
+              constructs: ``extra=['domain_ancillary',
+              'cell_measure']``.
+
+            An extra field construct created via the *extra* parameter
+            will have a domain limited to that which can be inferred
+            from the corresponding netCDF variable, but without the
+            connections that are defined by the parent netCDF data
+            variable. It is possible to create independent fields from
+            metadata constructs that do incorporate as much of the
+            parent field construct's domain as possible by using the
+            `~{{package}}.Field.convert` method of a returned field
+            construct, instead of setting the *extra* parameter.""",
+    # read verbose
+    "{{read verbose: `int` or `str` or `None`, optional}}": """verbose: `int` or `str` or `None`, optional
+            If an integer from ``-1`` to ``3``, or an equivalent string
+            equal ignoring case to one of:
+
+            * ``'DISABLE'`` (``0``)
+            * ``'WARNING'`` (``1``)
+            * ``'INFO'`` (``2``)
+            * ``'DETAIL'`` (``3``)
+            * ``'DEBUG'`` (``-1``)
+
+            set for the duration of the method call only as the
+            minimum cut-off for the verboseness level of displayed
+            output (log) messages, regardless of the
+            globally-configured `{{package}}.log_level`.  Note that
+            increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case
+            of maximal and extreme verbosity.
+
+            Otherwise, if `None` (the default value), output messages
+            will be shown according to the value of the
+            `{{package}}.log_level` setting.
+
+            Overall, the higher a non-negative integer or equivalent string
+            that is set (up to a maximum of ``3``/``'DETAIL'``) for
+            increasing verbosity, the more description that is printed to
+            convey how the contents of the netCDF file were parsed and
+            mapped to CF data model constructs.""",
+    # read warnings
+    "{{read warnings: `bool`, optional}}": """warnings: `bool`, optional
+            If True then print warnings when an output field construct
+            is incomplete due to structural non-compliance of the
+            dataset. By default such warnings are not displayed.""",
+    # read warn_valid
+    "{{read warn_valid: `bool`, optional}}": """warn_valid: `bool`, optional
+            If True then print a warning for the presence of
+            ``valid_min``, ``valid_max`` or ``valid_range`` properties
+            on field constructs and metadata constructs that have
+            data. By default no such warning is issued.
+
+            "Out-of-range" data values in the file, as defined by any
+            of these properties, are automatically masked by default,
+            which may not be as intended. See the *mask* parameter for
+            turning off all automatic masking.""",
+    # read mask
+    "{{read mask: `bool`, optional}}": """mask: `bool`, optional
+            If True (the default) then mask by convention the data of
+            field and metadata constructs.
+
+            A netCDF array is masked depending on the values of any of
+            the netCDF attributes ``_FillValue``, ``missing_value``,
+            ``_Unsigned``, ``valid_min``, ``valid_max``, and
+            ``valid_range``.""",
+    # read unpack
+    "{{read unpack: `bool`}}": """unpack: `bool`
+            If True, the default, then unpack arrays by convention
+            when the data is read from disk.
+
+            Unpacking is determined by netCDF conventions for the
+            following variable attributes: ``add_offset``,
+            ``scale_factor``, and ``_Unsigned``.""",
+    # read domain
+    "{{read domain: `bool`, optional}}": """domain: `bool`, optional
+            If True then return only the domain constructs that are
+            explicitly defined by CF-netCDF domain variables, ignoring
+            all CF-netCDF data variables. By default only the field
+            constructs defined by CF-netCDF data variables are
+            returned.
+
+            CF-netCDF domain variables are only defined from CF-1.9,
+            so older datasets automatically contain no CF-netCDF
+            domain variables.
+
+            The unique domain constructs of the dataset are
+            found with the `{{package}}.unique_constructs`
+            function. For example::
+
+               >>> d = {{package}}.read('file.nc', domain=True)
+               >>> ud = {{package}}.unique_constructs(d)
+               >>> f = {{package}}.read('file.nc')
+               >>> ufd = {{package}}.unique_constructs(x.domain for x in f)""",
+    # read netcdf_backend
+    "{{read netcdf_backend: `None` or (sequence of) `str`, optional}": """netcdf_backend: `None` or (sequence of) `str`, optional
+            Specify which library, or libraries, to use for opening
+            and reading netCDF files. By default, or if `None`, then
+            the first one of `h5netcdf` and `netCDF4` to successfully
+            open the netCDF file is used. The libraries will be used
+            in the order given, until a file is successfully
+            opened.""",
+    # read  storage_options
+    "{{read storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
+            Pass parameters to the backend file system driver, such as
+            username, password, server, port, etc. How the storage
+            options are interpreted depends on the location of the
+            file:
+
+            * **Local File System**: Storage options are ignored for
+              local files.
+
+            * **HTTP(S)**: Storage options are ignored for files
+              available across the network via OPeNDAP.
+
+            * **S3-compatible services**: The backend used is `s3fs`,
+              and the storage options are used to initialise an
+              `s3fs.S3FileSystem` file system object. By default, or
+              if `None`, then *storage_options* is taken as ``{}``.
+
+              If the ``'endpoint_url'`` key is not in
+              *storage_options*, nor in a dictionary defined by the
+              ``'client_kwargs'`` key (both of which are the case when
+              *storage_options* is `None`), then one will be
+              automatically inserted for accessing an S3 file. For
+              instance, with a file name of
+              ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
+              with value ``'https://store'`` would be created. To
+              disable this, set the ``'endpoint_url'`` key to `None`.
+
+              *Parameter example:*
+                For a file name of ``'s3://store/data/file.nc'``, the
+                following are equivalent: ``None``, ``{}``,
+                ``{'endpoint_url': 'https://store'}``, and
+                ``{'client_kwargs': {'endpoint_url':
+                'https://store'}}``
+
+              *Parameter example:*
+                ``{'key': 'scaleway-api-key...', 'secret':
+                'scaleway-secretkey...', 'endpoint_url':
+                'https://s3.fr-par.scw.cloud', 'client_kwargs':
+                {'region_name': 'fr-par'}}``""",
+    # read cache
+    "{{read cache: `bool`, optional}}": """cache: `bool`, optional
+            If True, the default, then cache the first and last array
+            elements of metadata constructs (not field constructs) for
+            fast future access. In addition, the second and
+            penultimate array elements will be cached from coordinate
+            bounds when there are two bounds per cell. For remote
+            data, setting *cache* to False may speed up the parsing of
+            the file.""",
+    # read dask_chunks
+    "{{read dask_chunks: `str`, `int`, `None`, or `dict`, optional}}": """dask_chunks: `str`, `int`, `None`, or `dict`, optional
+            Specify the Dask chunking for data. May be one of the
+            following:
+
+            * ``'storage-aligned'``
+
+              This is the default. The Dask chunk size in bytes will
+              be as close as possible the size given by
+              `{{package}}.chunksize`, favouring square-like chunk
+              shapes, with the added restriction that the entirety of
+              each storage chunk lies within exactly one Dask
+              chunk. This strategy is general the most performant, as
+              it ensures that when accessing the data, each storage
+              chunk is read from disk at most once (as opposed to once
+              per Dask chunk in which it lies).
+
+              For instance, consider a file variable that has an array
+              of 64-bit floats with shape (400, 300, 60) and a storage
+              chunk shape of (100, 5, 60). This has an overall size of
+              54.93 MiB, partitioned into 240 storage chunks each of
+              size 100*5*60*8 bytes = 0.23 MiB. Then:
+
+              * If `{{package}}.chunksize` returns 134217728 (i.e. 128
+                MiB), then the storage-aligned Dask chunks will have
+                shape (400, 300, 60), giving 1 Dask chunk with size of
+                54.93 MiB (compare with a Dask chunk shape of (400,
+                300, 60) and size 54.93 MiB when *dask_chunks* is
+                ``'auto'``.)
+
+              * If `{{package}}.chunksize` returns 33554432 (i.e. 32
+                MiB), then the storage-aligned Dask chunks will have
+                shape (200, 260, 60), giving 4 Dask chunks with a
+                maximum size of 23.80 MiB (compare with a Dask chunk
+                shape of (264, 264, 60) and maximum size 31.90 MiB
+                when *dask_chunks* is ``'auto'``.)
+
+              * If `{{package}}.chunksize` returns 4194304 (i.e. 4
+                MiB), then the storage-aligned Dask chunks will have
+                shape (100, 85, 60), giving 16 Dask chunks with a
+                maximum size of 3.89 MiB (compare with a Dask chunk
+                shape of (93, 93, 60) and maximum size 3.96 MiB when
+                *dask_chunks* is ``'auto'``.)
+
+              There are, however, some occasions when, for particular
+              data arrays in the file, the ``'auto'`` option will
+              automatically be used instead of storage-aligned Dask
+              chunks. This occurs when:
+
+              * The data array in the file is stored contiguously.
+
+              * The data array in the file is compressed by convention
+                (e.g. ragged array representations, compression by
+                gathering, subsampled coordinates, etc.). In this case
+                the Dask chunks are for the uncompressed data, and so
+                cannot be aligned with the storage chunks of the
+                compressed array in the file.
+
+            * ``'storage-exact'``
+
+              Each Dask chunk will contain exactly one storage chunk
+              and each storage chunk will lie within exactly one Dask
+              chunk.
+
+              For instance, consider a file variable that has an array
+              of 64-bit floats with shape (400, 300, 60) and a storage
+              chunk shape of (100, 5, 60). This has an overall size of
+              54.93 MiB, partitioned into 240 storage chunks each of
+              size 100*5*60*8 bytes = 0.23 MiB. The corresponding
+              storage-exact Dask chunks will also have shape (100, 5,
+              60), giving 240 Dask chunks with a maximum size of 0.23
+              MiB.
+
+              There are, however, some occasions when, for particular
+              data arrays in the file, the ``'auto'`` option will
+              automatically be used instead of storage-exact Dask
+              chunks. This occurs when:
+
+              * The data array in the file is stored contiguously.
+
+              * The data array in the file is compressed by convention
+                (e.g. ragged array representations, compression by
+                gathering, subsampled coordinates, etc.). In this case
+                the Dask chunks are for the uncompressed data, and so
+                cannot be aligned with the storage chunks of the
+                compressed array in the file.
+
+            * ``auto``
+
+              The Dask chunk size in bytes will be as close as
+              possible to the size given by `{{package}}.chunksize`,
+              favouring square-like chunk shapes. This may give
+              similar Dask chunk shapes as the ``'storage-aligned'``
+              option, but without the guarantee that each storage
+              chunk will lie within exactly one Dask chunk.
+
+            * A byte-size given by a `str`
+
+              The Dask chunk size in bytes will be as close as
+              possible to the given byte-size, favouring square-like
+              chunk shapes. Any string value, accepted by the *chunks*
+              parameter of the `dask.array.from_array` function is
+              permitted.
+
+              *Example:*
+                A Dask chunksize of 2 MiB may be specified as
+                ``'2097152'`` or ``'2 MiB'``.
+
+            * `-1` or `None`
+
+              There is no Dask chunking, i.e. every data array has one
+              Dask chunk regardless of its size.
+
+            * Positive `int`
+
+              Every dimension of all Dask chunks has this number of
+              elements.
+
+              *Example:*
+                For 3-dimensional data, *dask_chunks* of `10` will
+                give Dask chunks with shape (10, 10, 10).
+
+            * `dict`
+
+              Each of dictionary key identifies a file dimension, with
+              a value that defines the Dask chunking for that
+              dimension whenever it is spanned by a data array. A file
+              dimension is identified in one of three ways:
+
+              1. the netCDF dimension name, preceded by ``ncdim%``
+                (e.g. ``'ncdim%lat'``);
+
+              2. the value of the "standard name" attribute of a
+                 CF-netCDF coordinate variable that spans the
+                 dimension (e.g. ``'latitude'``);
+
+              3. the value of the "axis" attribute of a CF-netCDF
+                 coordinate variable that spans the dimension
+                 (e.g. ``'Y'``).
+
+              The dictionary values may be a byte-size string,
+              ``'auto'``, `int` or `None`, with the same meanings as
+              those types for the *dask_chunks* parameter itself, but
+              applying only to the specified dimension. In addition, a
+              dictionary value may be a `tuple` or `list` of integers
+              that sum to the dimension size.
+
+              Not specifying a file dimension in the dictionary is
+              equivalent to it being defined with a value of
+              ``'auto'``.
+
+              *Example:*
+                ``{'T': '0.5 MiB', 'Z': 'auto', 'Y': [36, 37], 'X':
+                None}``
+
+              *Example:*
+                If a netCDF file contains dimensions ``time``, ``z``,
+                ``lat`` and ``lon``, then ``{'ncdim%time': 12,
+                'ncdim%lat', None, 'ncdim%lon': None}`` will ensure
+                that, for all applicable data arrays, all ``time``
+                axes have a `dask` chunksize of 12; all ``lat`` and
+                ``lon`` axes are not `dask` chunked; and all ``z``
+                axes are `dask` chunked to comply as closely as
+                possible with the default `dask` chunk size.
+
+                If the netCDF file also contains a ``time`` coordinate
+                variable with a "standard_name" attribute of
+                ``'time'`` or "axis" attribute of ``'T'``, then the
+                same `dask` chunking could be specified with either
+                ``{'time': 12, 'ncdim%lat', None, 'ncdim%lon': None}``
+                or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
+                None}``.""",
+    # read store_hdf5_chunks
+    "{{read store_dataset_chunks: `bool`, optional}}": """store_dataset_chunks: `bool`, optional
+            If True (the default) then store the dataset chunking
+            strategy for each returned data array. The dataset
+            chunking strategy is then accessible via an object's
+            `nc_hdf5_chunksizes` method. When the dataset chunking
+            strategy is stored, it will be used when the data is
+            written to a new netCDF4 file with `{{package}}.write`
+            (unless the strategy is modified prior to writing).
+
+            If False, or if the dataset format does not support
+            chunking, then no dataset chunking strategy is stored.
+            (i.e. an `nc_hdf5_chunksizes` method will return `None`
+            for all `Data` objects). In this case, when the data is
+            written to a new netCDF4 file, the dataset chunking
+            strategy will be determined by `{{package}}.write`.
+
+            See the `{{package}}.write` *hdf5_chunks* parameter for
+            details on how the dataset chunking strategy is determined
+            at the time of writing.""",
+    # read cfa
+    "{{read cfa: `dict`, optional}}": """cfa: `dict`, optional
+            Configure the reading of CF-netCDF aggregation files.
+
+            The dictionary may have any subset of the following
+            key/value pairs that supplement or override the
+            information read from the file:
+
+            * ``'replace_directory'``: `dict`
+
+              A dictionary whose key/value pairs define modifications
+              to be applied to the directories of the fragment file
+              locations. The dictionary comprises keyword arguments to
+              the {{package}}.Data.replace_directory` method, which is
+              used to make the the changes. The aggregation file being
+              read is unaltered. An empty dictionary results in no
+              modifications.
+
+              *Example:*
+                Replace a leading ``data/model`` with ``home``,
+                wherever it occurs: ``{'replace_directory': {'old':
+                'data/model', 'new': 'home'}}``
+
+              *Example:*
+                Normalise all file locations and replace a leading
+                ``/archive`` with ``/data/obs``, wherever it occurs:
+                ``{'replace_directory': {'old': '/archive', 'new':
+                '/data/obs', 'normalise': True}}``
+
+              *Example:*
+                Normalise all file locations and remove a leading
+                ``/data`, wherever it occurs: ``{'replace_directory':
+                {'old': '/data', 'normalise': True}}``.""",
+    # read cfa_write
+    "{{read cfa_write: (sequence of) `str`, optional}}": """cfa_write: (sequence of) `str`, optional
+            Register the intention for named construct types to be
+            subsequently written as CF-netCDF aggregation variables.
+
+            This makes no difference to the logical content of any
+            construct, but ensures that the data of each of specified
+            construct types will have only one Dask chunk, regardless
+            of the seting of *dask_chunks*, which is a requirement for
+            the creation CF-netCDF aggregation variables.
+
+            The *cfa_write* parameter may be one, or a sequence, of:
+
+            ==========================  ===============================
+            *cfa_write*                 Construct types
+            ==========================  ===============================
+            ``'field'``                 Field constructs
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ``'domain_topology'``       Domain topology constructs
+            ``'cell_connectivity'``     Cell connectivity constructs
+            ``'all'``                   All constructs
+            ==========================  ===============================
+
+            .. note:: If the *dask_chunks* parameter is set to `None`
+                      or ``-1`` then the data of all constructs will
+                      already have only one Dask chunk, so in this
+                      case setting *cfa_write* will have no further
+                      effect.
+
+            *Example:*
+              To register field constructs to be written as CF-netCDF
+              aggregation variables: ``cfa_write='field'`` or
+              ``cfa_write=['field']``.
+
+            *Example:*
+              To register field and auxiliary coordinate constructs to
+              be written as CF-netCDF aggregation variables:
+              ``cfa_write=['field', 'auxiliary_coordinate']``.""",
+    # read to_memory
+    "{{read to_memory: (sequence of) `str`, optional}}": """to_memory: (sequence of) `str`, optional
+            Read all data arrays of the named construct types into
+            memory. By default, lazy loading is employed for all data
+            arrays.
+
+            The *to_memory* parameter may be one, or a sequence, of:
+
+            ==========================  ===============================
+            *to_memory*                 Construct types
+            ==========================  ===============================
+            ``'all'``                   All constructs
+            ``'metadata'``              All metadata constructs (i.e.
+                                        all constructs except Field
+                                        constructs)
+
+            ``'field'``                 Field constructs
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ``'domain_topology'``       Domain topology constructs
+            ``'cell_connectivity'``     Cell connectivity constructs
+            ==========================  ===============================
+
+            *Example:*
+              To read field construct data arrays into memory:
+              ``to_memory='field'`` or ``to_memory=['field']``.
+
+            *Example:*
+              To read field and auxiliary coordinate construct data
+              arrays into memory: ``to_memory=['field',
+              'auxiliary_coordinate']``.""",
+    # read squeeze
+    "{{read squeeze: `bool`, optional}}": """squeeze: `bool`, optional
+            If True then remove all size 1 dimensions from field
+            construct data arrays, regardless of how the data are
+            stored in the dataset. If False (the default) then the
+            presence or not of size 1 dimensions is determined by how
+            the data are stored in its dataset.""",
+    # read unsqueeze
+    "{{read unsqueeze: `bool`, optional}}": """unsqueeze: `bool`, optional
+            If True then ensure that field construct data arrays span
+            all of the size 1 dimensions, regardless of how the data
+            are stored in the dataset. If False (the default) then the
+            presence or not of size 1 dimensions is determined by how
+            the data are stored in its dataset.""",
+    # read file_type
+    "{{read file_type: `None` or (sequence of) `str`, optional}}": """file_type: `None` or (sequence of) `str`, optional
+             Only read files of the given type(s). All other file
+             types are ignored. If `None` (the default) then files of
+             any valid type are read. If there are no files of the
+             given type(s), or *file_type* is empty sequence, then an
+             empty list is returned.""",
+    # read ignore_unknown_type
+    "{{read ignore_unknown_type: `bool`, optional}}": """ignore_unknown_type: `bool`, optional
+             If True then ignore any file which does not have one of
+             the valid types specified by the *file_type*
+             parameter. If False (the default) then attempting to read
+             a file with an unrecognised type will result in an
+             error.""",
+    # persist
+    "{{persist description}}": """Persisting turns an underlying lazy dask array into an
+        equivalent chunked dask array, but now with the results fully
+        computed and in memory. This can avoid the expense of
+        re-reading the data from disk, or re-computing it, when the
+        data is accessed on multiple occassions.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ------------------------1----------------------------------------
@@ -501,20 +1035,11 @@ _docstring_substitution_definitions = {
     # init mask
     "{{init mask: `bool`, optional}}": """mask: `bool`, optional
                 If True (the default) then mask by convention when
-                reading data from disk.
-
-                A netCDF array is masked depending on the values of
-                any of the netCDF attributes ``_FillValue``,
-                ``missing_value``, ``_Unsigned``, ``valid_min``,
-                ``valid_max``, and ``valid_range``.""",
+                reading data from disk.""",
     # init unpack
     "{{init unpack: `bool`, optional}}": """unpack: `bool`, optional
                 If True (the default) then unpack by convention when
-                reading data from disk.
-
-                A netCDF array is unpacked depending on the values of
-                the netCDF attributes ``add_offset`` and
-                ``scale_factor``.""",
+                reading data from disk.""",
     # init attributes
     "{{init attributes: `dict` or `None`, optional}}": """attributes: `dict` or `None`, optional
                 Provide netCDF attributes for the data as a dictionary
@@ -663,7 +1188,7 @@ _docstring_substitution_definitions = {
                 so that any of the intermediate or final aggregation
                 steps operates on no more than ``split_every``
                 inputs. The depth of the aggregation graph will be
-                :math:`log_{split\_every}}(\textnormal{input chunks
+                :math:`log_{split\_every}(\textnormal{input chunks
                 along reduced axes})`. Setting to a low value can
                 reduce cache size and network transfers, at the cost
                 of more CPU and a larger dask graph.
@@ -684,12 +1209,58 @@ _docstring_substitution_definitions = {
     "{{to_size: `int`, optional}}": """to_size: `int`, optional
                 Pad the axis after so that the new axis has the given
                 size.""",
+    # cull_graph
+    "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
+                If True then unnecessary tasks are removed (culled)
+                from each array's dask graph before
+                concatenation. This process can have a considerable
+                overhead but can sometimes improve the overall
+                performance of a workflow. If False (the default) then
+                dask graphs are not culled. See
+                `dask.optimization.cull` for details.""",
+    # relaxed_units
+    "{{relaxed_units: `bool`, optional}}": """relaxed_units: `bool`, optional
+                If True then allow the concatenation of data with
+                invalid but otherwise equal units. By default, if any
+                data array has invalid units then the concatenation
+                will fail. A `Units` object is considered to be
+                invalid if its `!isvalid` attribute is `False`.""",
+    # relaxed_units
+    "{{concatenate copy: `bool`, optional}}": """copy: `bool`, optional
+                If True (the default) then make copies of the
+                `{{class}}` objects prior to the concatenation,
+                thereby ensuring that the input constructs are not
+                changed by the concatenation process. If False then
+                some or all input constructs might be changed
+                in-place, but the concatenation process will be
+                faster.""",
+    # normalise
+    "{{normalise: `bool`, optional}}": """normalise: `bool`, optional
+                If True then normalise to an absolute path. If False
+                (the default) then no normalisation is done.""",
+    # replace old
+    "{{replace old: `str` or `None`, optional}}": """old: `str` or `None`, optional
+                The base directory structure to be replaced by
+                *new*. If `None` (the default) or an empty string, and
+                *normalise* is False, then *new* (if set) is prepended
+                to each file name.""",
+    # replace new
+    "{{replace new: `str` or `None`, optional}}": """new: `str` or `None`, optional
+                The new directory that replaces the base directory
+                structure identified by *old*. If `None` (the default)
+                or an empty string, then *old* (if set) is replaced
+                with an empty string.""",
+    # replace normalise
+    "{{replace normalise: `bool`, optional}}": """normalise: `bool`, optional
+                If True then *old* and *new* directories, and the file
+                names, are normalised to absolute paths prior to the
+                replacement. If False (the default) then no
+                normalisation is done.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
     # Returns constructs
-    "{{Returns constructs}}": """
-                The selected constructs in a new `Constructs` object,
+    "{{Returns constructs}}": """The selected constructs in a new `Constructs` object,
                 unless modified by any *filter_kwargs* parameters. The
                 returned object will contain no constructs if none
                 were selected.""",

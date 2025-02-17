@@ -241,13 +241,6 @@ class SubsamplingTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             a_2d.array
 
-    def test_SubsampledArray_get_filenames(self):
-        """Test SubsampledArray.get_filenames."""
-        f = cfdm.read(self.linear)
-        q = f[0]
-        lat = q.construct("latitude").data
-        self.assertEqual(lat.get_filenames(), set())
-
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

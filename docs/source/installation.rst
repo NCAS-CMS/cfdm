@@ -166,7 +166,7 @@ The cfdm package requires:
 * `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
   newer.
 
-* `h5py <https://pypi.org/project/h5py>`_, version 3.10.0 or newer.
+* `h5py <https://pypi.org/project/h5py>`_, version 3.12.0 or newer.
 
 * `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 
@@ -177,6 +177,9 @@ The cfdm package requires:
   newer.
 
 * `scipy <https://scipy.org/>`_, version 1.10.0 or newer.
+
+* `uritools <https://pypi.org/project/uritools>`_, version 4.0.3 or
+  newer.
 
 ----
 

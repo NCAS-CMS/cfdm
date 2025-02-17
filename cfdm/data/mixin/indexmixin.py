@@ -98,16 +98,28 @@ class IndexMixin:
         """
         shape0 = self.shape
         index0 = self.index(conform=False)
-        original_shape = self.original_shape
+        reference_shape = list(self.reference_shape)
 
-        index1 = parse_indices(shape0, index, keepdims=False)
+        index1 = parse_indices(shape0, index, keepdims=False, newaxis=True)
 
         new = self.copy()
         new_indices = []
         new_shape = []
 
+        newaxis = np.newaxis
+        if len(index1) > len(index0):
+            # Take new axes out of 'index1' for now. We'll put them
+            # back later.
+            none_positions = [
+                i for i, ind1 in enumerate(index1) if ind1 is newaxis
+            ]
+            index1 = [ind1 for ind1 in index1 if ind1 is not newaxis]
+        else:
+            none_positions = []
+
         i = 0
-        for ind0, original_size in zip(index0, original_shape):
+        j = 0
+        for ind0, reference_size in zip(index0, reference_shape[:]):
             if isinstance(ind0, Integral):
                 # The previous call to __getitem__ resulted in a
                 # dimension being removed (i.e. 'ind0' is
@@ -120,7 +132,24 @@ class IndexMixin:
 
             ind1 = index1[i]
             size0 = shape0[i]
+
             i += 1
+            if ind0 is newaxis:
+                if isinstance(ind1, Integral):
+                    # A previously introduced new axis is being
+                    # removed by an integer index
+                    if ind1 not in (0, -1):
+                        raise IndexError(
+                            f"index {ind1} is out of bounds for axis {i - 1} "
+                            "with size 1"
+                        )
+
+                    reference_shape.pop(i - 1 - j)
+                    j += 1
+                else:
+                    new_indices.append(ind0)
+
+                continue
 
             # If this dimension is not subspaced by the new index then
             # we don't need to update the old index.
@@ -147,7 +176,7 @@ class IndexMixin:
                 if isinstance(ind1, slice):
                     # ind0: slice
                     # ind1: slice
-                    start, stop, step = ind0.indices(original_size)
+                    start, stop, step = ind0.indices(reference_size)
                     start1, stop1, step1 = ind1.indices(size0)
                     size1, mod1 = divmod(stop1 - start1, step1)
 
@@ -170,7 +199,7 @@ class IndexMixin:
                 else:
                     # ind0: slice
                     # ind1: int, or array of int/bool
-                    new_index = np.arange(*ind0.indices(original_size))[ind1]
+                    new_index = np.arange(*ind0.indices(reference_size))[ind1]
             else:
                 # ind0: array of int. If we made it to here then it
                 #                     can't be anything else. This is
@@ -187,10 +216,16 @@ class IndexMixin:
 
             new_indices.append(new_index)
 
+        if none_positions:
+            for i in none_positions:
+                new_indices.insert(i, newaxis)
+                reference_shape.insert(i, 1)
+
         new._custom["index"] = tuple(new_indices)
+        new._custom["reference_shape"] = tuple(reference_shape)
 
         # Find the shape defined by the new index
-        new_shape = indices_shape(new_indices, original_shape, keepdims=False)
+        new_shape = indices_shape(new_indices, reference_shape, keepdims=False)
         new._set_component("shape", tuple(new_shape), copy=False)
 
         return new
@@ -243,6 +278,26 @@ class IndexMixin:
             f"Must implement {self.__class__.__name__}._get_array"
         )
 
+    @property
+    def array(self):
+        """Return an independent numpy array containing the data.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        :Returns:
+
+            `numpy.ndarray`
+                An independent numpy array of the data.
+
+        **Examples**
+
+        >>> n = numpy.asanyarray(a)
+        >>> isinstance(n, numpy.ndarray)
+        True
+
+        """
+        return self.__array__()
+
     def index(self, conform=True):
         """The index to be applied when converting to a `numpy` array.
 
@@ -251,7 +306,7 @@ class IndexMixin:
 
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `shape`, `original_shape`
+        .. seealso:: `shape`, `original_shape`, `reference_shape`
 
         :Parameters:
 
@@ -294,9 +349,11 @@ class IndexMixin:
         if ind is None:
             # No indices have been applied yet, so define indices that
             # are equivalent to Ellipsis, and set the original shape.
-            ind = (slice(None),) * self.ndim
+            shape = self.shape
+            ind = tuple([slice(0, n, 1) for n in shape])
             self._custom["index"] = ind
-            self._custom["original_shape"] = self.shape
+            self._custom["original_shape"] = shape
+            self._custom["reference_shape"] = shape
             return ind
 
         if not conform:
@@ -345,15 +402,36 @@ class IndexMixin:
         return tuple(ind)
 
     @property
+    def reference_shape(self):
+        """The shape of the data in the file with added dimensions.
+
+        This is the same as `original_shape`, but with added size 1
+        dimensions if `index` has new dimensions added with index
+        values of `numpy.newaxis`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `index`, `shape`, `original_shape`
+
+        """
+        out = self._custom.get("reference_shape")
+        if out is None:
+            # No subspace has been defined yet
+            out = self.original_shape
+            self._custom["reference_shape"] = out
+
+        return out
+
+    @property
     def original_shape(self):
-        """The original shape of the data, before any subspacing.
+        """The shape of the data in the file.
 
         The `shape` is defined by the result of subspacing the data in
         its original shape with the indices given by `index`.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `index`, `shape`
+        .. seealso:: `index`, `shape`, `reference_shape`
 
         """
         out = self._custom.get("original_shape")
@@ -363,3 +441,19 @@ class IndexMixin:
             self._custom["original_shape"] = out
 
         return out
+
+    def is_subspace(self):
+        """True if the index represents a subspace of the data.
+
+        The presence of `numpy.newaxis` (i.e. added size 1 dimensions)
+        in `index` will not, on their own, cause `is_subspace` to
+        return `False`
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `index`, `shape`
+
+        """
+        newaxis = np.newaxis
+        index = [ind for ind in self.index() if ind is not newaxis]
+        return index != [slice(0, n, 1) for n in self.original_shape]

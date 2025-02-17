@@ -5,6 +5,7 @@ import itertools
 import os
 import tempfile
 import unittest
+import warnings
 
 import cftime
 import dask.array as da
@@ -51,6 +52,8 @@ def axis_combinations(ndim):
 class DataTest(unittest.TestCase):
     """Unit test for the Data class."""
 
+    f0 = cfdm.example_field(0)
+
     def setUp(self):
         """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
@@ -65,6 +68,31 @@ class DataTest(unittest.TestCase):
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
         )
+
+        expected_warning_msgs = [
+            "divide by zero encountered in " + np_method
+            for np_method in (
+                "arctanh",
+                "log",
+                "double_scalars",
+            )
+        ] + [
+            "invalid value encountered in " + np_method
+            for np_method in (
+                "arcsin",
+                "arccos",
+                "arctanh",
+                "arccosh",
+                "log",
+                "sqrt",
+                "double_scalars",
+                "true_divide",
+            )
+        ]
+        for expected_warning in expected_warning_msgs:
+            warnings.filterwarnings(
+                "ignore", category=RuntimeWarning, message=expected_warning
+            )
 
     def test_Data__init__basic(self):
         """Test basic Data.__init__"""
@@ -1229,6 +1257,13 @@ class DataTest(unittest.TestCase):
         d.insert_dimension(-1, inplace=True)
         self.assertEqual(d.nc_hdf5_chunksizes(), (1, 1, 4, 3, 1))
 
+        array = np.arange(12).reshape(3, 4)
+        d = cfdm.Data(array)
+        for i in (0, 1, 2, -3, -2, -1):
+            self.assertEqual(
+                d.insert_dimension(i).shape, np.expand_dims(array, i).shape
+            )
+
     def test_Data_get_compressed_dimension(self):
         """Test Data.get_compressed_dimension."""
         d = cfdm.Data([[281, 279, 278, 279]])
@@ -2051,8 +2086,9 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(f))
 
         # Chained subspaces reading from disk
-        f = cfdm.read(self.filename)[0]
+        f = cfdm.read(self.filename, netcdf_backend="h5netcdf")[0]
         d = f.data
+
         a = d[:1, [1, 3, 4], :][:, [True, False, True], ::-2].array
         b = d.array[:1, [1, 3, 4], :][:, [True, False, True], ::-2]
         self.assertTrue((a == b).all())
@@ -2375,12 +2411,20 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data.empty((5, 8), float, chunks=4)
         self.assertEqual(d.get_filenames(), set())
 
-        f = cfdm.example_field(0)
+        f = self.f0
         cfdm.write(f, file_A)
-        a = cfdm.read(file_A, dask_chunks=4)[0].data
-        self.assertEqual(a.get_filenames(), set([file_A]))
-        a.persist(inplace=True)
-        self.assertEqual(a.data.get_filenames(), set())
+
+        d = cfdm.read(file_A, dask_chunks=4)[0].data
+        self.assertEqual(d.get_filenames(), set([file_A]))
+        d.persist(inplace=True)
+        self.assertEqual(d.data.get_filenames(), set())
+
+        # Per chunk
+        d = cfdm.read(file_A, dask_chunks="128 B")[0].data
+        self.assertEqual(d.numblocks, (2, 2))
+        f = d.get_filenames(per_chunk=True)
+        self.assertEqual(f.shape, d.numblocks)
+        self.assertTrue((f == [[file_A, file_A], [file_A, file_A]]).all())
 
     def test_Data_chunk_indices(self):
         """Test Data.chunk_indices."""
@@ -2398,6 +2442,17 @@ class DataTest(unittest.TestCase):
                 (slice(1, 3, None), slice(0, 9, None), slice(4, 9, None)),
                 (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None)),
             ],
+        )
+
+    def test_Data_chunk_positions(self):
+        """Test Data.chunk_positions."""
+        d = cfdm.Data(
+            np.arange(60).reshape(3, 4, 5), chunks=((1, 2), (4,), (1, 2, 2))
+        )
+        self.assertEqual(d.npartitions, 6)
+        self.assertEqual(
+            list(d.chunk_positions()),
+            [(0, 0, 0), (0, 0, 1), (0, 0, 2), (1, 0, 0), (1, 0, 1), (1, 0, 2)],
         )
 
     def test_Data_hdf5_chunksizes(self):
@@ -2487,6 +2542,202 @@ class DataTest(unittest.TestCase):
         d[...] = cfdm.masked
         self.assertTrue(d.all())
         self.assertFalse(d.all(keepdims=False))
+
+    def test_Data_concatenate(self):
+        """Test Data.concatenate."""
+        # Unitless operation with default axis (axis=0):
+        d_np = np.arange(120).reshape(30, 4)
+        e_np = np.arange(120, 280).reshape(40, 4)
+        d = cfdm.Data(d_np)
+        e = cfdm.Data(e_np)
+        f_np = np.concatenate((d_np, e_np), axis=0)
+        f = cfdm.Data.concatenate((d, e))
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
+
+        d_np = np.array([[1, 2], [3, 4]])
+        e_np = np.array([[5.0, 6.0]])
+        d = cfdm.Data(d_np, "km")
+        e = cfdm.Data(e_np, "km")
+        f_np = np.concatenate((d_np, e_np), axis=0)
+        f = cfdm.Data.concatenate([d, e])
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
+
+        # Check axes equivalency:
+        self.assertTrue(f.equals(cfdm.Data.concatenate((d, e), axis=-2)))
+
+        # Non-default axis specification:
+        e_np = np.array([[5.0], [6.0]])  # for compatible shapes with axis=1
+        e = cfdm.Data(e_np, "km")
+        f_np = np.concatenate((d_np, e_np), axis=1)
+        f = cfdm.Data.concatenate((d, e), axis=1)
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
+
+        # Operation with every data item in sequence being a scalar:
+        d_np = np.array(1)
+        e_np = np.array(50.0)
+        d = cfdm.Data(d_np, "km")
+        e = cfdm.Data(e_np, "km")
+
+        # Note can't use the following (to compute answer):
+        #     f_np = np.concatenate([d_np, e_np])
+        # here since we have different behaviour to NumPy w.r.t
+        # scalars, where NumPy would error for the above with:
+        #     ValueError: zero-dimensional arrays cannot be concatenated
+        f_answer = np.array([d_np, e_np])
+        f = cfdm.Data.concatenate((d, e))
+        self.assertEqual(f.shape, f_answer.shape)
+        self.assertTrue((f.array == f_answer).all())
+
+        # Operation with some scalar and some non-scalar data in the
+        # sequence:
+        e_np = np.array([50.0, 75.0])
+        e = cfdm.Data(e_np, "km")
+
+        # As per above comment, can't use np.concatenate to compute
+        f_answer = np.array([1.0, 50, 75])
+        f = cfdm.Data.concatenate((d, e))
+        self.assertEqual(f.shape, f_answer.shape)
+        self.assertTrue((f.array == f_answer).all())
+
+        # Check cached elements
+        cached = f._get_cached_elements()
+        self.assertEqual(cached[0], d.first_element())
+        self.assertEqual(cached[-1], e.last_element())
+
+        # Check concatenation with one invalid units
+        d.Units = cfdm.Units("foo")
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e], relaxed_units=True)
+
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e], axis=1)
+
+        # Check concatenation with both invalid units
+        d.Units = cfdm.Units("foo")
+        e.Units = cfdm.Units("foo")
+        f = cfdm.Data.concatenate([d, e], relaxed_units=True)
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e])
+
+        e.Units = cfdm.Units("foobar")
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e], relaxed_units=True)
+
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e])
+
+        e.Units = cfdm.Units("metre")
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e], relaxed_units=True)
+
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e], axis=1)
+
+        # Test cached elements
+        d = cfdm.Data([1, 2, 3])
+        e = cfdm.Data([4, 5])
+        repr(d)
+        repr(e)
+        f = cfdm.Data.concatenate([d, e], axis=0)
+        self.assertEqual(
+            f._get_cached_elements(),
+            {0: d.first_element(), -1: e.last_element()},
+        )
+
+    def test_Data_aggregated_data(self):
+        """Test Data aggregated_data methods."""
+        d = cfdm.Data(9)
+        aggregated_data = {
+            "location": "location",
+            "shape": "shape",
+            "address": "cfa_address",
+        }
+
+        self.assertFalse(d.nc_has_aggregated_data())
+        self.assertIsNone(d.nc_set_aggregated_data(aggregated_data))
+        self.assertTrue(d.nc_has_aggregated_data())
+        self.assertEqual(d.nc_get_aggregated_data(), aggregated_data)
+        self.assertEqual(d.nc_del_aggregated_data(), aggregated_data)
+        self.assertFalse(d.nc_has_aggregated_data())
+        self.assertEqual(d.nc_get_aggregated_data(), {})
+        self.assertEqual(d.nc_del_aggregated_data(), {})
+
+    def test_Data_replace_directory(self):
+        """Test Data.replace_directory."""
+        f = self.f0
+
+        # No files means no stored directories
+        self.assertEqual(f.data.file_directories(), set())
+
+        cfdm.write(f, file_A)
+        d = cfdm.read(file_A, dask_chunks=4)[0].data
+        self.assertGreater(d.npartitions, 1)
+
+        e = d.copy()
+        directory = cfdm.dirname(file_A)
+
+        self.assertEqual(d.file_directories(), set([directory]))
+        self.assertIsNone(d.replace_directory())
+        d.replace_directory(directory, "/new/path")
+        self.assertEqual(
+            d.file_directories(),
+            set(["/new/path"]),
+        )
+        self.assertEqual(
+            d.get_filenames(), set((f"/new/path/{os.path.basename(file_A)}",))
+        )
+
+        # Check that we haven't changed 'e'
+        self.assertEqual(e.file_directories(), set([directory]))
+
+        d.replace_directory(new="/newer/path", common=True)
+        self.assertEqual(
+            d.file_directories(),
+            set(["/newer/path"]),
+        )
+        self.assertEqual(
+            d.get_filenames(),
+            set((f"/newer/path/{os.path.basename(file_A)}",)),
+        )
+
+        with self.assertRaises(ValueError):
+            d.replace_directory(old="something", common=True)
+
+        d.replace_directory("/newer/path")
+        self.assertEqual(
+            d.file_directories(),
+            set([""]),
+        )
+        self.assertEqual(
+            d.get_filenames(), set((f"{os.path.basename(file_A)}",))
+        )
+
+    def test_Data_replace_filenames(self):
+        """Test Data.replace_filenames."""
+        f = self.f0
+        cfdm.write(f[:2], file_A)
+        cfdm.write(f[2:], file_B)
+        a = cfdm.read(file_A)[0]
+        b = cfdm.read(file_B)[0]
+        d = cfdm.Data.concatenate([a.data, b.data], axis=0)
+
+        self.assertEqual(d.get_filenames(), set([file_A, file_B]))
+        self.assertEqual(d.numblocks, (2, 1))
+
+        new_filenames = [["a"], ["b"]]
+        self.assertIsNone(d.replace_filenames(new_filenames))
+        self.assertEqual(d.numblocks, np.shape(new_filenames))
+
+        self.assertEqual(d.get_filenames(normalise=False), set(["a", "b"]))
+        self.assertTrue(
+            (
+                d.get_filenames(normalise=False, per_chunk=True)
+                == new_filenames
+            ).all()
+        )
 
     def test_Data_has_deterministic_name(self):
         """Test Data.has_deterministic_name."""

@@ -164,6 +164,7 @@ from .functions import (
     atol,
     chunksize,
     configuration,
+    dirname,
     environment,
     integer_dtype,
     log_level,
@@ -195,10 +196,12 @@ from .constructs import Constructs
 
 from .data import (
     Array,
+    AggregatedArray,
     BoundsFromNodesArray,
     CellConnectivityArray,
     CompressedArray,
     Data,
+    FullArray,
     GatheredArray,
     H5netcdfArray,
     NetCDFArray,

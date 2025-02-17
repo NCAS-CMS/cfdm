@@ -384,6 +384,81 @@ class PropertiesDataBounds(PropertiesData):
 
         return c
 
+    @classmethod
+    def concatenate(
+        cls,
+        variables,
+        axis=0,
+        cull_graph=False,
+        relaxed_units=False,
+        copy=True,
+    ):
+        """Join a together sequence of `{{class}}`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `Data.concatenate`, `Data.cull_graph`
+
+        :Parameters:
+
+            variables: sequence of constructs
+
+            axis: `int`, optional
+                Select the axis to along which to concatenate, defined
+                by its position in the data array. By default
+                concatenation is along the axis in position 0.
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            {{concatenate copy: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}`
+                The concatenated construct.
+
+        """
+        variable0 = variables[0]
+        if copy:
+            variable0 = variable0.copy()
+
+        if len(variables) == 1:
+            return variable0
+
+        out = super().concatenate(
+            variables,
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
+
+        bounds = variable0.get_bounds(None)
+        if bounds is not None:
+            bounds = bounds.concatenate(
+                [v.get_bounds() for v in variables],
+                axis=axis,
+                cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
+            )
+            out.set_bounds(bounds, copy=False)
+
+        interior_ring = variable0.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring = interior_ring.concatenate(
+                [v.get_interior_ring() for v in variables],
+                axis=axis,
+                cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
+            )
+            out.set_interior_ring(interior_ring, copy=False)
+
+        return out
+
     def creation_commands(
         self,
         representative_data=False,
@@ -925,6 +1000,36 @@ class PropertiesDataBounds(PropertiesData):
 
         return out
 
+    def file_directories(self):
+        """The directories of files containing parts of the data.
+
+        Returns the locations of any files referenced by the data.
+
+        .. seealso:: `get_filenames`, `replace_directory`
+
+        :Returns:
+
+            `set`
+                The unique set of file directories as absolute paths.
+
+        **Examples**
+
+        >>> d.file_directories()
+        {'https:///data/1', 'file:///data2'}
+
+        """
+        out = super().file_directories()
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.update(bounds.file_directories())
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.update(interior_ring.file_directories())
+
+        return out
+
     def get_part_node_count(self, default=ValueError()):
         """Return the part node count variable for geometry bounds.
 
@@ -1364,6 +1469,100 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.insert_dimension(position, inplace=True)
 
         return c
+
+    @_inplace_enabled(default=False)
+    def persist(self, bounds=True, inplace=False):
+        """Persist data into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `array`, `datetime_array`,
+                     `{{package}}.Data.persist`
+
+        :Parameters:
+
+            bounds: `bool`, optional
+                If True, the default, then also persist any bounds
+                data.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with persisted data. If the operation
+                was in-place then `None` is returned.
+
+        """
+        c = _inplace_enabled_define_and_cleanup(self)
+
+        super(PropertiesDataBounds, c).persist(inplace=True)
+
+        # Bounds
+        bounds = c.get_bounds(None)
+        if bounds is not None:
+            bounds.persist(inplace=True)
+
+        # Interior_ring
+        interior_ring = c.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.persist(inplace=True)
+
+        return c
+
+    def replace_directory(
+        self,
+        old=None,
+        new=None,
+        normalise=False,
+        common=False,
+    ):
+        """Replace file directories in-place.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `file_directories`, `get_filenames`
+
+        :Parameters:
+
+            {{replace old: `str` or `None`, optional}}
+
+            {{replace new: `str` or `None`, optional}}
+
+            {{replace normalise: `bool`, optional}}
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
+
+        :Returns:
+
+            `None`
+
+        """
+        directory = super().replace_directory(
+            old=old, new=new, normalise=normalise, common=common
+        )
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.replace_directory(
+                old=old, new=new, normalise=normalise, common=common
+            )
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.replace_directory(
+                old=old, new=new, normalise=normalise, common=common
+            )
+
+        return directory
 
     def nc_clear_hdf5_chunksizes(self, bounds=True, interior_ring=True):
         """Clear the HDF5 chunking strategy for the data.

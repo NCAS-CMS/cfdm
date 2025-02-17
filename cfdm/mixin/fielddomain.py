@@ -88,7 +88,15 @@ class FieldDomain:
         c = getattr(self, _constructs_method)(*identities, **filter_kwargs)
 
         # Return construct, or key, or both, or default
-        return self._filter_return_construct(c, key, item, default, _method)
+        return self._filter_return_construct(
+            c,
+            key,
+            item,
+            default,
+            _method,
+            identities=identities,
+            filter_kwargs=filter_kwargs,
+        )
 
     def _get_data_compression_variables(self, component):
         """TODO."""
@@ -157,7 +165,16 @@ class FieldDomain:
 
         return out
 
-    def _filter_return_construct(self, c, key, item, default, _method):
+    def _filter_return_construct(
+        self,
+        c,
+        key,
+        item,
+        default,
+        _method,
+        identities=None,
+        filter_kwargs=None,
+    ):
         """Return construct, or key, or both, or default.
 
         :Parameters:
@@ -177,6 +194,20 @@ class FieldDomain:
 
             _method: `str`
                 The name of the ultimate calling method.
+
+            identities: `None` or sequence, optional
+                The *identity* positional argument passed in by the
+                calling function (i.e. by the user). Used for
+                informative error messages.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            filter_kwargs: `None` or `dict`, optional
+                The filter_kwargs that were passed in by the calling
+                function (i.e. by the user). Used for informative
+                error messages.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -198,10 +229,26 @@ class FieldDomain:
         if default is None:
             return default
 
+        # Create a nice error message
+        if identities is None:
+            identities = []
+        else:
+            identities = [f"{i!r}" for i in identities]
+
+        if filter_kwargs is None:
+            filter_kwargs = []
+        else:
+            filter_kwargs.pop("todict", None)
+            filter_kwargs = [
+                f"{key}={value!r}" for key, value in filter_kwargs.items()
+            ]
+
+        args = ", ".join(identities + filter_kwargs)
+        construct_type = _method.replace("_", " ")
+
         return self._default(
             default,
-            f"{self.__class__.__name__}.{_method}() can't return {n} "
-            "constructs",
+            f"No {construct_type} constructs found with identity {args}",
         )
 
     def _filter_interface(
@@ -286,7 +333,11 @@ class FieldDomain:
 
                 # Return construct, or key, or both, or default
                 return self._filter_return_construct(
-                    c, key, item, default, _method
+                    c,
+                    key,
+                    item,
+                    default,
+                    _method,
                 )
 
             kwargs = {"filter_by_type": _ctypes}
@@ -329,7 +380,15 @@ class FieldDomain:
             return c
 
         # Return construct, or key, or both, or default
-        return self._filter_return_construct(c, key, item, default, _method)
+        return self._filter_return_construct(
+            c,
+            key,
+            item,
+            default,
+            _method,
+            identities=identities,
+            filter_kwargs=filter_kwargs,
+        )
 
     def _original_filenames(self, define=None, update=None, clear=False):
         """The names of files containing the original data and metadata.

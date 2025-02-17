@@ -4,6 +4,7 @@ import operator
 from itertools import product, zip_longest
 from math import prod
 from numbers import Integral
+from os.path import commonprefix
 
 import dask.array as da
 import numpy as np
@@ -22,7 +23,7 @@ from ..decorators import (
 from ..functions import _numpy_allclose, is_log_level_info, parse_indices
 from ..mixin.container import Container
 from ..mixin.files import Files
-from ..mixin.netcdf import NetCDFHDF5
+from ..mixin.netcdf import NetCDFAggregation, NetCDFHDF5
 from ..units import Units
 from .abstract import Array
 from .creation import to_dask
@@ -35,6 +36,8 @@ from .dask_utils import (
 )
 from .utils import (
     allclose,
+    chunk_indices,
+    chunk_positions,
     collapse,
     convert_to_datetime,
     convert_to_reftime,
@@ -47,7 +50,7 @@ from .utils import (
 logger = logging.getLogger(__name__)
 
 
-class Data(Container, NetCDFHDF5, Files, core.Data):
+class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -118,9 +121,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
     # other constants. It is therefore convenient to define these
     # constants in binary.
     _NONE = 0b000
-    _ARRAY = 0b01
-    _CACHE = 0b10
-    _ALL = 0b11
+    _ARRAY = 0b001
+    _CACHE = 0b010
+    _CFA = 0b100
+    _ALL = 0b111
 
     # The default mask hardness
     _DEFAULT_HARDMASK = True
@@ -461,8 +465,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 "for compressed input arrays"
             )
 
-        # Bring the compressed data into memory without
-        # decompressing it
+        # Bring data into memory (compressed data is not decompressed)
         if to_memory:
             try:
                 array = array.to_memory()
@@ -732,7 +735,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # ------------------------------------------------------------
         # Set the subspaced dask array
         # ------------------------------------------------------------
-        new._set_dask(dx, clear=self._ALL, in_memory=None)
+        new._set_dask(dx, clear=self._ALL ^ self._CFA, in_memory=None)
 
         if 0 in new.shape:
             raise IndexError(
@@ -987,7 +990,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         # Do the assignment
         self._set_subspace(dx, indices, value)
-        self._set_dask(dx, in_memory=True)
+        self._set_dask(dx, clear=self._ALL ^ self._CFA, in_memory=True)
 
         return
 
@@ -1010,14 +1013,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         try:
             first = self.first_element()
         except Exception:
-            raise
-            out = ""
-            if units and not isreftime:
-                out += f" {units}"
-            if calendar:
-                out += f" {calendar}"
-
-            return out
+            first = "??"
 
         size = self.size
         shape = self.shape
@@ -1038,12 +1034,16 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     first = type(self)(
                         np.ma.array(first, mask=mask[0]), units, calendar
                     ).datetime_array
-                except (ValueError, OverflowError):
+                except Exception:
                     first = "??"
 
             out = f"{open_brackets}{first}{close_brackets}"
         else:
-            last = self.last_element()
+            try:
+                last = self.last_element()
+            except Exception:
+                last = "??"
+
             if isreftime:
                 if last is np.ma.masked:
                     last = 0
@@ -1056,13 +1056,17 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                         units,
                         calendar,
                     ).datetime_array
-                except (ValueError, OverflowError):
+                except Exception:
                     first, last = ("??", "??")
 
             if size > 3:
                 out = f"{open_brackets}{first}, ..., {last}{close_brackets}"
             elif shape[-1:] == (3,):
-                middle = self.second_element()
+                try:
+                    middle = self.second_element()
+                except Exception:
+                    last = "??"
+
                 if isreftime:
                     # Convert reference time to date-time
                     if middle is np.ma.masked:
@@ -1399,7 +1403,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
     @property
     def __keepdims_indexing__(self):
-        """Flag indicating if dimensions indexed with integers are kept.
+        """Flag to indicate if axes indexed with integers are kept.
 
         If set to True (the default) then providing a single integer
         as a single-axis index does *not* reduce the number of array
@@ -1574,17 +1578,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         >>> d = {{package}}.Data([0, 1, 2, 3])
         >>> e = {{package}}.Data([1, 1, 3, 4])
 
-        >>> f = d._binary_operation(e, '__add__')
+        >>> f = d._binary_operation(e, '__lt__')
         >>> print(f.array)
-        [1 2 5 7]
-
-        >>> e = d._binary_operation(e, '__lt__')
-        >>> print(e.array)
         [ True False  True  True]
-
-        >>> d._binary_operation(2, '__imul__')
-        >>> print(d.array)
-        [0 2 4 6]
 
         """
         # Note: This method is a classmethod to allow its
@@ -1650,7 +1646,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         else:
             d = data.copy()
 
-        d._set_dask(result, in_memory=True)
+        d._set_dask(result, clear=cls._ALL, in_memory=True)
 
         if axes is not None:
             d._axes = axes
@@ -1677,7 +1673,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `_del_Array`, `_del_cached_elements`,
-                     `_set_dask`
+                     `nc_del_aggregation_write_status`, `_set_dask`
 
         :Parameters:
 
@@ -1700,7 +1696,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         :Returns:
 
             `int`
-                 The integer value of *clear*.
+                The integer value of *clear*.
 
         """
         if clear is None:
@@ -1718,12 +1714,134 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             # Delete cached element values
             self._del_cached_elements()
 
+        if clear & self._CFA:
+            # Set the aggregation write status to False (under certain
+            # circumstances)
+            self._del_nc_aggregation_write_status()
+
         return clear
+
+    @classmethod
+    def _concatenate_conform_units(cls, data1, units0, relaxed_units, copy):
+        """Check and conform the units of data prior to concatenation.
+
+        This is a helper function for `concatenate` that may be easily
+        overridden in subclasses, to allow for customisation of the
+        concatenation process.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `concatenate`
+
+        :Parameters:
+
+            data1: `Data`
+                Data with units.
+
+            units0: `Units`
+                The units to conform *data1* to.
+
+            {{relaxed_units: `bool`, optional}}
+
+            copy: `bool`
+                If False then modify *data1* in-place. Otherwise a
+                copy of it is modified.
+
+        :Returns:
+
+            `Data`
+                Returns *data1*, possibly modified so that it conforms
+                to *units0*. If *copy* is False and *data1* is
+                modified, then it is done so in-place.
+
+        """
+        # Check and conform, if necessary, the units of all inputs
+        units1 = data1.Units
+        if (
+            relaxed_units
+            and not units0.isvalid
+            and not units1.isvalid
+            and units0.__dict__ == units1.__dict__
+        ):
+            # Allow identical invalid units to be equal
+            pass
+        elif not units0.equals(units1):
+            raise ValueError(
+                "Can't concatenate: All the input arrays must have "
+                f"equal units. Got {units0!r} and {units1!r}"
+            )
+
+        return data1
+
+    @classmethod
+    def _concatenate_post_process(
+        cls, concatenated_data, axis, conformed_data
+    ):
+        """Post-process concatenated data.
+
+        This is a helper function for `concatenate` that may be easily
+        overridden in subclasses, to allow for customisation of the
+        concatenation process.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `concatenate`
+
+        :Parameters:
+
+            concatenated_data: `Data`
+                The concatenated data array.
+
+            axis: `int`
+                The axis of concatenation.
+
+            conformed_data: sequence of `Data`
+                The ordered sequence of data arrays that were
+                concatenated.
+
+        :Returns:
+
+            `Data`
+                Returns *concatenated_data*, possibly modified
+                in-place.
+
+        """
+        # ------------------------------------------------------------
+        # Set the aggregation 'aggregated_data' terms
+        # ------------------------------------------------------------
+        if concatenated_data.nc_get_aggregation_write_status():
+            # Set the netCDF aggregated_data terms, giving precedence
+            # to those towards the left hand side of the input
+            # list. If any input Data object has no aggregated_data
+            # terms, then nor will the concatenated data.
+            aggregated_data = {}
+            for d in conformed_data[::-1]:
+                value = d.nc_get_aggregated_data()
+                if not value:
+                    aggregated_data = {}
+                    break
+
+                aggregated_data.update(value)
+
+            concatenated_data.nc_set_aggregated_data(aggregated_data)
+
+        # ------------------------------------------------------------
+        # Update the deterministic status of the concatenated data
+        # ------------------------------------------------------------
+        deterministic = True
+        for d in conformed_data:
+            if not d.has_deterministic_name():
+                deterministic = False
+                break
+
+        concatenated_data._update_deterministic(deterministic)
+
+        return concatenated_data
 
     def _del_cached_elements(self):
         """Delete any cached element values.
 
-        Updates *data* in-place to remove the cached element values.
+        Updates the data in-place to remove the cached element values.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
@@ -1735,6 +1853,29 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         self._del_component("cached_elements", None)
+
+    def _del_nc_aggregation_write_status(self):
+        """Set the aggregation write status to False.
+
+        Updates the data in-place to set the aggregation write status
+        to `False`, but only if the fragment type is not ``'value'``.
+
+        A necessary (but not sufficient) condition for writing the
+        data as CF-netCDF aggregated data is that the write status is
+        True.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregation_write_status`,
+                     `nc_get_aggregation_fragment_type`
+
+        :Returns:
+
+            `None`
+
+        """
+        if self.nc_get_aggregation_fragment_type() != "unique_value":
+            self.nc_del_aggregation_write_status()
 
     def _del_dask(self, default=ValueError(), clear=None):
         """Remove the dask array.
@@ -1849,11 +1990,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         >>> d = {{package}}.Data([[1, 2, 3]], 'km')
         >>> d._item((0, -1))
-
-
-
-
-
+        array(3)
         >>> d[0, 1] = {{package}}.masked
         >>> d._item((slice(None), slice(1, 2)))
         masked
@@ -1864,6 +2001,79 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             array = np.ma.masked
 
         return array
+
+    def _modify_dask_graph(
+        self, method, args=(), kwargs=None, exceptions=(AttributeError,)
+    ):
+        """Modify the Dask graph.
+
+        The value of each node of the Dask graph is replaced with the
+        result of calling its *method* method. If attempting to call
+        the method results in any of the exceptions given by
+        *exceptions*, then that node is unmodified. If attempting to
+        call the method results in an exception not given by
+        *exceptions*, then that exception is raised.
+
+        The `Data` object is modified in-place, but the embedded
+        Dask graph is not.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            method: `str`
+                The name of the callable method which returns a new
+                graph node value.
+
+            args: `tuple`, optional
+                Positional arguments for the *method*. No arguments
+                (the default) are specified by an empty `tuple`.
+
+            kwargs: `dict` or `None`, optional
+                Keyword arguments for the *method*. No keyword
+                arguments (the default) is specified by an empty
+                `dict` or `None`.
+
+            exceptions: `tuple` of `Exception`, optional
+                Do not change graph node values if calling its
+                *method* results in any of the specified exceptions.
+
+        :Returns:
+
+            `None`
+
+        """
+        if kwargs is None:
+            kwargs = {}
+
+        updated = False
+
+        dsk = self.todict(
+            optimize_graph=True,
+            _force_mask_hardness=False,
+            _force_to_memory=False,
+        )
+        for key, a in dsk.items():
+            try:
+                dsk[key] = getattr(a, method)(*args, **kwargs)
+            except exceptions:
+                # This graph node could not be modified
+                pass
+            else:
+                # This graph node was successfully modified
+                updated = True
+
+        if updated:
+            # The Dask graph was modified, so recast the dictionary
+            # representation as a Dask array.
+            dx = self.to_dask_array(
+                _force_mask_hardness=False, _force_to_memory=False
+            )
+            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+            self._set_dask(dx, clear=self._NONE, in_memory=None)
+
+            # Update the deterministic status
+            self._update_deterministic(False)
 
     def _parse_axes(self, axes):
         """Parses the data axes and returns valid non-duplicate axes.
@@ -2411,6 +2621,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         elif not isinstance(a, np.ndarray):
             a = np.asanyarray(a)
 
+        ndim = a.ndim
+        shape = a.shape
         size = a.size
         if not size:
             return a
@@ -2862,6 +3074,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         >>> d = {{package}}.Data.empty((6, 5), chunks=(2, 4))
         >>> d.chunks
         ((2, 2, 2), (4, 1))
+        >>> d.chunksize
+        (2, 4)
         >>> d.numblocks
         (3, 2)
         >>> d.npartitions
@@ -2886,6 +3100,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         >>> d = {{package}}.Data.empty((6, 5), chunks=(2, 4))
         >>> d.chunks
         ((2, 2, 2), (4, 1))
+        >>> d.chunksize
+        (2, 4)
         >>> d.numblocks
         (3, 2)
         >>> d.npartitions
@@ -3379,8 +3595,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         if mask is not None:
             dx = da.ma.masked_where(mask, dx)
+            CFA = self._CFA
+        else:
+            CFA = self._NONE
 
-        d._set_dask(dx, in_memory=True)
+        d._set_dask(dx, clear=self._ALL ^ CFA, in_memory=True)
 
         return d
 
@@ -3455,11 +3674,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         return data
 
     def chunk_indices(self):
-        """Return indices that define each dask chunk.
+        """Return indices of the data that define each dask chunk.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `chunks`
+        .. seealso:: `chunks`, `chunk_positions`
 
         :Returns:
 
@@ -3483,18 +3702,102 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None))
 
         """
-        from dask.utils import cached_cumsum
+        return chunk_indices(self.chunks)
 
-        chunks = self.chunks
+    def chunk_positions(self):
+        """Find the position of each chunk.
 
-        cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
-        indices = [
-            [slice(s, s + dim) for s, dim in zip(starts, shapes)]
-            for starts, shapes in zip(cumdims, chunks)
-        ]
-        return product(*indices)
+        .. versionadded:: (cfdm) NEXTVERSION
 
-    def compute(self):
+        .. seealso:: `chunks`, `chunk_indices`
+
+        :Parameters:
+
+            chunks: `tuple`
+
+                The chunk sizes along each dimension, as output by
+                `dask.array.Array.chunks`.
+
+        **Examples**
+
+        >>> d = {{package}}.Data(np.arange(405).reshape(3, 9, 15),
+        ...     chunks=((1, 2), (9,), (4, 5, 6)))
+        >>> d.npartitions
+        6
+        >>> for position in d.chunk_positions():
+        ...     print(position)
+        ...
+        (0, 0, 0)
+        (0, 0, 1)
+        (0, 0, 2)
+        (1, 0, 0)
+        (1, 0, 1)
+        (1, 0, 2)
+
+        """
+        return chunk_positions(self.chunks)
+
+    @_inplace_enabled(default=False)
+    def compressed(self, inplace=False):
+        """Return all non-masked values in a one dimensional data array.
+
+        Not to be confused with compression by convention (see the
+        `uncompress` method).
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `flatten`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The non-masked values, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> d = {{package}}.{class}}(numpy.arange(12).reshape(3, 4), 'm')
+        >>> print(d.array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> print(d.compressed().array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11]
+        >>> d[1, 1] = {{package}}.masked
+        >>> d[2, 3] = {{package}}.masked
+        >>> print(d.array)
+        [[0  1  2  3]
+         [4 --  6  7]
+         [8  9 10 --]]
+        >>> print(d.compressed().array)
+        [ 0  1  2  3  4  6  7  8  9 10]
+
+        >>> d = {{package}}.{class}}(9)
+        >>> print(d.compressed().array)
+        [9]
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d.to_dask_array(_force_mask_hardness=True, _force_to_memory=True)
+        dx = da.blockwise(
+            np.ma.compressed,
+            "i",
+            dx.ravel(),
+            "i",
+            adjust_chunks={"i": lambda n: np.nan},
+            dtype=dx.dtype,
+            meta=np.array((), dtype=dx.dtype),
+        )
+
+        d._set_dask(dx, clear=self._ALL, in_memory=True)
+        return d
+
+    def compute(self, _force_to_memory=True):
         """A view of the computed data.
 
         In-place changes to the returned array *might* affect the
@@ -3514,6 +3817,15 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         .. seealso:: `persist`, `array`, `datetime_array`,
                      `sparse_array`
+
+        :Parameters:
+
+            _force_to_memory: `bool`, optional
+                If True (the default) then force the data resulting
+                from computing the returned Dask graph to be in
+                memory. If False then the data resulting from
+                computing the Dask graph may or may not be in memory,
+                depending on the nature of the stack
 
         :Returns:
 
@@ -3537,12 +3849,25 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         array([[0., 0., 0.],
                [0., 0., 0.]])
 
+        >>> f = {{package}}.example_field(0)
+        >>> {{package}}.write(f, 'file.nc')
+        >>> f = {{package}}.read('file.nc')[0]
+        >>> print(f.data.compute())
+        [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+         [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+         [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+         [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+         [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+        >>> f.data.compute(_force_to_memory=False)
+        <{{repr}}NetCDF4Array(5, 8): file.nc, q(5, 8)>
+
         """
-        dx = self.to_dask_array(_force_mask_hardness=False)
+        dx = self.to_dask_array(
+            _force_mask_hardness=False, _force_to_memory=_force_to_memory
+        )
         a = dx.compute()
 
         if np.ma.isMA(a) and a is not np.ma.masked:
-            a.set_fill_value(999)
             if self.hardmask:
                 a.harden_mask()
             else:
@@ -3551,6 +3876,235 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             a.set_fill_value(self.get_fill_value(None))
 
         return a
+
+    @classmethod
+    def concatenate(
+        cls, data, axis=0, cull_graph=False, relaxed_units=False, copy=True
+    ):
+        """Join a sequence of data arrays together.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `cull_graph`
+
+        :Parameters:
+
+            data: sequence of `Data`
+                The data arrays to be concatenated. Concatenation is
+                carried out in the order given. Each data array must
+                have equivalent units and the same shape, except in
+                the concatenation axis. Note that scalar arrays are
+                treated as if they were one dimensional.
+
+            axis: `int`, optional
+                The axis along which the arrays will be joined. The
+                default is 0. Note that scalar arrays are treated as
+                if they were one dimensional.
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the data, if
+                required, prior to the concatenation, thereby ensuring
+                that the input data arrays are not changed by the
+                concatenation process. If False then some or all input
+                data arrays might be changed in-place, but the
+                concatenation process will be faster.
+
+        :Returns:
+
+            `Data`
+                The concatenated data.
+
+        **Examples**
+
+        >>> d = {{package}}.Data([[1, 2], [3, 4]])
+        >>> e = {{package}}.Data([[5.0, 6.0]])
+        >>> f = {{package}}.Data.concatenate((d, e))
+        >>> print(f.array)
+        [[ 1.     2.   ]
+         [ 3.     4.   ]
+         [ 5.     6.   ]]
+        >>> f.equals({{package}}.Data.concatenate((d, e), axis=-2))
+        True
+
+        >>> e = {{package}}.Data([[5.0], [6.0]])
+        >>> f = {{package}}.Data.concatenate((d, e), axis=1)
+        >>> print(f.array)
+        [[ 1.     2.     5.]
+         [ 3.     4.     6.]]
+
+        >>> d = {{package}}.Data(1)
+        >>> e = {{package}}.Data(50.0)
+        >>> f = {{package}}.Data.concatenate((d, e))
+        >>> print(f.array)
+        [ 1.    50.]
+
+        """
+        if isinstance(data, cls):
+            raise ValueError("Must provide a sequence of Data objects")
+
+        data = tuple(data)
+        n_data = len(data)
+        if not n_data:
+            raise ValueError(
+                "Can't concatenate: Must provide at least one Data object"
+            )
+
+        if cull_graph:
+            # Remove unnecessary components from the graph, which may
+            # improve performance, and because complicated task graphs
+            # can sometimes confuse da.concatenate.
+            for d in data:
+                d.cull_graph()
+
+        data0 = data[0]
+        units0 = data0.Units
+        data0_cached_elements = data0._get_cached_elements()
+
+        if copy:
+            data0 = data0.copy()
+
+        if not data0.ndim:
+            data0.insert_dimension(inplace=True)
+
+        if n_data == 1:
+            return data0
+
+        conformed_data = [data0]
+        for data1 in data[1:]:
+            # Turn any scalar array into a 1-d array
+            copied = False
+            if not data1.ndim:
+                if copy:
+                    data1 = data1.copy()
+                    copied = True
+
+                data1.insert_dimension(inplace=True)
+
+            # Check and conform the units of data1 with respect to
+            # those of data0
+            data1 = cls._concatenate_conform_units(
+                data1, units0, relaxed_units, copy and not copied
+            )
+
+            conformed_data.append(data1)
+
+        # Get data as dask arrays and apply concatenation operation
+        dxs = [
+            d.to_dask_array(_force_mask_hardness=False, _force_to_memory=False)
+            for d in conformed_data
+        ]
+        dx = da.concatenate(dxs, axis=axis)
+
+        # ------------------------------------------------------------
+        # Set the aggregation write status
+        # ------------------------------------------------------------
+        #
+        # Assume at first that all input data instances have True
+        # status, but then ..
+        CFA = cls._CFA
+        for d in conformed_data:
+            if not d.nc_get_aggregation_write_status():
+                # 1) The status must be False when any input data
+                #    object has False status.
+                CFA = cls._NONE
+                break
+
+        if CFA != cls._NONE:
+            non_concat_axis_chunks0 = list(data[0].chunks)
+            non_concat_axis_chunks0.pop(axis)
+            for d in conformed_data[1:]:
+                non_concat_axis_chunks = list(d.chunks)
+                non_concat_axis_chunks.pop(axis)
+                if non_concat_axis_chunks != non_concat_axis_chunks0:
+                    # 2) The status must be False when any two input
+                    #    data objects have different Dask chunk
+                    #    patterns for the non-concatenated axes.
+                    CFA = cls._NONE
+                    break
+
+        # ------------------------------------------------------------
+        # Set the aggregation fragment type
+        # ------------------------------------------------------------
+        if CFA != cls._NONE:
+            fragment_type0 = data[0].nc_get_aggregation_fragment_type()
+            for d in conformed_data[1:]:
+                fragment_type1 = d.nc_get_aggregation_fragment_type()
+                if fragment_type1 != fragment_type0 and "location" in (
+                    fragment_type1,
+                    fragment_type0,
+                ):
+                    # 3) The status must be False when any two input
+                    #    Data objects have different fragment types,
+                    #    onew of which is 'location'.
+                    data0._nc_del_aggregation_fragment_type()
+                    CFA = cls._NONE
+                    break
+
+        # ------------------------------------------------------------
+        # Set the __in_memory__ status
+        # ------------------------------------------------------------
+        in_memory = data[0].__in_memory__
+        for d in conformed_data[1:]:
+            if d.__in_memory__ != in_memory:
+                # If and only if any two input Data objects have
+                # different __in_memory__ values, then set
+                # in_memory=False for the concatenation.
+                in_memory = False
+                break
+
+        # ------------------------------------------------------------
+        # Set the concatenated dask array
+        # ------------------------------------------------------------
+        data0._set_dask(dx, clear=cls._ALL ^ CFA, in_memory=in_memory)
+
+        #        # ------------------------------------------------------------
+        #        # Set the aggregation 'aggregated_data' terms
+        #        # ------------------------------------------------------------
+        #        if data0.nc_get_aggregation_write_status():
+        #            # Set the netCDF aggregated_data terms, giving precedence
+        #            # to those towards the left hand side of the input
+        #            # list. If any input Data object has no aggregated_data
+        #            # terms, then nor will the concatenated data.
+        #            aggregated_data = {}
+        #            for d in conformed_data[::-1]:
+        #                value = d.nc_get_aggregated_data()
+        #                if not value:
+        #                    aggregated_data = {}
+        #                    break
+        #
+        #                aggregated_data.update(value)
+        #
+        #            data0.nc_set_aggregated_data(aggregated_data)
+        #
+        # ------------------------------------------------------------
+        # Re-set appropriate cached elements (after '_set_dask' has
+        # just cleared them from data0)
+        # ------------------------------------------------------------
+        cached_elements = {}
+        i = 0
+        element = data0_cached_elements.get(i)
+        if element is not None:
+            cached_elements[i] = element
+
+        i = -1
+        element = conformed_data[i]._get_cached_elements().get(i)
+        if element is not None:
+            cached_elements[i] = element
+
+        if cached_elements:
+            data0._set_cached_elements(cached_elements)
+
+        # ------------------------------------------------------------
+        # Apply extra post-processing to the concatenated data
+        # ------------------------------------------------------------
+        data0 = cls._concatenate_post_process(data0, axis, conformed_data)
+
+        # Return the concatenated data
+        return data0
 
     def creation_commands(
         self, name="data", namespace=None, indent=0, string=True
@@ -4051,6 +4605,39 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         else:
             return True
 
+    def file_directories(self, normalise=False):
+        """The directories of files containing parts of the data.
+
+        Returns the locations of any files referenced by the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_filenames`, `replace_directory`
+
+        :Returns:
+
+            `set`
+                The unique set of file directories as absolute paths.
+
+        **Examples**
+
+        >>> d.file_directories()
+        {'https:///data/1', 'file:///data2'}
+
+        """
+        out = []
+        append = out.append
+        for key, a in self.todict(
+            _force_mask_hardness=False, _force_to_memory=False
+        ).items():
+            try:
+                append(a.file_directory(normalise=normalise))
+            except AttributeError:
+                # This graph element doesn't contain a file name
+                pass
+
+        return set(out)
+
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
         """Replace masked elements with a fill value.
@@ -4104,7 +4691,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             _force_mask_hardness=False, _force_to_memory=False
         )
         dx = dx.map_blocks(cfdm_filled, fill_value=fill_value, dtype=d.dtype)
-        d._set_dask(dx, in_memory=True)
+        d._set_dask(dx, clear=self._ALL, in_memory=True)
 
         return d
 
@@ -4168,7 +4755,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) 1.7.11
 
-        .. seealso:: `insert_dimension`, `squeeze`, `transpose`
+        .. seealso:: `compressed`, `insert_dimension`, `squeeze`,
+                     `transpose`
 
         :Parameters:
 
@@ -4279,7 +4867,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         dx = d.to_dask_array(_force_mask_hardness=True, _force_to_memory=True)
         dx = dx.reshape(new_shape)
-        d._set_dask(dx, in_memory=True)
+        d._set_dask(dx, clear=self._ALL, in_memory=True)
 
         # Update the axis names
         data_axes0 = d._axes
@@ -4539,7 +5127,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
-        .. versionadded:: 3.0.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -4657,21 +5245,27 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             units._canonical_calendar,
         )
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=False, per_chunk=False):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
-        the computed data array. This set may contain fewer names than
-        the collection of file names that defined the data when it was
-        first instantiated, as could be the case after the data has
-        been subspaced.
+        the computed data array.
 
-        **Implementation**
+        .. seealso:: `replace_filenames, `replace_directory`
 
-        A `dask` chunk that contributes to the computed array is
-        assumed to reference data within a file if that chunk's array
-        object has a callable `get_filenames` method, the output of
-        which is added to the returned `set`.
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            per_chunk: `bool`, optional
+                Return a `numpy` array that provides the file name
+                that contributes to each Dask chunk. This array will
+                have the same shape as the Dask chunks (as returned by
+                the `numblocks` attribute).
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -4687,17 +5281,77 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         >>> f = {{package}}.example_field(0)
         >>> {{package}}.write(f, "file.nc")
-        >>> d = {{package}}.read("file.nc")[0].data
+        >>> d = {{package}}.read("file.nc", dask_chunks'128 B')[0].data
         >>> d.get_filenames()
         {'file.nc'}
 
+        >>> d.numblocks
+        (2, 2)
+        >>> filenames = d.get_filenames(per_chunk=True)
+        >>> filenames.shape
+        (2, 2)
+        >>> print(filenames)
+        [['file.nc' 'file.nc']
+         ['file.nc' 'file.nc']]
+
         """
+        if per_chunk:
+            # --------------------------------------------------------
+            # Return the filenames in a numpy array
+            # --------------------------------------------------------
+
+            # Maximum number of characters in any file name
+            n_char = 1
+
+            filenames = {}
+            for index, position in zip(
+                self.chunk_indices(), self.chunk_positions()
+            ):
+                for a in (
+                    self[index]
+                    .todict(_force_mask_hardness=False, _force_to_memory=False)
+                    .values()
+                ):
+                    try:
+                        filename = a.get_filename(
+                            normalise=normalise, default=None
+                        )
+                    except AttributeError:
+                        pass
+                    else:
+                        if filename:
+                            if position in filenames:
+                                raise ValueError(
+                                    "Can't return 'per_chunk' file names: "
+                                    f"The Dask chunk in position {position} "
+                                    f"(defined by {index!r}) has multiple "
+                                    "file locations"
+                                )
+
+                            filenames[position] = filename
+                            n_char = max(n_char, len(filename))
+
+            array = np.ma.masked_all(
+                self.numblocks,
+                dtype=f"U{n_char}",
+            )
+            array.set_fill_value("")
+
+            for position, filename in filenames.items():
+                array[position] = filename
+
+            return array
+
+        # ------------------------------------------------------------
+        # Return the filenames in a set
+        # ------------------------------------------------------------
         out = []
+        append = out.append
         for a in self.todict(
             _force_mask_hardness=False, _force_to_memory=False
         ).values():
             try:
-                out.extend(a.get_filenames())
+                append(a.get_filename(normalise=normalise))
             except AttributeError:
                 pass
 
@@ -5022,6 +5676,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         :Returns:
 
             `Data` or `None`
+                The new data with expanded data axes, or `None` if
+                the operation was in-place.
 
         **Examples**
 
@@ -5051,14 +5707,21 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 f"Can't insert dimension: Invalid position {position!r}"
             )
 
-        new_shape = list(d.shape)
-        new_shape.insert(position, 1)
+        #        new_shape = list(d.shape)
+        #        new_shape.insert(position, 1)
 
-        dx = d.to_dask_array(_force_mask_hardness=False, _force_to_memory=True)
-        dx = dx.reshape(new_shape)
+        dx = d.to_dask_array(
+            _force_mask_hardness=False, _force_to_memory=False
+        )
+        index = [slice(None)] * dx.ndim
+        index.insert(position, np.newaxis)
+        dx = dx[tuple(index)]
 
-        # Inserting a dimension doesn't affect the cached elements
-        d._set_dask(dx, clear=self._ALL ^ self._CACHE, in_memory=True)
+        # Inserting a dimension doesn't affect the cached elements or
+        # the CFA write status
+        d._set_dask(
+            dx, clear=self._ALL ^ self._CACHE ^ self._CFA, in_memory=None
+        )
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -5172,7 +5835,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         dx = d.to_dask_array(_force_mask_hardness=True, _force_to_memory=True)
         dx = da.ma.masked_values(dx, value, rtol=rtol, atol=atol)
-        d._set_dask(dx, in_memory=True)
+        d._set_dask(dx, clear=self._ALL, in_memory=True)
+
         return d
 
     @_inplace_enabled(default=False)
@@ -5218,7 +5882,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         array = cfdm_where(d.array, condition, masked, None, d.hardmask)
         dx = da.from_array(array, chunks=d.chunks)
-        d._set_dask(dx, in_memory=True)
+        d._set_dask(dx, clear=self._ALL, in_memory=True)
+
+        # Update the deterministic status
+        d._update_deterministic(condition)
 
         # Update the deterministic status
         d._update_deterministic(condition)
@@ -5495,20 +6162,15 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):
-        """Persist the underlying dask array into memory.
+        """Persist data into memory.
 
-        This turns an underlying lazy dask array into a equivalent
-        chunked dask array, but now with the results fully computed.
-
-        `persist` is particularly useful when using distributed
-        systems, because the results will be kept in distributed
-        memory, rather than returned to the local process.
+        {{persist description}}
 
         Compare with `compute` and `array`.
 
         **Performance**
 
-        `persist` causes all delayed operations to be computed.
+        `persist` causes delayed operations to be computed.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
@@ -5611,19 +6273,169 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # Dask rechunking is essentially a wrapper for __getitem__
-        # calls on the chunks, which means that we can use the same
-        # 'in_memory' and 'clear' keywords to `_set_dask` as are used
-        # in `__getitem__`.
         dx = d.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=False
         )
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
         d._set_dask(
-            dx, clear=self._ALL ^ self._ARRAY ^ self._CACHE, in_memory=None
+            dx,
+            clear=self._ALL ^ self._ARRAY ^ self._CACHE ^ self._CFA,
+            in_memory=None,
         )
 
         return d
+
+    def replace_directory(
+        self,
+        old=None,
+        new=None,
+        normalise=False,
+        common=False,
+    ):
+        """Replace file directories in-place.
+
+        Modifies the names of files that are required to deliver
+        the computed data array.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `file_directories`, `get_filenames`
+
+        :Parameters:
+
+            {{replace old: `str` or `None`, optional}}
+
+            {{replace new: `str` or `None`, optional}}
+
+            {{replace normalise: `bool`, optional}}
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> d.replace_directory('/data', '/new/data/path/')
+        >>> d.get_filenames()
+        {'/new/data/path/file1.nc', '/home/file2.nc'}
+        >>> d.replace_directory('/new/data, '/archive/location')
+        >>> d.get_filenames()
+        {'/archive/location/path/file1.nc', '/home/file2.nc'}
+        >>> d.replace_directory('/home')
+        >>> d.get_filenames()
+        {'/archive/location/path/file1.nc', 'file2.nc'}
+
+        """
+        if not old and not new and not normalise and not common:
+            return
+
+        if common:
+            if old is not None:
+                raise ValueError(
+                    "When 'common' is True, 'old' must be None "
+                    "(because 'old' is going to be determined "
+                    "automatically)"
+                )
+
+            old = commonprefix(
+                tuple(self.file_directories(normalise=normalise))
+            )
+
+        self._modify_dask_graph(
+            "replace_directory",
+            (),
+            {"old": old, "new": new, "normalise": normalise},
+        )
+
+    def replace_filenames(self, filenames):
+        """Replace file locations in-place.
+
+        A fragment is a part of the data array that is stored in a
+        file.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_filenames`
+
+        :Parameters:
+
+             filenames: array_like
+                 The replacement file names. It must either have the
+                 same shape as the Dask chunks (as returned by the
+                 `numblocks` attribute), or may also include an extra
+                 trailing dimension for different file location
+                 versions. Any output from the `get_filenames` method
+                 with ``per_chunk=True`` is guaranteed to have an
+                 acceptable shape.
+
+        :Returns:
+
+            `None`
+
+        """
+        filenames = np.ma.filled(filenames, "")
+        if self.numblocks != filenames.shape:
+            raise ValueError(
+                f"'filenames' shape {filenames.shape} must be the same "
+                f"as the Dask chunks shape {self.numblocks}"
+            )
+
+        dsk = self.todict(_force_mask_hardness=False, _force_to_memory=False)
+
+        updated_keys = {}
+        for index, position in zip(
+            self.chunk_indices(), self.chunk_positions()
+        ):
+            filename = filenames[position]
+            if not filename:
+                # Don't replace the filename(s) for this chunk
+                continue
+
+            chunk_updated = False
+            for key, a in (
+                self[index]
+                .todict(_force_mask_hardness=False, _force_to_memory=False)
+                .items()
+            ):
+                try:
+                    dsk[key] = a.replace_filename(filename)
+                except AttributeError:
+                    pass
+                else:
+                    if chunk_updated:
+                        raise ValueError(
+                            f"The Dask chunk in position {position} "
+                            f"(defined by data index {index!r}) references multiple "
+                            "file locations"
+                        )
+
+                    if key in updated_keys:
+                        raise ValueError(
+                            f"The Dask chunk in position {position} "
+                            f"(defined by data index {index!r}) references a file "
+                            "location that has already been replaced within "
+                            "the Dask chunk in position "
+                            f"{updated_keys[key][0]!r} (defined by "
+                            f"{updated_keys[key][1]!r})"
+                        )
+
+                    chunk_updated = True
+                    updated_keys[key] = (position, index)
+
+        dx = self.to_dask_array(
+            _force_mask_hardness=False, _force_to_memory=False
+        )
+        dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+        self._set_dask(dx, clear=self._NONE, in_memory=None)
+
+        # Update the deterministic status
+        self._update_deterministic(False)
 
     @_inplace_enabled(default=False)
     def reshape(self, *shape, merge_chunks=True, limit=None, inplace=False):
@@ -5936,7 +6748,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         dx = dx.squeeze(axis=iaxes)
 
         # Squeezing a dimension doesn't affect the cached elements
-        d._set_dask(dx, clear=self._ALL ^ self._CACHE, in_memory=True)
+        d._set_dask(
+            dx, clear=self._ALL ^ self._CACHE ^ self._CFA, in_memory=True
+        )
 
         # Remove the squeezed axis names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
