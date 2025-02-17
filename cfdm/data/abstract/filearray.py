@@ -352,20 +352,20 @@ class FileArray(Array):
             create_endpoint_url: `bool`, optional
                 If True, the default, then create an
                 ``'endpoint_url'`` option if and only if one was not
-                set during object initialisation. In this case the an
+                set during object initialisation. In this case the
                 ``'endpoint_url'`` will be set from from the file name
                 returned by `get_filename`, unless either of the
                 *filename* or *parsed_filename* parameters is also
                 set.
 
             filename: `str`, optional
-                Used to set the ``'endpoint_url'`` if it has was not
+                Used to set the ``'endpoint_url'`` if it was not
                 set during object initialisation and
                 *create_endpoint_url* is True. Ignored if the
                 *parsed_filename* parameter has been set.
 
             parsed_filename: `urllib.parse.ParseResult`, optional
-                Used to set the ``'endpoint_url'`` if it has was not
+                Used to set the ``'endpoint_url'`` if it was not
                 set during object initialisation and
                 *create_endpoint_url* is True. Ignored if the
                 *filename* parameter has been set.
