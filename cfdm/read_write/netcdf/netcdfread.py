@@ -8,9 +8,9 @@ from ast import literal_eval
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
-from pprint import pformat
 from math import log, nan, prod
 from numbers import Integral
+from pprint import pformat
 from typing import Any
 from uuid import uuid4
 
@@ -4000,7 +4000,10 @@ class NetCDFRead(IORead):
                         "topology variable. Ignoring the UGRID mesh "
                         f"for {field_ncvar!r}."
                     )
-                    logger.debug(f"Mesh dictionary is: {pformat(g['mesh'])}")
+                    if is_log_level_debug(logger):
+                        logger.debug(
+                            f"Mesh dictionary is: {pformat(g['mesh'])}"
+                        )
 
             if ugrid:
                 # The UGRID specification is OK, so get the auxiliary

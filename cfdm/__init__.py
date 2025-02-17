@@ -103,7 +103,7 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-_minimum_vn = "3.10.0"
+_minimum_vn = "3.12.0"
 if Version(h5py.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad h5py version: cfdm requires h5py>={_minimum_vn}. "
