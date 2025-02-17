@@ -353,7 +353,7 @@ class FileArray(Array):
                 If True, the default, then create an
                 ``'endpoint_url'`` option if and only if one was not
                 set during object initialisation. In this case the
-                ``'endpoint_url'`` will be set from from the file name
+                ``'endpoint_url'`` will be set from the file name
                 returned by `get_filename`, unless either of the
                 *filename* or *parsed_filename* parameters is also
                 set.
