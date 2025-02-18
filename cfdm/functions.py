@@ -370,8 +370,8 @@ def environment(display=True, paths=True):
     netCDF4: 1.6.4
     h5netcdf: 1.3.0
     h5py: 3.10.0
-    s3fs: 2023.12.2
-    dask: 2024.7.0
+    s3fs: 2024.6.0
+    dask: 2025.2.0
     scipy: 1.11.3
     cftime: 1.6.2
     cfdm: 1.11.2.0
@@ -387,9 +387,9 @@ def environment(display=True, paths=True):
     netCDF4: 1.6.4 /home/miniconda3/lib/python3.11/site-packages/netCDF4/__init__.py
     h5netcdf: 1.3.0 /home/miniconda3/lib/python3.11/site-packages/h5netcdf/__init__.py
     h5py: 3.10.0 /home/miniconda3/lib/python3.11/site-packages/h5py/__init__.py
-    s3fs: 2023.12.2 /home/miniconda3/lib/python3.11/site-packages/s3fs/__init__.py
+    s3fs: 2024.6.0 /home/miniconda3/lib/python3.11/site-packages/s3fs/__init__.py
     scipy: 1.11.3 /home/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
-    dask: 2024.7.0 /home/miniconda3/lib/python3.11/site-packages/dask/__init__.py
+    dask: 2025.2.0 /home/miniconda3/lib/python3.11/site-packages/dask/__init__.py
     cftime: 1.6.2 /home/miniconda3/lib/python3.11/site-packages/cftime/__init__.py
     cfdm: 1.11.2.0 /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
 

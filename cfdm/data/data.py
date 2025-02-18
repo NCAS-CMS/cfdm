@@ -4250,17 +4250,18 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> d = {{package}}.Data([1, 2, 3, 4, 5], chunks=3)
         >>> d = d[:2]
         >>> dict(d.to_dask_array().dask)
-        {('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3]),
-         ('array-21ea057f160746a3d3f0943bba945460', 1): array([4, 5]),
-         ('getitem-3e4edac0a632402f6b45923a6b9d215f',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
-           0), (slice(0, 2, 1),))}
+        {('array-729a27a557981dd627b6c07e8ef93250', 0): array([1, 2, 3]),
+         ('array-729a27a557981dd627b6c07e8ef93250', 1): array([4, 5]),
+         ('getitem-9890f07ccf98df4ab5231fbd87792f74',
+          0): <Task ('getitem-9890f07ccf98df4ab5231fbd87792f74', 0) getitem(...)>,
+         ('cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c',
+          0): <Task ('cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c', 0) cfdm_harden_mask(...)>}
         >>> d.cull_graph()
-        >>> dict(d.to_dask_array().dask)
-        {('getitem-3e4edac0a632402f6b45923a6b9d215f',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
-           0), (slice(0, 2, 1),)),
-         ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
+        {('getitem-9890f07ccf98df4ab5231fbd87792f74',
+          0): <Task ('getitem-9890f07ccf98df4ab5231fbd87792f74', 0) getitem(...)>,
+         ('array-729a27a557981dd627b6c07e8ef93250', 0): array([1, 2, 3]),
+         ('cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c',
+          0): <Task ('cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c', 0) cfdm_harden_mask(...)>}
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -6915,8 +6916,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         :Parameters:
 
             graph: `str` or `None`
-                Specify treatment to apply to the graph before
-                converting to a dictionary. Must be one of:
+                Specify the treatment to apply to the graph (not
+                in-place) before converting to a dictionary. Must be
+                one of:
 
                 * ``'cull'``
 
@@ -6941,7 +6943,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             {{_force_to_memory: `bool`, optional}}
 
             optimize_graph: Deprecated at version NEXTVERSION
-                Use the *graph* parameter instead.
+                Use the *graph* parameter instead. Note that
+                ``graph='optimise'`` is equivalent to the deprecated
+                ``optimize_graph=True``.
 
         :Returns:
 
@@ -6975,9 +6979,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
           0): <Task ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e', 0) cfdm_harden_mask(...)>}
 
         """
-        # WARNING: The Dask graph structure might change in the
-        # future, in which case this method might break and need
-        # refactoring (see
+        # NOTE: The Dask graph structure might change in the future,
+        # in which case this method could break and need refactoring
+        # (e.g.
         # https://github.com/dask/dask/pull/11736#discussion_r1954752842).
 
         if optimize_graph is not None:
