@@ -276,6 +276,8 @@ def array_implements(cls, numpy_function):
     return decorator
 
 
+# Implementationing np.concatenate is necessary for some use casexs of
+# `dask.array.slicing.take`
 @array_implements(ArrayMixin, np.concatenate)
 def concatenate(arrays, axis=0):
     """Version of `np.concatenate` that works for `Array` objects.
@@ -283,5 +285,5 @@ def concatenate(arrays, axis=0):
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
-    # Convert to numpy arrays, and concatenate those.
+    # Convert the inputs to numpy arrays, and concatenate those.
     return np.ma.concatenate(tuple(map(np.asanyarray, arrays)), axis=axis)

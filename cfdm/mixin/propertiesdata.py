@@ -755,6 +755,17 @@ class PropertiesData(Properties):
 
         return set()
 
+    def get_quantization(self):
+        """TODOQ
+
+        .. versionadded:: (cfdm) NEXTVERSION
+        """
+        q = self._get_component('quantization', None)
+        if q is None:
+            return {}
+
+        return q.copy()
+
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         """Expand the shape of the data array.
@@ -938,6 +949,16 @@ class PropertiesData(Properties):
             return data.replace_directory(
                 old=old, new=new, normalise=normalise, common=common
             )
+
+    def set_quantization(self, value, copy=True):
+        """TODOQ
+
+        .. versionadded:: (cfdm) NEXTVERSION
+        """
+        if copy:
+            q = value.copy()
+
+        self._set_component('quantization', value, copy=False)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

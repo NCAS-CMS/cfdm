@@ -1327,6 +1327,13 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "squeeze": bool(squeeze),
             "unsqueeze": bool(unsqueeze),
+            # --------------------------------------------------------
+            # Quantization containers, keyed by their netCDF
+            # quantization container variable names.
+            # --------------------------------------------------------
+            "quantization": {},
+            # Map data variables to their quantization variable names
+            "variable_quantization": {},
         }
 
         g = self.read_vars
@@ -1984,6 +1991,31 @@ class NetCDFRead(IORead):
 
             if debug:
                 logger.debug(f"    UGRID meshes:\n       {g['mesh']}")
+
+        # ------------------------------------------------------------
+        # Identify and parse all quantization container variables
+        # (CF>=1.12)
+        # ------------------------------------------------------------
+        if g["CF>=1.12"]:
+            for ncvar, attributes in variable_attributes.items():
+                if "quantization" not in attributes:
+                    # This data variable does not have a quantization
+                    # container
+                    continue
+
+                quantization_ncvar = self._parse_quantization(
+                    ncvar, variable_attributes
+                )
+
+                if not quantization_ncvar:
+                    # The quantization container has already been
+                    # parsed, or a sufficiently compliant quantization
+                    # container could not be found.
+                    continue
+
+                # Do not attempt to create a field construct from a
+                # quantization container variable
+                g["do_not_create_field"].add(quantization_ncvar)
 
         if _scan_only:
             return self.read_vars
@@ -3071,6 +3103,62 @@ class NetCDFRead(IORead):
 
         return geometry_ncvar
 
+    def _parse_quantization(self, parent_ncvar, attributes):
+        """Parse a quantization container variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent_ncvar: `str`
+                The netCDF variable name of the parent data variable.
+
+            attributes: `dict`
+                All attributes of *all* netCDF variables, keyed by netCDF
+                variable name.
+
+        :Returns:
+
+            `str` or `None`
+                 TODOQ The new geometry netCDF variable name, or `None` if a)
+                 the container has already been parsed or b) a
+                 sufficiently compliant geometry container could not be
+                 found.
+
+        """
+        g = self.read_vars
+
+        quantization_attribute = attributes[parent_ncvar]["quantization"]
+
+        parsed_quantization = self._split_string_by_white_space(
+            parent_ncvar, quantization_attribute, variables=True
+        )
+
+        cf_compliant = self._check_quantization_attribute(
+            parent_ncvar, quantization_attribute, parsed_quantization
+        )
+        if not cf_compliant:
+            return
+
+        quantization_ncvar = parsed_quantization[0]
+
+        if quantization_ncvar in g["quantization"]:
+            # We've already parsed this quantization container, so
+            # record the fact that this parent netCDF variable has
+            # this quantization variable and return.
+            g["variable_quantization"][parent_ncvar] = quantization_ncvar
+            return
+
+        q = attributes[quantization_ncvar].copy()
+        g["geometries"][quantization_ncvar] = q
+        
+        logger.info(
+            f"    Quantization container = {quantization_ncvar!r}\n"
+            f"        netCDF attributes: {q}"
+        )  # pragma: no cover
+
+        return quantization_ncvar
+        
     def _set_ragged_contiguous_parameters(
         self,
         elements_per_instance=None,
