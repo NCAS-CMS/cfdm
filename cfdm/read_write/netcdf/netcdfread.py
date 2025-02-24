@@ -8,9 +8,9 @@ from ast import literal_eval
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
-from pprint import pformat
 from math import log, nan, prod
 from numbers import Integral
+from pprint import pformat
 from typing import Any
 from uuid import uuid4
 
