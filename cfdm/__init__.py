@@ -143,7 +143,7 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
-    _minimum_vn = "2024.12.0"
+    _minimum_vn = "2025.2.0"
     if Version(dask.__version__) < Version(_minimum_vn):
         raise ValueError(
             f"Bad dask version: cfdm requires dask>={_minimum_vn}. "

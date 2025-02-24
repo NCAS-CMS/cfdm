@@ -16,7 +16,7 @@ class FullArray(IndexMixin, Array):
     """
 
     # Copy the numpy handled functions (numpy NEP 18) so that they can
-    # be added to locally.
+    # be locally added to.
     _HANDLED_FUNCTIONS = Array._HANDLED_FUNCTIONS.copy()
 
     def __init__(
