@@ -9,7 +9,6 @@ Version NEXTVERSION
   CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319)
 * Changed dependency: ``Python>=3.9.0``
 * Changed dependency: ``numpy>=2.0.0``
-* Changed dependency: ``h5py>=3.12.0``
 
 ----
 
