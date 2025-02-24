@@ -144,10 +144,20 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}.__getitem__"
         )  # pragma: no cover
 
-    def __repr__(self):  # noqa: D105
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        """
         return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
 
-    def __str__(self):  # noqa: D105
+    def __str__(self):
+        """"Called by the `str` built-in function.
+
+        x.__str__() <==> str(x)
+
+        """
         return f"{self.get_filename()}, {self.get_address()}"
 
     def __dask_tokenize__(self):
