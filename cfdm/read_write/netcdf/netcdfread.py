@@ -2001,8 +2001,8 @@ class NetCDFRead(IORead):
                 if "quantization" not in attributes:
                     # This data variable does not have a quantization
                     # container
-                    continue
-
+                    continue                
+                
                 quantization_ncvar = self._parse_quantization(
                     ncvar, variable_attributes
                 )
@@ -3134,11 +3134,9 @@ class NetCDFRead(IORead):
             parent_ncvar, quantization_attribute, variables=True
         )
 
-        cf_compliant = self._check_quantization_attribute(
+        self._check_quantization(
             parent_ncvar, quantization_attribute, parsed_quantization
         )
-        if not cf_compliant:
-            return
 
         quantization_ncvar = parsed_quantization[0]
 
@@ -3149,12 +3147,18 @@ class NetCDFRead(IORead):
             g["variable_quantization"][parent_ncvar] = quantization_ncvar
             return
 
-        q = attributes[quantization_ncvar].copy()
-        g["geometries"][quantization_ncvar] = q
+
+        # Create a quantization object
+        q = self.self.implementation.initialise_Quantization(
+            attributes[quantization_ncvar].copy(), copy=False
+        )
+        q.nc_set_variable('quantization_ncvar')
+        
+        g["quantization"][quantization_ncvar] = q
         
         logger.info(
             f"    Quantization container = {quantization_ncvar!r}\n"
-            f"        netCDF attributes: {q}"
+            f"        netCDF attributes: {attributes[quantization_ncvar]}"
         )  # pragma: no cover
 
         return quantization_ncvar
@@ -9051,6 +9055,85 @@ class NetCDFRead(IORead):
         # TODO check tie point variable dimensions
 
         return ok
+
+    def _check_quantization(
+            self, parent_ncvar, quantization,  parsed_quantization
+    ):
+        """Check a geometry node coordinate variable.
+
+        .. versionadded:: (cfdm) 1.8.6
+
+        :Parameters:
+
+            field_ncvar: `str`
+                The netCDF variable name of the parent data variable.
+
+            node_ncvar: `str`
+                The netCDF variable name of the node coordinate variable.
+
+            geometry: `dict`
+
+        :Returns:
+
+            `bool`
+
+        """
+        attribute = {parent_ncvar + ":quantization": quantization}
+
+        incorrectly_formatted = (
+            "quantization attribute",
+            "is incorrectly formatted",
+        )
+
+        g = self.read_vars
+
+        if not parsed_quantization or len(parsed_quantization) != 1::
+            self._add_message(
+                parent_ncvar,
+                parent_ncvar,
+                message=incorrectly_formatted,
+                attribute=attribute,
+            )
+            return False
+
+        ok = True
+
+        # Check that the quantization variable exists in the file
+        quantization_ncvar = parsed_quantization[0]
+        if quantization_ncvar not in g["internal_variables"]:
+            quantization_ncvar, message = self._missing_variable(
+                ncvar, "Quantization variable"
+            )
+            self._add_message(
+                field_ncvar, quantization_ncvar, message=message,
+                attribute=attribute
+            )
+            ok = False
+
+        attributes = g["variable_attributes"][ncvar]
+        for attr in ('algorithm', 'implementation'):
+            if attr not in attributes:
+                self._add_message(
+                    parent_ncvar,
+                    quantization_ncvar,
+                    message=(f"{attr} attribute", "is missing"),
+                )
+                ok = False
+            
+        attributes = g["variable_attributes"][parentncvar]
+        attr = 'quantization_nsb'
+        if attr not in attributes:
+            self._add_message(
+                parent_ncvar,
+                parent_ncvar,
+                message=(f"{attr} attribute", "is missing"),
+            )
+            ok = False
+            
+        if not ok:
+            return False
+
+        return True
 
     def _split_string_by_white_space(
         self, parent_ncvar, string, variables=False, trailing_colon=False
