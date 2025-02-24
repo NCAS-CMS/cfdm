@@ -54,6 +54,7 @@ _requires = core._requires + (
     "scipy",
     "h5netcdf",
     "s3fs",
+    "uritools",
 )
 
 _error0 = f"cfdm requires the modules {', '.join(_requires)}. "
@@ -142,11 +143,24 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
-    _minimum_vn = "2024.12.0"
+    _minimum_vn = "2025.2.0"
     if Version(dask.__version__) < Version(_minimum_vn):
         raise ValueError(
             f"Bad dask version: cfdm requires dask>={_minimum_vn}. "
             f"Got {dask.__version__} at {dask.__file__}"
+        )
+
+
+try:
+    import uritools
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+else:
+    _minimum_vn = "4.0.3"
+    if Version(uritools.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad uritools version: cfdm requires uritools>={_minimum_vn}. "
+            f"Got {uritools.__version__} at {uritools.__file__}"
         )
 
 del _minimum_vn

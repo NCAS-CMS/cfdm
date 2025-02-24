@@ -6923,7 +6923,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 * ``'cull'``
 
                   This is the default. Remove unnecessary tasks which
-                  do not contribute to the computed result.
+                  do not contribute to the computed result, equivalent
+                  to applying `dask.optimization.cull` to the graph.
 
                 * ``'optimise'``
 
@@ -6979,9 +6980,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
           0): <Task ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e', 0) cfdm_harden_mask(...)>}
 
         """
-        # NOTE: The Dask graph structure might change in the future,
-        # in which case this method could break and need refactoring
-        # (e.g.
+        # NOTE: The undlerlying Dask graph structure is liable to
+        # change in the future, in which case this method could break
+        # and need refactoring (e.g.
         # https://github.com/dask/dask/pull/11736#discussion_r1954752842).
 
         if optimize_graph is not None:
