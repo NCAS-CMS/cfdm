@@ -491,6 +491,13 @@ class PropertiesData(Properties):
 
         return out
 
+    def del_quantization(self, default=ValueError()):
+        """TODOQ
+
+        .. versionadded:: (cfdm) NEXTVERSION
+        """
+        return self._del_component('quantization', default)
+
     @_display_or_return
     def dump(
         self,

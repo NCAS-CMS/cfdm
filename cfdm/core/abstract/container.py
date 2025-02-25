@@ -299,6 +299,25 @@ class Container(metaclass=DocstringRewriteMeta):
         """
         return component in self._components
 
+    def _init_from_source(self, source, copy=True):
+        """TODOQ
+
+        .. versionadded:: (cfdm) NEXTVERSION
+        """
+        if source is None:
+            return
+        
+        # WARNING: The 'custom' dictionary is only shallow copied
+        #          from source
+        try:
+            custom = source._get_component("custom", {})
+        except AttributeError:
+            custom = {}
+        else:
+            custom = custom.copy()
+
+        self._set_component("custom", custom, copy=False)
+
     def _set_component(self, component, value, copy=True):
         """Set a component.
 
@@ -337,9 +356,6 @@ class Container(metaclass=DocstringRewriteMeta):
 
         self._components[component] = value
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def copy(self):
         """Return a deep copy.
 
