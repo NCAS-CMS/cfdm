@@ -180,6 +180,14 @@ class PropertiesData(Properties):
         """
         print("In _test_docstring_substitution")
 
+    def _lll(self, source):
+        """TODOQ"""
+        # Quantization
+        try:
+            q = source.get_quantization()
+        except (AttributeError, ValueError)
+            self.set_quantization(q)
+        
     @property
     def array(self):
         """A numpy array deep copy of the data.
@@ -277,8 +285,8 @@ class PropertiesData(Properties):
         .. note:: If using the `apply_masking` method on a construct
                   that has been read from a dataset with the
                   ``mask=False`` parameter to the `read` function,
-                  then the mask defined in the dataset can only be
-                  recreated if the ``missing_value``, ``_FillValue``,
+                  then the mask defined in the dataset can only be 
+                 recreated if the ``missing_value``, ``_FillValue``,
                   ``valid_min``, ``valid_max``, and ``valid_range``
                   properties have not been updated.
 
@@ -762,16 +770,12 @@ class PropertiesData(Properties):
 
         return set()
 
-    def get_quantization(self):
+    def get_quantization(self, default=ValueError()):
         """TODOQ
 
         .. versionadded:: (cfdm) NEXTVERSION
         """
-        q = self._get_component('quantization', None)
-        if q is None:
-            return {}
-
-        return q.copy()
+        return self._get_component('quantization', default)
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):

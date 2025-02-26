@@ -92,6 +92,7 @@ class AuxiliaryCoordinate(
 
         self._initialise_netcdf(source)
         self._initialise_original_filenames(source)
+        self._lll(source)
 
     def dump(
         self,
