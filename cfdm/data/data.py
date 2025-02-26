@@ -2612,6 +2612,44 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         return a
 
     @property
+    def datetime_as_string(self):
+        """Returns an independent numpy array with datetimes as strings.
+
+        Specifically, returns an independent numpy array containing
+        string representations of times since a reference date.
+
+        Only applicable for reference time units.
+
+        If the calendar has not been set then the CF default calendar of
+        "standard" (i.e. the mixed Gregorian/Julian calendar as defined by
+        Udunits) will be used.
+
+        Conversions are carried out with the `netCDF4.num2date` function.
+
+        .. versionadded:: (cfdm) 1.8.0
+
+        .. seealso:: `array`, `datetime_array`
+
+        :Returns:
+
+            `numpy.ndarray`
+                An independent numpy array of the date-time strings.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01')
+        >>> print(d.datetime_as_string)
+        ['2019-01-01 00:00:00' '2019-02-01 00:00:00' '2019-03-01 00:00:00']
+
+        >>> d = {{package}}.{{class}}(
+        ...     [31, 62, 90], units='days since 2018-12-01', calendar='360_day')
+        >>> print(d.datetime_as_string)
+        ['2019-01-02 00:00:00' '2019-02-03 00:00:00' '2019-03-01 00:00:00']
+
+        """
+        return self.datetime_array.astype(str)
+
+    @property
     def dtype(self):
         """The `numpy` data-type of the data.
 
