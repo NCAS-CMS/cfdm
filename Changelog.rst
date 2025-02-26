@@ -1,3 +1,12 @@
+Version 1.11.2.1
+----------------
+
+**2025-02-26**
+
+* Re-introduction of `cfdm.Data.datetime_as_array`
+
+----
+  
 Version 1.11.2.0
 ----------------
 
