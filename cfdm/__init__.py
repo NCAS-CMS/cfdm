@@ -146,7 +146,7 @@ else:
     _minimum_vn = "2024.6.0"
     _maximum_vn = "2024.7.1"
     _dask_version = Version(dask.__version__)
-    if not Version(_minimum_vn) <= _dask_version <= Version(_maximum_vn):
+    if _dask_version <= Version(_minimum_vn) or _dask_version >= Version(_maximum_vn):
         raise ValueError(
             "Bad dask version: cfdm requires "
             f"{_minimum_vn}<=dask<={_maximum_vn}. "
