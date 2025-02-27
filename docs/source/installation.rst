@@ -180,6 +180,9 @@ The cfdm package requires:
 * `uritools <https://pypi.org/project/uritools>`_, version 4.0.3 or
   newer.
 
+* `cfunits <https://pypi.org/project/cfunits>`_, version 3.3.7 or
+  newer.
+
 ----
 
 .. _Code-repository:
