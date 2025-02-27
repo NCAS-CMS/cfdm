@@ -837,8 +837,7 @@ def rt2dt(array, units_in):
      cftime.DatetimeGregorian(2001, 11, 16, 12, 0, 0, 0, has_year_zero=False)]
 
     """
-    ndim = np.ndim(array)
-    if not ndim and np.ma.is_masked(array):
+    if not np.ndim(array) and np.ma.is_masked(array):
         # num2date has issues with scalar masked arrays with a True
         # mask
         return np.ma.masked_all((), dtype=object)
@@ -846,12 +845,29 @@ def rt2dt(array, units_in):
     units = units_in.units
     calendar = getattr(units_in, "calendar", "standard")
 
+    if np.ma.isMA(array):
+        # Note: We're going to apply `cftime.num2date` to a non-masked
+        #       array and reset the mask afterwards, because numpy
+        #       currently (numpy==2.2.3) has a bug that produces a
+        #       RuntimeWarning: "numpy/ma/core.py:502: RuntimeWarning:
+        #       invalid value encountered in cast fill_value =
+        #       np.asarray(fill_value, dtype=ndtype)". See
+        #       https://github.com/numpy/numpy/issues/28255 for more
+        #       details.
+        mask = array.mask
+        array = np.array(array)
+    else:
+        mask = None
+
     array = cftime.num2date(
         array, units, calendar, only_use_cftime_datetimes=True
     )
 
     if not isinstance(array, np.ndarray):
         array = np.array(array, dtype=object)
+
+    if mask is not None:
+        array = np.ma.array(array, mask=mask)
 
     return array
 

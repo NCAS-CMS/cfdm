@@ -3,9 +3,14 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* Set new minimum version of `numpy`: ``2.0.0``
+  (https://github.com/NCAS-CMS/cfdm/issues/318)
 * Introduction of reading and writing of aggregation datasets (for
   CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319)
-* Changed dependency: ``h5py>=3.12.0``
+* Changed dependency: ``Python>=3.9.0``
+* Changed dependency: ``numpy>=2.0.0``
+* Changed dependency: ``netCDF4>=1.7.2``
+* Changed dependency: ``cftime>=1.6.4``
 
 ----
 
@@ -40,13 +45,14 @@ Version 1.11.2.0
   (https://github.com/NCAS-CMS/cfdm/issues/315)
 * New class `cfdm.H5netcdfArray`
 * New class `cfdm.NetCDF4Array`
-* Changed dependency: ``numpy>=1.15,<2.0``
 * New dependency: ``h5netcdf>=1.3.0``
-* New dependency: ``h5py>=3.10.0``
+* New dependency: ``h5py>=3.12.1``
 * New dependency: ``s3fs>=2024.6.0``
 * New dependency: ``dask>=2024.6.0,<=2024.7.1``
 * New dependency: ``uritools>=4.0.3``
-* Removed dependency: ``netcdf_flattener``
+* New dependency: ``cfunits>=3.3.7``
+* New dependency: ``udunits2>=2.2.28``
+* Removed dependency(now incorporated into `cfdm`): ``netcdf_flattener``
 
 ----
 

@@ -2561,9 +2561,9 @@ class NetCDFWrite(IOWrite):
                     continue
 
                 if np.size(value) == 1:
-                    value = np.array(value, copy=False).item()
+                    value = np.array(value).item()
                 else:
-                    value = np.array(value, copy=False).tolist()
+                    value = np.array(value).tolist()
 
                 parameters[term] = value
 

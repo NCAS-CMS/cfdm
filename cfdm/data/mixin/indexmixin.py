@@ -37,7 +37,7 @@ class IndexMixin:
 
     """
 
-    def __array__(self, *dtype):
+    def __array__(self, dtype=None, copy=None):
         """Convert the `{{class}}` into a `numpy` array.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -47,6 +47,13 @@ class IndexMixin:
             dtype: optional
                 Typecode or data-type to which the array is cast.
 
+            copy: `None` or `bool`
+                Included to match the v2 `numpy.ndarray.__array__`
+                API, but ignored. The return numpy array is always
+                independent.
+
+                .. versionadded:: NEXTVERSION
+
         :Returns:
 
             `numpy.ndarray`
@@ -55,10 +62,10 @@ class IndexMixin:
 
         """
         array = self._get_array()
-        if dtype:
-            return array.astype(dtype[0], copy=False)
+        if dtype is None:
+            return array
 
-        return array
+        return array.astype(dtype, copy=False)
 
     def __getitem__(self, index):
         """Returns a subspace of the data as a new `{{class}}`.
