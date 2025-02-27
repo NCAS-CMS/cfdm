@@ -847,7 +847,7 @@ def rt2dt(array, units_in):
 
     if np.ma.isMA(array):
         # Note: We're going to apply `cftime.num2date` to a non-masked
-        #       array and the reset the mask afterwards, because numpy
+        #       array and reset the mask afterwards, because numpy
         #       currently (numpy==2.2.3) has a bug that produces a
         #       RuntimeWarning: "numpy/ma/core.py:502: RuntimeWarning:
         #       invalid value encountered in cast fill_value =
