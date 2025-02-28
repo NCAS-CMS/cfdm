@@ -29,7 +29,7 @@ cfdm works for Linux, Mac and Windows operating systems.
 **Python versions**
 -------------------
 
-cfdm works for Python versions 3.8 or newer.
+cfdm works for Python versions 3.9 or newer.
 
 ----
 
@@ -152,21 +152,20 @@ Tests are run from within the ``cfdm/test`` directory:
 
 The cfdm package requires:
 
-* `Python <https://www.python.org>`_, version 3.8 or newer.
+* `Python <https://www.python.org>`_, version 3.9 or newer.
 
-* `numpy <http://www.numpy.org>`_, versions 1.15 up to, but not
-  including, 2.0.
+* `numpy <http://www.numpy.org>`_, version 2.0.0 or newer.
 
-* `netCDF4 <https://pypi.org/project/netCDF4>`_, version 1.5.4 or
+* `netCDF4 <https://pypi.org/project/netCDF4>`_, version 1.7.2 or
   newer.
 
-* `cftime <https://pypi.org/project/cftime>`_, version 1.6.0 or
+* `cftime <https://pypi.org/project/cftime>`_, version 1.6.4 or
   newer.
 
 * `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
   newer.
 
-* `h5py <https://pypi.org/project/h5py>`_, version 3.12.0 or newer.
+* `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.
 
 * `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 
@@ -179,6 +178,9 @@ The cfdm package requires:
 * `scipy <https://scipy.org/>`_, version 1.10.0 or newer.
 
 * `uritools <https://pypi.org/project/uritools>`_, version 4.0.3 or
+  newer.
+
+* `cfunits <https://pypi.org/project/cfunits>`_, version 3.3.7 or
   newer.
 
 ----

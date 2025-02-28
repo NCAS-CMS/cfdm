@@ -1342,7 +1342,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         return self._unary_operation("__pos__")
 
-    def __array__(self, *dtype):
+    def __array__(self, dtype=None, copy=None):
         """The numpy array interface.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1351,6 +1351,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             dtype: optional
                 Typecode or data-type to which the array is cast.
+
+            copy: `None` or `bool`
+                Included to match the v2 `numpy.ndarray.__array__`
+                API, but ignored. The returned numpy array is always
+                independent.
+
+                .. versionadded:: NEXTVERSION
 
         :Returns:
 
@@ -1372,10 +1379,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         array = self.array
-        if not dtype:
+        if dtype is None:
             return array
-        else:
-            return array.astype(dtype[0], copy=False)
+
+        return array.astype(dtype, copy=False)
 
     def __data__(self):
         """Returns a new reference to self.

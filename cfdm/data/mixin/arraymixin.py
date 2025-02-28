@@ -11,10 +11,22 @@ class ArrayMixin:
 
     """
 
-    def __array__(self, *dtype):
+    def __array__(self, dtype=None, copy=None):
         """The numpy array interface.
 
         .. versionadded:: (cfdm) 1.8.7.0
+
+        :Parameters:
+
+            dtype: optional
+                Typecode or data-type to which the array is cast.
+
+            copy: `None` or `bool`
+                Included to match the v2 `numpy.ndarray.__array__`
+                API, but ignored. The return numpy array is always
+                independent.
+
+                .. versionadded:: NEXTVERSION
 
         :Returns:
 
@@ -31,10 +43,10 @@ class ArrayMixin:
 
         """
         array = self.array
-        if not dtype:
+        if dtype is None:
             return array
-        else:
-            return array.astype(dtype[0], copy=False)
+
+        return array.astype(dtype, copy=False)
 
     def __array_function__(self, func, types, args, kwargs):
         """Implement the `numpy` ``__array_function__`` protocol.
