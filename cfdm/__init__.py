@@ -150,7 +150,7 @@ else:
             f"Got {dask.__version__} at {dask.__file__}"
         )
 
-
+# Check the version of uritools
 try:
     import uritools
 except ImportError as error1:
