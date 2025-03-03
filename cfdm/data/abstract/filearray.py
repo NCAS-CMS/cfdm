@@ -153,7 +153,7 @@ class FileArray(Array):
         return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
-        """"Called by the `str` built-in function.
+        """Called by the `str` built-in function.
 
         x.__str__() <==> str(x)
 

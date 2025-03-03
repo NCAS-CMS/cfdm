@@ -11,7 +11,8 @@ class ArrayMixin:
 
     """
 
-    # Numpy handled functions (numpy NEP 18)
+    # Functions handled by __array_function__ implementations (numpy
+    # NEP 18)
     _HANDLED_FUNCTIONS = {}
 
     def __array__(self, dtype=None, copy=None):
@@ -263,7 +264,7 @@ class ArrayMixin:
 # __array_function__ implementations (numpy NEP 18)
 # --------------------------------------------------------------------
 def array_implements(cls, numpy_function):
-    """An __array_function__ implementation for `Array` objects.
+    """Decorator for __array_function__ implementations.
 
     .. versionadded:: (cfdm) NEXTVERSION
 

@@ -1,13 +1,13 @@
 Version NEXTVERSION
 ----------------
 
-**2025-??-??**
+**2025-03-??**
 
 * Set new minimum version of `dask`: ``2025.2.0``
   (https://github.com/NCAS-CMS/cfdm/issues/321)
-** Set new minimum version of `numpy`: ``2.0.0``
+* Set new minimum version of `numpy`: ``2.0.0``
   (https://github.com/NCAS-CMS/cfdm/issues/318)
- Introduction of reading and writing of aggregation datasets (for
+* Introduction of reading and writing of aggregation datasets (for
   CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319)
 * Changed dependency: ``Python>=3.9.0``
 * Changed dependency: ``numpy>=2.0.0``
