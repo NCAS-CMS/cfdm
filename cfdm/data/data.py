@@ -6929,7 +6929,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 * ``'optimise'``
 
                   Apply all possible graph optimisations. These will
-                  include removal unnecessary tasks (see ``'cull'``),
+                  include removal of unnecessary tasks (see ``'cull'``),
                   and is equivalent to applying `dask.optimize` to the
                   graph.
 
@@ -6980,7 +6980,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
           0): <Task ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e', 0) cfdm_harden_mask(...)>}
 
         """
-        # NOTE: The undlerlying Dask graph structure is liable to
+        # NOTE: The underlying Dask graph structure is liable to
         # change in the future, in which case this method could break
         # and need refactoring (e.g.
         # https://github.com/dask/dask/pull/11736#discussion_r1954752842).
