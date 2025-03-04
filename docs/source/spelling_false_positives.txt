@@ -166,7 +166,8 @@ topologies
 trajectoryProfile
 Treshansky
 Typecode
-Udunits
+UDUNITS
+udunits
 Unary
 uncompress
 uncompresses
