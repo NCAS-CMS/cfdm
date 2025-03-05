@@ -143,16 +143,14 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
-    _minimum_vn = "2024.6.0"
-    _maximum_vn = "2024.7.1"
-    _dask_version = Version(dask.__version__)
-    if _dask_version < Version(_minimum_vn) or _dask_version > Version(_maximum_vn):
+    _minimum_vn = "2025.2.0"
+    if Version(dask.__version__) < Version(_minimum_vn):
         raise ValueError(
-            "Bad dask version: cfdm requires "
-            f"{_minimum_vn}<=dask<={_maximum_vn}. "
-            f"Got {_dask_version} at {dask.__file__}"
+            f"Bad dask version: cfdm requires dask>={_minimum_vn}. "
+            f"Got {dask.__version__} at {dask.__file__}"
         )
 
+# Check the version of uritools
 try:
     import uritools
 except ImportError as error1:
@@ -165,7 +163,7 @@ else:
             f"Got {uritools.__version__} at {uritools.__file__}"
         )
 
-del _minimum_vn, _maximum_vn
+del _minimum_vn
 
 from .constants import masked
 

@@ -14,6 +14,7 @@ import numpy as np
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
+from cfdm.functions import DeprecationError
 
 # To facilitate the testing of logging outputs (see comment tag
 # 'Logging note')
@@ -1433,14 +1434,19 @@ class DataTest(unittest.TestCase):
         self.assertIn((key, 1), x)
 
         e = d[0]
-        x = e.todict()
+        x = e.todict(graph="cull")
         self.assertIn((key, 0), x)
         self.assertNotIn((key, 1), x)
 
-        x = e.todict(optimize_graph=False)
+        e = d[0]
+        x = e.todict(graph=None)
         self.assertIsInstance(x, dict)
         self.assertIn((key, 0), x)
         self.assertIn((key, 1), x)
+
+        # Deprecated kwargs
+        with self.assertRaises(DeprecationError):
+            d.todict(optimize_graph=True)
 
     def test_Data_to_dask_array(self):
         """Test Data.to_dask_array."""
@@ -1470,29 +1476,16 @@ class DataTest(unittest.TestCase):
         """Test Data.cull_graph."""
         d = cfdm.Data([1, 2, 3, 4, 5], chunks=3)
         d = d[:2]
-        self.assertEqual(
-            len(
-                dict(
-                    d.to_dask_array(
-                        _force_mask_hardness=False, _force_to_memory=False
-                    ).dask
-                )
-            ),
-            3,
-        )
+        nkeys = len(dict(d.to_dask_array().dask))
 
         # Check that there are fewer keys after culling
-        d.cull_graph()
-        self.assertEqual(
-            len(
-                dict(
-                    d.to_dask_array(
-                        _force_mask_hardness=False, _force_to_memory=False
-                    ).dask
-                )
-            ),
-            2,
-        )
+        e = d.cull_graph(inplace=False)
+        self.assertIsInstance(e, cfdm.Data)
+        self.assertLess(len(dict(e.to_dask_array().dask)), nkeys)
+
+        # Check in-place (the default)
+        self.assertIsNone(d.cull_graph())
+        self.assertLess(len(dict(d.to_dask_array().dask)), nkeys)
 
     def test_Data_npartitions(self):
         """Test Data.npartitions."""
@@ -2103,6 +2096,15 @@ class DataTest(unittest.TestCase):
         d.nc_set_hdf5_chunksizes((1, 4, 3))
         e = d[0, :2, :]
         self.assertEqual(e.nc_hdf5_chunksizes(), (1, 2, 3))
+
+        # Integer-list indices that trigger dask optimisation (e.g. a
+        # non-monotonic integer list that spans multiple chunks, and
+        # applies to underlying cfdm Array objects).
+        cfdm.write(self.f0, file_A)
+        d = cfdm.read(file_A, dask_chunks=3)[0].data
+        self.assertTrue(
+            (d[0, [4, 0, 3, 1]].array == [[0.018, 0.007, 0.014, 0.034]]).all()
+        )
 
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
         """Test arithmetic, logical and comparison operators on Data."""
