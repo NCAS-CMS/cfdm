@@ -80,8 +80,11 @@ Data
    ~cfdm.Field.has_data_axes
    ~cfdm.Field.set_data_axes
    ~cfdm.Field.insert_dimension
+   ~cfdm.Field.persist
+   ~cfdm.Field.persist_metadata
    ~cfdm.Field.squeeze
    ~cfdm.Field.transpose
+   ~cfdm.Field.unsqueeze
    
 .. rubric:: Attributes
    
@@ -98,7 +101,7 @@ Data
    ~cfdm.Field.shape
    ~cfdm.Field.size
    
-.. _Field-Metadata-constructs:   
+.. _Field-Metadata-constructs:   x
    
 Metadata constructs
 -------------------
@@ -189,6 +192,7 @@ Miscellaneous
 
    ~cfdm.Field.compress
    ~cfdm.Field.copy
+   ~cfdm.Field.concatenate
    ~cfdm.Field.creation_commands
    ~cfdm.Field.equals
    ~cfdm.Field.convert
@@ -199,6 +203,19 @@ Miscellaneous
    ~cfdm.Field.get_filenames
    ~cfdm.Field.get_original_filenames
    ~cfdm.Field.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.Field.file_directories
+   ~cfdm.Field.replace_directory
 
 .. _Field-NetCDF:
    

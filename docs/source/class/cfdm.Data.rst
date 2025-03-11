@@ -100,6 +100,7 @@ Dask
 
    ~cfdm.Data.chunks
    ~cfdm.Data.chunksize
+   ~cfdm.Data.chunk_positions
    ~cfdm.Data.npartitions
    ~cfdm.Data.numblocks
    
@@ -164,6 +165,16 @@ Changing number of dimensions
    ~cfdm.Data.insert_dimension
    ~cfdm.Data.squeeze
 
+Joining data
+^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.concatenate
+   
 Adding and removing elements
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -372,6 +383,26 @@ Performance
    ~cfdm.Data.nc_set_hdf5_chunksizes
    ~cfdm.Data.to_memory
 
+Aggregation
+-----------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.file_directories
+   ~cfdm.Data.replace_directory
+   ~cfdm.Data.replace_filenames
+   ~cfdm.Data.nc_del_aggregated_data
+   ~cfdm.Data.nc_del_aggregation_write_status
+   ~cfdm.Data.nc_get_aggregated_data
+   ~cfdm.Data.nc_get_aggregation_fragment_type
+   ~cfdm.Data.nc_get_aggregation_write_status
+   ~cfdm.Data.nc_has_aggregated_data
+   ~cfdm.Data.nc_set_aggregated_data
+   ~cfdm.Data.nc_set_aggregation_write_status
+   
 Special
 -------
 

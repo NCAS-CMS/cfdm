@@ -70,6 +70,7 @@ Data
    ~cfdm.AuxiliaryCoordinate.has_data
    ~cfdm.AuxiliaryCoordinate.set_data
    ~cfdm.AuxiliaryCoordinate.insert_dimension
+   ~cfdm.AuxiliaryCoordinate.persist
    ~cfdm.AuxiliaryCoordinate.squeeze
    ~cfdm.AuxiliaryCoordinate.transpose
 
@@ -175,12 +176,26 @@ Miscellaneous
    :template: method.rst	     
 
    ~cfdm.AuxiliaryCoordinate.copy
+   ~cfdm.AuxiliaryCoordinate.concatenate
    ~cfdm.AuxiliaryCoordinate.creation_commands
    ~cfdm.AuxiliaryCoordinate.equals
    ~cfdm.AuxiliaryCoordinate.uncompress
    ~cfdm.AuxiliaryCoordinate.get_filenames
    ~cfdm.AuxiliaryCoordinate.get_original_filenames
    ~cfdm.AuxiliaryCoordinate.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.AuxiliaryCoordinate.file_directories
+   ~cfdm.AuxiliaryCoordinate.replace_directory
 
 NetCDF
 ------
