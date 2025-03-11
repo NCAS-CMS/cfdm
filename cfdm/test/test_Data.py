@@ -1640,6 +1640,16 @@ class DataTest(unittest.TestCase):
             a = d.array
             self.assertTrue((a == x).all())
 
+    def test_Data_datetime_as_string(self):
+        """Test the `datetime_as_string` Data property."""
+        d = cfdm.Data([11292.5, 11293.5], "days since 1970-1-1")
+        array = d.datetime_as_string
+        self.assertEqual(array.dtype.kind, "U")
+
+        self.assertTrue(
+            (array == ["2000-12-01 12:00:00", "2000-12-02 12:00:00"]).all()
+        )
+
     def test_Data_compute(self):
         """Test Data.compute."""
         # Scalar numeric array

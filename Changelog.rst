@@ -17,6 +17,16 @@ Version NEXTVERSION
 
 ----
 
+Version 1.11.2.1
+----------------
+
+**2025-02-26**
+
+* Re-introduction of `cfdm.Data.datetime_as_string`
+  (https://github.com/NCAS-CMS/cfdm/pull/324)
+
+----
+  
 Version 1.11.2.0
 ----------------
 
