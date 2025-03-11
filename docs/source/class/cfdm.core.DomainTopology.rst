@@ -68,7 +68,6 @@ Topology
    ~cfdm.core.DomainTopology.get_cell
    ~cfdm.core.DomainTopology.has_cell
    ~cfdm.core.DomainTopology.set_cell
-   ~cfdm.core.DomainTopology.normalise
 
 Data
 ----
@@ -80,15 +79,10 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.DomainTopology.apply_masking
    ~cfdm.core.DomainTopology.del_data
    ~cfdm.core.DomainTopology.get_data
    ~cfdm.core.DomainTopology.has_data
    ~cfdm.core.DomainTopology.set_data
-   ~cfdm.core.DomainTopology.insert_dimension
-   ~cfdm.core.DomainTopology.persist
-   ~cfdm.core.DomainTopology.squeeze
-   ~cfdm.core.DomainTopology.transpose
    
 .. rubric:: Attributes
    
@@ -97,9 +91,7 @@ Data
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~cfdm.core.DomainTopology.array
    ~cfdm.core.DomainTopology.data
-   ~cfdm.core.DomainTopology.datetime_array
    ~cfdm.core.DomainTopology.dtype
    ~cfdm.core.DomainTopology.ndim
    ~cfdm.core.DomainTopology.shape
@@ -128,69 +120,6 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.core.DomainTopology.copy
-   ~cfdm.core.DomainTopology.concatenate
-   ~cfdm.core.DomainTopology.creation_commands
-   ~cfdm.core.DomainTopology.equals
-   ~cfdm.core.DomainTopology.uncompress
-   ~cfdm.core.DomainTopology.get_filenames
-   ~cfdm.core.DomainTopology.get_original_filenames
-   ~cfdm.core.DomainTopology.to_memory
-
-Aggregation
------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-	      
-   ~cfdm.core.DomainTopology.file_directories
-   ~cfdm.core.DomainTopology.replace_directory
-
-NetCDF
-------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.DomainTopology.nc_del_variable
-   ~cfdm.core.DomainTopology.nc_get_variable
-   ~cfdm.core.DomainTopology.nc_has_variable
-   ~cfdm.core.DomainTopology.nc_set_variable
-
-Groups
-^^^^^^
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.DomainTopology.nc_variable_groups
-   ~cfdm.core.DomainTopology.nc_clear_variable_groups
-   ~cfdm.core.DomainTopology.nc_set_variable_groups
-
-HDF5 chunks
-^^^^^^^^^^^
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.DomainTopology.nc_hdf5_chunksizes
-   ~cfdm.core.DomainTopology.nc_set_hdf5_chunksizes
-   ~cfdm.core.DomainTopology.nc_clear_hdf5_chunksizes
 
 Special
 -------
@@ -203,7 +132,6 @@ Special
    :template: method.rst
 
    ~cfdm.core.DomainTopology.__deepcopy__
-   ~cfdm.core.DomainTopology.__getitem__
    ~cfdm.core.DomainTopology.__repr__
    ~cfdm.core.DomainTopology.__str__
 

@@ -3891,7 +3891,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> d.compute()
         <2x3 sparse array of type '<class 'numpy.float64'>'
                 with 0 stored elements in Compressed Sparse Row format>
-        >>>: d.array
+        >>> d.array
         array([[0., 0., 0.],
                [0., 0., 0.]])
         >>> d.compute().toarray()
