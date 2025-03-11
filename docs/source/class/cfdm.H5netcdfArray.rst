@@ -25,6 +25,7 @@ Inspection
    ~cfdm.H5netcdfArray.get_attributes
    ~cfdm.H5netcdfArray.get_missing_values
    ~cfdm.H5netcdfArray.index
+   ~cfdm.H5netcdfArray.is_subspace
 
 .. rubric:: Attributes
 
@@ -39,6 +40,7 @@ Inspection
    ~cfdm.H5netcdfArray.shape
    ~cfdm.H5netcdfArray.size
    ~cfdm.H5netcdfArray.original_shape
+   ~cfdm.H5netcdfArray.reference_shape
 
 Units
 -----
@@ -72,18 +74,17 @@ File
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.H5netcdfArray.file_directory
    ~cfdm.H5netcdfArray.get_address
-   ~cfdm.H5netcdfArray.get_addresses
    ~cfdm.H5netcdfArray.close
    ~cfdm.H5netcdfArray.open
    ~cfdm.H5netcdfArray.get_filename
-   ~cfdm.H5netcdfArray.get_filenames
-   ~cfdm.H5netcdfArray.get_format
-   ~cfdm.H5netcdfArray.get_formats
    ~cfdm.H5netcdfArray.get_groups
    ~cfdm.H5netcdfArray.get_mask
    ~cfdm.H5netcdfArray.get_unpack
    ~cfdm.H5netcdfArray.get_storage_options
+   ~cfdm.H5netcdfArray.replace_directory
+   ~cfdm.H5netcdfArray.replace_filename
 
 Miscellaneous
 -------------

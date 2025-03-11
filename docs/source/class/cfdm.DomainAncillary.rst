@@ -70,6 +70,7 @@ Data
    ~cfdm.DomainAncillary.has_data
    ~cfdm.DomainAncillary.set_data
    ~cfdm.DomainAncillary.insert_dimension
+   ~cfdm.DomainAncillary.persist
    ~cfdm.DomainAncillary.squeeze
    ~cfdm.DomainAncillary.transpose
    
@@ -160,12 +161,26 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.DomainAncillary.copy
+   ~cfdm.DomainAncillary.concatenate
    ~cfdm.DomainAncillary.creation_commands
    ~cfdm.DomainAncillary.equals
    ~cfdm.DomainAncillary.uncompress
    ~cfdm.DomainAncillary.get_filenames
    ~cfdm.DomainAncillary.get_original_filenames
    ~cfdm.DomainAncillary.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.DomainAncillary.file_directories
+   ~cfdm.DomainAncillary.replace_directory
 
 NetCDF
 ------
