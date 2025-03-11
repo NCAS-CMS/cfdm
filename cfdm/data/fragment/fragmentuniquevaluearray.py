@@ -5,7 +5,7 @@ from .mixin import FragmentArrayMixin
 class FragmentUniqueValueArray(FragmentArrayMixin, FullArray):
     """A fragment of aggregated data that has a single unique value.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 

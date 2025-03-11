@@ -52,7 +52,7 @@ class IndexMixin:
                 API, but ignored. The return numpy array is always
                 independent.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -416,7 +416,7 @@ class IndexMixin:
         dimensions if `index` has new dimensions added with index
         values of `numpy.newaxis`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `index`, `shape`, `original_shape`
 
@@ -456,7 +456,7 @@ class IndexMixin:
         in `index` will not, on their own, cause `is_subspace` to
         return `False`
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `index`, `shape`
 

@@ -583,7 +583,7 @@ class write(ReadWrite):
                       parameter) does not affect the dataset chunk
                       size.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         cfa: `str` or `dict` or `None`, optional
             Specify which netCDF variables, if any, should be written

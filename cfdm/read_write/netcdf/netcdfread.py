@@ -722,7 +722,7 @@ class NetCDFRead(IORead):
     def string_to_cdl(cls, cdl_string):
         """Create a temporary CDL file from a CDL string.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -953,44 +953,44 @@ class NetCDFRead(IORead):
                  Storing the dataset chunking strategy. See
                  `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             cfa: `dict`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             cfa_write: sequence of `str`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             to_memory: (sequence) of `str`, optional
                 Whether or not to bring data arrays into memory.  See
                 `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             squeeze: `bool`, optional
                 Whether or not to remove all size 1 axes from field
                 construct data arrays. See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             unsqueeze: `bool`, optional
                 Whether or not to ensure that all size 1 axes are
                 spanned by field construct data arrays. See
                 `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             file_type: `None` or (sequence of) `str`, optional
                 Only read files of the given type(s). See `cfdm.read`
                 for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             ignore_unknown_type: `bool`, optional
                 If True then ignore any file which does not have one
@@ -7860,7 +7860,7 @@ class NetCDFRead(IORead):
                 The type of the construct that contains *array*. Set
                 to `None` if the array does not belong to a construct.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
@@ -11316,7 +11316,7 @@ class NetCDFRead(IORead):
     def _cfa_is_aggregation_variable(self, ncvar):
         """Return True if *ncvar* is a CF-netCDF aggregated variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -11338,7 +11338,7 @@ class NetCDFRead(IORead):
     def _cfa_parse_aggregated_data(self, ncvar, aggregated_data):
         """Parse a CF-netCDF 'aggregated_data' attribute.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

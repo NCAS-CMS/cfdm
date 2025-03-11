@@ -1,4 +1,4 @@
-Version NEXTVERSION
+Version 1.12.0.0
 ----------------
 
 **2025-03-??**

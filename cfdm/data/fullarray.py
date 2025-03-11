@@ -11,7 +11,7 @@ class FullArray(IndexMixin, Array):
 
     The array may be empty or all missing values.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
@@ -100,7 +100,7 @@ class FullArray(IndexMixin, Array):
     def _get_array(self, index=None):
         """Returns the data as a `numpy` array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `__array__`, `index`
 
@@ -135,7 +135,7 @@ class FullArray(IndexMixin, Array):
     def array(self):
         """Return an independent numpy array containing the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -158,7 +158,7 @@ class FullArray(IndexMixin, Array):
     def get_full_value(self, default=AttributeError()):
         """Return the data array fill value.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `set_full_value`
 
@@ -179,7 +179,7 @@ class FullArray(IndexMixin, Array):
     def set_full_value(self, fill_value):
         """Set the data array fill value.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `get_full_value`
 
@@ -206,7 +206,7 @@ def unique(
 ):
     """Version of `np.unique` that is optimised for `FullArray` objects.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
     if return_index or return_inverse or return_counts or axis is not None:

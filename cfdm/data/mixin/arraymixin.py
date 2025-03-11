@@ -30,7 +30,7 @@ class ArrayMixin:
                 API, but ignored. The return numpy array is always
                 independent.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -266,7 +266,7 @@ class ArrayMixin:
 def array_implements(cls, numpy_function):
     """Decorator for __array_function__ implementations.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
@@ -281,7 +281,7 @@ def array_implements(cls, numpy_function):
 def concatenate(arrays, axis=0):
     """Version of `np.concatenate` that works for `Array` objects.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
     # Convert to numpy arrays, and concatenate those.

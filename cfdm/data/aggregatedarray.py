@@ -14,14 +14,14 @@ from .utils import chunk_locations, chunk_positions
 class AggregatedArray(abstract.FileArray):
     """An array stored in a CF aggregation variable.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
     def __new__(cls, *args, **kwargs):
         """Store fragment array classes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         """
         instance = super().__new__(cls)
@@ -169,7 +169,7 @@ class AggregatedArray(abstract.FileArray):
     def __getitem__(self, index):
         """Return a subspace.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         """
         dx = netcdf_indexer(
@@ -187,7 +187,7 @@ class AggregatedArray(abstract.FileArray):
     def __in_memory__(self):
         """True if the array data is in memory.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -199,7 +199,7 @@ class AggregatedArray(abstract.FileArray):
     def _parse_fragment_array(self, aggregated_filename, fragment_array):
         """Parse the fragment array dictionary.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -303,7 +303,7 @@ class AggregatedArray(abstract.FileArray):
         The keys are indices of the fragment array dimensions,
         e.g. ``(1, 0, 0, 0)``.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
          .. seealso:: `get_fragment_type`,
                       `get_fragment_array_shape`,
@@ -357,7 +357,7 @@ class AggregatedArray(abstract.FileArray):
         The fragment dimension sizes are given in the same order as
         the aggregated dimension sizes given by `shape`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
          .. seealso:: `get_fragment_array`,
                       `get_fragment_type`,
@@ -378,7 +378,7 @@ class AggregatedArray(abstract.FileArray):
         files, or else ``'unique_value'`` to indicate that they
         are represented by their unique data values.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
          .. seealso:: `get_fragment_array`,
                       `get_fragment_array_shape`,
@@ -395,7 +395,7 @@ class AggregatedArray(abstract.FileArray):
     def get_fragmented_dimensions(self):
         """The positions of dimensions spanned by two or more fragments.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
          .. seealso:: `get_fragment_array`,
                       `get_fragment_array_shape`,
@@ -433,7 +433,7 @@ class AggregatedArray(abstract.FileArray):
         its fragments, overriding any other size implied by the
         *shapes* parameter.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `subarrays`
 
@@ -538,7 +538,7 @@ class AggregatedArray(abstract.FileArray):
     def subarrays(self, subarray_shapes):
         """Return descriptors for every subarray.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `subarray_shapes`
 
@@ -686,7 +686,7 @@ class AggregatedArray(abstract.FileArray):
     def to_dask_array(self, chunks="auto"):
         """Create a dask array with `FragmentArray` chunks.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

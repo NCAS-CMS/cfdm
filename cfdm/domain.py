@@ -947,7 +947,7 @@ class Domain(
 
             {{normalise: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -1091,7 +1091,7 @@ class Domain(
 
         `persist` causes delayed operations to be computed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `{{package}}.Data.persist`
 

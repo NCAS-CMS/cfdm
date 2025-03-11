@@ -44,7 +44,7 @@ class Array(Container):
                 API, but ignored. The return numpy array is always
                 independent.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 

@@ -354,7 +354,7 @@ class PropertiesData(Properties):
     ):
         """Join a together sequence of `{{class}}`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `Data.concatenate`, `Data.cull_graph`
 
@@ -713,7 +713,7 @@ class PropertiesData(Properties):
 
         Returns the locations of any files referenced by the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `get_filenames`, `replace_directory`
 
@@ -741,7 +741,7 @@ class PropertiesData(Properties):
 
             {{normalise: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -808,7 +808,7 @@ class PropertiesData(Properties):
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
@@ -879,7 +879,7 @@ class PropertiesData(Properties):
 
         `persist` causes delayed operations to be computed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `array`, `datetime_array`,
                      `{{package}}.Data.persist`
@@ -912,7 +912,7 @@ class PropertiesData(Properties):
     ):
         """Replace a file directory in-place.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directories`, `get_filenames`
 

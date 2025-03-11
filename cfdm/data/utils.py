@@ -570,7 +570,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 def chunk_indices(chunks):
     """Return indices that define each dask chunk.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     .. seealso:: `chunks`
 

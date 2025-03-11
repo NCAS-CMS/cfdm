@@ -87,7 +87,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
     def _group(self, dataset, groups):
         """Return the group object containing a variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

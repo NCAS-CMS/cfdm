@@ -200,14 +200,14 @@ class FieldDomain:
                 calling function (i.e. by the user). Used for
                 informative error messages.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             filter_kwargs: `None` or `dict`, optional
                 The filter_kwargs that were passed in by the calling
                 function (i.e. by the user). Used for informative
                 error messages.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
