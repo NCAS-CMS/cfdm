@@ -21,7 +21,7 @@ class ReadWrite(metaclass=DocstringRewriteMeta):
 
         See `_docstring_substitutions` for details.
 
-        .. versionaddedd:: (cfdm) NEXTVERSION
+        .. versionaddedd:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -36,7 +36,7 @@ class ReadWrite(metaclass=DocstringRewriteMeta):
 
         See `_docstring_package_depth` for details.
 
-        .. versionaddedd:: (cfdm) NEXTVERSION
+        .. versionaddedd:: (cfdm) 1.12.0.0
 
         """
         return 0
@@ -45,13 +45,13 @@ class ReadWrite(metaclass=DocstringRewriteMeta):
     def _flat(cls, x):
         """Return an iterator over an arbitrarily nested sequence.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
             x: scalar or arbitrarily nested sequence
                 The arbitrarily nested sequence to be flattened. Note
-                that a If *x* is a string or a scalar then this is
+                that if *x* is a string or a scalar then this is
                 equivalent to passing a single element sequence
                 containing *x*.
 

@@ -27,6 +27,12 @@ Documentation
 
 https://ncas-cms.github.io/cfdm
 
+Dask
+====
+
+From version 1.11.2.0 the `cfdm` package uses
+[Dask](https://docs.dask.org) for all of its data manipulations.
+
 Installation
 ============
 
@@ -74,7 +80,7 @@ inspecting it:
 The ``cfdm`` package can:
 
 * read field and domain constructs from netCDF and CDL datasets with a
-  choice of netCDF backends,
+  choice of netCDF backends,and in  local, http, and s3 locations,
 * be fully flexible with respect to HDF5 chunking,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF datasets on disk,

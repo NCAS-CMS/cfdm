@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from functools import reduce
 from math import log, nan, prod
 from numbers import Integral
+from pprint import pformat
 from typing import Any
 from uuid import uuid4
 
@@ -570,7 +571,7 @@ class NetCDFRead(IORead):
         file_open_function = {
             # netCDF-4
             "h5netcdf-pyfive": self._open_h5netcdf_pyfive,
-            "h5netcdf": self._open_h5netcdf,
+            "h5netcdf-h5py": self._open_h5netcdf_h5py,
             # netCDF-3
             "netcdf_file": self._open_netcdf_file,
             # netCDF-3 and netCDF-4
@@ -663,7 +664,7 @@ class NetCDFRead(IORead):
     def _open_netCDF4(self, filename):
         """Return an open `netCDF4.Dataset`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -677,8 +678,8 @@ class NetCDFRead(IORead):
         """
         return netCDF4.Dataset(filename, mode="r")
 
-    def _open_h5netcdf(self, filename):
-        """Return an open `h5netcdf.File`.
+    def _open_h5netcdf_h5py(self, filename):
+        """Return an open `h5netcdf.File` with the `h5py` backend.
 
         Uses values of the ``rdcc_nbytes``, ``rdcc_w0``, and
         ``rdcc_nslots`` parameters to `h5netcdf.File` that correspond
@@ -686,7 +687,7 @@ class NetCDFRead(IORead):
         parameters ``size``, ``nelems``, and ``preemption``,
         respectively.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -705,7 +706,7 @@ class NetCDFRead(IORead):
             rdcc_nbytes=16777216,
             rdcc_w0=0.75,
             rdcc_nslots=4133,
-            backend="pyfive",
+#            backend="pyfive",
             phony_dims='sort'
 #            phony_dims='access'
         )
@@ -789,7 +790,7 @@ class NetCDFRead(IORead):
     def string_to_cdl(cls, cdl_string):
         """Create a temporary CDL file from a CDL string.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -983,7 +984,7 @@ class NetCDFRead(IORead):
             unpack: `bool`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             warn_valid: `bool`, optional
                 See `cfdm.read` for details
@@ -998,79 +999,79 @@ class NetCDFRead(IORead):
             storage_options: `bool`, optional
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             netcdf_backend: `None` or `str`, optional
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             cache: `bool`, optional
                 Control array element caching. See `cfdm.read` for
                 details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             dask_chunks: `str`, `int`, `None`, or `dict`, optional
                 Specify the `dask` chunking of dimensions for data in
                 the input files. See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             store_dataset_chunks: `bool`, optional
                  Storing the dataset chunking strategy. See
                  `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             cfa: `dict`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             cfa_write: sequence of `str`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             to_memory: (sequence) of `str`, optional
                 Whether or not to bring data arrays into memory.  See
                 `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             squeeze: `bool`, optional
                 Whether or not to remove all size 1 axes from field
                 construct data arrays. See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             unsqueeze: `bool`, optional
                 Whether or not to ensure that all size 1 axes are
                 spanned by field construct data arrays. See
                 `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             file_type: `None` or (sequence of) `str`, optional
                 Only read files of the given type(s). See `cfdm.read`
                 for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             ignore_unknown_type: `bool`, optional
                 If True then ignore any file which does not have one
                 of the valid types specified by the *file_type*
                 parameter. See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             _file_systems: `dict`, optional
                 Provide any already-open S3 file systems.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -1116,7 +1117,10 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         if netcdf_backend is None:
             # By default, try netCDF backends in this order:
-            netcdf_backend = ("h5netcdf-pyfive", "h5netcdf", "netcdf_file", "netCDF4")
+            netcdf_backend = ("h5netcdf-pyfive",
+                              "netcdf_file",
+                              "h5netcdf-h5py",
+                              "netCDF4")
         elif isinstance(netcdf_backend, str):
             netcdf_backend = (netcdf_backend,)
 
@@ -4065,9 +4069,13 @@ class NetCDFRead(IORead):
                     ugrid = False
                     logger.warning(
                         "There was a problem parsing the UGRID mesh "
-                        f"topology variable {mesh.mesh_ncvar!r}: "
-                        f"Ignoring the UGRID mesh for {field_ncvar!r}."
+                        "topology variable. Ignoring the UGRID mesh "
+                        f"for {field_ncvar!r}."
                     )
+                    if is_log_level_debug(logger):
+                        logger.debug(
+                            f"Mesh dictionary is: {pformat(g['mesh'])}"
+                        )
 
             if ugrid:
                 # The UGRID specification is OK, so get the auxiliary
@@ -6486,29 +6494,25 @@ class NetCDFRead(IORead):
                 return kwargs
 
             netcdf_backend = g["netcdf_backend"]
-            if netcdf_backend.startswith("h5netcdf"):
-                if netcdf_backend.endswith("pyfive"):
-                    # Backend h5netcdf-pyfive: Get the relevant
-                    # pyfive.Variable object and store it inside a
-                    # PyfiveArray object.
-                    kwargs["variable"] = dataset._h5file[ncvar]
-                    array = self.implementation.initialise_PyfiveArray(
-                        **kwargs
-                    )
-                else:
-                    # Backend: h5netcdf
-                    array = self.implementation.initialise_H5netcdfArray(
-                        **kwargs
-                    )
+            if netcdf_backend == "h5netcdf-pyfive":
+                # Backend h5netcdf-pyfive
+                #
+                # Add the pyfive.Variable object to the Array object
+                # initialization
+                kwargs["variable"] = dataset._h5file[ncvar]
+                array = self.implementation.initialise_PyfiveArray(**kwargs)
             elif netcdf_backend == "netcdf_file":
                 # Backend scipy.io.netcdf_file
-                print ('netCDF-3!')
                 array = self.implementation.initialise_Netcdf_fileArray(
                     **kwargs
                 )
             elif netcdf_backend == "netCDF4":
                 # Backend netCDF4
                 array = self.implementation.initialise_NetCDF4Array(**kwargs)
+
+            elif netcdf_backend == "h5netcdf-h5py":
+                # Backend h5netcdf-h5py
+                array = self.implementation.initialise_H5netcdfArray(**kwargs)
 
             return array, kwargs
 
@@ -7944,13 +7948,13 @@ class NetCDFRead(IORead):
             ncdimensions: sequence of `str`, optional
                 The netCDF dimensions spanned by the array.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             construct_type: `str` or `None`, optional
                 The type of the construct that contains *array*. Set
                 to `None` if the array does not belong to a construct.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
@@ -10602,7 +10606,7 @@ class NetCDFRead(IORead):
     def _file_global_attribute(self, nc, attr):
         """Return a global attribute from a dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10632,7 +10636,7 @@ class NetCDFRead(IORead):
     def _file_global_attributes(self, nc):
         """Return the global attributes from a dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10661,7 +10665,7 @@ class NetCDFRead(IORead):
     def _file_dimensions(self, nc):
         """Return all dimensions in the root group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -10686,7 +10690,7 @@ class NetCDFRead(IORead):
     def _file_dimension(self, nc, dim_name):
         """Return a dimension from the root group of a dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10708,7 +10712,7 @@ class NetCDFRead(IORead):
     def _file_dimension_isunlimited(self, nc, dim_name):
         """Return whether a dimension is unlimited.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10730,7 +10734,7 @@ class NetCDFRead(IORead):
     def _file_dimension_size(self, nc, dim_name):
         """Return a dimension's size.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10752,7 +10756,7 @@ class NetCDFRead(IORead):
     def _file_variables(self, nc):
         """Return all variables in the root group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10772,7 +10776,7 @@ class NetCDFRead(IORead):
     def _file_variable(self, nc, var_name):
         """Return a variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10793,7 +10797,7 @@ class NetCDFRead(IORead):
     def _file_variable_attributes(self, var):
         """Return the variable attributes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10822,7 +10826,7 @@ class NetCDFRead(IORead):
     def _file_variable_dimensions(self, var):
         """Return the variable dimension names.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10841,7 +10845,7 @@ class NetCDFRead(IORead):
     def _file_variable_size(self, var):
         """Return the size of a variable's array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10940,7 +10944,7 @@ class NetCDFRead(IORead):
         if self.read_vars["netcdf_backend"] == "netcdf_file":
             # scipy.io.netcdf_file
             array = array.copy()
-#        elif self.read_vars["netcdf_backend"] == "h5netcdf": # TODOVAR
+#        elif self.read_vars["netcdf_backend"] == "h5netcdf-h5py": # TODOVAR
 #            array = array.view(type=np.ndarray) # flakey (mising values)!!
 #            print (88888888, index, type(array))
             
@@ -10952,7 +10956,7 @@ class NetCDFRead(IORead):
         If returned storage options will always include an
         ``'endpoint_url'`` key.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10989,7 +10993,7 @@ class NetCDFRead(IORead):
     def _get_dataset_chunks(self, ncvar):
         """Return a netCDF variable's dataset chunks.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -11041,7 +11045,7 @@ class NetCDFRead(IORead):
     def _dask_chunks(self, array, ncvar, compressed, construct_type=None):
         """Set the Dask chunking strategy for a netCDF variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -11395,7 +11399,7 @@ class NetCDFRead(IORead):
         doesn't scale well with array size (i.e. it takes
         disproportionally longer for larger arrays).
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -11544,7 +11548,7 @@ class NetCDFRead(IORead):
     def _netcdf_chunksizes(self, variable):
         """Return the variable chunk sizes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -11586,7 +11590,7 @@ class NetCDFRead(IORead):
     def _cfa_is_aggregation_variable(self, ncvar):
         """Return True if *ncvar* is a CF-netCDF aggregated variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -11608,7 +11612,7 @@ class NetCDFRead(IORead):
     def _cfa_parse_aggregated_data(self, ncvar, aggregated_data):
         """Parse a CF-netCDF 'aggregated_data' attribute.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

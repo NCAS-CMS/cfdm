@@ -64,7 +64,7 @@ class netcdf_indexer:
       * For unpacking: ``add_offset``, ``scale_factor``, and
                        ``_Unsigned``
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     **Examples**
 
@@ -205,7 +205,7 @@ class netcdf_indexer:
         orthogonal.  If `__orthogonal_indexing__` is False then normal
         `numpy` indexing rules are applied.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         variable = self.variable
@@ -254,10 +254,12 @@ class netcdf_indexer:
             #      =>  index1: (1, slice(1, 5))
             #      and index2: (slice(None), np.newaxis, slice(None))
         except ValueError:
-            # Something went wrong (e.g. `h5netcdf` might have
-            # returned "ValueError: Step must be >= 1 (got -2)"), so
-            # we'll just get the entire array as a numpy array, and
-            # then try indexing that.
+            # Something went wrong, which is indicative of the
+            # variable not supporting the appropriate slicing method
+            # (e.g. `h5netcdf` might have returned "ValueError: Step
+            # must be >= 1 (got -2)"). Therefore we'll just get the
+            # entire array as a numpy array, and then try indexing
+            # that.
             data = self._index(Ellipsis)
             data = self._index(index, data=data)
 
@@ -322,7 +324,7 @@ class netcdf_indexer:
     def __orthogonal_indexing__(self):
         """Flag to indicate whether indexing is orthogonal.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._orthogonal_indexing
@@ -333,7 +335,7 @@ class netcdf_indexer:
         Checks to see that variable attribute exists and can be safely
         cast to variable's data type.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameter:
 
@@ -377,7 +379,7 @@ class netcdf_indexer:
     def _default_FillValue(self, dtype):
         """Return the default ``_FillValue`` for the given data type.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `netCDF4.default_fillvals`
 
@@ -399,7 +401,7 @@ class netcdf_indexer:
     def _index(self, index, data=None):
         """Get a subspace of the variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `__getitem__`
 
@@ -520,7 +522,7 @@ class netcdf_indexer:
     def _mask(self, data, dtype, attributes, dtype_unsigned_int):
         """Mask the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameter:
 
@@ -703,10 +705,10 @@ class netcdf_indexer:
         elif np.ma.isMA(data):
             if not (self.always_masked_array or np.ma.is_masked(data)):
                 # Return a non-masked array
-                data = np.array(data, copy=False)
+                data = np.array(data)
         elif self.always_masked_array:
             # Return a masked array
-            data = np.ma.masked_array(data, copy=False)
+            data = np.ma.masked_array(data)
 
         return data
 
@@ -717,7 +719,7 @@ class netcdf_indexer:
         have not been set then no unpacking is done and the data is
         returned unchanged.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameter:
 
@@ -794,7 +796,7 @@ class netcdf_indexer:
     def _size_1_axis(self):
         """Find the position of a unique size 1 index.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -813,7 +815,7 @@ class netcdf_indexer:
     def dtype(self):
         """The data type of the array elements.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         var = self.variable
@@ -828,7 +830,7 @@ class netcdf_indexer:
     def ndim(self):
         """Number of dimensions in the data array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         try:
@@ -842,7 +844,7 @@ class netcdf_indexer:
     def shape(self):
         """Tuple of the data dimension sizes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self.variable.shape
@@ -851,7 +853,7 @@ class netcdf_indexer:
     def size(self):
         """Number of elements in the data array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         try:
@@ -864,7 +866,7 @@ class netcdf_indexer:
     def attributes(self):
         """Return the netCDF attributes for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -908,7 +910,7 @@ class netcdf_indexer:
     def index_shape(cls, index, shape):
         """Return the shape of the array subspace implied by indices.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 

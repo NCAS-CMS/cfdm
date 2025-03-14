@@ -75,6 +75,7 @@ Data
    ~cfdm.CellMeasure.has_data
    ~cfdm.CellMeasure.set_data
    ~cfdm.CellMeasure.insert_dimension
+   ~cfdm.CellMeasure.persist
    ~cfdm.CellMeasure.squeeze
    ~cfdm.CellMeasure.transpose
 
@@ -104,6 +105,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.CellMeasure.copy
+   ~cfdm.CellMeasure.concatenate
    ~cfdm.CellMeasure.creation_commands
    ~cfdm.CellMeasure.equals
    ~cfdm.CellMeasure.has_bounds
@@ -111,6 +113,19 @@ Miscellaneous
    ~cfdm.CellMeasure.get_filenames
    ~cfdm.CellMeasure.get_original_filenames
    ~cfdm.CellMeasure.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.CellMeasure.file_directories
+   ~cfdm.CellMeasure.replace_directory
 
 NetCDF
 ------

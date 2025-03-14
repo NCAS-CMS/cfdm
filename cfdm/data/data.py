@@ -20,7 +20,12 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import _numpy_allclose, is_log_level_info, parse_indices
+from ..functions import (
+    _DEPRECATION_ERROR_KWARGS,
+    _numpy_allclose,
+    is_log_level_info,
+    parse_indices,
+)
 from ..mixin.container import Container
 from ..mixin.files import Files
 from ..mixin.netcdf import NetCDFAggregation, NetCDFHDF5
@@ -259,7 +264,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             to_memory: `bool`, optional
                 If True then ensure that the original data are in
@@ -281,7 +286,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 If the input *array* is a `dask.array.Array` object
                 then *to_memory* is ignored.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             init_options: `dict`, optional
                 Provide optional keyword arguments to methods and
@@ -1103,7 +1108,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__eq__(y) <==> x==y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__eq__")
@@ -1113,7 +1118,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__ne__(y) <==> x!=y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__ne__")
@@ -1123,7 +1128,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__ge__(y) <==> x>=y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__ge__")
@@ -1133,7 +1138,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__gt__(y) <==> x>y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__gt__")
@@ -1143,7 +1148,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__le__(y) <==> x<=y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__le__")
@@ -1153,7 +1158,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__lt__(y) <==> x<y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__lt__")
@@ -1163,7 +1168,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__and__(y) <==> x&y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__and__")
@@ -1173,7 +1178,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__iand__(y) <==> x&=y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__iand__")
@@ -1183,7 +1188,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__rand__(y) <==> y&x
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__rand__")
@@ -1193,7 +1198,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__or__(y) <==> x|y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__or__")
@@ -1203,7 +1208,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__ior__(y) <==> x|=y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__ior__")
@@ -1213,7 +1218,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__ror__(y) <==> y|x
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__ror__")
@@ -1223,7 +1228,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__xor__(y) <==> x^y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__xor__")
@@ -1233,7 +1238,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__ixor__(y) <==> x^=y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, other, "__ixor__")
@@ -1251,7 +1256,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__lshift__(y) <==> x<<y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, y, "__lshift__")
@@ -1269,7 +1274,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__rlshift__(y) <==> y<<x
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, y, "__rlshift__")
@@ -1287,7 +1292,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__irshift__(y) <==> x>>=y
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, y, "__irshift__")
@@ -1297,7 +1302,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__rrshift__(y) <==> y>>x
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._binary_operation(self, y, "__rrshift__")
@@ -1307,7 +1312,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__abs__() <==> abs(x)
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._unary_operation("__abs__")
@@ -1317,7 +1322,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__neg__() <==> -x
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._unary_operation("__neg__")
@@ -1327,7 +1332,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__invert__() <==> ~x
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._unary_operation("__invert__")
@@ -1337,12 +1342,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         x.__pos__() <==> +x
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._unary_operation("__pos__")
 
-    def __array__(self, *dtype):
+    def __array__(self, dtype=None, copy=None):
         """The numpy array interface.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1351,6 +1356,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             dtype: optional
                 Typecode or data-type to which the array is cast.
+
+            copy: `None` or `bool`
+                Included to match the v2 `numpy.ndarray.__array__`
+                API, but ignored. The returned numpy array is always
+                independent.
+
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -1372,15 +1384,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         array = self.array
-        if not dtype:
+        if dtype is None:
             return array
-        else:
-            return array.astype(dtype[0], copy=False)
+
+        return array.astype(dtype, copy=False)
 
     def __data__(self):
         """Returns a new reference to self.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self
@@ -1389,7 +1401,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def __in_memory__(self):
         """The in-memory status of chunk data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -1413,7 +1425,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         single-axis index reduces the number of array dimensions by
         1. This behaviour is the same as `numpy`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `__orthogonal_indexing__`, `__getitem__`,
                      `__setitem__`
@@ -1485,7 +1497,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         subspace along each dimension independently. This behaviour is
         similar to Fortran, but different to `numpy`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `__keepdims_indexing__`, `__getitem__`,
                      `__setitem__`,
@@ -1518,7 +1530,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def _Units(self):
         """Storage for the units in a `{{package}}.Units` object.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `Units`
 
@@ -1539,7 +1551,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         Contains a `tuple` of identifiers, one for each array axis.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return self._get_component("axes")
@@ -1670,7 +1682,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         consistent with an updated `dask` array. See the *clear*
         parameter for details.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `_del_Array`, `_del_cached_elements`,
                      `nc_del_aggregation_write_status`, `_set_dask`
@@ -1726,10 +1738,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """Check and conform the units of data prior to concatenation.
 
         This is a helper function for `concatenate` that may be easily
-        overridden in sublcasses, to allow for customisation of the
+        overridden in subclasses, to allow for customisation of the
         concatenation process.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `concatenate`
 
@@ -1780,10 +1792,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """Post-process concatenated data.
 
         This is a helper function for `concatenate` that may be easily
-        overridden in sublcasses, to allow for customisation of the
+        overridden in subclasses, to allow for customisation of the
         concatenation process.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `concatenate`
 
@@ -1843,7 +1855,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         Updates the data in-place to remove the cached element values.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `_get_cached_elements`, `_set_cached_elements`
 
@@ -1864,7 +1876,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         data as CF-netCDF aggregated data is that the write status is
         True.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_del_aggregation_write_status`,
                      `nc_get_aggregation_fragment_type`
@@ -1880,7 +1892,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def _del_dask(self, default=ValueError(), clear=None):
         """Remove the dask array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `to_dask_array`, `_clear_after_dask_update`,
                      `_set_dask`
@@ -1936,7 +1948,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. warning:: Never change the returned dictionary in-place.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `_del_cached_elements`, `_set_cached_elements`
 
@@ -2017,7 +2029,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         The `Data` object is modified in-place, but the embedded
         Dask graph is not.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -2049,7 +2061,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         updated = False
 
         dsk = self.todict(
-            optimize_graph=True,
             _force_mask_hardness=False,
             _force_to_memory=False,
         )
@@ -2128,7 +2139,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         Updates the `Data` instance in-place to store the given
         element values.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `_del_cached_elements`, `_get_cached_elements`
 
@@ -2197,7 +2208,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def _set_dask(self, dx, copy=False, clear=None, in_memory=None):
         """Set the dask array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `to_dask_array`, `_clear_after_dask_update`,
                      `_del_dask`
@@ -2531,7 +2542,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def _update_deterministic(self, other):
         """Update the deterministic name status in-place.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `get_deterministic_name`,
                      `has_deterministic_name`
@@ -2658,7 +2669,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def chunks(self):
         """The `dask` chunk sizes for each dimension.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `chunksize`, `npartitions`, `numblocks`,
                      `rechunk`
@@ -2682,7 +2693,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def chunksize(self):
         """The largest `dask` chunk size for each dimension.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `chunks`, `npartitions`, `numblocks`, `rechunk`
 
@@ -2732,7 +2743,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def dask_compressed_array(self):
         """Returns a dask array of the compressed data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -2831,6 +2842,44 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         return a
 
     @property
+    def datetime_as_string(self):
+        """Returns an independent numpy array with datetimes as strings.
+
+        Specifically, returns an independent numpy array containing
+        string representations of times since a reference date.
+
+        Only applicable for reference time units.
+
+        If the calendar has not been set then the CF default calendar of
+        "standard" (i.e. the mixed Gregorian/Julian calendar as defined by
+        Udunits) will be used.
+
+        Conversions are carried out with the `netCDF4.num2date` function.
+
+        .. versionadded:: (cfdm) 1.8.0
+
+        .. seealso:: `array`, `datetime_array`
+
+        :Returns:
+
+            `numpy.ndarray`
+                An independent numpy array of the date-time strings.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01')
+        >>> print(d.datetime_as_string)
+        ['2019-01-01 00:00:00' '2019-02-01 00:00:00' '2019-03-01 00:00:00']
+
+        >>> d = {{package}}.{{class}}(
+        ...     [31, 62, 90], units='days since 2018-12-01', calendar='360_day')
+        >>> print(d.datetime_as_string)
+        ['2019-01-02 00:00:00' '2019-02-03 00:00:00' '2019-03-01 00:00:00']
+
+        """
+        return self.datetime_array.astype(str)
+
+    @property
     def dtype(self):
         """The `numpy` data-type of the data.
 
@@ -2886,7 +2935,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         Deleting this attribute is equivalent to setting it to `None`,
         so this attribute is guaranteed to always exist.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         **Examples**
 
@@ -2933,7 +2982,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                   underlying `dask` array, and also set the value of
                   the `hardmask` attribute.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `harden_mask`, `soften_mask`, `to_dask_array`,
                      `__setitem__`
@@ -3072,7 +3121,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def npartitions(self):
         """The total number of chunks.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `chunks`, `chunksize`, `numblocks`, `rechunk`
 
@@ -3098,7 +3147,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def numblocks(self):
         """The number of chunks along each dimension.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `chunks`, `chunksize`, `npartitions`, `rechunk`
 
@@ -3244,7 +3293,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def Units(self):
         """The `Units` object containing the units of the data array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         **Examples**
 
@@ -3272,7 +3321,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def all(self, axis=None, keepdims=True, split_every=None):
         """Test whether all data array elements evaluate to True.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `any`
 
@@ -3618,7 +3667,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         `__data__` method), then the output of this method is used as
         the returned `Data` object. Otherwise, `Data(d)` is returned.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -3683,7 +3732,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def chunk_indices(self):
         """Return indices of the data that define each dask chunk.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `chunks`, `chunk_positions`
 
@@ -3714,7 +3763,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def chunk_positions(self):
         """Find the position of each chunk.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `chunks`, `chunk_indices`
 
@@ -3751,7 +3800,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         Not to be confused with compression by convention (see the
         `uncompress` method).
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `flatten`
 
@@ -3820,7 +3869,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         `compute` causes all delayed operations to be computed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `persist`, `array`, `datetime_array`,
                      `sparse_array`
@@ -3849,7 +3898,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> d.compute()
         <2x3 sparse array of type '<class 'numpy.float64'>'
                 with 0 stored elements in Compressed Sparse Row format>
-        >>>: d.array
+        >>> d.array
         array([[0., 0., 0.],
                [0., 0., 0.]])
         >>> d.compute().toarray()
@@ -3890,7 +3939,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     ):
         """Join a sequence of data arrays together.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `cull_graph`
 
@@ -3951,7 +4000,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         if isinstance(data, cls):
-            raise ValueError("Must provied a sequence of Data objects")
+            raise ValueError("Must provide a sequence of Data objects")
 
         data = tuple(data)
         n_data = len(data)
@@ -4215,7 +4264,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         return out
 
-    def cull_graph(self):
+    @_inplace_enabled(default=True)
+    def cull_graph(self, inplace=True):
         """Remove unnecessary tasks from the dask graph in-place.
 
         **Performance**
@@ -4226,9 +4276,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         improve performance by reducing the amount of work done in
         later steps.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `dask.optimization.cull`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -4239,25 +4295,30 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> d = {{package}}.Data([1, 2, 3, 4, 5], chunks=3)
         >>> d = d[:2]
         >>> dict(d.to_dask_array().dask)
-        {('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3]),
-         ('array-21ea057f160746a3d3f0943bba945460', 1): array([4, 5]),
-         ('getitem-3e4edac0a632402f6b45923a6b9d215f',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
-           0), (slice(0, 2, 1),))}
+        {('array-729a27a557981dd627b6c07e8ef93250', 0): array([1, 2, 3]),
+         ('array-729a27a557981dd627b6c07e8ef93250', 1): array([4, 5]),
+         ('getitem-9890f07ccf98df4ab5231fbd87792f74',
+          0): <Task ('getitem-9890f07ccf98df4ab5231fbd87792f74', 0) getitem(...)>,
+         ('cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c',
+          0): <Task ('cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c', 0) cfdm_harden_mask(...)>}
         >>> d.cull_graph()
-        >>> dict(d.to_dask_array().dask)
-        {('getitem-3e4edac0a632402f6b45923a6b9d215f',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
-           0), (slice(0, 2, 1),)),
-         ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
+        {('getitem-9890f07ccf98df4ab5231fbd87792f74',
+          0): <Task ('getitem-9890f07ccf98df4ab5231fbd87792f74', 0) getitem(...)>,
+         ('array-729a27a557981dd627b6c07e8ef93250', 0): array([1, 2, 3]),
+         ('cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c',
+          0): <Task ('cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c', 0) cfdm_harden_mask(...)>}
 
         """
-        dx = self.to_dask_array(
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=False
         )
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        self._set_dask(dx, clear=self._NONE, in_memory=None)
+        d._set_dask(dx, clear=d._NONE, in_memory=None)
+
+        return d
 
     def del_calendar(self, default=ValueError()):
         """Delete the calendar.
@@ -4385,7 +4446,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -4627,7 +4688,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         Returns the locations of any files referenced by the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `get_filenames`, `replace_directory`
 
@@ -4915,7 +4976,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     ):
         """Return new data filled with a fill value.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `empty`, `ones`, `zeros`
 
@@ -5144,7 +5205,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -5216,7 +5277,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         does not require the Dask array to be computed so is, in
         general, much faster than using the `equals` method.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `has_deterministic_name`
 
@@ -5274,7 +5335,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             {{normalise: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             per_chunk: `bool`, optional
                 Return a `numpy` array that provides the file name
@@ -5282,7 +5343,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 have the same shape as the Dask chunks (as returned by
                 the `numblocks` attribute).
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -5339,8 +5400,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         if filename:
                             if position in filenames:
                                 raise ValueError(
-                                    f"Can't return 'per_chunk' file names: "
-                                    "The Dask chunk in position {position} "
+                                    "Can't return 'per_chunk' file names: "
+                                    f"The Dask chunk in position {position} "
                                     f"(defined by {index!r}) has multiple "
                                     "file locations"
                                 )
@@ -5557,7 +5618,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         determined by its `hardmask` property. `harden_mask` sets
         `hardmask` to `True`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `hardmask`, `soften_mask`
 
@@ -5623,7 +5684,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         See `get_deterministic_name` for details.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `get_deterministic_name`
 
@@ -5864,7 +5925,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         `masked_where` causes all delayed operations to be executed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `mask`, `masked_values`
 
@@ -5937,7 +5998,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             {{inplace: `bool`, optional}}
 
@@ -5993,7 +6054,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             {{inplace: `bool`, optional}}
 
@@ -6031,7 +6092,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def ones(cls, shape, dtype=None, units=None, calendar=None, chunks="auto"):
         """Returns a new array filled with ones of set shape and type.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `empty`, `full`, `zeros`
 
@@ -6076,7 +6137,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
         """Pad an axis with missing data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -6189,7 +6250,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         `persist` causes delayed operations to be computed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `compute`, `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -6235,7 +6296,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         Rechunking can sometimes be expensive and incur a lot of
         communication overheads.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `chunks`, `chunksize`, `dask.array.rechunk`
 
@@ -6311,32 +6372,20 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     ):
         """Replace file directories in-place.
 
-        Modifies the names of files that are be required to deliver
+        Modifies the names of files that are required to deliver
         the computed data array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directories`, `get_filenames`
 
         :Parameters:
 
-            old: `str` or `None`, optional
-                The base directory structure to be replaced by
-                *new*. If `None` (the default) or an empty string, and
-                *normalise* is False, then *new* is prepended to each
-                file name.
+            {{replace old: `str` or `None`, optional}}
 
-            new: `str` or `None`, optional
-                The new directory that replaces the base directory
-                structure identified by *old*. If `None` (the default)
-                or an empty string, then *old* is replaced with an
-                empty string. Otherwise,
+            {{replace new: `str` or `None`, optional}}
 
-            normalise: `bool`, optional
-                If True then *old* and *new* directories, and the file
-                names, are normalised to absolute paths prior to the
-                replacement. If False (the default) then no
-                normalisation is done.
+            {{replace normalise: `bool`, optional}}
 
             common: `bool`, optional
                 If True the base directory structure that is common to
@@ -6388,7 +6437,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         A fragment is a part of the data array that is stored in a
         file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `get_filenames`
 
@@ -6474,7 +6523,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         only allows for reshapings that collapse or merge dimensions
         like ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -6661,7 +6710,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         determined by its `hardmask` property. `soften_mask` sets
         `hardmask` to `False`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `hardmask`, `harden_mask`
 
@@ -6814,7 +6863,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             {{inplace: `bool`, optional}}
 
@@ -6857,7 +6906,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def to_dask_array(self, _force_mask_hardness=True, _force_to_memory=True):
         """Convert the data to a `dask` array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -6908,55 +6957,108 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
     def todict(
         self,
-        optimize_graph=True,
+        graph="cull",
         _force_mask_hardness=True,
         _force_to_memory=True,
+        optimize_graph=None,
     ):
         """Return a dictionary of the dask graph key/value pairs.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `to_dask_array`
+        .. seealso:: `cull_graph`, `to_dask_array`
 
         :Parameters:
 
-            optimize_graph: `bool`
-                If True, the default, then prior to being converted to
-                a dictionary, the graph is optimised to remove unused
-                chunks. Note that optimising the graph can sometimes
-                add a considerable performance overhead.
+            graph: `str` or `None`
+                Specify the treatment to apply to the graph (not
+                in-place) before converting to a dictionary. Must be
+                one of:
+
+                * ``'cull'``
+
+                  This is the default. Remove unnecessary tasks which
+                  do not contribute to the computed result, equivalent
+                  to applying `dask.optimization.cull` to the graph.
+
+                * ``'optimise'``
+
+                  Apply all possible graph optimisations. These will
+                  include removal of unnecessary tasks (see ``'cull'``),
+                  and is equivalent to applying `dask.optimize` to the
+                  graph.
+
+                * `None`
+
+                  Do not apply any optimisations.
+
+                .. versionadded:: (cfdm) 1.12.0.0
 
             {{_force_mask_hardness: `bool`, optional}}
 
             {{_force_to_memory: `bool`, optional}}
 
+            optimize_graph: Deprecated at version 1.12.0.0
+                Use the *graph* parameter instead. Note that
+                ``graph='optimise'`` is equivalent to the deprecated
+                ``optimize_graph=True``.
+
         :Returns:
 
             `dict`
-                The dictionary of the dask graph key/value pairs.
+                The dictionary of the dask graph's key/value pairs.
 
         **Examples**
 
         >>> d = {{package}}.Data([1, 2, 3, 4], chunks=2)
         >>> d.todict()
-        {('array-1bd38aa2a7096af2b1db281a4309854a', 0): array([1, 2]),
-         ('array-1bd38aa2a7096af2b1db281a4309854a', 1): array([3, 4])}
+        {('array-58934a19a81f97038351581dea42e32f', 0): array([1, 2]),
+         ('array-58934a19a81f97038351581dea42e32f', 1): array([3, 4]),
+         ('cfdm_harden_mask-23375a35009f4d3ec84b767640370152',
+          0): <Task ('cfdm_harden_mask-23375a35009f4d3ec84b767640370152', 0) cfdm_harden_mask(...)>,
+         ('cfdm_harden_mask-23375a35009f4d3ec84b767640370152',
+          1): <Task ('cfdm_harden_mask-23375a35009f4d3ec84b767640370152', 1) cfdm_harden_mask(...)>}
+
         >>> e = d[0]
-        >>> e.todict()
-        {('getitem-bb4a18fba86eac0dd2c489748b2b3e2d', 0): (<function dask.array.chunk.getitem(obj, index)>, ('array-1bd38aa2a7096af2b1db281a4309854a', 0), (slice(0, 1, 1),)),
-         ('array-1bd38aa2a7096af2b1db281a4309854a', 0): array([1, 2])}
-        >>> e.todict(optimize_graph=False)
-        {('array-1bd38aa2a7096af2b1db281a4309854a', 0): array([1, 2]),
-         ('array-1bd38aa2a7096af2b1db281a4309854a', 1): array([3, 4]),
-         ('getitem-bb4a18fba86eac0dd2c489748b2b3e2d', 0): (<function dask.array.chunk.getitem(obj, index)>, ('array-1bd38aa2a7096af2b1db281a4309854a', 0), (slice(0, 1, 1),))}
+        >>> e.todict(graph=None)
+        {('array-58934a19a81f97038351581dea42e32f', 0): array([1, 2]),
+         ('array-58934a19a81f97038351581dea42e32f', 1): array([3, 4]),
+         ('getitem-4d1949dc1e18d336e215bc226cd7b109',
+          0): <Task ('getitem-4d1949dc1e18d336e215bc226cd7b109', 0) getitem(...)>,
+         ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e',
+          0): <Task ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e', 0) cfdm_harden_mask(...)>}
+        >>> e.todict(graph='cull')
+        {('getitem-4d1949dc1e18d336e215bc226cd7b109',
+          0): <Task ('getitem-4d1949dc1e18d336e215bc226cd7b109', 0) getitem(...)>,
+         ('array-58934a19a81f97038351581dea42e32f', 0): array([1, 2]),
+         ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e',
+          0): <Task ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e', 0) cfdm_harden_mask(...)>}
 
         """
+        # NOTE: The underlying Dask graph structure is liable to
+        # change in the future, in which case this method could break
+        # and need refactoring (e.g.
+        # https://github.com/dask/dask/pull/11736#discussion_r1954752842).
+
+        if optimize_graph is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "todict",
+                {"optimize_graph": optimize_graph},
+                message="Use keyword 'graph' instead.",
+                version="1.12.0.0",
+                removed_at="1.14.0",
+            )  # pragma: no cover
+
+        if graph == "cull":
+            self.cull_graph()
+
         dx = self.to_dask_array(
             _force_mask_hardness=_force_mask_hardness,
             _force_to_memory=_force_to_memory,
         )
 
-        if optimize_graph:
+        if graph == "optimise":
             return collections_to_dsk((dx,), optimize_graph=True)
 
         return dict(collections_to_dsk((dx,), optimize_graph=False))
@@ -6970,7 +7072,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         If ``N`` is 0 then, since the depth of the nested list is 0,
         it will not be a list at all, but a simple Python scalar.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `array`, `datetime_array`
 
@@ -7176,7 +7278,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     ):
         """Returns a new array filled with zeros of set shape and type.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `empty`, `full`, `ones`
 

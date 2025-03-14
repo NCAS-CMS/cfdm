@@ -60,6 +60,7 @@ Data
    ~cfdm.Bounds.has_data
    ~cfdm.Bounds.set_data
    ~cfdm.Bounds.insert_dimension
+   ~cfdm.Bounds.persist 
    ~cfdm.Bounds.squeeze
    ~cfdm.Bounds.transpose
 
@@ -89,6 +90,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Bounds.copy
+   ~cfdm.Bounds.concatenate
    ~cfdm.Bounds.creation_commands
    ~cfdm.Bounds.equals
    ~cfdm.Bounds.has_bounds
@@ -96,6 +98,19 @@ Miscellaneous
    ~cfdm.Bounds.get_filenames
    ~cfdm.Bounds.get_original_filenames
    ~cfdm.Bounds.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.Bounds.file_directories
+   ~cfdm.Bounds.replace_directory
 
 NetCDF
 ------

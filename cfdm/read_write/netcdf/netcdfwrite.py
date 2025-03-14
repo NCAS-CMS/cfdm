@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class AggregationError(Exception):
     """An error relating to CF-netCDF aggregation.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
@@ -2561,9 +2561,9 @@ class NetCDFWrite(IOWrite):
                     continue
 
                 if np.size(value) == 1:
-                    value = np.array(value, copy=False).item()
+                    value = np.array(value).item()
                 else:
-                    value = np.array(value, copy=False).tolist()
+                    value = np.array(value).tolist()
 
                 parameters[term] = value
 
@@ -2655,7 +2655,7 @@ class NetCDFWrite(IOWrite):
                 (the default), then these parameters are inferred from
                 the data.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -3054,7 +3054,7 @@ class NetCDFWrite(IOWrite):
                 For aggregation variables, a dictionary containing the
                 fragment array variables' data.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -4832,7 +4832,7 @@ class NetCDFWrite(IOWrite):
                 Configure the creation of aggregation variables. See
                 `cfdm.write` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -5485,7 +5485,7 @@ class NetCDFWrite(IOWrite):
     def _chunking_parameters(self, data, ncdimensions):
         """Set chunking parameters for `netCDF4.createVariable`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -5562,7 +5562,7 @@ class NetCDFWrite(IOWrite):
     def _compressed_data(self, ncdimensions):
         """Whether or not the data is being written in compressed form.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -5588,7 +5588,7 @@ class NetCDFWrite(IOWrite):
     def _change_reference_datetime(self, coord):
         """Change the units of a reference date-time.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5628,13 +5628,13 @@ class NetCDFWrite(IOWrite):
         aggregated data is that this method returns `True` and
         `_cfa_aggregation_instructions` returns a `dict`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
             cfvar:
                 Construct (e.g. `DimensionCoordinate`), or construct
-                component e.g. (`Bounds`) contains the data.
+                component e.g. (`Bounds`) that contains the data.
 
             construct_type: `str`
                 The construct type of the *cfvar*, or of its parent if
@@ -5702,7 +5702,7 @@ class NetCDFWrite(IOWrite):
     def _cfa_create_data(self, cfa, ncvar, ncdimensions, data, cfvar):
         """Write an aggregation variable to the netCDF file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5721,7 +5721,7 @@ class NetCDFWrite(IOWrite):
 
         :Returns:
 
-            `None`
+            `True`
 
         """
         g = self.write_vars
@@ -5892,7 +5892,7 @@ class NetCDFWrite(IOWrite):
     def _filled_string_array(self, array, fill_value=""):
         """Fill a string array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5903,7 +5903,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `numpy.ndarray`
-                The string array array with any missing data replaced
+                The string array with any missing data replaced
                 by the fill value.
 
         """
@@ -5917,7 +5917,7 @@ class NetCDFWrite(IOWrite):
     ):
         """Write an aggregation fragment array variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5971,10 +5971,10 @@ class NetCDFWrite(IOWrite):
     def _cfa_unique_value(cls, a, strict=True):
         """Return the unique value of an array.
 
-        If there are multiple unique vales then missing data is
+        If there are multiple unique values then missing data is
         returned.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5983,7 +5983,7 @@ class NetCDFWrite(IOWrite):
 
              strict: `bool`, optional
                  If True then raise an exception if there is more than
-                 one unique value. If False the a unique value of
+                 one unique value. If False then a unique value of
                  missing data will be returned in this case.
 
         :Returns:
@@ -6008,7 +6008,7 @@ class NetCDFWrite(IOWrite):
     def _cfa_fragment_array_variables(self, data, cfvar):
         """Convert data to aggregated_data terms.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

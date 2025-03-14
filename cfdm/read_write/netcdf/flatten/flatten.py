@@ -78,7 +78,7 @@ def netcdf_flatten(
     /group1/lat'``, and the ``_flattener_dimension_map`` global
     attribute will contain the mapping ``'lat: /lat'``.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -131,7 +131,7 @@ def parse_attribute(name, attribute):
      * 'area: time volume: lat lon' -> {'area': ['time'], 'volume':
        ['lat', 'lon']}
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -206,7 +206,7 @@ def parse_attribute(name, attribute):
 def generate_var_attr_str(d):
     """Re-generate the attribute string from a dictionary.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -237,7 +237,7 @@ class _Flattener:
     Contains the input file, the output file being flattened, and all
     the logic of the flattening process.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 
@@ -296,7 +296,7 @@ class _Flattener:
     def attrs(self, variable):
         """Return the variable attributes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -323,7 +323,7 @@ class _Flattener:
     def chunksizes(self, variable):
         """Return the variable chunk sizes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -360,7 +360,7 @@ class _Flattener:
     def contiguous(self, variable):
         """Whether or not the variable data is contiguous on disk.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -390,7 +390,7 @@ class _Flattener:
     def dtype(self, variable):
         """Return the data type of a variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -421,7 +421,7 @@ class _Flattener:
     def endian(self, variable):
         """Return the endian-ness of a variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -452,7 +452,7 @@ class _Flattener:
     def filepath(self, dataset):
         """Return the file path for the dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -482,7 +482,7 @@ class _Flattener:
     def get_dims(self, variable):
         """Return the dimensions associated with a variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -516,7 +516,7 @@ class _Flattener:
     def getncattr(self, x, attr):
         """Retrieve a netCDF attribute.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -537,7 +537,7 @@ class _Flattener:
     def group(self, x):
         """Return the group that a variable belongs to.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -554,7 +554,7 @@ class _Flattener:
     def name(self, x):
         """Return the netCDF name, without its groups.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -571,7 +571,7 @@ class _Flattener:
     def ncattrs(self, x):
         """Return netCDF attribute names.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -592,7 +592,7 @@ class _Flattener:
     def parent(self, group):
         """Return a simulated unix parent group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -607,7 +607,7 @@ class _Flattener:
     def path(self, group):
         """Return a simulated unix directory path to a group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -627,7 +627,7 @@ class _Flattener:
     def flatten(self):
         """Flattens and writes to output file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Return:
 
@@ -658,7 +658,7 @@ class _Flattener:
     def process_group(self, input_group):
         """Flattens a given group to the output file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -687,7 +687,7 @@ class _Flattener:
     def flatten_attribute(self, input_group, attr_name):
         """Flattens a given attribute from a group to the output file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -723,7 +723,7 @@ class _Flattener:
     def flatten_dimension(self, dim):
         """Flattens a given dimension to the output file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -766,7 +766,7 @@ class _Flattener:
     def flatten_variable(self, var):
         """Flattens a given variable to the output file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -856,7 +856,7 @@ class _Flattener:
         dimension is reached, recursively increment the next
         dimensions until a valid position is found.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -907,7 +907,7 @@ class _Flattener:
     def write_data_in_chunks(self, old_var, new_var):
         """Copy the data of a variable to a new one by slice.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -961,7 +961,7 @@ class _Flattener:
         Resolves the absolute path to a coordinate variable within the
         group structure.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1051,7 +1051,7 @@ class _Flattener:
     ):
         """Resolve reference: search by proximity.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1129,7 +1129,7 @@ class _Flattener:
     ):
         """Post-processing operations after resolving reference.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1183,6 +1183,14 @@ class _Flattener:
 
         # If variables refs are limited to coordinate variable,
         # additional check
+        try:
+            print ('LLL',
+                   type(orig_ref),type(orig_var),
+                   type(self.getncattr(orig_var, "coordinates")),
+                   str(self.getncattr(orig_var, "coordinates"))
+                   )
+        except:
+            pass
         if (
             ref_type == "variable"
             and rules.limit_to_scalar_coordinates
@@ -1209,7 +1217,7 @@ class _Flattener:
         Resolves the absolute path to a reference within the group
         structure, using search by relative path.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1271,7 +1279,7 @@ class _Flattener:
         group is reached. If coordinate variable, search until local
         apex is reached, then search down in siblings.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1356,7 +1364,7 @@ class _Flattener:
         In a given variable, replace all references to other variables
         in its attributes by absolute references.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1409,7 +1417,7 @@ class _Flattener:
         netCDF. All references have to be already resolved as absolute
         references.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1458,7 +1466,7 @@ class _Flattener:
         Return name of flattened reference. If not found, raise
         exception or continue with a warning.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
             resolved_ref: `str`
                 The resolved reference.
@@ -1514,7 +1522,7 @@ class _Flattener:
     def pathname(self, group, name):
         """Compose full path name to an element in a group structure.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1541,7 +1549,7 @@ class _Flattener:
         Generates a string representing the name mapping of an element
         before and after flattening.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1568,7 +1576,7 @@ class _Flattener:
     def convert_path_to_valid_name(self, pathname):
         """Generate valid name from path.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1600,7 +1608,7 @@ class _Flattener:
 
         * if name is still too long, replace complete name by hash.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1652,7 +1660,7 @@ class _Flattener:
         log a warning. If not strict then a reference placeholder is
         returned.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1683,7 +1691,7 @@ class _Flattener:
 class AttributeParsingException(Exception):
     """Exception for unparsable attribute.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 
@@ -1693,7 +1701,7 @@ class AttributeParsingException(Exception):
 class UnresolvedReferenceException(Exception):
     """Exception for unresolvable references in attributes.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 

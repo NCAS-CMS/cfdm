@@ -11,39 +11,35 @@ datasets and the inspection of CF data model constructs.
 
 """
 
-__date__ = "202?-??-??"
+__date__ = "2025-03-??"
 __cf_version__ = "1.12"
 __version__ = "1.12.0.0"
 
-from packaging import __version__ as _packaging_ver
-from packaging import __file__ as _packaging_file
-from packaging.version import Version
-
-import platform
+from platform import python_version
 
 _requires = ("numpy", "packaging")
-
 _error0 = f"cfdm.core requires the modules {', '.join(_requires)}. "
-
-# Check the version of python
-_minimum_vn = "3.8.0"
-if Version(platform.python_version()) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad python version: cfdm.core requires python>={_minimum_vn}. "
-        f"Got {platform.python_version()}"
-    )
 
 # Check the version of packaging
 try:
     import packaging
+    from packaging.version import Version
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
+else:
+    _minimum_vn = "20.0"
+    if Version(packaging.__version__) < Version(_minimum_vn):
+        raise RuntimeError(
+            f"Bad packaging version: cf requires packaging>={_minimum_vn}. "
+            f"Got {packaging.__version__} at {packaging.__file__}"
+        )
 
-_minimum_vn = "20.0"
-if Version(_packaging_ver) < Version(_minimum_vn):
+# Check the version of python
+_minimum_vn = "3.9.0"
+if Version(python_version()) < Version(_minimum_vn):
     raise ValueError(
-        f"Bad packaging version: cfdm.core requires packaging>={_minimum_vn}. "
-        f"Got {_packaging_ver} at {_packaging_file}"
+        f"Bad python version: cfdm.core requires python>={_minimum_vn}. "
+        f"Got {python_version()}"
     )
 
 # Check the version of numpy
@@ -51,22 +47,15 @@ try:
     import numpy as np
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
+else:
+    _minimum_vn = "2.0.0"
+    if Version(np.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad numpy version: cfdm.core requires numpy>={_minimum_vn}. "
+            f"Got {Version(np.__version__)} at {np.__file__}"
+        )
 
-_minimum_vn = "1.15"
-_maximum_vn = "2.0"
-_np_version = Version(np.__version__)
-if not Version(_minimum_vn) <= _np_version <= Version(_maximum_vn):
-    raise ValueError(
-        "Bad numpy version: cfdm requires "
-        f"{_minimum_vn}<=numpy<={_maximum_vn}. "
-        f"Got {_np_version} at {np.__file__}"
-    )
-
-if Version(np.__version__) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad numpy version: cfdm.core requires numpy>={_minimum_vn}. "
-        f"Got {np.__version__} at {np.__file__}"
-    )
+del _minimum_vn
 
 from .constructs import Constructs
 

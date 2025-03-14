@@ -15,14 +15,14 @@ class FragmentFileArray(
 ):
     """Fragment of aggregated data in a file.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
     def __new__(cls, *args, **kwargs):
         """Store fragment classes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         """
         # Import fragment classes. Do this here (as opposed to outside
@@ -30,12 +30,14 @@ class FragmentFileArray(
         from . import (
             FragmentH5netcdfArray,
             FragmentNetCDF4Array,
-            FragmentVariableArray,
+            FragmentPyfiveArray,
+#            FragmentVariableArray,
         )
 
         instance = super().__new__(cls)
         instance._FragmentArrays = (
-            FragmentVariableArray,
+#            FragmentVariableArray,
+            FragmentPyfiveArray,
             FragmentNetCDF4Array,
             FragmentH5netcdfArray,
         )
@@ -153,7 +155,7 @@ class FragmentFileArray(
         exception; and `UMFragmentArray` will only be used
         if `H5netcdfFragmentArray` returns an `Exception`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `__array__`, `index`
 
@@ -186,7 +188,7 @@ class FragmentFileArray(
             except Exception as error:  # noqa: F841
                 errors.append(
                     f"{FragmentArray().__class__.__name__}:\n"
-                    "{error.__class__.__name__}: {error}"
+                    f"{error.__class__.__name__}: {error}"
                 )
             else:
                 return array
@@ -202,7 +204,7 @@ class FragmentFileArray(
     def get_filename(self, normalise=False, default=AttributeError()):
         """The name of the file containing the fragment.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

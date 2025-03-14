@@ -1175,7 +1175,7 @@ class CFDMImplementation(Implementation):
     def nc_set_hdf5_chunksizes(self, data, chunksizes):
         """Set the HDF5 chunking strategy for the data.
 
-        ..versionadded:: (cfdm) NEXTVERSION
+        ..versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1358,11 +1358,11 @@ class CFDMImplementation(Implementation):
 
             normalise: `bool`, optional
                 If True (the default) then normalise the filenames by
-                applying any text substitutions and reslving the name
+                applying any text substitutions and resolving the name
                 to an absolute path. If False then neither of these is
                 carried out.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -1885,7 +1885,7 @@ class CFDMImplementation(Implementation):
     def initialise_AggregatedArray(self, **kwargs):
         """Return a `AggregatedArray` instance.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -2348,7 +2348,7 @@ class CFDMImplementation(Implementation):
             kwargs: optional
                 Initialisation parameters to pass to the new instance.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -2361,7 +2361,7 @@ class CFDMImplementation(Implementation):
     def initialise_H5netcdfArray(self, **kwargs):
         """Return a `H5netcdfArray` instance.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -3737,7 +3737,7 @@ class CFDMImplementation(Implementation):
                 If True then do the operation in-place and return
                 `None`.
 
-                .. versionadded:: (Cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -3750,7 +3750,7 @@ class CFDMImplementation(Implementation):
     def unsqueeze(self, field, inplace=False):
         """Insert size 1 axes into the field data array.
 
-        .. versionadded:: (Cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

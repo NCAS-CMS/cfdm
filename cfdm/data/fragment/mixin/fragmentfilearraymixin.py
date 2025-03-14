@@ -4,7 +4,7 @@ from .fragmentarraymixin import FragmentArrayMixin
 class FragmentFileArrayMixin(FragmentArrayMixin):
     """Mixin class for a fragment of aggregated data in a file.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 

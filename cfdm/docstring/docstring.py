@@ -1,4 +1,4 @@
-"""Descufine docstring substitutions.
+"""Define docstring substitutions.
 
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
@@ -146,7 +146,7 @@ _docstring_substitution_definitions = {
     # read extra
     "{{read extra: (sequence of) `str`, optional}}": """extra: (sequence of) `str`, optional
             Create extra, independent fields from netCDF variables
-            that correspond to particular types metadata constructs.
+            that correspond to particular types of metadata constructs.
             Ignored if *domain* is True.
 
             The *extra* parameter may be one, or a sequence, of:
@@ -253,7 +253,7 @@ _docstring_substitution_definitions = {
             so older datasets automatically contain no CF-netCDF
             domain variables.
 
-            The unique domain constructs of the dataset are easily
+            The unique domain constructs of the dataset are
             found with the `{{package}}.unique_constructs`
             function. For example::
 
@@ -263,7 +263,7 @@ _docstring_substitution_definitions = {
                >>> ufd = {{package}}.unique_constructs(x.domain for x in f)""",
     # read netcdf_backend
     "{{read netcdf_backend: `None` or (sequence of) `str`, optional}": """netcdf_backend: `None` or (sequence of) `str`, optional
-            Specify which library, or libraries, to use for opening
+            TODOVAR Specify which library, or libraries, to use for opening
             and reading netCDF files. By default, or if `None`, then
             the first one of `h5netcdf` and `netCDF4` to successfully
             open the netCDF file is used. The libraries will be used
@@ -1241,6 +1241,24 @@ _docstring_substitution_definitions = {
     "{{normalise: `bool`, optional}}": """normalise: `bool`, optional
                 If True then normalise to an absolute path. If False
                 (the default) then no normalisation is done.""",
+    # replace old
+    "{{replace old: `str` or `None`, optional}}": """old: `str` or `None`, optional
+                The base directory structure to be replaced by
+                *new*. If `None` (the default) or an empty string, and
+                *normalise* is False, then *new* (if set) is prepended
+                to each file name.""",
+    # replace new
+    "{{replace new: `str` or `None`, optional}}": """new: `str` or `None`, optional
+                The new directory that replaces the base directory
+                structure identified by *old*. If `None` (the default)
+                or an empty string, then *old* (if set) is replaced
+                with an empty string.""",
+    # replace normalise
+    "{{replace normalise: `bool`, optional}}": """normalise: `bool`, optional
+                If True then *old* and *new* directories, and the file
+                names, are normalised to absolute paths prior to the
+                replacement. If False (the default) then no
+                normalisation is done.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
