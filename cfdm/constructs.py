@@ -1,5 +1,4 @@
 import logging
-
 from copy import deepcopy
 from itertools import zip_longest
 from re import Pattern

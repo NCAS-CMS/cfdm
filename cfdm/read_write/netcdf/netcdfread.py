@@ -706,9 +706,7 @@ class NetCDFRead(IORead):
             rdcc_nbytes=16777216,
             rdcc_w0=0.75,
             rdcc_nslots=4133,
-#            backend="pyfive",
             phony_dims='sort'
-#            phony_dims='access'
         )
 
     def _open_h5netcdf_pyfive(self, filename):
@@ -733,8 +731,8 @@ class NetCDFRead(IORead):
             "r",
             decode_vlen_strings=True,
             backend="pyfive",
-            phony_dims='sort'
-#            phony_dims='access'
+            phony_dims="sort",
+            #            phony_dims='access'
         )
 
     def cdl_to_netcdf(self, filename):
@@ -1116,7 +1114,8 @@ class NetCDFRead(IORead):
         # Parse the 'netcdf_backend' keyword parameter
         # ------------------------------------------------------------
         if netcdf_backend is None:
-            # By default, try netCDF backends in this order:
+            # By default, try netCDF backends in this order, until one
+            # works.
             netcdf_backend = ("h5netcdf-pyfive",
                               "netcdf_file",
                               "h5netcdf-h5py",
@@ -6421,7 +6420,7 @@ class NetCDFRead(IORead):
             dataset = g["variable_grouped_dataset"][ncvar]
             variable = dataset[ncvar]
 
-#            variable = g["variable_grouped_dataset"][ncvar][ncvar]
+        #            variable = g["variable_grouped_dataset"][ncvar][ncvar]
         #
         #            group, name = self._netCDF4_group(
         #                g["variable_grouped_dataset"][ncvar], ncvar
@@ -10891,7 +10890,7 @@ class NetCDFRead(IORead):
             return len(var.shape)
 
     def _dtype(self, var):
-        """Return the variable attributes.TODOVAR
+        """Return the variable attributes.TODOVAR.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -10916,8 +10915,8 @@ class NetCDFRead(IORead):
             x = self._index(var, (slice(0, 1),) * len(var.shape))
             dtype = x.dtype
 
-#        if dtype == object and not len(var.shape):
-#            dtype = str
+        #        if dtype == object and not len(var.shape):
+        #            dtype = str
 
         return dtype
 

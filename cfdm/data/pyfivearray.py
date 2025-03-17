@@ -196,5 +196,9 @@ class PyfiveArray(IndexMixin, FileArray):
 
         """
         return super().open(
-            h5netcdf.File, mode="r", decode_vlen_strings=True, netcdf_backend='pyfive', **kwargs
+            h5netcdf.File,
+            mode="r",
+            decode_vlen_strings=True,
+            netcdf_backend="pyfive",
+            **kwargs
         )

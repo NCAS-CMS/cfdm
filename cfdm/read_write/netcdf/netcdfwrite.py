@@ -207,7 +207,7 @@ class NetCDFWrite(IOWrite):
 
         return array.flatten()
 
-    def _write_attributes(self, parent, ncvar, extra=None, omit=()):
+    def _write_attributes(self, parent, ncvar, extra=None, omit=(), dtype=None):
         """Write netCDF attributes to the netCDF file.
 
         :Parameters:
@@ -219,6 +219,13 @@ class NetCDFWrite(IOWrite):
             extra: `dict`, optional
 
             omit: sequence of `str`, optional
+
+            dtype: optional
+                The data type of the variable in the netCDF file. May
+                be used to ensure that fill and missing values have
+                the correct data type.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -252,7 +259,12 @@ class NetCDFWrite(IOWrite):
 
             data = self.implementation.get_data(parent, None)
             if data is not None:
-                dtype = g["datatype"].get(data.dtype, data.dtype)
+                if dtype is None:
+                    raise ValueError(
+                        "Must set dtype when attribute include _FillValue or "
+                        "missing_value"
+                    )
+
                 netcdf_attrs[attr] = np.array(netcdf_attrs[attr], dtype=dtype)
 
         skip_set_fill_value = False
@@ -2720,11 +2732,11 @@ class NetCDFWrite(IOWrite):
             omit_data or fill or g["post_dry_run"]
         ):  # or append mode's appending iteration
             fill_value = self.implementation.get_property(
-                cfvar, "_FillValue", None
+                cfvar, "_FillValue", None                
             )
         else:
             fill_value = None
-
+        
         if data_variable:
             lsd = g["least_significant_digit"]
         else:
@@ -2890,7 +2902,7 @@ class NetCDFWrite(IOWrite):
         # Write attributes to the netCDF variable
         # ------------------------------------------------------------
         attributes = self._write_attributes(
-            cfvar, ncvar, extra=extra, omit=omit
+            cfvar, ncvar, extra=extra, omit=omit, dtype=datatype
         )
 
         # ------------------------------------------------------------

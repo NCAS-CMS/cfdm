@@ -2164,13 +2164,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             return
 
         # Parse the new elements
-        elements = elements.copy()        
+        elements = elements.copy()
         for i, x in elements.items():
             if np.ma.is_masked(x):
                 x = np.ma.masked
             else:
                 x = x.squeeze()
-            
+
             elements[i] = x
 
         cache = self._get_component("cached_elements", None)
@@ -2633,11 +2633,11 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             a = np.asanyarray(a)
 
         # TODOVAR - for memmap
-#        a = a.view(type=type(a))
-#        if np.ma.isMA(a):
-#            a = a.view(type=np.ma.MaskedArray)
-#        else:
-#            a = a.view(type=np.ndarray)
+        #        a = a.view(type=type(a))
+        #        if np.ma.isMA(a):
+        #            a = a.view(type=np.ma.MaskedArray)
+        #        else:
+        #            a = a.view(type=np.ndarray)
 
         ndim = a.ndim
         shape = a.shape
@@ -4554,11 +4554,11 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # Check that each instance has the same data type
         self_is_numeric = is_numeric_dtype(self_dx)
         other_is_numeric = is_numeric_dtype(other_dx)
-        
+
         if (
             not ignore_data_type
             and (self_is_numeric or other_is_numeric)
-#                and self.dtype != other.dtype
+            #                and self.dtype != other.dtype
         ):
             # Test the dtypes with np.issubdtype, instead of !=, so
             # that dtypes that have different endianness but are
@@ -4568,7 +4568,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             # TODONUMPY2: Maybe use np.isdtype instead of np.issubdtype ?
             dtype0 = self.dtype
             dtype1 = other.dtype
-            if not (np.issubdtype(dtype0, dtype1) and np.issubdtype(dtype1, dtype0)):
+            if not (
+                np.issubdtype(dtype0, dtype1) and np.issubdtype(dtype1, dtype0)
+            ):
                 logger.info(
                     f"{self.__class__.__name__}: Different data types: "
                     f"{self.dtype}, {other.dtype}"

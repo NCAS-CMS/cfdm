@@ -31,7 +31,7 @@ def _remove_tmpfiles():
 
 atexit.register(_remove_tmpfiles)
 
-netcdf_backends = ("netCDF4", "h5netcdf")
+netcdf_backends = ("netCDF4", "h5netcdf-pyfive", "h5netcdf-h5py")
 
 
 class netcdf_indexerTest(unittest.TestCase):

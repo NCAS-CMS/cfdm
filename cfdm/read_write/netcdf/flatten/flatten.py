@@ -529,10 +529,15 @@ class _Flattener:
         """
         try:
             # netCDF4
-            return getattr(x, attr)
+            value = getattr(x, attr)
         except AttributeError:
             # h5netcdf
-            return x.attrs[attr]
+            value = x.attrs[attr]
+
+        if isinstance(value, bytes):
+            value = value.decode()
+
+        return value
 
     def group(self, x):
         """Return the group that a variable belongs to.
