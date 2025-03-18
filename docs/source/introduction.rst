@@ -136,7 +136,7 @@ outside of a Python environment:
 **Performance**
 ---------------
 
-As of version 1.11.2.0 (released 2025-01-28), cf uses `Dask
+As of version 1.11.2.0 (released 2025-01-28), cfdm uses `Dask
 <https://docs.dask.org>`_ for all of its data manipulations, which
 provides lazy, parallelised, and out-of-core computations of array
 operations.
