@@ -365,7 +365,7 @@ class PropertiesData(Properties):
             axis: `int`, optional
                 Select the axis along which to concatenate, defined
                 by its position in the data array. By default
-                concatenatoin is along the axis in position 0.
+                concatenation is along the axis in position 0.
 
             {{cull_graph: `bool`, optional}}
 

@@ -1,7 +1,7 @@
 Version 1.12.0.0
 ----------------
 
-**2025-03-??**
+**2025-03-18**
 
 * Set new minimum version of `dask`: ``2025.2.0``
   (https://github.com/NCAS-CMS/cfdm/issues/321)
@@ -34,8 +34,8 @@ Version 1.11.2.0
 
 * Introduction of `dask` for all data manipulations
   (https://github.com/NCAS-CMS/cfdm/issues/317)
-* Fix bug that returned incorrect results when an invalid identifer is
-  provided to `cf.Field.cell_methods`
+* Fix bug that returned incorrect results when an invalid identifier
+  is provided to `cf.Field.cell_methods`
   (https://github.com/NCAS-CMS/cfdm/issues/299)
 * Upgrades to allow cfdm to work with Python 3.12
   (https://github.com/NCAS-CMS/cfdm/issues/302)

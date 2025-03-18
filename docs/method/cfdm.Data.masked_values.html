@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.0.0</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data.masked_values<a class="headerlink" href="#cfdm-data-masked-values" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.masked_values">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">masked_values</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/data/data.py#L3080-L3133"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.masked_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">masked_values</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.0.0/cfdm/data/data.py#L5848-L5901"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.masked_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mask using floating point equality.</p>
 <p>Masks the data where elements are approximately equal to the
 given value. For integer types, exact equality is used.</p>
@@ -136,7 +136,7 @@ given value. For integer types, exact equality is used.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="../attribute/cfdm.Data.mask.html#cfdm.Data.mask" title="cfdm.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p>
+<p><a class="reference internal" href="../attribute/cfdm.Data.mask.html#cfdm.Data.mask" title="cfdm.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a>, <a class="reference internal" href="cfdm.Data.masked_where.html#cfdm.Data.masked_where" title="cfdm.Data.masked_where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_where</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -145,21 +145,21 @@ given value. For integer types, exact equality is used.</p>
 </dd>
 <dt>rtol: number, optional</dt><dd><p>The tolerance on relative differences between real
 numbers. The default value is set by the
-<a class="reference internal" href="../function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a> function.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code> function.</p>
 </dd>
 <dt>atol: number, optional</dt><dd><p>The tolerance on absolute differences between real
 numbers. The default value is set by the
-<a class="reference internal" href="../function/cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a> function.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code> function.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The result of masking the data where approximately
-equal to <em>value</em>, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was
+<dt><a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The result of masking the data where approximately
+equal to <em>value</em>, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was
 in-place.</p>
 </dd>
 </dl>
@@ -185,7 +185,7 @@ in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-03-18.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

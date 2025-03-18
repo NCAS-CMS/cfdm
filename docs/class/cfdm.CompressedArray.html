@@ -22,7 +22,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.CompressedArray.array" href="../attribute/cfdm.CompressedArray.array.html" />
+    <link rel="next" title="cfdm.CompressedArray.get_attributes" href="../method/cfdm.CompressedArray.get_attributes.html" />
     <link rel="prev" title="cfdm.RaggedIndexedContiguousArray._docstring_method_exclusions" href="../method/cfdm.RaggedIndexedContiguousArray._docstring_method_exclusions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.0.0</a></h1>
 
 
 
@@ -87,7 +87,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.RaggedIndexedContiguousArray._docstring_method_exclusions.html" title="previous chapter">cfdm.RaggedIndexedContiguousArray._docstring_method_exclusions</a></li>
-      <li>Next: <a href="../attribute/cfdm.CompressedArray.array.html" title="next chapter">cfdm.CompressedArray.array</a></li>
+      <li>Next: <a href="../method/cfdm.CompressedArray.get_attributes.html" title="next chapter">cfdm.CompressedArray.get_attributes</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -126,7 +126,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CompressedArray">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CompressedArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">compressed_dimension=None</em>, <em class="sig-param">compressed_dimensions=None</em>, <em class="sig-param">compression_type=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/data/abstract/compressedarray.py#L12-L573"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CompressedArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CompressedArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">compressed_dimension=None</em>, <em class="sig-param">compressed_dimensions=None</em>, <em class="sig-param">compression_type=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.0.0/cfdm/data/abstract/compressedarray.py#L13-L600"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CompressedArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.array.Array</span></code></p>
 <p>Mixin class for a container of an underlying compressed array.</p>
 <div class="versionadded">
@@ -138,9 +138,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dd class="field-odd"><dl>
 <dt>compressed_array: array_like</dt><dd><p>The compressed array.</p>
 </dd>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The uncompressed array dimension sizes.</p>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The uncompressed array dimension sizes.</p>
 </dd>
-<dt>compressed_dimensions: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Mapping of dimensions of the compressed array to their
+<dt>compressed_dimensions: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Mapping of dimensions of the compressed array to their
 corresponding dimensions in the uncompressed
 array. Compressed array dimensions that are not
 compressed must be omitted from the mapping.</p>
@@ -160,7 +160,7 @@ compressed must be omitted from the mapping.</p>
 <p><span class="versionmodified added">New in version (cfdm): </span>1.10.0.0</p>
 </div>
 </dd>
-<dt>compression_type: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The type of compression.</p>
+<dt>compression_type: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The type of compression.</p>
 </dd>
 <dt>kwargs: optional</dt><dd><p>Further named parameters and their values needed to define
 the compressed array.</p>
@@ -181,18 +181,18 @@ this way are assumed to have their default value.</p>
 <p><span class="versionmodified added">New in version (cfdm): </span>1.10.0.0</p>
 </div>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy input parameters
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy input parameters
 prior to initialisation. If False then arguments are
 not deep copied.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.10.0.0</p>
 </div>
 </dd>
-<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Deprecated at version 1.10.0.0. If set will be
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Deprecated at version 1.10.0.0. If set will be
 ignored.</p>
 <p>Number of elements in the uncompressed array.</p>
 </dd>
-<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Deprecated at version 1.10.0.0. If set will be
+<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Deprecated at version 1.10.0.0. If set will be
 ignored.</p>
 <p>The number of uncompressed array dimensions</p>
 </dd>
@@ -203,6 +203,18 @@ ignored.</p>
 
 <section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.get_attributes.html#cfdm.CompressedArray.get_attributes" title="cfdm.CompressedArray.get_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attributes</span></code></a></p></td>
+<td><p>The attributes of the array.</p></td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -245,6 +257,18 @@ ignored.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.get_units.html#cfdm.CompressedArray.get_units" title="cfdm.CompressedArray.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a></p></td>
 <td><p>The units of the array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.CompressedArray.Units.html#cfdm.CompressedArray.Units" title="cfdm.CompressedArray.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code> object containing the units of the array.</p></td>
 </tr>
 </tbody>
 </table>
@@ -300,8 +324,8 @@ ignored.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.copy.html#cfdm.CompressedArray.copy" title="cfdm.CompressedArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy of the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.get_subspace.html#cfdm.CompressedArray.get_subspace" title="cfdm.CompressedArray.get_subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_subspace</span></code></a></p></td>
-<td><p>Return a subspace, defined by indices, of a numpy array.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CompressedArray.get_subspace</span></code></p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.source.html#cfdm.CompressedArray.source" title="cfdm.CompressedArray.source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code></a></p></td>
 <td><p>Return the underlying array object.</p></td>
@@ -309,8 +333,8 @@ ignored.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.to_memory.html#cfdm.CompressedArray.to_memory" title="cfdm.CompressedArray.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
 <td><p>Bring data on disk into memory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.get_filenames.html#cfdm.CompressedArray.get_filenames" title="cfdm.CompressedArray.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
-<td><p>Return the names of any files containing the compressed data.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CompressedArray.get_filenames</span></code></p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -328,16 +352,16 @@ ignored.</p>
 <td><p>The numpy array interface.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.__deepcopy__.html#cfdm.CompressedArray.__deepcopy__" title="cfdm.CompressedArray.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.__getitem__.html#cfdm.CompressedArray.__getitem__" title="cfdm.CompressedArray.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the uncompressed data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.__repr__.html#cfdm.CompressedArray.__repr__" title="cfdm.CompressedArray.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.__str__.html#cfdm.CompressedArray.__str__" title="cfdm.CompressedArray.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -377,7 +401,7 @@ ignored.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-03-18.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

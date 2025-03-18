@@ -51,10 +51,12 @@ __version__ = core.__version__
 _requires = core._requires + (
     "cftime",
     "netCDF4",
+    "dask",
     "scipy",
     "h5netcdf",
     "s3fs",
     "uritools",
+    "cfunits",
 )
 
 _error0 = f"cfdm requires the modules {', '.join(_requires)}. "
@@ -161,6 +163,19 @@ else:
         raise ValueError(
             f"Bad uritools version: cfdm requires uritools>={_minimum_vn}. "
             f"Got {uritools.__version__} at {uritools.__file__}"
+        )
+
+# Check the version of cfunits
+try:
+    import cfunits
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+else:
+    _minimum_vn = "3.3.7"
+    if Version(cfunits.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad cfunits version: cfdm requires cfunits>={_minimum_vn}. "
+            f"Got {cfunits.__version__} at {cfunits.__file__}"
         )
 
 del _minimum_vn

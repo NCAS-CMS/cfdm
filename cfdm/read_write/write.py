@@ -566,7 +566,7 @@ class write(ReadWrite):
                       example, with *dataset_chunks* of ``'4 MiB'``, a
                       data array of 64-bit floats with shape (400,
                       300, 60) will be written with 20 dataset chunks,
-                      each of which contians (93, 93, 60)
+                      each of which contains (93, 93, 60)
                       elements. The first axis is split across 5
                       chunks, the second axis across 4 chunks, and the
                       third axis across 1 chunk containing 60
@@ -576,7 +576,7 @@ class write(ReadWrite):
                       the "edges" of the array contain only 93*21*60,
                       28*93*60, or 28*21*60 data values. The shape of
                       the dataset chunks is based on the shape of the
-                      data aray and its data type, and is calculated
+                      data array and its data type, and is calculated
                       internally with the
                       `dask.array.core.normalize_chunks` function. The
                       use of native compression (see the *compress*
@@ -680,7 +680,7 @@ class write(ReadWrite):
                 2, 'field': None}}``.
 
               *Example:*
-                 Write any three-dimensionsal construct whose data is
+                 Write any three-dimensional construct whose data is
                  unchanged from having been previously read from a
                  CF-netCDF aggregation variable: ``{'constructs':
                  {'auto': 3}}``.
