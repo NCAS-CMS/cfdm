@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.0.0</a></h1>
 
 
 
@@ -127,36 +127,41 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data.has_calendar<a class="headerlink" href="#cfdm-data-has-calendar" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.has_calendar">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">has_calendar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/core/data/data.py#L673-L702"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.has_calendar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">has_calendar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.0.0/cfdm/data/data.py#L5632-L5663"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.has_calendar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a calendar has been set.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cfdm.Data.del_calendar.html#cfdm.Data.del_calendar" title="cfdm.Data.del_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_calendar</span></code></a>, <a class="reference internal" href="cfdm.Data.get_calendar.html#cfdm.Data.get_calendar" title="cfdm.Data.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a>, <a class="reference internal" href="cfdm.Data.set_calendar.html#cfdm.Data.set_calendar" title="cfdm.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a>,
-<a class="reference internal" href="cfdm.Data.has_units.html#cfdm.Data.has_units" title="cfdm.Data.has_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_units</span></code></a></p>
+<a class="reference internal" href="cfdm.Data.has_units.html#cfdm.Data.has_units" title="cfdm.Data.has_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_units</span></code></a>, <a class="reference internal" href="../attribute/cfdm.Data.Units.html#cfdm.Data.Units" title="cfdm.Data.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>True if the calendar has been set, otherwise False.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the calendar has been set, otherwise
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">set_calendar</span><span class="p">(</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;days since 2000-1-1&quot;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s2">&quot;noleap&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">has_calendar</span><span class="p">()</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_calendar</span><span class="p">()</span>
-<span class="go">&#39;360_day&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">del_calendar</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s2">&quot;noleap&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">has_calendar</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;days since 2000-1-1&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">has_calendar</span><span class="p">()</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_calendar</span><span class="p">()</span>
-<span class="go">ValueError: Can&#39;t get non-existent calendar</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get_calendar</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">del_calendar</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
-<span class="go">None</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">has_calendar</span><span class="p">()</span>
+<span class="go">False</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -172,7 +177,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-03-18.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

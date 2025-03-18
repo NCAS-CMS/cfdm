@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.0.0</a></h1>
 
 
 
@@ -127,49 +127,35 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data.__setitem__<a class="headerlink" href="#cfdm-data-setitem" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.__setitem__">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">__setitem__</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/data/data.py#L449-L510"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.__setitem__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assign to data elements defined by indices.</p>
-<p>d.__setitem__(indices, x) &lt;==&gt; d[indices]=x</p>
-<p>Indexing follows rules that are very similar to the numpy indexing
-rules, the only differences being:</p>
-<ul class="simple">
-<li><p>An integer index i takes the i-th element but does not reduce
-the rank by one.</p></li>
-<li><p>When two or more dimensions’ indices are sequences of integers
-then these indices work independently along each dimension
-(similar to the way vector subscripts work in Fortran). This is
-the same behaviour as indexing on a Variable object of the
-netCDF4 package.</p></li>
-</ul>
-<p><strong>Broadcasting</strong></p>
-<p>The value, or values, being assigned must be broadcastable to the
-shape defined by the indices, using the numpy broadcasting rules.</p>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">__setitem__</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.0.0/cfdm/data/data.py#L894-L1000"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.__setitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement indexed assignment.</p>
+<p>x.__setitem__(indices, y) &lt;==&gt; x[indices]=y</p>
+<p>Assignment to data array elements defined by indices.</p>
+<p>Elements of a data array may be changed by assigning values to
+a subspace. See <a class="reference internal" href="cfdm.Data.__getitem__.html#cfdm.Data.__getitem__" title="cfdm.Data.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a> for details on how to define
+subspace of the data array.</p>
 <p><strong>Missing data</strong></p>
-<p>Data array elements may be set to missing values by assigning them
-to <code class="xref py py-obj docutils literal notranslate"><span class="pre">masked</span></code>. Missing values may be unmasked by assigning them to
-any other value.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
-</div>
+<p>The treatment of missing data elements during assignment to a
+subspace depends on the value of the <a class="reference internal" href="../attribute/cfdm.Data.hardmask.html#cfdm.Data.hardmask" title="cfdm.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute. If
+it is True then masked elements will not be unmasked,
+otherwise masked elements may be set to any value.</p>
+<p>In either case, unmasked elements may be set, (including
+missing data).</p>
+<p>Unmasked elements may be set to missing data by assignment to
+the <a class="reference internal" href="../constant.html#cfdm.cfdm.masked" title="cfdm.cfdm.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.masked</span></code></a> constant or by assignment to a value
+which contains masked elements.</p>
+<p><strong>Performance</strong></p>
+<p>If the shape of the data is unknown then it is calculated
+immediately by executing all delayed operations.</p>
+<p>If indices for two or more dimensions are lists or 1-d arrays
+of Booleans or integers, and any of these are dask
+collections, then these dask collections will be
+computed immediately.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cfdm.Data.__getitem__.html#cfdm.Data.__getitem__" title="cfdm.Data.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_parse_indices</span></code></p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
-</dd>
-</dl>
-<p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">190</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(1, 10, 9)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">3</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">18</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">masked</span>
-</pre></div>
+<p><a class="reference internal" href="cfdm.Data.__getitem__.html#cfdm.Data.__getitem__" title="cfdm.Data.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">__keedims_indexing__</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">__orthogonal_indexing__</span></code>, <a class="reference internal" href="../constant.html#cfdm.cfdm.masked" title="cfdm.cfdm.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.masked</span></code></a>,
+<a class="reference internal" href="../attribute/cfdm.Data.hardmask.html#cfdm.Data.hardmask" title="cfdm.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -184,7 +170,7 @@ any other value.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-03-18.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

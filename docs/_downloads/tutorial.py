@@ -538,8 +538,8 @@ print(q.creation_commands())
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
 v = nc.variables['ta']
-netcdf_array = cfdm.NetCDFArray(filename='file.nc', address='ta',
-                               dtype=v.dtype, shape=v.shape)
+netcdf_array = cfdm.NetCDF4Array(filename='file.nc', address='ta',
+                                dtype=v.dtype, shape=v.shape)
 data_disk = cfdm.Data(netcdf_array)
 numpy_array = v[...]
 data_memory = cfdm.Data(numpy_array)
