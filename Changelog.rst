@@ -1,7 +1,7 @@
 Version 1.12.0.0
 ----------------
 
-**2025-03-??**
+**2025-03-18**
 
 * Set new minimum version of `dask`: ``2025.2.0``
   (https://github.com/NCAS-CMS/cfdm/issues/321)

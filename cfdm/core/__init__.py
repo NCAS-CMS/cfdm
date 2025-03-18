@@ -11,7 +11,7 @@ datasets and the inspection of CF data model constructs.
 
 """
 
-__date__ = "2025-03-??"
+__date__ = "2025-03-18"
 __cf_version__ = "1.12"
 __version__ = "1.12.0.0"
 
@@ -52,7 +52,7 @@ else:
     if Version(np.__version__) < Version(_minimum_vn):
         raise ValueError(
             f"Bad numpy version: cfdm.core requires numpy>={_minimum_vn}. "
-            f"Got {Version(np.__version__)} at {np.__file__}"
+            f"Got {np.__version__} at {np.__file__}"
         )
 
 del _minimum_vn

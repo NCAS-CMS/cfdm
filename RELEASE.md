@@ -5,12 +5,12 @@
 * Change the version and date in `cfdm/core/__init__.py`
   (`__version__` and `__date__` variables).
   
-* Change the version and date in `codemeta.json`
+* Change the "version" and "dateModified" in `codemeta.json`.
 
 * Ensure that the requirements on dependencies and their versions are
   up-to-date and consistent in both the `requirements.txt` file and in
   `docs/source/installation.rst`; and in the `_requires` list and
-  `LooseVersion` checks in `cfdm/core/__init__.py` and
+  `Version` checks in both `cfdm/core/__init__.py` and
   `cfdm/__init__.py`.
 
 * If required, change the CF conventions version in
