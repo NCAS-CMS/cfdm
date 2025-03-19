@@ -133,7 +133,7 @@ class GroupsTest(unittest.TestCase):
         grouped_file = grouped_file1
 
         h = cfdm.read(grouped_file, netcdf_backend="h5netcdf-h5py", verbose=1)
-        print ('arse')
+        print("arse")
         self.assertEqual(len(h), 1, repr(h))
         h = h[0]
         self.assertTrue(f.equals(h))

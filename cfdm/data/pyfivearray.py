@@ -6,7 +6,7 @@ from .netcdfindexer import netcdf_indexer
 
 
 class PyfiveArray(IndexMixin, FileArray):
-    """A netCDF array accessed with `TODOVAR`.
+    """A netCDF array accessed with `pyfive`.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -16,14 +16,14 @@ class PyfiveArray(IndexMixin, FileArray):
         """Get the netCDF variable attributes.
 
         If the attributes have not been set, then they are retrieved
-        from the netCDF variable *var* and stored in `{{class}}`
-        instance for fast future access.
+        from the netCDF variable *var* and stored in for fast future
+        access.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            var: `TODOVAR`
+            var: `pyfive.Dataset`
                 The netCDF variable.
 
         :Returns:
@@ -61,7 +61,7 @@ class PyfiveArray(IndexMixin, FileArray):
             index = self.index()
 
         # Get the variable for subspacing
-        variable = self.get_variable()
+        variable = self.get_variable(None)
 
         dataset = None
         if variable is None:

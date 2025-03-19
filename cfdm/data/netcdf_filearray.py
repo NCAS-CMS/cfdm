@@ -16,8 +16,8 @@ class Netcdf_fileArray(IndexMixin, FileArray):
         """Get the netCDF variable attributes.
 
         If the attributes have not been set, then they are retrieved
-        from the netCDF variable *var* and stored in `{{class}}`
-        instance for fast future access.
+        from the netCDF variable *var* and stored for fast future
+        access.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -82,9 +82,11 @@ class Netcdf_fileArray(IndexMixin, FileArray):
         #
         # * Replace 'array' (which is currently a memory map view of
         #   the data on disk) with a copy of itself.
+        # 
         # * Delete references to 'variable'.
         #
-        # For reasons why, see the docs for `scipy.io.netcdf_file`.
+        # These actions are necessary to allow the file to be closed.
+        # See the docs for `scipy.io.netcdf_file` for details.
         array = array.copy()
         del variable
         self.close(dataset)

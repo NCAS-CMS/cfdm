@@ -263,12 +263,53 @@ _docstring_substitution_definitions = {
                >>> ufd = {{package}}.unique_constructs(x.domain for x in f)""",
     # read netcdf_backend
     "{{read netcdf_backend: `None` or (sequence of) `str`, optional}": """netcdf_backend: `None` or (sequence of) `str`, optional
-            TODOVAR Specify which library, or libraries, to use for opening
-            and reading netCDF files. By default, or if `None`, then
-            the first one of `h5netcdf` and `netCDF4` to successfully
-            open the netCDF file is used. The libraries will be used
-            in the order given, until a file is successfully
-            opened.""",
+            Which library to use for opening and reading netCDF
+            datasets. An attempt to be open a dataset is made by each
+            of the specified libraries, in the order given, stopping
+            afer the first successful read. The following libraries
+            are allowed:
+
+            * ``'h5netcdf-pyfive'``
+
+              The `h5netcdf` library using `pyfive` as its backend.
+              This is the default. Reads local and remote (http and
+              s3) netCDF-4 datasets. Allows parallised
+              reading. Improves the performance of active storage
+              reductions (by storing the dataset variables' B-trees so
+              that they don't have to be re-retrieved at compute time).
+           
+            * ``'h5netcdf-h5py'``
+
+              The `h5netcdf` library using `h5py` as its
+              backend. Reads netCDF-4 datasets. Reads local and remote
+              (http and s3) netCDF-4 datasets. Parallelised reading is
+              not allowed.
+           
+            * ``'netcdf_file'``
+
+              The `scipy.io.netcdf_file` library. Reads local netCDF-3
+              datasets. Allows parallised reading.
+           
+            * ``'netCDF4'``
+
+              The `netCDF4` library. Reads local and remote (http)
+              netCDF-3 and netCDF-4 datasets. Parallelised reading is
+              not allowed.
+
+            The default of `None` is equivalent to providing the
+            ordered sequence of libraries ``('h5netcdf-pyfive',
+            'h5netcdf-h5py', 'netcdf_file', 'netCDF4')``.
+
+            *Example:*
+              To only use the `netCDF4` library: ``'netCDF4'`` or
+              ``['netCDF4']``
+
+            *Example:*
+              To only use the `netCDF4` or ``'h5netcdf-h5py'``
+              library, in that order: : ``('netCDF4',
+              'h5netcdf-h5py')``
+
+                 .. versionadded:: (cfdm) 1.11.2.0""",
     # read  storage_options
     "{{read storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
             Pass parameters to the backend file system driver, such as
@@ -1076,9 +1117,6 @@ _docstring_substitution_definitions = {
                   'scaleway-secretkey...', 'endpoint_url':
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``""",
-    # init variable TODOVAR
-    "{{init variable: TODOVAR or `None`, optional}}": """variable: TODOVAR or `None`, optional
-                TODOVAR""",
     # _force_mask_hardness
     "{{_force_mask_hardness: `bool`, optional}}": """_force_mask_hardness: `bool`, optional
                 If True (the default) then force the mask hardness of

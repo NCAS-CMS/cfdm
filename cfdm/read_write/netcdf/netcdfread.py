@@ -706,7 +706,7 @@ class NetCDFRead(IORead):
             rdcc_nbytes=16777216,
             rdcc_w0=0.75,
             rdcc_nslots=4133,
-            phony_dims='sort'
+            phony_dims="sort",
         )
 
     def _open_h5netcdf_pyfive(self, filename):
@@ -1116,10 +1116,12 @@ class NetCDFRead(IORead):
         if netcdf_backend is None:
             # By default, try netCDF backends in this order, until one
             # works.
-            netcdf_backend = ("h5netcdf-pyfive",
-                              "netcdf_file",
-                              "h5netcdf-h5py",
-                              "netCDF4")
+            netcdf_backend = (
+                "h5netcdf-pyfive",
+                "netcdf_file",
+                "h5netcdf-h5py",
+                "netCDF4",
+            )
         elif isinstance(netcdf_backend, str):
             netcdf_backend = (netcdf_backend,)
 
@@ -10943,10 +10945,10 @@ class NetCDFRead(IORead):
         if self.read_vars["netcdf_backend"] == "netcdf_file":
             # scipy.io.netcdf_file
             array = array.copy()
-#        elif self.read_vars["netcdf_backend"] == "h5netcdf-h5py": # TODOVAR
-#            array = array.view(type=np.ndarray) # flakey (mising values)!!
-#            print (88888888, index, type(array))
-            
+        #        elif self.read_vars["netcdf_backend"] == "h5netcdf-h5py": # TODOVAR
+        #            array = array.view(type=np.ndarray) # flakey (mising values)!!
+        #            print (88888888, index, type(array))
+
         return array
 
     def _get_storage_options(self, filename, parsed_filename):

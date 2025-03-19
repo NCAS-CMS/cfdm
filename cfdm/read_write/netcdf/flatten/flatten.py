@@ -1188,14 +1188,6 @@ class _Flattener:
 
         # If variables refs are limited to coordinate variable,
         # additional check
-        try:
-            print ('LLL',
-                   type(orig_ref),type(orig_var),
-                   type(self.getncattr(orig_var, "coordinates")),
-                   str(self.getncattr(orig_var, "coordinates"))
-                   )
-        except:
-            pass
         if (
             ref_type == "variable"
             and rules.limit_to_scalar_coordinates

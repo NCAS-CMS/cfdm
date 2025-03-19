@@ -36,15 +36,15 @@ class FileArray(Array):
         :Parameters:
 
             filename: (sequence of `str`), optional
-                The locations of datasets containing the array.
+                The location of the dataset containing the array.
 
             address: (sequence of `str`), optional
-                How to find the array in the datasets.
+                How to find the array in the dataset.
 
             dtype: `numpy.dtype`, optional
                 The data type of the array. May be `None` if is not
                 known. This may differ from the data type of the
-                array in the datasets.
+                array in the dataset.
 
             shape: `tuple`, optional
                 The shape of the dataset array.
@@ -56,12 +56,18 @@ class FileArray(Array):
             {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
-                attributes will be set during the first `__getitem__`
-                call.
+                attributes will be set from those in the dataset
+                during the first `__getitem__` call.
 
             {{init storage_options: `dict` or `None`, optional}}
 
-            {{init variable: TODOVAR or `None`, optional}}
+            variable: optional
+                An open dataset variable object. Setting *variable*
+                does not replace the need for the *filename* and
+                *address* parameters, instead it compliments them by
+                allowing faster data access.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             {{init source: optional}}
 
@@ -137,7 +143,8 @@ class FileArray(Array):
         if attributes is not None:
             self._set_component("attributes", attributes, copy=copy)
 
-        self._set_component("variable", variable, copy=False)
+        if variable is not None:
+            self._set_component("variable", variable, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
@@ -211,23 +218,6 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}._get_array"
         )  # pragma: no cover
 
-    def _set_variable(self, variable):
-        """TODOVAR.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            variable: TODOVAR
-
-        :Returns:
-
-            `str`TODOVAR
-                The file name.TODOVAR
-
-        """
-        return self._set_component("variable", variable, copy=False)
-
     @property
     def array(self):
         """Return an independent numpy array containing the data.
@@ -275,8 +265,7 @@ class FileArray(Array):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if there
-                is no file.
+                Return *default* if the address has not been set.
 
                 {{default Exception}}
 
@@ -286,16 +275,17 @@ class FileArray(Array):
                 The file name.
 
         """
-        address = self._get_component("address", None)
-        if address is None:
-            if default is None:
-                return
-
-            return self._default(
-                default, f"{self.__class__.__name__} has no address"
-            )
-
-        return address
+        return self._get_component("address", default)
+#        address = self._get_component("address", None)
+#        if address is None:
+#            if default is None:
+#                return
+#
+#            return self._default(
+#                default, f"{self.__class__.__name__} has no address"
+#            )
+#
+#        return address
 
     def file_directory(self, normalise=False, default=AttributeError()):
         """The file directory.
@@ -305,6 +295,11 @@ class FileArray(Array):
         :Parameters:
 
             {{normalise: `bool`, optional}}
+
+            default: optional
+                Return *default* if the file has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -464,25 +459,27 @@ class FileArray(Array):
 
         return storage_options
 
-    def get_variable(self):
-        """TODOVAR.
+    def get_variable(self, default=AttributeError()):
+        """Get the open dataset variable object for the data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
+        :Parameters:
+
+            default: optional
+                Return *default* if the variable has not been set.
+
+                {{default Exception}}
+
         :Returns:
 
-                The file name.TODOVAR
+                The open dataset variable object.
 
         """
-        return self._get_component("variable", None)
+        return self._get_component("variable", default)
 
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
-
-        When multiple files have been provided an attempt is made
-        TODOVAR to
-        open each one, in the order stored, and a file object is
-        returned from the first file that exists.
 
         .. versionadded:: (cfdm) 1.10.1.0
 
@@ -611,7 +608,7 @@ class FileArray(Array):
         a._set_component("filename", filename, copy=False)
 
         # Remove an obselete variable
-        a._set_variable(None)
+        a._del_component("variable", None)
 
         return a
 
@@ -709,6 +706,6 @@ class FileArray(Array):
         a._set_component("filename", filename, copy=False)
 
         # Remove an obselete variable
-        a._set_variable(None)
+        a._del_component("variable", None)
 
         return a

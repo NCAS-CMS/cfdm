@@ -207,7 +207,9 @@ class NetCDFWrite(IOWrite):
 
         return array.flatten()
 
-    def _write_attributes(self, parent, ncvar, extra=None, omit=(), dtype=None):
+    def _write_attributes(
+        self, parent, ncvar, extra=None, omit=(), dtype=None
+    ):
         """Write netCDF attributes to the netCDF file.
 
         :Parameters:
@@ -2732,11 +2734,11 @@ class NetCDFWrite(IOWrite):
             omit_data or fill or g["post_dry_run"]
         ):  # or append mode's appending iteration
             fill_value = self.implementation.get_property(
-                cfvar, "_FillValue", None                
+                cfvar, "_FillValue", None
             )
         else:
             fill_value = None
-        
+
         if data_variable:
             lsd = g["least_significant_digit"]
         else:

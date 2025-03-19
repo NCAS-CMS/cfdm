@@ -2395,7 +2395,7 @@ class CFDMImplementation(Implementation):
         return cls(**kwargs)
 
     def initialise_PyfiveArray(self, **kwargs):
-        """Return a `TODOVAR` instance.
+        """Return a `PyfiveArray` instance.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -2406,7 +2406,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            `TODOVAR`
+            `PyfiveArray`
 
         """
         cls = self.get_class("PyfiveArray")
