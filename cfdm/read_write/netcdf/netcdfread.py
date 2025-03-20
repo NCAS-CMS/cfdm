@@ -466,20 +466,17 @@ class NetCDFRead(IORead):
 
         for nc in g["datasets"]:
             if g["netcdf_backend"] == "netcdf_file":
-                # For the a file opened with scipy.io.netcdf_file and
-                # mmap=True, when netcdf_variables or arrays referring
-                # to its data still exist we can't close the file. See
-                # the scipy.io.netcdf_file docstring for more
-                # information (v1.12.TODOVAR).
-                #
-                # Rather than attempting to hunt down all of the
-                # locals in `read` which contain such references
-                # (messy!), the hack of setting '_mm_buf' to None
+                # We can't close a scipy.io.netcdf_file instance
+                # opened with mmap=True if file any netcdf_variables
+                # or arrays referring to its data still exist (see
+                # netcdf_file docs for details). So, rather than
+                # attempting to hunt down all such reference (messy!),
+                # the hack of setting the '_mm_buf' attribute to None
                 # allows the file to be closed. We get away with this
                 # because we know that we've copied all memory mapped
-                # data into memory (by using `_index`
-                # instead of using variables' __getitem__ methods
-                # directly), and because no constructs contain any
+                # data into memory (by using `_index` instead of using
+                # a variable's __getitem__ method directly), and
+                # because no constructs will contain any
                 # `scipy.io.netcdf_variable` objects.
                 nc._mm_buf = None
 
@@ -712,8 +709,6 @@ class NetCDFRead(IORead):
     def _open_h5netcdf_pyfive(self, filename):
         """Return an open `h5netcdf.File` with the `pyfive` backend.
 
-        TODOVAR
-
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
@@ -910,10 +905,9 @@ class NetCDFRead(IORead):
         **Examples**
 
         >>> n.default_netCDF_fill_value('ua')
-        9.969209968386869e+36g
+        9.969209968386869e+36
 
         """
-        # TODOVAR      data_type = self.read_vars["variables"][ncvar].dtype.str[-2:]
         data_type = self._dtype(self.read_vars["variables"][ncvar])
         return netCDF4.default_fillvals[data_type.str[-2:]]
 
@@ -6446,18 +6440,11 @@ class NetCDFRead(IORead):
             dtype = np.result_type(dtype, unpacked_dtype)
 
         ndim = self._ndim(variable)
-        # TODOVAR       size = self._file_variable_size(variable)
         shape = variable.shape
-
-        #  TODOVAR      if size < 2:
-        #  TODOVAR          size = int(size)
-
         if self._is_char(ncvar) and ndim >= 1:
             # Has a trailing string-length dimension
             strlen = shape[-1]
             shape = shape[:-1]
-            # TODOVAR  size /= strlen
-            # TODOVAR  ndim -= 1
             dtype = np.dtype(f"U{strlen}")
 
         filename = g["variable_filename"][ncvar]
@@ -6557,9 +6544,9 @@ class NetCDFRead(IORead):
 
             if term == "unique_value" and kwargs["dtype"] is None:
                 # This is a string-valued aggregation variable with a
-                # 'value' fragment array variable, so set the correct
-                # numpy data type.
-                kwargs["dtype"] = fragment_array_variable.dtype  # TODOVAR
+                # 'unique_value' fragment array variable, so set the
+                # correct numpy data type.
+                kwargs["dtype"] = fragment_array_variable.dtype
 
         kwargs["fragment_array"] = fragment_array
         if return_kwargs_only:
@@ -10892,7 +10879,7 @@ class NetCDFRead(IORead):
             return len(var.shape)
 
     def _dtype(self, var):
-        """Return the variable attributes.TODOVAR.
+        """Return the data type of a dataset variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -10904,50 +10891,48 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `dict` TODOVAR
-                A dictionary of the attribute values keyed by their
-                names.TODOVAR
+                The variable's data type as a `numpy.dtype` object,
+                unless the variable is a VLEN string, in which case
+                the data type will be `str`.
 
         """
         try:
             # h5netcdf, netCDF4
             dtype = var.dtype
         except AttributeError:
-            # scipy.io.netcdf_file
+            # scipy.io.netcdf_file: Need to get the datatype from the
+            # memory-mapped array.
             x = self._index(var, (slice(0, 1),) * len(var.shape))
             dtype = x.dtype
 
-        #        if dtype == object and not len(var.shape):
-        #            dtype = str
-
         return dtype
 
-    def _index(self, variable, index):
-        """Return a global attribute from a dataset. TODOVAR.
+    def _index(self, var, index):
+        """Return a subspace of the array of a dataset variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        :Parameters: TODOVAR
+        :Parameters:
 
-            nc:
-                The dataset. One of `netCDF4.Dataset`,
-                `scipy.io.netcdf_file`, or `h5netcdf.File`. TODOVAR
+            var:
+                The variable. One of `netCDF4.Variable`,
+               `scipy.io.netcdf_variable`, or `h5netcdf.Variable`.
 
-            attr: `str`
-                The global attribute name. TODOVAR
+            index:
+                The array index that defines the subspace.
 
         :Returns:
 
-                The global attribute value. TODOVAR
+            `numpy.ndarray`
+                The array subspace.
 
         """
-        array = variable[index]
+        array = var[index]
         if self.read_vars["netcdf_backend"] == "netcdf_file":
-            # scipy.io.netcdf_file
+            # Need to copy the numpy array returned by
+            # scipy.io.netcdf_file with mmap=True. See netcdf_file
+            # docs for details.
             array = array.copy()
-        #        elif self.read_vars["netcdf_backend"] == "h5netcdf-h5py": # TODOVAR
-        #            array = array.view(type=np.ndarray) # flakey (mising values)!!
-        #            print (88888888, index, type(array))
 
         return array
 
@@ -11459,23 +11444,32 @@ class NetCDFRead(IORead):
             # Also cache the second element for 1-d data, on the
             # assumption that they may well be dimension coordinate
             # data.
-            if size == 1:
-                indices = (0, -1)
-                value = self._index(variable, Ellipsis)
-                values = (value, value)
-            elif size == 2:
+            if size > 3:
                 indices = (0, 1, -1)
-                value0 = self._index(variable, slice(0, 1))
-                value1 = self._index(variable, slice(1, 2))
-                values = (value0, value1, value1)
-            else:
-                indices = (0, 1, -1)
-                value0, value1 = self._index(variable, slice(0, 2))
+                v = self._index(variable, slice(0, 2))
                 values = (
-                    self._index(variable, slice(0, 1)),
-                    self._index(variable, slice(1, 2)),
+                    v[:1],
+                    v[1:],
                     self._index(variable, slice(-1, None, 1)),
                 )
+            else:
+                v = self._index(variable, Ellipsis)
+                if size == 1:
+                    indices = (0, -1)
+                    values = (v, v)
+                elif size == 2:
+                    indices = (0, 1, -1)
+                    v0 = v[:1]
+                    v1 = v[1:]
+                    values = (v0, v1, v1)
+                else:
+                    # size == 3
+                    indices = (0, 1, -1)
+                    v0 = v[:1]
+                    v1 = v[1:2]
+                    v2 = v[2:]
+                    values = (v0, v1, v2)
+
         elif ndim == 2 and data.shape[-1] == 2:
             # Assume that 2-d data with a last dimension of size 2
             # contains coordinate bounds, for which it is useful to
@@ -11501,18 +11495,22 @@ class NetCDFRead(IORead):
                     ),
                 )
         elif size == 1:
+            # size 1, N-d (N>1)
             indices = (0, -1)
-            value = self._index(variable, Ellipsis)
-            values = (value, value)
+            v = self._index(variable, Ellipsis)
+            values = (v, v)
         elif size == 3:
+            # size 3, N-d (N>1)
+            v = self._index(variable, Ellipsis)
             indices = (0, 1, -1)
             if char:
-                values = self._index(variable, Ellipsis).reshape(
-                    3, variable.shape[-1]
-                )
+                v = v.reshape(3, variable.shape[-1])
             else:
-                values = self._index(variable, Ellipsis).flatten()
+                v = v.flatten()
+
+            values = (v[:1], v[1:2], v[2:])
         else:
+            # size M (M=2 or >3), N-d (N>1)
             indices = (0, -1)
             values = (
                 self._index(variable, (slice(0, 1),) * ndim),
@@ -11553,9 +11551,9 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-        variable:
-                The variable, that has the same API as
-                `netCDF4.Variable` or `h5netcdf.Variable`. TODOVAR
+            variable:
+                The variable, one of `netCDF4.Variable`,
+                `scipy.io.netcdf_file`, or `h5netcdf.Variable`.
 
         :Returns:
 

@@ -2632,13 +2632,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         elif not isinstance(a, np.ndarray):
             a = np.asanyarray(a)
 
-        # TODOVAR - for memmap
-        #        a = a.view(type=type(a))
-        #        if np.ma.isMA(a):
-        #            a = a.view(type=np.ma.MaskedArray)
-        #        else:
-        #            a = a.view(type=np.ndarray)
-
         ndim = a.ndim
         shape = a.shape
         size = a.size

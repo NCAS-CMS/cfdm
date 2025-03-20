@@ -277,19 +277,19 @@ _docstring_substitution_definitions = {
               reading. Improves the performance of active storage
               reductions (by storing the dataset variables' B-trees so
               that they don't have to be re-retrieved at compute time).
-           
+
             * ``'h5netcdf-h5py'``
 
               The `h5netcdf` library using `h5py` as its
               backend. Reads netCDF-4 datasets. Reads local and remote
               (http and s3) netCDF-4 datasets. Parallelised reading is
               not allowed.
-           
+
             * ``'netcdf_file'``
 
               The `scipy.io.netcdf_file` library. Reads local netCDF-3
               datasets. Allows parallised reading.
-           
+
             * ``'netCDF4'``
 
               The `netCDF4` library. Reads local and remote (http)

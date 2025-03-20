@@ -82,7 +82,7 @@ class Netcdf_fileArray(IndexMixin, FileArray):
         #
         # * Replace 'array' (which is currently a memory map view of
         #   the data on disk) with a copy of itself.
-        # 
+        #
         # * Delete references to 'variable'.
         #
         # These actions are necessary to allow the file to be closed.
