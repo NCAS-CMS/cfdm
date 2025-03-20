@@ -68,17 +68,17 @@ class Mesh:
     # The location of the location index set. E.g. 'edge'
     location: Any = None
     # The zero-based indices of the location index set.
-    # E.g. <CF Data(13243): >
+    # E.g. <Data(13243): >
     index_set: Any = None
     # The domain topology construct for each location.
-    # E.g. {'face': <CF DomainTopology(13243, 4) >}
+    # E.g. {'face': <DomainTopology(13243, 4) >}
     domain_topologies: dict = field(default_factory=dict)
     # Cell connectivity constructs for each location.
-    # E.g. {'face': [<CF CellConnectivity(13243, 4) >]}
+    # E.g. {'face': [<CellConnectivity(13243, 4) >]}
     cell_connectivities: dict = field(default_factory=dict)
     # Auxiliary coordinate constructs for each location.
-    # E.g. {'face': [<CF AxuxiliaryCoordinate(13243) >,
-    #                <CF AxuxiliaryCoordinate(13243) >]}
+    # E.g. {'face': [<AxuxiliaryCoordinate(13243) >,
+    #                <AxuxiliaryCoordinate(13243) >]}
     auxiliary_coordinates: dict = field(default_factory=dict)
     # The netCDF dimension spanned by the cells for each
     # location. E.g. {'node': 'nNodes', 'edge': 'nEdges'}
@@ -580,11 +580,13 @@ class NetCDFRead(IORead):
         nc = None
         errors = []
         for backend in g["netcdf_backend"]:
+            print ('b=', backend)
             try:
                 nc = file_open_function[backend](filename)
             except KeyError:
                 errors.append(f"{backend}: Unknown netCDF backend name")
             except Exception as error:
+                print(error)
                 errors.append(
                     f"{backend}:\n{error.__class__.__name__}: {error}"
                 )
@@ -6482,6 +6484,7 @@ class NetCDFRead(IORead):
                 return kwargs
 
             netcdf_backend = g["netcdf_backend"]
+            print ( 'netcdf_backend =',netcdf_backend)
             if netcdf_backend == "h5netcdf-pyfive":
                 # Backend h5netcdf-pyfive
                 #

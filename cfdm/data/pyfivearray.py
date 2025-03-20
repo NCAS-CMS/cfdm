@@ -62,7 +62,8 @@ class PyfiveArray(IndexMixin, FileArray):
 
         # Get the variable for subspacing
         variable = self.get_variable(None)
-
+        print ('pyfive', index)
+        
         dataset = None
         if variable is None:
             # The variable has not been provided, so get it.
@@ -95,7 +96,7 @@ class PyfiveArray(IndexMixin, FileArray):
 
         if dataset is not None:
             self.close(dataset0)
-
+        print ('      ', index)
         return array
 
     def _group(self, dataset, groups):

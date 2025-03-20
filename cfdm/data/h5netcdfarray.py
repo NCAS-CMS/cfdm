@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class H5netcdfArray(IndexMixin, abstract.FileArray):
-    """A netCDF array accessed with `h5netcdf`.
+    """A netCDF array accessed with `h5netcdf` using the `h5py` backend.
 
     .. versionadded:: (cfdm) 1.11.2.0
 
@@ -79,10 +79,11 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         """
         if index is None:
             index = self.index()
-
+        print ('h5netcdf', index)
         # Note: We need to lock because HDF5 is about to access the
         #       file.
         with self._lock:
+            print ('        ', index)
             dataset, address = self.open()
             dataset0 = dataset
 
