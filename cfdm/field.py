@@ -1427,7 +1427,7 @@ class Field(
     ):
         """Join together a sequence of Field constructs.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `Data.concatenate`, `Data.cull_graph`
 
@@ -1933,7 +1933,7 @@ class Field(
 
         Returns the locations of any files referenced by the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `replace_directory`
 
@@ -2086,7 +2086,7 @@ class Field(
 
             {{normalise: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -2653,7 +2653,7 @@ class Field(
 
         `persist` causes delayed operations to be computed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `persist_metadata`, `array`, `datetime_array`,
                      `{{package}}.Data.persist`
@@ -2691,7 +2691,7 @@ class Field(
 
         `persist_metadata` causes delayed operations to be computed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `persist`, `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -2727,7 +2727,7 @@ class Field(
         Every file in *old_directory* that is referenced by the data
         is redefined to be in *new*.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directories`, `get_filenames`
 
@@ -3351,7 +3351,7 @@ class Field(
 
         The axes are inserted into the slowest varying data array positions.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `insert_dimension`, `squeeze`, `transpose`
 

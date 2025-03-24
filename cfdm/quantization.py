@@ -1,7 +1,10 @@
 from . import core, mixin
 
 
-class Quantization(mixin.Parameters, mixin.NetCDFVariable, mixin.Files, core.abstract.Parameters):
+class Quantization(mixin.Parameters,
+                   mixin.NetCDFVariable,
+                   mixin.Files,
+                   core.abstract.Parameters):
     """TODOQ
 
     **NetCDF interface**

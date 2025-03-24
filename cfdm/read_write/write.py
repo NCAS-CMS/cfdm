@@ -372,6 +372,28 @@ class write(ReadWrite):
             *Parameter example:*
               ``least_significant_digit=3``
 
+        chunk_cache: `int` or `None`, optional    
+            The amount of memory (in bytes) used in each variable's
+            chunk cache at the HDF5 level. Ignored when not writing to
+            a netCDF-4 format. By default, or if `None`, a chunk cache
+            of 16777216 (i.e. 16 MiB) is used. Changing this has no
+            effect on the new netCDF-4 file on disk, but may be used
+            to prevent the available memory from filling up when a
+            very large number of netCDF-4 variables are being
+            created. For instance, if 1024 netCDF-4 variables are
+            being created, then approximately 17179869184 bytes
+            (i.e. 16 GiB) of memory will be needed for their chunk
+            caches, and if this is too much then *chunk_cache* should
+            be reduced. Note the changing the size of the pre-variable
+            chunk cache has the potential to seriously degrade
+            performance, although that may be preferable to the write
+            process failing due to lack of memory.
+
+            See the netCDF-C library documentation for
+            `nc_set_var_chunk_cache` for details.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         fletcher32: `bool`, optional
             If True then the Fletcher-32 HDF5 checksum algorithm is
             activated to detect compression errors. Ignored if
@@ -566,7 +588,7 @@ class write(ReadWrite):
                       example, with *dataset_chunks* of ``'4 MiB'``, a
                       data array of 64-bit floats with shape (400,
                       300, 60) will be written with 20 dataset chunks,
-                      each of which contians (93, 93, 60)
+                      each of which contains (93, 93, 60)
                       elements. The first axis is split across 5
                       chunks, the second axis across 4 chunks, and the
                       third axis across 1 chunk containing 60
@@ -576,14 +598,14 @@ class write(ReadWrite):
                       the "edges" of the array contain only 93*21*60,
                       28*93*60, or 28*21*60 data values. The shape of
                       the dataset chunks is based on the shape of the
-                      data aray and its data type, and is calculated
+                      data array and its data type, and is calculated
                       internally with the
                       `dask.array.core.normalize_chunks` function. The
                       use of native compression (see the *compress*
                       parameter) does not affect the dataset chunk
                       size.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         cfa: `str` or `dict` or `None`, optional
             Specify which netCDF variables, if any, should be written
@@ -680,7 +702,7 @@ class write(ReadWrite):
                 2, 'field': None}}``.
 
               *Example:*
-                 Write any three-dimensionsal construct whose data is
+                 Write any three-dimensional construct whose data is
                  unchanged from having been previously read from a
                  CF-netCDF aggregation variable: ``{'constructs':
                  {'auto': 3}}``.
@@ -748,6 +770,7 @@ class write(ReadWrite):
         single=False,
         double=False,
         least_significant_digit=None,
+        chunk_cache=None,
         endian="native",
         compress=4,
         fletcher32=False,
@@ -809,6 +832,7 @@ class write(ReadWrite):
             Conventions=Conventions,
             datatype=datatype,
             least_significant_digit=least_significant_digit,
+            chunk_cache=chunk_cache,
             endian=endian,
             compress=compress,
             shuffle=shuffle,

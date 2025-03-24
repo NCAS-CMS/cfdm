@@ -11,7 +11,8 @@ class ArrayMixin:
 
     """
 
-    # Numpy handled functions (numpy NEP 18)
+    # Functions handled by __array_function__ implementations (numpy
+    # NEP 18)
     _HANDLED_FUNCTIONS = {}
 
     def __array__(self, dtype=None, copy=None):
@@ -29,7 +30,7 @@ class ArrayMixin:
                 API, but ignored. The return numpy array is always
                 independent.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -263,9 +264,9 @@ class ArrayMixin:
 # __array_function__ implementations (numpy NEP 18)
 # --------------------------------------------------------------------
 def array_implements(cls, numpy_function):
-    """An __array_function__ implementation for `Array` objects.
+    """Decorator for __array_function__ implementations.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
@@ -276,13 +277,13 @@ def array_implements(cls, numpy_function):
     return decorator
 
 
-# Implementationing np.concatenate is necessary for some use casexs of
+# Implementationing np.concatenate is necessary for some use cases of
 # `dask.array.slicing.take`
 @array_implements(ArrayMixin, np.concatenate)
 def concatenate(arrays, axis=0):
     """Version of `np.concatenate` that works for `Array` objects.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
     # Convert the inputs to numpy arrays, and concatenate those.

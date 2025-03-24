@@ -395,7 +395,7 @@ class PropertiesDataBounds(PropertiesData):
     ):
         """Join a together sequence of `{{class}}`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `Data.concatenate`, `Data.cull_graph`
 
@@ -1480,7 +1480,7 @@ class PropertiesDataBounds(PropertiesData):
 
         `persist` causes delayed operations to be computed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `array`, `datetime_array`,
                      `{{package}}.Data.persist`
@@ -1525,7 +1525,7 @@ class PropertiesDataBounds(PropertiesData):
     ):
         """Replace file directories in-place.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directories`, `get_filenames`
 

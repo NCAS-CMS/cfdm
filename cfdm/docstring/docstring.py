@@ -551,8 +551,8 @@ _docstring_substitution_definitions = {
             This makes no difference to the logical content of any
             construct, but ensures that the data of each of specified
             construct types will have only one Dask chunk, regardless
-            of the seting of *dask_chunks*, which is a requirement for
-            the creation CF-netCDF aggregation variables.
+            of the setting of *dask_chunks*, which is a requirement
+            for the creation CF-netCDF aggregation variables.
 
             The *cfa_write* parameter may be one, or a sequence, of:
 

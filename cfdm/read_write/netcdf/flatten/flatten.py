@@ -61,7 +61,7 @@ def netcdf_flatten(
     group identifier than its dimension.
 
     In such cases it is up to the user to apply the proximal and
-    lateral search alogrithms to the flattened dataset returned by
+    lateral search algorithms to the flattened dataset returned by
     `netcdf_flatten`, in conjunction with the mappings defined in the
     newly created global attributes ``_flattener_variable_map`` and
     ``_flattener_dimension_map``, to find which netCDF variables are

@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class AggregationError(Exception):
     """An error relating to CF-netCDF aggregation.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
@@ -2655,7 +2655,7 @@ class NetCDFWrite(IOWrite):
                 (the default), then these parameters are inferred from
                 the data.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -2778,8 +2778,15 @@ class NetCDFWrite(IOWrite):
             "chunksizes": chunksizes,
             "least_significant_digit": lsd,
             "fill_value": fill_value,
+            "chunk_cache": g['chunk_cache']
         }
+        
+        # TODOQ - add in per-variable quantization to the kwargs based
+        #         on the presence to a Quantization component.
 
+        # TODOQ: Also create a quantization container variable and a
+        #        quantisation_nsb attribute.
+        
         # ------------------------------------------------------------
         # For aggregation variables, create a dictionary containing
         # the fragment array variables' data.
@@ -3054,7 +3061,7 @@ class NetCDFWrite(IOWrite):
                 For aggregation variables, a dictionary containing the
                 fragment array variables' data.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -4583,6 +4590,7 @@ class NetCDFWrite(IOWrite):
         Conventions=None,
         datatype=None,
         least_significant_digit=None,
+            chunk_cache=None,
         endian="native",
         compress=4,
         fletcher32=False,
@@ -4748,6 +4756,13 @@ class NetCDFWrite(IOWrite):
 
                 See `cfdm.write` for details.
 
+            chunk_cache: `int` or `None`, optional
+                TODOQ
+
+                See `cfdm.write` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
             fletcher32: `bool`, optional
                 If True then the Fletcher-32 HDF5 checksum algorithm is
                 activated to detect compression errors. Ignored if
@@ -4892,6 +4907,7 @@ class NetCDFWrite(IOWrite):
             "netcdf_compression": {},
             "endian": "native",
             "least_significant_digit": None,
+            "chunk_cache": None,
             # CF properties which need not be set on bounds if they're set
             # on the parent coordinate
             "omit_bounds_properties": (
@@ -5110,6 +5126,7 @@ class NetCDFWrite(IOWrite):
             Conventions=Conventions,
             datatype=datatype,
             least_significant_digit=least_significant_digit,
+            chunk_cache=chunk_cache,            
             endian=endian,
             compress=compress,
             fletcher32=fletcher32,
@@ -5142,6 +5159,7 @@ class NetCDFWrite(IOWrite):
                 Conventions=Conventions,
                 datatype=datatype,
                 least_significant_digit=least_significant_digit,
+                chunk_cache=chunk_cache,            
                 endian=endian,
                 compress=compress,
                 fletcher32=fletcher32,
@@ -5167,6 +5185,7 @@ class NetCDFWrite(IOWrite):
         Conventions,
         datatype,
         least_significant_digit,
+        chunk_cache,            
         endian,
         compress,
         fletcher32,
@@ -5588,7 +5607,7 @@ class NetCDFWrite(IOWrite):
     def _change_reference_datetime(self, coord):
         """Change the units of a reference date-time.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5628,7 +5647,7 @@ class NetCDFWrite(IOWrite):
         aggregated data is that this method returns `True` and
         `_cfa_aggregation_instructions` returns a `dict`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5702,7 +5721,7 @@ class NetCDFWrite(IOWrite):
     def _cfa_create_data(self, cfa, ncvar, ncdimensions, data, cfvar):
         """Write an aggregation variable to the netCDF file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5892,7 +5911,7 @@ class NetCDFWrite(IOWrite):
     def _filled_string_array(self, array, fill_value=""):
         """Fill a string array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5917,7 +5936,7 @@ class NetCDFWrite(IOWrite):
     ):
         """Write an aggregation fragment array variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5974,7 +5993,7 @@ class NetCDFWrite(IOWrite):
         If there are multiple unique values then missing data is
         returned.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -6008,7 +6027,7 @@ class NetCDFWrite(IOWrite):
     def _cfa_fragment_array_variables(self, data, cfvar):
         """Convert data to aggregated_data terms.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

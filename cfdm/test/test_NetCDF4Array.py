@@ -349,6 +349,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         c1 = np.concatenate((n, n), axis=0)
         self.assertTrue(np.ma.is_masked(c1))
 
+        self.assertEqual(c0.shape, c1.shape)
         self.assertTrue((c0.mask == c1.mask).all())
         self.assertTrue((c0 == c1).all())
 

@@ -1,13 +1,20 @@
-Version NEXTVERSION
+Version 1.12.?.?
 ----------------
 
 **2025-??-??**
+ 
+* New keyword parameter to `cfdm.write`: ``chunk_cache``
+
+*Version 1.12.0.0
+----------------
+
+**2025-03-18**
 
 * Set new minimum version of `dask`: ``2025.2.0``
   (https://github.com/NCAS-CMS/cfdm/issues/321)
-** Set new minimum version of `numpy`: ``2.0.0``
+* Set new minimum version of `numpy`: ``2.0.0``
   (https://github.com/NCAS-CMS/cfdm/issues/318)
- Introduction of reading and writing of aggregation datasets (for
+* Introduction of reading and writing of aggregation datasets (for
   CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319)
 * Changed dependency: ``Python>=3.9.0``
 * Changed dependency: ``numpy>=2.0.0``
@@ -17,6 +24,16 @@ Version NEXTVERSION
 
 ----
 
+Version 1.11.2.1
+----------------
+
+**2025-02-26**
+
+* Re-introduction of `cfdm.Data.datetime_as_string`
+  (https://github.com/NCAS-CMS/cfdm/pull/324)
+
+----
+  
 Version 1.11.2.0
 ----------------
 
@@ -24,8 +41,8 @@ Version 1.11.2.0
 
 * Introduction of `dask` for all data manipulations
   (https://github.com/NCAS-CMS/cfdm/issues/317)
-* Fix bug that returned incorrect results when an invalid identifer is
-  provided to `cf.Field.cell_methods`
+* Fix bug that returned incorrect results when an invalid identifier
+  is provided to `cf.Field.cell_methods`
   (https://github.com/NCAS-CMS/cfdm/issues/299)
 * Upgrades to allow cfdm to work with Python 3.12
   (https://github.com/NCAS-CMS/cfdm/issues/302)

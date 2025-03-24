@@ -4609,7 +4609,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
 class NetCDFAggregation(NetCDFMixin):
     """Mixin class for netCDF aggregated variables.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
@@ -4620,7 +4620,7 @@ class NetCDFAggregation(NetCDFMixin):
         array variables, and are stored in a netCDF file in an
         "aggregated_data" attribute.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_get_aggregated_data`,
                      `nc_has_aggregated_data`,
@@ -4674,7 +4674,7 @@ class NetCDFAggregation(NetCDFMixin):
         array variables, and are stored in a netCDF file in an
         "aggregated_data" attribute.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_del_aggregated_data`,
                      `nc_has_aggregated_data`,
@@ -4728,7 +4728,7 @@ class NetCDFAggregation(NetCDFMixin):
         array variables, and are stored in a netCDF file in an
         "aggregated_data" attribute.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_del_aggregated_data`,
                      `nc_get_aggregated_data`,
@@ -4783,7 +4783,7 @@ class NetCDFAggregation(NetCDFMixin):
         character and contains no others, the name is assumed to be in
         the root group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_del_aggregated_data`,
                      `nc_get_aggregated_data`,
@@ -4795,7 +4795,7 @@ class NetCDFAggregation(NetCDFMixin):
                 The netCDF aggregated_data terms in a dictionary whose
                 key/value pairs are the feature names and their
                 corresponding fragment array variable names; or else
-                an equivalent string formated with the the CF-netCDF
+                an equivalent string formatted with the the CF-netCDF
                 encoding.
 
         :Returns:
@@ -4845,7 +4845,7 @@ class NetCDFAggregation(NetCDFMixin):
     def _nc_del_aggregation_fragment_type(self):
         """Remove the type of fragments in the aggregated data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -4860,7 +4860,7 @@ class NetCDFAggregation(NetCDFMixin):
     def nc_get_aggregation_fragment_type(self):
         """The type of fragments in the aggregated data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -4874,7 +4874,7 @@ class NetCDFAggregation(NetCDFMixin):
     def _nc_set_aggregation_fragment_type(self, value):
         """Set the type of fragments in the aggregated data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -4899,7 +4899,7 @@ class NetCDFAggregation(NetCDFMixin):
         data as CF-netCDF aggregated data is that the write status is
         True.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_get_aggregation_write_status`,
                      `nc_set_aggregation_write_status`
@@ -4919,7 +4919,7 @@ class NetCDFAggregation(NetCDFMixin):
         data as CF-netCDF aggregated data is that the write status is
         True.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_del_aggregation_write_status`,
                      `nc_set_aggregation_write_status`
@@ -4947,7 +4947,7 @@ class NetCDFAggregation(NetCDFMixin):
         data as CF-netCDF aggregated data is that the write status is
         True.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_del_aggregation_write_status`,
                      `nc_get_aggregation_write_status`,
@@ -4974,7 +4974,7 @@ class NetCDFAggregation(NetCDFMixin):
         data as CF-netCDF aggregated data is that the write status is
         True.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_del_aggregation_write_status`,
                      `nc_get_aggregation_write_status`

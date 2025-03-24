@@ -148,23 +148,23 @@ class read(ReadWrite):
 
         {{read cfa: `dict`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read cfa_write: (sequence of) `str`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read to_memory: (sequence of) `str`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read squeeze: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read unsqueeze: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read file_type: `None` or (sequence of) `str`, optional}}
 
@@ -177,11 +177,11 @@ class read(ReadWrite):
             ``'CDL'``     Text CDL representation of a netCDF file
             ============  ============================================
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read ignore_unknown_type: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
     :Returns:
 

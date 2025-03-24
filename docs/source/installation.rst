@@ -39,7 +39,7 @@ cfdm works for Python versions 3.9 or newer.
 -------
 
 To install cfdm and all of its :ref:`dependencies <Dependencies>`
-(apart from :ref:`Udunits <Udunits>`) run, for example:
+(apart from :ref:`UDUNITS <UDUNITS>`) run, for example:
 
 .. code-block:: console
    :caption: *Install as root, with any missing dependencies.*
@@ -63,12 +63,12 @@ See the `documentation for pip install
 <https://pip.pypa.io/en/stable/reference/pip_install/>`_ for further
 options.
 
-.. _Udunits:
+.. _UDUNITS:
 
-Udunits
+UDUNITS
 ^^^^^^^
 
-Udunits (a C library that provides support for units of physical
+UDUNITS (a C library that provides support for units of physical
 quantities) is a required dependency that is not installed by ``pip``,
 but it can be installed in a ``conda`` environment:
 
@@ -76,11 +76,11 @@ but it can be installed in a ``conda`` environment:
 
    $ conda install -c conda-forge udunits2
 
-Alternatively, Udunits is often available from operating system
+Alternatively, UDUNITS is often available from operating system
 software download managers, or may be installed from source.
     
 Note that :ref:`some environment variables might also need setting
-<UNIDATA-UDUNITS-2-library>` in order for the Udunits library to work
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
 properly, although the defaults are usually sufficient.
 
 ----
@@ -100,7 +100,7 @@ cfdm with all of its :ref:`dependencies <Dependencies>` run
    $ conda install -c conda-forge cfdm udunits2
 
 Note that :ref:`some environment variables might also need setting
-<UNIDATA-UDUNITS-2-library>` in order for the Udunits library to work
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
 properly, although the defaults are usually sufficient.
 
 ----
@@ -144,7 +144,7 @@ To install from source:
        $ python setup.py install --home=<directory>
 
 Note that :ref:`some environment variables might also need setting
-<UNIDATA-UDUNITS-2-library>` in order for the Udunits library to work
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
 properly, although the defaults are usually sufficient.
 
 ----
@@ -193,7 +193,7 @@ The cfdm package requires:
 * `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
   newer.
 
-* `h5py <https://pypi.org/project/h5py>`_, version 3.12.0 or newer.
+* `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.
 
 * `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 
@@ -207,14 +207,17 @@ The cfdm package requires:
 * `uritools <https://pypi.org/project/uritools>`_, version 4.0.3 or
   newer.
 
+* `cfunits <https://pypi.org/project/cfunits>`_, version 3.3.7 or
+  newer.
+
 .. _UNIDATA-UDUNITS-2-library:
 
-* `UNIDATA Udunits-2 library
+* `UNIDATA UDUNITS-2 library
   <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.25
   or newer. UDUNITS-2 is a C library that provides support for units of
   physical quantities.
 
-  If the Udunits-2 shared library file (``libudunits2.so.0`` on
+  If the UDUNITS-2 shared library file (``libudunits2.so.0`` on
   GNU/Linux or ``libudunits2.0.dylibfile`` on MacOS) is in a
   non-standard location then its directory path should be added to the
   ``LD_LIBRARY_PATH`` environment variable.

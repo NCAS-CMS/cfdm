@@ -722,7 +722,7 @@ class NetCDFRead(IORead):
     def string_to_cdl(cls, cdl_string):
         """Create a temporary CDL file from a CDL string.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -953,44 +953,44 @@ class NetCDFRead(IORead):
                  Storing the dataset chunking strategy. See
                  `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             cfa: `dict`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             cfa_write: sequence of `str`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             to_memory: (sequence) of `str`, optional
                 Whether or not to bring data arrays into memory.  See
                 `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             squeeze: `bool`, optional
                 Whether or not to remove all size 1 axes from field
                 construct data arrays. See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             unsqueeze: `bool`, optional
                 Whether or not to ensure that all size 1 axes are
                 spanned by field construct data arrays. See
                 `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             file_type: `None` or (sequence of) `str`, optional
                 Only read files of the given type(s). See `cfdm.read`
                 for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             ignore_unknown_type: `bool`, optional
                 If True then ignore any file which does not have one
@@ -1331,9 +1331,10 @@ class NetCDFRead(IORead):
             # Quantization containers, keyed by their netCDF
             # quantization container variable names.
             # --------------------------------------------------------
+            # Maps quantization variable names to Quantization objects
+            "quantization_variable": {},
+            # Maps variable names to their quantization variable names
             "quantization": {},
-            # Map data variables to their quantization variable names
-            "variable_quantization": {},
         }
 
         g = self.read_vars
@@ -3138,30 +3139,26 @@ class NetCDFRead(IORead):
             parent_ncvar, quantization_attribute, parsed_quantization
         )
 
-        quantization_ncvar = parsed_quantization[0]
+        ncvar = parsed_quantization[0]
 
-        if quantization_ncvar in g["quantization"]:
-            # We've already parsed this quantization container, so
-            # record the fact that this parent netCDF variable has
-            # this quantization variable and return.
-            g["variable_quantization"][parent_ncvar] = quantization_ncvar
+        # Record that the parent variable references this quantization
+        # variable
+        g["quantization"][parent_ncvar] = ncvar
+        
+        if ncvar in g["quantization_variable"]:
+            # We've already parsed this quantization variable
             return
 
-
         # Create a quantization object
-        q = self.self.implementation.initialise_Quantization(
-            attributes[quantization_ncvar].copy(), copy=False
-        )
-        q.nc_set_variable('quantization_ncvar')
-        
-        g["quantization"][quantization_ncvar] = q
-        
+        q = self._create_quantization(ncvar)
+        g["quantization_variable"][ncvar] = q
+       
         logger.info(
             f"    Quantization container = {quantization_ncvar!r}\n"
-            f"        netCDF attributes: {attributes[quantization_ncvar]}"
+            f"        netCDF attributes: {attributes[ncvar]}"
         )  # pragma: no cover
 
-        return quantization_ncvar
+        return ncvar
         
     def _set_ragged_contiguous_parameters(
         self,
@@ -7952,7 +7949,7 @@ class NetCDFRead(IORead):
                 The type of the construct that contains *array*. Set
                 to `None` if the array does not belong to a construct.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
@@ -8025,6 +8022,30 @@ class NetCDFRead(IORead):
 
         return data
 
+    def _create_quantization(self, ncvar):
+        """Create a Quantization component.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            ncvar: `str`
+                The netCDF name of the quantization container
+                variable.
+
+        :Returns:
+
+            `Quantization`
+                The Quantization component.
+
+        """
+        attributes  = self.read_vars["attributes"][ncvar].copy()
+        q = self.self.implementation.initialise_Quantization(
+            attributes, copy=False
+        )
+        q.nc_set_variable(ncvar)        
+        return q
+    
     def _copy_construct(self, construct_type, parent_ncvar, ncvar):
         """Return a copy of an existing construct.
 
@@ -11487,7 +11508,7 @@ class NetCDFRead(IORead):
     def _cfa_is_aggregation_variable(self, ncvar):
         """Return True if *ncvar* is a CF-netCDF aggregated variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -11509,7 +11530,7 @@ class NetCDFRead(IORead):
     def _cfa_parse_aggregated_data(self, ncvar, aggregated_data):
         """Parse a CF-netCDF 'aggregated_data' attribute.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

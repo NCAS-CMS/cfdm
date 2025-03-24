@@ -13,7 +13,7 @@ from . import Array
 class FileArray(Array):
     """Abstract base class for an array in a file.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
@@ -153,7 +153,7 @@ class FileArray(Array):
         return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
-        """"Called by the `str` built-in function.
+        """Called by the `str` built-in function.
 
         x.__str__() <==> str(x)
 
@@ -163,7 +163,7 @@ class FileArray(Array):
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         """
         return (
@@ -183,7 +183,7 @@ class FileArray(Array):
         The subspace is defined by the `index` attributes, and is
         applied with `cfdm.netcdf_indexer`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `__array__`, `index`
 
@@ -273,7 +273,7 @@ class FileArray(Array):
     def file_directory(self, normalise=False, default=AttributeError()):
         """The file directory.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -310,7 +310,7 @@ class FileArray(Array):
 
             {{normalise: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             default: optional
                 Return the value of the *default* parameter if there
@@ -355,7 +355,7 @@ class FileArray(Array):
     ):
         """Return `s3fs.S3FileSystem` options for accessing S3 files.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -489,7 +489,7 @@ class FileArray(Array):
 
         Modifies the name of the file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directory`, `get_filename`
 
@@ -574,7 +574,7 @@ class FileArray(Array):
     def get_missing_values(self):
         """The missing values of the data.
 
-        Deprecated at version NEXTVERSION. Use `get_attributes` instead.
+        Deprecated at version 1.12.0.0. Use `get_attributes` instead.
 
         """
 
@@ -585,7 +585,7 @@ class FileArray(Array):
 
         raise DeprecationError(
             f"{self.__class__.__name__}.get_missing_values was deprecated "
-            "at version NEXTVERSION and is no longer available. "
+            "at version 1.12.0.0 and is no longer available. "
             f"Use {self.__class__.__name__}.get_attributes instead."
         )  # pragma: no cover
 
@@ -609,7 +609,7 @@ class FileArray(Array):
         they have not already been defined, either during {{class}}
         instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -629,7 +629,7 @@ class FileArray(Array):
     def get_unpack(self):
         """Whether or not to automatically unpack the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         **Examples**
 
@@ -642,7 +642,7 @@ class FileArray(Array):
     def replace_filename(self, filename):
         """Replace the file location.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directory`, `get_filename`,
                      `replace_directory`

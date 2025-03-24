@@ -1362,7 +1362,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 API, but ignored. The returned numpy array is always
                 independent.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -1741,7 +1741,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         overridden in subclasses, to allow for customisation of the
         concatenation process.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `concatenate`
 
@@ -1795,7 +1795,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         overridden in subclasses, to allow for customisation of the
         concatenation process.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `concatenate`
 
@@ -1876,7 +1876,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         data as CF-netCDF aggregated data is that the write status is
         True.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `nc_del_aggregation_write_status`,
                      `nc_get_aggregation_fragment_type`
@@ -2029,7 +2029,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         The `Data` object is modified in-place, but the embedded
         Dask graph is not.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -2833,6 +2833,44 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             a.set_fill_value(self.get_fill_value(None))
 
         return a
+
+    @property
+    def datetime_as_string(self):
+        """Returns an independent numpy array with datetimes as strings.
+
+        Specifically, returns an independent numpy array containing
+        string representations of times since a reference date.
+
+        Only applicable for reference time units.
+
+        If the calendar has not been set then the CF default calendar of
+        "standard" (i.e. the mixed Gregorian/Julian calendar as defined by
+        Udunits) will be used.
+
+        Conversions are carried out with the `netCDF4.num2date` function.
+
+        .. versionadded:: (cfdm) 1.8.0
+
+        .. seealso:: `array`, `datetime_array`
+
+        :Returns:
+
+            `numpy.ndarray`
+                An independent numpy array of the date-time strings.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01')
+        >>> print(d.datetime_as_string)
+        ['2019-01-01 00:00:00' '2019-02-01 00:00:00' '2019-03-01 00:00:00']
+
+        >>> d = {{package}}.{{class}}(
+        ...     [31, 62, 90], units='days since 2018-12-01', calendar='360_day')
+        >>> print(d.datetime_as_string)
+        ['2019-01-02 00:00:00' '2019-02-03 00:00:00' '2019-03-01 00:00:00']
+
+        """
+        return self.datetime_array.astype(str)
 
     @property
     def dtype(self):
@@ -3718,7 +3756,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def chunk_positions(self):
         """Find the position of each chunk.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `chunks`, `chunk_indices`
 
@@ -3755,7 +3793,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         Not to be confused with compression by convention (see the
         `uncompress` method).
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `flatten`
 
@@ -3853,7 +3891,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> d.compute()
         <2x3 sparse array of type '<class 'numpy.float64'>'
                 with 0 stored elements in Compressed Sparse Row format>
-        >>>: d.array
+        >>> d.array
         array([[0., 0., 0.],
                [0., 0., 0.]])
         >>> d.compute().toarray()
@@ -3894,7 +3932,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     ):
         """Join a sequence of data arrays together.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `cull_graph`
 
@@ -4239,7 +4277,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             {{inplace: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -4633,7 +4671,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         Returns the locations of any files referenced by the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `get_filenames`, `replace_directory`
 
@@ -5150,7 +5188,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -5280,7 +5318,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             {{normalise: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             per_chunk: `bool`, optional
                 Return a `numpy` array that provides the file name
@@ -5288,7 +5326,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 have the same shape as the Dask chunks (as returned by
                 the `numblocks` attribute).
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -6320,7 +6358,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         Modifies the names of files that are required to deliver
         the computed data array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directories`, `get_filenames`
 
@@ -6382,7 +6420,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         A fragment is a part of the data array that is stored in a
         file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `get_filenames`
 
@@ -6929,7 +6967,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 * ``'optimise'``
 
                   Apply all possible graph optimisations. These will
-                  include removal unnecessary tasks (see ``'cull'``),
+                  include removal of unnecessary tasks (see ``'cull'``),
                   and is equivalent to applying `dask.optimize` to the
                   graph.
 
@@ -6937,13 +6975,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
                   Do not apply any optimisations.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             {{_force_mask_hardness: `bool`, optional}}
 
             {{_force_to_memory: `bool`, optional}}
 
-            optimize_graph: Deprecated at version NEXTVERSION
+            optimize_graph: Deprecated at version 1.12.0.0
                 Use the *graph* parameter instead. Note that
                 ``graph='optimise'`` is equivalent to the deprecated
                 ``optimize_graph=True``.
@@ -6980,7 +7018,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
           0): <Task ('cfdm_harden_mask-b57a3694b00d301421b9fc21db4cf24e', 0) cfdm_harden_mask(...)>}
 
         """
-        # NOTE: The undlerlying Dask graph structure is liable to
+        # NOTE: The underlying Dask graph structure is liable to
         # change in the future, in which case this method could break
         # and need refactoring (e.g.
         # https://github.com/dask/dask/pull/11736#discussion_r1954752842).
@@ -6991,7 +7029,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "todict",
                 {"optimize_graph": optimize_graph},
                 message="Use keyword 'graph' instead.",
-                version="NEXTVERSION",
+                version="1.12.0.0",
                 removed_at="1.14.0",
             )  # pragma: no cover
 

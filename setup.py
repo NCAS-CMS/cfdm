@@ -78,6 +78,12 @@ Documentation
 
 https://ncas-cms.github.io/cfdm
 
+Dask
+====
+
+From version 1.11.2.0 the `cfdm` package uses `Dask
+<https://docs.dask.org>`_ for all of its data manipulations.
+
 Tutorial
 ========
 

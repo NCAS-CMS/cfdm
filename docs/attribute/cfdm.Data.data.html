@@ -22,7 +22,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Data.nc_clear_hdf5_chunksizes" href="../method/cfdm.Data.nc_clear_hdf5_chunksizes.html" />
+    <link rel="next" title="cfdm.Data.tolist" href="cfdm.Data.tolist.html" />
     <link rel="prev" title="cfdm.Data.source" href="../method/cfdm.Data.source.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.0.0</a></h1>
 
 
 
@@ -88,7 +88,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Data.html">cfdm.Data</a><ul>
       <li>Previous: <a href="../method/cfdm.Data.source.html" title="previous chapter">cfdm.Data.source</a></li>
-      <li>Next: <a href="../method/cfdm.Data.nc_clear_hdf5_chunksizes.html" title="next chapter">cfdm.Data.nc_clear_hdf5_chunksizes</a></li>
+      <li>Next: <a href="cfdm.Data.tolist.html" title="next chapter">cfdm.Data.tolist</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -130,7 +130,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <code class="sig-prename descclassname">Data.</code><code class="sig-name descname">data</code><a class="headerlink" href="#cfdm.Data.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>The data as an object identity.</p>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="n">d</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="n">d</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -147,7 +148,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-03-18.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

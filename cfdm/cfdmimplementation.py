@@ -1360,7 +1360,7 @@ class CFDMImplementation(Implementation):
                 to an absolute path. If False then neither of these is
                 carried out.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -1883,7 +1883,7 @@ class CFDMImplementation(Implementation):
     def initialise_AggregatedArray(self, **kwargs):
         """Return a `AggregatedArray` instance.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -3699,7 +3699,7 @@ class CFDMImplementation(Implementation):
                 If True then do the operation in-place and return
                 `None`.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -3712,7 +3712,7 @@ class CFDMImplementation(Implementation):
     def unsqueeze(self, field, inplace=False):
         """Insert size 1 axes into the field data array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

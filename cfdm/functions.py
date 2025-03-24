@@ -475,7 +475,7 @@ def abspath(path, uri=None):
             `None` (the default) then the returned path will begin
             with a URI scheme component if the input *path* does.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
     :Returns:
 
@@ -564,7 +564,7 @@ def abspath(path, uri=None):
 def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
     """Return the directory of a path.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     :Parameters:
 
@@ -2350,7 +2350,7 @@ def _DEPRECATION_ERROR_KWARGS(
 ):
     """Error handling for deprecated kwargs.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
     if removed_at:

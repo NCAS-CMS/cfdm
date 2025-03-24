@@ -59,6 +59,7 @@ Data
    ~cfdm.Count.has_data
    ~cfdm.Count.set_data  
    ~cfdm.Count.insert_dimension
+   ~cfdm.Count.persist
    ~cfdm.Count.squeeze
    ~cfdm.Count.transpose
    
@@ -88,6 +89,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Count.copy
+   ~cfdm.Count.concatenate 
    ~cfdm.Count.creation_commands
    ~cfdm.Count.equals
    ~cfdm.Count.get_filenames
@@ -95,6 +97,19 @@ Miscellaneous
    ~cfdm.Count.has_bounds
    ~cfdm.Count.uncompress
    ~cfdm.Count.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.Count.file_directories
+   ~cfdm.Count.replace_directory
 
 NetCDF
 ------
