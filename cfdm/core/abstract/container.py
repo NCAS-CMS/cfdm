@@ -300,13 +300,14 @@ class Container(metaclass=DocstringRewriteMeta):
         return component in self._components
 
     def _init_from_source(self, source, copy=True):
-        """TODOQ
+        """TODOQ.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
         """
         if source is None:
             return
-        
+
         # WARNING: The 'custom' dictionary is only shallow copied
         #          from source
         try:

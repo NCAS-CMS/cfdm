@@ -1,15 +1,22 @@
 from . import core, mixin
 
 
-class Quantization(mixin.Parameters,
-                   mixin.NetCDFVariable,
-                   mixin.Files,
-                   core.abstract.Parameters):
-    """TODOQ
+class Quantization(
+    mixin.NetCDFVariable,
+    mixin.NetCDFGroupAttributes,
+    mixin.Files,
+    mixin.Parameters,
+    core.abstract.Parameters,
+):
+    """TODOQ.
+
+    See CF section 8.4. "Lossy Compression via Quantization".
 
     **NetCDF interface**
 
     {{netCDF variable}}
+
+    {{netCDF group attributes}}
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -39,3 +46,28 @@ class Quantization(mixin.Parameters,
 
         self._initialise_netcdf(source)
         self._initialise_original_filenames(source)
+
+    @classmethod
+    def quantization_parameters(cls):
+        """TODOQ.
+
+        Maps the CF quantization "algorithm" to the corresponding CF
+        property that defines the algorithm's parameter for the number
+        of significant bits or digits.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `dict`
+                A dictionary for which a key is a CF algorithm name,
+                with corresponding value of the parameter name that
+                configures the algorithm.
+
+        """
+        return {
+            "bitgroom": "quantization_nsd",
+            "bitround": "quantization_nsb",
+            "digitround": "quantization_nsd",
+            "granular_bitround": "quantization_nsd",
+        }

@@ -124,6 +124,24 @@ class PropertiesData(Properties):
 
         return [(i + ndim if i < 0 else i) for i in axes]
 
+    def _set_quantization(self, quantization, copy=True):
+        """TODOQ.
+
+        .. warning:: TODOQ
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `Quantization`
+                TODOQ
+
+        """
+        if copy:
+            quantization = quantization.copy()
+
+        return self._set_component("quantization", copy=False)
+
     @classmethod
     def _test_docstring_substitution_classmethod(cls, arg1, arg2):
         """Test docstring substitution on with @classmethod.
@@ -180,14 +198,16 @@ class PropertiesData(Properties):
         """
         print("In _test_docstring_substitution")
 
-    def _lll(self, source):
-        """TODOQ"""
-        # Quantization
+    def _init_quantization(self, source, copy=True):
+        """TODOQ."""
         try:
-            q = source.get_quantization()
-        except (AttributeError, ValueError)
-            self.set_quantization(q)
-        
+            q = source.get_quantization(None)
+        except (AttributeError, ValueError):
+            pass
+        else:
+            if q is not None:
+                self._set_quantization(q, copy=copy)
+
     @property
     def array(self):
         """A numpy array deep copy of the data.
@@ -285,7 +305,7 @@ class PropertiesData(Properties):
         .. note:: If using the `apply_masking` method on a construct
                   that has been read from a dataset with the
                   ``mask=False`` parameter to the `read` function,
-                  then the mask defined in the dataset can only be 
+                  then the mask defined in the dataset can only be
                  recreated if the ``missing_value``, ``_FillValue``,
                   ``valid_min``, ``valid_max``, and ``valid_range``
                   properties have not been updated.
@@ -500,11 +520,19 @@ class PropertiesData(Properties):
         return out
 
     def del_quantization(self, default=ValueError()):
-        """TODOQ
+        """TODOQ.
+
+        .. warning:: TODOQ
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `Quantization`
+                TODOQ
+
         """
-        return self._del_component('quantization', default)
+        return self._del_component("quantization", default)
 
     @_display_or_return
     def dump(
@@ -771,11 +799,17 @@ class PropertiesData(Properties):
         return set()
 
     def get_quantization(self, default=ValueError()):
-        """TODOQ
+        """TODOQ.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `Quantization`
+                TODOQ
+
         """
-        return self._get_component('quantization', default)
+        return self._get_component("quantization", default)
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
@@ -960,16 +994,6 @@ class PropertiesData(Properties):
             return data.replace_directory(
                 old=old, new=new, normalise=normalise, common=common
             )
-
-    def set_quantization(self, value, copy=True):
-        """TODOQ
-
-        .. versionadded:: (cfdm) NEXTVERSION
-        """
-        if copy:
-            q = value.copy()
-
-        self._set_component('quantization', value, copy=False)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

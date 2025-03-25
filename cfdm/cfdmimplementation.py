@@ -253,6 +253,27 @@ class CFDMImplementation(Implementation):
         """
         return data.insert_dimension(position=position)
 
+    def del_parameter(self, parent, parameter, default=None):
+        """TODOQ Remove a property from a construct.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            construct: construct
+
+            props: (sequence of) `str`
+
+            default: optional
+
+        :Returns:
+
+            `dict`
+                The deleted properties, if any
+
+        """
+        return parent.del_parameter(parameter, default)
+
     def del_properties(self, construct, props):
         """Remove a property from a construct.
 
@@ -1190,6 +1211,27 @@ class CFDMImplementation(Implementation):
         """
         return data.nc_set_hdf5_chunksizes(chunksizes)
 
+    def parameters(self, parent):
+        """TODOQ Remove a property from a construct.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            construct: construct
+
+            props: (sequence of) `str`
+
+            default: optional
+
+        :Returns:
+
+            `dict`
+                The deleted properties, if any
+
+        """
+        return parent.parameters()
+
     def equal_components(self, construct0, construct1, ignore_type=False):
         """Whether or not two field construct components are equal.
 
@@ -1679,6 +1721,46 @@ class CFDMImplementation(Implementation):
         """
         try:
             return construct.get_property(prop, default=default)
+        except AttributeError:
+            return default
+
+    def get_quantization(self, construct, default=None):
+        """TODOQ Return the geometry type of coordinates.
+
+        :Parameters:
+
+            construct:
+
+            default: optional
+
+        :Returns:
+
+            `str` or `None`
+                The geometry type.
+
+        """
+        try:
+            return construct.get_quantization(default=default)
+        except AttributeError:
+            return default
+
+    def get_quantization_on_write(self, construct, default=None):
+        """TODOQ Return the geometry type of coordinates.
+
+        :Parameters:
+
+            construct:
+
+            default: optional
+
+        :Returns:
+
+            `str` or `None`
+                The geometry type.
+
+        """
+        try:
+            return construct.get_quantization_on_write(default=default)
         except AttributeError:
             return default
 
@@ -3384,6 +3466,26 @@ class CFDMImplementation(Implementation):
 
         parent._original_filenames(define=set(filenames))
 
+    def set_parameter(self, parent, parameter, value, copy=True):
+        """TODOQ.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent:
+
+            part_node_count: part node count properties variable
+
+            copy: `bool`, optional
+
+        :Returns:
+
+            `None`
+
+        """
+        parent.set_parameter(parameter, value, copy=copy)
+
     def set_part_node_count_properties(
         self, parent, part_node_count, copy=True
     ):
@@ -3405,6 +3507,26 @@ class CFDMImplementation(Implementation):
 
         """
         parent.set_part_node_count(part_node_count, copy=copy)
+
+    def set_quantization(self, parent, quantization, copy=True):
+        """Set a quantization component.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent: TODOQ
+
+            quantization: `Quantization` TODOQ
+
+            copy: `bool`, optional TODOQ
+
+        :Returns:
+
+            `None`
+
+        """
+        parent._set_quantization(quantization, copy=copy)
 
     def set_interior_ring(self, parent, interior_ring, copy=True):
         """Insert an interior ring array into a coordinate.

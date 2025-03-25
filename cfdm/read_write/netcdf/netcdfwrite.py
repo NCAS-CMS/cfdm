@@ -65,6 +65,54 @@ class NetCDFWrite(IOWrite):
         """Cell method qualifiers."""
         return set(("within", "where", "over", "interval", "comment"))
 
+    def quantize_modes(self):
+        """TODOQ.
+
+        Maps the CF quantization "algorithm" to `netCDF4`
+        "quantize_mode" parameter.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return {
+            "bitgroom": "BitGroom",
+            "bitround": "BitRound",
+            "digitround": None,  # TODO: is there a value for this?
+            "granular_bitround": "GranularBitRound",
+        }
+
+    def quantization_parameters(self):
+        """TODOQ.
+
+        Maps the CF quantization "algorithm" to the CF attribute for
+        the number of significant bits or digits.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return {
+            "bitgroom": "quantization_nsd",
+            "bitround": "quantization_nsb",
+            "digitround": "quantization_nsd",
+            "granular_bitround": "quantization_nsd",
+        }
+
+    def quantization_netcdf_parameters(self):
+        """TODOQ.
+
+        TODOQ. Maps the CF quantization "algorithm" to the CF attribute for
+        the number of significant bits or digits.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return {
+            "bitgroom": "_QuantizeBitGroomNumberOfSignificantDigits",
+            "bitround": "_QuantizeBitRoundNumberOfSignificantBits",
+            "digitround": "_QuantizeDigitRoundNumberOfSignificantDigits",
+            "granular_bitround": "_QuantizeGranularBitRoundNumberOfSignificantDigits",
+        }
+
     def _create_netcdf_group(self, nc, group_name):
         """Creates a new netCDF4 group object.
 
@@ -2778,15 +2826,85 @@ class NetCDFWrite(IOWrite):
             "chunksizes": chunksizes,
             "least_significant_digit": lsd,
             "fill_value": fill_value,
-            "chunk_cache": g['chunk_cache']
+            "chunk_cache": g["chunk_cache"],
         }
-        
-        # TODOQ - add in per-variable quantization to the kwargs based
-        #         on the presence to a Quantization component.
 
-        # TODOQ: Also create a quantization container variable and a
-        #        quantisation_nsb attribute.
-        
+        # ------------------------------------------------------------
+        # Create a quantization container variable, add any extra
+        # quantization attributes, and if required instruct
+        # `_createVariable`to perform the quantization.
+        # ------------------------------------------------------------
+        q = self.implementation.get_quantization_on_write(cfvar, None)
+        if q is not None:
+            quantize_on_write = True
+        else:
+            q = self.implementation.get_quantization(cfvar, None)
+            quantize_on_write = False
+
+        if q is not None:
+            # There is some quantization metadata
+            algorithm = self.implementation.get_parameter(q, "algorithm", None)
+
+            parameter = self.quantization_parameters().get(algorithm)
+            # TODOQ replace with self.implementation.quantization_parameters(q)
+            ns = self.implementation.del_parameter(q, parameter, None)
+
+            parameter_netcdf = self.quantization_netcdf_parameters().get(
+                algorithm
+            )
+            ns_netcdf = self.implementation.del_parameter(
+                q, parameter_netcdf, None
+            )
+
+            # Create a quantization container if it doesn't
+            # already exist (and after having removed any
+            # quantization parameters, such as
+            # "quantization_nsd").
+            q_ncvar = self._write_quantization_container(q)
+
+            # Update the variable's extra attributes
+            extra = extra.copy()
+            extra["quantization"] = q_ncvar
+            if ns is not None:
+                extra[parameter] = ns
+
+            if quantize_on_write:
+                # Update the kwargs for `_createVariable` to perform
+                # the quantization during the write process
+                quantize_mode = self.quantize_modes().get(algorithm)
+                if quantize_mode is None:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with non-standardised "
+                        f"algorithm: {algorithm!r}. Valid algorithms are"
+                        f"{tuple(self.quantize_modes())}"
+                    )
+
+                if not ns or ns < 1:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with a {parameter!r} value "
+                        f"of {ns}. {parameter!r} must be at least 1."
+                    )
+
+                if not ns or ns < 1:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with a {parameter!r} value "
+                        f"of {ns!r}. {parameter!r} must be at least 1."
+                    )
+
+                if not datatype.startswith("f"):
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with data type "
+                        f"{datatype!r}. Only floating point data can be "
+                        "quantized."
+                    )
+
+                kwargs["quantize_mode"] = quantize_mode
+                kwargs["significant_digits"] = ns
+            elif parameter_netcdf is not None:
+                # We're not performing any quantization, so manually
+                # set the netCDF-C-defined attribute.
+                extra[parameter_netcdf] = ns_netcdf
+
         # ------------------------------------------------------------
         # For aggregation variables, create a dictionary containing
         # the fragment array variables' data.
@@ -4590,7 +4708,7 @@ class NetCDFWrite(IOWrite):
         Conventions=None,
         datatype=None,
         least_significant_digit=None,
-            chunk_cache=None,
+        chunk_cache=None,
         endian="native",
         compress=4,
         fletcher32=False,
@@ -4979,6 +5097,10 @@ class NetCDFWrite(IOWrite):
             # Dataset chunking stategy
             # --------------------------------------------------------
             "dataset_chunks": dataset_chunks,
+            # --------------------------------------------------------
+            # Quantization: Store the unique Quantization components
+            # --------------------------------------------------------
+            "quantization": {},
         }
 
         if mode not in ("w", "a", "r+"):
@@ -5126,7 +5248,7 @@ class NetCDFWrite(IOWrite):
             Conventions=Conventions,
             datatype=datatype,
             least_significant_digit=least_significant_digit,
-            chunk_cache=chunk_cache,            
+            chunk_cache=chunk_cache,
             endian=endian,
             compress=compress,
             fletcher32=fletcher32,
@@ -5159,7 +5281,7 @@ class NetCDFWrite(IOWrite):
                 Conventions=Conventions,
                 datatype=datatype,
                 least_significant_digit=least_significant_digit,
-                chunk_cache=chunk_cache,            
+                chunk_cache=chunk_cache,
                 endian=endian,
                 compress=compress,
                 fletcher32=fletcher32,
@@ -5185,7 +5307,7 @@ class NetCDFWrite(IOWrite):
         Conventions,
         datatype,
         least_significant_digit,
-        chunk_cache,            
+        chunk_cache,
         endian,
         compress,
         fletcher32,
@@ -6246,3 +6368,54 @@ class NetCDFWrite(IOWrite):
 
         # Return the dictionary of Data objects
         return out
+
+    def _write_quantization_container(self, quantization):
+        """Write a CF-netCDF quantization container variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `str`
+                The netCDF variable name for the quantization
+                container.
+
+        """
+        g = self.write_vars
+
+        for ncvar, q in g["quantization"].items():
+            if self.implementation.equal_components(quantization, q):
+                # Use this existing quantization container
+                return ncvar
+
+        # Create a new quantization container variable
+        ncvar = self._create_netcdf_variable_name(
+            quantization, default="quantization"
+        )
+
+        logger.info(
+            f"    Writing {quantization!r} to netCDF variable: {ncvar}"
+        )  # pragma: no cover
+
+        kwargs = {
+            "varname": ncvar,
+            "datatype": "S1",
+            "dimensions": (),
+            "endian": g["endian"],
+        }
+        kwargs.update(g["netcdf_compression"])
+
+        if not g["dry_run"]:
+            # Create the variable
+            self._createVariable(**kwargs)
+
+            # Set the attributes. Note that it is assumed that the
+            # per-variable parameters have been already been removed.
+            g["nc"][ncvar].setncatts(
+                self.implementation.parameters(quantization)
+            )
+
+        # Update the quantization dictionary
+        g["quantization"][ncvar] = quantization
+
+        return ncvar

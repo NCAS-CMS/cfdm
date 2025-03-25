@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class Field(
+    mixin.QuantizationWriteMixin,
     mixin.NetCDFVariable,
     mixin.NetCDFGeometry,
     mixin.NetCDFGlobalAttributes,
@@ -153,6 +154,8 @@ class Field(
             else:
                 if mesh_id is not None:
                     self.set_mesh_id(mesh_id)
+
+            self._init_quantization(source, copy)
 
         self._initialise_netcdf(source)
         self._initialise_original_filenames(source)

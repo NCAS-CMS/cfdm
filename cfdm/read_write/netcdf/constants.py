@@ -46,3 +46,15 @@ _CODE1 = {
 # Recognised netCDF file magic numbers
 # --------------------------------------------------------------------
 MAGIC_NUMBER = (21382211, 1128547841, 1178880137, 38159427)
+
+# --------------------------------------------------------------------
+# Quantization
+# --------------------------------------------------------------------
+# Map algorithms to their per-variable parameters
+# TODOQ move tonetcdfread.py
+_quantization_parameters = {
+    "bitgroom": "quantization_nsd",
+    "bitround": "quantization_nsb",
+    "digitround": "quantization_nsd",
+    "granular_bitround": "quantization_nsd",
+}

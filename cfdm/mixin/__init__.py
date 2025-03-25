@@ -28,4 +28,6 @@ from .netcdf import (
     NetCDFVariable,
 )
 
+from .quantizationmixin import QuantizationWriteMixin
+
 from .fielddomain import FieldDomain

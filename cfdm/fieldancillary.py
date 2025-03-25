@@ -2,6 +2,7 @@ from . import core, mixin
 
 
 class FieldAncillary(
+    mixin.QuantizationWriteMixin,
     mixin.NetCDFVariable,
     mixin.PropertiesData,
     mixin.Files,
@@ -69,6 +70,9 @@ class FieldAncillary(
             copy=copy,
             _use_data=_use_data,
         )
+
+        if source is not None:
+            self._init_quantization(source, copy)
 
         self._initialise_netcdf(source)
         self._initialise_original_filenames(source)

@@ -372,7 +372,7 @@ class write(ReadWrite):
             *Parameter example:*
               ``least_significant_digit=3``
 
-        chunk_cache: `int` or `None`, optional    
+        chunk_cache: `int` or `None`, optional
             The amount of memory (in bytes) used in each variable's
             chunk cache at the HDF5 level. Ignored when not writing to
             a netCDF-4 format. By default, or if `None`, a chunk cache
