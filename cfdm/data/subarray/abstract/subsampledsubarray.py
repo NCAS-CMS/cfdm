@@ -506,7 +506,7 @@ class SubsampledSubarray(Subarray):
 
         For each subsampled dimension, removes the first point of the
         interpolation subarea when it is not the first (in
-        index-space) of a continuous area. This is beacuse this value
+        index-space) of a continuous area. This is because this value
         in the uncompressed data has already been calculated from the
         previous (in index space) interpolation subarea.
 
