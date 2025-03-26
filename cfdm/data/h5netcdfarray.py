@@ -79,11 +79,10 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         """
         if index is None:
             index = self.index()
-        print ('h5netcdf', index)
+
         # Note: We need to lock because HDF5 is about to access the
         #       file.
         with self._lock:
-            print ('        ', index)
             dataset, address = self.open()
             dataset0 = dataset
 

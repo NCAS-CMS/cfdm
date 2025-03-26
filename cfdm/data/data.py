@@ -2169,7 +2169,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             if np.ma.is_masked(x):
                 x = np.ma.masked
             else:
-                x = x.squeeze()
+                try:
+                    x = x.squeeze()
+                except AttributeError:
+                    pass
 
             elements[i] = x
 

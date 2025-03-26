@@ -580,13 +580,11 @@ class NetCDFRead(IORead):
         nc = None
         errors = []
         for backend in g["netcdf_backend"]:
-            print ('b=', backend)
             try:
                 nc = file_open_function[backend](filename)
             except KeyError:
                 errors.append(f"{backend}: Unknown netCDF backend name")
             except Exception as error:
-                print(error)
                 errors.append(
                     f"{backend}:\n{error.__class__.__name__}: {error}"
                 )
@@ -4604,6 +4602,7 @@ class NetCDFRead(IORead):
                     domain_anc = self._create_domain_ancillary(
                         field_ncvar, ncvar, f, bounds_ncvar=bounds
                     )
+                    g["domain_ancillary"][ncvar] = domain_anc
 
                 if len(axes) == len(self._ncdimensions(ncvar)):
                     domain_ancillaries.append((ncvar, domain_anc, axes))
@@ -6484,7 +6483,6 @@ class NetCDFRead(IORead):
                 return kwargs
 
             netcdf_backend = g["netcdf_backend"]
-            print ( 'netcdf_backend =',netcdf_backend)
             if netcdf_backend == "h5netcdf-pyfive":
                 # Backend h5netcdf-pyfive
                 #
@@ -10907,6 +10905,9 @@ class NetCDFRead(IORead):
             # memory-mapped array.
             x = self._index(var, (slice(0, 1),) * len(var.shape))
             dtype = x.dtype
+
+        if dtype is not str:
+            dtype = np.dtype(f"{dtype.kind}{dtype.itemsize}")
 
         return dtype
 

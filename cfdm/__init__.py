@@ -235,6 +235,7 @@ from .data import (
     H5netcdfArray,
     NetCDFArray,
     NetCDF4Array,
+    Netcdf_fileArray,
     netcdf_indexer,
     NumpyArray,
     PointTopologyArray,
