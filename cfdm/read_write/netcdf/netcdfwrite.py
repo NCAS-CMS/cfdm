@@ -81,37 +81,37 @@ class NetCDFWrite(IOWrite):
             "granular_bitround": "GranularBitRound",
         }
 
-    def quantization_parameters(self):
-        """TODOQ.
-
-        Maps the CF quantization "algorithm" to the CF attribute for
-        the number of significant bits or digits.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        return {
-            "bitgroom": "quantization_nsd",
-            "bitround": "quantization_nsb",
-            "digitround": "quantization_nsd",
-            "granular_bitround": "quantization_nsd",
-        }
-
-    def quantization_netcdf_parameters(self):
-        """TODOQ.
-
-        TODOQ. Maps the CF quantization "algorithm" to the CF attribute for
-        the number of significant bits or digits.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        return {
-            "bitgroom": "_QuantizeBitGroomNumberOfSignificantDigits",
-            "bitround": "_QuantizeBitRoundNumberOfSignificantBits",
-            "digitround": "_QuantizeDigitRoundNumberOfSignificantDigits",
-            "granular_bitround": "_QuantizeGranularBitRoundNumberOfSignificantDigits",
-        }
+    #    def quantization_parameters(self):
+    #        """TODOQ.
+    #
+    #        Maps the CF quantization "algorithm" to the CF attribute for
+    #        the number of significant bits or digits.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        """
+    #        return {
+    #            "bitgroom": "quantization_nsd",
+    #            "bitround": "quantization_nsb",
+    #            "digitround": "quantization_nsd",
+    #            "granular_bitround": "quantization_nsd",
+    #        }
+    #
+    #    def quantization_netcdf_parameters(self):
+    #        """TODOQ.
+    #
+    #        TODOQ. Maps the CF quantization "algorithm" to the CF attribute for
+    #        the number of significant bits or digits.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        """
+    #        return {
+    #            "bitgroom": "_QuantizeBitGroomNumberOfSignificantDigits",
+    #            "bitround": "_QuantizeBitRoundNumberOfSignificantBits",
+    #            "digitround": "_QuantizeDigitRoundNumberOfSignificantDigits",
+    #            "granular_bitround": "_QuantizeGranularBitRoundNumberOfSignificantDigits",
+    #        }
 
     def _create_netcdf_group(self, nc, group_name):
         """Creates a new netCDF4 group object.
@@ -2834,24 +2834,26 @@ class NetCDFWrite(IOWrite):
         # quantization attributes, and if required instruct
         # `_createVariable`to perform the quantization.
         # ------------------------------------------------------------
-        q = self.implementation.get_quantization_on_write(cfvar, None)
+        q = self.implementation.get_quantize_on_write(cfvar, None)
         if q is not None:
             quantize_on_write = True
         else:
             q = self.implementation.get_quantization(cfvar, None)
             quantize_on_write = False
 
+        print(111, repr(cfvar), repr(q))
         if q is not None:
             # There is some quantization metadata
+            print(repr(q), q.get_parameter("algorithm"), q.__dict__)
             algorithm = self.implementation.get_parameter(q, "algorithm", None)
-
-            parameter = self.quantization_parameters().get(algorithm)
+            print("alg=", algorithm)
+            parameter = q.quantization_parameters().get(algorithm)
             # TODOQ replace with self.implementation.quantization_parameters(q)
             ns = self.implementation.del_parameter(q, parameter, None)
 
-            parameter_netcdf = self.quantization_netcdf_parameters().get(
+            parameter_netcdf = q.quantization_netcdf_parameters().get(
                 algorithm
-            )
+            )  # TODOQ impl
             ns_netcdf = self.implementation.del_parameter(
                 q, parameter_netcdf, None
             )
@@ -2860,6 +2862,16 @@ class NetCDFWrite(IOWrite):
             # already exist (and after having removed any
             # quantization parameters, such as
             # "quantization_nsd").
+            if quantize_on_write:
+                # Set the implemention to this version of the netCDF-C
+                # library
+                self.implementation.set_parameter(
+                    q,
+                    "implementation",
+                    f"libnetcdf version {netCDF4.__netcdf4libversion__}",
+                    copy=False,
+                )
+
             q_ncvar = self._write_quantization_container(q)
 
             # Update the variable's extra attributes

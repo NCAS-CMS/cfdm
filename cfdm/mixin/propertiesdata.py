@@ -140,7 +140,7 @@ class PropertiesData(Properties):
         if copy:
             quantization = quantization.copy()
 
-        return self._set_component("quantization", copy=False)
+        return self._set_component("quantization", quantization, copy=False)
 
     @classmethod
     def _test_docstring_substitution_classmethod(cls, arg1, arg2):
@@ -207,6 +207,14 @@ class PropertiesData(Properties):
         else:
             if q is not None:
                 self._set_quantization(q, copy=copy)
+
+        try:
+            q = source.get_quantize_on_write(None)
+        except (AttributeError, ValueError):
+            pass
+        else:
+            if q is not None:
+                self.set_quantize_on_write(q, copy=copy)
 
     @property
     def array(self):

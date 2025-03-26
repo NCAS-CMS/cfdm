@@ -3152,7 +3152,7 @@ class NetCDFRead(IORead):
             return
 
         # Create a quantization object
-        q = self._create_quantization(parent_ncvar, ncvar)
+        q = self._create_quantization(ncvar)
 
         g["quantization_variable"][ncvar] = q
         g["quantization"][parent_ncvar] = q
@@ -11644,23 +11644,36 @@ class NetCDFRead(IORead):
 
         """
         q = self.implementation.initialise_Quantization(
-            attributes=self.read_vars["attributes"][ncvar].copy(), copy=False
+            parameters=self.read_vars["variable_attributes"][ncvar].copy(),
+            copy=False,
         )
         self.implementation.nc_set_variable(q, ncvar)
         return q
 
     def _set_quantization(self, parent, ncvar):
-        """TODOQ."""
+        """TODOQ.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
         g = self.read_vars
         q = g["quantization"].get(ncvar)
         if q is None:
             # No quantization for this construct
             return
 
-        # Set number of significant bits or decimal digits
+        # Set number of significant bits or decimal digits for this
+        # parent variable
         q = q.copy()
-        attributes = g["attributes"][ncvar]
-        for attr in ("quantization_nsd", "quantization_nsb"):
+
+        attributes = g["variable_attributes"][ncvar]
+        parent.del_property("quantization", None)
+
+        # Delete the parent variable attributes that relate to level of
+        # quantisation, moving them to the Quantization component.
+        for attr in set(q.quantization_parameters().values()) | set(
+            q.quantization_netcdf_parameters().values()  # TODOQ imple
+        ):
             value = attributes.get(attr, None)
             if value is not None:
                 self.implementation.set_parameter(q, attr, value, copy=False)

@@ -35,7 +35,8 @@ class Quantization(
                the `set_parameters` and `set_parameter` methods.
 
                *Parameter example:*
-                 ``parameters=TODOQ``
+                 ``parameters={'algorithm': 'bitround',
+                 'implementation': 'libnetcdf version 4.9.2}``
 
             {{init source: optional}}
 
@@ -70,4 +71,29 @@ class Quantization(
             "bitround": "quantization_nsb",
             "digitround": "quantization_nsd",
             "granular_bitround": "quantization_nsd",
+        }
+
+    @classmethod
+    def quantization_netcdf_parameters(cls):
+        """TODOQ.
+
+        Maps the CF quantization "algorithm" to the corresponding CF
+        property that defines the algorithm's parameter for the number
+        of significant bits or digits.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `dict`
+                A dictionary for which a key is a CF algorithm name,
+                with corresponding value of the parameter name that
+                configures the algorithm.
+
+        """
+        return {
+            "bitgroom": "_QuantizeBitGroomNumberOfSignificantDigits",
+            "bitround": "_QuantizeBitRoundNumberOfSignificantBits",
+            "digitround": "_QuantizeDigitRoundNumberOfSignificantDigits",
+            "granular_bitround": "_QuantizeGranularBitRoundNumberOfSignificantDigits",
         }

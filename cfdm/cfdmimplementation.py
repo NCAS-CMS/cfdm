@@ -22,6 +22,7 @@ from . import (
     List,
     NodeCountProperties,
     PartNodeCountProperties,
+    Quantization,
     TiePointIndex,
 )
 from .abstract import Implementation
@@ -1652,6 +1653,26 @@ class CFDMImplementation(Implementation):
         """
         return construct.get_node_count(default=None)
 
+    def get_parameter(self, parent, parameter, default=None):
+        """TODOQ.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent:
+
+            part_node_count: part node count properties variable
+
+            copy: `bool`, optional
+
+        :Returns:
+
+            `None`
+
+        """
+        return parent.get_parameter(parameter, default=default)
+
     def get_part_node_count(self, construct):
         """Return the part node count variable of geometry coordinates.
 
@@ -1744,23 +1765,22 @@ class CFDMImplementation(Implementation):
         except AttributeError:
             return default
 
-    def get_quantization_on_write(self, construct, default=None):
+    def get_quantize_on_write(self, construct, default=None):
         """TODOQ Return the geometry type of coordinates.
 
         :Parameters:
 
-            construct:
+            TODOQ construct:
 
-            default: optional
+            TODOQ default: optional
 
         :Returns:
 
-            `str` or `None`
-                The geometry type.
+            `Quantization`
 
         """
         try:
-            return construct.get_quantization_on_write(default=default)
+            return construct.get_quantize_on_write(default=default)
         except AttributeError:
             return default
 
@@ -2407,6 +2427,25 @@ class CFDMImplementation(Implementation):
 
         """
         cls = self.get_class("PointTopologyArray")
+        return cls(**kwargs)
+
+    def initialise_Quantization(self, **kwargs):
+        """Return a quantization component.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            kwargs: optional
+                Parameters for intialising the quantization component,
+                which are passed to `Quantization.__init__`.
+
+        :Returns:
+
+            `Quantization`
+
+        """
+        cls = self.get_class("Quantization")
         return cls(**kwargs)
 
     def initialise_TiePointIndex(self):
@@ -3887,6 +3926,7 @@ _implementation = CFDMImplementation(
     H5netcdfArray=H5netcdfArray,
     NetCDF4Array=NetCDF4Array,
     PointTopologyArray=PointTopologyArray,
+    Quantization=Quantization,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
@@ -3939,7 +3979,8 @@ def implementation():
      'Count': <class 'cfdm.count.Count'>,
      'Index': <class 'cfdm.index.Index'>,
      'NodeCountProperties': <class 'cfdm.nodecountproperties.NodeCountProperties'>,
-     'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>}
+     'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>,
+     'Quantization': <class 'cfdm.quantization.Quantization'>}
 
     """
     return _implementation.copy()
