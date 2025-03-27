@@ -28,6 +28,10 @@ from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
 from ..exceptions import DatasetTypeError
+from .contants import (
+    _CF_QUANTIZATION_PARAMETERS,
+    _NETCDF_QUANTIZATION_PARAMETERS,
+)
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -9117,8 +9121,6 @@ class NetCDFRead(IORead):
             `bool`
 
         """
-        from .constants import _quantization_parameters
-
         attribute = {parent_ncvar + ":quantization": quantization}
 
         incorrectly_formatted = (
@@ -9173,14 +9175,14 @@ class NetCDFRead(IORead):
             )
             ok = False
 
-        parameter = _quantization_parameters.get(algorithm)
+        parameter = _CF_QUANTIZATION_PARAMETERS.get(algorithm)
         if parameter is None:
             self._add_message(
                 parent_ncvar,
                 ncvar,
                 message=(
                     "algorithm attribute",
-                    f"has non-standardised value: {algorithm}",
+                    f"has non-standardised value: {algorithm!r}",
                 ),
             )
             ok = False
@@ -11667,16 +11669,16 @@ class NetCDFRead(IORead):
         q = q.copy()
 
         attributes = g["variable_attributes"][ncvar]
-        parent.del_property("quantization", None)
+        self.implementation.del_property(parent, "quantization", None)
 
         # Delete the parent variable attributes that relate to level of
         # quantisation, moving them to the Quantization component.
-        for attr in set(q.quantization_parameters().values()) | set(
-            q.quantization_netcdf_parameters().values()  # TODOQ imple
+        for attr in set(_CF_QUANTIZATION_PARAMETERS.values()) | set(
+            _NETCDF_QUANTIZATION_PARAMETERS.values()
         ):
             value = attributes.get(attr, None)
             if value is not None:
                 self.implementation.set_parameter(q, attr, value, copy=False)
-                parent.del_property(attr, None)
+                self.implementation.del_property(parent, attr, None)
 
         self.implementation.set_quantization(parent, q, copy=False)

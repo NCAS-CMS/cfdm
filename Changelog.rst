@@ -2,8 +2,11 @@ Version 1.12.?.?
 ----------------
 
 **2025-??-??**
- 
+
 * New keyword parameter to `cfdm.write`: ``chunk_cache``
+* Implement lossy compression via quantization
+  (https://github.com/NCAS-CMS/cfdm/issues/???)
+* New class: `cfdm.Quantization`
 
 *Version 1.12.0.0
 ----------------

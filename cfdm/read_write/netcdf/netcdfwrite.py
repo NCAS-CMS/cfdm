@@ -16,6 +16,13 @@ from ...data.dask_utils import cfdm_to_memory
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, dirname, integer_dtype
 from .. import IOWrite
+from .contants import (
+    _CF_QUANTIZATION_PARAMETERS,
+    _NETCDF3_FMTS,
+    _NETCDF4_FMTS,
+    _NETCDF_QUANTIZATION_PARAMETERS,
+    _NETCDF_QUANTIZE_MODES,
+)
 from .netcdfread import NetCDFRead
 
 logger = logging.getLogger(__name__)
@@ -64,54 +71,6 @@ class NetCDFWrite(IOWrite):
     def cf_cell_method_qualifiers(self):
         """Cell method qualifiers."""
         return set(("within", "where", "over", "interval", "comment"))
-
-    def quantize_modes(self):
-        """TODOQ.
-
-        Maps the CF quantization "algorithm" to `netCDF4`
-        "quantize_mode" parameter.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        return {
-            "bitgroom": "BitGroom",
-            "bitround": "BitRound",
-            "digitround": None,  # TODO: is there a value for this?
-            "granular_bitround": "GranularBitRound",
-        }
-
-    #    def quantization_parameters(self):
-    #        """TODOQ.
-    #
-    #        Maps the CF quantization "algorithm" to the CF attribute for
-    #        the number of significant bits or digits.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        """
-    #        return {
-    #            "bitgroom": "quantization_nsd",
-    #            "bitround": "quantization_nsb",
-    #            "digitround": "quantization_nsd",
-    #            "granular_bitround": "quantization_nsd",
-    #        }
-    #
-    #    def quantization_netcdf_parameters(self):
-    #        """TODOQ.
-    #
-    #        TODOQ. Maps the CF quantization "algorithm" to the CF attribute for
-    #        the number of significant bits or digits.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        """
-    #        return {
-    #            "bitgroom": "_QuantizeBitGroomNumberOfSignificantDigits",
-    #            "bitround": "_QuantizeBitRoundNumberOfSignificantBits",
-    #            "digitround": "_QuantizeDigitRoundNumberOfSignificantDigits",
-    #            "granular_bitround": "_QuantizeGranularBitRoundNumberOfSignificantDigits",
-    #        }
 
     def _create_netcdf_group(self, nc, group_name):
         """Creates a new netCDF4 group object.
@@ -2841,21 +2800,16 @@ class NetCDFWrite(IOWrite):
             q = self.implementation.get_quantization(cfvar, None)
             quantize_on_write = False
 
-        print(111, repr(cfvar), repr(q))
         if q is not None:
             # There is some quantization metadata
-            print(repr(q), q.get_parameter("algorithm"), q.__dict__)
             algorithm = self.implementation.get_parameter(q, "algorithm", None)
-            print("alg=", algorithm)
-            parameter = q.quantization_parameters().get(algorithm)
-            # TODOQ replace with self.implementation.quantization_parameters(q)
-            ns = self.implementation.del_parameter(q, parameter, None)
 
-            parameter_netcdf = q.quantization_netcdf_parameters().get(
-                algorithm
-            )  # TODOQ impl
-            ns_netcdf = self.implementation.del_parameter(
-                q, parameter_netcdf, None
+            cf_parameter = _CF_QUANTIZATION_PARAMETERS.get(algorithm)
+            cf_ns = self.implementation.del_parameter(q, cf_parameter, None)
+
+            netcdf_parameter = _NETCDF_QUANTIZATION_PARAMETERS.get(algorithm)
+            netcdf_ns = self.implementation.del_parameter(
+                q, netcdf_parameter, None
             )
 
             # Create a quantization container if it doesn't
@@ -2877,30 +2831,36 @@ class NetCDFWrite(IOWrite):
             # Update the variable's extra attributes
             extra = extra.copy()
             extra["quantization"] = q_ncvar
-            if ns is not None:
-                extra[parameter] = ns
+            if cf_ns is not None:
+                extra[cf_parameter] = cf_ns
 
             if quantize_on_write:
-                # Update the kwargs for `_createVariable` to perform
-                # the quantization during the write process
-                quantize_mode = self.quantize_modes().get(algorithm)
+                quantize_mode = _NETCDF_QUANTIZE_MODES.get(algorithm)
+
+                if algorithm == "digitround":
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with algorithm "
+                        f"{algorithm!r}, because it is not yet available "
+                        "from the netCDF-C library"
+                    )
+
                 if quantize_mode is None:
                     raise ValueError(
                         f"Can't quantize {cfvar!r} with non-standardised "
-                        f"algorithm: {algorithm!r}. Valid algorithms are"
-                        f"{tuple(self.quantize_modes())}"
+                        f"algorithm {algorithm!r}. Valid algorithms are"
+                        f"{tuple(_NETCDF_QUANTIZE_MODES)}"
                     )
 
-                if not ns or ns < 1:
+                if not cf_ns or cf_ns < 1:
                     raise ValueError(
                         f"Can't quantize {cfvar!r} with a {parameter!r} value "
-                        f"of {ns}. {parameter!r} must be at least 1."
+                        f"of {cf_ns}. {parameter!r} must be at least 1"
                     )
 
-                if not ns or ns < 1:
+                if not cf_ns or cf_ns < 1:
                     raise ValueError(
                         f"Can't quantize {cfvar!r} with a {parameter!r} value "
-                        f"of {ns!r}. {parameter!r} must be at least 1."
+                        f"of {cf_ns}. {parameter!r} must be at least 1"
                     )
 
                 if not datatype.startswith("f"):
@@ -2910,12 +2870,21 @@ class NetCDFWrite(IOWrite):
                         "quantized."
                     )
 
+                if g["fmt"] not in _NETCDF4_FMTS:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} into a {g['fmt']} "
+                        "format file. Quantization is only possible when "
+                        f"writing to one of the {_NETCDF4_FMTS} formats."
+                    )
+
+                # Update the kwargs for `_createVariable` to perform
+                # the quantization during the write process
                 kwargs["quantize_mode"] = quantize_mode
-                kwargs["significant_digits"] = ns
-            elif parameter_netcdf is not None:
-                # We're not performing any quantization, so manually
-                # set the netCDF-C-defined attribute.
-                extra[parameter_netcdf] = ns_netcdf
+                kwargs["significant_digits"] = cf_ns
+            elif ns_netcdf is not None:
+                # We're not performing any quantization, so also set
+                # the netCDF-C-defined attribute.
+                extra[netcdf_parameter] = netcdf_ns
 
         # ------------------------------------------------------------
         # For aggregation variables, create a dictionary containing
@@ -5110,7 +5079,9 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             "dataset_chunks": dataset_chunks,
             # --------------------------------------------------------
-            # Quantization: Store the unique Quantization components
+            # Quantization: Store the unique Quantization components,
+            #               keyed by their output netCDF variable
+            #               names.
             # --------------------------------------------------------
             "quantization": {},
         }
@@ -5362,22 +5333,23 @@ class NetCDFWrite(IOWrite):
         else:
             compression = None
 
-        netcdf3_fmts = (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        )
-        netcdf4_fmts = ("NETCDF4", "NETCDF4_CLASSIC")
-        if fmt not in netcdf3_fmts + netcdf4_fmts:
-            raise ValueError(f"Unknown output file format: {fmt}")
-        elif fmt in netcdf3_fmts:
-            if compress in netcdf3_fmts:
+        #        netcdf3_fmts = (
+        #            "NETCDF3_CLASSIC",
+        #           "NETCDF3_64BIT",
+        #           "NETCDF3_64BIT_OFFSET",
+        #           "NETCDF3_64BIT_DATA",
+        #        )
+        #        netcdf4_fmts = ("NETCDF4", "NETCDF4_CLASSIC")
+        #        if fmt not in _NETCDF3_FMTS + _NETCDF4_FMTS:
+        #            raise ValueError(f"Unknown output file format: {fmt}")
+        if fmt in _NETCDF3_FMTS:
+            if compress:  # in _NETCDF3_FMTS:
                 raise ValueError(f"Can't compress {fmt} format file")
-            if group in netcdf3_fmts:
+            if group:  # in _NETCDF3_FMTS:
                 # Can't write groups to a netCDF3 file
                 g["group"] = False
-
+        elif fmt not in _NETCDF4_FMTS:
+            raise ValueError(f"Unknown output file format: {fmt}")
         # ------------------------------------------------------------
         # Set up global/non-global attributes
         # ------------------------------------------------------------
@@ -6384,7 +6356,17 @@ class NetCDFWrite(IOWrite):
     def _write_quantization_container(self, quantization):
         """Write a CF-netCDF quantization container variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. note:: It is assumed, but not checked, that the
+                  per-variable parameters (such as "quantization_nsd"
+                  or "_QuantizeBitRoundNumberOfSignificantBits") have
+                  been already been removed from *quantization*.
+
+         .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            quantization: `Quantization`
+                TODOQ
 
         :Returns:
 
@@ -6421,8 +6403,7 @@ class NetCDFWrite(IOWrite):
             # Create the variable
             self._createVariable(**kwargs)
 
-            # Set the attributes. Note that it is assumed that the
-            # per-variable parameters have been already been removed.
+            # Set the attributes
             g["nc"][ncvar].setncatts(
                 self.implementation.parameters(quantization)
             )

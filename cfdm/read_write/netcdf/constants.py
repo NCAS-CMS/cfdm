@@ -41,20 +41,44 @@ _CODE1 = {
         "parametric coordinate variable"
     ): 8,
 }
+from ..quantization import Quantization
 
 # --------------------------------------------------------------------
-# Recognised netCDF file magic numbers
+# NetCDF file magic numbers
 # --------------------------------------------------------------------
 MAGIC_NUMBER = (21382211, 1128547841, 1178880137, 38159427)
 
 # --------------------------------------------------------------------
-# Quantization
+# NetCDF file formats
 # --------------------------------------------------------------------
-# Map algorithms to their per-variable parameters
-# TODOQ move tonetcdfread.py
-_quantization_parameters = {
-    "bitgroom": "quantization_nsd",
-    "bitround": "quantization_nsb",
-    "digitround": "quantization_nsd",
-    "granular_bitround": "quantization_nsd",
+_NETCDF3_FMTS = (
+    "NETCDF3_CLASSIC",
+    "NETCDF3_64BIT",
+    "NETCDF3_64BIT_OFFSET",
+    "NETCDF3_64BIT_DATA",
+)
+_NETCDF4_FMTS = ("NETCDF4", "NETCDF4_CLASSIC")
+
+# --------------------------------------------------------------------
+# Quantisation
+# --------------------------------------------------------------------
+# Map CF quantization algorithms to netCDF4 quantize_mode keyword
+# values
+_NETCDF_QUANTIZE_MODES = {
+    "bitgroom": "BitGroom",
+    "bitround": "BitRound",
+    "digitround": "DigitRound",
+    "granular_bitround": "GranularBitRound",
 }
+
+# Map CF quantization algorithms to netCDF-C library quantization
+# attributes
+_NETCDF_QUANTIZATION_PARAMETERS = {
+    "bitgroom": "_QuantizeBitGroomNumberOfSignificantDigits",
+    "bitround": "_QuantizeBitRoundNumberOfSignificantBits",
+    "digitround": "_QuantizeDigitRoundNumberOfSignificantDigits",
+    "granular_bitround": "_QuantizeGranularBitRoundNumberOfSignificantDigits",
+}
+
+# Map CF quantization algorithms to CF algorithm attributes
+_CF_QUANTIZATION_PARAMETERS = Quantization.algorithm_parameters()
