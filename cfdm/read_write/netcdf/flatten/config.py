@@ -228,5 +228,9 @@ flattening_rules = {
         FlatteningRules(
             name="interpolation_parameters", ref_to_var=1, resolve_value=True
         ),
+        # ------------------------------------------------------------
+        # Quantization
+        # ------------------------------------------------------------
+        FlatteningRules(name="quantization", ref_to_var=1, resolve_key=True),
     )
 }

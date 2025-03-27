@@ -128,11 +128,20 @@ class QuantizationWriteMixin:
                 f"{self.__class__.__name__} that is already quantized"
             )
 
-        q = quantization.copy()
+        if quantization is None:
+            # Note: A parent class must define `_Quantization` as its
+            #       quantization component.
+            q = self._Quantization()
+        else:
+            q = quantization.copy()
+            q.del_parameter("implementation", None)
 
-        q.del_parameter("implementation", None)
+        if algorithm is not None:
+            # Override the algorithm parameter
+            q.set_parameter("algorithm", algorithm, copy=False)
+        else:
+            algorithm = q.get_parameter("algorithm", None)
 
-        algorithm = q.get_parameter("algorithm", None)
         parameter = q.algorithm_parameters().get(algorithm)
 
         if parameter is None:
@@ -142,6 +151,7 @@ class QuantizationWriteMixin:
             )
 
         if quantization_nsd is not None:
+            # Override the quantization_nsd parameter
             if quantization_nsb is not None:
                 raise ValueError(
                     "Can not set both keywords 'quantization_nsd' and "
@@ -156,6 +166,7 @@ class QuantizationWriteMixin:
 
             q.set_parameter(parameter, quantization_nsd, copy=False)
         elif quantization_nsb is not None:
+            # Override the quantization_nsb parameter
             if parameter != "quantization_nsb":
                 raise ValueError(
                     f"Can only provide keyword {parameter!r} for "

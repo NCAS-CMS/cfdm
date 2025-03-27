@@ -212,7 +212,7 @@ class Properties(Container):
                     default = ""
 
                 string.append(
-                    f"{indent0}{self.__class__.__name_}: "
+                    f"{indent0}{self.__class__.__name__}: "
                     f"{self.identity(default=default)}"
                 )
             else:

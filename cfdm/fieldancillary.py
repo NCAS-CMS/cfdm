@@ -1,4 +1,4 @@
-from . import core, mixin
+from . import Quantization, core, mixin
 
 
 class FieldAncillary(
@@ -38,6 +38,12 @@ class FieldAncillary(
     .. versionadded:: (cfdm) 1.7.0
 
     """
+
+    def __new__(cls, *args, **kwargs):
+        """Store component classes."""
+        instance = super().__new__(cls)
+        instance._Quantization = Quantization
+        return instance
 
     def __init__(
         self,

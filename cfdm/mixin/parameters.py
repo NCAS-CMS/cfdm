@@ -1,6 +1,7 @@
 import logging
+import textwrap
 
-from ..decorators import _manage_log_level_via_verbosity
+from ..decorators import _display_or_return, _manage_log_level_via_verbosity
 from . import Container
 
 logger = logging.getLogger(__name__)
@@ -31,8 +32,124 @@ class Parameters(Container):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        x = ", ".join(sorted(self.parameters()))
-        return f"Parameters: {x}"
+        x = [f"{p} = {v!r}" for p, v in sorted(self.parameters().items())]
+        return ", ".join(x)
+
+    def creation_commands(
+        self, namespace=None, indent=0, string=True, name="p", header=True
+    ):
+        """Return the commands that would create the component.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `{{package}}.Field.creation_commands`
+
+        :Parameters:
+
+            {{namespace: `str`, optional}}
+
+            {{indent: `int`, optional}}
+
+            {{string: `bool`, optional}}
+
+            {{name: `str`, optional}}
+
+            {{header: `bool`, optional}}
+
+        :Returns:
+
+            {{returns creation_commands}}
+
+        **Examples**
+
+        >>> x = {{package}}.{{class}}({'algorithm': 'granular_bitround'})
+        >>> x.nc_set_variable('var')
+        >>> print(x.creation_commands(header=False))
+        p = {{package}}.{{class}}()
+        p.set_parameters({'algorithm': 'granular_bitround'})
+        p.nc_set_variable('var')
+
+        """
+        if namespace is None:
+            namespace = self._package() + "."
+        elif namespace and not namespace.endswith("."):
+            namespace += "."
+
+        out = []
+
+        if header:
+            out.append("#")
+            out.append("#")
+            out[-1] += f" {self.__class__.__name__.lower()} component"
+
+        out.append(f"{name} = {namespace}{self.__class__.__name__}()")
+
+        parameters = self.parameters()
+        if parameters:
+            out.append(f"{name}.set_parameters({parameters})")
+
+        nc = self.nc_get_variable(None)
+        if nc is not None:
+            out.append(f"{name}.nc_set_variable('{nc}')")
+
+        if string:
+            indent = " " * indent
+            out[0] = indent + out[0]
+            out = ("\n" + indent).join(out)
+
+        return out
+
+    @_display_or_return
+    def dump(
+        self,
+        display=True,
+        _prefix="",
+        _title=None,
+        _create_title=True,
+        _level=0,
+    ):
+        """A full description.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            display: `bool`, optional
+                If False then return the description as a string. By
+                default the description is printed.
+
+        :Returns:
+
+            {{returns dump}}
+
+        """
+        indent0 = "    " * _level
+        string = []
+
+        # Title
+        if _create_title:
+            if _title is None:
+                string.append(f"{indent0}{self.__class__.__name__}: ")
+            else:
+                string.append(indent0 + _title)
+
+        # Parameters
+        indent1 = "    " * (_level + 1)
+        parameters = self.parameters()
+        for param, value in sorted(parameters.items()):
+            name = f"{indent1}{_prefix}{param} = "
+            value = repr(value)
+            subsequent_indent = " " * len(name)
+            if value.startswith("'") or value.startswith('"'):
+                subsequent_indent = f"{subsequent_indent} "
+
+            string.append(
+                textwrap.fill(
+                    name + value, 79, subsequent_indent=subsequent_indent
+                )
+            )
+
+        return "\n".join(string)
 
     @_manage_log_level_via_verbosity
     def equals(

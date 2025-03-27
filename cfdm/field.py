@@ -10,6 +10,7 @@ from . import (
     DomainAxis,
     Index,
     List,
+    Quantization,
     core,
     mixin,
 )
@@ -111,6 +112,7 @@ class Field(
         instance._Constructs = Constructs
         instance._Domain = Domain
         instance._DomainAxis = DomainAxis
+        instance._Quantization = Quantization
         instance._RaggedContiguousArray = RaggedContiguousArray
         instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray
@@ -1894,6 +1896,12 @@ class Field(
 
             string.append("")
             string.append(f"{indent0}Data({', '.join(x)}) = {data}")
+            string.append("")
+
+        # Quantization
+        q = self.get_quantization(None)
+        if q is not None:
+            string.append(q.dump(display=False, _level=_level))
             string.append("")
 
         # Cell methods

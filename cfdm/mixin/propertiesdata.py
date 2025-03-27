@@ -214,7 +214,7 @@ class PropertiesData(Properties):
             pass
         else:
             if q is not None:
-                self.set_quantize_on_write(q, copy=copy)
+                self.set_quantize_on_write(q)
 
     @property
     def array(self):
@@ -520,6 +520,18 @@ class PropertiesData(Properties):
 
             out.append(f"{name}.set_data({data_name})")
 
+        # Quantization
+        q = self.get_quantization(None)
+        if q is not None:
+            out.extend(
+                q.creation_commands(
+                    namespace=namespace0,
+                    indent=0,
+                    string=False,
+                )
+            )
+            out.append(f"{name}._set_quantization(p)")
+
         if string:
             indent = " " * indent
             out[0] = indent + out[0]
@@ -570,9 +582,7 @@ class PropertiesData(Properties):
             {{returns dump}}
 
         """
-        # ------------------------------------------------------------
         # Properties
-        # ------------------------------------------------------------
         string = super().dump(
             display=False,
             _key=_key,
@@ -589,9 +599,7 @@ class PropertiesData(Properties):
 
         indent1 = "    " * (_level + 1)
 
-        # ------------------------------------------------------------
         # Data
-        # ------------------------------------------------------------
         data = self.get_data(None)
         if data is not None:
             if _axes and _axis_names:
@@ -606,6 +614,11 @@ class PropertiesData(Properties):
             shape = ", ".join(x)
 
             string.append(f"{indent1}{_prefix}Data({shape}) = {data}")
+
+        # Quantization
+        q = self.get_quantization(None)
+        if q is not None:
+            string.append(q.dump(display=False, _level=_level + 1))
 
         return "\n".join(string)
 
@@ -732,6 +745,17 @@ class PropertiesData(Properties):
             ignore_properties=ignore_properties,
             ignore_type=ignore_type,
         ):
+            return False
+
+        # ------------------------------------------------------------
+        # Check the quantization components
+        # ------------------------------------------------------------
+        q0 = self.get_quantization(None)
+        q1 = other.get_quantization(None)
+        if not (q0 is None and q1 is None) and not self._equals(q0, q1):
+            logger.info(
+                f"{self.__class__.__name__}: Different quantization components"
+            )
             return False
 
         # ------------------------------------------------------------

@@ -45,7 +45,7 @@ class Quantization(
                the `set_parameters` and `set_parameter` methods.
 
                *Example:*
-                 ``parameters={'algorithm': 'bitround',
+                 ``parameters={'algorithm': 'bitgroom',
                  'implementation': 'libnetcdf version 4.9.4'}``
 
             {{init source: optional}}

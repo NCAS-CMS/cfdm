@@ -7,7 +7,9 @@ Version 1.12.?.?
   (https://github.com/NCAS-CMS/cfdm/issues/???)
 * New class: `cfdm.Quantization`
 
-*Version 1.12.0.0
+----
+
+Version 1.12.0.0
 ----------------
 
 **2025-03-18**
