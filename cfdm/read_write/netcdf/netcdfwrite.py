@@ -2778,6 +2778,7 @@ class NetCDFWrite(IOWrite):
             "chunksizes": chunksizes,
             "least_significant_digit": lsd,
             "fill_value": fill_value,
+            "chunk_cache": g["chunk_cache"],
         }
 
         # ------------------------------------------------------------
@@ -4583,6 +4584,7 @@ class NetCDFWrite(IOWrite):
         Conventions=None,
         datatype=None,
         least_significant_digit=None,
+        chunk_cache=None,
         endian="native",
         compress=4,
         fletcher32=False,
@@ -4748,6 +4750,14 @@ class NetCDFWrite(IOWrite):
 
                 See `cfdm.write` for details.
 
+            chunk_cache: `int` or `None`, optional
+                The amount of memory (in bytes) used in each
+                variable's chunk cache at the HDF5 level.
+
+                See `cfdm.write` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
             fletcher32: `bool`, optional
                 If True then the Fletcher-32 HDF5 checksum algorithm is
                 activated to detect compression errors. Ignored if
@@ -4892,6 +4902,7 @@ class NetCDFWrite(IOWrite):
             "netcdf_compression": {},
             "endian": "native",
             "least_significant_digit": None,
+            "chunk_cache": None,
             # CF properties which need not be set on bounds if they're set
             # on the parent coordinate
             "omit_bounds_properties": (
@@ -5110,6 +5121,7 @@ class NetCDFWrite(IOWrite):
             Conventions=Conventions,
             datatype=datatype,
             least_significant_digit=least_significant_digit,
+            chunk_cache=chunk_cache,
             endian=endian,
             compress=compress,
             fletcher32=fletcher32,
@@ -5142,6 +5154,7 @@ class NetCDFWrite(IOWrite):
                 Conventions=Conventions,
                 datatype=datatype,
                 least_significant_digit=least_significant_digit,
+                chunk_cache=chunk_cache,
                 endian=endian,
                 compress=compress,
                 fletcher32=fletcher32,
@@ -5167,6 +5180,7 @@ class NetCDFWrite(IOWrite):
         Conventions,
         datatype,
         least_significant_digit,
+        chunk_cache,
         endian,
         compress,
         fletcher32,

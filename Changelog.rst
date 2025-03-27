@@ -1,3 +1,13 @@
+Version NEXTVERSION
+----------------
+
+**2025-??-??**
+
+* New keyword parameter to `cfdm.write`: ``chunk_cache``
+  (https://github.com/NCAS-CMS/cfdm/issues/328)
+
+----
+
 Version 1.12.0.0
 ----------------
 
