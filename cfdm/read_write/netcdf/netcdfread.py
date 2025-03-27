@@ -28,7 +28,7 @@ from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
 from ..exceptions import DatasetTypeError
-from .contants import (
+from .constants import (
     _CF_QUANTIZATION_PARAMETERS,
     _NETCDF_QUANTIZATION_PARAMETERS,
 )
@@ -1337,7 +1337,8 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Maps quantization variable names to Quantization objects
             "quantization_variable": {},
-            # Maps variable names to their quantization variable names
+            # Maps variable names to their quantization container
+            # variable names
             "quantization": {},
         }
 
@@ -3125,10 +3126,9 @@ class NetCDFRead(IORead):
         :Returns:
 
             `str` or `None`
-                 TODOQ The new geometry netCDF variable name, or `None` if a)
-                 the container has already been parsed or b) a
-                 sufficiently compliant geometry container could not be
-                 found.
+                 The netCDF name of the quantization container
+                 variable, or `None` if the container has already been
+                 parsed.
 
         """
         g = self.read_vars
@@ -11632,9 +11632,6 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            parent_ncvar: `str`
-                The netCDF variable name of the parent construct.
-
             ncvar: `str`
                 The netCDF name of the quantization container
                 variable.
@@ -11653,26 +11650,38 @@ class NetCDFRead(IORead):
         return q
 
     def _set_quantization(self, parent, ncvar):
-        """TODOQ.
+        """Set a Quantization component on a construct.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
+        :Parameters:
+
+            parent:
+                The construct that might be quantized.
+
+            ncvar: `str`
+                The netCDF name of the quantization container
+                variable.
+
+        :Returns:
+
+            `None`ppp
+
         """
         g = self.read_vars
+
         q = g["quantization"].get(ncvar)
         if q is None:
             # No quantization for this construct
             return
 
-        # Set number of significant bits or decimal digits for this
-        # parent variable
+        # Delete the parent's quantization properties, moving them to
+        # the Quantization component as appropriate.
         q = q.copy()
 
         attributes = g["variable_attributes"][ncvar]
         self.implementation.del_property(parent, "quantization", None)
 
-        # Delete the parent variable attributes that relate to level of
-        # quantisation, moving them to the Quantization component.
         for attr in set(_CF_QUANTIZATION_PARAMETERS.values()) | set(
             _NETCDF_QUANTIZATION_PARAMETERS.values()
         ):
@@ -11681,4 +11690,5 @@ class NetCDFRead(IORead):
                 self.implementation.set_parameter(q, attr, value, copy=False)
                 self.implementation.del_property(parent, attr, None)
 
+        # Set the Quantization component
         self.implementation.set_quantization(parent, q, copy=False)

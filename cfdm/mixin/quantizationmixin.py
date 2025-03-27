@@ -6,9 +6,14 @@ class QuantizationWriteMixin:
     """
 
     def del_quantize_on_write(self, default=ValueError()):
-        """TODOQ.
+        """Remove a quantize-on-write instruction.
+
+        See `set_quantize_on_write` for details.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_quantization`, `get_quantize_on_write`,
+                     `set_quantize_on_write`
 
         :Parameters:
 
@@ -28,9 +33,14 @@ class QuantizationWriteMixin:
         return self._del_component("quantize_on_write", default)
 
     def get_quantize_on_write(self, default=ValueError()):
-        """TODOQ.
+        """Get a quantize-on-write instruction.
+
+        See `set_quantize_on_write` for details.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_quantization`, `set_quantize_on_write`,
+                     `del_quantize_on_write`
 
         :Parameters:
 
@@ -51,14 +61,18 @@ class QuantizationWriteMixin:
 
     def set_quantize_on_write(
         self,
-        quantization,
+        quantization=None,
+        algorithm=None,
         quantization_nsd=None,
         quantization_nsb=None,
-        copy=True,
     ):
         """Set a quantize-on-write instruction.
 
-        A quantize-on-write instruction 
+        Calling `set_quantize_on_write` does not immediataely change
+        the data, but if the {{class}} is written to a netCDF dataset
+        with `{{package}}.write` then the quantization will be applied
+        to its data on disk, leaving the construct's data in memory
+        unchanged.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -67,45 +81,65 @@ class QuantizationWriteMixin:
 
         :Parameters:
 
-            quantization: `Quantization`
+            quantization: `Quantization` or `None`, optional
                 The quantize-on-write instruction in a quantization
-                variable.
+                variable. By default, or if `None`, an empty
+                `Quantization` component is used.
+
+                Its parameters may be overridden by the *algorithm*,
+                *quantization_nsd* or *quantization_nsb* keywords. If
+                the "implementation" parameter is defined then it is
+                removed (because it will get reset during a future
+                call to `{{package}}.write`).
+
+            algorithm: `str` or `None`, optional
+                Set the "algorithm" parameter of *quantization*.
 
             quantization_nsd: `int` or `None`, optional
-                If set to an integer, then set the "quantization_nsd"
-                parameter of *quantization* to that value. Note that
-                setting this parameter will automatically force *copy*
-                to be True, regardless of its actual setting.
+                Set the "quantization_nsd" parameter of
+                *quantization*.
 
             quantization_nsb: `int` or `None`, optional
-                If set to an integer, then set the "quantization_nsb"
-                parameter of *quantization* to that value. Note that
-                setting this parameter will automatically force *copy*
-                to be True, regardless of its actual setting.
-
-            copy: `bool`, optional
-                If True (the default) then copy *quantization* prior
-                to storing it in the `{{class}}` instance.
+                Set the "quantization_nsb" parameter of
+                *quantization*.
 
         :Returns:
 
             `None`
 
+        **Examples**
+
+        >>> f.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=6)
+
+        >>> q = {{package}}.Quantization({'algorithm': 'bitgroom',
+        ...                               'quantization_nsd': 6})
+        >>> f.set_quantize_on_write(q)
+
+        Use the quantization component from another construct,
+        overriding its per-variable quantization parameter:
+
+        >>> q = g.get_quantization()
+        >>> f.set_quantize_on_write(q, 'quantization_nsd': 6}))
+
         """
         if self.get_quantization(None) is not None:
             raise ValueError(
                 "Can't set a quantize-on-write instruction on a "
-                f"{self.__class__.__name__} that is already quantised"
+                f"{self.__class__.__name__} that is already quantized"
             )
 
-        if copy:
-            quantization = quantization.copy()
+        q = quantization.copy()
 
-        algorithm = quantization.get_parameter("algorithm", None)
-        parameter = quantization.algorithm_parameters().get(algorithm)
+        q.del_parameter("implementation", None)
+
+        algorithm = q.get_parameter("algorithm", None)
+        parameter = q.algorithm_parameters().get(algorithm)
 
         if parameter is None:
-            raise ValueError("TODOQ bad algorithm")
+            raise ValueError(
+                "Must provide a quantization algorthm with the "
+                "'quantization' or 'algorithm' keywords "
+            )
 
         if quantization_nsd is not None:
             if quantization_nsb is not None:
@@ -120,11 +154,7 @@ class QuantizationWriteMixin:
                     f"quantization algorithm {algorithm!r}"
                 )
 
-            if not copy:
-                # Copy anyway, because we're about to change it.
-                q = quantization.copy()
-
-            quantization.set_parameter(parameter, quantization_nsd, copy=False)
+            q.set_parameter(parameter, quantization_nsd, copy=False)
         elif quantization_nsb is not None:
             if parameter != "quantization_nsb":
                 raise ValueError(
@@ -132,10 +162,6 @@ class QuantizationWriteMixin:
                     f"quantization algorithm {algorithm!r}"
                 )
 
-            if not copy:
-                # Copy anyway, because we're about to change it.
-                quantization = quantization.copy()
-
-            quantization.set_parameter(parameter, quantization_nsb, copy=False)
+            q.set_parameter(parameter, quantization_nsb, copy=False)
 
         self._set_component("quantize_on_write", q, copy=False)

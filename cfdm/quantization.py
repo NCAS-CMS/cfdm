@@ -12,13 +12,13 @@ class Quantization(
 
     The parameters of a quantization variable describe a configured
     quantization algorithm. For instance, the following parameters
-    describe quantization via the BitRound algorithm retaining 6
+    describe quantization via the BitRound algorithm, retaining 6
     significant bits, and implemented by libnetcdf::
 
        >>> q.parameters()
        {'algorithm': 'bitround',
         'quantization_nsb': 6,
-        'implementation': 'libnetcdf version 4.9.2'}
+        'implementation': 'libnetcdf version 4.9.4'}
 
     See CF section 8.4. "Lossy Compression via Quantization".
 
@@ -46,7 +46,7 @@ class Quantization(
 
                *Example:*
                  ``parameters={'algorithm': 'bitround',
-                 'implementation': 'libnetcdf version 4.9.2'}``
+                 'implementation': 'libnetcdf version 4.9.4'}``
 
             {{init source: optional}}
 

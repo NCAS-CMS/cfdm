@@ -16,7 +16,8 @@ from ...data.dask_utils import cfdm_to_memory
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, dirname, integer_dtype
 from .. import IOWrite
-from .contants import (
+from .constants import (
+    _CF_QUANTIZATION_PARAMETER_LIMITS,
     _CF_QUANTIZATION_PARAMETERS,
     _NETCDF3_FMTS,
     _NETCDF4_FMTS,
@@ -2785,7 +2786,6 @@ class NetCDFWrite(IOWrite):
             "chunksizes": chunksizes,
             "least_significant_digit": lsd,
             "fill_value": fill_value,
-            "chunk_cache": g["chunk_cache"],
         }
 
         # ------------------------------------------------------------
@@ -2802,20 +2802,26 @@ class NetCDFWrite(IOWrite):
 
         if q is not None:
             # There is some quantization metadata
+
+            # CF quantization algorithm name (e.g. 'bitgroom')
             algorithm = self.implementation.get_parameter(q, "algorithm", None)
 
+            # CF quantization parameter name and value
+            # (e.g. 'quantization_nsd' and 6)
             cf_parameter = _CF_QUANTIZATION_PARAMETERS.get(algorithm)
             cf_ns = self.implementation.del_parameter(q, cf_parameter, None)
 
+            # NetCDF-C library quantization attribute name and value
+            # (e.g. '_QuantizeBitGroomNumberOfSignificantDigits' and
+            # 6)
             netcdf_parameter = _NETCDF_QUANTIZATION_PARAMETERS.get(algorithm)
             netcdf_ns = self.implementation.del_parameter(
                 q, netcdf_parameter, None
             )
 
-            # Create a quantization container if it doesn't
-            # already exist (and after having removed any
-            # quantization parameters, such as
-            # "quantization_nsd").
+            # Create a quantization container variable in the file, if
+            # it doesn't already exist (and after having removed any
+            # quantization parameters, such as "quantization_nsd").
             if quantize_on_write:
                 # Set the implemention to this version of the netCDF-C
                 # library
@@ -2834,9 +2840,14 @@ class NetCDFWrite(IOWrite):
             if cf_ns is not None:
                 extra[cf_parameter] = cf_ns
 
-            if quantize_on_write:
-                quantize_mode = _NETCDF_QUANTIZE_MODES.get(algorithm)
-
+            if not quantize_on_write:
+                # We're not performing any quantization, so also set
+                # the netCDF-C-defined attribute.
+                if netcdf_ns is not None:
+                    extra[netcdf_parameter] = netcdf_ns
+                    quantize_mode = _NETCDF_QUANTIZE_MODES.get(algorithm)
+            else:
+                # We are going to perform quantization
                 if algorithm == "digitround":
                     raise ValueError(
                         f"Can't quantize {cfvar!r} with algorithm "
@@ -2847,27 +2858,8 @@ class NetCDFWrite(IOWrite):
                 if quantize_mode is None:
                     raise ValueError(
                         f"Can't quantize {cfvar!r} with non-standardised "
-                        f"algorithm {algorithm!r}. Valid algorithms are"
+                        f"algorithm {algorithm!r}. Valid algorithms are "
                         f"{tuple(_NETCDF_QUANTIZE_MODES)}"
-                    )
-
-                if not cf_ns or cf_ns < 1:
-                    raise ValueError(
-                        f"Can't quantize {cfvar!r} with a {parameter!r} value "
-                        f"of {cf_ns}. {parameter!r} must be at least 1"
-                    )
-
-                if not cf_ns or cf_ns < 1:
-                    raise ValueError(
-                        f"Can't quantize {cfvar!r} with a {parameter!r} value "
-                        f"of {cf_ns}. {parameter!r} must be at least 1"
-                    )
-
-                if not datatype.startswith("f"):
-                    raise ValueError(
-                        f"Can't quantize {cfvar!r} with data type "
-                        f"{datatype!r}. Only floating point data can be "
-                        "quantized."
                     )
 
                 if g["fmt"] not in _NETCDF4_FMTS:
@@ -2877,14 +2869,31 @@ class NetCDFWrite(IOWrite):
                         f"writing to one of the {_NETCDF4_FMTS} formats."
                     )
 
+                if not datatype.startswith("f"):
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with data type "
+                        f"{datatype!r}. Only floating point data can be "
+                        "quantized."
+                    )
+
+                if cf_ns is None:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} because the "
+                        f"{cf_parameter!r} parameter has not been defined"
+                    )
+
+                u = _CF_QUANTIZATION_PARAMETER_LIMITS[cf_parameter][datatype]
+                if not 1 <= cf_ns <= u:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with a {cf_parameter!r} "
+                        f"parameter value of {cf_ns}. {cf_parameter!r} must "
+                        f"lie in the range [1, {u}]"
+                    )
+
                 # Update the kwargs for `_createVariable` to perform
                 # the quantization during the write process
                 kwargs["quantize_mode"] = quantize_mode
                 kwargs["significant_digits"] = cf_ns
-            elif ns_netcdf is not None:
-                # We're not performing any quantization, so also set
-                # the netCDF-C-defined attribute.
-                extra[netcdf_parameter] = netcdf_ns
 
         # ------------------------------------------------------------
         # For aggregation variables, create a dictionary containing
@@ -4689,7 +4698,6 @@ class NetCDFWrite(IOWrite):
         Conventions=None,
         datatype=None,
         least_significant_digit=None,
-        chunk_cache=None,
         endian="native",
         compress=4,
         fletcher32=False,
@@ -4855,13 +4863,6 @@ class NetCDFWrite(IOWrite):
 
                 See `cfdm.write` for details.
 
-            chunk_cache: `int` or `None`, optional
-                TODOQ
-
-                See `cfdm.write` for details.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
             fletcher32: `bool`, optional
                 If True then the Fletcher-32 HDF5 checksum algorithm is
                 activated to detect compression errors. Ignored if
@@ -5006,7 +5007,6 @@ class NetCDFWrite(IOWrite):
             "netcdf_compression": {},
             "endian": "native",
             "least_significant_digit": None,
-            "chunk_cache": None,
             # CF properties which need not be set on bounds if they're set
             # on the parent coordinate
             "omit_bounds_properties": (
@@ -5231,7 +5231,6 @@ class NetCDFWrite(IOWrite):
             Conventions=Conventions,
             datatype=datatype,
             least_significant_digit=least_significant_digit,
-            chunk_cache=chunk_cache,
             endian=endian,
             compress=compress,
             fletcher32=fletcher32,
@@ -5264,7 +5263,6 @@ class NetCDFWrite(IOWrite):
                 Conventions=Conventions,
                 datatype=datatype,
                 least_significant_digit=least_significant_digit,
-                chunk_cache=chunk_cache,
                 endian=endian,
                 compress=compress,
                 fletcher32=fletcher32,
@@ -5290,7 +5288,6 @@ class NetCDFWrite(IOWrite):
         Conventions,
         datatype,
         least_significant_digit,
-        chunk_cache,
         endian,
         compress,
         fletcher32,
@@ -5333,23 +5330,17 @@ class NetCDFWrite(IOWrite):
         else:
             compression = None
 
-        #        netcdf3_fmts = (
-        #            "NETCDF3_CLASSIC",
-        #           "NETCDF3_64BIT",
-        #           "NETCDF3_64BIT_OFFSET",
-        #           "NETCDF3_64BIT_DATA",
-        #        )
-        #        netcdf4_fmts = ("NETCDF4", "NETCDF4_CLASSIC")
-        #        if fmt not in _NETCDF3_FMTS + _NETCDF4_FMTS:
-        #            raise ValueError(f"Unknown output file format: {fmt}")
         if fmt in _NETCDF3_FMTS:
-            if compress:  # in _NETCDF3_FMTS:
-                raise ValueError(f"Can't compress {fmt} format file")
-            if group:  # in _NETCDF3_FMTS:
-                # Can't write groups to a netCDF3 file
+            if compress:
+                # Can't compress a netCDF-3 format file
+                compress = 0
+
+            if group:
+                # Can't write groups to a netCDF-3 file
                 g["group"] = False
         elif fmt not in _NETCDF4_FMTS:
             raise ValueError(f"Unknown output file format: {fmt}")
+
         # ------------------------------------------------------------
         # Set up global/non-global attributes
         # ------------------------------------------------------------
@@ -6366,7 +6357,7 @@ class NetCDFWrite(IOWrite):
         :Parameters:
 
             quantization: `Quantization`
-                TODOQ
+                The Quantization component to be written.
 
         :Returns:
 

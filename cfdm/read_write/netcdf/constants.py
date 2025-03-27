@@ -1,3 +1,5 @@
+from ...quantization import Quantization
+
 _CODE0 = {
     # Physically meaningful and corresponding to constructs
     "Cell measures variable": 100,
@@ -41,22 +43,22 @@ _CODE1 = {
         "parametric coordinate variable"
     ): 8,
 }
-from ..quantization import Quantization
 
+# --------------------------------------------------------------------
+# NetCDF formats
 # --------------------------------------------------------------------
 # NetCDF file magic numbers
-# --------------------------------------------------------------------
 MAGIC_NUMBER = (21382211, 1128547841, 1178880137, 38159427)
 
-# --------------------------------------------------------------------
-# NetCDF file formats
-# --------------------------------------------------------------------
+# NetCDF-3 file formats
 _NETCDF3_FMTS = (
     "NETCDF3_CLASSIC",
     "NETCDF3_64BIT",
     "NETCDF3_64BIT_OFFSET",
     "NETCDF3_64BIT_DATA",
 )
+
+# NetCDF-4 file formats
 _NETCDF4_FMTS = ("NETCDF4", "NETCDF4_CLASSIC")
 
 # --------------------------------------------------------------------
@@ -80,5 +82,13 @@ _NETCDF_QUANTIZATION_PARAMETERS = {
     "granular_bitround": "_QuantizeGranularBitRoundNumberOfSignificantDigits",
 }
 
-# Map CF quantization algorithms to CF algorithm attributes
+# Map CF quantization algorithms to CF quantization parameters (CF
+# section 8.4.2. Per-variable quantization attributes)
 _CF_QUANTIZATION_PARAMETERS = Quantization.algorithm_parameters()
+
+# Map CF quantization parameters to their upper limits for each data
+# type (CF section 8.4.2. Per-variable quantization attributes)
+_CF_QUANTIZATION_PARAMETER_LIMITS = {
+    "quantization_nsd": {"f4": 7, "f8": 15},
+    "quantization_nsb": {"f4": 23, "f8": 52},
+}
