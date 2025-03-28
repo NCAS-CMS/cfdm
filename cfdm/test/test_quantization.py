@@ -33,8 +33,8 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-class read_writeTest(unittest.TestCase):
-    """Test the reading and writing of field constructs from/to disk."""
+class quantizationTest(unittest.TestCase):
+    """Test the reading and writing with quantization."""
 
     f1 = cfdm.example_field(1)
 
@@ -123,6 +123,7 @@ class read_writeTest(unittest.TestCase):
         # Write the quantized field and read it back in
         cfdm.write(g, tmpfile2)
         h = cfdm.read(tmpfile2)[0]
+        self.assertIsInstance(h.get_quantization(), cfdm.Quantization)
 
         # Check that h and g are equal
         self.assertTrue(h.equals(g))
@@ -135,6 +136,15 @@ class read_writeTest(unittest.TestCase):
         # Can't set_quantize_on_write when already quantized
         with self.assertRaises(ValueError):
             h.set_quantize_on_write()
+
+        # Check that quantization information is copied
+        i = h.copy()
+        self.assertIsInstance(i.get_quantization(), cfdm.Quantization)
+        i._del_quantization()
+        i.set_quantize_on_write(q)
+        self.assertIsInstance(i.get_quantize_on_write(), cfdm.Quantization)
+        i = i.copy()
+        self.assertIsInstance(i.get_quantize_on_write(), cfdm.Quantization)
 
 
 if __name__ == "__main__":

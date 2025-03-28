@@ -124,24 +124,6 @@ class PropertiesData(Properties):
 
         return [(i + ndim if i < 0 else i) for i in axes]
 
-    def _set_quantization(self, quantization, copy=True):
-        """TODOQ.
-
-        .. warning:: TODOQ
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `Quantization`
-                TODOQ
-
-        """
-        if copy:
-            quantization = quantization.copy()
-
-        return self._set_component("quantization", quantization, copy=False)
-
     @classmethod
     def _test_docstring_substitution_classmethod(cls, arg1, arg2):
         """Test docstring substitution on with @classmethod.
@@ -197,24 +179,6 @@ class PropertiesData(Properties):
 
         """
         print("In _test_docstring_substitution")
-
-    def _init_quantization(self, source, copy=True):
-        """TODOQ."""
-        try:
-            q = source.get_quantization(None)
-        except (AttributeError, ValueError):
-            pass
-        else:
-            if q is not None:
-                self._set_quantization(q, copy=copy)
-
-        try:
-            q = source.get_quantize_on_write(None)
-        except (AttributeError, ValueError):
-            pass
-        else:
-            if q is not None:
-                self.set_quantize_on_write(q)
 
     @property
     def array(self):
@@ -539,21 +503,6 @@ class PropertiesData(Properties):
 
         return out
 
-    def del_quantization(self, default=ValueError()):
-        """TODOQ.
-
-        .. warning:: TODOQ
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `Quantization`
-                TODOQ
-
-        """
-        return self._del_component("quantization", default)
-
     @_display_or_return
     def dump(
         self,
@@ -831,17 +780,27 @@ class PropertiesData(Properties):
         return set()
 
     def get_quantization(self, default=ValueError()):
-        """TODOQ.
+        """Get quantization metadata.
+
+        .. note:: `{{class}}` data can not be quantized so the default
+                  is always returned.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter, because there
+                is no quantization metadata.
+
+                {{default Exception}}
+
         :Returns:
 
-            `Quantization`
-                TODOQ
+                The value *default*.
 
         """
-        return self._get_component("quantization", default)
+        return self._default(default)
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):

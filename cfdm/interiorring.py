@@ -40,44 +40,41 @@ class InteriorRing(
 
     """
 
-    def __init__(
-        self,
-        properties=None,
-        data=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                  ``properties={'long_name': 'which station this obs is
-                  for'}``
-
-            {{init data: data_like, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        if source is not None:
-            self._init_quantization(source, copy)
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
+    #def __init__(
+    #    self,
+    #    properties=None,
+    #    data=None,
+    #    source=None,
+    #    copy=True,
+    #    _use_data=True,
+    #):
+    #    """**Initialisation**
+    #
+    #    :Parameters:
+    #
+    #        {{init properties: `dict`, optional}}
+    #
+    #            *Parameter example:*
+    #              ``properties={'long_name': 'which station this obs is
+    #              for'}``
+    #
+    #        {{init data: data_like, optional}}
+    #
+    #        {{init source: optional}}
+    #
+    #        {{init copy: `bool`, optional}}
+    #
+    #    """
+    #    super().__init__(
+    #        properties=properties,
+    #        data=data,
+    #        source=source,
+    #        copy=copy,
+    #        _use_data=_use_data,
+    #    )
+    #
+    #    self._initialise_netcdf(source)
+    #    self._initialise_original_filenames(source)
 
     def dump(
         self,

@@ -117,47 +117,44 @@ class DomainTopology(
 
     """
 
-    def __init__(
-        self,
-        cell=None,
-        properties=None,
-        data=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init cell: `str`, optional}}
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                  ``properties={'long_name': 'face to node mapping'}``
-
-            {{init data: data_like, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            cell=cell,
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        if source is not None:
-            self._init_quantization(source, copy)
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
+    #def __init__(
+    #    self,
+    #    cell=None,
+    #    properties=None,
+    #    data=None,
+    #    source=None,
+    #    copy=True,
+    #    _use_data=True,
+    #):
+    #    """**Initialisation**
+    #
+    #    :Parameters:
+    #
+    #        {{init cell: `str`, optional}}
+    #
+    #        {{init properties: `dict`, optional}}
+    #
+    #            *Parameter example:*
+    #              ``properties={'long_name': 'face to node mapping'}``
+    #
+    #        {{init data: data_like, optional}}
+    #
+    #        {{init source: optional}}
+    #
+    #        {{init copy: `bool`, optional}}
+    #
+    #    """
+    #    super().__init__(
+    #        cell=cell,
+    #        properties=properties,
+    #        data=data,
+    #        source=source,
+    #        copy=copy,
+    #        _use_data=_use_data,
+    #    )
+    #
+    #    self._initialise_netcdf(source)
+    #    self._initialise_original_filenames(source)
 
     def creation_commands(
         self,

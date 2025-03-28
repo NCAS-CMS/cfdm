@@ -2,7 +2,7 @@ from . import Quantization, core, mixin
 
 
 class FieldAncillary(
-    mixin.QuantizationWriteMixin,
+    mixin.QuantizationMixin,
     mixin.NetCDFVariable,
     mixin.PropertiesData,
     mixin.Files,
@@ -45,43 +45,40 @@ class FieldAncillary(
         instance._Quantization = Quantization
         return instance
 
-    def __init__(
-        self,
-        properties=None,
-        data=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-               *Parameter example:*
-                  ``properties={'standard_name': 'altitude'}``
-
-            {{init data: data_like, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        if source is not None:
-            self._init_quantization(source, copy)
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
+    #def __init__(
+    #    self,
+    #    properties=None,
+    #    data=None,
+    #    source=None,
+    #    copy=True,
+    #    _use_data=True,
+    #):
+    #    """**Initialisation**
+    #
+    #    :Parameters:
+    #
+    #        {{init properties: `dict`, optional}}
+    #
+    #           *Parameter example:*
+    #              ``properties={'standard_name': 'altitude'}``
+    #
+    #        {{init data: data_like, optional}}
+    #
+    #        {{init source: optional}}
+    #
+    #        {{init copy: `bool`, optional}}
+    #
+    #    """
+    #    super().__init__(
+    #        properties=properties,
+    #        data=data,
+    #        source=source,
+    #        copy=copy,
+    #        _use_data=_use_data,
+    #    )
+    #
+    #    self._initialise_netcdf(source)
+    #    self._initialise_original_filenames(source)
 
     def dump(
         self,

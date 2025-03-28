@@ -100,9 +100,6 @@ class CellConnectivity(
             _use_data=_use_data,
         )
 
-        if source is not None:
-            self._init_quantization(source, copy)
-
         self._initialise_netcdf(source)
         self._initialise_original_filenames(source)
 

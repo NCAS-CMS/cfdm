@@ -75,63 +75,63 @@ class CoordinateReference(
         instance._Datum = Datum
         return instance
 
-    def __init__(
-        self,
-        coordinates=None,
-        datum=None,
-        coordinate_conversion=None,
-        source=None,
-        copy=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            coordinates: sequence of `str`, optional
-                Identify the related dimension and auxiliary
-                coordinate constructs by their construct
-                identifiers.
-
-                The coordinates may also be set after initialisation
-                with the `set_coordinates` and `set_coordinate`
-                methods.
-
-                *Parameter example:*
-                  ``coordinates=['dimensioncoordinate2']``
-
-                *Parameter example:*
-                  ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1')``
-
-            datum: `Datum`, optional
-                Set the datum component of the coordinate reference
-                construct.
-
-                The datum may also be set after initialisation with
-                the `set_datum` method.
-
-            coordinate_conversion: `CoordinateConversion`, optional
-                Set the coordinate conversion component of the
-                coordinate reference construct.
-
-                The coordinate conversion may also be set after
-                initialisation with the `set_coordinate_conversion`
-                method.
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            coordinates=coordinates,
-            datum=datum,
-            coordinate_conversion=coordinate_conversion,
-            source=source,
-            copy=copy,
-        )
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
+#    def __init__(
+#        self,
+#        coordinates=None,
+#        datum=None,
+#        coordinate_conversion=None,
+#        source=None,
+#        copy=True,
+#    ):
+#        """**Initialisation**
+#
+#        :Parameters:
+#
+#            coordinates: sequence of `str`, optional
+#                Identify the related dimension and auxiliary
+#                coordinate constructs by their construct
+#                identifiers.
+#
+#                The coordinates may also be set after initialisation
+#                with the `set_coordinates` and `set_coordinate`
+#                methods.
+#
+#                *Parameter example:*
+#                  ``coordinates=['dimensioncoordinate2']``
+#
+#                *Parameter example:*
+#                  ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1')``
+#
+#            datum: `Datum`, optional
+#                Set the datum component of the coordinate reference
+#                construct.
+#
+#                The datum may also be set after initialisation with
+#                the `set_datum` method.
+#
+#            coordinate_conversion: `CoordinateConversion`, optional
+#                Set the coordinate conversion component of the
+#                coordinate reference construct.
+#
+#                The coordinate conversion may also be set after
+#                initialisation with the `set_coordinate_conversion`
+#                method.
+#
+#            {{init source: optional}}
+#
+#            {{init copy: `bool`, optional}}
+#
+#        """
+#        super().__init__(
+#            coordinates=coordinates,
+#            datum=datum,
+#            coordinate_conversion=coordinate_conversion,
+#            source=source,
+#            copy=copy,
+#        )
+#
+#        self._initialise_netcdf(source)
+#        self._initialise_original_filenames(source)
 
     def __str__(self):
         """Called by the `str` built-in function.

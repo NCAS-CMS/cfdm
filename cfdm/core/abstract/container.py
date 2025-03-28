@@ -31,21 +31,26 @@ class Container(metaclass=DocstringRewriteMeta):
 
         """
         self._components = {}
-
+        
         if source is not None:
-            # WARNING: The 'custom' dictionary is only shallow copied
-            #          from source
+            # Copy the 'custom' dictionary from source.
+            #
+            # WARNING: The 'custom' dictionary is only shallow copied.
             try:
                 custom = source._get_component("custom", {})
             except AttributeError:
                 custom = {}
             else:
                 custom = custom.copy()
+
         else:
             custom = {}
 
         self._set_component("custom", custom, copy=False)
-
+        
+        # Run initialisation methods defined on parent classes.
+        self._initialise_from_source(source, copy)
+        
     def __deepcopy__(self, memo):
         """Called by the `copy.deepcopy` function.
 
@@ -134,6 +139,10 @@ class Container(metaclass=DocstringRewriteMeta):
         1
 
         """
+        if default is None:
+            # Fast return for the common case of default=None
+            return
+
         if isinstance(default, Exception):
             if message is not None and not default.args:
                 default = type(default)(message)
@@ -298,6 +307,33 @@ class Container(metaclass=DocstringRewriteMeta):
 
         """
         return component in self._components
+
+    def _initialise_from_source(self, source, copy=True):
+        """Run initialisation methods defined on parent classes.
+
+        Runs initialisation-from-source methods defined on parent
+        classes. These will be called _P__initialization, where P is
+        the name of a parent class.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            {{init source: optional}}
+
+            {{init copy: `bool`, optional}}
+
+        :Returns:
+
+            `None`
+
+        """
+#        for P in self.__class__.__bases__:
+        for P in self.__class__.__mro__:
+            try:
+                getattr(self, f"_{P.__name__}__initialise")(source, copy)
+            except AttributeError:
+                pass
 
     def _set_component(self, component, value, copy=True):
         """Set a component.

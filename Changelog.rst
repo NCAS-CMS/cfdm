@@ -4,8 +4,9 @@ Version 1.12.?.?
 **2025-??-??**
 
 * Implement lossy compression via quantization
-  (https://github.com/NCAS-CMS/cfdm/issues/???)
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
 * New class: `cfdm.Quantization`
+* New class: `cfdm.mixin.QuantizationMixin`
 
 ----
 

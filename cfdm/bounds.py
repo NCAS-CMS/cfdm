@@ -81,8 +81,6 @@ class Bounds(
                 inherited_properties = source.inherited_properties()
             except AttributeError:
                 inherited_properties = {}
-
-            self._init_quantization(source, copy)
         else:
             inherited_properties = {}
 

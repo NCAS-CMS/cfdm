@@ -1,5 +1,6 @@
 from .container import Container
 from .files import Files
+from .quantizationmixin import QuantizationMixin
 from .properties import Properties
 from .propertiesdata import PropertiesData
 from .propertiesdatabounds import PropertiesDataBounds
@@ -27,7 +28,5 @@ from .netcdf import (
     NetCDFUnreferenced,
     NetCDFVariable,
 )
-
-from .quantizationmixin import QuantizationWriteMixin
 
 from .fielddomain import FieldDomain

@@ -8,6 +8,39 @@ class Files:
 
     """
 
+    def __initialise(self, source, copy=True):
+        """Helps to initialise original file names. TODOQ
+
+        Call this from inside the `!__init__` method of a class that
+        inherits from this mixin class.
+
+        :Parameters:
+
+            {{init source: optional}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f._initialise_original_filenames(source)
+
+        """
+        # Note: Getting and setting the component directly (as opposed
+        #       to using the `_original_filenames` methods of 'source'
+        #       and 'self') should improve the performance of
+        #       `self.copy`.
+        try:
+            filenames = source._get_component("original_filenames", None)
+        except AttributeError:
+            pass
+        else:
+            if filenames is not None:
+                self._set_component(
+                    "original_filenames", filenames, copy=False
+                )
+
     def _initialise_original_filenames(self, source=None):
         """Helps to initialise original file names.
 

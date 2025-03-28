@@ -255,22 +255,26 @@ class CFDMImplementation(Implementation):
         return data.insert_dimension(position=position)
 
     def del_parameter(self, parent, parameter, default=None):
-        """TODOQ Remove a property from a construct.
+        """Delete a parameter from a component.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            construct: construct
+            parent:
+                The component.
 
-            props: (sequence of) `str`
+            parameter: `str`
+                The name of the parameter.
 
             default: optional
+                Return the value of the *default* parameter if the
+                parameter has not been set.
 
         :Returns:
 
             `dict`
-                The deleted properties, if any
+                The deleted parameter.
 
         """
         return parent.del_parameter(parameter, default)
@@ -1213,22 +1217,19 @@ class CFDMImplementation(Implementation):
         return data.nc_set_hdf5_chunksizes(chunksizes)
 
     def parameters(self, parent):
-        """TODOQ Remove a property from a construct.
+        """Return all parameters from a component.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            construct: construct
-
-            props: (sequence of) `str`
-
-            default: optional
+            parent:
+                The component.
 
         :Returns:
 
             `dict`
-                The deleted properties, if any
+                The parameters.
 
         """
         return parent.parameters()
@@ -1654,17 +1655,21 @@ class CFDMImplementation(Implementation):
         return construct.get_node_count(default=None)
 
     def get_parameter(self, parent, parameter, default=None):
-        """TODOQ.
+        """Get a parameter value from a component.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
             parent:
+                The component.
 
-            part_node_count: part node count properties variable
+            parameter: `str`
+                The name of the parameter.
 
-            copy: `bool`, optional
+            default: optional
+                Return the value of the *default* parameter if the
+                parameter has not been set.
 
         :Returns:
 
@@ -1746,7 +1751,7 @@ class CFDMImplementation(Implementation):
             return default
 
     def get_quantization(self, construct, default=None):
-        """TODOQ Return the geometry type of coordinates.
+        """Get quantization metadata.
 
         :Parameters:
 
@@ -1766,13 +1771,16 @@ class CFDMImplementation(Implementation):
             return default
 
     def get_quantize_on_write(self, construct, default=None):
-        """TODOQ Return the geometry type of coordinates.
+        """Get a quantize-on-write instruction form a construct.
 
         :Parameters:
 
-            TODOQ construct:
+            construct:
+                The construct.
 
-            TODOQ default: optional
+            default: optional
+                Return the value of the *default* parameter if a
+                uantize-on-write instruction has not been set.
 
         :Returns:
 
@@ -3506,17 +3514,23 @@ class CFDMImplementation(Implementation):
         parent._original_filenames(define=set(filenames))
 
     def set_parameter(self, parent, parameter, value, copy=True):
-        """TODOQ.
+        """Set a parameter on a component.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
             parent:
+                The component to be modified.
 
-            part_node_count: part node count properties variable
+            parameter: `str`
+                The name of the parameter.
+
+            value:
+                The value of the parameter.
 
             copy: `bool`, optional
+                If True (the default) then set a copy of *value*.
 
         :Returns:
 
@@ -3554,11 +3568,15 @@ class CFDMImplementation(Implementation):
 
         :Parameters:
 
-            parent: TODOQ
+            parent:
+                The construct to be modified.
 
-            quantization: `Quantization` TODOQ
+            quantization: `Quantization`
+                The new quantization metadata.
 
-            copy: `bool`, optional TODOQ
+            copy: `bool`, optional
+                If True (the default) then copy *quantization* prior
+                to insertion.
 
         :Returns:
 
