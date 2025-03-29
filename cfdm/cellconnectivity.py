@@ -64,45 +64,6 @@ class CellConnectivity(
 
     """
 
-    def __init__(
-        self,
-        connectivity=None,
-        properties=None,
-        data=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init connectivity: `str`, optional}}
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                  ``properties={'long_name': 'face-face connectivity'}``
-
-            {{init data: data_like, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            connectivity=connectivity,
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
-
     def creation_commands(
         self,
         representative_data=False,
@@ -143,7 +104,7 @@ class CellConnectivity(
         """
         out = super().creation_commands(
             representative_data=representative_data,
-            indent=0,
+            indent=indent,
             namespace=namespace,
             string=False,
             name=name,

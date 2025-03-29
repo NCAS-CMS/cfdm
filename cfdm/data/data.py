@@ -408,10 +408,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             self._custom["has_deterministic_name"] = bool(deterministic)
 
-            # File components
-            self._initialise_netcdf(source)
-            self._initialise_original_filenames(source)
-
             return
 
         super().__init__(
@@ -419,10 +415,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             fill_value=fill_value,
             _use_array=False,
         )
-
-        # Initialise file components
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
 
         # Set the units
         units = self._Units_class(units, calendar=calendar)
@@ -4232,7 +4224,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         if masked:
             mask = mask.creation_commands(
-                name="mask", namespace=namespace0, indent=0, string=True
+                name="mask", namespace=namespace0, indent=indent, string=True
             )
             mask = mask.replace("mask = ", "mask=", 1)
             mask = f", {mask}"

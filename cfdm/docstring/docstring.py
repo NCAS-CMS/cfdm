@@ -664,10 +664,7 @@ _docstring_substitution_definitions = {
     # data_name: `str`, optional
     "{{data_name: `str`, optional}}": """data_name: `str`, optional
                 The name of the construct's `Data` instance created by
-                the returned commands.
-
-                *Parameter example:*
-                  ``name='data1'``""",
+                the returned commands.""",
     # header: `bool`, optional
     "{{header: `bool`, optional}}": """header: `bool`, optional
                 If True (the default) output a comment describing the
@@ -713,10 +710,7 @@ _docstring_substitution_definitions = {
     # name
     "{{name: `str`, optional}}": """name: `str`, optional
                 The name of the `{{class}}` instance created by the
-                returned commands.
-
-                *Parameter example:*
-                  ``name='var1'``""",
+                returned commands.""",
     # namespace
     "{{namespace: `str`, optional}}": """namespace: `str`, optional
                 The name space containing classes of the {{package}}

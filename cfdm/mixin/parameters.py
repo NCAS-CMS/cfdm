@@ -88,9 +88,13 @@ class Parameters(Container):
         if parameters:
             out.append(f"{name}.set_parameters({parameters})")
 
-        nc = self.nc_get_variable(None)
-        if nc is not None:
-            out.append(f"{name}.nc_set_variable('{nc}')")
+        try:
+            nc = self.nc_get_variable(None)
+        except AttributeError:
+            pass
+        else:
+            if nc is not None:
+                out.append(f"{name}.nc_set_variable('{nc}')")
 
         if string:
             indent = " " * indent

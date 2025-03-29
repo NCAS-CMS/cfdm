@@ -12,24 +12,30 @@ class DeprecationError(Exception):
     pass
 
 
-class NetCDF:
-    """Mixin class for storing simple netCDF elements.
+class NetCDFMixin:
+    """Mixin class for accessing netCDF entities.
 
-    .. versionadded:: (cfdm) 1.7.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
     def __initialise(self, source, copy=True):
-        """TODOQ Helps to initialise netCDF components.
+        """Initialise netCDF components from a source.
 
-        Call this from inside the __init__ method of a class that
-        inherits from this mixin class.
+        Intended to be called by `_parent_initialise_from_source`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            {{init source: optional}}
+            source:
+                The object from which to extract the initialisation
+                information. Typically, but not necessarily, a
+                `{{class}}` object.
+
+            copy: `bool`, optional
+                If True (the default) then deep copy the
+                initialisation information.
 
         :Returns:
 
@@ -37,69 +43,12 @@ class NetCDF:
 
         """
         try:
-            netcdf = source._get_component("netcdf", None)
+            n = source._get_component("netcdf", None)
         except AttributeError:
             pass
         else:
-            if netcdf is not None:
-                self._set_component("netcdf", netcdf, copy=copy)
-
-    def _set_netcdf(self, key, value):
-        """TODOQ
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        netcdf =  self._get_component("netcdf", None)
-        if netcdf is None:
-            netcdf = {}
-            self._set_component("netcdf", netcdf, copy=False)
-
-        netcdf[key] = value
-
-    def _initialise_netcdf(self, source=None):
-        """Helps to initialise netCDF components.
-
-        Call this from inside the __init__ method of a class that
-        inherits from this mixin class.
-
-        :Parameters:
-
-            {{init source: optional}}
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> f._initialise_netcdf(source)
-
-        """
-        return
-    
-        if source is None:
-            netcdf = {}
-        else:
-            try:
-                netcdf = source._get_component("netcdf", {})
-            except AttributeError:
-                netcdf = {}
-            else:
-                if netcdf:
-                    netcdf = deepcopy(netcdf)
-                else:
-                    netcdf = {}
-
-        self._set_component("netcdf", netcdf, copy=False)
-
-
-class NetCDFMixin:
-    """Mixin class for accessing named netCDF entities.
-
-    .. versionadded:: (cfdm) 1.10.0.0
-
-    """
+            if n is not None:
+                self._set_component("netcdf", n, copy=copy)
 
     def _nc_del(self, entity, default=ValueError()):
         """Remove the netCDF entity name.
@@ -315,7 +264,19 @@ class NetCDFMixin:
                 )
 
         self._set_netcdf(entity, value)
-#        self._get_component("netcdf")[entity] = value
+
+    def _set_netcdf(self, key, value):
+        """TODOQ.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        netcdf = self._get_component("netcdf", None)
+        if netcdf is None:
+            netcdf = {}
+            self._set_component("netcdf", netcdf, copy=False)
+
+        netcdf[key] = value
 
 
 class NetCDFGroupsMixin:
@@ -464,7 +425,7 @@ class NetCDFGroupsMixin:
         return old
 
 
-class NetCDFDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
+class NetCDFDimension(NetCDFMixin, NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF dimension name.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -783,7 +744,7 @@ class NetCDFDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         )
 
 
-class NetCDFVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
+class NetCDFVariable(NetCDFMixin, NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF variable name.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -1103,7 +1064,7 @@ class NetCDFVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         )
 
 
-class NetCDFSampleDimension(NetCDF, NetCDFGroupsMixin):
+class NetCDFSampleDimension(NetCDFMixin, NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF sample dimension name.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -1302,8 +1263,7 @@ class NetCDFSampleDimension(NetCDF, NetCDFGroupsMixin):
                     f"can't end with a '/'. Got {value!r}"
                 )
 
-        self._set_netcdf("sample_dimension",value)
-#        self._get_component("netcdf")["sample_dimension"] = value
+        self._set_netcdf("sample_dimension", value)
 
     def nc_sample_dimension_groups(self):
         """Return the netCDF sample dimension group hierarchy.
@@ -1464,7 +1424,7 @@ class NetCDFSampleDimension(NetCDF, NetCDFGroupsMixin):
         )
 
 
-class NetCDFGlobalAttributes(NetCDF):
+class NetCDFGlobalAttributes(NetCDFMixin):
     """Mixin class for accessing netCDF global attributes.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -1530,9 +1490,7 @@ class NetCDFGlobalAttributes(NetCDF):
         if out is None:
             return {}
 
- 
         out = out.copy()
-        self._set_netcdf("global_attributes", out)
 
         if values:
             # Replace a None value with the value from the variable
@@ -1593,8 +1551,7 @@ class NetCDFGlobalAttributes(NetCDF):
         if out is None:
             out = {}
 
-        self._get_component("netcdf", {})["global_attributes"] = {}
-
+        self._set_netcdf("global_attributes", {})
         return out
 
     def nc_set_global_attribute(self, prop, value=None):
@@ -1661,7 +1618,6 @@ class NetCDFGlobalAttributes(NetCDF):
         out[prop] = value
 
         self._set_netcdf("global_attributes", out)
-        #      self._get_component("netcdf")["global_attributes"] = out
 
     def nc_set_global_attributes(self, properties, copy=True):
         """Set properties to be written as netCDF global attributes.
@@ -1735,11 +1691,10 @@ class NetCDFGlobalAttributes(NetCDF):
 
         out.update(properties)
 
-        self._set_netcdf("global_attributes",out)
-#        self._get_component("netcdf")["global_attributes"] = out
+        self._set_netcdf("global_attributes", out)
 
 
-class NetCDFGroupAttributes(NetCDF):
+class NetCDFGroupAttributes(NetCDFMixin):
     """Mixin class for accessing netCDF group attributes.
 
     .. versionadded:: (cfdm) 1.8.6
@@ -1840,9 +1795,7 @@ class NetCDFGroupAttributes(NetCDF):
         if out is None:
             out = {}
 
-        self._set_netcdf("group_attributes",  {})
-#        self._get_component("netcdf", ppp)["group_attributes"] = {}
-
+        self._set_netcdf("group_attributes", {})
         return out
 
     def nc_set_group_attribute(self, prop, value=None):
@@ -1898,7 +1851,6 @@ class NetCDFGroupAttributes(NetCDF):
         out[prop] = value
 
         self._set_netcdf("group_attributes", out)
-#        self._get_component("netcdf", ppp)["group_attributes"] = out
 
     def nc_set_group_attributes(self, properties, copy=True):
         """Set properties to be written as netCDF group attributes.
@@ -1962,10 +1914,9 @@ class NetCDFGroupAttributes(NetCDF):
         out.update(properties)
 
         self._set_netcdf("group_attributes", out)
-#        self._get_component("netcdf")["group_attributes"] = out
 
 
-class NetCDFUnlimitedDimensions(NetCDF):
+class NetCDFUnlimitedDimensions(NetCDFMixin):
     """Mixin class for accessing netCDF unlimited dimensions.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -2099,7 +2050,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
         )
 
 
-class NetCDFExternal(NetCDF):
+class NetCDFExternal(NetCDFMixin):
     """Mixin class for accessing the netCDF external variable status.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -2158,10 +2109,9 @@ class NetCDFExternal(NetCDF):
 
         """
         self._set_netcdf("external", bool(external))
- #        self._get_component("netcdf", ppp)["external"] = bool(external)
 
 
-class NetCDFGeometry(NetCDF, NetCDFGroupsMixin):
+class NetCDFGeometry(NetCDFMixin, NetCDFGroupsMixin):
     """Mixin to access the netCDF geometry container variable name.
 
     .. versionadded:: (cfdm) 1.8.0
@@ -2361,8 +2311,7 @@ class NetCDFGeometry(NetCDF, NetCDFGroupsMixin):
                     f"can't end with a '/'. Got {value!r}"
                 )
 
-        self._set_netcdf("geometry_variable",value)
-#        self._get_component("netcdf", ppp)["geometry_variable"] = value
+        self._set_netcdf("geometry_variable", value)
 
     def nc_geometry_variable_groups(self):
         """Return the netCDF geometry variable group hierarchy.
@@ -2525,7 +2474,7 @@ class NetCDFGeometry(NetCDF, NetCDFGroupsMixin):
         )
 
 
-class NetCDFHDF5(NetCDF, NetCDFMixin):
+class NetCDFHDF5(NetCDFMixin):
     """Mixin class for accessing the netCDF HDF5 chunksizes.
 
     .. versionadded:: (cfdm) 1.7.2
@@ -2618,7 +2567,7 @@ class NetCDFHDF5(NetCDF, NetCDFMixin):
         None
 
         """
-        return self._get_component("netcdf",{}).pop("hdf5_chunksizes", None)
+        return self._get_component("netcdf", {}).pop("hdf5_chunksizes", None)
 
     def nc_set_hdf5_chunksizes(self, chunksizes):
         """Set the HDF5 chunking strategy for the data.
@@ -2688,7 +2637,6 @@ class NetCDFHDF5(NetCDF, NetCDFMixin):
             ]
 
         if chunksizes != "contiguous":
-            print('chunksizes = ', chunksizes, shape)
             try:
                 chunksizes = parse_bytes(chunksizes)
             except ValueError:
@@ -2735,10 +2683,9 @@ class NetCDFHDF5(NetCDF, NetCDFMixin):
                 chunksizes = tuple(c)
 
         self._set_netcdf("hdf5_chunksizes", chunksizes)
-#        self._get_component("netcdf")["hdf5_chunksizes"] = chunksizes
 
 
-class NetCDFUnlimitedDimension(NetCDF):
+class NetCDFUnlimitedDimension(NetCDFMixin):
     """Mixin class for accessing a netCDF unlimited dimension.
 
     .. versionadded:: (cfdm) 1.7.4
@@ -2812,10 +2759,9 @@ class NetCDFUnlimitedDimension(NetCDF):
 
         """
         self._set_netcdf("unlimited", bool(value))
-#        self._get_component("netcdf")["unlimited"] = bool(value)
 
 
-class NetCDFComponents(NetCDF):
+class NetCDFComponents(NetCDFMixin):
     """Mixin class for a netCDF feature common to many constructs.
 
     Accesses netCDF names consistently across multiple metadata
@@ -3559,6 +3505,37 @@ class NetCDFUnreferenced:
 
     """
 
+    def __initialise(self, source, copy=True):
+        """Initialise dataset compliance information from a source.
+
+        Intended to be called by `_parent_initialise_from_source`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            source:
+                The object from which to extract the initialisation
+                information. Typically, but not necessarily, a
+                `{{class}}` object.
+
+            copy: `bool`, optional
+                If True (the default) then deep copy the
+                initialisation information.
+
+        :Returns:
+
+            `None`
+
+        """
+        try:
+            dc = source._get_component("dataset_compliance", None)
+        except AttributeError:
+            pass
+        else:
+            if dc is not None:
+                self._set_component("dataset_compliance", dc, copy=copy)
+
     def _set_dataset_compliance(self, value, copy=True):
         """Set the dataset compliance report.
 
@@ -3670,7 +3647,7 @@ class NetCDFUnreferenced:
             print("    },")
 
 
-class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
+class NetCDFSubsampledDimension(NetCDFMixin, NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF subsampled dimension name.
 
     .. versionadded:: (cfdm) 1.10.0.0
@@ -3995,9 +3972,7 @@ class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         )
 
 
-class NetCDFInterpolationSubareaDimension(
-    NetCDF, NetCDFMixin, NetCDFGroupsMixin
-):
+class NetCDFInterpolationSubareaDimension(NetCDFMixin, NetCDFGroupsMixin):
     """Mixin class for the netCDF interpolation subarea dimension name.
 
     .. versionadded:: (cfdm) 1.10.0.0
@@ -4330,7 +4305,7 @@ class NetCDFInterpolationSubareaDimension(
         )
 
 
-class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
+class NetCDFNodeCoordinateVariable(NetCDFMixin, NetCDFGroupsMixin):
     """Mixin for accessing the netCDF node coordinate variable name.
 
     .. versionadded:: (cfdm) 1.11.0.0
@@ -4660,7 +4635,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         )
 
 
-class NetCDFAggregation(NetCDF, NetCDFMixin):
+class NetCDFAggregation(NetCDFMixin):
     """Mixin class for netCDF aggregated variables.
 
     .. versionadded:: (cfdm) 1.12.0.0
@@ -4895,7 +4870,6 @@ class NetCDFAggregation(NetCDF, NetCDFMixin):
             value = value.copy()
 
         self._set_netcdf("aggregated_data", value)
-        #self._get_component("netcdf")["aggregated_data"] = value
 
     def _nc_del_aggregation_fragment_type(self):
         """Remove the type of fragments in the aggregated data.
@@ -4944,7 +4918,6 @@ class NetCDFAggregation(NetCDF, NetCDFMixin):
 
         """
         self._set_netcdf("aggregation_fragment_type", value)
-#        self._get_component("netcdf")["aggregation_fragment_type"] = value
         if value == "unique_value":
             self._nc_set_aggregation_write_status(True)
 
@@ -5020,9 +4993,6 @@ class NetCDFAggregation(NetCDF, NetCDFMixin):
 
         """
         self._set_netcdf("aggregation_write_status", bool(status))
-#        self._get_component("netcdf")["aggregation_write_status"] = bool(
-#            status
-#        )
 
     def nc_set_aggregation_write_status(self, status):
         """Set the netCDF aggregation write status.

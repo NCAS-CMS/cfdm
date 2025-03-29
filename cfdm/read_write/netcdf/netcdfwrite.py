@@ -2846,7 +2846,9 @@ class NetCDFWrite(IOWrite):
                 if netcdf_ns is not None:
                     extra[netcdf_parameter] = netcdf_ns
             else:
+                # ----------------------------------------------------
                 # We are going to perform quantization
+                # ----------------------------------------------------
                 quantize_mode = _NETCDF_QUANTIZE_MODES.get(algorithm)
 
                 if algorithm == "digitround":

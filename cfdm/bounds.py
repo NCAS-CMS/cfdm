@@ -88,9 +88,6 @@ class Bounds(
             "inherited_properties", inherited_properties, copy=False
         )
 
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
-
     def dump(
         self,
         display=True,

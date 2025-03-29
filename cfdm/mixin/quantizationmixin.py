@@ -8,10 +8,21 @@ class QuantizationMixin:
     def __initialise(self, source, copy=True):
         """Initialise quantization information from a source.
 
-        Intended to be called from `__init__` via
-        `_{{class}}__initialise`
+        Intended to be called by `_parent_initialise_from_source`.
+
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            source:
+                The object from which to extract the initialisation
+                information. Typically, but not necessarily, a
+                `{{class}}` object.
+
+            copy: `bool`, optional
+                If True (the default) then deep copy the
+                initialisation information.
 
         :Returns:
 
@@ -24,7 +35,9 @@ class QuantizationMixin:
             pass
         else:
             if q is not None:
-                self._set_quantization(q, copy=copy)
+                # No need to copy, because `get_quantization` already
+                # returns a copy.
+                self._set_component("quantization", q, copy=False)
 
         try:
             q = source.get_quantize_on_write(None)
@@ -32,7 +45,9 @@ class QuantizationMixin:
             pass
         else:
             if q is not None:
-                self.set_quantize_on_write(q)
+                # No need to copy, because `get_quantize_on_write` already
+                # returns a copy.
+                self._set_component("quantize_on_write", q, copy=False)
 
     def _del_quantization(self, default=ValueError()):
         """Remove quantization metadata.
@@ -139,6 +154,14 @@ class QuantizationMixin:
         .. seealso:: `_del_quantization`, `_set_quantization`,
                      `get_quantize_on_write`
 
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no quantization metadata.
+
+                {{default Exception}}
+
         :Returns:
 
             `Quantization`
@@ -147,7 +170,16 @@ class QuantizationMixin:
         """
         q = self._get_component("quantization", None)
         if q is None:
-            return self._default(default)
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                message=(
+                    f"{self.__class__.__name__} has no "
+                    "quantization component"
+                ),
+            )
 
         return q.copy()
 
@@ -177,7 +209,16 @@ class QuantizationMixin:
         """
         q = self._get_component("quantize_on_write", None)
         if q is None:
-            return self._default(default)
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                message=(
+                    f"{self.__class__.__name__} has no "
+                    "quantize-on-write instruction"
+                ),
+            )
 
         return q.copy()
 

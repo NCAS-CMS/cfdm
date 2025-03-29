@@ -23,27 +23,6 @@ class PartNodeCountProperties(
 
     """
 
-   # def __init__(self, properties=None, source=None, copy=True):
-   #     """**Initialisation**
-   #
-   #     :Parameters:
-   #
-   #         {{init properties: `dict`, optional}}
-   #
-   #             *Parameter example:*
-   #               ``properties={'long_name': 'number of obs for this
-   #               station'}``
-   #
-   #         {{init source: optional}}
-   #
-   #         {{init copy: `bool`, optional}}
-   #
-   #     """
-   #     super().__init__(properties=properties, source=source, copy=copy)
-   #
-   #     self._initialise_netcdf(source)
-   #     self._initialise_original_filenames(source)
-
     def dump(
         self,
         display=True,

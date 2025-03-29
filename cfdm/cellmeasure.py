@@ -45,53 +45,6 @@ class CellMeasure(
 
     """
 
-#    def __init__(
-#        self,
-#        measure=None,
-#        properties=None,
-#        data=None,
-#        source=None,
-#        copy=True,
-#        _use_data=True,
-#    ):
-#        """**Initialisation**
-#
-#        :Parameters:
-#
-#            measure: `str`, optional
-#                Set the measure that indicates the metric given by
-#                the data array.
-#
-#                The measure may also be set after initialisation with
-#                the `set_measure` method.
-#
-#                *Parameter example:*
-#                  ``measure='area'``
-#
-#            {{init properties: `dict`, optional}}
-#
-#               *Parameter example:*
-#                 ``properties={'standard_name': 'cell_area'}``
-#
-#            {{init data: data_like, optional}}
-#
-#            {{init source: optional}}
-#
-#            {{init copy: `bool`, optional}}
-#
-#        """
-#        super().__init__(
-#            measure=measure,
-#            properties=properties,
-#            data=data,
-#            source=source,
-#            copy=copy,
-#            _use_data=_use_data,
-#        )
-#
-#        self._initialise_netcdf(source)
-#        self._initialise_original_filenames(source)
-
     def creation_commands(
         self,
         representative_data=False,
@@ -146,7 +99,7 @@ class CellMeasure(
         """
         out = super().creation_commands(
             representative_data=representative_data,
-            indent=0,
+            indent=indent,
             namespace=namespace,
             string=False,
             name=name,

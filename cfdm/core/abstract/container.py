@@ -21,7 +21,7 @@ class Container(metaclass=DocstringRewriteMeta):
     """
 
     def __init__(self, source=None, copy=True):
-        """**Initialiation**
+        """**Initialisation**
 
         :Parameters:
 
@@ -31,7 +31,7 @@ class Container(metaclass=DocstringRewriteMeta):
 
         """
         self._components = {}
-        
+
         if source is not None:
             # Copy the 'custom' dictionary from source.
             #
@@ -43,14 +43,14 @@ class Container(metaclass=DocstringRewriteMeta):
             else:
                 custom = custom.copy()
 
+            # Run initialise-from-source methods defined on parent
+            # classes.
+            self._parent_initialise_from_source(source, copy)
         else:
             custom = {}
 
         self._set_component("custom", custom, copy=False)
-        
-        # Run initialisation methods defined on parent classes.
-        self._initialise_from_source(source, copy)
-        
+
     def __deepcopy__(self, memo):
         """Called by the `copy.deepcopy` function.
 
@@ -308,30 +308,35 @@ class Container(metaclass=DocstringRewriteMeta):
         """
         return component in self._components
 
-    def _initialise_from_source(self, source, copy=True):
-        """Run initialisation methods defined on parent classes.
+    def _parent_initialise_from_source(self, source, copy=True):
+        """Run parent class initialise-from-source methods.
 
-        Runs initialisation-from-source methods defined on parent
-        classes. These will be called _P__initialization, where P is
-        the name of a parent class.
+        Any such methods will be called ``_P__initialise``, where
+        ``P`` is the name of a parent class, and they will be applied
+        in reverse method resolution order.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            {{init source: optional}}
+            source:
+                The object from which to extract the initialisation
+                information. Typically, but not necessarily, a
+                `{{class}}` object.
 
-            {{init copy: `bool`, optional}}
+            copy: `bool`, optional
+                If True (the default) then deep copy the
+                initialisation information.
 
         :Returns:
 
             `None`
 
         """
-#        for P in self.__class__.__bases__:
-        for P in self.__class__.__mro__:
+        for P in self.__class__.__mro__[-1:0:-1]:
+            method = f"_{P.__name__}__initialise"
             try:
-                getattr(self, f"_{P.__name__}__initialise")(source, copy)
+                getattr(self, method)(source, copy)
             except AttributeError:
                 pass
 

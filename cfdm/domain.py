@@ -76,47 +76,6 @@ class Domain(
         instance._Constructs = Constructs
         return instance
 
-    def __init__(
-        self, properties=None, source=None, copy=True, _use_data=True
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                   ``properties={'long_name': 'Domain for model'}``
-
-            {{init source: optional}}
-
-                A new domain may also be instantiated with the
-                `fromconstructs` class method.
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            properties=properties,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        if source is not None:
-            try:
-                mesh_id = source.get_mesh_id(None)
-            except AttributeError:
-                pass
-            else:
-                if mesh_id is not None:
-                    self.set_mesh_id(mesh_id)
-
-        #self._initialise_netcdf(source)
-        #self._initialise_original_filenames(source)
-
-        self._set_dataset_compliance(self.dataset_compliance(), copy=True)
-
     def __repr__(self):
         """Called by the `repr` built-in function.
 
@@ -588,7 +547,7 @@ class Domain(
             domain.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
 
         """
-        if name in ("b", "c", "mask", "i"):
+        if name in ("b", "c", "d", "f", "i", "q", "mask"):
             raise ValueError(
                 f"The 'name' parameter can not have the value {name!r}"
             )
@@ -631,11 +590,11 @@ class Domain(
         for key, c in self.domain_axes(todict=True).items():
             out.extend(
                 c.creation_commands(
-                    indent=0,
+                    indent=indent,
                     string=False,
                     namespace=namespace0,
-                    name="c",
                     header=header,
+                    name="c",
                 )
             )
             out.append(f"{name}.set_construct(c, key={key!r}, copy=False)")
@@ -653,7 +612,7 @@ class Domain(
                 c.creation_commands(
                     representative_data=representative_data,
                     string=False,
-                    indent=0,
+                    indent=indent,
                     namespace=namespace0,
                     name="c",
                     data_name=data_name,
@@ -670,10 +629,10 @@ class Domain(
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
-                    indent=0,
+                    indent=indent,
                     string=False,
-                    name="c",
                     header=header,
+                    name="c",
                 )
             )
             out.append(f"{name}.set_construct(c)")

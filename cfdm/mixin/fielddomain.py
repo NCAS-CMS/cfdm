@@ -13,6 +13,39 @@ class FieldDomain:
 
     """
 
+    def __initialise(self, source=None, copy=True, **kwargs):
+        """Initialise quaTODOQntization information.
+
+        Called by `__init__`. See `_parent_initialisations` for
+        details.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            {{init source: optional}}
+
+            {{init copy: `bool`, optional}}
+
+            kwargs: optional
+                Additional initialisation parameters.
+
+        :Returns:
+
+            `None`
+
+        """
+        if source is None:
+            return
+
+        try:
+            mesh_id = source.get_mesh_id(None)
+        except AttributeError:
+            pass
+        else:
+            if mesh_id is not None:
+                self.set_mesh_id(mesh_id)
+
     def _apply_masking_constructs(self):
         """Apply masking to metadata constructs in-place.
 

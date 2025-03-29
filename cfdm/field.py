@@ -122,46 +122,6 @@ class Field(
         instance._List = List
         return instance
 
-    def __init__(
-        self, properties=None, source=None, copy=True, _use_data=True
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                  ``properties={'standard_name': 'air_temperature'}``
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        # Initialise the new field with attributes and CF properties
-        core.Field.__init__(
-            self,
-            properties=properties,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        if source is not None:
-            try:
-                mesh_id = source.get_mesh_id(None)
-            except AttributeError:
-                pass
-            else:
-                if mesh_id is not None:
-                    self.set_mesh_id(mesh_id)
-
-#        self._initialise_netcdf(source)
-#        self._initialise_original_filenames(source)
-
-        self._set_dataset_compliance(self.dataset_compliance(), copy=True)
-
     def __repr__(self):
         """Called by the `repr` built-in function.
 
@@ -1618,7 +1578,7 @@ class Field(
         #
         # field: specific_humidity
         field = {{package}}.Field()
-        field.set_properties({'Conventions': 'CF-1.10', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+        field.set_properties({'Conventions': 'CF-1.12', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
         field.nc_set_variable('q')
         data = {{package}}.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
         field.set_data(data)
@@ -1682,10 +1642,11 @@ class Field(
         #
         # field data axes
         field.set_data_axes(('domainaxis0', 'domainaxis1'))
+
         >>> print(q.creation_commands(representative_data=True, namespace='',
         ...                           indent=4, header=False))
             field = Field()
-            field.set_properties({'Conventions': 'CF-1.10', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+            field.set_properties({'Conventions': 'CF-1.12', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
             field.nc_set_variable('q')
             data = <Data(5, 8): [[0.007, ..., 0.013]] 1>  # Representative data
             field.set_data(data)
@@ -1735,15 +1696,9 @@ class Field(
             field.set_data_axes(('domainaxis0', 'domainaxis1'))
 
         """
-        if name in ("b", "c", "mask", "i"):
+        if name in ("b", "c", "d", "f", "i", "q", "mask"):
             raise ValueError(
                 f"The 'name' parameter can not have the value {name!r}"
-            )
-
-        if name == data_name:
-            raise ValueError(
-                "The 'name' parameter can not have the same value as "
-                f"the 'data_name' parameter: {name!r}"
             )
 
         namespace0 = namespace
@@ -1754,7 +1709,7 @@ class Field(
 
         out = super().creation_commands(
             representative_data=representative_data,
-            indent=0,
+            indent=indent,
             namespace=namespace,
             string=False,
             name=name,
@@ -1779,7 +1734,7 @@ class Field(
             self.domain.creation_commands(
                 representative_data=representative_data,
                 string=False,
-                indent=0,
+                indent=indent,
                 namespace=namespace0,
                 name=name,
                 data_name=data_name,
@@ -1794,7 +1749,7 @@ class Field(
                 c.creation_commands(
                     representative_data=representative_data,
                     string=False,
-                    indent=0,
+                    indent=indent,
                     namespace=namespace0,
                     name="c",
                     data_name=data_name,
@@ -1811,10 +1766,10 @@ class Field(
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
-                    indent=0,
+                    indent=indent,
                     string=False,
-                    name="c",
                     header=header,
+                    name="c",
                 )
             )
             out.append(f"{name}.set_construct(c)")
@@ -2159,7 +2114,7 @@ class Field(
 
         **Examples**
 
-        >>> f = cfdm.example_field(0)
+        >>> f = {{package}}.example_field(0)
         >>> print(f)
         Field: specific_humidity (ncvar%q)
         ----------------------------------
