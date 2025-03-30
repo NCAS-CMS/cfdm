@@ -38,66 +38,29 @@ class quantizationTest(unittest.TestCase):
 
     f1 = cfdm.example_field(1)
 
-    def setUp(self):
-        """Preparations called immediately before each test method."""
-        # Disable log messages to silence expected warnings
-        cfdm.LOG_LEVEL("DISABLE")
-        # Note: to enable all messages for given methods, lines or
-        # calls (those without a 'verbose' option to do the same)
-        # e.g. to debug them, wrap them (for methods, start-to-end
-        # internally) as follows: cfdm.LOG_LEVEL('DEBUG')
-        #
-        # < ... test code ... >
-        # cfdm.log_level('DISABLE')
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-        )
+    netcdf3_fmts = (
+        "NETCDF3_CLASSIC",
+        "NETCDF3_64BIT",
+        "NETCDF3_64BIT_OFFSET",
+        "NETCDF3_64BIT_DATA",
+    )
 
-        self.string_filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "string_char.nc"
-        )
-
-        self.netcdf3_fmts = [
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        ]
-        self.netcdf4_fmts = ["NETCDF4", "NETCDF4_CLASSIC"]
-        self.netcdf_fmts = self.netcdf3_fmts + self.netcdf4_fmts
-
-    def test_quantization(self):
+    def test_quantization_read_write(self):
         """Test reading, writing, and storing quantization."""
         f = self.f1.copy()
         # Add some precision to the data
-        f.data[...] = f.array + 0.123456789
-
-        self.assertIsNone(f.get_quantize_on_write(None))
-        self.assertIsNone(f.del_quantize_on_write(None))
+        f.data[...] = f.array + 3.141592653589793
 
         # Set a quantisation instruction
+        nsd = 2
         q0 = cfdm.Quantization(
             {
-                "algorithm": "digitround",
-                "quantization_nsd": 9,
+                "algorithm": "granular_bitround",
                 "implementation": "foobar",
+                "quantization_nsd": nsd,
             }
         )
-        nsd = 2
-        self.assertIsNone(
-            f.set_quantize_on_write(
-                quantization=q0,
-                algorithm="granular_bitround",
-                quantization_nsd=nsd,
-            )
-        )
-        self.assertTrue(
-            f.get_quantize_on_write().equals(
-                cfdm.Quantization(
-                    {"algorithm": "granular_bitround", "quantization_nsd": nsd}
-                )
-            )
-        )
+        f.set_quantize_on_write(q0)
 
         # Write the field and read it back in
         cfdm.write(f, tmpfile1)
@@ -133,18 +96,125 @@ class quantizationTest(unittest.TestCase):
         h._set_quantization(q0)
         self.assertFalse(h.equals(g))
 
-        # Can't set_quantize_on_write when already quantized
-        with self.assertRaises(ValueError):
-            h.set_quantize_on_write()
+    def test_quantize_on_write(self):
+        """Test del/get/set quantize-on-write methods."""
+        f = self.f1.copy()
+        q0 = cfdm.Quantization(
+            {
+                "algorithm": "digitround",
+                "quantization_nsd": 9,
+                "implementation": "foobar",
+            }
+        )
 
-        # Check that quantization information is copied
-        i = h.copy()
-        self.assertIsInstance(i.get_quantization(), cfdm.Quantization)
-        i._del_quantization()
-        i.set_quantize_on_write(q)
-        self.assertIsInstance(i.get_quantize_on_write(), cfdm.Quantization)
-        i = i.copy()
-        self.assertIsInstance(i.get_quantize_on_write(), cfdm.Quantization)
+        self.assertIsNone(f.set_quantize_on_write(q0))
+
+        q1 = q0.copy()
+        q1.del_parameter("implementation")
+        self.assertTrue(f.get_quantize_on_write().equals(q1))
+        self.assertTrue(f.del_quantize_on_write().equals(q1))
+        self.assertIsNone(f.get_quantize_on_write(None))
+        self.assertIsNone(f.del_quantize_on_write(None))
+
+        with self.assertRaises(ValueError):
+            f.set_quantize_on_write()
+
+        with self.assertRaises(ValueError):
+            f.set_quantize_on_write(quantization_nsd=2)
+
+        with self.assertRaises(ValueError):
+            f.set_quantize_on_write(quantization_nsd=2, quantization_nsb=2)
+
+        with self.assertRaises(ValueError):
+            f.set_quantize_on_write(algorithm="digitround", quantization_nsb=2)
+
+        with self.assertRaises(ValueError):
+            f.set_quantize_on_write(
+                algorithm="digitround", quantization_nsd=2, quantization_nsb=2
+            )
+
+        with self.assertRaises(ValueError):
+            f.set_quantize_on_write(algorithm="bitround", quantization_nsd=2)
+
+        f._set_quantization(q0)
+        with self.assertRaises(ValueError):
+            f.set_quantize_on_write(q0)
+
+    def test_quantization(self):
+        """Test _del/get/_set quantization methods."""
+        f = self.f1.copy()
+        q0 = cfdm.Quantization(
+            {
+                "algorithm": "digitround",
+                "quantization_nsd": 9,
+                "implementation": "foobar",
+            }
+        )
+
+        self.assertIsNone(f._set_quantization(q0))
+
+        with self.assertRaises(ValueError):
+            f.set_quantize_on_write(q0)
+
+        self.assertTrue(f.get_quantization().equals(q0))
+        self.assertTrue(f._del_quantization().equals(q0))
+        self.assertIsNone(f.get_quantization(None))
+        self.assertIsNone(f._del_quantization(None))
+
+    def test_quantization_write_exceptions(self):
+        """Test reading, wrTODOQiting, and storing quantization."""
+        f = self.f1.copy()
+
+        # digit_round
+        f.set_quantize_on_write(algorithm="digitround", quantization_nsd=2)
+        with self.assertRaises(ValueError):
+            cfdm.write(f, tmpfile1)
+
+        # NetCDF3 formats
+        for fmt in self.netcdf3_fmts:
+            with self.assertRaises(ValueError):
+                cfdm.write(f, tmpfile1, fmt=fmt)
+
+        # Integer data type
+        f.data.dtype = int
+        with self.assertRaises(ValueError):
+            cfdm.write(f, tmpfile1)
+
+        # Out-of-range quantization_nsd
+        f.data.dtype = "float32"
+        f.set_quantize_on_write(algorithm="bitgroom", quantization_nsd=8)
+        with self.assertRaises(ValueError):
+            cfdm.write(f, tmpfile1)
+
+        f.data.dtype = "float64"
+        f.set_quantize_on_write(algorithm="bitgroom", quantization_nsd=16)
+        with self.assertRaises(ValueError):
+            cfdm.write(f, tmpfile1)
+
+        # Out-of-range quantization_nsb
+        f.data.dtype = "float32"
+        f.set_quantize_on_write(algorithm="bitround", quantization_nsb=24)
+        with self.assertRaises(ValueError):
+            cfdm.write(f, tmpfile1)
+
+        f.data.dtype = "float64"
+        f.set_quantize_on_write(algorithm="bitround", quantization_nsb=53)
+        with self.assertRaises(ValueError):
+            cfdm.write(f, tmpfile1)
+
+    def test_quantization_copy(self):
+        """Test that quantization information gets copied."""
+        f = self.f1.copy()
+
+        f.set_quantize_on_write(algorithm="bitround", quantization_nsb=2)
+        q = f.get_quantize_on_write()
+        g = f.copy()
+        self.assertTrue(g.get_quantize_on_write().equals(q))
+
+        f.del_quantize_on_write(q)
+        f._set_quantization(q)
+        g = f.copy()
+        self.assertTrue(g.get_quantization().equals(q))
 
 
 if __name__ == "__main__":

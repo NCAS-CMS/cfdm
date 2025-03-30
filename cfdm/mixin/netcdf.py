@@ -1478,7 +1478,7 @@ class NetCDFGlobalAttributes(NetCDFMixin):
         >>> f.nc_global_attributes()
         {'Conventions': None, 'comment': 'global_comment', 'foo': None}
         >>> f.nc_global_attributes(values=True)
-        {'Conventions': 'CF-1.9', 'comment': 'global_comment', 'foo': 'bar'}
+        {'Conventions': 'CF-1.12', 'comment': 'global_comment', 'foo': 'bar'}
         >>> f.nc_clear_global_attributes()
         {'Conventions': None, 'comment': 'global_comment', 'foo': None}
         >>> f.nc_global_attributes()

@@ -124,33 +124,6 @@ class PropertiesData(Properties):
 
         return [(i + ndim if i < 0 else i) for i in axes]
 
-    #    def _set_quantization(self, *args, **kwargs):
-    #        """Set quantization metadata.
-    #
-    #        Always raises an `AttributeError` because {{class}} data may
-    #        not be quantized. See CF section 8.4. "Lossy Compression via
-    #        Quantization" for details.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `get_quantization`, `set_quantize_on_write`
-    #
-    #        :Parameters:
-    #
-    #            args, kwargs: optional
-    #                Ignored.
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        """
-    #        raise AttributeError(
-    #            f"{self.__class__.__name__} object has no attribute "
-    #            "'_set_quantization' because its data may not be quantized. "
-    #            "See the CF conventions for details."
-    #        )
-
     @classmethod
     def _test_docstring_substitution_classmethod(cls, arg1, arg2):
         """Test docstring substitution on with @classmethod.
@@ -486,13 +459,13 @@ class PropertiesData(Properties):
             raise ValueError(
                 "The 'name' parameter can not have the same value as "
                 "either of the 'data_name' or 'quantization_name': "
-                f"parameters: {name!r}"
+                f"keywords: {name!r}"
             )
 
         if data_name == quantization_name:
             raise ValueError(
                 "The 'data_name' parameter can not have the same value as "
-                f"'quantization_name' parameter: {name!r}"
+                f"'quantization_name' keyword: {data_name!r}"
             )
 
         namespace0 = namespace
@@ -825,7 +798,7 @@ class PropertiesData(Properties):
     def get_quantization(self, default=ValueError()):
         """Get quantization metadata.
 
-        `{{class}}` data can not be quantized so the default is always
+        `{{class}}` data can not be quantized, so the default is always
         returned.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -848,33 +821,6 @@ class PropertiesData(Properties):
 
         """
         return self._default(default)
-
-    #    def get_quantize_on_write(self, default=ValueError()):
-    #        """Get a quantize-on-write instruction.
-    #
-    #        `{{class}}` data can not be quantized so the default is always
-    #        returned.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `set_quantize_on_write`, `get_quantization`
-    #
-    #        :Parameters:
-    #
-    #            default: optional
-    #                Return the value of the *default* parameter if there
-    #                is no quantize-on-write instruction.
-    #
-    #                {{default Exception}}
-    #
-    #        :Returns:
-    #
-    #                The *default* parameter.
-    #
-    #                {{default Exception}}
-    #
-    #        """
-    #        return self._default(default)
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
@@ -1059,33 +1005,6 @@ class PropertiesData(Properties):
             return data.replace_directory(
                 old=old, new=new, normalise=normalise, common=common
             )
-
-    #    def set_quantize_on_write(self, *args, **kwargs):
-    #        """Set a quantize-on-write instruction.
-    #
-    #        Always raises an `AttributeError` because {{class}} data may
-    #        not be quantized. See CF section 8.4. "Lossy Compression via
-    #        Quantization" for details.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `get_quantize_on_write`, `_set_quantization`
-    #
-    #        :Parameters:
-    #
-    #            args, kwargs: optional
-    #                Ignored.
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        """
-    #        raise AttributeError(
-    #            f"{self.__class__.__name__} object has no attribute "
-    #            "'set_quantize_on_write' because its data may not be quantized. "
-    #            "See the CF conventions for details."
-    #        )
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
