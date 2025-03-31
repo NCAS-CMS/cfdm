@@ -158,7 +158,7 @@ class ArrayMixin:
 
         """
         kwargs["copy"] = False
-        return np.astype(self.array, dtype, **kwargs)
+        return self.array.astype(dtype, **kwargs)
 
     def get_attributes(self, copy=True):
         """The attributes of the array.
