@@ -89,6 +89,23 @@ Data
    ~cfdm.FieldAncillary.shape
    ~cfdm.FieldAncillary.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.FieldAncillary.get_quantization
+   ~cfdm.FieldAncillary._set_quantization
+   ~cfdm.FieldAncillary._del_quantization
+   ~cfdm.FieldAncillary.get_quantize_on_write
+   ~cfdm.FieldAncillary.set_quantize_on_write
+   ~cfdm.FieldAncillary.del_quantize_on_write
+
 Miscellaneous
 -------------
 

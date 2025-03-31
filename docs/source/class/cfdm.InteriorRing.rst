@@ -78,6 +78,19 @@ Data
    ~cfdm.InteriorRing.shape
    ~cfdm.InteriorRing.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.InteriorRing.get_quantization
+   ~cfdm.InteriorRing.get_quantize_on_write
+
 Miscellaneous
 -------------
 

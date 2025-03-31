@@ -98,7 +98,7 @@ Classes that support the creation and storage of compressed arrays.
    cfdm.RaggedIndexedArray
    cfdm.RaggedIndexedContiguousArray
    cfdm.CompressedArray
-
+   cfdm.Quantization
 
 Miscellaneous classes
 ---------------------
