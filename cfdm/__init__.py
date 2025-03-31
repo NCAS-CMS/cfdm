@@ -146,9 +146,13 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
     _minimum_vn = "2025.2.0"
-    if Version(dask.__version__) < Version(_minimum_vn):
+    _maximum_vn = "2025.3.0"
+    if Version(dask.__version__) < Version(_minimum_vn) or Version(
+        dask.__version__
+    ) > Version(_maximum_vn):
         raise ValueError(
-            f"Bad dask version: cfdm requires dask>={_minimum_vn}. "
+            "Bad dask version: cfdm requires "
+            f"dask>={_minimum_vn},<={_maximum_vn}. "
             f"Got {dask.__version__} at {dask.__file__}"
         )
 
