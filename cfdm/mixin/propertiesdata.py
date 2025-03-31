@@ -719,7 +719,7 @@ class PropertiesData(Properties):
         q1 = other.get_quantization(None)
         if not (q0 is None and q1 is None) and not self._equals(q0, q1):
             logger.info(
-                f"{self.__class__.__name__}: Different quantization components"
+                f"{self.__class__.__name__}: Different quantization metadata"
             )
             return False
 
@@ -803,24 +803,64 @@ class PropertiesData(Properties):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `_set_quantization`, `get_quantize_on_write`
+        .. seealso:: `get_quantize_on_write`
 
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter, because
+                Return the value of the *default* keyword, because
                 there is no quantization metadata.
 
                 {{default Exception}}
 
         :Returns:
 
-                The *default* parameter.
+                The default.
 
                 {{default Exception}}
 
         """
-        return self._default(default)
+        if default is None:
+            return
+
+        return self._default(
+            default,
+            message=f"{self.__class__.__name__} has no quantization metadata",
+        )
+
+    def get_quantize_on_write(self, default=ValueError()):
+        """Get a quantize-on-write instruction.
+
+        `{{class}}` data can not be quantized, so the default is
+        always returned.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_quantization`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* keyword, because
+                there is no quantize-on-write instruction.
+
+                {{default Exception}}
+
+        :Returns:
+
+                The default.
+
+                {{default Exception}}
+
+        """
+        if default is None:
+            return
+
+        return self._default(
+            default,
+            message=f"{self.__class__.__name__} has no "
+            "quantize-on-write instruction",
+        )
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):

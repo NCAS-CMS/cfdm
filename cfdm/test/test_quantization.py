@@ -111,11 +111,13 @@ class quantizationTest(unittest.TestCase):
 
         q1 = q0.copy()
         q1.del_parameter("implementation")
+
         self.assertTrue(f.get_quantize_on_write().equals(q1))
         self.assertTrue(f.del_quantize_on_write().equals(q1))
         self.assertIsNone(f.get_quantize_on_write(None))
         self.assertIsNone(f.del_quantize_on_write(None))
 
+        # Check consistency of arguments
         with self.assertRaises(ValueError):
             f.set_quantize_on_write()
 
@@ -136,6 +138,8 @@ class quantizationTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.set_quantize_on_write(algorithm="bitround", quantization_nsd=2)
 
+        # Can't set quantization metadata when there is a
+        # quantize-on-write instruction
         f._set_quantization(q0)
         with self.assertRaises(ValueError):
             f.set_quantize_on_write(q0)

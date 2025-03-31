@@ -5082,9 +5082,8 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             "dataset_chunks": dataset_chunks,
             # --------------------------------------------------------
-            # Quantization: Store the unique Quantization components,
-            #               keyed by their output netCDF variable
-            #               names.
+            # Quantization: Store unique Quantization objects, keyed
+            #               by their output netCDF variable names.
             # --------------------------------------------------------
             "quantization": {},
         }
@@ -6360,7 +6359,7 @@ class NetCDFWrite(IOWrite):
         :Parameters:
 
             quantization: `Quantization`
-                The Quantization component to be written.
+                The Quantization metadata to be written.
 
         :Returns:
 

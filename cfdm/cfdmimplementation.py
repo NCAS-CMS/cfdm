@@ -2438,14 +2438,14 @@ class CFDMImplementation(Implementation):
         return cls(**kwargs)
 
     def initialise_Quantization(self, **kwargs):
-        """Return a quantization component.
+        """Return a quantization metadata class.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
             kwargs: optional
-                Parameters for intialising the quantization component,
+                Parameters for intialising the quantization metadata,
                 which are passed to `Quantization.__init__`.
 
         :Returns:
@@ -3050,15 +3050,15 @@ class CFDMImplementation(Implementation):
     def set_coordinate_conversion(
         self, coordinate_reference, coordinate_conversion
     ):
-        """Set the coordinate conversion coordinate reference construct.
+        """Set a coordinate conversion component.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
-            coordinate_reference: coordinate reference construct
+            coordinate_reference: `CoordinateReference`
 
-            coordinate_conversion: coordinate conversion component
+            coordinate_conversion: `CoordinateConversion`
 
         :Returns:
 
@@ -3562,7 +3562,7 @@ class CFDMImplementation(Implementation):
         parent.set_part_node_count(part_node_count, copy=copy)
 
     def set_quantization(self, parent, quantization, copy=True):
-        """Set a quantization component.
+        """Set quantization metadata.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

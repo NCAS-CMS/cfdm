@@ -11626,7 +11626,7 @@ class NetCDFRead(IORead):
         return out
 
     def _create_quantization(self, ncvar):
-        """Create a Quantization component.
+        """Create quantization metadata.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -11639,7 +11639,7 @@ class NetCDFRead(IORead):
         :Returns:
 
             `Quantization`
-                The Quantization component.
+                The Quantization metadata.
 
         """
         q = self.implementation.initialise_Quantization(
@@ -11650,7 +11650,7 @@ class NetCDFRead(IORead):
         return q
 
     def _set_quantization(self, parent, ncvar):
-        """Set a Quantization component on a construct.
+        """Set a quantization metadata on a construct.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -11690,5 +11690,5 @@ class NetCDFRead(IORead):
                 self.implementation.set_parameter(q, attr, value, copy=False)
                 self.implementation.del_property(parent, attr, None)
 
-        # Set the Quantization component
+        # Set the Quantization metadata
         self.implementation.set_quantization(parent, q, copy=False)

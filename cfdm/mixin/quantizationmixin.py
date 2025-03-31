@@ -63,8 +63,8 @@ class QuantizationMixin:
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if there
-                is no quantization metadata.
+                Return the value of the *default* keyword if there is
+                no quantization metadata.
 
                 {{default Exception}}
 
@@ -132,8 +132,8 @@ class QuantizationMixin:
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if there
-                is no quantize-on-write instruction.
+                Return the value of the *default* keyword if there is
+                no quantize-on-write instruction.
 
                 {{default Exception}}
 
@@ -157,8 +157,8 @@ class QuantizationMixin:
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if there
-                is no quantization metadata.
+                Return the value of the *default* keyword if there is
+                no quantization metadata.
 
                 {{default Exception}}
 
@@ -177,7 +177,7 @@ class QuantizationMixin:
                 default,
                 message=(
                     f"{self.__class__.__name__} has no "
-                    "quantization component"
+                    "quantization metadata"
                 ),
             )
 
@@ -196,8 +196,8 @@ class QuantizationMixin:
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if there
-                is no quantize-on-write instruction.
+                Return the value of the *default* keyword if there is
+                no quantize-on-write instruction.
 
                 {{default Exception}}
 
@@ -247,8 +247,8 @@ class QuantizationMixin:
 
             quantization: `Quantization` or `None`, optional
                 The quantize-on-write instruction in a quantization
-                variable. By default, or if `None`, an empty
-                `Quantization` component is used.
+                variable. By default, or if `None`, a `Quantization`
+                with no parameters is used.
 
                 Its parameters may be overridden by the *algorithm*,
                 *quantization_nsd* or *quantization_nsb* keywords. If
@@ -279,7 +279,7 @@ class QuantizationMixin:
         ...                               'quantization_nsd': 6})
         >>> f.set_quantize_on_write(q)
 
-        Use the quantization component from another construct,
+        Use the quantization metadata from another construct,
         overriding its per-variable quantization parameter:
 
         >>> q = g.get_quantization()
@@ -296,7 +296,7 @@ class QuantizationMixin:
 
         if quantization is None:
             # Note: A parent class must define the `_Quantization`
-            #       attribute as its quantization component class.
+            #       attribute as its quantization class.
             q = self._Quantization()
         else:
             q = quantization.copy()
