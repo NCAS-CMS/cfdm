@@ -8,7 +8,8 @@ class QuantizationMixin:
     def __initialise(self, source, copy=True):
         """Initialise quantization information from a source.
 
-        Intended to be called by `_parent_initialise_from_source`.
+        Intended to be called from a child class with
+        `_parent_initialise_from_source`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -72,6 +73,17 @@ class QuantizationMixin:
             `Quantization`
                 The deleted quantization metadata.
 
+        **Examples**
+
+        >>> f.get_quantization()
+        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
+        >>> q = f._del_quantization()
+        >>> print(f.get_quantization(None))
+        None
+        >>> f._set_quantization(q)
+        >>> f.get_quantization(None)
+        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
+
         """
         return self._del_component("quantization", default)
 
@@ -103,6 +115,17 @@ class QuantizationMixin:
         :Returns:
 
             `None`
+
+        **Examples**
+
+        >>> f.get_quantization()
+        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
+        >>> q = f._del_quantization()
+        >>> print(f.get_quantization(None))
+        None
+        >>> f._set_quantization(q)
+        >>> f.get_quantization(None)
+        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
 
         """
         q_on_w = self.get_quantize_on_write(None)
@@ -142,6 +165,15 @@ class QuantizationMixin:
                 The deleted quantize-on-write instruction in a
                 quantization variable.
 
+        **Examples**
+
+        >>> f.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=6)
+        >>> f.get_quantize_on_write()
+        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=6>
+        >>> q = f.del_quantize_on_write()
+        >>> print(f.get_quantize_on_write(None))
+        None
+
         """
         return self._del_component("quantize_on_write", default)
 
@@ -165,6 +197,17 @@ class QuantizationMixin:
 
             `Quantization`
                 A copy of quantization metadata.
+
+        **Examples**
+
+        >>> f.get_quantization()
+        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
+        >>> q = f._del_quantization()
+        >>> print(f.get_quantization(None))
+        None
+        >>> f._set_quantization(q)
+        >>> f.get_quantization(None)
+        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
 
         """
         q = self._get_component("quantization", None)
@@ -204,6 +247,15 @@ class QuantizationMixin:
 
             `Quantization`
                 A copy of the quantize-on-write instruction.
+
+        **Examples**
+
+        >>> f.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=6)
+        >>> f.get_quantize_on_write()
+        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=6>
+        >>> q = f.del_quantize_on_write()
+        >>> print(f.get_quantize_on_write(None))
+        None
 
         """
         q = self._get_component("quantize_on_write", None)

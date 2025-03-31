@@ -11,7 +11,8 @@ class Files:
     def __initialise(self, source=None, copy=True):
         """Initialise original file names from a source.
 
-        Intended to be called by `_parent_initialise_from_source`.
+        Intended to be called from a child class with
+        `_parent_initialise_from_source`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

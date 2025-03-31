@@ -32,7 +32,7 @@ class Parameters(Container):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        x = [f"{p} = {v!r}" for p, v in sorted(self.parameters().items())]
+        x = [f"{p}={v}" for p, v in sorted(self.parameters().items())]
         return ", ".join(x)
 
     def creation_commands(

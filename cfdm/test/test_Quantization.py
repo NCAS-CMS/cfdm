@@ -23,9 +23,7 @@ class QuantizationTest(unittest.TestCase):
 
     def test_Quantization__str__(self):
         """Test Quantization.__str__."""
-        self.assertEqual(
-            str(self.q), "algorithm = 'bitgroom', quantization_nsd = 4"
-        )
+        self.assertEqual(str(self.q), "algorithm=bitgroom, quantization_nsd=4")
 
     def test_Quantization_dump(self):
         """Test Quantization.dump."""
