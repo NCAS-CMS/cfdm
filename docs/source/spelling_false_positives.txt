@@ -112,6 +112,7 @@ kB
 kwargs
 lat
 len
+libnetcdf
 lossy
 mercator
 MiB
@@ -138,6 +139,8 @@ NetCDFIndexer
 Nino
 nonzero
 npartitions
+nsb
+nsd
 numblocks
 numpy
 NumpyArray
@@ -153,6 +156,10 @@ prepended
 PropertiesData
 PropertiesDataBounds
 py
+Quantization
+quantization
+quantize
+quantized
 RaggedContiguousArray
 RaggedIndexedArray
 RaggedIndexedContiguousArray
