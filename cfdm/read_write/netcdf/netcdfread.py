@@ -8899,7 +8899,8 @@ class NetCDFRead(IORead):
             return True
 
         attribute = {
-            parent_ncvar + ":coordinate_interpolation": coordinate_interpolation
+            parent_ncvar
+            + ":coordinate_interpolation": coordinate_interpolation
         }
 
         g = self.read_vars

@@ -96,6 +96,7 @@ Miscellaneous
 
    ~cfdm.H5netcdfArray.copy
    ~cfdm.H5netcdfArray.to_memory
+   ~cfdm.H5netcdfArray.astype
 
 Special
 -------
