@@ -166,7 +166,7 @@ class quantizationTest(unittest.TestCase):
         self.assertIsNone(f._del_quantization(None))
 
     def test_quantization_write_exceptions(self):
-        """Test reading, wrTODOQiting, and storing quantization."""
+        """Test writing quantization exceptions."""
         f = self.f1.copy()
 
         # digit_round

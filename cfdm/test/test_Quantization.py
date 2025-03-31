@@ -5,7 +5,7 @@ import cfdm
 
 
 class QuantizationTest(unittest.TestCase):
-    """Unit test for the QuantizationTest class."""
+    """Unit test for the Quantization class."""
 
     q = cfdm.Quantization({"quantization_nsd": 4, "algorithm": "bitgroom"})
 

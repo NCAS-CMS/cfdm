@@ -986,16 +986,14 @@ class NetCDFWrite(IOWrite):
             # Grid mapping
             grid_mappings = [
                 g["seen"][id(cr)]["ncvar"]
-                # TODO replace field.coordinate_references with
-                # self.implemenetation call
-                for cr in field.coordinate_references().values()
-                if (
-                    cr.coordinate_conversion.get_parameter(
-                        "grid_mapping_name", None
-                    )
-                    is not None
-                    and key in cr.coordinates()
-                )
+                for cr in self.implementation.get_coordinate_references(
+                    field
+                ).values()
+                if self.implementation.get_coordinate_conversion_parameters(
+                    cr
+                ).get("grid_mapping_name")
+                is not None
+                and key in cr.coordinates()
             ]
             gc[geometry_id].setdefault("grid_mapping", []).extend(
                 grid_mappings

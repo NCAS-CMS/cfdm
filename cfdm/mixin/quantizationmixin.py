@@ -10,7 +10,6 @@ class QuantizationMixin:
 
         Intended to be called by `_parent_initialise_from_source`.
 
-
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:

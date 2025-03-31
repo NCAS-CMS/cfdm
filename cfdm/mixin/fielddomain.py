@@ -13,31 +13,29 @@ class FieldDomain:
 
     """
 
-    def __initialise(self, source=None, copy=True, **kwargs):
-        """Initialise quaTODOQntization information.
+    def __initialise(self, source, copy=True):
+        """Initialise mesh_id information from a source.
 
-        Called by `__init__`. See `_parent_initialisations` for
-        details.
+        Intended to be called by `_parent_initialise_from_source`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            {{init source: optional}}
+            source:
+                The object from which to extract the initialisation
+                information. Typically, but not necessarily, a
+                `{{class}}` object.
 
-            {{init copy: `bool`, optional}}
-
-            kwargs: optional
-                Additional initialisation parameters.
+            copy: `bool`, optional
+                If True (the default) then deep copy the
+                initialisation information.
 
         :Returns:
 
             `None`
 
         """
-        if source is None:
-            return
-
         try:
             mesh_id = source.get_mesh_id(None)
         except AttributeError:

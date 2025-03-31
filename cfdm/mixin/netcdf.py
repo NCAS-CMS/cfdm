@@ -266,9 +266,24 @@ class NetCDFMixin:
         self._set_netcdf(entity, value)
 
     def _set_netcdf(self, key, value):
-        """TODOQ.
+        """Set a new key in the ``netcdf`` component dictionary.
+
+        If the component does not exist then it is automatically
+        created.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            key:
+                The dictionary key.
+
+            value:
+                The dictionary value.
+
+        :Returns:
+
+            `None`
 
         """
         netcdf = self._get_component("netcdf", None)
