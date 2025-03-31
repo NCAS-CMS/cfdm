@@ -86,6 +86,7 @@ Miscellaneous
    ~cfdm.RaggedIndexedContiguousArray.get_filename
    ~cfdm.RaggedIndexedContiguousArray.get_filenames
    ~cfdm.RaggedIndexedContiguousArray.to_dask_array
+   ~cfdm.RaggedIndexedContiguousArray.astype
 
 Special
 -------
