@@ -29,8 +29,9 @@ from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
 from ..exceptions import DatasetTypeError
 from .constants import (
-    _CF_QUANTIZATION_PARAMETERS,
-    _NETCDF_QUANTIZATION_PARAMETERS,
+    CF_QUANTIZATION_PARAMETERS,
+    MAGIC_NUMBERS,
+    NETCDF_QUANTIZATION_PARAMETERS,
 )
 from .flatten import netcdf_flatten
 from .flatten.config import (
@@ -116,6 +117,7 @@ class NetCDFRead(IORead):
         "Node coordinate variable": 190,
         "Tie points coordinate variable": 200,
         "Bounds tie points variable": 201,
+        "Quantization variable": 211,
         # Purely structural
         "Compressed dimension": 300,
         "compress attribute": 301,
@@ -796,13 +798,7 @@ class NetCDFRead(IORead):
             pass
         else:
             # Is it a netCDF-C binary file?
-            if magic_number in (
-                21382211,
-                1128547841,
-                1178880137,
-                38159427,
-                88491075,
-            ):
+            if magic_number in MAGIC_NUMBERS:
                 f_type = "netCDF"
             else:
                 # Is it a CDL text file?
@@ -1332,8 +1328,7 @@ class NetCDFRead(IORead):
             "squeeze": bool(squeeze),
             "unsqueeze": bool(unsqueeze),
             # --------------------------------------------------------
-            # Quantization containers, keyed by their netCDF
-            # quantization container variable names.
+            # Quantization
             # --------------------------------------------------------
             # Maps quantization variable names to Quantization objects
             "quantization_variable": {},
@@ -2019,8 +2014,8 @@ class NetCDFRead(IORead):
                     # container could not be found.
                     continue
 
-                # Do not attempt to create a field construct from a
-                # quantization container variable
+                # Do not attempt to create a field or domain construct
+                # from a quantization container variable
                 g["do_not_create_field"].add(quantization_ncvar)
 
         if _scan_only:
@@ -3133,17 +3128,16 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        quantization_attribute = attributes[parent_ncvar]["quantization"]
+        ncvar = attributes[parent_ncvar]["quantization"]
+        #        quantization_attribute = attributes[parent_ncvar]["quantization"]
 
-        parsed_quantization = self._split_string_by_white_space(
-            parent_ncvar, quantization_attribute, variables=True
-        )
+        #       parsed_quantization = self._split_string_by_white_space(
+        #           parent_ncvar, quantization_attribute, variables=True
+        #        )
 
-        self._check_quantization(
-            parent_ncvar, quantization_attribute, parsed_quantization
-        )
+        ok = self._check_quantization(parent_ncvar, ncvar)
 
-        ncvar = parsed_quantization[0]
+        #        ncvar = parsed_quantization[0]
 
         q = g["quantization_variable"].get(ncvar)
         if q is not None:
@@ -3165,6 +3159,9 @@ class NetCDFRead(IORead):
             f"    Quantization variable = {ncvar!r}\n"
             f"        netCDF attributes: {attributes[ncvar]}"
         )  # pragma: no cover
+
+        if not ok:
+            return
 
         return ncvar
 
@@ -9099,50 +9096,31 @@ class NetCDFRead(IORead):
 
         return ok
 
-    def _check_quantization(
-        self, parent_ncvar, quantization, parsed_quantization
-    ):
-        """Check a geometry node coordinate variable.
+    def _check_quantization(self, parent_ncvar, ncvar):
+        """Check a quantization container variable.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            field_ncvar: `str`
-                The netCDF variable name of the parent data variable.
+            parent_ncvar: `str`
+                The netCDF variable name of the parent variable.
 
-            node_ncvar: `str`
-                The netCDF variable name of the node coordinate variable.
-
-            geometry: `dict`
+            ncvar: `str`
+                The netCDF variable name of the quantization variable.
 
         :Returns:
 
             `bool`
 
         """
-        attribute = {parent_ncvar + ":quantization": quantization}
-
-        incorrectly_formatted = (
-            "quantization attribute",
-            "is incorrectly formatted",
-        )
+        attribute = {parent_ncvar + ":quantization": ncvar}
 
         g = self.read_vars
-
-        if not parsed_quantization or len(parsed_quantization) != 1:
-            self._add_message(
-                parent_ncvar,
-                parent_ncvar,
-                message=incorrectly_formatted,
-                attribute=attribute,
-            )
-            return False
 
         ok = True
 
         # Check that the quantization variable exists in the file
-        ncvar = parsed_quantization[0]
         if ncvar not in g["internal_variables"]:
             ncvar, message = self._missing_variable(
                 ncvar, "Quantization variable"
@@ -9175,7 +9153,7 @@ class NetCDFRead(IORead):
             )
             ok = False
 
-        parameter = _CF_QUANTIZATION_PARAMETERS.get(algorithm)
+        parameter = CF_QUANTIZATION_PARAMETERS.get(algorithm)
         if parameter is None:
             self._add_message(
                 parent_ncvar,
@@ -11682,8 +11660,8 @@ class NetCDFRead(IORead):
         attributes = g["variable_attributes"][ncvar]
         self.implementation.del_property(parent, "quantization", None)
 
-        for attr in set(_CF_QUANTIZATION_PARAMETERS.values()) | set(
-            _NETCDF_QUANTIZATION_PARAMETERS.values()
+        for attr in set(CF_QUANTIZATION_PARAMETERS.values()) | set(
+            NETCDF_QUANTIZATION_PARAMETERS.values()
         ):
             value = attributes.get(attr, None)
             if value is not None:

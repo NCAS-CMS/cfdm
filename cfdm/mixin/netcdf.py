@@ -22,8 +22,9 @@ class NetCDFMixin:
     def __initialise(self, source, copy=True):
         """Initialise netCDF components from a source.
 
-        Intended to be called from a child class with
-        `_parent_initialise_from_source`.
+        Intended to be called from a child class's
+        `_parent_initialise_from_source` method, which in turn is
+        called from `cfdm.core.abstract.Container.__init__`
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -3524,8 +3525,9 @@ class NetCDFUnreferenced:
     def __initialise(self, source, copy=True):
         """Initialise dataset compliance information from a source.
 
-        Intended to be called from a child class with
-        `_parent_initialise_from_source`.
+        Intended to be called from a child class's
+        `_parent_initialise_from_source` method, which in turn is
+        called from `cfdm.core.abstract.Container.__init__`
 
         .. versionadded:: (cfdm) NEXTVERSION
 

@@ -1,6 +1,6 @@
 from ...quantization import Quantization
 
-_CODE0 = {
+CODE0 = {
     # Physically meaningful and corresponding to constructs
     "Cell measures variable": 100,
     "cell_measures attribute": 101,
@@ -27,7 +27,7 @@ _CODE0 = {
     "count_dimension attribute": 321,
 }
 
-_CODE1 = {
+CODE1 = {
     "is incorrectly formatted": 2,
     "is not in file": 3,
     "spans incorrect dimensions": 4,
@@ -48,10 +48,16 @@ _CODE1 = {
 # NetCDF formats
 # --------------------------------------------------------------------
 # NetCDF file magic numbers
-MAGIC_NUMBER = (21382211, 1128547841, 1178880137, 38159427)
+MAGIC_NUMBERS = (
+    21382211,
+    1128547841,
+    1178880137,
+    38159427,
+    88491075,
+)
 
 # NetCDF-3 file formats
-_NETCDF3_FMTS = (
+NETCDF3_FMTS = (
     "NETCDF3_CLASSIC",
     "NETCDF3_64BIT",
     "NETCDF3_64BIT_OFFSET",
@@ -59,14 +65,14 @@ _NETCDF3_FMTS = (
 )
 
 # NetCDF-4 file formats
-_NETCDF4_FMTS = ("NETCDF4", "NETCDF4_CLASSIC")
+NETCDF4_FMTS = ("NETCDF4", "NETCDF4_CLASSIC")
 
 # --------------------------------------------------------------------
 # Quantisation
 # --------------------------------------------------------------------
 # Map CF quantization algorithms to netCDF4 quantize_mode keyword
 # values
-_NETCDF_QUANTIZE_MODES = {
+NETCDF_QUANTIZE_MODES = {
     "bitgroom": "BitGroom",
     "bitround": "BitRound",
     "digitround": "DigitRound",
@@ -75,7 +81,7 @@ _NETCDF_QUANTIZE_MODES = {
 
 # Map CF quantization algorithms to netCDF-C library quantization
 # attributes
-_NETCDF_QUANTIZATION_PARAMETERS = {
+NETCDF_QUANTIZATION_PARAMETERS = {
     "bitgroom": "_QuantizeBitGroomNumberOfSignificantDigits",
     "bitround": "_QuantizeBitRoundNumberOfSignificantBits",
     "digitround": "_QuantizeDigitRoundNumberOfSignificantDigits",
@@ -84,11 +90,11 @@ _NETCDF_QUANTIZATION_PARAMETERS = {
 
 # Map CF quantization algorithms to CF quantization parameters (CF
 # section 8.4.2. Per-variable quantization attributes)
-_CF_QUANTIZATION_PARAMETERS = Quantization.algorithm_parameters()
+CF_QUANTIZATION_PARAMETERS = Quantization.algorithm_parameters()
 
 # Map CF quantization parameters to their upper limits for each data
 # type (CF section 8.4.2. Per-variable quantization attributes)
-_CF_QUANTIZATION_PARAMETER_LIMITS = {
+CF_QUANTIZATION_PARAMETER_LIMITS = {
     "quantization_nsd": {"f4": 7, "f8": 15},
     "quantization_nsb": {"f4": 23, "f8": 52},
 }

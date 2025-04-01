@@ -17,12 +17,12 @@ from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, dirname, integer_dtype
 from .. import IOWrite
 from .constants import (
-    _CF_QUANTIZATION_PARAMETER_LIMITS,
-    _CF_QUANTIZATION_PARAMETERS,
-    _NETCDF3_FMTS,
-    _NETCDF4_FMTS,
-    _NETCDF_QUANTIZATION_PARAMETERS,
-    _NETCDF_QUANTIZE_MODES,
+    CF_QUANTIZATION_PARAMETER_LIMITS,
+    CF_QUANTIZATION_PARAMETERS,
+    NETCDF3_FMTS,
+    NETCDF4_FMTS,
+    NETCDF_QUANTIZATION_PARAMETERS,
+    NETCDF_QUANTIZE_MODES,
 )
 from .netcdfread import NetCDFRead
 
@@ -2806,13 +2806,13 @@ class NetCDFWrite(IOWrite):
 
             # CF quantization parameter name and value
             # (e.g. 'quantization_nsd' and 6)
-            cf_parameter = _CF_QUANTIZATION_PARAMETERS.get(algorithm)
+            cf_parameter = CF_QUANTIZATION_PARAMETERS.get(algorithm)
             cf_ns = self.implementation.del_parameter(q, cf_parameter, None)
 
             # NetCDF-C library quantization attribute name and value
             # (e.g. '_QuantizeBitGroomNumberOfSignificantDigits' and
             # 6)
-            netcdf_parameter = _NETCDF_QUANTIZATION_PARAMETERS.get(algorithm)
+            netcdf_parameter = NETCDF_QUANTIZATION_PARAMETERS.get(algorithm)
             netcdf_ns = self.implementation.del_parameter(
                 q, netcdf_parameter, None
             )
@@ -2847,7 +2847,7 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 # We are going to perform quantization
                 # ----------------------------------------------------
-                quantize_mode = _NETCDF_QUANTIZE_MODES.get(algorithm)
+                quantize_mode = NETCDF_QUANTIZE_MODES.get(algorithm)
 
                 if algorithm == "digitround":
                     raise ValueError(
@@ -2860,14 +2860,14 @@ class NetCDFWrite(IOWrite):
                     raise ValueError(
                         f"Can't quantize {cfvar!r} with non-standardised "
                         f"algorithm {algorithm!r}. Valid algorithms are "
-                        f"{tuple(_NETCDF_QUANTIZE_MODES)}"
+                        f"{tuple(NETCDF_QUANTIZE_MODES)}"
                     )
 
-                if g["fmt"] not in _NETCDF4_FMTS:
+                if g["fmt"] not in NETCDF4_FMTS:
                     raise ValueError(
                         f"Can't quantize {cfvar!r} into a {g['fmt']} "
                         "format file. Quantization is only possible when "
-                        f"writing to one of the {_NETCDF4_FMTS} formats."
+                        f"writing to one of the {NETCDF4_FMTS} formats."
                     )
 
                 if not datatype.startswith("f"):
@@ -2883,7 +2883,7 @@ class NetCDFWrite(IOWrite):
                         f"{cf_parameter!r} parameter has not been defined"
                     )
 
-                u = _CF_QUANTIZATION_PARAMETER_LIMITS[cf_parameter][datatype]
+                u = CF_QUANTIZATION_PARAMETER_LIMITS[cf_parameter][datatype]
                 if not 1 <= cf_ns <= u:
                     raise ValueError(
                         f"Can't quantize {cfvar!r} with a {cf_parameter!r} "
@@ -5330,7 +5330,7 @@ class NetCDFWrite(IOWrite):
         else:
             compression = None
 
-        if fmt in _NETCDF3_FMTS:
+        if fmt in NETCDF3_FMTS:
             if compress:
                 # Can't compress a netCDF-3 format file
                 compress = 0
@@ -5338,8 +5338,11 @@ class NetCDFWrite(IOWrite):
             if group:
                 # Can't write groups to a netCDF-3 file
                 g["group"] = False
-        elif fmt not in _NETCDF4_FMTS:
-            raise ValueError(f"Unknown output file format: {fmt}")
+        elif fmt not in NETCDF4_FMTS:
+            raise ValueError(
+                f"Unknown output file format: {fmt!r}. "
+                f"Valid formats are {NETCDF4_FMTS + NETCDF3_FMTS}"
+            )
 
         # ------------------------------------------------------------
         # Set up global/non-global attributes
