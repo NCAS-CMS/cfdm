@@ -1,7 +1,7 @@
 Version 1.12.1.0
 ----------------
 
-**2025-??-??**
+**2025-04-01**
 
 * Set new method `cfdm.Array.astype`
   (https://github.com/NCAS-CMS/cfdm/issues/331)
