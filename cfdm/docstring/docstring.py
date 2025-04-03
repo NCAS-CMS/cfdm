@@ -693,7 +693,7 @@ _docstring_substitution_definitions = {
         equivalent chunked dask array, but now with the results fully
         computed and in memory. This can avoid the expense of
         re-reading the data from disk, or re-computing it, when the
-        data is accessed on multiple occassions.""",
+        data is accessed on multiple occasions.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ------------------------1----------------------------------------

@@ -4208,7 +4208,7 @@ class NetCDFRead(IORead):
                     # derived from a numeric scalar auxiliary
                     # coordinate.
 
-                    # First turn the scalar auxiliary corodinate into
+                    # First turn the scalar auxiliary coordinate into
                     # a 1-d auxiliary coordinate construct
                     coord = self.implementation.construct_insert_dimension(
                         construct=coord, position=0
@@ -7267,7 +7267,7 @@ class NetCDFRead(IORead):
                             ),
                             attribute={
                                 interpolation_ncvar
-                                + ":coordinate_interplation": coordinate_interpolation
+                                + ":coordinate_interpolation": coordinate_interpolation
                             },
                         )
                         continue
@@ -8986,7 +8986,8 @@ class NetCDFRead(IORead):
             return True
 
         attribute = {
-            parent_ncvar + ":coordinate_interplation": coordinate_interpolation
+            parent_ncvar
+            + ":coordinate_interpolation": coordinate_interpolation
         }
 
         g = self.read_vars
