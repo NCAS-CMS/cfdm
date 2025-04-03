@@ -161,7 +161,10 @@
     6. Remove duplicate words and sort alphabetically via:
        `sort -u -o docs/source/spelling_false_positives.txt docs/source/spelling_false_positives.txt`
 
-- [ ] Create an archived copy of the documentation (note it will not get committed to this repo. here, but we will move and commit it to https://github.com/NCAS-CMS/cfdm-docs post-release, as a last step):
+- [ ] For major or epoch releases *only* (i.e. not minor, see the versioning strategy at
+  https://ncas-cms.github.io/cfdm/releases.html#versioning-strategy) create an archived copy
+  of the documentation (note it will not get committed to this repo. here, but we will move and
+  commit it to https://github.com/NCAS-CMS/cfdm-docs post-release, as a last step):
 
   ```bash
   ./release_docs archive
@@ -211,7 +214,9 @@
 
 - [ ] Upload the new release to Zenodo: https://zenodo.org/record/5521505
 
-- [ ] Finally, move and commit the previously-generated archived copy of the documentation to https://github.com/NCAS-CMS/cfdm-docs (fork or clone that repo first):
+- [ ] Finally, for major or epoch releases *only*, move the archive docs generated earlier to
+  https://github.com/NCAS-CMS/cfdm-docs and commit them (you may have to fork or clone
+  that repo first):
 
   ```bash
   mv docs/<vn>/ ~/cfdm-docs/
