@@ -278,7 +278,7 @@ class PropertiesData(Properties):
                   that has been read from a dataset with the
                   ``mask=False`` parameter to the `read` function,
                   then the mask defined in the dataset can only be
-                 recreated if the ``missing_value``, ``_FillValue``,
+                  recreated if the ``missing_value``, ``_FillValue``,
                   ``valid_min``, ``valid_max``, and ``valid_range``
                   properties have not been updated.
 
