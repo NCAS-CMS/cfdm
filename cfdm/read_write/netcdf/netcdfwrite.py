@@ -662,7 +662,7 @@ class NetCDFWrite(IOWrite):
                 The name of the netCDF dimension for this dimension
                 coordinate construct, including any groups structure. Note
                 that the group structure may be different to the
-                corodinate variable, and the basename.
+                coordinate variable, and the basename.
 
             coordinates: `list`
                This list may get updated in-place.
@@ -4942,7 +4942,7 @@ class NetCDFWrite(IOWrite):
             # valid_[min|max|range] attributes?
             "warn_valid": bool(warn_valid),
             "valid_properties": set(("valid_min", "valid_max", "valid_range")),
-            # Whether or not to name dimension corodinates in the
+            # Whether or not to name dimension coordinates in the
             # 'coordinates' attribute
             "coordinates": bool(coordinates),
             # Dictionary of netCDF variable names and netCDF
