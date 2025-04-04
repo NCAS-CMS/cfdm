@@ -136,30 +136,6 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
 
         return dataset
 
-    #    def _set_attributes(self, var):
-    #        """Set the netCDF variable attributes.
-    #
-    #        These are set from the netCDF variable attributes, but only if
-    #        they have not already been defined, either during `{{class}}`
-    #        instantiation or by a previous call to `_set_attributes`.
-    #
-    #        .. versionadded:: (cfdm) 1.11.2.0
-    #
-    #        :Parameters:
-    #
-    #            var: `h5netcdf.Variable`
-    #                The netCDF variable.
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        """
-    #        if self._get_component("attributes", None) is not None:
-    #            return
-    #
-    #        self._set_component("attributes", dict(var.attrs), copy=False)
-
     def close(self, dataset):
         """Close the dataset containing the data.
 
