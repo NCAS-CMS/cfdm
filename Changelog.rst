@@ -1,3 +1,13 @@
+Version NEXTVERSION
+----------------
+
+**2025-06-??**
+
+* Improve performance in `cfdm.read` by caching any array values
+  retrieved from disk (https://github.com/NCAS-CMS/cfdm/issues/313)
+
+----
+
 Version 1.12.1.0
 ----------------
 
