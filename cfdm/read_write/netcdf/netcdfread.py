@@ -1394,6 +1394,8 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "squeeze": bool(squeeze),
             "unsqueeze": bool(unsqueeze),
+            #
+            "cached_Data": {},
         }
 
         g = self.read_vars
@@ -1423,7 +1425,7 @@ class NetCDFRead(IORead):
                     "netCDF dataset"
                 )  # pragma: no cover
 
-                return []
+            return []
 
         logger.info(
             f"Reading netCDF file: {g['filename']}\n"
@@ -1594,6 +1596,8 @@ class NetCDFRead(IORead):
             ):
                 g["global_attributes"].pop(attr, None)
 
+        ff = self._file_variables(nc)
+ 
         for ncvar in self._file_variables(nc):
             ncvar_basename = ncvar
             groups = ()
@@ -1661,6 +1665,7 @@ class NetCDFRead(IORead):
             variable_dimensions[ncvar] = tuple(
                 self._file_variable_dimensions(variable)
             )
+
             variable_dataset[ncvar] = nc
             variable_filename[ncvar] = g["filename"]
             variables[ncvar] = variable
@@ -1668,10 +1673,11 @@ class NetCDFRead(IORead):
             variable_basename[ncvar] = ncvar_basename
             variable_groups[ncvar] = groups
             variable_group_attributes[ncvar] = group_attributes
-
+ 
         # Populate dimensions_groups and dimension_basename
         # dictionaries
-        for ncdim in self._file_dimensions(nc):
+        file_dimensions = dict(self._file_dimensions(nc))
+        for ncdim, dimension in file_dimensions.items():
             ncdim_org = ncdim
             ncdim_basename = ncdim
             groups = ()
@@ -1696,10 +1702,11 @@ class NetCDFRead(IORead):
             dimension_groups[ncdim] = groups
             dimension_basename[ncdim] = ncdim_basename
 
+#            dimension_isunlimited[ncdim] = file_dimensions[ncdim_org].isunlimited()
             dimension_isunlimited[ncdim] = self._file_dimension_isunlimited(
                 nc, ncdim_org
             )
-
+ 
         if has_groups:
             variable_dimensions = {
                 name: tuple([flattener_dimensions[ncdim] for ncdim in value])
@@ -1746,7 +1753,7 @@ class NetCDFRead(IORead):
 
         # The netCDF dimensions of the parent file
         internal_dimension_sizes = {}
-        for name, dimension in self._file_dimensions(nc).items():
+        for name, dimension in file_dimensions.items():
             if (
                 has_groups
                 and dimension_isunlimited[flattener_dimensions[name]]
@@ -1761,7 +1768,7 @@ class NetCDFRead(IORead):
                 internal_dimension_sizes[name] = group.dimensions[ncdim].size
             else:
                 internal_dimension_sizes[name] = dimension.size
-
+    
         if g["has_groups"]:
             internal_dimension_sizes = {
                 flattener_dimensions[name]: value
@@ -2068,7 +2075,7 @@ class NetCDFRead(IORead):
                 self._get_variables_from_external_files(
                     netcdf_external_variables
                 )
-
+  
         # ------------------------------------------------------------
         # Create a field/domain from every netCDF variable (apart from
         # special variables that have already been identified as such)
@@ -2115,7 +2122,7 @@ class NetCDFRead(IORead):
                         continue
 
                     all_fields_or_domains[f"{ncvar} {location}"] = mesh_domain
-
+   
         # ------------------------------------------------------------
         # Check for unreferenced external variables (CF>=1.7)
         # ------------------------------------------------------------
@@ -2256,12 +2263,12 @@ class NetCDFRead(IORead):
             elif g["squeeze"]:
                 for f in out:
                     self.implementation.squeeze(f, inplace=True)
-
+   
         # ------------------------------------------------------------
         # Close all opened netCDF files (last thing before returning)
         # ------------------------------------------------------------
         self.file_close()
-
+    
         # ------------------------------------------------------------
         # Return the fields/domains
         # ------------------------------------------------------------
@@ -5742,7 +5749,6 @@ class NetCDFRead(IORead):
                 parent_ncvar=parent_ncvar,
                 coord_ncvar=ncvar,
             )
-
             self.implementation.set_data(bounds, bounds_data, copy=False)
 
             # Store the original file names
@@ -6602,13 +6608,11 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         construct_type = self.implementation.get_construct_type(construct)
-
         netcdf_array, netcdf_kwargs = self._create_netcdfarray(
             ncvar,
             unpacked_dtype=unpacked_dtype,
             coord_ncvar=coord_ncvar,
         )
-
         if netcdf_array is None:
             return None
 
@@ -6923,7 +6927,7 @@ class NetCDFRead(IORead):
                             "the 'Data.replace_directory' method. "
                             f"Got: {replace_directory!r}"
                         )
-
+    
         # Return the data object
         return data
 
@@ -7954,6 +7958,12 @@ class NetCDFRead(IORead):
             `Data`
 
         """
+        g = self.read_vars
+            
+#        cached_Data = g['cached_Data'].get(ncvar)
+#        if  cached_Data is not None:
+#            return cached_Data.copy()
+        
         if array.dtype is None:
             g = self.read_vars
             if g["has_groups"]:
@@ -8018,6 +8028,8 @@ class NetCDFRead(IORead):
             if shape == data.shape:
                 self.implementation.nc_set_hdf5_chunksizes(data, chunks)
 
+        g['cached_Data'][ncvar] = data
+                
         return data
 
     def _copy_construct(self, construct_type, parent_ncvar, ncvar):
@@ -11080,8 +11092,6 @@ class NetCDFRead(IORead):
         else:
             dask_chunks = g.get("dask_chunks", "storage-aligned")
 
-        storage_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
-
         # ------------------------------------------------------------
         # None
         # ------------------------------------------------------------
@@ -11089,16 +11099,20 @@ class NetCDFRead(IORead):
             # No Dask chunking
             return -1
 
-        ndim = array.ndim
-        if (
-            storage_chunks is not None
-            and not compressed
-            and len(storage_chunks) > ndim
-        ):
-            # Remove irrelevant trailing dimensions (e.g. as used by
-            # char data-type variables)
-            storage_chunks = storage_chunks[:ndim]
-
+        if dask_chunks in ("storage-aligned", "storage-exact"):
+            # Get the storage chunks
+            storage_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
+            
+            ndim = array.ndim
+            if (
+                    storage_chunks is not None
+                    and not compressed
+                    and len(storage_chunks) > ndim
+            ):
+                # Remove irrelevant trailing dimensions (e.g. as used
+                # by char data-type variables)
+                storage_chunks = storage_chunks[:ndim]
+                
         # ------------------------------------------------------------
         # storage-aligned
         # ------------------------------------------------------------
