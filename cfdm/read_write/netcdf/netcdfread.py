@@ -1596,14 +1596,13 @@ class NetCDFRead(IORead):
             ):
                 g["global_attributes"].pop(attr, None)
 
-        ff = self._file_variables(nc)
- 
-        for ncvar in self._file_variables(nc):
+#        ff = self._file_variables(nc)
+        for ncvar, variable in self._file_variables(nc).items():
             ncvar_basename = ncvar
             groups = ()
             group_attributes = {}
 
-            variable = self._file_variable(nc, ncvar)
+            # variable = self._file_variable(nc, ncvar)
 
             # --------------------------------------------------------
             # Specify the group structure for each variable (CF>=1.8)
@@ -1673,7 +1672,7 @@ class NetCDFRead(IORead):
             variable_basename[ncvar] = ncvar_basename
             variable_groups[ncvar] = groups
             variable_group_attributes[ncvar] = group_attributes
- 
+
         # Populate dimensions_groups and dimension_basename
         # dictionaries
         file_dimensions = dict(self._file_dimensions(nc))
@@ -2093,6 +2092,8 @@ class NetCDFRead(IORead):
 
         all_fields_or_domains = {}
         domain = g["domain"]
+        import time
+        s = time.time()
         for ncvar in g["variables"]:
             if ncvar in g["do_not_create_field"] or ncvar in g["mesh"]:
                 continue
@@ -2102,6 +2103,8 @@ class NetCDFRead(IORead):
             )
             if field_or_domain is not None:
                 all_fields_or_domains[ncvar] = field_or_domain
+
+            print ('creating field', ncvar,f"{time.time()-s:.4f}"); s = time.time()
 
         # ------------------------------------------------------------
         # Create domain constructs from UGRID mesh topology variables
@@ -2268,7 +2271,7 @@ class NetCDFRead(IORead):
         # Close all opened netCDF files (last thing before returning)
         # ------------------------------------------------------------
         self.file_close()
-    
+        print ('done', f"{time.time()-s:.4f}")
         # ------------------------------------------------------------
         # Return the fields/domains
         # ------------------------------------------------------------
@@ -3671,6 +3674,8 @@ class NetCDFRead(IORead):
             `Field` or `Domain`
 
         """
+        import time
+        s = time.time()
         g = self.read_vars
 
         field = not domain
@@ -3978,6 +3983,7 @@ class NetCDFRead(IORead):
         # Add the data to the field
         # ------------------------------------------------------------
         if field:
+            s = time.time()
             data = self._create_data(
                 field_ncvar, f, unpacked_dtype=unpacked_dtype
             )
@@ -3988,6 +3994,7 @@ class NetCDFRead(IORead):
 
             self.implementation.set_data(f, data, axes=data_axes, copy=False)
 
+            print ('    _create_data', field_ncvar,f"{time.time()-s:.4f}"); s = time.time()
         # Store the original file names
         self.implementation.set_original_filenames(f, g["filename"])
 
@@ -6415,7 +6422,8 @@ class NetCDFRead(IORead):
 
         """
         g = self.read_vars
-
+        import time
+        s = time.time()
         if g["has_groups"]:  # ppp
             # Get the variable from the original grouped file. This is
             # primarily so that unlimited dimensions don't come out
@@ -6432,11 +6440,12 @@ class NetCDFRead(IORead):
         else:
             dataset = g["nc"]
             variable = g["variables"].get(ncvar)
-
+        print ('    1', ncvar,f"{time.time()-s:.4f}"); s = time.time()
         if variable is None:
             return None
 
         dtype = self._dtype(variable)
+        print ('    2', ncvar,f"{time.time()-s:.4f}"); s = time.time()
         if dtype is str or dtype.kind == "O":
             # netCDF string types have a dtype of `str`, which needs
             # to be reset as a numpy.dtype, but we don't know what
@@ -6446,8 +6455,10 @@ class NetCDFRead(IORead):
         if dtype is not None and unpacked_dtype is not False:
             dtype = np.result_type(dtype, unpacked_dtype)
 
+        s = time.time()
         ndim = self._ndim(variable)
         shape = variable.shape
+        print ('    shape & ndim', ncvar,f"{time.time()-s:.4f}"); s = time.time()
         if self._is_char(ncvar) and ndim >= 1:
             # Has a trailing string-length dimension
             strlen = shape[-1]
@@ -6455,6 +6466,7 @@ class NetCDFRead(IORead):
             dtype = np.dtype(f"U{strlen}")
 
         filename = g["variable_filename"][ncvar]
+        print ('    3', ncvar,f"{time.time()-s:.4f}"); s = time.time()
 
         attributes = g["variable_attributes"][ncvar].copy()
         if coord_ncvar is not None:
@@ -6494,8 +6506,12 @@ class NetCDFRead(IORead):
                 #
                 # Add the pyfive.Variable object to the Array object
                 # initialization
-                kwargs["variable"] = dataset._h5file[ncvar]
+                s = time.time()
+#                kwargs["variable"] = dataset._h5file[ncvar]
+                kwargs["variable"] = g['variables'][ncvar]._h5ds
+                print ('    _dataset._h5file[ncvar]', ncvar,f"{time.time()-s:.4f}"); s = time.time()
                 array = self.implementation.initialise_PyfiveArray(**kwargs)
+                print ('    initialise_PyfiveArray', ncvar,f"{time.time()-s:.4f}"); s = time.time()
             elif netcdf_backend == "netcdf_file":
                 # Backend scipy.io.netcdf_file
                 array = self.implementation.initialise_Netcdf_fileArray(
@@ -6607,12 +6623,17 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
+        import time
+        s = time.time()
         construct_type = self.implementation.get_construct_type(construct)
         netcdf_array, netcdf_kwargs = self._create_netcdfarray(
             ncvar,
             unpacked_dtype=unpacked_dtype,
             coord_ncvar=coord_ncvar,
         )
+        
+        print ('    _create_netcdfarray', ncvar,f"{time.time()-s:.4f}"); s = time.time()
+        
         if netcdf_array is None:
             return None
 
@@ -11425,6 +11446,8 @@ class NetCDFRead(IORead):
             # convention, as they'll likely be wrong.
             return
 
+        print ('    _caching elements from disk', ncvar)
+        
         g = self.read_vars
 
         # Get the netCDF4.Variable for the data
