@@ -467,8 +467,8 @@ class NetCDFRead(IORead):
         for nc in g["datasets"]:
             if g["netcdf_backend"] == "netcdf_file":
                 # We can't close a scipy.io.netcdf_file instance
-                # opened with mmap=True if file any netcdf_variables
-                # or arrays referring to its data still exist (see
+                # opened with mmap=True if any netcdf_variables or
+                # arrays referring to its data still exist (see
                 # netcdf_file docs for details). So, rather than
                 # attempting to hunt down all such reference (messy!),
                 # the hack of setting the '_mm_buf' attribute to None
@@ -490,9 +490,9 @@ class NetCDFRead(IORead):
         if "nc_grouped" in g:
             g["nc_grouped"].close()
 
-        # Close s3fs.File objects
-        for f in g["s3fs_File_objects"]:
-            f.close()
+#        # Close s3fs.File objects
+#        for f in g["s3fs_File_objects"]:
+#            f.close()
 
     def file_open(self, filename, flatten=True, verbose=None):
         """Open the netCDF file for reading.
@@ -557,7 +557,7 @@ class NetCDFRead(IORead):
             # Reset 'filename' to an s3fs.File object that can be
             # passed to the netCDF backend
             filename = file_system.open(u.path[1:], "rb")
-            g["s3fs_File_objects"].append(filename)
+#            g["s3fs_File_objects"].append(filename)
 
             if is_log_level_detail(logger):
                 logger.detail(
@@ -1361,8 +1361,8 @@ class NetCDFRead(IORead):
             "file_system_storage_options": {},
             # Cached s3fs.S3FileSystem objects
             "file_systems": _file_systems,
-            # Cache of open s3fs.File objects
-            "s3fs_File_objects": [],
+#            # Cache of open s3fs.File objects
+#            "s3fs_File_objects": [],
             # --------------------------------------------------------
             # Array element caching
             # --------------------------------------------------------
