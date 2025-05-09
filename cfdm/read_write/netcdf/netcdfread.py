@@ -10785,9 +10785,16 @@ class NetCDFRead(IORead):
             # netCDF4, h5netcdf
             return var.dimensions
         except AttributeError:
-            # TODOZARR check for zarr3 first
-            # zarr2
-            return var.attrs["_ARRAY_DIMENSIONS"]
+            try:
+                # zarr3
+                dimension_names = var.metadata.dimension_names
+                if dimension_names is None:
+                    raise Exception("TODOZARR")
+
+                return dimension_names
+            except AttributeError:
+                # zarr2
+                return var.attrs["_ARRAY_DIMENSIONS"]
 
     def _file_variable_size(self, var):
         """Return the size of a variable's array.
