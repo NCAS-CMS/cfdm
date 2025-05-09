@@ -34,6 +34,10 @@ _docstring_substitution_definitions = _subs
 del _subs
 
 
+class DeprecationError(Exception):
+    pass
+
+
 def configuration(
     atol=None,
     rtol=None,
@@ -93,7 +97,7 @@ def configuration(
             The new chunksize in bytes. The default is to not change
             the current behaviour.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
     :Returns:
 
@@ -360,34 +364,34 @@ def environment(display=True, paths=True):
     Python: 3.11.4
     packaging: 23.0
     numpy: 1.25.2
-    cfdm.core: NEXTVERSION
+    cfdm.core: 1.11.2.0
     HDF5 library: 1.14.2
     netcdf library: 4.9.2
     netCDF4: 1.6.4
     h5netcdf: 1.3.0
     h5py: 3.10.0
-    s3fs: 2023.12.2
-    dask: 2024.7.0
+    s3fs: 2024.6.0
+    dask: 2025.2.0
     scipy: 1.11.3
     cftime: 1.6.2
-    cfdm: NEXTVERSION
+    cfdm: 1.11.2.0
 
     >>> cfdm.environment()
     Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
     Python: 3.11.4 /home/miniconda3/bin/python
     packaging: 23.0 /home/miniconda3/lib/python3.11/site-packages/packaging/__init__.py
     numpy: 1.25.2 /home/miniconda3/lib/python3.11/site-packages/numpy/__init__.py
-    cfdm.core: NEXTVERSION /home/cfdm/cfdm/core/__init__.py
+    cfdm.core: 1.11.2.0 /home/cfdm/cfdm/core/__init__.py
     HDF5 library: 1.14.2
     netcdf library: 4.9.2
     netCDF4: 1.6.4 /home/miniconda3/lib/python3.11/site-packages/netCDF4/__init__.py
     h5netcdf: 1.3.0 /home/miniconda3/lib/python3.11/site-packages/h5netcdf/__init__.py
     h5py: 3.10.0 /home/miniconda3/lib/python3.11/site-packages/h5py/__init__.py
-    s3fs: 2023.12.2 /home/miniconda3/lib/python3.11/site-packages/s3fs/__init__.py
+    s3fs: 2024.6.0 /home/miniconda3/lib/python3.11/site-packages/s3fs/__init__.py
     scipy: 1.11.3 /home/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
-    dask: 2024.7.0 /home/miniconda3/lib/python3.11/site-packages/dask/__init__.py
+    dask: 2025.2.0 /home/miniconda3/lib/python3.11/site-packages/dask/__init__.py
     cftime: 1.6.2 /home/miniconda3/lib/python3.11/site-packages/cftime/__init__.py
-    cfdm: NEXTVERSION /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
+    cfdm: 1.11.2.0 /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
 
     """
     import cftime
@@ -471,7 +475,7 @@ def abspath(path, uri=None):
             `None` (the default) then the returned path will begin
             with a URI scheme component if the input *path* does.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
     :Returns:
 
@@ -490,7 +494,7 @@ def abspath(path, uri=None):
     '/data/file.nc'
     >>> cfdm.abspath('file:///file.nc')
     'file:///file.nc'
-    >>> cfdm.abspath('file://file.nc'),
+    >>> cfdm.abspath('file://file.nc')
     'file:///data/archive'
     >>> cfdm.abspath('file:/file.nc')
     'file:///file.nc'
@@ -560,7 +564,7 @@ def abspath(path, uri=None):
 def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
     """Return the directory of a path.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     :Parameters:
 
@@ -586,7 +590,7 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
             a file.
 
         sep: `bool`, optional
-            Set to True to add a trailing path seperator to the
+            Set to True to add a trailing path separator to the
             returned directory.
 
     :Returns:
@@ -1669,7 +1673,7 @@ class chunksize(ConstantAccess):
               configuration API will affect subsequent data creation,
               but will *not* change the value of `chunksize`.
 
-    .. versionaddedd:: (cfdm) NEXTVERSION
+    .. versionaddedd:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -1721,7 +1725,7 @@ class chunksize(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: (cfdm) NEXTVERSION
+        .. versionaddedd:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -2004,7 +2008,7 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
     ``atol`` are added together to compare against the absolute difference
     between ``a`` and ``b``.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -2026,20 +2030,20 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
     **Examples**
 
-    >>> cf._numpy_allclose([1, 2], [1, 2])
+    >>> cfdm._numpy_allclose([1, 2], [1, 2])
     True
-    >>> cf._numpy_allclose(numpy.array([1, 2]), numpy.array([1, 2]))
+    >>> cfdm._numpy_allclose(numpy.array([1, 2]), numpy.array([1, 2]))
     True
-    >>> cf._numpy_allclose([1, 2], [1, 2, 3])
+    >>> cfdm._numpy_allclose([1, 2], [1, 2, 3])
     False
-    >>> cf._numpy_allclose([1, 2], [1, 4])
+    >>> cfdm._numpy_allclose([1, 2], [1, 4])
     False
 
     >>> a = numpy.ma.array([1])
     >>> b = numpy.ma.array([2])
     >>> a[0] = numpy.ma.masked
     >>> b[0] = numpy.ma.masked
-    >>> cf._numpy_allclose(a, b)
+    >>> cfdm._numpy_allclose(a, b)
     True
 
     """
@@ -2098,9 +2102,9 @@ def indices_shape(indices, full_shape, keepdims=True):
     Boolean `dask` arrays will be computed, and `dask` arrays with
     unknown size will have their chunk sizes computed.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
-    .. seealso:: `cf.parse_indices`
+    .. seealso:: `cfdm.parse_indices`
 
     :Parameters:
 
@@ -2125,46 +2129,46 @@ def indices_shape(indices, full_shape, keepdims=True):
     >>> import numpy as np
     >>> import dask.array as da
 
-    >>> cf.indices_shape((slice(2, 5), 4), (10, 20))
+    >>> cfdm.indices_shape((slice(2, 5), 4), (10, 20))
     [3, 1]
-    >>> cf.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
+    >>> cfdm.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
     [3, 5]
 
     >>> index0 = [False] * 5
     >>> index0[2:5] = [True] * 3
-    >>> cf.indices_shape((index0, da.arange(1, 6)), (10, 20))
+    >>> cfdm.indices_shape((index0, da.arange(1, 6)), (10, 20))
     [3, 5]
 
     >>> index0 = da.full((5,), False, dtype=bool)
     >>> index0[2:5] = True
     >>> index1 = np.full((6,), False, dtype=bool)
     >>> index1[1:6] = True
-    >>> cf.indices_shape((index0, index1), (10, 20))
+    >>> cfdm.indices_shape((index0, index1), (10, 20))
     [3, 5]
 
     >>> index0 = da.arange(5)
     >>> index0 = index0[index0 < 3]
-    >>> cf.indices_shape((index0, []), (10, 20))
+    >>> cfdm.indices_shape((index0, []), (10, 20))
     [3, 0]
 
-    >>> cf.indices_shape((da.from_array(2), np.array(3)), (10, 20))
+    >>> cfdm.indices_shape((da.from_array(2), np.array(3)), (10, 20))
     [1, 1]
-    >>> cf.indices_shape((da.from_array([]), np.array(())), (10, 20))
+    >>> cfdm.indices_shape((da.from_array([]), np.array(())), (10, 20))
     [0, 0]
-    >>> cf.indices_shape((slice(1, 5, 3), 3), (10, 20))
+    >>> cfdm.indices_shape((slice(1, 5, 3), 3), (10, 20))
     [2, 1]
-    >>> cf.indices_shape((slice(5, 1, -2), 3), (10, 20))
+    >>> cfdm.indices_shape((slice(5, 1, -2), 3), (10, 20))
     [2, 1]
-    >>> cf.indices_shape((slice(5, 1, 3), 3), (10, 20))
+    >>> cfdm.indices_shape((slice(5, 1, 3), 3), (10, 20))
     [0, 1]
-    >>> cf.indices_shape((slice(1, 5, -3), 3), (10, 20))
+    >>> cfdm.indices_shape((slice(1, 5, -3), 3), (10, 20))
     [0, 1]
 
-    >>> cf.indices_shape((slice(2, 5), 4), (10, 20), keepdims=False)
+    >>> cfdm.indices_shape((slice(2, 5), 4), (10, 20), keepdims=False)
     [3]
-    >>> cf.indices_shape((da.from_array(2), 3), (10, 20), keepdims=False)
+    >>> cfdm.indices_shape((da.from_array(2), 3), (10, 20), keepdims=False)
     []
-    >>> cf.indices_shape((2, np.array(3)), (10, 20), keepdims=False)
+    >>> cfdm.indices_shape((2, np.array(3)), (10, 20), keepdims=False)
     []
 
     """
@@ -2226,7 +2230,7 @@ def indices_shape(indices, full_shape, keepdims=True):
 def parse_indices(shape, indices, keepdims=True, newaxis=False):
     """Parse indices for array access and assignment.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -2252,17 +2256,17 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
 
     **Examples**
 
-    >>> cf.parse_indices((5, 8), ([1, 2, 4, 6],))
+    >>> cfdm.parse_indices((5, 8), ([1, 2, 4, 6],))
     [array([1, 2, 4, 6]), slice(None, None, None)]
-    >>> cf.parse_indices((5, 8), (Ellipsis, [2, 4, 6]))
+    >>> cfdm.parse_indices((5, 8), (Ellipsis, [2, 4, 6]))
     [slice(None, None, None), [2, 4, 6]]
-    >>> cf.parse_indices((5, 8), (Ellipsis, 4))
+    >>> cfdm.parse_indices((5, 8), (Ellipsis, 4))
     [slice(None, None, None), slice(4, 5, 1)]
-    >>> cf.parse_indices((5, 8), (Ellipsis, 4), keepdims=False)
+    >>> cfdm.parse_indices((5, 8), (Ellipsis, 4), keepdims=False)
     [slice(None, None, None), 4]
-    >>> cf.parse_indices((5, 8), (slice(-2, 2)))
+    >>> cfdm.parse_indices((5, 8), (slice(-2, 2)))
     [slice(-2, 2, None), slice(None, None, None)]
-    >>> cf.parse_indices((5, 8), (cf.Data([1, 3]),))
+    >>> cfdm.parse_indices((5, 8), (cfdm.Data([1, 3]),))
     [dask.array<array, shape=(2,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>, slice(None, None, None)]
 
     """
@@ -2314,7 +2318,7 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
         if not newaxis and index is np.newaxis:
             raise IndexError(
-                "Invalid indices {indices!r} for array with shape {shape}: "
+                f"Invalid indices {indices!r} for array with shape {shape}: "
                 "New axis indices are not allowed"
             )
 
@@ -2334,3 +2338,31 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
         parsed_indices[i] = index
 
     return parsed_indices
+
+
+def _DEPRECATION_ERROR_KWARGS(
+    instance,
+    method,
+    kwargs=None,
+    message="",
+    version=None,
+    removed_at=None,
+):
+    """Error handling for deprecated kwargs.
+
+    .. versionadded:: (cfdm) 1.12.0.0
+
+    """
+    if removed_at:
+        removed_at = f" and will be removed at cfdm version {removed_at}"
+
+    if not kwargs:
+        kwargs = {}
+
+    for key in kwargs:
+        raise DeprecationError(
+            f"Keyword {key!r} of method "
+            f"'{instance.__class__.__name__}.{method}' has been deprecated "
+            f"at cfdm version {version} and is no longer "
+            f"available{removed_at}. {message}"
+        )

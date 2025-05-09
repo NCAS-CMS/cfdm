@@ -8,7 +8,7 @@ from dask.base import is_dask_collection
 def to_dask(array, chunks, **from_array_options):
     """Create a `dask` array.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 

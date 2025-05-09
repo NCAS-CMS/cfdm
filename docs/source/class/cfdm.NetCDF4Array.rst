@@ -25,6 +25,7 @@ Inspection
    ~cfdm.NetCDF4Array.get_attributes
    ~cfdm.NetCDF4Array.get_missing_values
    ~cfdm.NetCDF4Array.index
+   ~cfdm.NetCDF4Array.is_subspace
 
 .. rubric:: Attributes
 
@@ -39,6 +40,7 @@ Inspection
    ~cfdm.NetCDF4Array.shape
    ~cfdm.NetCDF4Array.size
    ~cfdm.NetCDF4Array.original_shape
+   ~cfdm.NetCDF4Array.reference_shape
 
 Units
 -----
@@ -72,18 +74,17 @@ File
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.NetCDF4Array.file_directory
    ~cfdm.NetCDF4Array.get_address
-   ~cfdm.NetCDF4Array.get_addresses
    ~cfdm.NetCDF4Array.close
    ~cfdm.NetCDF4Array.open
    ~cfdm.NetCDF4Array.get_filename
-   ~cfdm.NetCDF4Array.get_filenames
-   ~cfdm.NetCDF4Array.get_format
-   ~cfdm.NetCDF4Array.get_formats
    ~cfdm.NetCDF4Array.get_groups
    ~cfdm.NetCDF4Array.get_mask
    ~cfdm.NetCDF4Array.get_unpack
    ~cfdm.NetCDF4Array.get_storage_options
+   ~cfdm.NetCDF4Array.replace_directory
+   ~cfdm.NetCDF4Array.replace_filename
 
 Miscellaneous
 -------------
@@ -95,6 +96,7 @@ Miscellaneous
 
    ~cfdm.NetCDF4Array.copy
    ~cfdm.NetCDF4Array.to_memory
+   ~cfdm.NetCDF4Array.astype
 
 Special
 -------

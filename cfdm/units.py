@@ -23,7 +23,7 @@ class Units(metaclass=DocstringRewriteMeta):
     """
 
     def __new__(cls, *args, **kwargs):
-        """Return a new new Units instance."""
+        """Return a new Units instance."""
         return cfUnits(*args, **kwargs)
 
     @staticmethod

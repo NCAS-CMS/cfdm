@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.12.1.0</a></h1>
 
 
 
@@ -122,7 +122,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="cfdm-functions">
 <span id="function"></span><h1><strong>cfdm functions</strong><a class="headerlink" href="#cfdm-functions" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.11.1.0 for version 1.11 of the CF conventions.</p>
+<p>Version 1.12.1.0 for version 1.12 of the CF conventions.</p>
 <section id="reading-and-writing">
 <h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
@@ -137,40 +137,45 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a></p></td>
 <td><p>Write field and domain constructs to a netCDF file.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.netcdf_flatten.html#cfdm.netcdf_flatten" title="cfdm.netcdf_flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.netcdf_flatten</span></code></a></p></td>
+<td><p>Create a flattened version of a grouped netCDF dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.netcdf_index</span></code></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </section>
-<section id="constants">
-<h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
+<section id="mathematical-operations">
+<h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.CF.html#cfdm.CF" title="cfdm.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CF</span></code></a></p></td>
-<td><p>The version of the CF conventions.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.atol</span></code></p></td>
 <td><p>The numerical equality tolerance on absolute differences.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></p></td>
 <td><p>The numerical equality tolerance on relative differences.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a></p></td>
-<td><p>The minimal level of seriousness of log messages which are shown.</p></td>
+</tbody>
+</table>
+</section>
+<section id="resource-management">
+<h2>Resource management<a class="headerlink" href="#resource-management" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.configuration</span></code></p></td>
+<td><p>View or set any number of constants in the project-wide configuration.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.configuration.html#cfdm.configuration" title="cfdm.configuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.configuration</span></code></a></p></td>
-<td><p>Views and sets constants in the project-wide configuration.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a></p></td>
-<td><p>Alias for <a class="reference internal" href="function/cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a></p></td>
-<td><p>Alias for <a class="reference internal" href="function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a>.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.LOG_LEVEL.html#cfdm.LOG_LEVEL" title="cfdm.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.LOG_LEVEL</span></code></a></p></td>
-<td><p>Alias for <a class="reference internal" href="function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a>.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></p></td>
+<td><p>Return a <a class="reference internal" href="class/cfdm.Constant.html#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> instance during class creation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -183,8 +188,14 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.abspath.html#cfdm.abspath" title="cfdm.abspath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.abspath</span></code></a></p></td>
-<td><p>Return a normalised absolute version of a file name.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.CF.html#cfdm.CF" title="cfdm.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CF</span></code></a></p></td>
+<td><p>The version of the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.abspath.html#cfdm.abspath" title="cfdm.abspath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.abspath</span></code></a></p></td>
+<td><p>Return a normalised absolute version of a path.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.dirname.html#cfdm.dirname" title="cfdm.dirname"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.dirname</span></code></a></p></td>
+<td><p>Return the directory of a path.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a></p></td>
 <td><p>Return the names, versions and paths of all dependencies.</p></td>
@@ -204,7 +215,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.integer_dtype.html#cfdm.integer_dtype" title="cfdm.integer_dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.integer_dtype</span></code></a></p></td>
 <td><p>Return the smallest data type that can store the given integer.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a></p></td>
+<td><p>The minimal level of seriousness of log messages which are shown.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a></p></td>
 <td><p>Return the unique constructs from a sequence.</p></td>
 </tr>
 </tbody>
@@ -221,7 +235,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

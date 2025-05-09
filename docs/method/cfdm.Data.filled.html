@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Data.masked_values" href="cfdm.Data.masked_values.html" />
-    <link rel="prev" title="cfdm.Data.apply_masking" href="cfdm.Data.apply_masking.html" />
+    <link rel="prev" title="cfdm.Data.masked_where" href="cfdm.Data.masked_where.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
 
 
 
@@ -87,7 +87,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Data.html">cfdm.Data</a><ul>
-      <li>Previous: <a href="cfdm.Data.apply_masking.html" title="previous chapter">cfdm.Data.apply_masking</a></li>
+      <li>Previous: <a href="cfdm.Data.masked_where.html" title="previous chapter">cfdm.Data.masked_where</a></li>
       <li>Next: <a href="cfdm.Data.masked_values.html" title="next chapter">cfdm.Data.masked_values</a></li>
   </ul></li>
   </ul></li>
@@ -127,8 +127,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data.filled<a class="headerlink" href="#cfdm-data-filled" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.filled">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">filled</code><span class="sig-paren">(</span><em class="sig-param">fill_value=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/data/data.py#L1695-L1754"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.filled" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replace masked elements with the fill value.</p>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">filled</code><span class="sig-paren">(</span><em class="sig-param">fill_value=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/data/data.py#L4702-L4757"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.filled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace masked elements with a fill value.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.7.0</p>
 </div>
@@ -136,18 +136,18 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt>fill_value: scalar, optional</dt><dd><p>The fill value. By default the fill returned by
-<a class="reference internal" href="cfdm.Data.get_fill_value.html#cfdm.Data.get_fill_value" title="cfdm.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a> is used, or if this is not set then the
-netCDF default fill value for the data type is used (as
-defined by <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF.fillvals</span></code>).</p>
+<a class="reference internal" href="cfdm.Data.get_fill_value.html#cfdm.Data.get_fill_value" title="cfdm.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a> is used, or if this is not set then
+the netCDF default fill value for the data type is
+used, as defined by <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF.default_fillvals</span></code>.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The filled data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
+<dt><a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The filled data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
 </dd>
 </dl>
 </dd>
@@ -158,12 +158,10 @@ defined by <code class="xref py py-obj docutils literal notranslate"><span class
 <span class="go">[[1 2 3]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">masked</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">filled</span><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[-9223372036854775806                    2                    3]]</span>
+<span class="go">[-9223372036854775806                    2                    3]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="o">-</span><span class="mi">99</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">filled</span><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[-99   2   3]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="mf">1e10</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[10000000000           2           3]]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -179,7 +177,7 @@ defined by <code class="xref py py-obj docutils literal notranslate"><span class
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

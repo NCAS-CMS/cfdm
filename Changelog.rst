@@ -1,12 +1,54 @@
-Version NEXTVERSION
--------------------
+Version 1.12.1.0
+----------------
 
-**2024-12-??**
+**2025-04-01**
+
+* Set new method `cfdm.Array.astype`
+  (https://github.com/NCAS-CMS/cfdm/issues/331)
+* Set new maximum version of `dask`: ``2025.3.0``
+  (https://github.com/NCAS-CMS/cfdm/issues/332)
+* Changed dependency: ``dask>=2025.2.0,<=2025.3.0``
+
+----
+
+Version 1.12.0.0
+----------------
+
+**2025-03-18**
+
+* Set new minimum version of `dask`: ``2025.2.0``
+  (https://github.com/NCAS-CMS/cfdm/issues/321)
+* Set new minimum version of `numpy`: ``2.0.0``
+  (https://github.com/NCAS-CMS/cfdm/issues/318)
+* Introduction of reading and writing of aggregation datasets (for
+  CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319)
+* Changed dependency: ``Python>=3.9.0``
+* Changed dependency: ``numpy>=2.0.0``
+* Changed dependency: ``netCDF4>=1.7.2``
+* Changed dependency: ``cftime>=1.6.4``
+* Changed dependency: ``dask>=2025.2.0``
+
+----
+
+Version 1.11.2.1
+----------------
+
+**2025-02-26**
+
+* Re-introduction of `cfdm.Data.datetime_as_string`
+  (https://github.com/NCAS-CMS/cfdm/pull/324)
+
+----
+  
+Version 1.11.2.0
+----------------
+
+**2025-01-28**
 
 * Introduction of `dask` for all data manipulations
-  https://github.com/NCAS-CMS/cf-python/pull/312)
-* Fix bug that returned incorrect results when an invalid identifer is
-  provided to `cf.Field.cell_methods`
+  (https://github.com/NCAS-CMS/cfdm/issues/317)
+* Fix bug that returned incorrect results when an invalid identifier
+  is provided to `cf.Field.cell_methods`
   (https://github.com/NCAS-CMS/cfdm/issues/299)
 * Upgrades to allow cfdm to work with Python 3.12
   (https://github.com/NCAS-CMS/cfdm/issues/302)
@@ -24,13 +66,19 @@ Version NEXTVERSION
 * Fix bug that caused `cfdm.write` to fail when a parametric Z
   dimension coordinate did not have a ``computed_standard_name``
   attribute (https://github.com/NCAS-CMS/cfdm/issues/303)
+* Fix bug that caused `cfdm.read` to fail to read at all
+  datasets including variables with badly-encoded UGRID meshes
+  (https://github.com/NCAS-CMS/cfdm/issues/315)
 * New class `cfdm.H5netcdfArray`
 * New class `cfdm.NetCDF4Array`
 * New dependency: ``h5netcdf>=1.3.0``
-* New dependency: ``h5py>=3.10.0``
+* New dependency: ``h5py>=3.12.1``
 * New dependency: ``s3fs>=2024.6.0``
-* New dependency: ``dask>=2024.6.0``
-* Removed dependency: ``netcdf_flattener``
+* New dependency: ``dask>=2024.6.0,<=2024.7.1``
+* New dependency: ``uritools>=4.0.3``
+* New dependency: ``cfunits>=3.3.7``
+* New dependency: ``udunits2>=2.2.28``
+* Removed dependency(now incorporated into `cfdm`): ``netcdf_flattener``
 
 ----
 

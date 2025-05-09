@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Data.second_element" href="cfdm.Data.second_element.html" />
-    <link rel="prev" title="cfdm.Data.unique" href="cfdm.Data.unique.html" />
+    <link rel="prev" title="cfdm.Data.pad_missing" href="cfdm.Data.pad_missing.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
 
 
 
@@ -87,7 +87,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Data.html">cfdm.Data</a><ul>
-      <li>Previous: <a href="cfdm.Data.unique.html" title="previous chapter">cfdm.Data.unique</a></li>
+      <li>Previous: <a href="cfdm.Data.pad_missing.html" title="previous chapter">cfdm.Data.pad_missing</a></li>
       <li>Next: <a href="cfdm.Data.second_element.html" title="next chapter">cfdm.Data.second_element</a></li>
   </ul></li>
   </ul></li>
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data.first_element<a class="headerlink" href="#cfdm-data-first-element" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.first_element">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">first_element</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/data/data.py#L2876-L2909"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.first_element" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">first_element</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/data/data.py#L4759-L4803"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.first_element" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the first element of the data as a scalar.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
@@ -136,6 +136,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cfdm.Data.last_element.html#cfdm.Data.last_element" title="cfdm.Data.last_element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">last_element</span></code></a>, <a class="reference internal" href="cfdm.Data.second_element.html#cfdm.Data.second_element" title="cfdm.Data.second_element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second_element</span></code></a></p>
 </div>
+<p><strong>Performance</strong></p>
+<p>If possible, a cached value is returned. Otherwise the delayed
+operations needed to compute the element are executed, and
+cached for subsequent calls.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The first element of the data.</p>
@@ -177,7 +181,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class AggregationError(Exception):
     """An error relating to CF-netCDF aggregation.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
@@ -648,7 +648,7 @@ class NetCDFWrite(IOWrite):
                 The name of the netCDF dimension for this dimension
                 coordinate construct, including any groups structure. Note
                 that the group structure may be different to the
-                corodinate variable, and the basename.
+                coordinate variable, and the basename.
 
             coordinates: `list`
                This list may get updated in-place.
@@ -2561,9 +2561,9 @@ class NetCDFWrite(IOWrite):
                     continue
 
                 if np.size(value) == 1:
-                    value = np.array(value, copy=False).item()
+                    value = np.array(value).item()
                 else:
-                    value = np.array(value, copy=False).tolist()
+                    value = np.array(value).tolist()
 
                 parameters[term] = value
 
@@ -2655,7 +2655,7 @@ class NetCDFWrite(IOWrite):
                 (the default), then these parameters are inferred from
                 the data.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -2730,7 +2730,7 @@ class NetCDFWrite(IOWrite):
         else:
             lsd = None
 
-        # Set the HDF5 chunk strategy
+        # Set the dataset chunk strategy
         if chunking:
             contiguous, chunksizes = chunking
         else:
@@ -2739,8 +2739,8 @@ class NetCDFWrite(IOWrite):
             )
 
         logger.debug(
-            f"      HDF5 chunksizes: {chunksizes}\n"
-            f"      HDF5 contiguous: {contiguous}"
+            f"      chunksizes: {chunksizes}\n"
+            f"      contiguous: {contiguous}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -2805,11 +2805,11 @@ class NetCDFWrite(IOWrite):
                 g["cfa_write_status"][ncvar] = False
             else:
                 # We're going to create a scalar aggregation variable,
-                # so override dimensions and HDF5 chunking strategy
+                # so override dimensions and dataset chunking strategy
                 # keyword arguments. This is necessary because the
-                # dimensions and HDF5 chunking strategy will otherwise
-                # reflect the aggregated data in memory, rather than
-                # the scalar variable in the file.
+                # dimensions and dataset chunking strategy will
+                # otherwise reflect the aggregated data in memory,
+                # rather than the scalar variable in the file.
                 kwargs["dimensions"] = ()
                 kwargs["contiguous"] = True
                 kwargs["chunksizes"] = None
@@ -3054,7 +3054,7 @@ class NetCDFWrite(IOWrite):
                 For aggregation variables, a dictionary containing the
                 fragment array variables' data.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -4595,7 +4595,7 @@ class NetCDFWrite(IOWrite):
         group=True,
         coordinates=False,
         omit_data=None,
-        hdf5_chunks="4MiB",
+        dataset_chunks="4MiB",
         cfa="auto",
         reference_datetime=None,
     ):
@@ -4824,17 +4824,15 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
-            hdf5_chunks: `str`, `int`, or `float`, optional
-                The HDF5 chunking strategy. The default
-                value is "4MiB".
-
-                See `cfdm.write` for details.
+            dataset_chunks: `str`, `int`, or `float`, optional
+                The dataset chunking strategy. The default value is
+                "4MiB". See `cfdm.write` for details.
 
             cfa: `dict` or `None`, optional
                 Configure the creation of aggregation variables. See
                 `cfdm.write` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -4930,7 +4928,7 @@ class NetCDFWrite(IOWrite):
             # valid_[min|max|range] attributes?
             "warn_valid": bool(warn_valid),
             "valid_properties": set(("valid_min", "valid_max", "valid_range")),
-            # Whether or not to name dimension corodinates in the
+            # Whether or not to name dimension coordinates in the
             # 'coordinates' attribute
             "coordinates": bool(coordinates),
             # Dictionary of netCDF variable names and netCDF
@@ -4962,9 +4960,9 @@ class NetCDFWrite(IOWrite):
             # netCDF variable
             "cfa_write_status": {},
             # --------------------------------------------------------
-            # HDF5 chunking stategy
+            # Dataset chunking stategy
             # --------------------------------------------------------
-            "hdf5_chunks": hdf5_chunks,
+            "dataset_chunks": dataset_chunks,
         }
 
         if mode not in ("w", "a", "r+"):
@@ -4977,14 +4975,14 @@ class NetCDFWrite(IOWrite):
 
         self.write_vars["mode"] = mode
 
-        # Parse the 'hdf5_chunks' parameter
-        if hdf5_chunks != "contiguous":
+        # Parse the 'dataset_chunks' parameter
+        if dataset_chunks != "contiguous":
             try:
-                self.write_vars["hdf5_chunks"] = parse_bytes(hdf5_chunks)
+                self.write_vars["dataset_chunks"] = parse_bytes(dataset_chunks)
             except (ValueError, AttributeError):
                 raise ValueError(
-                    "Invalid value for the 'hdf5_chunks' keyword: "
-                    f"{hdf5_chunks!r}."
+                    "Invalid value for the 'dataset_chunks' keyword: "
+                    f"{dataset_chunks!r}."
                 )
 
         # ------------------------------------------------------------
@@ -5487,7 +5485,7 @@ class NetCDFWrite(IOWrite):
     def _chunking_parameters(self, data, ncdimensions):
         """Set chunking parameters for `netCDF4.createVariable`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -5510,8 +5508,8 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         # ------------------------------------------------------------
-        # HDF5 chunk strategy: Either use that provided on the data,
-        # or else work it out.
+        # Dataset chunk strategy: Either use that provided on the
+        # data, or else work it out.
         # ------------------------------------------------------------
         # Get the chunking strategy defined by the data itself
         chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
@@ -5520,25 +5518,25 @@ class NetCDFWrite(IOWrite):
             return True, None
 
         # Still here?
-        hdf5_chunks = g["hdf5_chunks"]
+        dataset_chunks = g["dataset_chunks"]
         if isinstance(chunksizes, int):
-            # Reset hdf_chunks to the integer given by 'data'
-            hdf5_chunks = chunksizes
+            # Reset dataset chunks to the integer given by 'data'
+            dataset_chunks = chunksizes
         elif chunksizes is not None:
             # Chunked as defined by the tuple of int given by 'data'
             return False, chunksizes
 
         # Still here? Then work out the chunking strategy from the
-        # hdf5_chunks
-        if hdf5_chunks == "contiguous":
-            # Contiguous as defined by 'hdf_chunks'
+        # dataset_chunks
+        if dataset_chunks == "contiguous":
+            # Contiguous as defined by 'dataset_chunks'
             return True, None
 
         # Still here? Then work out the chunks from both the
-        # size-in-bytes given by hdf5_chunks (e.g. 1024, or '1 KiB'),
-        # and the data shape (e.g. (12, 73, 96)).
+        # size-in-bytes given by dataset_chunks (e.g. 1024, or '1
+        # KiB'), and the data shape (e.g. (12, 73, 96)).
         if self._compressed_data(ncdimensions):
-            # Base the HDF5 chunks on the compressed data that is
+            # Base the dataset chunks on the compressed data that is
             # going into the file
             d = self.implementation.get_compressed_array(data)
         else:
@@ -5547,7 +5545,7 @@ class NetCDFWrite(IOWrite):
         d_dtype = d.dtype
         dtype = g["datatype"].get(d_dtype, d_dtype)
 
-        with dask_config.set({"array.chunk-size": hdf5_chunks}):
+        with dask_config.set({"array.chunk-size": dataset_chunks}):
             chunksizes = normalize_chunks("auto", shape=d.shape, dtype=dtype)
 
         if chunksizes:
@@ -5564,7 +5562,7 @@ class NetCDFWrite(IOWrite):
     def _compressed_data(self, ncdimensions):
         """Whether or not the data is being written in compressed form.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -5590,7 +5588,7 @@ class NetCDFWrite(IOWrite):
     def _change_reference_datetime(self, coord):
         """Change the units of a reference date-time.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5630,13 +5628,13 @@ class NetCDFWrite(IOWrite):
         aggregated data is that this method returns `True` and
         `_cfa_aggregation_instructions` returns a `dict`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
             cfvar:
                 Construct (e.g. `DimensionCoordinate`), or construct
-                component e.g. (`Bounds`) contains the data.
+                component e.g. (`Bounds`) that contains the data.
 
             construct_type: `str`
                 The construct type of the *cfvar*, or of its parent if
@@ -5704,7 +5702,7 @@ class NetCDFWrite(IOWrite):
     def _cfa_create_data(self, cfa, ncvar, ncdimensions, data, cfvar):
         """Write an aggregation variable to the netCDF file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5723,7 +5721,7 @@ class NetCDFWrite(IOWrite):
 
         :Returns:
 
-            `None`
+            `True`
 
         """
         g = self.write_vars
@@ -5894,7 +5892,7 @@ class NetCDFWrite(IOWrite):
     def _filled_string_array(self, array, fill_value=""):
         """Fill a string array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5905,7 +5903,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `numpy.ndarray`
-                The string array array with any missing data replaced
+                The string array with any missing data replaced
                 by the fill value.
 
         """
@@ -5919,7 +5917,7 @@ class NetCDFWrite(IOWrite):
     ):
         """Write an aggregation fragment array variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5973,10 +5971,10 @@ class NetCDFWrite(IOWrite):
     def _cfa_unique_value(cls, a, strict=True):
         """Return the unique value of an array.
 
-        If there are multiple unique vales then missing data is
+        If there are multiple unique values then missing data is
         returned.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -5985,7 +5983,7 @@ class NetCDFWrite(IOWrite):
 
              strict: `bool`, optional
                  If True then raise an exception if there is more than
-                 one unique value. If False the a unique value of
+                 one unique value. If False then a unique value of
                  missing data will be returned in this case.
 
         :Returns:
@@ -6010,7 +6008,7 @@ class NetCDFWrite(IOWrite):
     def _cfa_fragment_array_variables(self, data, cfvar):
         """Convert data to aggregated_data terms.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

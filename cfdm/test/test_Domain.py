@@ -227,12 +227,13 @@ class DomainTest(unittest.TestCase):
         """Test Domain.persist."""
         f = cfdm.example_field(0)
         cfdm.write(f, tmpfile)
-        f = cfdm.read(tmpfile)[0].domain
+        f = cfdm.read(tmpfile, dask_chunks=3)[0][:2, :2].domain
 
         on_disk = False
-        for v in f.coordinate("longitude").data.todict().values():
+        for k, v in f.coordinate("longitude").data.todict().items():
             if isinstance(v, cfdm.data.abstract.FileArray):
                 on_disk = True
+                break
 
         self.assertTrue(on_disk)
 
@@ -241,6 +242,7 @@ class DomainTest(unittest.TestCase):
         for v in g.coordinate("longitude").data.todict().values():
             if isinstance(v, np.ndarray):
                 in_memory = True
+                break
 
         self.assertTrue(in_memory)
 
@@ -251,6 +253,7 @@ class DomainTest(unittest.TestCase):
         for v in f.coordinate("longitude").data.todict().values():
             if isinstance(v, np.ndarray):
                 in_memory = True
+                break
 
         self.assertTrue(in_memory)
 

@@ -59,6 +59,7 @@ Data
    ~cfdm.Index.has_data
    ~cfdm.Index.set_data
    ~cfdm.Index.insert_dimension
+   ~cfdm.Index.persist
    ~cfdm.Index.squeeze
    ~cfdm.Index.transpose
 
@@ -88,6 +89,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Index.copy
+   ~cfdm.Index.concatenate
    ~cfdm.Index.creation_commands
    ~cfdm.Index.equals
    ~cfdm.Index.get_filenames
@@ -95,6 +97,19 @@ Miscellaneous
    ~cfdm.Index.has_bounds
    ~cfdm.Index.uncompress
    ~cfdm.Index.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.Index.file_directories
+   ~cfdm.Index.replace_directory
 
 NetCDF
 ------

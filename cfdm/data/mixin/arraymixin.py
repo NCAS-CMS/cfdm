@@ -7,14 +7,30 @@ from cfunits import Units
 class ArrayMixin:
     """Mixin class for a container of an array.
 
-    .. versionadded::  (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 
-    def __array__(self, *dtype):
+    # Functions handled by __array_function__ implementations (numpy
+    # NEP 18)
+    _HANDLED_FUNCTIONS = {}
+
+    def __array__(self, dtype=None, copy=None):
         """The numpy array interface.
 
         .. versionadded:: (cfdm) 1.8.7.0
+
+        :Parameters:
+
+            dtype: optional
+                Typecode or data-type to which the array is cast.
+
+            copy: `None` or `bool`
+                Included to match the v2 `numpy.ndarray.__array__`
+                API, but ignored. The return numpy array is always
+                independent.
+
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -31,18 +47,28 @@ class ArrayMixin:
 
         """
         array = self.array
-        if not dtype:
+        if dtype is None:
             return array
-        else:
-            return array.astype(dtype[0], copy=False)
+
+        return array.astype(dtype, copy=False)
 
     def __array_function__(self, func, types, args, kwargs):
         """Implement the `numpy` ``__array_function__`` protocol.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        See numpy NEP 18 for details.
+
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
-        return NotImplemented
+        if func not in self._HANDLED_FUNCTIONS:
+            return NotImplemented
+
+        # Note: This allows subclasses that don't override
+        #       __array_function__ to handle Array objects
+        if not all(issubclass(t, self.__class__) for t in types):
+            return NotImplemented
+
+        return self._HANDLED_FUNCTIONS[func](*args, **kwargs)
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed subarray.
@@ -96,7 +122,7 @@ class ArrayMixin:
         the actual metadata from the values. It does not force the
         output to have the structure or dtype of the specified meta.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `dask.utils.meta_from_array`
 
@@ -107,15 +133,37 @@ class ArrayMixin:
     def Units(self):
         """The `Units` object containing the units of the array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return Units(self.get_units(None), self.get_calendar(None))
 
+    def astype(self, dtype, **kwargs):
+        """Cast the data to a specified type.
+
+        .. versionadded:: (cfdm) 1.12.1.0
+
+        :Parameters:
+
+            dtype: `str` or dtype
+                Typecode or data-type to which the array is cast.
+
+            kwargs: optional
+                Any other keywords accepted by `np.astype`.
+
+        :Returns:
+
+            `np.ndarray`
+                The data with the new data type
+
+        """
+        kwargs["copy"] = False
+        return self.array.astype(dtype, **kwargs)
+
     def get_attributes(self, copy=True):
         """The attributes of the array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -232,3 +280,31 @@ class ArrayMixin:
             )
 
         return attributes["units"]
+
+
+# --------------------------------------------------------------------
+# __array_function__ implementations (numpy NEP 18)
+# --------------------------------------------------------------------
+def array_implements(cls, numpy_function):
+    """Decorator for __array_function__ implementations.
+
+    .. versionadded:: (cfdm) 1.12.0.0
+
+    """
+
+    def decorator(func):
+        cls._HANDLED_FUNCTIONS[numpy_function] = func
+        return func
+
+    return decorator
+
+
+@array_implements(ArrayMixin, np.concatenate)
+def concatenate(arrays, axis=0):
+    """Version of `np.concatenate` that works for `Array` objects.
+
+    .. versionadded:: (cfdm) 1.12.0.0
+
+    """
+    # Convert to numpy arrays, and concatenate those.
+    return np.ma.concatenate(tuple(map(np.asanyarray, arrays)), axis=axis)

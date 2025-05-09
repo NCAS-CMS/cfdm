@@ -38,7 +38,7 @@ class PointTopology:
                 node_connectivity = node_connectivity.astype(int, copy=False)
 
             node_connectivity = node_connectivity + 1
-            largest_node_id += 1
+            largest_node_id = largest_node_id + 1
 
         p = 0
         pointers = [0]

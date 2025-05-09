@@ -145,7 +145,7 @@ class SubsampledArray(CompressedArrayMixin, CompressedArray):
 
             tie_point_indices: `dict`
                 The tie point index variable for each subsampled
-                dimension. A key indentifies a subsampled dimension by
+                dimension. A key identifies a subsampled dimension by
                 its integer position in the compressed array, and its
                 value is a `TiePointIndex` variable.
 
@@ -599,7 +599,7 @@ class SubsampledArray(CompressedArrayMixin, CompressedArray):
         """Return the conformed tie points and any ancillary data.
 
         Returns the tie points and any ancillary data in the forms
-        required by the interpolation algorthm.
+        required by the interpolation algorithm.
 
         .. versionadded:: (cfdm) 1.10.0.0
 
@@ -1050,7 +1050,7 @@ class SubsampledArray(CompressedArrayMixin, CompressedArray):
                   interpolation subarea dimensions.
 
                5. Flags which state, for each interpolated dimension,
-                  whether each interplation subarea is at the start of
+                  whether each interpolation subarea is at the start of
                   a continuous area.
 
                6. The location of each subarray on the uncompressed
@@ -1064,9 +1064,9 @@ class SubsampledArray(CompressedArrayMixin, CompressedArray):
         compressed by subsampling with dimensions 0 and 2 being
         interpolated dimensions. Interpolated dimension 0 (size 20)
         has two equally-sized continuous areas, each with one
-        interpolation subarea of size 10; and interpolated dimenson 2
+        interpolation subarea of size 10; and interpolated dimension 2
         (size 15) has a single continuous area divided into has three
-        interpolation subareas of szes 5, 6, and 6.
+        interpolation subareas of sizes 5, 6, and 6.
 
         >>> (
         ...  u_indices,
@@ -1176,7 +1176,7 @@ class SubsampledArray(CompressedArrayMixin, CompressedArray):
         interpolation_subarea_indices = c_indices[:]
 
         # The flags which state, for each dimension, whether (`True`)
-        # or not (`False`) an interplation subarea is at the start of
+        # or not (`False`) an interpolation subarea is at the start of
         # a continuous area. Non-interpolated dimensions are given the
         # falsey flag `None`.
         new_continuous_area = [(None,)] * tie_points.ndim
@@ -1255,7 +1255,7 @@ class SubsampledArray(CompressedArrayMixin, CompressedArray):
     def to_dask_array(self, chunks="auto"):
         """Convert the data to a `dask` array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -1318,7 +1318,7 @@ class SubsampledArray(CompressedArrayMixin, CompressedArray):
         #       compressed dimensions, since these chunk sizes are a
         #       function of the tie point indices which haven't yet
         #       been accessed. Therefore, the chunks for the
-        #       compressed dimensons need to be redefined later.
+        #       compressed dimensions need to be redefined later.
         chunks = normalize_chunks(
             self.subarray_shapes(chunks),
             shape=self.shape,

@@ -22,7 +22,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Field.array" href="../attribute/cfdm.Field.array.html" />
+    <link rel="next" title="cfdm.Field.unsqueeze" href="cfdm.Field.unsqueeze.html" />
     <link rel="prev" title="cfdm.Field.squeeze" href="cfdm.Field.squeeze.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
 
 
 
@@ -88,7 +88,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Field.html">cfdm.Field</a><ul>
       <li>Previous: <a href="cfdm.Field.squeeze.html" title="previous chapter">cfdm.Field.squeeze</a></li>
-      <li>Next: <a href="../attribute/cfdm.Field.array.html" title="next chapter">cfdm.Field.array</a></li>
+      <li>Next: <a href="cfdm.Field.unsqueeze.html" title="next chapter">cfdm.Field.unsqueeze</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -127,45 +127,42 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Field.transpose<a class="headerlink" href="#cfdm-field-transpose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.transpose">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">constructs=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/field.py#L2508-L2602"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">constructs=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/field.py#L3158-L3268"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the axes of the data array.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cfdm.Field.insert_dimension.html#cfdm.Field.insert_dimension" title="cfdm.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cfdm.Field.squeeze.html#cfdm.Field.squeeze" title="cfdm.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p>
+<p><a class="reference internal" href="cfdm.Field.insert_dimension.html#cfdm.Field.insert_dimension" title="cfdm.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cfdm.Field.squeeze.html#cfdm.Field.squeeze" title="cfdm.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>, <a class="reference internal" href="cfdm.Field.unsqueeze.html#cfdm.Field.unsqueeze" title="cfdm.Field.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsqueeze</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The new axis order. By default the order is reversed.</p>
-<p>Each axis is identified by its integer position in the
-data. Negative integers counting from the last
-position are allowed.</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=0</span></code></p>
+<dt>axes: sequence or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>Select the domain axis order, defined by the domain
+axes that would be selected by passing each given axis
+description to a call of the field construct’s
+<a class="reference internal" href="cfdm.Field.domain_axis.html#cfdm.Field.domain_axis" title="cfdm.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example, for a value of
+<code class="docutils literal notranslate"><span class="pre">'time'</span></code>, the domain axis construct returned by
+<code class="docutils literal notranslate"><span class="pre">f.domain_axis('time')</span></code> is selected.</p>
+<p>Each dimension of the field construct’s data must be
+provided, or if <em>axes</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then
+the axis order is reversed.</p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=-1</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes=[1,</span> <span class="pre">-2]</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>constructs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If True then transpose the metadata constructs to have
+<dt>constructs: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If True then transpose the metadata constructs to have
 the same relative domain axis order as the data of
 transposed field construct. By default, metadata
 constructs are not changed.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The field construct with permuted data axes. If the
-operation was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<dt><a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The field construct with permuted data axes. If the
+operation was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </dd>
 </dl>
 </dd>
@@ -195,7 +192,7 @@ operation was in-place then <a class="reference external" href="https://docs.pyt
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -15,7 +15,7 @@ class IndexMixin:
 
     **Examples**
 
-    >>> a = cf.{{class}}(....)
+    >>> a = {{package}}.{{class}}(...)
     >>> a.shape
     (6, 5)
     >>> print(np.asanyarray(a)
@@ -33,19 +33,26 @@ class IndexMixin:
     [[ 1,  2,  4],
      [21, 22, 24]]
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 
-    def __array__(self, *dtype):
+    def __array__(self, dtype=None, copy=None):
         """Convert the `{{class}}` into a `numpy` array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
             dtype: optional
                 Typecode or data-type to which the array is cast.
+
+            copy: `None` or `bool`
+                Included to match the v2 `numpy.ndarray.__array__`
+                API, but ignored. The return numpy array is always
+                independent.
+
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -55,10 +62,10 @@ class IndexMixin:
 
         """
         array = self._get_array()
-        if dtype:
-            return array.astype(dtype[0], copy=False)
+        if dtype is None:
+            return array
 
-        return array
+        return array.astype(dtype, copy=False)
 
     def __getitem__(self, index):
         """Returns a subspace of the data as a new `{{class}}`.
@@ -85,7 +92,7 @@ class IndexMixin:
         96]`` will be retrieved from the data when `__array__` is
         called.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `index`, `original_shape`, `__array__`,
                      `__getitem__`
@@ -245,7 +252,7 @@ class IndexMixin:
     def __in_memory__(self):
         """True if the array data is in memory.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -260,7 +267,7 @@ class IndexMixin:
         The subspace is defined by the `index` attributes, and is
         applied with `cfdm.netcdf_indexer`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `__array__`, `index`
 
@@ -304,7 +311,7 @@ class IndexMixin:
         The `shape` is defined by the `index` applied to the
         `original_shape`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `shape`, `original_shape`, `reference_shape`
 
@@ -406,10 +413,10 @@ class IndexMixin:
         """The shape of the data in the file with added dimensions.
 
         This is the same as `original_shape`, but with added size 1
-        dimensions if `index` has has new dimensions added with index
+        dimensions if `index` has new dimensions added with index
         values of `numpy.newaxis`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `index`, `shape`, `original_shape`
 
@@ -429,7 +436,7 @@ class IndexMixin:
         The `shape` is defined by the result of subspacing the data in
         its original shape with the indices given by `index`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `index`, `shape`, `reference_shape`
 
@@ -446,10 +453,10 @@ class IndexMixin:
         """True if the index represents a subspace of the data.
 
         The presence of `numpy.newaxis` (i.e. added size 1 dimensions)
-        in `index` will not, on their own cause `is_subspace` to
+        in `index` will not, on their own, cause `is_subspace` to
         return `False`
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `index`, `shape`
 

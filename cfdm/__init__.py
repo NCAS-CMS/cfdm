@@ -51,9 +51,12 @@ __version__ = core.__version__
 _requires = core._requires + (
     "cftime",
     "netCDF4",
+    "dask",
     "scipy",
     "h5netcdf",
     "s3fs",
+    "uritools",
+    "cfunits",
 )
 
 _error0 = f"cfdm requires the modules {', '.join(_requires)}. "
@@ -63,91 +66,123 @@ try:
     import cftime
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
-
-_minimum_vn = "1.6.0"
-if Version(cftime.__version__) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad cftime version: cfdm requires cftime>={_minimum_vn}. "
-        f"Got {cftime.__version__} at {cftime.__file__}"
-    )
+else:
+    _minimum_vn = "1.6.4"
+    if Version(cftime.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad cftime version: cfdm requires cftime>={_minimum_vn}. "
+            f"Got {cftime.__version__} at {cftime.__file__}"
+        )
 
 # Check the version of netCDF4
 try:
     import netCDF4
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
-
-_minimum_vn = "1.5.4"
-if Version(netCDF4.__version__) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad netCDF4 version: cfdm requires netCDF4>={_minimum_vn}. "
-        f"Got {netCDF4.__version__} at {netCDF4.__file__}"
-    )
+else:
+    _minimum_vn = "1.7.2"
+    if Version(netCDF4.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad netCDF4 version: cfdm requires netCDF4>={_minimum_vn}. "
+            f"Got {netCDF4.__version__} at {netCDF4.__file__}"
+        )
 
 # Check the version of h5netcdf
 try:
     import h5netcdf
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
-
-_minimum_vn = "1.3.0"
-if Version(h5netcdf.__version__) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad h5netcdf version: cfdm requires h5netcdf>={_minimum_vn}. "
-        f"Got {h5netcdf.__version__} at {h5netcdf.__file__}"
-    )
+else:
+    _minimum_vn = "1.3.0"
+    if Version(h5netcdf.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad h5netcdf version: cfdm requires h5netcdf>={_minimum_vn}. "
+            f"Got {h5netcdf.__version__} at {h5netcdf.__file__}"
+        )
 
 # Check the version of h5py
 try:
     import h5py
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
-
-_minimum_vn = "3.10.0"
-if Version(h5py.__version__) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad h5py version: cfdm requires h5py>={_minimum_vn}. "
-        f"Got {h5py.__version__} at {h5py.__file__}"
-    )
+else:
+    _minimum_vn = "3.12.0"
+    if Version(h5py.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad h5py version: cfdm requires h5py>={_minimum_vn}. "
+            f"Got {h5py.__version__} at {h5py.__file__}"
+        )
 
 # Check the version of s3fs
 try:
     import s3fs
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
-
-_minimum_vn = "2024.6.0"
-if Version(s3fs.__version__) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad s3fs version: cfdm requires s3fs>={_minimum_vn}. "
-        f"Got {s3fs.__version__} at {s3fs.__file__}"
-    )
+else:
+    _minimum_vn = "2024.6.0"
+    if Version(s3fs.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad s3fs version: cfdm requires s3fs>={_minimum_vn}. "
+            f"Got {s3fs.__version__} at {s3fs.__file__}"
+        )
 
 # Check the version of scipy
 try:
     import scipy
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
-
-_minimum_vn = "1.10.0"
-if Version(scipy.__version__) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad scipy version: cfdm requires scipy>={_minimum_vn}. "
-        f"Got {scipy.__version__} at {scipy.__file__}"
-    )
+else:
+    _minimum_vn = "1.10.0"
+    if Version(scipy.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad scipy version: cfdm requires scipy>={_minimum_vn}. "
+            f"Got {scipy.__version__} at {scipy.__file__}"
+        )
 
 # Check the version of dask
 try:
     import dask
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
+else:
+    _minimum_vn = "2025.2.0"
+    _maximum_vn = "2025.3.0"
+    if Version(dask.__version__) < Version(_minimum_vn) or Version(
+        dask.__version__
+    ) > Version(_maximum_vn):
+        raise ValueError(
+            "Bad dask version: cfdm requires "
+            f"dask>={_minimum_vn},<={_maximum_vn}. "
+            f"Got {dask.__version__} at {dask.__file__}"
+        )
 
-_minimum_vn = "2024.6.0"
-if Version(dask.__version__) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad scipy version: cfdm requires dask>={_minimum_vn}. "
-        f"Got {dask.__version__} at {dask.__file__}"
-    )
+# Check the version of uritools
+try:
+    import uritools
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+else:
+    _minimum_vn = "4.0.3"
+    if Version(uritools.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad uritools version: cfdm requires uritools>={_minimum_vn}. "
+            f"Got {uritools.__version__} at {uritools.__file__}"
+        )
+
+# Check the version of cfunits
+try:
+    import cfunits
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+else:
+    _minimum_vn = "3.3.7"
+    if Version(cfunits.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad cfunits version: cfdm requires cfunits>={_minimum_vn}. "
+            f"Got {cfunits.__version__} at {cfunits.__file__}"
+        )
+
+del _minimum_vn
 
 from .constants import masked
 

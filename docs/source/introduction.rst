@@ -133,13 +133,32 @@ outside of a Python environment:
 
 ----
 
+**Performance**
+---------------
+
+As of version 1.11.2.0 (released 2025-01-28), cfdm uses `Dask
+<https://docs.dask.org>`_ for all of its data manipulations, which
+provides lazy, parallelised, and out-of-core computations of array
+operations.
+
+----
+
+**Command line utilities**
+--------------------------
+
+During installation the ``cfdump`` command line utility is also
+installed, which generates text descriptions of field constructs
+contained in files.
+
+----
+
 **Related packages**
 --------------------
 
 The `cf-python <https://ncas-cms.github.io/cf-python>`_ package, which
 is built as an extension to cfdm, includes higher-level functionality,
 such as regridding, and statistical operations. In turn, the `cf-plot
-<http://ajheaps.github.io/cf-plot/>`_ package provides comprehensive
+<https://github.com/NCAS-CMS/cf-plot>`_ package provides comprehensive
 visualisation of field constructs created by cf-python.
 
 ----

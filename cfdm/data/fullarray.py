@@ -3,8 +3,7 @@ import numpy as np
 from ..functions import indices_shape, parse_indices
 from .abstract import Array
 from .mixin import IndexMixin
-
-_FULLARRAY_HANDLED_FUNCTIONS = {}
+from .mixin.arraymixin import array_implements
 
 
 class FullArray(IndexMixin, Array):
@@ -12,9 +11,13 @@ class FullArray(IndexMixin, Array):
 
     The array may be empty or all missing values.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
+
+    # Copy the functions handled by __array_function__ implementations
+    # (numpy NEP 18) from Array, so that they can be extended.
+    _HANDLED_FUNCTIONS = Array._HANDLED_FUNCTIONS.copy()
 
     def __init__(
         self,
@@ -74,22 +77,6 @@ class FullArray(IndexMixin, Array):
         self._set_component("shape", shape, copy=False)
         self._set_component("attributes", attributes, copy=False)
 
-    def __array_function__(self, func, types, args, kwargs):
-        """The `numpy` `__array_function__` protocol.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        if func not in _FULLARRAY_HANDLED_FUNCTIONS:
-            return NotImplemented
-
-        # Note: This allows subclasses that don't override
-        #       __array_function__ to handle FullArray objects
-        if not all(issubclass(t, self.__class__) for t in types):
-            return NotImplemented
-
-        return _FULLARRAY_HANDLED_FUNCTIONS[func](*args, **kwargs)
-
     def __repr__(self):
         """Called by the `repr` built-in function.
 
@@ -113,7 +100,7 @@ class FullArray(IndexMixin, Array):
     def _get_array(self, index=None):
         """Returns the data as a `numpy` array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `__array__`, `index`
 
@@ -148,7 +135,7 @@ class FullArray(IndexMixin, Array):
     def array(self):
         """Return an independent numpy array containing the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -171,7 +158,7 @@ class FullArray(IndexMixin, Array):
     def get_full_value(self, default=AttributeError()):
         """Return the data array fill value.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `set_full_value`
 
@@ -192,7 +179,7 @@ class FullArray(IndexMixin, Array):
     def set_full_value(self, fill_value):
         """Set the data array fill value.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `get_full_value`
 
@@ -210,27 +197,16 @@ class FullArray(IndexMixin, Array):
         self._set_component("full_value", fill_value, copy=False)
 
 
-def fullarray_implements(numpy_function):
-    """An __array_function__ implementation for `FullArray` objects.
-
-    .. versionadded:: (cfdm) NEXTVERSION
-
-    """
-
-    def decorator(func):
-        _FULLARRAY_HANDLED_FUNCTIONS[numpy_function] = func
-        return func
-
-    return decorator
-
-
-@fullarray_implements(np.unique)
+# --------------------------------------------------------------------
+# __array_function__ implementations (numpy NEP 18)
+# --------------------------------------------------------------------
+@array_implements(FullArray, np.unique)
 def unique(
     a, return_index=False, return_inverse=False, return_counts=False, axis=None
 ):
     """Version of `np.unique` that is optimised for `FullArray` objects.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
     if return_index or return_inverse or return_counts or axis is not None:
@@ -245,7 +221,7 @@ def unique(
             axis=axis,
         )
 
-    # Fast unique based on the full value
+    # Efficient unique based on the full value
     x = a.get_full_value()
     if x is np.ma.masked:
         return np.ma.masked_all((1,), dtype=a.dtype)

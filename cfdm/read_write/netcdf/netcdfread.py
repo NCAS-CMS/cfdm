@@ -17,7 +17,6 @@ from uuid import uuid4
 import h5netcdf
 import netCDF4
 import numpy as np
-import zarr
 from dask.array.core import normalize_chunks
 from dask.base import tokenize
 from packaging.version import Version
@@ -28,7 +27,7 @@ from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
-from ..exceptions import FileTypeError
+from ..exceptions import DatasetTypeError
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -584,8 +583,8 @@ class NetCDFRead(IORead):
                 filename = f"{filename} (created from CDL file {cdl_filename})"
 
             error = "\n\n".join(errors)
-            raise FileTypeError(
-                f"Can't interpret {filename} as a netCDF dataset"
+            raise DatasetTypeError(
+                f"Can't interpret {filename} as a netCDF dataset "
                 f"with any of the netCDF backends {netcdf_backend!r}:\n\n"
                 f"{error}"
             )
@@ -632,7 +631,7 @@ class NetCDFRead(IORead):
     def _open_netCDF4(self, filename):
         """Return an open `netCDF4.Dataset`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -657,7 +656,7 @@ class NetCDFRead(IORead):
         parameters ``size``, ``nelems``, and ``preemption``,
         respectively.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -695,6 +694,8 @@ class NetCDFRead(IORead):
             `zarr.hierarchy.Group`
 
         """
+        import zarr
+        
         nc = zarr.open(filename)
         self.read_vars["file_opened_with"] = "zarr"
         return nc
@@ -752,7 +753,7 @@ class NetCDFRead(IORead):
     def string_to_cdl(cls, cdl_string):
         """Create a temporary CDL file from a CDL string.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -811,11 +812,11 @@ class NetCDFRead(IORead):
 
         """
         # Assume that non-local URIs are netCDF or zarr
-        u =  urisplit(filename)
+        u = urisplit(filename)
         if u.scheme not in (None, "file"):
             if file_type and len(file_type) == 1 and file_type[0] == 'Zarr':
-                # Assume that a non-local URI is zarr if 'file_type'
-                # indicates Zarr
+                # Assume that a non-local URI is zarr if indicated by
+                # 'file_type'
                 return 'Zarr'
             
             # Assume that a non-local URI is netCDF if it's not Zarr
@@ -831,6 +832,8 @@ class NetCDFRead(IORead):
             # Read the first 4 bytes from the file
             fh = open(filename, "rb")
             magic_number = struct.unpack("=L", fh.read(4))[0]
+        except FileNotFoundError:
+            raise
         except Exception:
             # Can't read 4 bytes from the file, so it can't be netCDF
             # or CDL.
@@ -960,7 +963,7 @@ class NetCDFRead(IORead):
             unpack: `bool`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             warn_valid: `bool`, optional
                 See `cfdm.read` for details
@@ -975,79 +978,79 @@ class NetCDFRead(IORead):
             storage_options: `bool`, optional
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             netcdf_backend: `None` or `str`, optional
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             cache: `bool`, optional
                 Control array element caching. See `cfdm.read` for
                 details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             dask_chunks: `str`, `int`, `None`, or `dict`, optional
                 Specify the `dask` chunking of dimensions for data in
                 the input files. See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
-            store_hdf_chunks: `bool`, optional
+            store_dataset_chunks: `bool`, optional
                  Storing the dataset chunking strategy. See
                  `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             cfa: `dict`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             cfa_write: sequence of `str`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             to_memory: (sequence) of `str`, optional
                 Whether or not to bring data arrays into memory.  See
                 `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             squeeze: `bool`, optional
                 Whether or not to remove all size 1 axes from field
                 construct data arrays. See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             unsqueeze: `bool`, optional
                 Whether or not to ensure that all size 1 axes are
                 spanned by field construct data arrays. See
                 `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             file_type: `None` or (sequence of) `str`, optional
                 Only read files of the given type(s). See `cfdm.read`
                 for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             ignore_unknown_type: `bool`, optional
                 If True then ignore any file which does not have one
                 of the valid types specified by the *file_type*
                 parameter. See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             _file_systems: `dict`, optional
                 Provide any already-open S3 file systems.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -1078,13 +1081,13 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         ftype = self.ftype(filename, file_type)
         if not ftype:
-            raise FileTypeError(
-                f"Can't interpret {filename} as a netCDF, CDL, or "
+            raise DatasetTypeError(
+                f"Can't interpret {filename} as a netCDF, CDL or "
                 "Zarr dataset"
             )
 
         if file_type and ftype not in file_type:
-            raise FileTypeError(
+            raise DatasetTypeError(
                 f"Can't interpret {filename} as one of the "
                 f"requested types: {file_type}"
             )
@@ -1363,7 +1366,7 @@ class NetCDFRead(IORead):
             # Dask chunking of aggregated data for selected constructs
             "cfa_write": cfa_write,
             # --------------------------------------------------------
-            # Whether or not to store HDF chunks
+            # Whether or not to store the dataset chunking strategy
             # --------------------------------------------------------
             "store_dataset_chunks": bool(store_dataset_chunks),
             # --------------------------------------------------------
@@ -1394,7 +1397,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         try:
             nc = self.file_open(filename, flatten=True, verbose=None)
-        except FileTypeError:
+        except DatasetTypeError:
             if not g["ignore_unknown_type"]:
                 raise
 
@@ -4045,9 +4048,13 @@ class NetCDFRead(IORead):
                     ugrid = False
                     logger.warning(
                         "There was a problem parsing the UGRID mesh "
-                        f"topology variable {mesh.mesh_ncvar!r}: "
-                        f"Ignoring the UGRID mesh for {field_ncvar!r}."
+                        "topology variable. Ignoring the UGRID mesh "
+                        f"for {field_ncvar!r}."
                     )
+                    if is_log_level_debug(logger):
+                        logger.debug(
+                            f"Mesh dictionary is: {pformat(g['mesh'])}"
+                        )
 
             if ugrid:
                 # The UGRID specification is OK, so get the auxiliary
@@ -4185,7 +4192,7 @@ class NetCDFRead(IORead):
                     # derived from a numeric scalar auxiliary
                     # coordinate.
 
-                    # First turn the scalar auxiliary corodinate into
+                    # First turn the scalar auxiliary coordinate into
                     # a 1-d auxiliary coordinate construct
                     coord = self.implementation.construct_insert_dimension(
                         construct=coord, position=0
@@ -7231,7 +7238,7 @@ class NetCDFRead(IORead):
                             ),
                             attribute={
                                 interpolation_ncvar
-                                + ":coordinate_interplation": coordinate_interpolation
+                                + ":coordinate_interpolation": coordinate_interpolation
                             },
                         )
                         continue
@@ -7900,13 +7907,13 @@ class NetCDFRead(IORead):
             ncdimensions: sequence of `str`, optional
                 The netCDF dimensions spanned by the array.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.11.2.0
 
             construct_type: `str` or `None`, optional
                 The type of the construct that contains *array*. Set
                 to `None` if the array does not belong to a construct.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
@@ -8946,7 +8953,8 @@ class NetCDFRead(IORead):
             return True
 
         attribute = {
-            parent_ncvar + ":coordinate_interplation": coordinate_interpolation
+            parent_ncvar
+            + ":coordinate_interpolation": coordinate_interpolation
         }
 
         g = self.read_vars
@@ -10535,7 +10543,7 @@ class NetCDFRead(IORead):
     def _file_global_attribute(self, nc, attr):
         """Return a global attribute from a dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10560,7 +10568,7 @@ class NetCDFRead(IORead):
     def _file_global_attributes(self, nc):
         """Return the global attributes from a dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10584,7 +10592,7 @@ class NetCDFRead(IORead):
     def _file_dimensions(self, nc):
         """Return all dimensions in the root group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
@@ -10615,7 +10623,7 @@ class NetCDFRead(IORead):
     def _file_dimension(self, nc, dim_name):
         """Return a dimension from the root group of a dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10637,7 +10645,7 @@ class NetCDFRead(IORead):
     def _file_dimension_isunlimited(self, nc, dim_name):
         """Return whether a dimension is unlimited.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10663,7 +10671,7 @@ class NetCDFRead(IORead):
     def _file_dimension_size(self, nc, dim_name):
         """Return a dimension's size.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10685,7 +10693,7 @@ class NetCDFRead(IORead):
     def _file_variables(self, nc):
         """Return all variables in the root group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10708,7 +10716,7 @@ class NetCDFRead(IORead):
     def _file_variable(self, nc, var_name):
         """Return a variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10730,7 +10738,7 @@ class NetCDFRead(IORead):
     def _file_variable_attributes(self, var):
         """Return the variable attributes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10777,13 +10785,14 @@ class NetCDFRead(IORead):
             # netCDF4, h5netcdf
             return var.dimensions
         except AttributeError:
-            # zarr
+            # TODOZARR check for zarr3 first
+            # zarr2
             return var.attrs["_ARRAY_DIMENSIONS"]
 
     def _file_variable_size(self, var):
         """Return the size of a variable's array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10812,7 +10821,7 @@ class NetCDFRead(IORead):
         If returned storage options will always include an
         ``'endpoint_url'`` key.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10849,7 +10858,7 @@ class NetCDFRead(IORead):
     def _get_dataset_chunks(self, ncvar):
         """Return a netCDF variable's dataset storage chunks.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -10897,7 +10906,7 @@ class NetCDFRead(IORead):
     def _dask_chunks(self, array, ncvar, compressed, construct_type=None):
         """Set the Dask chunking strategy for a netCDF variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -11250,12 +11259,9 @@ class NetCDFRead(IORead):
         the first and last elements of a large array on disk
         (e.g. shape (1, 75, 1207, 1442)) is slow (e.g. ~2 seconds) and
         doesn't scale well with array size (i.e. it takes
-        disproportionally longer for larger arrays). Such arrays are
-        usually in field constructs, for which `cf.aggregate` does not
-        need to know any array values, so this method should be used
-        with caution, if at all, on field construct data.
+        disproportionally longer for larger arrays).
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -11388,7 +11394,7 @@ class NetCDFRead(IORead):
     def _netcdf_chunksizes(self, variable):
         """Return the variable chunk sizes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -11426,7 +11432,7 @@ class NetCDFRead(IORead):
     def _cfa_is_aggregation_variable(self, ncvar):
         """Return True if *ncvar* is a CF-netCDF aggregated variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -11448,7 +11454,7 @@ class NetCDFRead(IORead):
     def _cfa_parse_aggregated_data(self, ncvar, aggregated_data):
         """Parse a CF-netCDF 'aggregated_data' attribute.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 

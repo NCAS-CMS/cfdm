@@ -1,4 +1,4 @@
-"""Descufine docstring substitutions.
+"""Define docstring substitutions.
 
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
@@ -146,7 +146,7 @@ _docstring_substitution_definitions = {
     # read extra
     "{{read extra: (sequence of) `str`, optional}}": """extra: (sequence of) `str`, optional
             Create extra, independent fields from netCDF variables
-            that correspond to particular types metadata constructs.
+            that correspond to particular types of metadata constructs.
             Ignored if *domain* is True.
 
             The *extra* parameter may be one, or a sequence, of:
@@ -253,7 +253,7 @@ _docstring_substitution_definitions = {
             so older datasets automatically contain no CF-netCDF
             domain variables.
 
-            The unique domain constructs of the dataset are easily
+            The unique domain constructs of the dataset are
             found with the `{{package}}.unique_constructs`
             function. For example::
 
@@ -497,16 +497,15 @@ _docstring_substitution_definitions = {
             chunking strategy is then accessible via an object's
             `nc_hdf5_chunksizes` method. When the dataset chunking
             strategy is stored, it will be used when the data is
-            written to a new netCDF file with `{{package}}.write`
+            written to a new netCDF4 file with `{{package}}.write`
             (unless the strategy is modified prior to writing).
 
-            If False, or if the dataset being read does not support
-            chunking (such as a netCDF3 dataset), then no dataset
-            chunking strategy is stored (i.e. an `nc_hdf5_chunksizes`
-            method will return `None` for all `Data` objects). In this
-            case, when the data is written to a new netCDF file, the
-            dataset chunking strategy will be determined by
-            `{{package}}.write`.
+            If False, or if the dataset format does not support
+            chunking, then no dataset chunking strategy is stored.
+            (i.e. an `nc_hdf5_chunksizes` method will return `None`
+            for all `Data` objects). In this case, when the data is
+            written to a new netCDF4 file, the dataset chunking
+            strategy will be determined by `{{package}}.write`.
 
             See the `{{package}}.write` *hdf5_chunks* parameter for
             details on how the dataset chunking strategy is determined
@@ -552,8 +551,8 @@ _docstring_substitution_definitions = {
             This makes no difference to the logical content of any
             construct, but ensures that the data of each of specified
             construct types will have only one Dask chunk, regardless
-            of the seting of *dask_chunks*, which is a requirement for
-            the creation CF-netCDF aggregation variables.
+            of the setting of *dask_chunks*, which is a requirement
+            for the creation CF-netCDF aggregation variables.
 
             The *cfa_write* parameter may be one, or a sequence, of:
 
@@ -653,7 +652,7 @@ _docstring_substitution_definitions = {
         equivalent chunked dask array, but now with the results fully
         computed and in memory. This can avoid the expense of
         re-reading the data from disk, or re-computing it, when the
-        data is accessed on multiple occassions.""",
+        data is accessed on multiple occasions.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ------------------------1----------------------------------------
@@ -1111,7 +1110,7 @@ _docstring_substitution_definitions = {
 
                 By default, ``"auto"`` is used to specify the array
                 chunking, which uses a chunk size in bytes defined by
-                the `cf.chunksize` function, preferring square-like
+                the `{{package}}.chunksize` function, preferring square-like
                 chunk shapes.
 
                 *Parameter example:*
@@ -1146,7 +1145,7 @@ _docstring_substitution_definitions = {
     # block_size_limit
     "{{block_size_limit: `int`, optional}}": """block_size_limit: `int`, optional
                 The maximum block size (in bytes) we want to produce,
-                as defined by the `cf.chunksize` function.""",
+                as defined by the `{{package}}.chunksize` function.""",
     # balance
     "{{balance: `bool`, optional}}": """balance: `bool`, optional
                 If True, try to make each chunk the same size. By
@@ -1239,6 +1238,24 @@ _docstring_substitution_definitions = {
     "{{normalise: `bool`, optional}}": """normalise: `bool`, optional
                 If True then normalise to an absolute path. If False
                 (the default) then no normalisation is done.""",
+    # replace old
+    "{{replace old: `str` or `None`, optional}}": """old: `str` or `None`, optional
+                The base directory structure to be replaced by
+                *new*. If `None` (the default) or an empty string, and
+                *normalise* is False, then *new* (if set) is prepended
+                to each file name.""",
+    # replace new
+    "{{replace new: `str` or `None`, optional}}": """new: `str` or `None`, optional
+                The new directory that replaces the base directory
+                structure identified by *old*. If `None` (the default)
+                or an empty string, then *old* (if set) is replaced
+                with an empty string.""",
+    # replace normalise
+    "{{replace normalise: `bool`, optional}}": """normalise: `bool`, optional
+                If True then *old* and *new* directories, and the file
+                names, are normalised to absolute paths prior to the
+                replacement. If False (the default) then no
+                normalisation is done.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

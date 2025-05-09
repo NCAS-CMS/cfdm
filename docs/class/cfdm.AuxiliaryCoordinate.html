@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
 
 
 
@@ -126,7 +126,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.AuxiliaryCoordinate">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/auxiliarycoordinate.py#L4-L133"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/auxiliarycoordinate.py#L4-L135"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFNodeCoordinateVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.auxiliarycoordinate.AuxiliaryCoordinate</span></code></p>
 <p>An auxiliary coordinate construct of the CF data model.</p>
 <p>An auxiliary coordinate construct provides information which
@@ -170,6 +170,9 @@ accessed with the <a class="reference internal" href="../method/cfdm.AuxiliaryCo
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_node_coordinate_groups</span></code>,
 <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups.html#cfdm.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups" title="cfdm.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_node_coordinate_variable_groups</span></code></a>, and
 <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups.html#cfdm.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups" title="cfdm.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_node_coordinate_variable_groups</span></code></a> methods.</p>
+<p>The netCDF4 HDF5 chunks may be accessed with the
+<a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_hdf5_chunksizes.html#cfdm.AuxiliaryCoordinate.nc_hdf5_chunksizes" title="cfdm.AuxiliaryCoordinate.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>, <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_set_hdf5_chunksizes.html#cfdm.AuxiliaryCoordinate.nc_set_hdf5_chunksizes" title="cfdm.AuxiliaryCoordinate.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a>, and
+<a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes.html#cfdm.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes" title="cfdm.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
@@ -177,7 +180,7 @@ accessed with the <a class="reference internal" href="../method/cfdm.AuxiliaryCo
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
 <div><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
@@ -190,7 +193,7 @@ the <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.set_p
 </dd>
 <dt>data: data_like, optional</dt><dd><p>Set the data.</p>
 <p>A data_like object is any object that can be converted
-to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
 <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm instances that contain
 <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
@@ -200,7 +203,7 @@ to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.D
 <p>The bounds array may also be set after initialisation
 with the <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.set_bounds.html#cfdm.AuxiliaryCoordinate.set_bounds" title="cfdm.AuxiliaryCoordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
 </dd>
-<dt>geometry: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the geometry type.</p>
+<dt>geometry: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the geometry type.</p>
 <p>The geometry type may also be set after initialisation
 with the <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.set_geometry.html#cfdm.AuxiliaryCoordinate.set_geometry" title="cfdm.AuxiliaryCoordinate.set_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code></a> method.</p>
 <dl class="simple">
@@ -223,7 +226,7 @@ this way are assumed to have their default value.</p>
 <code class="docutils literal notranslate"><span class="pre">cfdm.AuxiliaryCoordinate(source=x)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
 parameters prior to initialisation. By default the
 parameters are not deep copied.</p>
 </dd>
@@ -328,10 +331,13 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.insert_dimension.html#cfdm.AuxiliaryCoordinate.insert_dimension" title="cfdm.AuxiliaryCoordinate.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
 <td><p>Expand the shape of the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.squeeze.html#cfdm.AuxiliaryCoordinate.squeeze" title="cfdm.AuxiliaryCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.persist.html#cfdm.AuxiliaryCoordinate.persist" title="cfdm.AuxiliaryCoordinate.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
+<td><p>Persist data into memory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.squeeze.html#cfdm.AuxiliaryCoordinate.squeeze" title="cfdm.AuxiliaryCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
 <td><p>Remove size one axes from the data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.transpose.html#cfdm.AuxiliaryCoordinate.transpose" title="cfdm.AuxiliaryCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.transpose.html#cfdm.AuxiliaryCoordinate.transpose" title="cfdm.AuxiliaryCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
 <td><p>Permute the axes of the data array.</p></td>
 </tr>
 </tbody>
@@ -347,7 +353,7 @@ parameters are not deep copied.</p>
 <td><p>A numpy array deep copy of the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.AuxiliaryCoordinate.data.html#cfdm.AuxiliaryCoordinate.data" title="cfdm.AuxiliaryCoordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
-<td><p>Return the data.</p></td>
+<td><p>The data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.AuxiliaryCoordinate.datetime_array.html#cfdm.AuxiliaryCoordinate.datetime_array" title="cfdm.AuxiliaryCoordinate.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
 <td><p>An independent numpy array of date-time objects.</p></td>
@@ -514,23 +520,44 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.copy.html#cfdm.AuxiliaryCoordinate.copy" title="cfdm.AuxiliaryCoordinate.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.creation_commands.html#cfdm.AuxiliaryCoordinate.creation_commands" title="cfdm.AuxiliaryCoordinate.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.concatenate.html#cfdm.AuxiliaryCoordinate.concatenate" title="cfdm.AuxiliaryCoordinate.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
+<td><p>Join a together sequence of <a class="reference internal" href="#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.creation_commands.html#cfdm.AuxiliaryCoordinate.creation_commands" title="cfdm.AuxiliaryCoordinate.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
 <td><p>Return the commands that would create the construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.equals.html#cfdm.AuxiliaryCoordinate.equals" title="cfdm.AuxiliaryCoordinate.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.equals.html#cfdm.AuxiliaryCoordinate.equals" title="cfdm.AuxiliaryCoordinate.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two instances are the same.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.uncompress.html#cfdm.AuxiliaryCoordinate.uncompress" title="cfdm.AuxiliaryCoordinate.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.uncompress.html#cfdm.AuxiliaryCoordinate.uncompress" title="cfdm.AuxiliaryCoordinate.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
 <td><p>Uncompress the construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.get_filenames.html#cfdm.AuxiliaryCoordinate.get_filenames" title="cfdm.AuxiliaryCoordinate.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.get_filenames.html#cfdm.AuxiliaryCoordinate.get_filenames" title="cfdm.AuxiliaryCoordinate.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
 <td><p>Return the name of the file or files containing the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.get_original_filenames.html#cfdm.AuxiliaryCoordinate.get_original_filenames" title="cfdm.AuxiliaryCoordinate.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.get_original_filenames.html#cfdm.AuxiliaryCoordinate.get_original_filenames" title="cfdm.AuxiliaryCoordinate.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
 <td><p>The names of files containing the original data and metadata.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.to_memory.html#cfdm.AuxiliaryCoordinate.to_memory" title="cfdm.AuxiliaryCoordinate.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.to_memory.html#cfdm.AuxiliaryCoordinate.to_memory" title="cfdm.AuxiliaryCoordinate.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
 <td><p>Bring data on disk into memory.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="aggregation">
+<h2>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.file_directories.html#cfdm.AuxiliaryCoordinate.file_directories" title="cfdm.AuxiliaryCoordinate.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
+<td><p>The directories of files containing parts of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.replace_directory.html#cfdm.AuxiliaryCoordinate.replace_directory" title="cfdm.AuxiliaryCoordinate.replace_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></a></p></td>
+<td><p>Replace file directories in-place.</p></td>
 </tr>
 </tbody>
 </table>
@@ -600,6 +627,27 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 </section>
+<section id="hdf5-chunks">
+<h3>HDF5 chunks<a class="headerlink" href="#hdf5-chunks" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_hdf5_chunksizes.html#cfdm.AuxiliaryCoordinate.nc_hdf5_chunksizes" title="cfdm.AuxiliaryCoordinate.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_set_hdf5_chunksizes.html#cfdm.AuxiliaryCoordinate.nc_set_hdf5_chunksizes" title="cfdm.AuxiliaryCoordinate.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes.html#cfdm.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes" title="cfdm.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
@@ -611,16 +659,16 @@ parameters are not deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.__deepcopy__.html#cfdm.AuxiliaryCoordinate.__deepcopy__" title="cfdm.AuxiliaryCoordinate.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.__getitem__.html#cfdm.AuxiliaryCoordinate.__getitem__" title="cfdm.AuxiliaryCoordinate.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the construct defined by indices.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.__repr__.html#cfdm.AuxiliaryCoordinate.__repr__" title="cfdm.AuxiliaryCoordinate.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.__str__.html#cfdm.AuxiliaryCoordinate.__str__" title="cfdm.AuxiliaryCoordinate.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -660,7 +708,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

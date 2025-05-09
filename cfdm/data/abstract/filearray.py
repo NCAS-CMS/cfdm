@@ -13,7 +13,7 @@ from . import Array
 class FileArray(Array):
     """Abstract base class for an array in a file.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
@@ -144,16 +144,26 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}.__getitem__"
         )  # pragma: no cover
 
-    def __repr__(self):  # noqa: D105
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        """
         return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
 
-    def __str__(self):  # noqa: D105
+    def __str__(self):
+        """Called by the `str` built-in function.
+
+        x.__str__() <==> str(x)
+
+        """
         return f"{self.get_filename()}, {self.get_address()}"
 
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         """
         return (
@@ -173,7 +183,7 @@ class FileArray(Array):
         The subspace is defined by the `index` attributes, and is
         applied with `cfdm.netcdf_indexer`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `__array__`, `index`
 
@@ -204,7 +214,7 @@ class FileArray(Array):
 
         **Examples**
 
-        >>> n = numpy.asanyarray(a)
+        >>> n = {{package}}.{{class}}.array(a)
         >>> isinstance(n, numpy.ndarray)
         True
 
@@ -263,7 +273,7 @@ class FileArray(Array):
     def file_directory(self, normalise=False, default=AttributeError()):
         """The file directory.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -300,7 +310,7 @@ class FileArray(Array):
 
             {{normalise: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
             default: optional
                 Return the value of the *default* parameter if there
@@ -345,26 +355,30 @@ class FileArray(Array):
     ):
         """Return `s3fs.S3FileSystem` options for accessing S3 files.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
             create_endpoint_url: `bool`, optional
                 If True, the default, then create an
-                ``'endpoint_url'`` option if and only if one has not
-                already been provided. See *filename* and
-                *parsed_filename* for details.
+                ``'endpoint_url'`` option if and only if one was not
+                set during object initialisation. In this case the
+                ``'endpoint_url'`` will be set from the file name
+                returned by `get_filename`, unless either of the
+                *filename* or *parsed_filename* parameters is also
+                set.
 
             filename: `str`, optional
-                Used to set the ``'endpoint_url'`` option if it has
-                not been previously defined. Ignored if
-                *parsed_filename* has been set.
+                Used to set the ``'endpoint_url'`` if it was not
+                set during object initialisation and
+                *create_endpoint_url* is True. Ignored if the
+                *parsed_filename* parameter has been set.
 
             parsed_filename: `urllib.parse.ParseResult`, optional
-                Used to set the ``'endpoint_url'`` option if it has
-                not been previously defined. By default the
-                ``'endpoint_url'`` option, if required, is set from
-                the file name returned by `get_filename`.
+                Used to set the ``'endpoint_url'`` if it was not
+                set during object initialisation and
+                *create_endpoint_url* is True. Ignored if the
+                *filename* parameter has been set.
 
         :Returns:
 
@@ -475,29 +489,17 @@ class FileArray(Array):
 
         Modifies the name of the file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directory`, `get_filename`
 
         :Parameters:
 
-            old: `str` or `None`, optional
-                The base directory structure to be replaced by
-                *new*. If `None` (the default) or an empty string, and
-                *normalise* is False, then *new* is prepended to each
-                file name.
+            {{replace old: `str` or `None`, optional}}
 
-            new: `str` or `None`, optional
-                The new directory that replaces the base directory
-                structure identified by *old*. If `None` (the default)
-                or an empty string, then *old* is replaced with an
-                empty string. Otherwise,
+            {{replace new: `str` or `None`, optional}}
 
-            normalise: `bool`, optional
-                If True then *old*, *new*, and the file name are
-                normalised to absolute paths prior to the
-                replacement. If False (the default) then no
-                normalisation is done.
+            {{replace normalise: `bool`, optional}}
 
         :Returns:
 
@@ -561,6 +563,9 @@ class FileArray(Array):
 
                     filename = filename.replace(old, new)
             elif new:
+                if filename.startswith(sep):
+                    filename = filename[1:]
+
                 filename = join(new, filename)
 
         a._set_component("filename", filename, copy=False)
@@ -569,7 +574,7 @@ class FileArray(Array):
     def get_missing_values(self):
         """The missing values of the data.
 
-        Deprecated at version NEXTVERSION. Use `get_attributes` instead.
+        Deprecated at version 1.12.0.0. Use `get_attributes` instead.
 
         """
 
@@ -580,7 +585,7 @@ class FileArray(Array):
 
         raise DeprecationError(
             f"{self.__class__.__name__}.get_missing_values was deprecated "
-            "at version NEXTVERSION and is no longer available. "
+            "at version 1.12.0.0 and is no longer available. "
             f"Use {self.__class__.__name__}.get_attributes instead."
         )  # pragma: no cover
 
@@ -604,7 +609,7 @@ class FileArray(Array):
         they have not already been defined, either during {{class}}
         instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -624,7 +629,7 @@ class FileArray(Array):
     def get_unpack(self):
         """Whether or not to automatically unpack the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         **Examples**
 
@@ -637,7 +642,7 @@ class FileArray(Array):
     def replace_filename(self, filename):
         """Replace the file location.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directory`, `get_filename`,
                      `replace_directory`

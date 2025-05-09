@@ -22,7 +22,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.unique_constructs" href="cfdm.unique_constructs.html" />
+    <link rel="next" title="cfdm.log_level" href="cfdm.log_level.html" />
     <link rel="prev" title="cfdm.implementation" href="cfdm.implementation.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
 
 
 
@@ -87,7 +87,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../functions.html"><strong>cfdm functions</strong></a><ul>
       <li>Previous: <a href="cfdm.implementation.html" title="previous chapter">cfdm.implementation</a></li>
-      <li>Next: <a href="cfdm.unique_constructs.html" title="next chapter">cfdm.unique_constructs</a></li>
+      <li>Next: <a href="cfdm.log_level.html" title="next chapter">cfdm.log_level</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.integer_dtype<a class="headerlink" href="#cfdm-integer-dtype" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.integer_dtype">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">integer_dtype</code><span class="sig-paren">(</span><em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/functions.py#L1599-L1641"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.integer_dtype" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">integer_dtype</code><span class="sig-paren">(</span><em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/functions.py#L1957-L1999"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.integer_dtype" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the smallest data type that can store the given integer.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.11.0.0</p>
@@ -139,7 +139,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a></dt><dd><dl class="simple">
+<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a></dt><dd><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">numpy.dtype('int32')</span></code> if <em>n</em> is representable by a 32-bit</dt><dd><p>integer, otherwise <code class="docutils literal notranslate"><span class="pre">numpy.dtype(int)</span></code>.</p>
 </dd>
 </dl>
@@ -183,7 +183,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

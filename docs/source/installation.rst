@@ -29,7 +29,7 @@ cfdm works for Linux, Mac and Windows operating systems.
 **Python versions**
 -------------------
 
-cfdm works for Python versions 3.8 or newer.
+cfdm works for Python versions 3.9 or newer.
 
 ----
 
@@ -38,8 +38,8 @@ cfdm works for Python versions 3.8 or newer.
 **pip**
 -------
 
-To install cfdm and all of its :ref:`dependencies <Dependencies>` run,
-for example:
+To install cfdm and all of its :ref:`dependencies <Dependencies>`
+(apart from :ref:`UDUNITS <UDUNITS>`) run, for example:
 
 .. code-block:: console
    :caption: *Install as root, with any missing dependencies.*
@@ -63,6 +63,26 @@ See the `documentation for pip install
 <https://pip.pypa.io/en/stable/reference/pip_install/>`_ for further
 options.
 
+.. _UDUNITS:
+
+UDUNITS
+^^^^^^^
+
+UDUNITS (a C library that provides support for units of physical
+quantities) is a required dependency that is not installed by ``pip``,
+but it can be installed in a ``conda`` environment:
+
+.. code-block:: console
+
+   $ conda install -c conda-forge udunits2
+
+Alternatively, UDUNITS is often available from operating system
+software download managers, or may be installed from source.
+    
+Note that :ref:`some environment variables might also need setting
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+properly, although the defaults are usually sufficient.
+
 ----
 
 .. _conda:
@@ -77,7 +97,11 @@ cfdm with all of its :ref:`dependencies <Dependencies>` run
 .. code-block:: console
    :caption: *Install with conda.*
 
-   $ conda install -c conda-forge cfdm
+   $ conda install -c conda-forge cfdm udunits2
+
+Note that :ref:`some environment variables might also need setting
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+properly, although the defaults are usually sufficient.
 
 ----
 
@@ -119,6 +143,10 @@ To install from source:
 
        $ python setup.py install --home=<directory>
 
+Note that :ref:`some environment variables might also need setting
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+properly, although the defaults are usually sufficient.
+
 ----
 
 .. _cfdump-utility:
@@ -152,29 +180,58 @@ Tests are run from within the ``cfdm/test`` directory:
 
 The cfdm package requires:
 
-* `Python <https://www.python.org>`_, version 3.8 or newer.
+* `Python <https://www.python.org>`_, version 3.9 or newer.
 
-* `numpy <http://www.numpy.org>`_, version 1.15 or newer.
+* `numpy <http://www.numpy.org>`_, version 2.0.0 or newer.
 
-* `netCDF4 <https://pypi.org/project/netCDF4>`_, version 1.5.4 or
+* `netCDF4 <https://pypi.org/project/netCDF4>`_, version 1.7.2 or
   newer.
 
-* `cftime <https://pypi.org/project/cftime>`_, version 1.6.0 or
+* `cftime <https://pypi.org/project/cftime>`_, version 1.6.4 or
   newer.
 
 * `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
   newer.
 
-* `h5py <https://pypi.org/project/h5py>`_, version 3.10.0 or newer.
+* `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.
 
-* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.2.0 or newer.
+* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 
-* `dask <https://pypi.org/project/dask>`_, version 2024.2.1 or newer.
+* `dask <https://pypi.org/project/dask>`_, versions 2025.2.0 or
+  2025.3.0.
 
 * `packaging <https://pypi.org/project/packaging>`_, version 20.0 or
   newer.
 
 * `scipy <https://scipy.org/>`_, version 1.10.0 or newer.
+
+* `uritools <https://pypi.org/project/uritools>`_, version 4.0.3 or
+  newer.
+
+* `cfunits <https://pypi.org/project/cfunits>`_, version 3.3.7 or
+  newer.
+
+.. _UNIDATA-UDUNITS-2-library:
+
+* `UNIDATA UDUNITS-2 library
+  <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.25
+  or newer. UDUNITS-2 is a C library that provides support for units of
+  physical quantities.
+
+  If the UDUNITS-2 shared library file (``libudunits2.so.0`` on
+  GNU/Linux or ``libudunits2.0.dylibfile`` on MacOS) is in a
+  non-standard location then its directory path should be added to the
+  ``LD_LIBRARY_PATH`` environment variable.
+
+  It may also be necessary to specify the location (directory path
+  *and* file name) of the ``udunits2.xml`` file in the
+  ``UDUNITS2_XML_PATH`` environment variable, although the default
+  location is usually correct. For example, ``export
+  UDUNITS2_XML_PATH=/home/user/anaconda3/share/udunits/udunits2.xml``.
+  If you get a run-time error that looks like ``assert(0 ==
+  _ut_unmap_symbol_to_unit(_ut_system, _c_char_p(b'Sv'), _UT_ASCII))``
+  then setting the ``UDUNITS2_XML_PATH`` environment variable is the
+  likely solution.
 
 ----
 

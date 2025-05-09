@@ -58,7 +58,7 @@ class PointTopologyArray(CompressedArrayMixin, MeshArray):
 
             shape: `tuple`, optional
                 The shape of the point cell domain topology array. If
-                the shape is unknown (beacuse the connectivity array
+                the shape is unknown (because the connectivity array
                 has not been read yet) then set to `None`, which will
                 result in a shape of ``(nan, nan)``.
 

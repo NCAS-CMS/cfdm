@@ -59,6 +59,7 @@ Data
    ~cfdm.InteriorRing.has_data
    ~cfdm.InteriorRing.set_data
    ~cfdm.InteriorRing.insert_dimension
+   ~cfdm.InteriorRing.persist
    ~cfdm.InteriorRing.squeeze
    ~cfdm.InteriorRing.transpose
 
@@ -88,6 +89,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.InteriorRing.copy
+   ~cfdm.InteriorRing.concatenate
    ~cfdm.InteriorRing.creation_commands
    ~cfdm.InteriorRing.equals
    ~cfdm.InteriorRing.has_bounds
@@ -95,6 +97,19 @@ Miscellaneous
    ~cfdm.InteriorRing.get_filenames
    ~cfdm.InteriorRing.get_original_filenames
    ~cfdm.InteriorRing.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.InteriorRing.file_directories
+   ~cfdm.InteriorRing.replace_directory
 
 NetCDF
 ------

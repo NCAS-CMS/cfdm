@@ -1425,9 +1425,9 @@ class Field(
     def concatenate(
         cls, fields, axis, cull_graph=False, relaxed_units=False, copy=True
     ):
-        """Join together a sequence of Field constricts`.
+        """Join together a sequence of Field constructs.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `Data.concatenate`, `Data.cull_graph`
 
@@ -1933,7 +1933,7 @@ class Field(
 
         Returns the locations of any files referenced by the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `replace_directory`
 
@@ -1941,7 +1941,7 @@ class Field(
 
             constructs: `bool`, optional
                 If True (the default) then add also the directory to
-                the data of metadata constructs. IF False then don't
+                the data of metadata constructs. If False then don't
                 do this.
 
         :Returns:
@@ -2086,7 +2086,7 @@ class Field(
 
             {{normalise: `bool`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -2319,7 +2319,7 @@ class Field(
                 returned by ``f.domain_axis('time')`` is selected.
 
                 If *axis* is `None` then a new domain axis construct
-                will created for the inserted dimension.
+                will be created for the inserted dimension.
 
             position: `int`, optional
                 Specify the position that the new axis will have in
@@ -2647,13 +2647,13 @@ class Field(
         chunked dask array, but now with the results fully computed
         and in memory. This can avoid the expense of re-reading the
         data from disk, or re-computing it, when the data is accessed
-        on multiple occassions.
+        on multiple occasions.
 
         **Performance**
 
         `persist` causes delayed operations to be computed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `persist_metadata`, `array`, `datetime_array`,
                      `{{package}}.Data.persist`
@@ -2669,8 +2669,8 @@ class Field(
         :Returns:
 
             `Field` or `None`
-                The field construct with persisted. If the operation
-                was in-place then `None` is returned.
+                The field construct with persisted data. If the
+                operation was in-place then `None` is returned.
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
@@ -2691,7 +2691,7 @@ class Field(
 
         `persist_metadata` causes delayed operations to be computed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `persist`, `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -2727,21 +2727,25 @@ class Field(
         Every file in *old_directory* that is referenced by the data
         is redefined to be in *new*.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directories`, `get_filenames`
 
         :Parameters:
 
-            old_directory: `str`
-                The new directory to be replaced.
+            {{replace old: `str` or `None`, optional}}
 
-            new_directory: `str`
-                The new directory.
+            {{replace new: `str` or `None`, optional}}
+
+            {{replace normalise: `bool`, optional}}
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
 
             constructs: `bool`, optional
                 If True (the default) then add also the directory to
-                the data of metadata constructs. IF False then don't
+                the data of metadata constructs. If False then don't
                 do this.
 
         :Returns:
@@ -2770,7 +2774,7 @@ class Field(
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `nc_clear_hdf5_chunksizes`,
                      `nc_set_hdf5_chunksizes`, `{{package}}.read`,
@@ -2821,7 +2825,7 @@ class Field(
     def nc_clear_hdf5_chunksizes(self, constructs=False):
         """Clear the HDF5 chunking strategy.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
@@ -2881,7 +2885,7 @@ class Field(
         .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -3347,7 +3351,7 @@ class Field(
 
         The axes are inserted into the slowest varying data array positions.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `insert_dimension`, `squeeze`, `transpose`
 

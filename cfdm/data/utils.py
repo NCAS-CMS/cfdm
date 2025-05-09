@@ -29,7 +29,7 @@ def allclose(x, y, masked_equal=True, rtol=None, atol=None):
     the corresponding NumPy method (see the `numpy.ma.allclose` API
     reference).
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -106,7 +106,7 @@ def collapse(
 ):
     """Collapse data in-place using a given funcion.
 
-     .. versionadded:: (cfdm) NEXTVERSION
+     .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -183,7 +183,7 @@ def collapse(
 def is_numeric_dtype(array):
     """True if the given array is of a numeric or boolean data type.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
@@ -231,7 +231,7 @@ def is_numeric_dtype(array):
 def convert_to_datetime(a, units):
     """Convert a dask array of numbers to one of date-time objects.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso `convert_to_reftime`
 
@@ -268,7 +268,7 @@ def convert_to_datetime(a, units):
 def convert_to_reftime(a, units=None, first_value=None):
     """Convert date-times to floating point reference times.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso `convert_to_datetime`
 
@@ -362,7 +362,7 @@ def convert_to_reftime(a, units=None, first_value=None):
             units = Units(d_units, calendar=d_calendar)
 
         # Convert the date-time objects to reference times
-        a = a.map_blocks(dt2rt, units_in=None, units_out=units, dtype=float)
+        a = a.map_blocks(dt2rt, units_out=units, dtype=float)
 
     if not units.isreftime:
         raise ValueError(
@@ -375,7 +375,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 def first_non_missing_value(a, cached=None, method="index"):
     """Return the first non-missing value of a dask array.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -483,7 +483,7 @@ def generate_axis_identifiers(n):
 
     The names are arbitrary and have no semantic meaning.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -514,7 +514,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 
     The name is arbitrary and has no semantic meaning.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -570,7 +570,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 def chunk_indices(chunks):
     """Return indices that define each dask chunk.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     .. seealso:: `chunks`
 
@@ -612,7 +612,7 @@ def chunk_indices(chunks):
 def chunk_positions(chunks):
     """Find the position of each chunk.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso:: `chunk_indices`, `chunk_locations`, `chunk_shapes`
 
@@ -642,7 +642,7 @@ def chunk_positions(chunks):
 def chunk_shapes(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso:: `chunk_indices`, `chunk_locations`, `chunk_positions`
 
@@ -672,7 +672,7 @@ def chunk_shapes(chunks):
 def chunk_locations(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso:: `chunk_indices`, `chunk_positions`, `chunk_shapes`
 
@@ -717,7 +717,7 @@ def normalize_chunks(chunks, shape=None, dtype=None):
     identical to `dask.array.core.normalize_chunks`. If it does, then
     the output chunks for each such axis will be ``(nan,)``.
 
-    .. versionadded (cfdm) NEXTVERSION
+    .. versionadded (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -755,10 +755,10 @@ def normalize_chunks(chunks, shape=None, dtype=None):
     return tuple(out)
 
 
-def dt2rt(array, units_in, units_out, dummy1=None):
+def dt2rt(array, units_out):
     """Return numeric time values from datetime objects.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     .. seealso:: `rt2dt`
 
@@ -768,16 +768,10 @@ def dt2rt(array, units_in, units_out, dummy1=None):
             The datetime objects must be in UTC with no time-zone
             offset.
 
-      units_in:
-            Ignored.
-
         units_out: `Units`
             The units of the numeric time values. If there is a
             time-zone offset in *units_out*, it will be applied to the
             returned numeric values.
-
-        dummy1:
-            Ignored.
 
     :Returns:
 
@@ -789,7 +783,6 @@ def dt2rt(array, units_in, units_out, dummy1=None):
     >>> print(
     ...   cfdm.data.utils.dt2rt(
     ...     np.ma.array([0, cftime.DatetimeGregorian(2001, 11, 16, 12)], mask=[True, False]),
-    ...     None,
     ...     units_out=cfdm.Units('days since 2000-01-01')
     ...   )
     ... )
@@ -811,10 +804,10 @@ def dt2rt(array, units_in, units_out, dummy1=None):
     return array
 
 
-def rt2dt(array, units_in, units_out=None, dummy1=None):
+def rt2dt(array, units_in):
     """Convert reference times to date-time objects.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     The returned array is always independent.
 
@@ -825,12 +818,6 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
         array: numpy array-like
 
         units_in: `Units`
-
-        units_out: *optional*
-            Ignored.
-
-        dummy1:
-            Ignored.
 
     :Returns:
 
@@ -850,14 +837,27 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
      cftime.DatetimeGregorian(2001, 11, 16, 12, 0, 0, 0, has_year_zero=False)]
 
     """
-    ndim = np.ndim(array)
-    if not ndim and np.ma.is_masked(array):
+    if not np.ndim(array) and np.ma.is_masked(array):
         # num2date has issues with scalar masked arrays with a True
         # mask
         return np.ma.masked_all((), dtype=object)
 
     units = units_in.units
     calendar = getattr(units_in, "calendar", "standard")
+
+    if np.ma.isMA(array):
+        # Note: We're going to apply `cftime.num2date` to a non-masked
+        #       array and reset the mask afterwards, because numpy
+        #       currently (numpy==2.2.3) has a bug that produces a
+        #       RuntimeWarning: "numpy/ma/core.py:502: RuntimeWarning:
+        #       invalid value encountered in cast fill_value =
+        #       np.asarray(fill_value, dtype=ndtype)". See
+        #       https://github.com/numpy/numpy/issues/28255 for more
+        #       details.
+        mask = array.mask
+        array = np.array(array)
+    else:
+        mask = None
 
     array = cftime.num2date(
         array, units, calendar, only_use_cftime_datetimes=True
@@ -866,13 +866,16 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
     if not isinstance(array, np.ndarray):
         array = np.array(array, dtype=object)
 
+    if mask is not None:
+        array = np.ma.array(array, mask=mask)
+
     return array
 
 
 def st2datetime(date_string, calendar=None):
     """Parse an ISO 8601 date-time string into a `cftime` object.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -904,22 +907,16 @@ def st2datetime(date_string, calendar=None):
     )
 
 
-def st2dt(array, units_in=None, dummy0=None, dummy1=None):
+def st2dt(array, units_in=None):
     """The returned array is always independent.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
         array: numpy array-like
 
         units_in: `Units`, optional
-
-        dummy0: optional
-            Ignored.
-
-        dummy1: optional
-            Ignored.
 
     :Returns:
 
@@ -934,10 +931,10 @@ def st2dt(array, units_in=None, dummy0=None, dummy1=None):
     return np.vectorize(func, otypes=[object])(array)
 
 
-def st2rt(array, units_in, units_out, dummy1=None):
+def st2rt(array, units_in, units_out):
     """The returned array is always independent.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.11.2.0
 
     :Parameters:
 
@@ -947,9 +944,6 @@ def st2rt(array, units_in, units_out, dummy1=None):
 
         units_out: `Units`
 
-        dummy1:
-            Ignored.
-
     :Returns:
 
         `numpy.ndarray`
@@ -957,4 +951,4 @@ def st2rt(array, units_in, units_out, dummy1=None):
 
     """
     array = st2dt(array, units_in)
-    return dt2rt(array, None, units_out)
+    return dt2rt(array, units_out)

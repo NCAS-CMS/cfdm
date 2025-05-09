@@ -3,13 +3,12 @@ import os
 from numpy.ma.core import MaskError
 
 from ..cfdmimplementation import implementation
-from ..core import DocstringRewriteMeta
-from ..docstring import _docstring_substitution_definitions
-from .exceptions import FileTypeError
+from .abstract import ReadWrite
+from .exceptions import DatasetTypeError
 from .netcdf import NetCDFRead
 
 
-class read(metaclass=DocstringRewriteMeta):
+class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
     The following file formats are supported: netCDF and CDL.
@@ -121,7 +120,7 @@ class read(metaclass=DocstringRewriteMeta):
 
         {{read unpack: `bool`}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         {{read domain: `bool`, optional}}
 
@@ -129,43 +128,43 @@ class read(metaclass=DocstringRewriteMeta):
 
         {{read netcdf_backend: `None` or (sequence of) `str`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         {{read storage_options: `dict` or `None`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         {{read cache: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         {{read dask_chunks: `str`, `int`, `None`, or `dict`, optional}}
 
-              .. versionadded:: (cfdm) NEXTVERSION
+              .. versionadded:: (cfdm) 1.11.2.0
 
         {{read store_dataset_chunks: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.11.2.0
 
         {{read cfa: `dict`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read cfa_write: (sequence of) `str`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read to_memory: (sequence of) `str`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read squeeze: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read unsqueeze: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read file_type: `None` or (sequence of) `str`, optional}}
 
@@ -178,11 +177,11 @@ class read(metaclass=DocstringRewriteMeta):
             ``'CDL'``     Text CDL representation of a netCDF file
             ============  ============================================
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
         {{read ignore_unknown_type: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.0.0
 
     :Returns:
 
@@ -271,7 +270,7 @@ class read(metaclass=DocstringRewriteMeta):
                 ignore_unknown_type=ignore_unknown_type,
                 extra_read_vars=extra_read_vars,
             )
-        except FileTypeError:
+        except DatasetTypeError:
             if file_type is None:
                 raise
 
@@ -288,34 +287,3 @@ class read(metaclass=DocstringRewriteMeta):
 
         # Return the field or domain constructs
         return fields
-
-    def __docstring_substitutions__(self):
-        """Defines applicable docstring substitutions.
-
-        Substitutons are considered applicable if they apply to this
-        class as well as all of its subclasses.
-
-        These are in addtion to, and take precendence over, docstring
-        substitutions defined by the base classes of this class.
-
-        See `_docstring_substitutions` for details.
-
-        .. versionaddedd:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `dict`
-                The docstring substitutions that have been applied.
-
-        """
-        return _docstring_substitution_definitions
-
-    def __docstring_package_depth__(self):
-        """Returns the package depth for {{package}} substitutions.
-
-        See `_docstring_package_depth` for details.
-
-        .. versionaddedd:: (cfdm) NEXTVERSION
-
-        """
-        return 0

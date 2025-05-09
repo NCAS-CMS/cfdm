@@ -71,6 +71,7 @@ Miscellaneous
    ~cfdm.NumpyArray.to_memory
    ~cfdm.NumpyArray.get_filename
    ~cfdm.NumpyArray.get_filenames
+   ~cfdm.NumpyArray.astype
    
 Special
 -------

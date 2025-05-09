@@ -234,7 +234,7 @@ class MeshArray(CompressedArray):
     def subarray_shapes(self, shapes):
         """Create the subarray shapes along each uncompressed dimension.
 
-        Note that the ouput is indpendent of the *shapes* parameter,
+        Note that the output is independent of the *shapes* parameter,
         because each dimension of the compressed data corresponds to a
         unique dimension of the uncompressed data.
 

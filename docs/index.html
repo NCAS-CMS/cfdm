@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="#">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="#">cfdm 1.12.1.0</a></h1>
 
 
 
@@ -121,13 +121,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <style> .small {font-size:small} </style><section id="introduction">
 <h2><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
-<p>Version 1.11.1.0 for version 1.11 of the CF conventions.</p>
+<p>Version 1.12.1.0 for version 1.12 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#functionality" id="id4"><strong>Functionality</strong></a></p></li>
-<li><p><a class="reference internal" href="#related-packages" id="id5"><strong>Related packages</strong></a></p></li>
-<li><p><a class="reference internal" href="#citation" id="id6"><strong>Citation</strong></a></p></li>
-<li><p><a class="reference internal" href="#references" id="id7"><strong>References</strong></a></p></li>
+<li><p><a class="reference internal" href="#performance" id="id5"><strong>Performance</strong></a></p></li>
+<li><p><a class="reference internal" href="#command-line-utilities" id="id6"><strong>Command line utilities</strong></a></p></li>
+<li><p><a class="reference internal" href="#related-packages" id="id7"><strong>Related packages</strong></a></p></li>
+<li><p><a class="reference internal" href="#citation" id="id8"><strong>Citation</strong></a></p></li>
+<li><p><a class="reference internal" href="#references" id="id9"><strong>References</strong></a></p></li>
 </ul>
 </div>
 <p>The cfdm library implements the data model of the CF (Climate and
@@ -163,7 +165,7 @@ to add more sophisticated methods.</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text"><em>A basic example of reading a field construct from a
 file and inspecting it.</em></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">cfdm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">[&lt;Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;]</span>
@@ -182,9 +184,13 @@ file and inspecting it.</em></span><a class="headerlink" href="#id2" title="Perm
 <p>The cfdm package can</p>
 <ul class="simple">
 <li><p>read <a class="reference internal" href="cf_data_model.html#term-field-construct"><span class="xref std std-term">field constructs</span></a> and <a class="reference internal" href="cf_data_model.html#term-domain-construct"><span class="xref std std-term">domain
-constructs</span></a> from netCDF and CDL datasets,</p></li>
+constructs</span></a> from netCDF and CDL datasets with a
+choice of netCDF backends,</p></li>
+<li><p>be fully flexible with respect to HDF5 chunking,</p></li>
+<li><p>read files from OPeNDAP servers and S3 object stores,</p></li>
 <li><p>create new field and domain constructs in memory,</p></li>
 <li><p>write field and domain constructs to netCDF datasets on disk,</p></li>
+<li><p>read, write, and manipulate UGRID mesh topologies,</p></li>
 <li><p>read, write, and create coordinates defined by geometry cells,</p></li>
 <li><p>read and write netCDF4 string data-type variables,</p></li>
 <li><p>read, write, and create netCDF and CDL datasets containing
@@ -220,22 +226,37 @@ outside of a Python environment:</p>
 </div>
 </section>
 <hr class="docutils" />
+<section id="performance">
+<h3><a class="toc-backref" href="#id5"><strong>Performance</strong></a><a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h3>
+<p>As of version 1.11.2.0 (released 2025-01-28), cfdm uses <a class="reference external" href="https://docs.dask.org">Dask</a> for all of its data manipulations, which
+provides lazy, parallelised, and out-of-core computations of array
+operations.</p>
+</section>
+<hr class="docutils" />
+<section id="command-line-utilities">
+<h3><a class="toc-backref" href="#id6"><strong>Command line utilities</strong></a><a class="headerlink" href="#command-line-utilities" title="Permalink to this headline">¶</a></h3>
+<p>During installation the <code class="docutils literal notranslate"><span class="pre">cfdump</span></code> command line utility is also
+installed, which generates text descriptions of field constructs
+contained in files.</p>
+</section>
+<hr class="docutils" />
 <section id="related-packages">
-<h3><a class="toc-backref" href="#id5"><strong>Related packages</strong></a><a class="headerlink" href="#related-packages" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id7"><strong>Related packages</strong></a><a class="headerlink" href="#related-packages" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python">cf-python</a> package, which
 is built as an extension to cfdm, includes higher-level functionality,
-such as regridding, and statistical operations. In turn, the <a class="reference external" href="http://ajheaps.github.io/cf-plot/">cf-plot</a> package provides comprehensive
+such as regridding, and statistical operations. In turn, the <a class="reference external" href="https://github.com/NCAS-CMS/cf-plot">cf-plot</a> package provides comprehensive
 visualisation of field constructs created by cf-python.</p>
 </section>
 <hr class="docutils" />
 <section id="citation">
-<h3><a class="toc-backref" href="#id6"><strong>Citation</strong></a><a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id8"><strong>Citation</strong></a><a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h3>
 <p>If you use cfdm, either as a stand-alone application or to provide a
 CF data model implementation to another software library, please
 consider including the reference:</p>
 <dl class="simple">
-<dt>Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference</dt><dd><p>implementation of the CF data model. Journal of Open Source
-Software, 5(54), 2717, <a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
+<dt>Hassell, D., and Bartholomew, S. L. (2020).</dt><dd><p>cfdm: A Python reference implementation of the CF data
+model. Journal of Open Source Software, 5(54), 2717,
+<a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
 </dd>
 </dl>
 <div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">Hassell2020</span><span class="p">,</span>
@@ -255,27 +276,29 @@ Software, 5(54), 2717, <a class="reference external" href="https://doi.org/10.21
 </section>
 <hr class="docutils" />
 <section id="references">
-<h3><a class="toc-backref" href="#id7"><strong>References</strong></a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id9"><strong>References</strong></a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
 <dl class="simple">
-<dt>Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S., Caron, J.,</dt><dd><p>Signell, R., et al. (2020). NetCDF Climate and Forecast (CF)
+<dt>Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S., Caron, J., Signell, R., et al. (2020).</dt><dd><p>NetCDF Climate and Forecast (CF)
 Metadata Conventions. CF Conventions Committee. Retrieved from
 <a class="reference external" href="https://cfconventions.org/cf-conventions/cf-conventions.html">https://cfconventions.org/cf-conventions/cf-conventions.html</a></p>
 </dd>
-<dt>Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference</dt><dd><p>implementation of the CF data model. Journal of Open Source
-Software, 5(54), 2717, <a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
+<dt>Hassell, D., and Bartholomew, S. L. (2020).</dt><dd><p>cfdm: A Python reference implementation of the CF data
+model. Journal of Open Source Software, 5(54), 2717,
+<a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
 </dd>
-<dt>Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and</dt><dd><p>Taylor, K. E. (2017). A data model of the Climate and Forecast
-metadata conventions (CF-1.6) with a software implementation
-(cf-python v2.1), Geosci. Model Dev., 10, 4619-4646,
+<dt>Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and Taylor, K. E. (2017).</dt><dd><p>A data model of the Climate and Forecast metadata conventions
+(CF-1.6) with a software implementation (cf-python v2.1),
+Geosci. Model Dev., 10, 4619-4646,
 <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a></p>
 </dd>
-<dt>Rew, R., and Davis, G. (1990). NetCDF: An Interface for Scientific</dt><dd><p>Data Access. IEEE Computer Graphics and Applications, 10(4),
+<dt>Rew, R., and Davis, G. (1990).</dt><dd><p>NetCDF: An Interface for Scientific Data Access. IEEE Computer
+Graphics and Applications, 10(4),
 76–82. <a class="reference external" href="https://doi.org/10.1109/38.56302">https://doi.org/10.1109/38.56302</a></p>
 </dd>
-<dt>Rew, R., Hartnett, E., and Caron, J. (2006). NetCDF-4: Software</dt><dd><p>Implementing an Enhanced Data Model for the Geosciences. In 22nd
-International Conference on Interactive Information Processing
-Systems for Meteorology, Oceanography, and Hydrology. AMS. Retrieved
-from
+<dt>Rew, R., Hartnett, E., and Caron, J. (2006).</dt><dd><p>NetCDF-4: Software Implementing an Enhanced Data Model for the
+Geosciences. In 22nd International Conference on Interactive
+Information Processing Systems for Meteorology, Oceanography, and
+Hydrology. AMS. Retrieved from
 <a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf">https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf</a></p>
 </dd>
 </dl>
@@ -319,7 +342,7 @@ from
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

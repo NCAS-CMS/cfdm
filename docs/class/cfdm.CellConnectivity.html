@@ -1,0 +1,601 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cfdm.CellConnectivity &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.CellConnectivity.dump" href="../method/cfdm.CellConnectivity.dump.html" />
+    <link rel="prev" title="cfdm.AuxiliaryCoordinate._docstring_method_exclusions" href="../method/cfdm.AuxiliaryCoordinate._docstring_method_exclusions.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
+
+
+
+<p class="blurb">A Python reference implementation of the CF data model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cfdm&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
+      <li>Previous: <a href="../method/cfdm.AuxiliaryCoordinate._docstring_method_exclusions.html" title="previous chapter">cfdm.AuxiliaryCoordinate._docstring_method_exclusions</a></li>
+      <li>Next: <a href="../method/cfdm.CellConnectivity.dump.html" title="next chapter">cfdm.CellConnectivity.dump</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="cfdm-cellconnectivity">
+<span id="id1"></span><h1>cfdm.CellConnectivity<a class="headerlink" href="#cfdm-cellconnectivity" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cfdm.CellConnectivity">
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CellConnectivity</code><span class="sig-paren">(</span><em class="sig-param">connectivity=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/cellconnectivity.py#L5-L359"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellConnectivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.topology.Topology</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.cellconnectivity.CellConnectivity</span></code></p>
+<p>A cell connectivity construct of the CF data model.</p>
+<p>A cell connectivity construct defines explicitly how cells
+arranged in two or three dimensions in real space but indexed by a
+single domain (discrete) axis are connected. Connectivity can only
+be provided when the domain axis construct also has a domain
+topology construct, and two cells can only be connected if they
+also have a topological relationship. For instance, the
+connectivity of two-dimensional face cells could be characterised
+by whether or not they have shared edges, where the edges are
+defined by connected nodes of the domain topology construct.</p>
+<p>The cell connectivity construct consists of an array recording the
+connectivity, and properties to describe the data. There must be a
+property indicating the condition by which the connectivity is
+derived from the domain topology. The array spans the domain axis
+construct with the addition of a ragged dimension. For each cell,
+the first element along the ragged dimension contains the unique
+identity of the cell, and the following elements contain in
+arbitrary order the identities of all the other cells to which the
+cell is connected. Note that the connectivity array for point
+cells is, by definition, equivalent to the array of the domain
+topology construct.</p>
+<p>When cell connectivity constructs are present they are considered
+to define the connectivity of the cells. Exactly the same
+connectivity information could be derived from the domain topology
+construct. Connectivity information inferred from inspection of
+any other constructs is not guaranteed to be the same.</p>
+<p>In CF-netCDF a cell topology construct can only be provided by a
+UGRID mesh topology variable. The construct array is supplied
+either indirectly by any of the UGRID variables that are used to
+define a domain topology construct, or directly by the UGRID
+“face_face_connectivity” variable (for face cells). In the direct
+case, the integer indices contained in the UGRID variable may be
+used as the cell identities, although the CF data model attaches
+no significance to the values other than the fact that some values
+are the same as others.</p>
+<p>Restricting the types of connectivity to those implied by the
+geospatial topology of the cells precludes connectivity derived
+from any other sources, but is consistent with UGRID encoding
+within CF-netCDF.</p>
+<p>See CF Appendix I “The CF Data Model”.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name may be accessed with the
+<a class="reference internal" href="../method/cfdm.CellConnectivity.nc_set_variable.html#cfdm.CellConnectivity.nc_set_variable" title="cfdm.CellConnectivity.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CellConnectivity.nc_get_variable.html#cfdm.CellConnectivity.nc_get_variable" title="cfdm.CellConnectivity.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CellConnectivity.nc_del_variable.html#cfdm.CellConnectivity.nc_del_variable" title="cfdm.CellConnectivity.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a>, and
+<a class="reference internal" href="../method/cfdm.CellConnectivity.nc_has_variable.html#cfdm.CellConnectivity.nc_has_variable" title="cfdm.CellConnectivity.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>The netCDF variable group structure may be accessed with the
+<a class="reference internal" href="../method/cfdm.CellConnectivity.nc_set_variable.html#cfdm.CellConnectivity.nc_set_variable" title="cfdm.CellConnectivity.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CellConnectivity.nc_get_variable.html#cfdm.CellConnectivity.nc_get_variable" title="cfdm.CellConnectivity.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CellConnectivity.nc_variable_groups.html#cfdm.CellConnectivity.nc_variable_groups" title="cfdm.CellConnectivity.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
+<a class="reference internal" href="../method/cfdm.CellConnectivity.nc_clear_variable_groups.html#cfdm.CellConnectivity.nc_clear_variable_groups" title="cfdm.CellConnectivity.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a>, and <a class="reference internal" href="../method/cfdm.CellConnectivity.nc_set_variable_groups.html#cfdm.CellConnectivity.nc_set_variable_groups" title="cfdm.CellConnectivity.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
+methods.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.11.0.0</p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>connectivity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The connectivity type describes a characteristic of
+inter-cell connectivity defined by the domain topology
+construct. It may take any value, but the following
+values are standardised: <code class="docutils literal notranslate"><span class="pre">'node'``(edge</span> <span class="pre">or</span> <span class="pre">face</span> <span class="pre">cells</span>
+<span class="pre">connected</span> <span class="pre">by</span> <span class="pre">one</span> <span class="pre">or</span> <span class="pre">more</span> <span class="pre">shared</span> <span class="pre">nodes)</span> <span class="pre">and</span> <span class="pre">``'edge'</span></code>
+(face cells connected by one or more shared edges).</p>
+</dd>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+property names, with corresponding values.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.CellConnectivity.set_properties.html#cfdm.CellConnectivity.set_properties" title="cfdm.CellConnectivity.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.CellConnectivity.set_property.html#cfdm.CellConnectivity.set_property" title="cfdm.CellConnectivity.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'face-face</span> <span class="pre">connectivity'}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>data: data_like, optional</dt><dd><p>Set the data.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm instances that contain
+<a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
+<p>The data also may be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.CellConnectivity.set_data.html#cfdm.CellConnectivity.set_data" title="cfdm.CellConnectivity.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+</dd>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cfdm.CellConnectivity" title="cfdm.CellConnectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellConnectivity</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cfdm.CellConnectivity" title="cfdm.CellConnectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellConnectivity</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cfdm.CellConnectivity" title="cfdm.CellConnectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellConnectivity</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cfdm.CellConnectivity(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+parameters prior to initialisation. By default the
+parameters are not deep copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.dump.html#cfdm.CellConnectivity.dump" title="cfdm.CellConnectivity.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description of the cell connectivity construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.identity.html#cfdm.CellConnectivity.identity" title="cfdm.CellConnectivity.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p></td>
+<td><p>Return the canonical identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.identities.html#cfdm.CellConnectivity.identities" title="cfdm.CellConnectivity.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p></td>
+<td><p>Return all possible identities.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.CellConnectivity.construct_type.html#cfdm.CellConnectivity.construct_type" title="cfdm.CellConnectivity.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<td><p>Return a description of the construct type.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.del_property.html#cfdm.CellConnectivity.del_property" title="cfdm.CellConnectivity.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<td><p>Remove a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.get_property.html#cfdm.CellConnectivity.get_property" title="cfdm.CellConnectivity.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<td><p>Return a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.has_property.html#cfdm.CellConnectivity.has_property" title="cfdm.CellConnectivity.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<td><p>Whether a property has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.set_property.html#cfdm.CellConnectivity.set_property" title="cfdm.CellConnectivity.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<td><p>Set a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.properties.html#cfdm.CellConnectivity.properties" title="cfdm.CellConnectivity.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<td><p>Return all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.clear_properties.html#cfdm.CellConnectivity.clear_properties" title="cfdm.CellConnectivity.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<td><p>Remove all properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.del_properties.html#cfdm.CellConnectivity.del_properties" title="cfdm.CellConnectivity.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></a></p></td>
+<td><p>Remove properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.set_properties.html#cfdm.CellConnectivity.set_properties" title="cfdm.CellConnectivity.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<td><p>Set properties.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="topology">
+<h2>Topology<a class="headerlink" href="#topology" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.del_connectivity.html#cfdm.CellConnectivity.del_connectivity" title="cfdm.CellConnectivity.del_connectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_connectivity</span></code></a></p></td>
+<td><p>Remove the connectivity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.get_connectivity.html#cfdm.CellConnectivity.get_connectivity" title="cfdm.CellConnectivity.get_connectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_connectivity</span></code></a></p></td>
+<td><p>Return the connectivity type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.has_connectivity.html#cfdm.CellConnectivity.has_connectivity" title="cfdm.CellConnectivity.has_connectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_connectivity</span></code></a></p></td>
+<td><p>Whether the connectivity type has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.set_connectivity.html#cfdm.CellConnectivity.set_connectivity" title="cfdm.CellConnectivity.set_connectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_connectivity</span></code></a></p></td>
+<td><p>Set the connectivity type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.normalise.html#cfdm.CellConnectivity.normalise" title="cfdm.CellConnectivity.normalise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise</span></code></a></p></td>
+<td><p>Normalise the data values.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.apply_masking.html#cfdm.CellConnectivity.apply_masking" title="cfdm.CellConnectivity.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.del_data.html#cfdm.CellConnectivity.del_data" title="cfdm.CellConnectivity.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<td><p>Remove the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.get_data.html#cfdm.CellConnectivity.get_data" title="cfdm.CellConnectivity.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<td><p>Return the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.has_data.html#cfdm.CellConnectivity.has_data" title="cfdm.CellConnectivity.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<td><p>Whether or not the construct has data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.set_data.html#cfdm.CellConnectivity.set_data" title="cfdm.CellConnectivity.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<td><p>Set the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.insert_dimension.html#cfdm.CellConnectivity.insert_dimension" title="cfdm.CellConnectivity.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
+<td><p>Expand the shape of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.persist.html#cfdm.CellConnectivity.persist" title="cfdm.CellConnectivity.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
+<td><p>Persist data into memory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.squeeze.html#cfdm.CellConnectivity.squeeze" title="cfdm.CellConnectivity.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<td><p>Remove size one axes from the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.transpose.html#cfdm.CellConnectivity.transpose" title="cfdm.CellConnectivity.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
+<td><p>Permute the axes of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.CellConnectivity.array.html#cfdm.CellConnectivity.array" title="cfdm.CellConnectivity.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
+<td><p>A numpy array deep copy of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.CellConnectivity.data.html#cfdm.CellConnectivity.data" title="cfdm.CellConnectivity.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<td><p>The data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.CellConnectivity.datetime_array.html#cfdm.CellConnectivity.datetime_array" title="cfdm.CellConnectivity.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
+<td><p>An independent numpy array of date-time objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.CellConnectivity.dtype.html#cfdm.CellConnectivity.dtype" title="cfdm.CellConnectivity.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>Data-type of the data elements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.CellConnectivity.ndim.html#cfdm.CellConnectivity.ndim" title="cfdm.CellConnectivity.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<td><p>The number of data dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.CellConnectivity.shape.html#cfdm.CellConnectivity.shape" title="cfdm.CellConnectivity.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>A tuple of the data array’s dimension sizes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.CellConnectivity.size.html#cfdm.CellConnectivity.size" title="cfdm.CellConnectivity.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>The number elements in the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="bounds">
+<h2>Bounds<a class="headerlink" href="#bounds" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.has_bounds.html#cfdm.CellConnectivity.has_bounds" title="cfdm.CellConnectivity.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<td><p>Whether or not there are cell bounds.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.copy.html#cfdm.CellConnectivity.copy" title="cfdm.CellConnectivity.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.concatenate.html#cfdm.CellConnectivity.concatenate" title="cfdm.CellConnectivity.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
+<td><p>Join a together sequence of <a class="reference internal" href="#cfdm.CellConnectivity" title="cfdm.CellConnectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellConnectivity</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.creation_commands.html#cfdm.CellConnectivity.creation_commands" title="cfdm.CellConnectivity.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Returns the commands to create the construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.equals.html#cfdm.CellConnectivity.equals" title="cfdm.CellConnectivity.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.uncompress.html#cfdm.CellConnectivity.uncompress" title="cfdm.CellConnectivity.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<td><p>Uncompress the construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.get_filenames.html#cfdm.CellConnectivity.get_filenames" title="cfdm.CellConnectivity.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the name of the file or files containing the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.get_original_filenames.html#cfdm.CellConnectivity.get_original_filenames" title="cfdm.CellConnectivity.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
+<td><p>The names of files containing the original data and metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.to_memory.html#cfdm.CellConnectivity.to_memory" title="cfdm.CellConnectivity.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<td><p>Bring data on disk into memory.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="aggregation">
+<h2>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.file_directories.html#cfdm.CellConnectivity.file_directories" title="cfdm.CellConnectivity.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
+<td><p>The directories of files containing parts of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.replace_directory.html#cfdm.CellConnectivity.replace_directory" title="cfdm.CellConnectivity.replace_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></a></p></td>
+<td><p>Replace a file directory in-place.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.nc_del_variable.html#cfdm.CellConnectivity.nc_del_variable" title="cfdm.CellConnectivity.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
+<td><p>Remove the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.nc_get_variable.html#cfdm.CellConnectivity.nc_get_variable" title="cfdm.CellConnectivity.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.nc_has_variable.html#cfdm.CellConnectivity.nc_has_variable" title="cfdm.CellConnectivity.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
+<td><p>Whether the netCDF variable name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.nc_set_variable.html#cfdm.CellConnectivity.nc_set_variable" title="cfdm.CellConnectivity.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="groups">
+<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.nc_variable_groups.html#cfdm.CellConnectivity.nc_variable_groups" title="cfdm.CellConnectivity.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.nc_clear_variable_groups.html#cfdm.CellConnectivity.nc_clear_variable_groups" title="cfdm.CellConnectivity.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.nc_set_variable_groups.html#cfdm.CellConnectivity.nc_set_variable_groups" title="cfdm.CellConnectivity.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF variable group hierarchy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="hdf5-chunks">
+<h3>HDF5 chunks<a class="headerlink" href="#hdf5-chunks" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.nc_hdf5_chunksizes.html#cfdm.CellConnectivity.nc_hdf5_chunksizes" title="cfdm.CellConnectivity.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.nc_set_hdf5_chunksizes.html#cfdm.CellConnectivity.nc_set_hdf5_chunksizes" title="cfdm.CellConnectivity.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.nc_clear_hdf5_chunksizes.html#cfdm.CellConnectivity.nc_clear_hdf5_chunksizes" title="cfdm.CellConnectivity.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.__deepcopy__.html#cfdm.CellConnectivity.__deepcopy__" title="cfdm.CellConnectivity.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.__getitem__.html#cfdm.CellConnectivity.__getitem__" title="cfdm.CellConnectivity.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Return a subspace defined by indices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.__repr__.html#cfdm.CellConnectivity.__repr__" title="cfdm.CellConnectivity.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity.__str__.html#cfdm.CellConnectivity.__str__" title="cfdm.CellConnectivity.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity._docstring_special_substitutions.html#cfdm.CellConnectivity._docstring_special_substitutions" title="cfdm.CellConnectivity._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring substitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity._docstring_substitutions.html#cfdm.CellConnectivity._docstring_substitutions" title="cfdm.CellConnectivity._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity._docstring_package_depth.html#cfdm.CellConnectivity._docstring_package_depth" title="cfdm.CellConnectivity._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellConnectivity._docstring_method_exclusions.html#cfdm.CellConnectivity._docstring_method_exclusions" title="cfdm.CellConnectivity._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-04-01.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

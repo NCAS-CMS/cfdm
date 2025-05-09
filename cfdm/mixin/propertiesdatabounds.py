@@ -393,9 +393,9 @@ class PropertiesDataBounds(PropertiesData):
         relaxed_units=False,
         copy=True,
     ):
-        """Join a together sequence of '{{class}}`.
+        """Join a together sequence of `{{class}}`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `Data.concatenate`, `Data.cull_graph`
 
@@ -406,7 +406,7 @@ class PropertiesDataBounds(PropertiesData):
             axis: `int`, optional
                 Select the axis to along which to concatenate, defined
                 by its position in the data array. By default
-                concatenatoin is along the axis in position 0.
+                concatenation is along the axis in position 0.
 
             {{cull_graph: `bool`, optional}}
 
@@ -1480,7 +1480,7 @@ class PropertiesDataBounds(PropertiesData):
 
         `persist` causes delayed operations to be computed.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `array`, `datetime_array`,
                      `{{package}}.Data.persist`
@@ -1488,8 +1488,8 @@ class PropertiesDataBounds(PropertiesData):
         :Parameters:
 
             bounds: `bool`, optional
-                If False then do not persist any bounds data. By
-                default any bounds data are also persisted.
+                If True, the default, then also persist any bounds
+                data.
 
             {{inplace: `bool`, optional}}
 
@@ -1525,29 +1525,17 @@ class PropertiesDataBounds(PropertiesData):
     ):
         """Replace file directories in-place.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `file_directories`, `get_filenames`
 
         :Parameters:
 
-            old: `str` or `None`, optional
-                The base directory structure to be replaced by
-                *new*. If `None` (the default) or an empty string, and
-                *normalise* is False, then *new* is prepended to each
-                file name.
+            {{replace old: `str` or `None`, optional}}
 
-            new: `str` or `None`, optional
-                The new directory that replaces the base directory
-                structure identified by *old*. If `None` (the default)
-                or an empty string, then *old* is replaced with an
-                empty string. Otherwise,
+            {{replace new: `str` or `None`, optional}}
 
-            normalise: `bool`, optional
-                If True then *old* and *new* directories, and the file
-                names, are normalised to absolute paths prior to the
-                replacement. If False (the default) then no
-                normalisation is done.
+            {{replace normalise: `bool`, optional}}
 
             common: `bool`, optional
                 If True the base directory structure that is common to
@@ -1579,7 +1567,7 @@ class PropertiesDataBounds(PropertiesData):
     def nc_clear_hdf5_chunksizes(self, bounds=True, interior_ring=True):
         """Clear the HDF5 chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
@@ -1623,7 +1611,7 @@ class PropertiesDataBounds(PropertiesData):
     ):
         """Set the HDF5 chunking strategy.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`

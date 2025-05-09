@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data.__getitem__<a class="headerlink" href="#cfdm-data-getitem" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.__getitem__">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/data/data.py#L309-L368"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.__getitem__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/data/data.py#L635-L774"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subspace of the data defined by indices.</p>
 <p>d.__getitem__(indices) &lt;==&gt; d[indices]</p>
 <p>Indexing follows rules that are very similar to the numpy indexing
@@ -138,15 +138,15 @@ the rank by one.</p></li>
 <li><p>When two or more dimensions’ indices are sequences of integers
 then these indices work independently along each dimension
 (similar to the way vector subscripts work in Fortran). This is
-the same behaviour as indexing on a Variable object of the
-netCDF4 package.</p></li>
+the same behaviour as indexing on a <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.Variable</span></code> object.</p></li>
 </ul>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
-</div>
+<p><strong>Performance</strong></p>
+<p>If the shape of the data is unknown then it is calculated
+immediately by executing all delayed operations.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cfdm.Data.__setitem__.html#cfdm.Data.__setitem__" title="cfdm.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">_parse_indices</span></code></p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__keepdims_indexing__</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">__orthogonal_indexing__</span></code>, <a class="reference internal" href="cfdm.Data.__setitem__.html#cfdm.Data.__setitem__" title="cfdm.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -157,7 +157,8 @@ netCDF4 package.</p></li>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">190</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">190</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(1, 10, 9)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
@@ -185,7 +186,7 @@ netCDF4 package.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &copy;2025, NCAS | Page built on 2025-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

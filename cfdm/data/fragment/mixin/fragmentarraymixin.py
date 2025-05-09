@@ -9,14 +9,14 @@ from ...netcdfindexer import netcdf_indexer
 class FragmentArrayMixin:
     """Mixin class for a fragment of aggregated data.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.0.0
 
     """
 
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `__array__`, `index`
 
@@ -65,7 +65,7 @@ class FragmentArrayMixin:
                 if array.size > prod(self.original_shape):
                     raise ValueError(
                         f"Can't get fragment data from ({self}) when "
-                        "the the fragment has two or more missing size 1 "
+                        "the fragment has two or more missing size 1 "
                         "dimensions, whilst also spanning two or more "
                         "Dask compute chunks."
                         "\n\n"
@@ -88,7 +88,7 @@ class FragmentArrayMixin:
     def _conform_to_aggregated_units(self, array):
         """Conform the array to have the aggregated units.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -137,11 +137,9 @@ class FragmentArrayMixin:
     def _size_1_axis(self):  # , indices):
         """Find the position of a unique size 1 index.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         .. seealso:: `_parse_indices`, `__getitem__`
-
-        :Paramealso:: `_parse_indices`, `__getitem__`
 
         :Parameters:
 
@@ -180,7 +178,7 @@ class FragmentArrayMixin:
     def _unpack_aggregated_data(self, array):
         """Unpack the canonical data, if requested.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         """
         if self.get_unpack_aggregated_data():
@@ -198,7 +196,7 @@ class FragmentArrayMixin:
     def aggregated_Units(self):
         """The units of the aggregated data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -217,7 +215,7 @@ class FragmentArrayMixin:
         If the calendar is `None` then the CF default calendar is
         assumed, if applicable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -242,7 +240,7 @@ class FragmentArrayMixin:
         attributes, then the array is unpacked according to those
         attributes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         **Examples**
 

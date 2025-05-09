@@ -93,6 +93,7 @@ Miscellaneous
    ~cfdm.CompressedArray.source
    ~cfdm.CompressedArray.to_memory
    ~cfdm.CompressedArray.get_filenames
+   ~cfdm.CompressedArray.astype
 
 Special
 -------

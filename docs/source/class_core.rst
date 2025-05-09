@@ -37,12 +37,14 @@ Metadata construct classes
    :toctree: class/
 
    cfdm.core.AuxiliaryCoordinate
+   cfdm.core.CellConnectivity
    cfdm.core.CellMeasure
    cfdm.core.CellMethod
    cfdm.core.CoordinateReference
    cfdm.core.DimensionCoordinate
    cfdm.core.DomainAncillary
    cfdm.core.DomainAxis
+   cfdm.core.DomainTopology
    cfdm.core.FieldAncillary
 
 Constructs class

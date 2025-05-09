@@ -20,7 +20,7 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
         Returns a lock object that prevents concurrent reads of netCDF
         files, which are not currently supported by `netCDF4`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return netcdf_lock
@@ -31,7 +31,7 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
         The subspace is defined by the `index` attributes, and is
         applied with `cfdm.netcdf_indexer`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `__array__`, `index`
 
@@ -94,7 +94,7 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
     def _group(self, dataset, groups):
         """Return the group object containing a variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
@@ -103,7 +103,7 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
 
             groups: sequence of `str`
                 The definition of which group the variable is in. For
-                instance, of the variable is in group
+                instance, if the variable is in group
                 ``/forecast/model`` then *groups* would be
                 ``['forecast', 'model']``.
 
@@ -125,7 +125,7 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
         they have not already been defined, either during `{{class}}`
         instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
