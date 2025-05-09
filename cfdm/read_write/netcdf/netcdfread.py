@@ -580,6 +580,7 @@ class NetCDFRead(IORead):
         nc = None
         errors = []
         for backend in g["netcdf_backend"]:
+            print (backend)
             try:
                 nc = file_open_function[backend](filename)
             except KeyError:
@@ -1413,6 +1414,9 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Open the netCDF file to be read
         # ------------------------------------------------------------
+        import time
+        print (-4)
+        s = time.time()
         try:
             nc = self.file_open(filename, flatten=True, verbose=None)
         except DatasetTypeError:
@@ -1426,7 +1430,8 @@ class NetCDFRead(IORead):
                 )  # pragma: no cover
 
             return []
-
+        print ('file_open', f"{time.time()-s:.4f}"); s = time.time()
+         
         logger.info(
             f"Reading netCDF file: {g['filename']}\n"
         )  # pragma: no cover
@@ -1439,6 +1444,7 @@ class NetCDFRead(IORead):
         # Put the file's global attributes into the global
         # 'global_attributes' dictionary
         # ----------------------------------------------------------------
+        print (-3)
         global_attributes = {}
         for attr, value in self._file_global_attributes(nc).items():
             attr = str(attr)
@@ -1452,6 +1458,7 @@ class NetCDFRead(IORead):
             logger.debug(
                 f"    Global attributes:\n        {g['global_attributes']}"
             )  # pragma: no cover
+        print (-2)
 
         # ------------------------------------------------------------
         # Find the CF version for the file
@@ -1596,8 +1603,10 @@ class NetCDFRead(IORead):
             ):
                 g["global_attributes"].pop(attr, None)
 
-#        ff = self._file_variables(nc)
+        print (-1)
+        import time
         for ncvar, variable in self._file_variables(nc).items():
+            s0 = time.time()
             ncvar_basename = ncvar
             groups = ()
             group_attributes = {}
@@ -1650,21 +1659,25 @@ class NetCDFRead(IORead):
                     flattener_variables[ncvar] = ncvar
 
                 variable_grouped_dataset[ncvar] = g["nc_grouped"]
-
+            s = time.time()
+            print(000, ncvar)
             variable_attributes[ncvar] = {}
-            for attr, value in self._file_variable_attributes(
-                variable
-            ).items():
+            dd =  self._file_variable_attributes(variable)
+            print (0.5, f"{time.time()-s:.4f}"); s = time.time()
+            for attr, value in dd.items(): #self._file_variable_attributes(
+#                variable
+#            ).items():
                 attr = str(attr)
                 if isinstance(value, bytes):
                     value = value.decode(errors="ignore")
 
                 variable_attributes[ncvar][attr] = value
 
+            print (111, f"{time.time()-s:.4f}"); s = time.time()
             variable_dimensions[ncvar] = tuple(
                 self._file_variable_dimensions(variable)
             )
-
+            print(222, f"{time.time()-s:.4f}"); s = time.time()
             variable_dataset[ncvar] = nc
             variable_filename[ncvar] = g["filename"]
             variables[ncvar] = variable
@@ -1673,6 +1686,8 @@ class NetCDFRead(IORead):
             variable_groups[ncvar] = groups
             variable_group_attributes[ncvar] = group_attributes
 
+            print ('attributes/dimensions', ncvar,f"{time.time()-s0:.4f}"); s0 = time.time()
+        
         # Populate dimensions_groups and dimension_basename
         # dictionaries
         file_dimensions = dict(self._file_dimensions(nc))
@@ -10840,6 +10855,7 @@ class NetCDFRead(IORead):
             return dict(var.attrs)
         except AttributeError:
             try:
+                print ('here, for some reason')
                 # netCDF4
                 return {attr: var.getncattr(attr) for attr in var.ncattrs()}
             except AttributeError:
