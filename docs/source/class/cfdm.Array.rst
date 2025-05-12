@@ -81,6 +81,7 @@ Miscellaneous
 
    ~cfdm.Array.copy
    ~cfdm.Array.get_subspace
+   ~cfdm.Array.astype
 
 Special
 -------

@@ -5,12 +5,12 @@ class QuantizationMixin:
 
     """
 
-    def __initialise(self, source, copy=True):
+    def __initialise_from_source(self, source, copy=True):
         """Initialise quantization information from a source.
 
-        Intended to be called from a child class's
-        `_parent_initialise_from_source` method, which in turn is
-        called from `cfdm.core.abstract.Container.__init__`
+        If `{{class}}` inherits from `cfdm.core.abstract.Container`,
+        then this method is called by `_parent_initialise_from_source`
+        from within `cfdm.core.abstract.Container.__init__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

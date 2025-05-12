@@ -13,10 +13,12 @@ class FieldDomain:
 
     """
 
-    def __initialise(self, source, copy=True):
+    def __initialise_from_source(self, source, copy=True):
         """Initialise mesh_id information from a source.
 
-        Intended to be called by `_parent_initialise_from_source`.
+        If `{{class}}` inherits from `cfdm.core.abstract.Container`,
+        then this method is called by `_parent_initialise_from_source`
+        from within `cfdm.core.abstract.Container.__init__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

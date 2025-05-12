@@ -11,7 +11,7 @@ datasets and the inspection of CF data model constructs.
 
 """
 
-__date__ = "2025-??-??"
+__date__ = "2025-04-01"
 __cf_version__ = "1.12"
 __version__ = "1.12.1.0"
 

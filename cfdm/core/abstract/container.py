@@ -309,11 +309,12 @@ class Container(metaclass=DocstringRewriteMeta):
         return component in self._components
 
     def _parent_initialise_from_source(self, source, copy=True):
-        """Run parent class initialise-from-source methods.
+        """Run all parent class initialise-from-source methods.
 
-        Any such methods will be called ``_P__initialise``, where
-        ``P`` is the name of a parent class, and they will be applied
-        in reverse method resolution order.
+        Any such methods will be called
+        ``_P__initialise_from_source``, where ``P`` is the name of a
+        parent class, and they will be applied in reverse method
+        resolution order.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -334,10 +335,12 @@ class Container(metaclass=DocstringRewriteMeta):
 
         """
         for P in self.__class__.__mro__[-1:0:-1]:
-            method = f"_{P.__name__}__initialise"
+            method = f"_{P.__name__}__initialise_from_source"
             try:
+                # Try to run the parent class method
                 getattr(self, method)(source, copy)
             except AttributeError:
+                # Parent class does not have this method
                 pass
 
     def _set_component(self, component, value, copy=True):

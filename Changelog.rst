@@ -8,6 +8,17 @@ Version 1.12.?.?
 * New class: `cfdm.Quantization`
 * New class: `cfdm.mixin.QuantizationMixin`
 
+Version 1.12.1.0
+----------------
+
+**2025-04-01**
+
+* Set new method `cfdm.Array.astype`
+  (https://github.com/NCAS-CMS/cfdm/issues/331)
+* Set new maximum version of `dask`: ``2025.3.0``
+  (https://github.com/NCAS-CMS/cfdm/issues/332)
+* Changed dependency: ``dask>=2025.2.0,<=2025.3.0``
+
 ----
 
 Version 1.12.0.0

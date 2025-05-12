@@ -138,6 +138,28 @@ class ArrayMixin:
         """
         return Units(self.get_units(None), self.get_calendar(None))
 
+    def astype(self, dtype, **kwargs):
+        """Cast the data to a specified type.
+
+        .. versionadded:: (cfdm) 1.12.1.0
+
+        :Parameters:
+
+            dtype: `str` or dtype
+                Typecode or data-type to which the array is cast.
+
+            kwargs: optional
+                Any other keywords accepted by `np.astype`.
+
+        :Returns:
+
+            `np.ndarray`
+                The data with the new data type
+
+        """
+        kwargs["copy"] = False
+        return self.array.astype(dtype, **kwargs)
+
     def get_attributes(self, copy=True):
         """The attributes of the array.
 
