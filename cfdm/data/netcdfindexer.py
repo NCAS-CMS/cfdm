@@ -231,7 +231,7 @@ class netcdf_indexer:
             # Assume we are here because we have one or more
             # np.newaxis values in 'index', and the variable doesn't
             # support that type of indexing. It is known that
-            # `netCDF4` raises an IndexError and h5netcdf raises an
+            # `netCDF4` raises an IndexError and `h5netcdf` raises an
             # AttributeError.
 
             # Subspace the variable with the np.newaxis elements
@@ -870,7 +870,7 @@ class netcdf_indexer:
 
         variable = self.variable
         try:
-            # h5py API
+            # h5py, zarr API
             attrs = dict(variable.attrs)
         except AttributeError:
             try:

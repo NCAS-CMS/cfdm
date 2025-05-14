@@ -12,7 +12,7 @@ class ZarrDimension:
 
             name: `str`
                 The dimension name.
-        
+
             size: `int`
                 The dimension size.
 
@@ -46,7 +46,7 @@ class ZarrDimension:
 
         """
         return self.group
-        
+
     def isunlimited(self):
         """Whether or not the dimension is unlimited.
 

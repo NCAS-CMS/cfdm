@@ -129,7 +129,7 @@ shell parameter expansions are applied to it.
 
 The following file types can be read:
 
-* All formats of netCDF3 and netCDF4 files can be read, containing
+* All formats of netCDF-3 and netCDF-4 files can be read, containing
   datasets for all versions of CF up to CF-|version|, including
   :ref:`UGRID <UGRID-mesh-topologies>` datasets.
 
@@ -151,6 +151,9 @@ datasets <Sample-datasets>`), which contains two field constructs:
    <type 'list'>
    >>> len(x)
    2
+
+* Datasets in `Zarr v2 format
+  <https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html>`_.
 
 Descriptive properties are always read into memory, but `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all

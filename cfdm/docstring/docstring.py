@@ -119,6 +119,33 @@ _docstring_substitution_definitions = {
         was produced by combining other objects that also store their
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
+    # read dataset
+    "{{dataset: (arbitrarily nested sequence of) `str`}}": """dataset: (arbitrarily nested sequence of) `str`
+            A string, or arbitrarily nested sequence of strings,
+            giving the dataset names, or directory names, from which
+            to read field or doman constructs. Relative paths are
+            allowed.
+
+            Local files will have tilde and shell environment
+            variables expansions applied to them.
+
+            Directories will be walked through to find their contents
+            (recursively if *recursive* is True), unless the directory
+            contains a Zarr dataset (which is ascertained by presence
+            in the directory of appropriate Zarr metadata files).
+
+            Dataset names containing UNIX wildcard characters (``*``,
+            ``?``, ``[a-z]``, etc.) will be replaced the corresponding
+            list of matching dataset names.
+
+            Remote datasets are assumed to be binary netCDF files,
+            unless *dataset_type* is set to ``'Zarr'``.
+
+            *Example:*
+              The local file ``file.nc`` in the user's home directory
+              could be described by any of the following dataset
+              names: ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
+              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.""",
     # read external
     "{{read external: (sequence of) `str`, optional}}": """external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
@@ -497,15 +524,16 @@ _docstring_substitution_definitions = {
             chunking strategy is then accessible via an object's
             `nc_hdf5_chunksizes` method. When the dataset chunking
             strategy is stored, it will be used when the data is
-            written to a new netCDF4 file with `{{package}}.write`
+            written to a new netCDF file with `{{package}}.write`
             (unless the strategy is modified prior to writing).
 
-            If False, or if the dataset format does not support
-            chunking, then no dataset chunking strategy is stored.
-            (i.e. an `nc_hdf5_chunksizes` method will return `None`
-            for all `Data` objects). In this case, when the data is
-            written to a new netCDF4 file, the dataset chunking
-            strategy will be determined by `{{package}}.write`.
+            If False, or if the dataset being read does not support
+            chunking (such as a netCDF-3 dataset), then no dataset
+            chunking strategy is stored (i.e. an `nc_hdf5_chunksizes`
+            method will return `None` for all `Data` objects). In this
+            case, when the data is written to a new netCDF file, the
+            dataset chunking strategy will be determined by
+            `{{package}}.write`.
 
             See the `{{package}}.write` *hdf5_chunks* parameter for
             details on how the dataset chunking strategy is determined
@@ -635,18 +663,11 @@ _docstring_substitution_definitions = {
             the data are stored in its dataset.""",
     # read file_type
     "{{read file_type: `None` or (sequence of) `str`, optional}}": """file_type: `None` or (sequence of) `str`, optional
-             Only read files of the given type(s). All other file
-             types are ignored. If `None` (the default) then files of
-             any valid type are read. If there are no files of the
-             given type(s), or *file_type* is empty sequence, then an
-             empty list is returned.""",
-    # read ignore_unknown_type
-    "{{read ignore_unknown_type: `bool`, optional}}": """ignore_unknown_type: `bool`, optional
-             If True then ignore any file which does not have one of
-             the valid types specified by the *file_type*
-             parameter. If False (the default) then attempting to read
-             a file with an unrecognised type will result in an
-             error.""",
+             Only read files of the given type(s), ignoring others. If
+             there are no files of the given type(s), or *file_type*
+             is empty sequence, then an empty list is returned. If
+             `None` (the default) then files of any type are read, and
+             an exception is raised for any invalid file type.""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully
