@@ -697,7 +697,7 @@ class NetCDFRead(IORead):
 
         """
         import zarr
-        
+
         nc = zarr.open(dataset)
         self.read_vars["file_opened_with"] = "zarr"
         return nc
@@ -823,7 +823,7 @@ class NetCDFRead(IORead):
             if (
                 allowed_dataset_types
                 and len(allowed_dataset_types) == 1
-                and dataset_type[0] == "Zarr"
+                and allowed_dataset_types[0] == "Zarr"
             ):
                 # Assume that a non-local URI is zarr if
                 # 'allowed_dataset_types' is ('Zarr',)
@@ -834,7 +834,7 @@ class NetCDFRead(IORead):
 
         # Still here? Then check for a local Zarr dataset
         dataset = u.path
-        if isdir(dataset) and cls._is_zarr(dataset):
+        if isdir(dataset) and cls.is_zarr(dataset):
             return "Zarr"
 
         # Still here? Then check for a local netCDF or CDL file
@@ -1132,7 +1132,7 @@ class NetCDFRead(IORead):
                     f"Can't interpret {dataset} as a dataset of one of the "
                     f"valid types: {valid_dataset_types!r}"
                 )
-            
+
             return []
 
         # Can interpret the dataset as a recognised type, but return
@@ -4156,6 +4156,8 @@ class NetCDFRead(IORead):
                         f"for {field_ncvar!r}."
                     )
                     if is_log_level_debug(logger):
+                        from pprint import pformat
+
                         logger.debug(
                             f"Mesh dictionary is: {pformat(g['mesh'])}"
                         )
@@ -10906,7 +10908,8 @@ class NetCDFRead(IORead):
                 # zarr3
                 dimension_names = var.metadata.dimension_names
                 if dimension_names is None:
-                    raise Exception("TODOZARR")
+                    # scalar variable
+                    dimension_names = ()
 
                 return dimension_names
             except AttributeError:
@@ -11633,8 +11636,10 @@ class NetCDFRead(IORead):
         return out
 
     @classmethod
-    def _is_zarr(cls, path):
+    def is_zarr(cls, path):
         """Whether or not a directory contains a Zarr dataset.
+
+        Zarr versions 2 (xarray) and 3 are supported.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -11650,4 +11655,8 @@ class NetCDFRead(IORead):
                 `False`.
 
         """
-        return isfile(join(path, ".zgroup")) or isfile(join(path, ".zarray"))
+        return (
+            isfile(join(path, ".zgroup"))
+            or isfile(join(path, ".zarray"))
+            or isfile(join(path, "zarr.json"))
+        )

@@ -2376,18 +2376,18 @@ class CFDMImplementation(Implementation):
         return cls(**kwargs)
 
     def initialise_ZarrArray(self, **kwargs):
-        """Return a `NetCDF4Array` instance. TODOZARR.
+        """Return a `ZarrArray` instance.
+
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
             kwargs: optional
                 Initialisation parameters to pass to the new instance.
 
-                .. versionadded:: (cfdm) NEXTVERSION
-
         :Returns:
 
-            `NetCDF4Array`
+            `ZarrArray`
 
         """
         cls = self.get_class("ZarrArray")

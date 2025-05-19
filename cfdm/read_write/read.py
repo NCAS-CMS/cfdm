@@ -1,3 +1,4 @@
+from functools import partial
 from glob import iglob
 from logging import getLogger
 from os import walk
@@ -5,8 +6,8 @@ from os.path import expanduser, expandvars, isdir, join
 
 from uritools import urisplit
 
+from ..decorators import _manage_log_level_via_verbosity
 from ..functions import is_log_level_info
-
 from .abstract import ReadWrite
 from .exceptions import DatasetTypeError
 from .netcdf import NetCDFRead
@@ -17,10 +18,14 @@ logger = getLogger(__name__)
 class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
-    The following file formats are supported: netCDF and CDL.
+    The following file formats are supported: netCDF, CDL, and Zarr.
 
-    NetCDF files may be on local disk, on an OPeNDAP server, or in an
-    S3 object store.
+    NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
+    server, or in an S3 object store.
+
+    CDL files must be on local disk.
+
+    Any amount of files of any combination of file types may be read.
 
     The returned constructs are sorted by the netCDF variable names of
     their corresponding data or domain variables.
@@ -82,10 +87,6 @@ class read(ReadWrite):
     constructs in memory will be created with data with all missing
     values.
 
-    **Zarr files**
-
-    TODOZARR
-
     **Performance**
 
     Descriptive properties are always read into memory, but lazy
@@ -99,7 +100,9 @@ class read(ReadWrite):
 
     :Parameters:
 
-        {{read dataset: (arbitrarily nested sequence of) `str`}}
+        {{read datasets: (arbitrarily nested sequence of) `str`}}
+
+        {{read cdl_string: `bool`, optional}}
 
         {{read external: (sequence of) `str`, optional}}
 
@@ -172,8 +175,9 @@ class read(ReadWrite):
             ============  ============================================
             file type     Description
             ============  ============================================
-            ``'netCDF'``  Binary netCDF-3 or netCDF-4 files
-            ``'CDL'``     Text CDL representations of netCDF files
+            ``'netCDF'``  Binary netCDF-3 or netCDF-4 file
+            ``'CDL'``     Text CDL representations of a netCDF dataset
+            ``'Zarr'``    A Zarr v2 (xarray) or Zarr v3 hierarchy
             ============  ============================================
 
             .. versionadded:: (cfdm) 1.12.0.0
@@ -210,6 +214,7 @@ class read(ReadWrite):
 
     """
 
+    @_manage_log_level_via_verbosity
     def __new__(
         cls,
         datasets,
@@ -247,10 +252,20 @@ class read(ReadWrite):
         kwargs.update(kwargs.pop("kwargs"))
 
         self = super().__new__(cls)
+
         self.kwargs = kwargs
 
-        # Actions to take before any datasets have been read
+        # Actions to be taken before any datasets have been read
+        # (which include initialising the 'constructs' attribute to an
+        # empty `list`).
         self._initialise()
+
+        dataset_type = self.dataset_type
+        if not (
+            dataset_type is None
+            or self.dataset_type.issubset(self.allowed_dataset_types)
+        ):
+            raise ValueError("TODOZARR 3453452")
 
         # Loop round the input datasets
         for dataset in self._datasets():
@@ -259,10 +274,11 @@ class read(ReadWrite):
             self._read(dataset)
             self._post_read(dataset)
 
-            # Add its contents to the output list
+            # Add the dataset contents to the output list
+            self.n_datasets += 1
             self.constructs.extend(self.dataset_contents)
 
-        # Actions to take after all datasets have been read
+        # Actions to be taken after all datasets have been read
         self._finalise()
 
         if is_log_level_info(logger):
@@ -282,15 +298,17 @@ class read(ReadWrite):
         The datset pathnames are defined by
         ``self.kwargs['datasets']``.
 
-        Each pathname has tilde and environment variables exapanded,
-        and is then replaced by all of the pathnames matching glob
-        patterns used by the Unix shell.
+        Each pathname has its tilde and environment variables
+        expanded, and is then replaced by all of the pathnames
+        matching glob patterns used by the Unix shell.
 
-        A directory is replaced the pathnames of the files it
-        contains. If ``self.kwargs['recursive']`` is True then
-        subdirectories are recursively searched through. If
-        ``self.kwargs['followlinks']`` is True then subdirectories
-        pointed to by symlinks are included.
+        A directory is replaced the pathnames of the datasets it
+        contains. Subdirectories are recursively searched through only
+        if ``self.kwargs['recursive']`` is True. Subdirectories
+        pointed to by symlinks are included only if
+        ``self.kwargs['followlinks']`` is True.
+
+        Called by `__new__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -315,11 +333,12 @@ class read(ReadWrite):
 
         if followlinks and not recursive:
             raise ValueError(
-                f"Can't set followlinks={followlinks!r} when "
-                f"recursive={recursive!r}"
+                f"Can only set followlinks={followlinks!r} when "
+                f"recursive={True}. Got recursive={recursive!r}"
             )
 
         for datasets1 in datasets:
+            # Apply tilde and environment variable expansions
             datasets1 = expanduser(expandvars(datasets1))
 
             u = urisplit(datasets1)
@@ -335,9 +354,9 @@ class read(ReadWrite):
             n_datasets = 0
             for x in iglob(datasets1):
                 if isdir(x):
-                    if NetCDFRead._is_zarr(x):
-                        # This directory is a Zarr dataset. Don't look
-                        # in any subdirectories.
+                    if NetCDFRead.is_zarr(x):
+                        # This directory is a Zarr dataset, so don't
+                        # look in any subdirectories.
                         n_datasets += 1
                         yield x
                         continue
@@ -345,14 +364,14 @@ class read(ReadWrite):
                     # Walk through directories, possibly recursively
                     for path, _, filenames in walk(x, followlinks=followlinks):
                         if NetCDFRead.is_zarr(path):
-                            # This directory is a Zarr dataset. Don't
-                            # look in any subdirectories.
+                            # This directory is a Zarr dataset, so
+                            # don't look in any subdirectories.
                             n_datasets += 1
                             yield path
                             break
 
                         for f in filenames:
-                            # This file is a dataset
+                            # This file is a (non-Zarr) dataset
                             n_datasets += 1
                             yield join(path, f)
 
@@ -360,17 +379,19 @@ class read(ReadWrite):
                             # Don't look in any subdirectories
                             break
                 else:
-                    # This file is a dataset
+                    # This file is a (non-Zarr) dataset
                     n_datasets += 1
                     yield x
 
             if not n_datasets:
                 raise FileNotFoundError(
-                    f"No datasets found from {kwargs['datasets']}"
+                    f"No datasets found from datasets={kwargs['datasets']!r}"
                 )
 
     def _finalise(self):
         """Actions to take after all datasets have been read.
+
+        Called by `__new__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -379,14 +400,16 @@ class read(ReadWrite):
             `None`
 
         """
-        # Sort the output contructs by netCDF variable name
-        out = self.constructs
-        n = len(out)
-        if n > 1:
-            out.sort(key=lambda f: f.nc_get_variable(""))
+        # Sort the output contructs in-place by their netCDF variable
+        # names
+        constructs = self.constructs
+        if len(constructs) > 1:
+            constructs.sort(key=lambda f: f.nc_get_variable(""))
 
     def _initialise(self):
         """Actions to take before any datasets have been read.
+
+        Called by `__new__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -399,19 +422,23 @@ class read(ReadWrite):
 
         # Parse the 'dataset_type' keyword parameter
         dataset_type = kwargs.get("dataset_type")
-        if dataset_type is None:
-            self.dataset_type = None
-        else:
+        if dataset_type is not None:
             if isinstance(dataset_type, str):
                 dataset_type = (dataset_type,)
 
-            self.dataset_type = set(dataset_type)
+            dataset_type = set(dataset_type)
 
-        # Recognised netCDF datsets formats
+        self.dataset_type = dataset_type
+
+        # Recognised netCDF dataset formats
         self.netCDF_dataset_types = set(("netCDF", "CDL", "Zarr"))
+
+        # Allowed dataset formats
+        self.allowed_dataset_types = self.netCDF_dataset_types.copy()
 
         # The output construct type
         self.domain = bool(kwargs["domain"])
+        self.field = not self.domain
         self.construct = "domain" if self.domain else "field"
 
         # Initialise the number of successfully read of datasets
@@ -420,8 +447,13 @@ class read(ReadWrite):
         # Initialise the list of output constructs
         self.constructs = []
 
+        # Initialise the set of different dataset categories.
+        self.unique_dataset_categories = set()
+
     def _post_read(self, dataset):
-        """Actions to take immediately after reading a given dataset.
+        """Actions to take immediately after reading a dataset.
+
+        Called by `__new__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -435,13 +467,15 @@ class read(ReadWrite):
             `None`
 
         """
-        # Raise any unknown-format errors
+        # Raise any "unknown format" errors
         if self.dataset_format_errors:
             error = "\n".join(map(str, self.dataset_format_errors))
             raise DatasetTypeError(f"\n{error}")
 
     def _pre_read(self, dataset):
-        """Actions to take immediately before reading a given dataset.
+        """Actions to take immediately before reading a dataset.
+
+        Called by `__new__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -459,14 +493,15 @@ class read(ReadWrite):
         self.dataset_contents = []
 
         # Initialise the list of unknown-format errors arising from
-        # trying to the read dataset
+        # trying to read the read dataset
         self.dataset_format_errors = []
-
-        # Initialise the dataset type
-        self.dataset_type = None
 
     def _read(self, dataset):
         """Read a given dataset into field or domain constructs.
+
+        The constructs are stored in the `dataset_contents` attribute.
+
+        Called by `__new__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -490,7 +525,7 @@ class read(ReadWrite):
             if not hasattr(self, "netcdf_read"):
                 # Initialise the netCDF read function
                 kwargs = self.kwargs
-                self.netcdf_kwargs = {
+                netcdf_kwargs = {
                     key: kwargs[key]
                     for key in (
                         "external",
@@ -516,16 +551,17 @@ class read(ReadWrite):
                         "extra_read_vars",
                     )
                 }
-                self.netcdf_read = NetCDFRead(self.implementation).read
+
+                self.netcdf_read = partial(
+                    NetCDFRead(self.implementation).read, **netcdf_kwargs
+                )
 
             try:
-                self.dataset_contents = self.netcdf_read(
-                    dataset, **self.netcdf_kwargs
-                )
+                # Try to read the dataset
+                self.dataset_contents = self.netcdf_read(dataset)
             except DatasetTypeError as error:
                 if dataset_type is None:
                     self.dataset_format_errors.append(error)
             else:
-                self.dataset_format_errors = []
-                self.n_datasets += 1
-                self.dataset_type = "netCDF"
+                # Successfully read the dataset
+                self.unique_dataset_categories.add("netCDF")

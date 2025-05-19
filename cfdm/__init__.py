@@ -18,7 +18,7 @@ written to new datasets.
 
 The cfdm package can:
 
-    * read field constructs from netCDF and CDL datasets,
+    * read field constructs from netCDF, CDL, and Zarr datasets,
     * create new field constructs in memory,
     * write and append field constructs to netCDF datasets on disk,
     * read, write, and create datasets containing hierarchical groups,
@@ -248,6 +248,7 @@ from .data import (
     RaggedIndexedContiguousArray,
     SparseArray,
     SubsampledArray,
+    ZarrArray,
 )
 
 from .data import (

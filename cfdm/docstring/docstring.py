@@ -119,33 +119,53 @@ _docstring_substitution_definitions = {
         was produced by combining other objects that also store their
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
-    # read dataset
-    "{{dataset: (arbitrarily nested sequence of) `str`}}": """dataset: (arbitrarily nested sequence of) `str`
+    # read datasets
+    "{{read datasets: (arbitrarily nested sequence of) `str`}}": """dataset: (arbitrarily nested sequence of) `str`
             A string, or arbitrarily nested sequence of strings,
             giving the dataset names, or directory names, from which
-            to read field or doman constructs. Relative paths are
-            allowed.
+            to read field or domain constructs.
 
-            Local files will have tilde and shell environment
-            variables expansions applied to them.
+            Local names may be relative paths and will have tilde and
+            shell environment variables expansions applied to them,
+            folowed by the replacement of any UNIX wildcards (such as
+            ``*``, ``?``, ``[a-z]``, etc.)  the with the lst of
+            matching names. Remote names (i.e. those with an http or
+            s3 shema), however, are not transformed in any way.
 
             Directories will be walked through to find their contents
             (recursively if *recursive* is True), unless the directory
-            contains a Zarr dataset (which is ascertained by presence
+            defines a Zarr dataset (which is ascertained by presence
             in the directory of appropriate Zarr metadata files).
 
-            Dataset names containing UNIX wildcard characters (``*``,
-            ``?``, ``[a-z]``, etc.) will be replaced the corresponding
-            list of matching dataset names.
+            Remote datasets (i.e. those with an http or s3 schema) are
+            assumed to be binary netCDF files, or else Zarr datasets
+            if the *dataset_type* parameter is set to ``'Zarr'``.
 
-            Remote datasets are assumed to be binary netCDF files,
-            unless *dataset_type* is set to ``'Zarr'``.
+            As a special case, if the *cdl_string* parameter is True,
+            then interpretation of *datasets* changes so that each
+            string is assumed to be an actual CDL representation of a
+            dataset, rather than a than a file or directory name.
 
             *Example:*
-              The local file ``file.nc`` in the user's home directory
-              could be described by any of the following dataset
-              names: ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
-              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.""",
+              The local dataset ``file.nc`` in the user's home
+              directory could be described by any of the following:
+              ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
+              ``'~/file.nc'``, ``'~/tmp/../file.nc'``
+
+            *Example:*
+              The local datasets ``file1.nc`` and ``file2.nc`` could
+              be described by any of the following: ``['file1.nc',
+              'file2.nc']``, ``'file[12].nc'``""",
+    # read cdl_string
+    "{{read cdl_string: `bool`, optional}}": """cdl_string: `bool`, optional
+            If True and the format to read is CDL then each string
+            given by the *datasets* parameter is interpreted as a
+            string of actual CDL rather than the name of a location
+            from which field or domain constructs can be read.
+
+            Note that when `cdl_string` is True, the `fmt` parameter
+            is ignored as the format is assumed to be CDL, so in this
+            case it is not necessary to also specify ``fmt='CDL'``.""",
     # read external
     "{{read external: (sequence of) `str`, optional}}": """external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
@@ -661,6 +681,14 @@ _docstring_substitution_definitions = {
             are stored in the dataset. If False (the default) then the
             presence or not of size 1 dimensions is determined by how
             the data are stored in its dataset.""",
+    # read dataset_type
+    "{{read dataset_type: `None` or (sequence of) `str`, optional}}": """dataset_type: `None` or (sequence of) `str`, optional
+             Only read datasets of the given type(s), ignoring
+             others. If there are no files of the given type(s), or
+             *dataset_type* is empty sequence, then an empty list is
+             returned. If `None` (the default) then files of any type
+             are read, and an exception is raised for any invalid file
+             type.""",
     # read file_type
     "{{read file_type: `None` or (sequence of) `str`, optional}}": """file_type: `None` or (sequence of) `str`, optional
              Only read files of the given type(s), ignoring others. If

@@ -57,6 +57,14 @@ class read_writeTest(unittest.TestCase):
 
     filename = filename
 
+    zarr2 = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr2"
+    )
+
+    zarr3 = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr3"
+    )
+
     f = cfdm.read(filename)[0]
     f0 = cfdm.example_field(0)
     f1 = cfdm.example_field(1)
@@ -1255,28 +1263,26 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_zarr(self):
         """Test the cfdm.read of a zarr dataset."""
-        import cfdm
-
         n = cfdm.read("example_field_0.nc")[0]
-        z = cfdm.read("example_field_0.zarr")
+        for zarr_dataset in (self.zarr2, self.zarr3):
+            z = cfdm.read(zarr_dataset, dask_chunks=3)
+            self.assertEqual(len(z), 1)
+            z = z[0]
+            self.assertTrue(z.equals(n))
 
-        self.assertEqual(len(z), 1)
-        z = z[0]
-        self.assertTrue(z.equals(n))
+            cfdm.write(z, tmpfile)
+            n2 = cfdm.read(tmpfile)[0]
+            self.assertTrue(n2.equals(n))
 
-        nz = cfdm.read(["example_field_0.nc", "example_field_0.zarr"])
+            z = cfdm.read(zarr_dataset, dataset_type="netCDF")
+            self.assertEqual(len(z), 0)
+
+            z = cfdm.read(zarr_dataset, dataset_type="Zarr")
+            self.assertEqual(len(z), 1)
+
+        nz = cfdm.read(["example_field_0.nc", self.zarr3])
         self.assertEqual(len(nz), 2)
         self.assertTrue(nz[0].equals(nz[1]))
-
-        cfdm.write(z, tmpfile)
-        n2 = cfdm.read(tmpfile)[0]
-        self.assertTrue(n2.equals(n))
-
-        z = cfdm.read("example_field_0.zarr", dataset_type="netCDF")
-        self.assertEqual(len(z), 0)
-
-        z = cfdm.read("example_field_0.zarr", dataset_type="Zarr")
-        self.assertEqual(len(z), 1)
 
     def test_read_cdl_string(self):
         """Test the cfdm.read 'cdl_string' keyword."""
