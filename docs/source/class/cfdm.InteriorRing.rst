@@ -129,9 +129,9 @@ NetCDF
    ~cfdm.InteriorRing.nc_get_dimension
    ~cfdm.InteriorRing.nc_has_dimension
    ~cfdm.InteriorRing.nc_set_dimension
-   ~cfdm.InteriorRing.nc_clear_hdf5_chunksizes
-   ~cfdm.InteriorRing.nc_hdf5_chunksizes
-   ~cfdm.InteriorRing.nc_set_hdf5_chunksizes
+   ~cfdm.InteriorRing.nc_clear_dataset_chunksizes
+   ~cfdm.InteriorRing.nc_dataset_chunksizes
+   ~cfdm.InteriorRing.nc_set_dataset_chunksizes
    
 Groups
 ^^^^^^

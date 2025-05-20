@@ -178,8 +178,8 @@ Groups
    ~cfdm.CellConnectivity.nc_clear_variable_groups
    ~cfdm.CellConnectivity.nc_set_variable_groups
 
-HDF5 chunks
-^^^^^^^^^^^
+Dataset chunks
+^^^^^^^^^^^^^^
 
 .. rubric:: Methods
 
@@ -188,9 +188,9 @@ HDF5 chunks
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.CellConnectivity.nc_hdf5_chunksizes
-   ~cfdm.CellConnectivity.nc_set_hdf5_chunksizes
-   ~cfdm.CellConnectivity.nc_clear_hdf5_chunksizes
+   ~cfdm.CellConnectivity.nc_dataset_chunksizes
+   ~cfdm.CellConnectivity.nc_set_dataset_chunksizes
+   ~cfdm.CellConnectivity.nc_clear_dataset_chunksizes
 
 Special
 -------

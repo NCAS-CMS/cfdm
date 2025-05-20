@@ -163,8 +163,8 @@ def collapse(
     if iaxes and not keepdims:
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
 
-    # Update the HDF5 chunking strategy
-    chunksizes = d.nc_hdf5_chunksizes()
+    # Update the dataset chunking strategy
+    chunksizes = d.nc_dataset_chunksizes()
     if (
         chunksizes
         and isinstance(chunksizes, tuple)
@@ -175,7 +175,7 @@ def collapse(
                 size for i, size in enumerate(chunksizes) if i not in iaxes
             ]
 
-        d.nc_set_hdf5_chunksizes(chunksizes)
+        d.nc_set_dataset_chunksizes(chunksizes)
 
     return d
 

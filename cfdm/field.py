@@ -26,7 +26,7 @@ from .decorators import (
     _manage_log_level_via_verbosity,
     _test_decorator_args,
 )
-from .functions import parse_indices
+from .functions import _DEPRECATION_ERROR_METHOD, parse_indices
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ class Field(
 
     {{netCDF geometry group}}
 
-    {{netCDF HDF5 chunks}}
+    {{netCDF dataset chunks}}
 
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
@@ -2774,6 +2774,9 @@ class Field(
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
+        Deprecated at version NEXTVERSION. Use `nc_dataset_chunksizes`
+        instead.
+
         .. versionadded:: (cfdm) 1.11.2.0
 
         .. seealso:: `nc_clear_hdf5_chunksizes`,
@@ -2793,10 +2796,34 @@ class Field(
 
         :Returns:
 
-            {{Returns nc_hdf5_chunksizes}}
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_hdf5_chunksizes",
+            "Use `nc_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_dataset_chunksizes(self, todict=False):
+        """Get the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Parameters:
+
+            {{dataset todict: `bool`, optional}}
+
+        :Returns:
+
+            {{Returns nc_dataset_chunksizes}}
 
         """
-        chunksizes = super().nc_hdf5_chunksizes()
+        chunksizes = super().nc_dataset_chunksizes()
 
         if todict:
             if not isinstance(chunksizes, tuple):
@@ -2824,6 +2851,9 @@ class Field(
 
     def nc_clear_hdf5_chunksizes(self, constructs=False):
         """Clear the HDF5 chunking strategy.
+
+        Deprecated at version NEXTVERSION. Use
+        `nc_clear_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
@@ -2857,7 +2887,51 @@ class Field(
                 be returned by `nc_hdf5_chunksizes`.
 
         """
-        # Clear HDF5 chunksizes from the metadata
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_clear_hdf5_chunksizes",
+            "Use `nc_clear_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_clear_dataset_chunksizes(self, constructs=False):
+        """Clear the dataset chunking strategy.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_set_hdataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Parameters:
+
+            constructs: `dict` or `bool`, optional
+                Also clear the dataset chunking strategy from selected
+                metadata constructs. The chunking strategies of
+                unselected metadata constructs are unchanged.
+
+                If *constructs* is a `dict` then the selected metadata
+                constructs are those that would be returned by
+                ``f.constructs.filter(**constructs,
+                filter_by_data=True)``. Note that an empty dictionary
+                will therefore select all metadata constructs that
+                have data. See `~Constructs.filter` for details.
+
+                For *constructs* being anything other than a
+                dictionary, if it evaluates to True then all metadata
+                constructs that have data are selected, and if it
+                evaluates to False (the default) then no metadata
+                are constructs selected.
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_dataset_chunksizes`.
+
+        """
+        # Clear dataset chunksizes from the metadata
         if isinstance(constructs, dict):
             constructs = constructs.copy()
         elif constructs:
@@ -2869,9 +2943,9 @@ class Field(
             constructs["filter_by_data"] = True
             constructs["todict"] = True
             for key, construct in self.constructs.filter(**constructs).items():
-                construct.nc_clear_hdf5_chunksizes()
+                construct.nc_clear_dataset_chunksizes()
 
-        return super().nc_clear_hdf5_chunksizes()
+        return super().nc_clear_dataset_chunksizes()
 
     def nc_set_hdf5_chunksizes(
         self,
@@ -2882,14 +2956,77 @@ class Field(
     ):
         """Set the HDF5 chunking strategy.
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
+        Deprecated at version NEXTVERSION. Use
+        `nc_set_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
         :Parameters:
 
-            {{hdf5 chunksizes}}
+            constructs: `dict` or `bool`, optional
+                Also apply the dataset chunking strategy of the field
+                construct data to the applicable axes of selected
+                metadata constructs. The chunking strategies of
+                unselected metadata constructs are unchanged.
+
+                If *constructs* is a `dict` then the selected metadata
+                constructs are those that would be returned by
+                ``f.constructs.filter(**constructs,
+                filter_by_data=True)``. Note that an empty dictionary
+                will therefore select all metadata constructs that
+                have data. See `~Constructs.filter` for details.
+
+                For *constructs* being anything other than a
+                dictionary, if it evaluates to True then all metadata
+                constructs that have data are selected, and if it
+                evaluates to False (the default) then no metadata
+                constructs selected.
+
+            ignore: `bool`, optional
+                If True and *chunksizes* is a `dict` then ignore any
+                dictionary keys that do not identify a unique axis of
+                the field construct's data. If False, the default,
+                then an exception will be raised when such keys are
+                encountered.
+
+            filter_kwargs: optional
+                When *chunksizes* is a `dict`, provide additional
+                keyword arguments to `domain_axis` to customise axis
+                selection criteria.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_set_hdf5_chunksizes",
+            "Use `nc_set_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_set_dataset_chunksizes(
+        self,
+        chunksizes,
+        ignore=False,
+        constructs=False,
+        **filter_kwargs,
+    ):
+        """Set the dataset chunking strategy.
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_clear_dataset_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            {{dataset chunksizes}}
                   Each dictionary key (``k``) specifies the unique
                   axis that would be identified by ``f.domain_axis(k,
                   **filter_kwargs)``, and it is allowed to specify a
@@ -2897,7 +3034,7 @@ class Field(
                   array. See `domain_axis` for details.
 
             constructs: `dict` or `bool`, optional
-                Also apply the HDF5 chunking strategy of the field
+                Also apply the dataset chunking strategy of the field
                 construct data to the applicable axes of selected
                 metadata constructs. The chunking strategies of
                 unselected metadata constructs are unchanged.
@@ -2944,73 +3081,73 @@ class Field(
                         : time(1) = [2019-01-01 00:00:00]
         >>> f.shape
         (5, 8)
-        >>> print(f.nc_hdf5_chunksizes())
+        >>> print(f.nc_dataset_chunksizes())
         None
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 1})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'latitude': 1})
+        >>> f.nc_dataset_chunksizes()
         (1, 8)
-        >>> f.nc_set_hdf5_chunksizes({'longitude': 7})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'longitude': 7})
+        >>> f.nc_dataset_chunksizes()
         (1, 7)
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'longitude': 2})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'latitude': 4, 'longitude': 2})
+        >>> f.nc_dataset_chunksizes()
         (4, 2)
-        >>> f.nc_set_hdf5_chunksizes([1, 7])
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes([1, 7])
+        >>> f.nc_dataset_chunksizes()
         (1, 7)
-        >>> f.nc_set_hdf5_chunksizes(64)
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes(64)
+        >>> f.nc_dataset_chunksizes()
         64
-        >>> f.nc_set_hdf5_chunksizes('128 B')
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes('128 B')
+        >>> f.nc_dataset_chunksizes()
         128
-        >>> f.nc_set_hdf5_chunksizes('contiguous')
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes('contiguous')
+        >>> f.nc_dataset_chunksizes()
         'contiguous'
-        >>> f.nc_set_hdf5_chunksizes(None)
-        >>> print(f.nc_hdf5_chunksizes())
+        >>> f.nc_set_dataset_chunksizes(None)
+        >>> print(f.nc_dataset_chunksizes())
         None
 
-        >>> f.nc_set_hdf5_chunksizes([-1, None])
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes([-1, None])
+        >>> f.nc_dataset_chunksizes()
         (5, 8)
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 999})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'latitude': 999})
+        >>> f.nc_dataset_chunksizes()
         (5, 8)
 
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'time': 1})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'latitude': 4, 'time': 1})
+        >>> f.nc_dataset_chunksizes()
         (4, 8)
-        >>> print(f.dimension_coordinate('time').nc_hdf5_chunksizes())
+        >>> print(f.dimension_coordinate('time').nc_dataset_chunksizes())
         None
-        >>> print(f.dimension_coordinate('latitude').nc_hdf5_chunksizes())
+        >>> print(f.dimension_coordinate('latitude').nc_dataset_chunksizes())
         None
-        >>> print(f.dimension_coordinate('longitude').nc_hdf5_chunksizes())
+        >>> print(f.dimension_coordinate('longitude').nc_dataset_chunksizes())
         None
 
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'time': 1}, constructs=True)
-        >>> f.dimension_coordinate('time').nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'latitude': 4, 'time': 1}, constructs=True)
+        >>> f.dimension_coordinate('time').nc_dataset_chunksizes()
         (1,)
-        >>> f.dimension_coordinate('latitude').nc_hdf5_chunksizes()
+        >>> f.dimension_coordinate('latitude').nc_dataset_chunksizes()
         (4,)
-        >>> f.dimension_coordinate('longitude').nc_hdf5_chunksizes()
+        >>> f.dimension_coordinate('longitude').nc_dataset_chunksizes()
         (8,)
-        >>> f.nc_set_hdf5_chunksizes('contiguous', constructs={'filter_by_axis': ('longitude',)})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes('contiguous', constructs={'filter_by_axis': ('longitude',)})
+        >>> f.nc_dataset_chunksizes()
         'contiguous'
-         >>> f.dimension_coordinate('time').nc_hdf5_chunksizes()
+         >>> f.dimension_coordinate('time').nc_dataset_chunksizes()
         (1,)
-        >>> f.dimension_coordinate('latitude').nc_hdf5_chunksizes()
+        >>> f.dimension_coordinate('latitude').nc_dataset_chunksizes()
         (4,)
-        >>> f.dimension_coordinate('longitude').nc_hdf5_chunksizes()
+        >>> f.dimension_coordinate('longitude').nc_dataset_chunksizes()
         'contiguous'
 
-        >>> f.nc_set_hdf5_chunksizes({'height': 19, 'latitude': 3})
+        >>> f.nc_set_dataset_chunksizes({'height': 19, 'latitude': 3})
         Traceback
             ...
         ValueError: Can't find unique 'height' axis. Consider setting ignore=True
-        >>> f.nc_set_hdf5_chunksizes({'height': 19, 'latitude': 3}, ignore=True)
-        >>> f.nc_hdf5_chunksizes(todict=True)
+        >>> f.nc_set_dataset_chunksizes({'height': 19, 'latitude': 3}, ignore=True)
+        >>> f.nc_dataset_chunksizes(todict=True)
         {'time': 1, 'latitude': 3, 'longitude': 8}
 
         """
@@ -3051,9 +3188,9 @@ class Field(
                 data_axes[n]: value for n, value in enumerate(chunksizes)
             }
 
-        super().nc_set_hdf5_chunksizes(chunksizes)
+        super().nc_set_dataset_chunksizes(chunksizes)
 
-        # Set HDF5 chunksizes on the metadata
+        # Set dataset chunksizes on the metadata
         if isinstance(constructs, dict):
             constructs = constructs.copy()
         elif constructs:
@@ -3075,7 +3212,7 @@ class Field(
                 else:
                     c = chunksizes
 
-                construct.nc_set_hdf5_chunksizes(c)
+                construct.nc_set_dataset_chunksizes(c)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

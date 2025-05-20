@@ -66,10 +66,10 @@ _docstring_substitution_definitions = {
     `nc_variable_node_coordinate_groups`,
     `nc_clear_node_coordinate_variable_groups`, and
     `nc_set_node_coordinate_variable_groups` methods.""",
-    # netCDF HDF5 chunks TODOZARR
-    "{{netCDF HDF5 chunks}}": """The netCDF4 HDF5 chunks may be accessed with the
-    `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`, and
-    `nc_clear_hdf5_chunksizes` methods.""",
+    # netCDF dataset chunks
+    "{{netCDF dataset chunks}}": """The dataset chunks may be accessed with the
+    `nc_dataset_chunksizes`, `nc_set_dataset_chunksizes`, and
+    `nc_clear_datset_chunksizes` methods.""",
     # ----------------------------------------------------------------
     # Method description substitutions (2 levels of indentation)
     # ----------------------------------------------------------------
@@ -537,25 +537,26 @@ _docstring_substitution_definitions = {
                 ``{'time': 12, 'ncdim%lat', None, 'ncdim%lon': None}``
                 or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
                 None}``.""",
-    # read store_hdf5_chunks TODOZARR
+    # read store_dataset_chunks
     "{{read store_dataset_chunks: `bool`, optional}}": """store_dataset_chunks: `bool`, optional
+
             If True (the default) then store the dataset chunking
             strategy for each returned data array. The dataset
             chunking strategy is then accessible via an object's
-            `nc_hdf5_chunksizes` method. When the dataset chunking
+            `nc_dataset_chunksizes` method. When the dataset chunking
             strategy is stored, it will be used when the data is
             written to a new netCDF file with `{{package}}.write`
             (unless the strategy is modified prior to writing).
 
             If False, or if the dataset being read does not support
             chunking (such as a netCDF-3 dataset), then no dataset
-            chunking strategy is stored (i.e. an `nc_hdf5_chunksizes`
-            method will return `None` for all `Data` objects). In this
-            case, when the data is written to a new netCDF file, the
-            dataset chunking strategy will be determined by
-            `{{package}}.write`.
+            chunking strategy is stored (i.e. an
+            `nc_dataset_chunksizes` method will return `None` for all
+            `Data` objects). In this case, when the data is written to
+            a new netCDF file, the dataset chunking strategy will be
+            determined by `{{package}}.write`.
 
-            See the `{{package}}.write` *hdf5_chunks* parameter for
+            See the `{{package}}.write` *dataset_chunks* parameter for
             details on how the dataset chunking strategy is determined
             at the time of writing.""",
     # read cfa
@@ -972,12 +973,12 @@ _docstring_substitution_definitions = {
                 stored. The original file names of any constituent
                 parts are not updated. Can't be used with the *define*
                 parameter.""",
-    # hdf5 chunksizes TODOZARR
-    "{{hdf5 chunksizes}}": """chunksizes: `None` or `str` or `int` or `float` or `dict` or a sequence
+    # dataset chunksizes
+    "{{dataset chunksizes}}": """chunksizes: `None` or `str` or `int` or `float` or `dict` or a sequence
                 Set the chunking strategy for writing to a netCDF4
                 file. One of:
 
-                * `None`: No HDF5 chunking strategy has been
+                * `None`: No dataset chunking strategy has been
                   defined. The chunking strategy will be determined at
                   write time by `{{package}}.write`.
 
@@ -985,12 +986,12 @@ _docstring_substitution_definitions = {
                   file contiguously, i.e. no chunking.
 
                 * `int` or `float` or `str`: The size in bytes of the
-                  HDF5 chunks. A floating point value is rounded down
-                  to the nearest integer, and a string represents a
-                  quantity of byte units. "Square-like" chunk shapes
+                  dataset chunks. A floating point value is rounded
+                  down to the nearest integer, and a string represents
+                  a quantity of byte units. "Square-like" chunk shapes
                   are preferred, maximising the amount of chunks that
                   are completely filled with data values (see the
-                  `{{package}}.write` *hdf5_chunks* parameter for
+                  `{{package}}.write` *dataset_chunks* parameter for
                   details). For instance a chunksize of 1024 bytes may
                   be specified with any of ``1024``, ``1024.9``,
                   ``'1024'``, ``'1024.9'``, ``'1024 B'``, ``'1 KiB'``,
@@ -1020,37 +1021,37 @@ _docstring_substitution_definitions = {
                   size. This chunking strategy may get automatically
                   modified by methods that change the data shape (such
                   as `insert_dimension`).""",
-    # hdf5 todict TODOZARR
-    "{{hdf5 todict: `bool`, optional}}": """todict: `bool`, optional
-                If True then the HDF5 chunk sizes are returned in a
+    # dataset todict
+    "{{dataset todict: `bool`, optional}}": """todict: `bool`, optional
+                If True then the dataset chunk sizes are returned in a
                 `dict` keyed by their axis positions. If False (the
-                default) then the HDF5 chunking strategy is returned
-                in the same form that it was set (i.e. as `None`,
-                `int`, `str`, or `tuple`).""",
-    # Returns nc_hdf5_chunksizes TODOZARR
-    "{{Returns nc_hdf5_chunksizes}}": """`None` or `str` or `int` or `dict` or `tuple` of `int`
+                default) then the dataset chunking strategy is
+                returned in the same form that it was set (i.e. as
+                `None`, `int`, `str`, or `tuple`).""",
+    # Returns nc_dataset_chunksizes
+    "{{Returns nc_dataset_chunksizes}}": """`None` or `str` or `int` or `dict` or `tuple` of `int`
                 The current chunking strategy when writing to a
                 netCDF4 file. One of:
 
-                * `None`: No HDF5 chunking strategy has been
+                * `None`: No dataset chunking strategy has been
                   defined. The chunking strategy will be determined at
                   write time by `{{package}}.write`.
 
                 * ``'contiguous'``: The data will be written to the
                   file contiguously, i.e. no chunking.
 
-                * `int` or `str`: The size in bytes of the HDF5
+                * `int` or `str`: The size in bytes of the dataset
                   chunks. A string represents a quantity of byte
                   units. "Square-like" chunk shapes are preferred,
                   maximising the amount of chunks that are completely
                   filled with data values (see the `{{package}}.write`
-                  *hdf5_chunks* parameter for details). For instance a
-                  chunksize of 1024 bytes may be specified with any of
-                  ``1024``, ``'1024'``, ``'1024 B'``, ``'1 KiB'``,
-                  ``'0.0009765625 MiB'``, etc. Recognised byte units
-                  are (case insensitive): ``B``, ``KiB``, ``MiB``,
-                  ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
-                  ``TB``, and ``PB``.
+                  *dataset_chunks* parameter for details). For
+                  instance a chunksize of 1024 bytes may be specified
+                  with any of ``1024``, ``'1024'``, ``'1024 B'``, ``'1
+                  KiB'``, ``'0.0009765625 MiB'``, etc. Recognised byte
+                  units are (case insensitive): ``B``, ``KiB``,
+                  ``MiB``, ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``,
+                  ``GB``, ``TB``, and ``PB``.
 
                 * `tuple` of `int`: The maximum number of array
                   elements in a chunk along each data axis. This

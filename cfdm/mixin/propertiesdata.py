@@ -8,6 +8,7 @@ from ..decorators import (
     _manage_log_level_via_verbosity,
     _test_decorator_args,
 )
+from ..functions import _DEPRECATION_ERROR_METHOD
 from . import Properties
 
 logger = logging.getLogger(__name__)
@@ -805,8 +806,31 @@ class PropertiesData(Properties):
 
         return v
 
+    def nc_clear_dataset_chunksizes(self):
+        """Clear the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_dataset_chunksizes`.
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.nc_clear_dataset_chunksizes()
+
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
+
+        Deprecated at version NEXTVERSION. Use
+        `nc_clear_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.12.0.0
 
@@ -820,12 +844,19 @@ class PropertiesData(Properties):
                 be returned by `nc_hdf5_chunksizes`.
 
         """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.nc_clear_hdf5_chunksizes()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_clear_hdf5_chunksizes",
+            "Use `nc_clear_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
+
+        Deprecated at version NEXTVERSION. Use `nc_dataset_chunksizes`
+        instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
@@ -833,30 +864,49 @@ class PropertiesData(Properties):
                      `nc_set_hdf5_chunksizes`, `{{package}}.read`,
                      `{{package}}.write`
 
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_hdf5_chunksizes",
+            "Use `nc_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_dataset_chunksizes(self, todict=False):
+        """Get the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
         :Parameters:
 
-            {{hdf5 todict: `bool`, optional}}
+            {{dataset todict: `bool`, optional}}
 
         :Returns:
 
-            {{Returns nc_hdf5_chunksizes}}
+            {{Returns nc_dataset_chunksizes}}
 
         """
         data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
-            return data.nc_hdf5_chunksizes(todict=todict)
+            return data.nc_dataset_chunksizes(todict=todict)
 
-    def nc_set_hdf5_chunksizes(self, chunksizes):
-        """Set the HDF5 chunking strategy.
+    def nc_set_dataset_chunksizes(self, chunksizes):
+        """Set the dataset chunking strategy.
 
-        .. versionadded:: (cfdm) 1.11.2.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_clear_dataset_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
 
         :Parameters:
 
-            {{hdf5 chunksizes}}
+            {{dataset chunksizes}}
                   Each dictionary key is an integer that specifies an
                   axis by its position in the data array.
 
@@ -867,7 +917,31 @@ class PropertiesData(Properties):
         """
         data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
-            data.nc_set_hdf5_chunksizes(chunksizes)
+            data.nc_set_dataset_chunksizes(chunksizes)
+
+    def nc_set_hdf5_chunksizes(self, chunksizes):
+        """Set the HDF5 chunking strategy.
+
+        Deprecated at version NEXTVERSION. Use
+        `nc_set_dataset_chunksizes` instead.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        :Returns:
+
+            `None`
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_set_hdf5_chunksizes",
+            "Use `nc_set_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):

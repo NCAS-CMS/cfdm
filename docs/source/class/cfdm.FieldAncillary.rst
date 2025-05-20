@@ -137,8 +137,8 @@ NetCDF
    ~cfdm.FieldAncillary.nc_has_variable
    ~cfdm.FieldAncillary.nc_set_variable
    
-HDF5 chunks
-^^^^^^^^^^^
+Dataset chunks
+^^^^^^^^^^^^^^
 
 .. rubric:: Methods
 
@@ -147,9 +147,9 @@ HDF5 chunks
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.FieldAncillary.nc_hdf5_chunksizes
-   ~cfdm.FieldAncillary.nc_set_hdf5_chunksizes
-   ~cfdm.FieldAncillary.nc_clear_hdf5_chunksizes
+   ~cfdm.FieldAncillary.nc_dataset_chunksizes
+   ~cfdm.FieldAncillary.nc_set_dataset_chunksizes
+   ~cfdm.FieldAncillary.nc_clear_dataset_chunksizes
 
 Groups
 ^^^^^^

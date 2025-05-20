@@ -14,7 +14,6 @@ from os.path import isdir, isfile, join
 from typing import Any
 from uuid import uuid4
 
-import h5netcdf
 import netCDF4
 import numpy as np
 from dask.array.core import normalize_chunks
@@ -494,8 +493,7 @@ class NetCDFRead(IORead):
         :Paramters:
 
             dataset: `str`
-                As for the *filename* parameter for initialising a
-                `netCDF.Dataset` instance. TODOZARR
+                The name of the dataset to be opened.
 
             flatten: `bool`, optional
                 If True (the default) then flatten a grouped file.
@@ -505,8 +503,7 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `netCDF4.Dataset`
-                A `netCDF4.Dataset` object for the file.
+                An object representing the opened dataset.
 
         **Examples**
 
@@ -670,6 +667,8 @@ class NetCDFRead(IORead):
             `h5netcdf.File`
 
         """
+        import h5netcdf
+
         nc = h5netcdf.File(
             filename,
             "r",
@@ -737,9 +736,8 @@ class NetCDFRead(IORead):
                 "Command '['ncgen', '-knc4', '-o'"
             ) and msg.endswith("returned non-zero exit status 1."):
                 raise RuntimeError(
-                    f"The CDL file {filename} is invalid so cannot be "
-                    f"converted to netCDF with `{' '.join(ncgen_command)}`. "
-                    "ncgen output:\n\n"
+                    f"The CDL file {filename} cannot be converted to netCDF "
+                    f"with `{' '.join(ncgen_command)}`. ncgen output:\n\n"
                     f"{msg}"
                 )
             else:
@@ -8088,7 +8086,7 @@ class NetCDFRead(IORead):
             # variables).
             chunks, shape = self._get_dataset_chunks(ncvar)
             if shape == data.shape:
-                self.implementation.nc_set_hdf5_chunksizes(data, chunks)
+                self.implementation.nc_set_dataset_chunksizes(data, chunks)
 
         return data
 
@@ -10650,9 +10648,9 @@ class NetCDFRead(IORead):
         if self.read_vars["file_opened_with"] == "zarr":
             # zarr
             if len(tuple(nc.groups())) > 1:
-                raise ValueError(
-                    "Can't read Zarr dataset "
-                    f"{self.read_vars['dataset']!r} that has groups"
+                raise ReadError(
+                    "Can't read Zarr dataset that has groups: "
+                    f"{self.read_vars['dataset']}"
                 )
 
             return False
@@ -10879,7 +10877,7 @@ class NetCDFRead(IORead):
             return {attr: var.getncattr(attr) for attr in var.ncattrs()}
         else:
             if self.read_vars["file_opened_with"] == "zarr":
-                # zarr: Remove the special _ARRAY_DIMENSIONS attribute
+                # zarr: Remove the _ARRAY_DIMENSIONS attribute
                 attrs.pop("_ARRAY_DIMENSIONS", None)
 
             return attrs
@@ -10905,7 +10903,7 @@ class NetCDFRead(IORead):
             return var.dimensions
         except AttributeError:
             try:
-                # zarr3
+                # zarr v3
                 dimension_names = var.metadata.dimension_names
                 if dimension_names is None:
                     # scalar variable
@@ -10913,8 +10911,8 @@ class NetCDFRead(IORead):
 
                 return dimension_names
             except AttributeError:
-                # zarr2
-                return var.attrs["_ARRAY_DIMENSIONS"]
+                # zarr v2
+                return tuple(var.attrs["_ARRAY_DIMENSIONS"])
 
     def _file_variable_size(self, var):
         """Return the size of a variable's array.
@@ -10995,9 +10993,11 @@ class NetCDFRead(IORead):
         :Returns:
 
             2-tuple:
-                The variable's chunking strategy (`None` for netCDF3,
-                ``'contiguous'``, or a sequence of `int`) and its
-                shape.
+                The variable's chunking strategy and its shape.
+
+                The variable's chunking strategy will one of
+                ``'contiguous'``, a sequence of `int`, or (only for
+                netCDF-3) `None`.
 
         **Examples**
 
@@ -11639,7 +11639,7 @@ class NetCDFRead(IORead):
     def is_zarr(cls, path):
         """Whether or not a directory contains a Zarr dataset.
 
-        Zarr versions 2 (xarray) and 3 are supported.
+        Zarr v2 and v3 are supported.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -11656,7 +11656,7 @@ class NetCDFRead(IORead):
 
         """
         return (
-            isfile(join(path, ".zgroup"))
-            or isfile(join(path, ".zarray"))
-            or isfile(join(path, "zarr.json"))
+            isfile(join(path, "zarr.json"))  # v3
+            or isfile(join(path, ".zgroup"))  # v2
+            or isfile(join(path, ".zarray"))  # v2
         )

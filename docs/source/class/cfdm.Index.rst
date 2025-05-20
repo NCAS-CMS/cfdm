@@ -129,9 +129,9 @@ NetCDF
    ~cfdm.Index.nc_get_dimension
    ~cfdm.Index.nc_has_dimension
    ~cfdm.Index.nc_set_dimension
-   ~cfdm.Index.nc_clear_hdf5_chunksizes
-   ~cfdm.Index.nc_hdf5_chunksizes
-   ~cfdm.Index.nc_set_hdf5_chunksizes
+   ~cfdm.Index.nc_clear_dataset_chunksizes
+   ~cfdm.Index.nc_dataset_chunksizes
+   ~cfdm.Index.nc_set_dataset_chunksizes
 
 Groups
 ^^^^^^   

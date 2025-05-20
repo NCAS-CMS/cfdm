@@ -178,8 +178,8 @@ Groups
    ~cfdm.DomainTopology.nc_clear_variable_groups
    ~cfdm.DomainTopology.nc_set_variable_groups
 
-HDF5 chunks
-^^^^^^^^^^^
+Dataset chunks
+^^^^^^^^^^^^^^
 
 .. rubric:: Methods
 
@@ -188,9 +188,9 @@ HDF5 chunks
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.DomainTopology.nc_hdf5_chunksizes
-   ~cfdm.DomainTopology.nc_set_hdf5_chunksizes
-   ~cfdm.DomainTopology.nc_clear_hdf5_chunksizes
+   ~cfdm.DomainTopology.nc_dataset_chunksizes
+   ~cfdm.DomainTopology.nc_set_dataset_chunksizes
+   ~cfdm.DomainTopology.nc_clear_dataset_chunksizes
 
 Special
 -------

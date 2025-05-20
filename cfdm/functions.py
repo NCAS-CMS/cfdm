@@ -2366,3 +2366,21 @@ def _DEPRECATION_ERROR_KWARGS(
             f"at cfdm version {version} and is no longer "
             f"available{removed_at}. {message}"
         )
+
+
+def _DEPRECATION_ERROR_METHOD(
+    instance, method, message="", version="3.0.0", removed_at=""
+):
+    """Error handling for deprecated kwargs methods.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"{instance.__class__.__name__} method {method!r} has been deprecated "
+        f"at version {version} and is no longer available{removed_at}. "
+        f"{message}"
+    )

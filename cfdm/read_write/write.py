@@ -70,8 +70,9 @@ class write(ReadWrite):
     which defines the chunking strategy for all output data, including
     the option of no chunking. However, this will be overridden for
     any data that defines its own chunking strategy. See
-    `{{package}}.Field.nc_set_hdf5_chunksizes`,
-    `{{package}}.Data.nc_set_hdf5_chunksizes`, and `{{package}}.read`.
+    `{{package}}.Field.nc_set_dataset_chunksizes`,
+    `{{package}}.Data.nc_set_dataset_chunksizes`, and
+    `{{package}}.read`.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -516,7 +517,7 @@ class write(ReadWrite):
             bytes.
 
             If any `Data` being written already stores its own dataset
-            chunking strategy (i.e. its `Data.nc_hdf5_chunksizes`
+            chunking strategy (i.e. its `Data.nc_dataset_chunksizes`
             method returns something other than `None`) then, for that
             data array alone, it is used in preference to the strategy
             defined by the *dataset_chunks* parameter.

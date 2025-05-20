@@ -378,9 +378,9 @@ Performance
    :toctree: ../method/
    :template: method.rst
 	      
-   ~cfdm.Data.nc_clear_hdf5_chunksizes
-   ~cfdm.Data.nc_hdf5_chunksizes
-   ~cfdm.Data.nc_set_hdf5_chunksizes
+   ~cfdm.Data.nc_clear_dataset_chunksizes
+   ~cfdm.Data.nc_dataset_chunksizes
+   ~cfdm.Data.nc_set_dataset_chunksizes
    ~cfdm.Data.to_memory
 
 Aggregation

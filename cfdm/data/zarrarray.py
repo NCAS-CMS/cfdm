@@ -34,7 +34,7 @@ class ZarrArray(IndexMixin, abstract.FileArray):
 
         zr, address = self.open()
 
-        # Get the variable by Zarr name
+        # Get the variable by name
         variable = zr[address]
 
         # Get the data, applying masking and scaling as required.

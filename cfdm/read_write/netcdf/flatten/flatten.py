@@ -302,8 +302,7 @@ class _Flattener:
 
             variable:
                 The variable, that has the same API as
-                `netCDF4.Variable`, `h5netcdf.Variable`, or
-                `zarr.Array`
+                `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -313,7 +312,7 @@ class _Flattener:
 
         """
         try:
-            # h5netcdf, zarr
+            # h5netcdf
             return dict(variable.attrs)
         except AttributeError:
             # netCDF4
@@ -330,8 +329,7 @@ class _Flattener:
 
             variable:
                 The variable, that has the same API as
-                `netCDF4.Variable`, `h5netcdf.Variable`, or
-                `zarr.Array`.
+                `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -356,7 +354,7 @@ class _Flattener:
 
             return chunking
         except AttributeError:
-            # h5netcdf, zarr
+            # h5netcdf
             return variable.chunks
 
     def contiguous(self, variable):
@@ -386,10 +384,6 @@ class _Flattener:
             # netCDF4
             return variable.chunking() == "contiguous"
         except AttributeError:
-            if hasattr(variable, "store"):
-                # zarrr
-                return False
-
             # h5netcdf
             return variable.chunks is None
 
@@ -433,8 +427,7 @@ class _Flattener:
 
             variable:
                 The variable, that has the same API as
-                `netCDF4.Variable`, `h5netcdf.Variable`, or
-                `zarr.Array`.
+                `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -452,7 +445,7 @@ class _Flattener:
             # netCDF4
             return variable.endian()
         except AttributeError:
-            # h5netcdf, zarr
+            # h5netcdf
             dtype = variable.dtype
             return _dtype_endian_lookup[getattr(dtype, "byteorder", None)]
 
@@ -465,8 +458,7 @@ class _Flattener:
 
             dataset:
                 The dataset, that has the same API as
-                `netCDF4.Variable`, `h5netcdf.Variable`, or
-                `zarr.Array`. TODOZARR: are these objects right?
+                `netCDF4.Dataset` or `h5netcdf.File`.
 
         :Returns:
 
@@ -484,12 +476,8 @@ class _Flattener:
             # netCDF4
             return dataset.filepath()
         except AttributeError:
-            try:
-                # h5netcdf
-                return dataset.filename
-            except AttributeError:
-                # zarr
-                return dataset.store.dir_path()
+            # h5netcdf
+            return dataset.filename
 
     def get_dims(self, variable):
         """Return the dimensions associated with a variable.
@@ -501,7 +489,6 @@ class _Flattener:
             `list`
 
         """
-        # TODOZARR
         try:
             # netCDF4
             return variable.get_dims()
@@ -544,7 +531,7 @@ class _Flattener:
             # netCDF4
             return getattr(x, attr)
         except AttributeError:
-            # h5netcdf, zarr
+            # h5netcdf
             return x.attrs[attr]
 
     def group(self, x):
@@ -557,22 +544,12 @@ class _Flattener:
             `Group`
 
         """
-        # TODOZARR
         try:
             # netCDF4
             return x.group()
         except AttributeError:
             # h5netcdf
             return x._parent
-
-    def grouo_dimensions(self, group):
-        """TODOZARR."""
-        try:
-            # netCDF4, h5netcdf
-            return group.dimensions
-        except AttributeError:
-            # zarr TODOZARR
-            pass  # meaningless?
 
     def name(self, x):
         """Return the netCDF name, without its groups.
@@ -586,7 +563,7 @@ class _Flattener:
         """
         out = x.name
         if group_separator in out:
-            # h5netcdf, zarr
+            # h5netcdf
             out = x.name.split(group_separator)[-1]
 
         return out

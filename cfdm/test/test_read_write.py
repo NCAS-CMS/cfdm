@@ -463,7 +463,7 @@ class read_writeTest(unittest.TestCase):
     def test_read_write_compress_shuffle(self):
         """Test the `compress` and `shuffle` parameters to `write`."""
         f = self.f0.copy()
-        f.data.nc_set_hdf5_chunksizes("contiguous")
+        f.data.nc_set_dataset_chunksizes("contiguous")
         y = f.domain_axis("latitude")
         y.nc_set_unlimited(True)
 
@@ -1073,14 +1073,14 @@ class read_writeTest(unittest.TestCase):
 
         # Check that user-set chunks are not overridden
         for chunking in ([5, 4, 3], "contiguous"):
-            f.nc_set_hdf5_chunksizes(chunking)
+            f.nc_set_dataset_chunksizes(chunking)
             for dataset_chunks in ("4MiB", "contiguous"):
                 cfdm.write(f, tmpfile, dataset_chunks=dataset_chunks)
                 nc = netCDF4.Dataset(tmpfile, "r")
                 self.assertEqual(nc.variables["data"].chunking(), chunking)
                 nc.close()
 
-        f.nc_set_hdf5_chunksizes("120 B")
+        f.nc_set_dataset_chunksizes("120 B")
         for dataset_chunks in ("contiguous", "4MiB"):
             cfdm.write(f, tmpfile, dataset_chunks=dataset_chunks)
             nc = netCDF4.Dataset(tmpfile, "r")
@@ -1089,10 +1089,10 @@ class read_writeTest(unittest.TestCase):
 
         # store_dataset_chunks
         f = cfdm.read(tmpfile)[0]
-        self.assertEqual(f.nc_hdf5_chunksizes(), (2, 2, 2))
+        self.assertEqual(f.nc_dataset_chunksizes(), (2, 2, 2))
 
         f = cfdm.read(tmpfile, store_dataset_chunks=False)[0]
-        self.assertIsNone(f.nc_hdf5_chunksizes())
+        self.assertIsNone(f.nc_dataset_chunksizes())
 
         # Scalar data is written contiguously
         f = self.f0
@@ -1143,7 +1143,7 @@ class read_writeTest(unittest.TestCase):
 
         # storage-exact
         f = cfdm.example_field(2)
-        f.data.nc_set_hdf5_chunksizes([7, 5, 4])
+        f.data.nc_set_dataset_chunksizes([7, 5, 4])
         cfdm.write(f, tmpfile)
         g = cfdm.read(tmpfile, dask_chunks="storage-exact")[0]
         self.assertEqual(g.data.chunks, ((7, 7, 7, 7, 7, 1), (5,), (4, 4)))

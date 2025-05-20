@@ -265,7 +265,10 @@ class read(ReadWrite):
             dataset_type is None
             or self.dataset_type.issubset(self.allowed_dataset_types)
         ):
-            raise ValueError("TODOZARR 3453452")
+            raise ValueError(
+                "'dataset_type' keyword must be None, or a subset of "
+                f"{self.allowed_dataset_types}"
+            )
 
         # Loop round the input datasets
         for dataset in self._datasets():

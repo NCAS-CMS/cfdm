@@ -4,6 +4,7 @@ from re import split
 from dask.utils import parse_bytes
 
 from ..core.functions import deepcopy
+from ..functions import _DEPRECATION_ERROR_METHOD
 
 
 class DeprecationError(Exception):
@@ -2474,15 +2475,20 @@ class NetCDFGeometry(NetCDF, NetCDFGroupsMixin):
         )
 
 
-class NetCDFHDF5(NetCDF):
-    """Mixin class for accessing the netCDF HDF5 chunksizes.
+class NetCDFChunks(NetCDF):
+    """Mixin class for accessing the netCDF dataset chunksizes.
 
-    .. versionadded:: (cfdm) 1.7.2
+    This class replaces the deprecated `NetCDFHDF5` class.
+
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
+
+        Deprecated at version NEXTVERSION. Use `nc_dataset_chunksizes`
+        instead.
 
         .. versionadded:: (cfdm) 1.7.2
 
@@ -2490,47 +2496,63 @@ class NetCDFHDF5(NetCDF):
                      `nc_set_hdf5_chunksizes`, `{{package}}.read`,
                      `{{package}}.write`
 
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_hdf5_chunksizes",
+            "Use `nc_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_dataset_chunksizes(self, todict=False):
+        """Get the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
         :Parameters:
 
-            {{hdf5 todict: `bool`, optional}}
-
-                .. versionadded:: (cfdm) 1.11.2.0
+            {{dataset todict: `bool`, optional}}
 
         :Returns:
 
-            {{Returns nc_hdf5_chunksizes}}
+            {{Returns nc_dataset_chunksizes}}
 
         **Examples**
 
         >>> d.shape
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        >>> d.nc_dataset_chunksizes()
         (1, 35, 73)
-        >>> d.nc_hdf5_chunksizes(todict=True)
+        >>> d.nc_dataset_chunksizes(todict=True)
         {0: 1, 1: 35, 2: 73}
-        >>> d.nc_clear_hdf5_chunksizes()
+        >>> d.nc_clear_dataset_chunksizes()
         (1, 35, 73)
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_dataset_chunksizes()
         None
-        >>> d.nc_set_hdf5_chunksizes('contiguous')
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes('contiguous')
+        >>> d.nc_dataset_chunksizes()
         'contiguous'
-        >>> d.nc_set_hdf5_chunksizes('1 KiB')
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes('1 KiB')
+        >>> d.nc_dataset_chunksizes()
         1024
-        >>> d.nc_set_hdf5_chunksizes(None)
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes(None)
+        >>> d.nc_dataset_chunksizes()
         None
 
         """
-        chunksizes = self._get_component("netcdf").get("hdf5_chunksizes")
+        chunksizes = self._get_component("netcdf").get("dataset_chunksizes")
         if todict:
             if not isinstance(chunksizes, tuple):
                 raise ValueError(
-                    "Can only set todict=True when the HDF5 chunking strategy "
-                    "comprises the maximum number of array elements in a "
-                    f"chunk along each data axis. Got: {chunksizes!r}"
+                    "Can only set todict=True when the dataset chunking "
+                    "strategy comprises the maximum number of array elements "
+                    f"in a chunk along each data axis. Got: {chunksizes!r}"
                 )
 
             chunksizes = {n: value for n, value in enumerate(chunksizes)}
@@ -2539,6 +2561,9 @@ class NetCDFHDF5(NetCDF):
 
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
+
+        Deprecated at version NEXTVERSION. Use
+        `nc_clear_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.7.2
 
@@ -2551,35 +2576,84 @@ class NetCDFHDF5(NetCDF):
                 The chunking strategy prior to being cleared, as would
                 be returned by `nc_hdf5_chunksizes`.
 
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_clear_hdf5_chunksizes",
+            "Use `nc_clear_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_clear_dataset_chunksizes(self):
+        """Clear the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_dataset_chunksizes`.
+
 
         **Examples**
 
         >>> d.shape
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
-        >>> d.nc_clear_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        >>> d.nc_clear_dataset_chunksizes()
         (1, 35, 73)
-        >>> d.nc_set_hdf5_chunksizes('1 KiB')
-        >>> d.nc_clear_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes('1 KiB')
+        >>> d.nc_clear_dataset_chunksizes()
         1024
-        >>> d.nc_set_hdf5_chunksizes(None)
-        >>> print(d.nc_clear_hdf5_chunksizes())
+        >>> d.nc_set_dataset_chunksizes(None)
+        >>> print(d.nc_clear_dataset_chunksizes())
         None
 
         """
-        return self._get_component("netcdf").pop("hdf5_chunksizes", None)
+        return self._get_component("netcdf").pop("dataset_chunksizes", None)
 
     def nc_set_hdf5_chunksizes(self, chunksizes):
         """Set the HDF5 chunking strategy for the data.
+
+        Deprecated at version NEXTVERSION. Use `nc_dataset_chunksizes`
+        instead.
 
         .. versionadded:: (cfdm) 1.7.2
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
 
+        :Returns:
+
+            `None`
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_set_hdf5_chunksizes",
+            "Use `nc_set_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_set_dataset_chunksizes(self, chunksizes):
+        """Set the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_clear_dataset_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
         :Parameters:
 
-            {{hdf5 chunksizes}}
+            {{dataset chunksizes}}
                   Each dictionary key is an integer that specifies an
                   axis by its position in the data array.
 
@@ -2591,44 +2665,44 @@ class NetCDFHDF5(NetCDF):
 
         >>> d.shape
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        >>> d.nc_dataset_chunksizes()
         (1, 35, 73)
-        >>> d.nc_clear_hdf5_chunksizes()
+        >>> d.nc_clear_dataset_chunksizes()
         (1, 35, 73)
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_dataset_chunksizes()
         None
-        >>> d.nc_set_hdf5_chunksizes('contiguous')
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes('contiguous')
+        >>> d.nc_dataset_chunksizes()
         'contiguous'
-        >>> d.nc_set_hdf5_chunksizes('1 KiB')
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes('1 KiB')
+        >>> d.nc_dataset_chunksizes()
         1024
-        >>> d.nc_set_hdf5_chunksizes(None)
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes(None)
+        >>> d.nc_dataset_chunksizes()
         None
-        >>> d.nc_set_hdf5_chunksizes([9999, -1, None])
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes([9999, -1, None])
+        >>> d.nc_dataset_chunksizes()
         (1, 96, 73)
-        >>> d.nc_clear_hdf5_chunksizes()
+        >>> d.nc_clear_dataset_chunksizes()
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes({1: 24})
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes({1: 24})
+        >>> d.nc_dataset_chunksizes()
         (1, 24, 73)
-        >>> d.nc_set_hdf5_chunksizes({0: None, 2: 50})
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes({0: None, 2: 50})
+        >>> d.nc_dataset_chunksizes()
         (1, 24, 50)
 
         """
         if chunksizes is None:
-            self.nc_clear_hdf5_chunksizes()
+            self.nc_clear_dataset_chunksizes()
             return
 
         shape = self.shape
 
         # Convert a dictionary to a sequence.
         if isinstance(chunksizes, dict):
-            org_chunksizes = self.nc_hdf5_chunksizes()
+            org_chunksizes = self.nc_dataset_chunksizes()
             if not isinstance(org_chunksizes, tuple):
                 org_chunksizes = shape
 
@@ -2682,7 +2756,17 @@ class NetCDFHDF5(NetCDF):
 
                 chunksizes = tuple(c)
 
-        self._get_component("netcdf")["hdf5_chunksizes"] = chunksizes
+        self._get_component("netcdf")["dataset_chunksizes"] = chunksizes
+
+
+class NetCDFHDF5(NetCDF):
+    """Mixin class for accessing the netCDF HDF5 chunksizes.
+
+    Deprecated at version NEXTVERSION. Use `NetCDFChunks` instead.
+
+    .. versionadded:: (cfdm) 1.7.2
+
+    """
 
 
 class NetCDFUnlimitedDimension(NetCDF):

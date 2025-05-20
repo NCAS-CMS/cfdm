@@ -152,8 +152,13 @@ datasets <Sample-datasets>`), which contains two field constructs:
    >>> len(x)
    2
 
-* Datasets in `Zarr v2 format
-  <https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html>`_.
+..
+
+* Datasets in `Zarr v2 (xarray)
+  <https://docs.xarray.dev/en/latest/internals/zarr-encoding-spec.html>`_
+  and `Zarr v3
+  <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
+  formats.
 
 Descriptive properties are always read into memory, but `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all

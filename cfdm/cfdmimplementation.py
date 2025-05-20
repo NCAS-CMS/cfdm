@@ -1049,6 +1049,9 @@ class CFDMImplementation(Implementation):
     def nc_get_hdf5_chunksizes(self, data):
         """Get the HDF5 chunking strategy for the data.
 
+        Deprecated at NEXTVERSION. Use `nc_get_dataset_chunksizes`
+        instead.
+
         ..versionadded:: (cfdm) 1.7.2
 
         :Parameters:
@@ -1061,7 +1064,27 @@ class CFDMImplementation(Implementation):
                 The HDF5 chunking strategy.
 
         """
-        return data.nc_hdf5_chunksizes()
+        raise NotImplementedError(
+            "Deprecated at version NEXATVERSION. "
+            "Use 'nc_get_dataset_chunksizes' instead."
+        )
+
+    def nc_get_dataset_chunksizes(self, data):
+        """Get the dataset chunking strategy for the data.
+
+        ..versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `Data`
+
+        :Returns:
+
+            `tuple` or `int` or `str` or `None`
+                The dataset chunking strategy.
+
+        """
+        return data.nc_dataset_chunksizes()
 
     def nc_get_sample_dimension(self, count, default=None):
         """Return the name of the netCDF sample dimension.
@@ -1171,8 +1194,31 @@ class CFDMImplementation(Implementation):
         for attr, value in attributes.items():
             field.nc_set_group_attribute(attr, value)
 
+    def nc_set_dataset_chunksizes(self, data, chunksizes):
+        """Set the dataset chunking strategy for the data.
+
+        ..versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `Data`
+
+            chunksizes: `int` or `str` or `None` or `dict` or a sequence
+                Set the chunking strategy when writing to a netCDF4
+                file.
+
+        :Returns:
+
+            `None`
+
+        """
+        return data.nc_set_dataset_chunksizes(chunksizes)
+
     def nc_set_hdf5_chunksizes(self, data, chunksizes):
         """Set the HDF5 chunking strategy for the data.
+
+        Deprecated at NEXTVERSION. Use `nc_set_dataset_chunksizes`
+        instead.
 
         ..versionadded:: (cfdm) 1.11.2.0
 
@@ -1189,7 +1235,10 @@ class CFDMImplementation(Implementation):
             `None`
 
         """
-        return data.nc_set_hdf5_chunksizes(chunksizes)
+        raise NotImplementedError(
+            "Deprecated at version NEXATVERSION. "
+            "Use 'nc_set_dataset_chunksizes' instead."
+        )
 
     def equal_components(self, construct0, construct1, ignore_type=False):
         """Whether or not two field construct components are equal.
@@ -1238,8 +1287,7 @@ class CFDMImplementation(Implementation):
 
         """
         raise NotImplementedError(
-            "Deprecated at version 1.8.6.0. "
-            + "Use 'equal_components' instead."
+            "Deprecated at version 1.8.6.0. " "Use 'equal_components' instead."
         )
 
     def equal_properties(self, property_value0, property_value1):

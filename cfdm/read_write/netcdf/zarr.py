@@ -1,6 +1,9 @@
 class ZarrDimension:
     """A named Zarr dimension.
 
+    This class defines a Zarr dimension with the same API as
+    `netCDF4.Dimension`.
+
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
@@ -49,6 +52,8 @@ class ZarrDimension:
 
     def isunlimited(self):
         """Whether or not the dimension is unlimited.
+
+        In Zarr v2 and v3, dimensions can not be unlimited.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
