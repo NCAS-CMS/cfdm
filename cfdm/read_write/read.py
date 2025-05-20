@@ -470,10 +470,13 @@ class read(ReadWrite):
             `None`
 
         """
-        # Raise any "unknown format" errors
-        if self.dataset_format_errors:
-            error = "\n".join(map(str, self.dataset_format_errors))
-            raise DatasetTypeError(f"\n{error}")
+        if self.dataset_contents is None:
+            # Raise any "unknown format" errors
+            if self.dataset_format_errors:
+                error = "\n".join(map(str, self.dataset_format_errors))
+                raise DatasetTypeError(f"\n{error}")
+
+            self.dataset_contents = []
 
     def _pre_read(self, dataset):
         """Actions to take immediately before reading a dataset.
@@ -493,7 +496,7 @@ class read(ReadWrite):
 
         """
         # Initialise the list of constructs in the dataset
-        self.dataset_contents = []
+        self.dataset_contents = None
 
         # Initialise the list of unknown-format errors arising from
         # trying to read the read dataset
@@ -568,3 +571,6 @@ class read(ReadWrite):
             else:
                 # Successfully read the dataset
                 self.unique_dataset_categories.add("netCDF")
+
+        if self.dataset_contents is not None:
+            return
