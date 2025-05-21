@@ -175,9 +175,9 @@ class read(ReadWrite):
             ============  ============================================
             file type     Description
             ============  ============================================
-            ``'netCDF'``  Binary netCDF-3 or netCDF-4 file
-            ``'CDL'``     Text CDL representations of a netCDF dataset
-            ``'Zarr'``    A Zarr v2 (xarray) or Zarr v3 hierarchy
+            ``'netCDF'``  A netCDF-3 or netCDF-4 dataset
+            ``'CDL'``     A text CDL file of a netCDF dataset
+            ``'Zarr'``    A Zarr v2 (xarray) or Zarr v3 dataset 
             ============  ============================================
 
             .. versionadded:: (cfdm) 1.12.0.0

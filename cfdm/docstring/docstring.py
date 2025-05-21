@@ -138,8 +138,8 @@ _docstring_substitution_definitions = {
             in the directory of appropriate Zarr metadata files).
 
             Remote datasets (i.e. those with an http or s3 schema) are
-            assumed to be binary netCDF files, or else Zarr datasets
-            if the *dataset_type* parameter is set to ``'Zarr'``.
+            assumed to be netCDF files, or else Zarr datasets if the
+            *dataset_type* parameter is set to ``'Zarr'``.
 
             As a special case, if the *cdl_string* parameter is True,
             then interpretation of *datasets* changes so that each
@@ -375,7 +375,7 @@ _docstring_substitution_definitions = {
               This is the default. The Dask chunk size in bytes will
               be as close as possible the size given by
               `{{package}}.chunksize`, favouring square-like chunk
-              shapes, with the added restriction that the entirety of
+              shapes, with the added guarantee that the entirety of
               each storage chunk lies within exactly one Dask
               chunk. This strategy is general the most performant, as
               it ensures that when accessing the data, each storage
@@ -426,8 +426,8 @@ _docstring_substitution_definitions = {
             * ``'storage-exact'``
 
               Each Dask chunk will contain exactly one storage chunk
-              and each storage chunk will lie within exactly one Dask
-              chunk.
+              and each storage chunk will lie entirely within exactly
+              one Dask chunk.
 
               For instance, consider a file variable that has an array
               of 64-bit floats with shape (400, 300, 60) and a storage
@@ -459,7 +459,7 @@ _docstring_substitution_definitions = {
               favouring square-like chunk shapes. This may give
               similar Dask chunk shapes as the ``'storage-aligned'``
               option, but without the guarantee that each storage
-              chunk will lie within exactly one Dask chunk.
+              chunk will lie entirely within exactly one Dask chunk.
 
             * A byte-size given by a `str`
 
@@ -467,7 +467,8 @@ _docstring_substitution_definitions = {
               possible to the given byte-size, favouring square-like
               chunk shapes. Any string value, accepted by the *chunks*
               parameter of the `dask.array.from_array` function is
-              permitted.
+              permitted. There is no guarantee that a storage chunk
+              lies entirely within one Dask chunk.
 
               *Example:*
                 A Dask chunksize of 2 MiB may be specified as
@@ -476,12 +477,15 @@ _docstring_substitution_definitions = {
             * `-1` or `None`
 
               There is no Dask chunking, i.e. every data array has one
-              Dask chunk regardless of its size.
+              Dask chunk regardless of its size. In this case each
+              storage chunk is guaranteed to lie entirely within the
+              one Dask chunk.
 
             * Positive `int`
 
               Every dimension of all Dask chunks has this number of
-              elements.
+              elements. There is no guarantee that a storage chunk
+              lies entirely within one Dask chunk.
 
               *Example:*
                 For 3-dimensional data, *dask_chunks* of `10` will
@@ -522,13 +526,12 @@ _docstring_substitution_definitions = {
 
               *Example:*
                 If a netCDF file contains dimensions ``time``, ``z``,
-                ``lat`` and ``lon``, then ``{'ncdim%time': 12,
+                ``lat``, and ``lon``, then ``{'ncdim%time': 12,
                 'ncdim%lat', None, 'ncdim%lon': None}`` will ensure
-                that, for all applicable data arrays, all ``time``
-                axes have a `dask` chunksize of 12; all ``lat`` and
-                ``lon`` axes are not `dask` chunked; and all ``z``
-                axes are `dask` chunked to comply as closely as
-                possible with the default `dask` chunk size.
+                that all ``time`` axes have a Dask chunksize of 12;
+                all ``lat`` and ``lon`` axes are not Dask chunked; and
+                all ``z`` axes are Dask chunked to comply as closely
+                as possible with the default Dask chunk size.
 
                 If the netCDF file also contains a ``time`` coordinate
                 variable with a "standard_name" attribute of
@@ -973,8 +976,8 @@ _docstring_substitution_definitions = {
                 stored. The original file names of any constituent
                 parts are not updated. Can't be used with the *define*
                 parameter.""",
-    # dataset chunksizes
-    "{{dataset chunksizes}}": """chunksizes: `None` or `str` or `int` or `float` or `dict` or a sequence
+    # chunk chunksizes
+    "{{chunk chunksizes}}": """chunksizes: `None` or `str` or `int` or `float` or `dict` or a sequence
                 Set the chunking strategy for writing to a netCDF4
                 file. One of:
 
@@ -982,36 +985,43 @@ _docstring_substitution_definitions = {
                   defined. The chunking strategy will be determined at
                   write time by `{{package}}.write`.
 
-                * ``'contiguous'``: The data will be written to the
-                  file contiguously, i.e. no chunking.
+                * ``'contiguous'``
 
-                * `int` or `float` or `str`: The size in bytes of the
-                  dataset chunks. A floating point value is rounded
-                  down to the nearest integer, and a string represents
-                  a quantity of byte units. "Square-like" chunk shapes
-                  are preferred, maximising the amount of chunks that
-                  are completely filled with data values (see the
-                  `{{package}}.write` *dataset_chunks* parameter for
-                  details). For instance a chunksize of 1024 bytes may
-                  be specified with any of ``1024``, ``1024.9``,
-                  ``'1024'``, ``'1024.9'``, ``'1024 B'``, ``'1 KiB'``,
+                  The data will be written to the file contiguously,
+                  i.e. no chunking.
+
+                * `int` or `float` or `str`
+
+                  The size in bytes of the dataset chunks. A floating
+                  point value is rounded down to the nearest integer,
+                  and a string represents a quantity of byte
+                  units. "Square-like" chunk shapes are preferred,
+                  maximising the amount of chunks that are completely
+                  filled with data values (see the `{{package}}.write`
+                  *dataset_chunks* parameter for details). For
+                  instance a chunksize of 1024 bytes may be specified
+                  with any of ``1024``, ``1024.9``, ``'1024'``,
+                  ``'1024.9'``, ``'1024 B'``, ``'1 KiB'``,
                   ``'0.0009765625 MiB'``, etc. Recognised byte units
                   are (case insensitive): ``B``, ``KiB``, ``MiB``,
                   ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
                   ``TB``, and ``PB``. Spaces in strings are optional.
 
-                * sequence of `int` or `None`: The maximum number of
-                  array elements in a chunk along each data axis,
-                  provided in the same order as the data axes. Values
-                  are automatically limited to the full size of their
-                  corresponding data axis, but the special values
-                  `None` or ``-1`` may be used to indicate the full
-                  axis size. This chunking strategy may get
-                  automatically modified by methods that change the
-                  data shape (such as `insert_dimension`).
+                * sequence of `int` or `None`
 
-                * `dict`: The maximum number of array elements in a
-                  chunk along the axes specified by the dictionary
+                  The maximum number of array elements in a chunk
+                  along each data axis, provided in the same order as
+                  the data axes. Values are automatically limited to
+                  the full size of their corresponding data axis, but
+                  the special values `None` or ``-1`` may be used to
+                  indicate the full axis size. This chunking strategy
+                  may get automatically modified by methods that
+                  change the data shape (such as `insert_dimension`).
+
+                * `dict`
+
+                  The maximum number of array elements in a chunk
+                  along the axes specified by the dictionary
                   keys. Integer values are automatically limited to
                   the full size of their corresponding data axis, and
                   the special values `None` or ``-1`` may be used to
@@ -1021,8 +1031,8 @@ _docstring_substitution_definitions = {
                   size. This chunking strategy may get automatically
                   modified by methods that change the data shape (such
                   as `insert_dimension`).""",
-    # dataset todict
-    "{{dataset todict: `bool`, optional}}": """todict: `bool`, optional
+    # chunk todict
+    "{{chunk todict: `bool`, optional}}": """todict: `bool`, optional
                 If True then the dataset chunk sizes are returned in a
                 `dict` keyed by their axis positions. If False (the
                 default) then the dataset chunking strategy is

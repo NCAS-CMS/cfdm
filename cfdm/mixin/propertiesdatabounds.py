@@ -1572,28 +1572,6 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
-
-        :Parameters:
-
-            bounds: `bool`, optional
-                If True, the default, then clear the HDF5 chunking
-                strategy from any bounds. If False then leave the
-                bounds chunking strategy unchanged.
-
-            interior_ring: `bool`
-                If True, the default, then clear the HDF5 chunking
-                strategy from a geometry interior ring variable. If
-                False then leave the geometry interior ring variable
-                chunking strategy unchanged.
-
-        :Returns:
-
-            `None` or `str` or `int` or `tuple` of `int`
-                The chunking strategy prior to being cleared, as would
-                be returned by `nc_hdf5_chunksizes`.
-
         """
         _DEPRECATION_ERROR_METHOD(
             self,
@@ -1656,28 +1634,6 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
-
-        :Parameters:
-
-            bounds: `bool`, optional
-                If True, the default, then apply the HDF5 chunking
-                strategy to the corresponding axes of any bounds. If
-                False then leave the bounds chunking strategy
-                unchanged.
-
-            interior_ring: `bool`
-                If True, the default, then apply the HDF5 chunking
-                strategy to the corresponding axis of a geometry
-                interior ring variable. If False then leave the
-                geometry interior ring variable chunking strategy
-                unchanged.
-
-        :Returns:
-
-            `None`
-
         """
         _DEPRECATION_ERROR_METHOD(
             self,
@@ -1700,7 +1656,8 @@ class PropertiesDataBounds(PropertiesData):
 
         :Parameters:
 
-            {{dataset chunksizes}}
+            {{chunk chunksizes}}
+
                   Each dictionary key is an integer that specifies an
                   axis by its position in the data array.
 

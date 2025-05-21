@@ -834,15 +834,6 @@ class PropertiesData(Properties):
 
         .. versionadded:: (cfdm) 1.12.0.0
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
-
-        :Returns:
-
-            `None` or `str` or `int` or `tuple` of `int`
-                The chunking strategy prior to being cleared, as would
-                be returned by `nc_hdf5_chunksizes`.
-
         """
         _DEPRECATION_ERROR_METHOD(
             self,
@@ -859,10 +850,6 @@ class PropertiesData(Properties):
         instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
-
-        .. seealso:: `nc_clear_hdf5_chunksizes`,
-                     `nc_set_hdf5_chunksizes`, `{{package}}.read`,
-                     `{{package}}.write`
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -884,7 +871,7 @@ class PropertiesData(Properties):
 
         :Parameters:
 
-            {{dataset todict: `bool`, optional}}
+            {{chunk todict: `bool`, optional}}
 
         :Returns:
 
@@ -906,7 +893,8 @@ class PropertiesData(Properties):
 
         :Parameters:
 
-            {{dataset chunksizes}}
+            {{chunk chunksizes}}
+
                   Each dictionary key is an integer that specifies an
                   axis by its position in the data array.
 
@@ -926,13 +914,6 @@ class PropertiesData(Properties):
         `nc_set_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
-
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
-
-        :Returns:
-
-            `None`
 
         """
         _DEPRECATION_ERROR_METHOD(

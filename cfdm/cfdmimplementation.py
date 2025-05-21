@@ -1054,15 +1054,6 @@ class CFDMImplementation(Implementation):
 
         ..versionadded:: (cfdm) 1.7.2
 
-        :Parameters:
-
-            data: `Data`
-
-        :Returns:
-
-            `tuple` or `int` or `str` or `None`
-                The HDF5 chunking strategy.
-
         """
         raise NotImplementedError(
             "Deprecated at version NEXATVERSION. "
@@ -1222,18 +1213,6 @@ class CFDMImplementation(Implementation):
 
         ..versionadded:: (cfdm) 1.11.2.0
 
-        :Parameters:
-
-            data: `Data`
-
-            chunksizes: `int` or `str` or `None` or `dict` or a sequence
-                Set the chunking strategy when writing to a netCDF4
-                file.
-
-        :Returns:
-
-            `None`
-
         """
         raise NotImplementedError(
             "Deprecated at version NEXATVERSION. "
@@ -1287,7 +1266,7 @@ class CFDMImplementation(Implementation):
 
         """
         raise NotImplementedError(
-            "Deprecated at version 1.8.6.0. " "Use 'equal_components' instead."
+            "Deprecated at version 1.8.6.0. Use 'equal_components' instead."
         )
 
     def equal_properties(self, property_value0, property_value1):
@@ -3885,7 +3864,8 @@ def implementation():
      'Count': <class 'cfdm.count.Count'>,
      'Index': <class 'cfdm.index.Index'>,
      'NodeCountProperties': <class 'cfdm.nodecountproperties.NodeCountProperties'>,
-     'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>}
+     'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>,
+     'ZarrArray': <class 'cfdm.data.zarrarray.ZarrArray'>}
 
     """
     return _implementation.copy()

@@ -793,8 +793,8 @@ class NetCDFRead(IORead):
 
         However, dataset names that are non-local URIs (such as those
         starting ``https:`` or ``s3:``) are assumed, without checking,
-        to be netCDF files, or Zarr datasets if *dataset_type*` is
-        ``('Zarr',)``.
+        to be netCDF files, or Zarr datasets if
+        *allowed_dataset_types*` is ``('Zarr',)``.
 
         :Parameters:
 
@@ -809,7 +809,7 @@ class NetCDFRead(IORead):
             `str` or `None`
                 The dataset type:
 
-                * ``'netCDF'`` for a binary netCDF-3 or netCDF-4 file,
+                * ``'netCDF'`` for a netCDF-3 or netCDF-4 file,
                 * ``'CDL'`` for a text CDL file,
                 * ``'Zarr'`` for a Zarr dataset directory,
                 * `None` for anything else.
@@ -10630,7 +10630,7 @@ class NetCDFRead(IORead):
     def _dataset_has_groups(self, nc):
         """True if the dataset has a groups other than the root group.
 
-        If the dataset is in Zarr format then an exception is raised
+        If the dataset is a Zarr dataset then an exception is raised
         of the dataset has groups.
 
         .. versionadded:: (cfdm) NEXTVERSION

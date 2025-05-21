@@ -2779,23 +2779,6 @@ class Field(
 
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `nc_clear_hdf5_chunksizes`,
-                     `nc_set_hdf5_chunksizes`, `{{package}}.read`,
-                     `{{package}}.write`
-
-        :Parameters:
-
-            todict: `bool`, optional
-                If True then the HDF5 chunking strategy must comprise
-                the maximum number of array elements in a chunk along
-                each data axis, and these HDF chunk sizes are returned
-                in a `dict` keyed by domain axis identities. If False
-                (the default) then the HDF chunking strategy is
-                returned with any of the return options other than a
-                `dict`, as described below.
-
-        :Returns:
-
         """
         _DEPRECATION_ERROR_METHOD(
             self,
@@ -2816,7 +2799,7 @@ class Field(
 
         :Parameters:
 
-            {{dataset todict: `bool`, optional}}
+            {{chunk todict: `bool`, optional}}
 
         :Returns:
 
@@ -2856,35 +2839,6 @@ class Field(
         `nc_clear_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
-
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
-
-        :Parameters:
-
-            constructs: `dict` or `bool`, optional
-                Also clear the HDF5 chunking strategy from selected
-                metadata constructs. The chunking strategies of
-                unselected metadata constructs are unchanged.
-
-                If *constructs* is a `dict` then the selected metadata
-                constructs are those that would be returned by
-                ``f.constructs.filter(**constructs,
-                filter_by_data=True)``. Note that an empty dictionary
-                will therefore select all metadata constructs that
-                have data. See `~Constructs.filter` for details.
-
-                For *constructs* being anything other than a
-                dictionary, if it evaluates to True then all metadata
-                constructs that have data are selected, and if it
-                evaluates to False (the default) then no metadata
-                are constructs selected.
-
-        :Returns:
-
-            `None` or `str` or `int` or `tuple` of `int`
-                The chunking strategy prior to being cleared, as would
-                be returned by `nc_hdf5_chunksizes`.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -2961,45 +2915,6 @@ class Field(
 
         .. versionadded:: (cfdm) 1.11.2.0
 
-        :Parameters:
-
-            constructs: `dict` or `bool`, optional
-                Also apply the dataset chunking strategy of the field
-                construct data to the applicable axes of selected
-                metadata constructs. The chunking strategies of
-                unselected metadata constructs are unchanged.
-
-                If *constructs* is a `dict` then the selected metadata
-                constructs are those that would be returned by
-                ``f.constructs.filter(**constructs,
-                filter_by_data=True)``. Note that an empty dictionary
-                will therefore select all metadata constructs that
-                have data. See `~Constructs.filter` for details.
-
-                For *constructs* being anything other than a
-                dictionary, if it evaluates to True then all metadata
-                constructs that have data are selected, and if it
-                evaluates to False (the default) then no metadata
-                constructs selected.
-
-            ignore: `bool`, optional
-                If True and *chunksizes* is a `dict` then ignore any
-                dictionary keys that do not identify a unique axis of
-                the field construct's data. If False, the default,
-                then an exception will be raised when such keys are
-                encountered.
-
-            filter_kwargs: optional
-                When *chunksizes* is a `dict`, provide additional
-                keyword arguments to `domain_axis` to customise axis
-                selection criteria.
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
         """
         _DEPRECATION_ERROR_METHOD(
             self,
@@ -3026,8 +2941,9 @@ class Field(
 
         :Parameters:
 
-            {{dataset chunksizes}}
-                  Each dictionary key (``k``) specifies the unique
+            {{chunk chunksizes}}
+
+                  Each dictionary key, ``k``, specifies the unique
                   axis that would be identified by ``f.domain_axis(k,
                   **filter_kwargs)``, and it is allowed to specify a
                   domain axis that is not spanned by the data
