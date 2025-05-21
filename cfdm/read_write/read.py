@@ -495,11 +495,18 @@ class read(ReadWrite):
             `None`
 
         """
-        # Initialise the list of constructs in the dataset
+        # Initialise the contents of the dataset. If the dataset is
+        # valid then this will get replaced by a (possibly empty) list
+        # of the contents.
         self.dataset_contents = None
 
         # Initialise the list of unknown-format errors arising from
-        # trying to read the read dataset
+        # trying to read the read dataset. If, after reading, there
+        # are any unknown-format errors then they will get raised, but
+        # only if `dataset_contents` is still None. Note that when
+        # unknown-format errors arise prior to a successful
+        # interpretation of the dataset, the errors are not raised
+        # because `dataset_contents` will no longer be None.
         self.dataset_format_errors = []
 
     def _read(self, dataset):
@@ -573,4 +580,5 @@ class read(ReadWrite):
                 self.unique_dataset_categories.add("netCDF")
 
         if self.dataset_contents is not None:
+            # Successfully read the dataset
             return
