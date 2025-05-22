@@ -112,6 +112,20 @@ class read(ReadWrite):
 
         {{read cdl_string: `bool`, optional}}
 
+        {{read dataset_type: `None` or (sequence of) `str`, optional}}
+
+            Valid file types are:
+
+            ==============  ==========================================
+            *dataset_type*  Description
+            ==============  ==========================================
+            ``'netCDF'``    A netCDF-3 or netCDF-4 dataset
+            ``'CDL'``       A text CDL file of a netCDF dataset
+            ``'Zarr'``      A Zarr v2 (xarray) or Zarr v3 dataset
+            ==============  ==========================================
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         {{read external: (sequence of) `str`, optional}}
 
         {{read extra: (sequence of) `str`, optional}}
@@ -176,23 +190,8 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.12.0.0
 
-        {{read dataset_type: `None` or (sequence of) `str`, optional}}
-
-            Valid file types are:
-
-            ============  ============================================
-            file type     Description
-            ============  ============================================
-            ``'netCDF'``  A netCDF-3 or netCDF-4 dataset
-            ``'CDL'``     A text CDL file of a netCDF dataset
-            ``'Zarr'``    A Zarr v2 (xarray-style) or Zarr v3 dataset
-            ============  ============================================
-
-            .. versionadded:: (cfdm) 1.12.0.0
-
-        {{read ignore_unknown_type: `bool`, optional}}
-
-            .. versionadded:: (cfdm) 1.12.0.0
+        ignore_unknown_type: Deprecated at version NEXTVERSION
+            Use *dataset_type* instead.
 
     :Returns:
 

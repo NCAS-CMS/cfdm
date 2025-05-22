@@ -687,12 +687,12 @@ _docstring_substitution_definitions = {
             the data are stored in its dataset.""",
     # read dataset_type
     "{{read dataset_type: `None` or (sequence of) `str`, optional}}": """dataset_type: `None` or (sequence of) `str`, optional
-             Only read datasets of the given type or types, ignoring
-             others. If there are no dataset of the given types, or
-             *dataset_type* is empty sequence, then an empty list is
-             returned. If `None` (the default) all datasets defined by
-             the *dataset* parameter are read, and an exception is
-             raised for any invalid dataset type.""",
+            Only read datasets of the given type or types, ignoring
+            others. If there are no dataset of the given types, or
+            *dataset_type* is empty sequence, then an empty list is
+            returned. If `None` (the default) all datasets defined by
+            the *dataset* parameter are read, and an exception is
+            raised for any invalid dataset type.""",
     # read recursive
     "{{read recursive: `bool`, optional}}": """recursive: `bool`, optional
             If True then recursively read sub-directories of any

@@ -1,5 +1,3 @@
-import zarr
-
 from . import abstract
 from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
@@ -110,4 +108,6 @@ class ZarrArray(IndexMixin, abstract.FileArray):
                 variable name of the data within the dataset.
 
         """
+        import zarr
+
         return super().open(zarr.open, mode="r")
