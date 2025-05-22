@@ -2487,8 +2487,8 @@ class NetCDFChunks(NetCDF):
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
-        Deprecated at version NEXTVERSION. Use `nc_dataset_chunksizes`
-        instead.
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `nc_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.7.2
 
@@ -2558,8 +2558,8 @@ class NetCDFChunks(NetCDF):
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
 
-        Deprecated at version NEXTVERSION. Use
-        `nc_clear_dataset_chunksizes` instead.
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `nc_clear_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.7.2
 
@@ -2608,8 +2608,8 @@ class NetCDFChunks(NetCDF):
     def nc_set_hdf5_chunksizes(self, chunksizes):
         """Set the HDF5 chunking strategy for the data.
 
-        Deprecated at version NEXTVERSION. Use `nc_dataset_chunksizes`
-        instead.
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `nc_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.7.2
 
@@ -2743,7 +2743,8 @@ class NetCDFChunks(NetCDF):
 class NetCDFHDF5(NetCDF):
     """Mixin class for accessing the netCDF HDF5 chunksizes.
 
-    Deprecated at version NEXTVERSION. Use `NetCDFChunks` instead.
+    Deprecated at version NEXTVERSION and is no longer available. Use
+    `NetCDFChunks` instead.
 
     .. versionadded:: (cfdm) 1.7.2
 

@@ -695,7 +695,11 @@ class NetCDFRead(IORead):
             `zarr.Group`
 
         """
-        import zarr
+        try:
+            import zarr
+        except ModuleNotFoundError as error:
+            error.msg += ". Install the 'zarr' package to read Zarr datasets"
+            raise
 
         nc = zarr.open(dataset)
         self.read_vars["file_opened_with"] = "zarr"

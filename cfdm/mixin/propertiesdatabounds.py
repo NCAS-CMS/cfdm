@@ -1567,8 +1567,8 @@ class PropertiesDataBounds(PropertiesData):
     def nc_clear_hdf5_chunksizes(self, bounds=True, interior_ring=True):
         """Clear the HDF5 chunking strategy for the data.
 
-        Deprecated at version NEXTVERSION. Use
-        `nc_clear_dataset_chunksizes` instead.
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `nc_clear_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
@@ -1629,8 +1629,8 @@ class PropertiesDataBounds(PropertiesData):
     ):
         """Set the HDF5 chunking strategy.
 
-        Deprecated at version NEXTVERSION. Use
-        `nc_set_dataset_chunksizes` instead.
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `nc_set_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
 

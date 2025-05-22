@@ -1327,6 +1327,14 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(OSError):
             cfdm.read(cdl_string_1)
 
+    def test_read_multiple_files(self):
+        """Test cfdm.read with multiple files."""
+        f = cfdm.read(["example_field_0.nc"])
+        self.assertEqual(len(f), 1)
+
+        f = cfdm.read("ugrid_[12].nc")
+        self.assertEqual(len(f), 6)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

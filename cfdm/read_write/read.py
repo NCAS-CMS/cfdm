@@ -102,6 +102,14 @@ class read(ReadWrite):
 
         {{read datasets: (arbitrarily nested sequence of) `str`}}
 
+        {{read recursive: `bool`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
+        {{read followlinks: `bool`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         {{read cdl_string: `bool`, optional}}
 
         {{read external: (sequence of) `str`, optional}}
@@ -177,7 +185,7 @@ class read(ReadWrite):
             ============  ============================================
             ``'netCDF'``  A netCDF-3 or netCDF-4 dataset
             ``'CDL'``     A text CDL file of a netCDF dataset
-            ``'Zarr'``    A Zarr v2 (xarray) or Zarr v3 dataset 
+            ``'Zarr'``    A Zarr v2 (xarray-style) or Zarr v3 dataset
             ============  ============================================
 
             .. versionadded:: (cfdm) 1.12.0.0

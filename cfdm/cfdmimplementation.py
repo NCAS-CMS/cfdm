@@ -1049,8 +1049,8 @@ class CFDMImplementation(Implementation):
     def nc_get_hdf5_chunksizes(self, data):
         """Get the HDF5 chunking strategy for the data.
 
-        Deprecated at NEXTVERSION. Use `nc_get_dataset_chunksizes`
-        instead.
+        Deprecated at NEXTVERSION and is no longer available. Use
+        `nc_get_dataset_chunksizes` instead.
 
         ..versionadded:: (cfdm) 1.7.2
 
@@ -1208,8 +1208,8 @@ class CFDMImplementation(Implementation):
     def nc_set_hdf5_chunksizes(self, data, chunksizes):
         """Set the HDF5 chunking strategy for the data.
 
-        Deprecated at NEXTVERSION. Use `nc_set_dataset_chunksizes`
-        instead.
+        Deprecated at NEXTVERSION and is no longer available. Use
+        `nc_set_dataset_chunksizes` instead.
 
         ..versionadded:: (cfdm) 1.11.2.0
 

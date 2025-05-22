@@ -1,3 +1,20 @@
+Version NEXTVERSION
+----------------
+
+**2025-??-??**
+
+* Read Zarr datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/335)
+* Read multiple datasets simultaneausly with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/336)
+* New keyword parameters to `cfdm.read`: ``recursive``,
+  ``followlinks`` (https://github.com/NCAS-CMS/cfdm/issues/336)
+* New keyword parameters to `cfdm.read`: ``cdl_string``
+  (https://github.com/NCAS-CMS/cfdm/issues/337)
+* New dependency: ``zarr>=3.0.7``
+
+----
+
 Version 1.12.1.0
 ----------------
 

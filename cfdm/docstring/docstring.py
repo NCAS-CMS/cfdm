@@ -687,19 +687,28 @@ _docstring_substitution_definitions = {
             the data are stored in its dataset.""",
     # read dataset_type
     "{{read dataset_type: `None` or (sequence of) `str`, optional}}": """dataset_type: `None` or (sequence of) `str`, optional
-             Only read datasets of the given type(s), ignoring
-             others. If there are no files of the given type(s), or
+             Only read datasets of the given type or types, ignoring
+             others. If there are no dataset of the given types, or
              *dataset_type* is empty sequence, then an empty list is
-             returned. If `None` (the default) then files of any type
-             are read, and an exception is raised for any invalid file
-             type.""",
-    # read file_type
-    "{{read file_type: `None` or (sequence of) `str`, optional}}": """file_type: `None` or (sequence of) `str`, optional
-             Only read files of the given type(s), ignoring others. If
-             there are no files of the given type(s), or *file_type*
-             is empty sequence, then an empty list is returned. If
-             `None` (the default) then files of any type are read, and
-             an exception is raised for any invalid file type.""",
+             returned. If `None` (the default) all datasets defined by
+             the *dataset* parameter are read, and an exception is
+             raised for any invalid dataset type.""",
+    # read recursive
+    "{{read recursive: `bool`, optional}}": """recursive: `bool`, optional
+            If True then recursively read sub-directories of any
+            directories specified with the *datasets* parameter.""",
+    # read followlinks
+    "{{read followlinks: `bool`, optional}}": """followlinks: `bool`, optional
+            If True, and *recursive* is True, then also search for
+            datasets in sub-directories which resolve to symbolic
+            links. By default directories which resolve to symbolic
+            links are ignored. Ignored of *recursive* is
+            False. Datasets which are symbolic links are always
+            followed.
+
+            Note that setting ``recursive=True, followlinks=True`` can
+            lead to infinite recursion if a symbolic link points to a
+            parent directory of itself.""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully

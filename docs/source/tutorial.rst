@@ -154,7 +154,7 @@ datasets <Sample-datasets>`), which contains two field constructs:
 
 ..
 
-* Datasets in `Zarr v2 (xarray)
+* Datasets in `Zarr v2 (xarray-style)
   <https://docs.xarray.dev/en/latest/internals/zarr-encoding-spec.html>`_
   and `Zarr v3
   <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
