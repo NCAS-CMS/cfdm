@@ -260,11 +260,12 @@ class read(ReadWrite):
 
         self = super().__new__(cls)
 
+        # Store the keyword arguments
         self.kwargs = kwargs
 
-        # Actions to be taken before any datasets have been read
-        # (which include initialising the 'constructs' attribute to an
-        # empty `list`).
+        # Actions to be taken before any datasets are been read (which
+        # include initialising 'self.constructs' attribute to an empty
+        # list).
         self._initialise()
 
         dataset_type = self.dataset_type
@@ -347,6 +348,8 @@ class read(ReadWrite):
                 f"recursive={True}. Got recursive={recursive!r}"
             )
 
+        is_zarr = NetCDFRead.is_zarr
+
         for datasets1 in datasets:
             # Apply tilde and environment variable expansions
             datasets1 = expanduser(expandvars(datasets1))
@@ -364,7 +367,7 @@ class read(ReadWrite):
             n_datasets = 0
             for x in iglob(datasets1):
                 if isdir(x):
-                    if NetCDFRead.is_zarr(x):
+                    if is_zarr(x):
                         # This directory is a Zarr dataset, so don't
                         # look in any subdirectories.
                         n_datasets += 1
