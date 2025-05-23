@@ -290,17 +290,3 @@ Deprecated
    ~cfdm.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes
    ~cfdm.AuxiliaryCoordinate.nc_hdf5_chunksizes
    ~cfdm.AuxiliaryCoordinate.nc_set_hdf5_chunksizes
-
-Deprecated
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm..nc_clear_hdf5_chunksizes
-   ~cfdm..nc_hdf5_chunksizes
-   ~cfdm..nc_set_hdf5_chunksizes
