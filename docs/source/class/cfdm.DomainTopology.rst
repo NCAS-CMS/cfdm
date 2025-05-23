@@ -221,3 +221,17 @@ Docstring substitutions
    ~cfdm.DomainTopology._docstring_substitutions        
    ~cfdm.DomainTopology._docstring_package_depth        
    ~cfdm.DomainTopology._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainTopology.nc_clear_hdf5_chunksizes
+   ~cfdm.DomainTopology.nc_hdf5_chunksizes
+   ~cfdm.DomainTopology.nc_set_hdf5_chunksizes

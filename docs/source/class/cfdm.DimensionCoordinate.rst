@@ -269,3 +269,17 @@ Docstring substitutions
    ~cfdm.DimensionCoordinate._docstring_substitutions        
    ~cfdm.DimensionCoordinate._docstring_package_depth        
    ~cfdm.DimensionCoordinate._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DimensionCoordinate.nc_clear_hdf5_chunksizes
+   ~cfdm.DimensionCoordinate.nc_hdf5_chunksizes
+   ~cfdm.DimensionCoordinate.nc_set_hdf5_chunksizes

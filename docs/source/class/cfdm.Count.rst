@@ -196,4 +196,18 @@ Docstring substitutions
    ~cfdm.Count._docstring_special_substitutions
    ~cfdm.Count._docstring_substitutions        
    ~cfdm.Count._docstring_package_depth        
-   ~cfdm.Count._docstring_method_exclusions    
+   ~cfdm.Count._docstring_method_exclusions
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.nc_clear_hdf5_chunksizes
+   ~cfdm.Count.nc_hdf5_chunksizes
+   ~cfdm.Count.nc_set_hdf5_chunksizes

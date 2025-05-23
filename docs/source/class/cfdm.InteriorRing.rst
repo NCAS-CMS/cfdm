@@ -179,3 +179,17 @@ Docstring substitutions
    ~cfdm.InteriorRing._docstring_substitutions        
    ~cfdm.InteriorRing._docstring_package_depth        
    ~cfdm.InteriorRing._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.InteriorRing.nc_clear_hdf5_chunksizes
+   ~cfdm.InteriorRing.nc_hdf5_chunksizes
+   ~cfdm.InteriorRing.nc_set_hdf5_chunksizes

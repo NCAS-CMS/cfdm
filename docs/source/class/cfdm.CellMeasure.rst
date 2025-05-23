@@ -201,3 +201,17 @@ Docstring substitutions
    ~cfdm.CellMeasure._docstring_substitutions        
    ~cfdm.CellMeasure._docstring_package_depth        
    ~cfdm.CellMeasure._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CellMeasure.nc_clear_hdf5_chunksizes
+   ~cfdm.CellMeasure.nc_hdf5_chunksizes
+   ~cfdm.CellMeasure.nc_set_hdf5_chunksizes

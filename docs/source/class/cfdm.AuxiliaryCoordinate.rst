@@ -276,3 +276,31 @@ Docstring substitutions
    ~cfdm.AuxiliaryCoordinate._docstring_substitutions        
    ~cfdm.AuxiliaryCoordinate._docstring_package_depth        
    ~cfdm.AuxiliaryCoordinate._docstring_method_exclusions
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes
+   ~cfdm.AuxiliaryCoordinate.nc_hdf5_chunksizes
+   ~cfdm.AuxiliaryCoordinate.nc_set_hdf5_chunksizes
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm..nc_clear_hdf5_chunksizes
+   ~cfdm..nc_hdf5_chunksizes
+   ~cfdm..nc_set_hdf5_chunksizes
