@@ -359,39 +359,38 @@ def environment(display=True, paths=True):
 
     **Examples**
 
-    >>> cfdm.environment(paths=False)
-    Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
-    Python: 3.11.4
-    packaging: 23.0
-    numpy: 1.25.2
-    cfdm.core: 1.11.2.0
-    HDF5 library: 1.14.2
-    netcdf library: 4.9.2
-    netCDF4: 1.6.4
-    h5netcdf: 1.3.0
-    h5py: 3.10.0
-    s3fs: 2024.6.0
-    dask: 2025.2.0
-    scipy: 1.11.3
-    cftime: 1.6.2
-    cfdm: 1.11.2.0
-
     >>> cfdm.environment()
-    Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
-    Python: 3.11.4 /home/miniconda3/bin/python
-    packaging: 23.0 /home/miniconda3/lib/python3.11/site-packages/packaging/__init__.py
-    numpy: 1.25.2 /home/miniconda3/lib/python3.11/site-packages/numpy/__init__.py
-    cfdm.core: 1.11.2.0 /home/cfdm/cfdm/core/__init__.py
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8 /home/miniconda3/bin/python
+    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
+    numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
+    cfdm.core: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
     HDF5 library: 1.14.2
-    netcdf library: 4.9.2
-    netCDF4: 1.6.4 /home/miniconda3/lib/python3.11/site-packages/netCDF4/__init__.py
-    h5netcdf: 1.3.0 /home/miniconda3/lib/python3.11/site-packages/h5netcdf/__init__.py
-    h5py: 3.10.0 /home/miniconda3/lib/python3.11/site-packages/h5py/__init__.py
-    s3fs: 2024.6.0 /home/miniconda3/lib/python3.11/site-packages/s3fs/__init__.py
-    scipy: 1.11.3 /home/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
-    dask: 2025.2.0 /home/miniconda3/lib/python3.11/site-packages/dask/__init__.py
-    cftime: 1.6.2 /home/miniconda3/lib/python3.11/site-packages/cftime/__init__.py
-    cfdm: 1.11.2.0 /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
+    netcdf library: 4.9.4-development
+    netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
+    h5netcdf: 1.3.0  /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
+    h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
+    s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
+    scipy: 1.15.2 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
+    dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
+    cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py
+    cfdm: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cfdm/__init__.py
+
+    >>> cfdm.environment(paths=False)
+    Python: 3.12.8
+    packaging: 24.2
+    numpy: 2.2.6
+    cfdm.core: NEXTVERSION
+    HDF5 library: 1.14.2
+    netcdf library: 4.9.4-development
+    netCDF4: 1.7.2
+    h5netcdf: 1.3.0
+    h5py: 3.12.1
+    s3fs: 2024.12.0
+    scipy: 1.15.2
+    dask: 2025.5.1
+    cftime: 1.6.4.post1
+    cfdm: NEXTVERSION
 
     """
     import cftime

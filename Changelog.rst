@@ -11,7 +11,10 @@ Version NEXTVERSION
   ``followlinks`` (https://github.com/NCAS-CMS/cfdm/issues/336)
 * New keyword parameters to `cfdm.read`: ``cdl_string``
   (https://github.com/NCAS-CMS/cfdm/issues/337)
+* Set new minimum version of `dask`: ``2025.5.1``
+  (https://github.com/NCAS-CMS/cfdm/issues/339)
 * New dependency: ``zarr>=3.0.7``
+* Changed dependency: ``dask>=2025.5.1``
 
 ----
 

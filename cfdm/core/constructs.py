@@ -1299,52 +1299,6 @@ class Constructs(abstract.Container):
 
         return key
 
-    def ordered(self):
-        """Return the constructs in their predetermined order.
-
-        For cell method constructs, the predetermined order is that in
-        which they where added. There is no predetermined ordering for
-        all other construct types, and a exception is raised if any
-        non-cell method constructs are present.
-
-        Deprecated at version (cfdm) 1.9.0.0, since all metadata
-        constructs are now stored in the order in which they where
-        added.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Returns:
-
-             `collections.OrderedDict`
-                 The constructs and their construct keys, in their
-                 predetermined order.
-
-        **Examples**
-
-        >>> f = {{package}}.Field()
-        >>> c = f.constructs
-        >>> c.ordered()
-        {}
-        >>> m1 = {{package}}.CellMethod(axes=['domainaxis1'], method='mean')
-        >>> c._set_construct(m1, key='cell_method_for_axis_1')
-        'cell_method_for_axis_1'
-        >>> m2 = {{package}}.CellMethod(axes=['domainaxis0'], method='minimum')
-        >>> c._set_construct(m2, key='cell_method_for_axis_0')
-        'cell_method_for_axis_0'
-        >>> print(c)
-        Constructs:
-        {'cell_method_for_axis_0': <{{repr}}CellMethod: domainaxis0: minimum>,
-         'cell_method_for_axis_1': <{{repr}}CellMethod: domainaxis1: mean>}
-        >>> c.ordered()
-        OrderedDict([('cell_method_for_axis_1', <{{repr}}CellMethod: domainaxis1: mean>),
-                     ('cell_method_for_axis_0', <{{repr}}CellMethod: domainaxis0: minimum>)])
-
-        """
-        raise DeprecationWarning(
-            "This method is no longer required from v1.9.0.0, and"
-            "will be removed at a later date"
-        )
-
     def replace(self, key, construct, axes=None, copy=True):
         """Replace one metadata construct with another.
 

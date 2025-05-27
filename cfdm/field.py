@@ -537,10 +537,6 @@ class Field(
         {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
          'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
 
-        >>> f.cell_methods.ordered()
-        OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                     ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
-
         """
         return self._filter_interface(
             ("field_ancillary",),
