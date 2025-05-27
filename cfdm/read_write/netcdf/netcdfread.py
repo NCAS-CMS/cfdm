@@ -825,7 +825,7 @@ class NetCDFRead(IORead):
             if (
                 allowed_dataset_types
                 and len(allowed_dataset_types) == 1
-                and allowed_dataset_types[0] == "Zarr"
+                and "Zarr" in allowed_dataset_types
             ):
                 # Assume that a non-local URI is zarr if
                 # 'allowed_dataset_types' is ('Zarr',)
@@ -1074,7 +1074,6 @@ class NetCDFRead(IORead):
                 The field or domain constructs in the file.
 
         """
-        #        info = is_log_level_info(logger)
         debug = is_log_level_debug(logger)
 
         # ------------------------------------------------------------

@@ -532,56 +532,54 @@ def abspath(path, uri=None):
     >>> os.getcwd()
     '/data/archive'
 
-    >>> cfdm.abspath('file.nc')
-    '/data/archive/file.nc'
-    >>> cfdm.abspath('../file.nc')
-    '/data/file.nc'
-    >>> cfdm.abspath('file:///file.nc')
-    'file:///file.nc'
-    >>> cfdm.abspath('file://file.nc')
-    'file:///data/archive'
-    >>> cfdm.abspath('file:/file.nc')
-    'file:///file.nc'
-
-    >>> cfdm.abspath('http:///file.nc')
-    'http:///file.nc'
-    >>> cfdm.abspath('http://file.nc')
-    'http://'
-    >>> cfdm.abspath('http:/file.nc')
-    'http:///file.nc'
-
-    >>> cfdm.abspath('file.nc', uri=True)
-    'file:///data/archive/file.nc'
-    >>> cfdm.abspath('../file.nc', uri=True)
-    'file:///data/file.nc'
-    >>> cfdm.abspath('file:///file.nc', uri=True)
-    'file:///file.nc'
-    >>> cfdm.abspath('file://file.nc', uri=True)
-    'file:///data/archive'
-    >>> cfdm.abspath('file:/file.nc', uri=True)
-    'file:///file.nc'
-
-    >>> cfdm.abspath('http:///file.nc', uri=True)
-    'http:///file.nc'
-    >>> cfdm.abspath('http://file.nc', uri=True)
-    'http://'
-    >>> cfdm.abspath('http:/file.nc', uri=True)
-    'http:///file.nc'
-
-    >>> cfdm.abspath('file.nc', uri=False)
-    '/data/archive/file.nc'
-
-    >>> cfdm.abspath('../file.nc', uri=False)
-    '/data/file.nc'
-    >>> cfdm.abspath('file:///file.nc', uri=False)
-    '/file.nc'
-    >>> cfdm.abspath('file://file.nc', uri=False)
+    >>> cfdm.abspath("")
     '/data/archive'
-    >>> cfdm.abspath('file:/file.nc', uri=False)
-    '/file.nc'
+    >>> cfdm.abspath("file.nc")
+    '/data/archive/file.nc'
+    >>> cfdm.abspath("../file.nc")
+    '/data/file.nc'
+    >>> cfdm.abspath("file:///file.nc")
+    'file:///file.nc'
+    >>> cfdm.abspath("file://file.nc")
+    'file://file.nc/data/archive'
+    >>> cfdm.abspath("file:/file.nc")
+    'file:/file.nc'
+    >>> cfdm.abspath("http:///file.nc")
+    'http:///file.nc'
+    >>> cfdm.abspath("http://file.nc")
+    'http://file.nc'
+    >>> cfdm.abspath("http:/file.nc")
+    'http:/file.nc'
 
-    >>> cfdm.abspath('')
-    '/data/archive"
+    >>> cfdm.abspath("file.nc", uri=True)
+    'file:/data/archive/file.nc'
+    >>> cfdm.abspath("../file.nc", uri=True)
+    'file:/data/file.nc'
+    >>> cfdm.abspath("file:///file.nc", uri=True)
+    'file:///file.nc'
+    >>> cfdm.abspath("file://file.nc", uri=True)
+    'file://file.nc/data/archive'
+    >>> cfdm.abspath("file:/file.nc", uri=True)
+    'file:/file.nc'
+    >>> cfdm.abspath("http:///file.nc", uri=True)
+    'http:///file.nc'
+    >>> cfdm.abspath("http://file.nc", uri=True)
+    'http://file.nc'
+    >>> cfdm.abspath("http:/file.nc", uri=True)
+    'http:/file.nc'
+
+    >>> cfdm.abspath("file.nc", uri=False)
+    '/data/archive/file.nc'
+    >>> cfdm.abspath("../file.nc", uri=False)
+    '/data/file.nc'
+    >>> cfdm.abspath("file:///file.nc", uri=False)
+    '/file.nc'
+    >>> cfdm.abspath("file://file.nc", uri=False)
+    '/data/archive'
+    >>> cfdm.abspath("file:/file.nc", uri=False)
+    '/file.nc'
+     >>> cfdm.abspath("http:///file.nc", uri=False)
+    ValueError: Can't set uri=False for path='http:///file.nc'
 
     """
     u = urisplit(path)
@@ -592,7 +590,7 @@ def abspath(path, uri=None):
             path = os_abspath(path)
 
         if uri or uri is None:
-            path = uricompose(scheme=scheme, authority="", path=path)
+            path = uricompose(scheme=scheme, authority=u.authority, path=path)
         elif scheme != "file":
             raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
@@ -600,7 +598,7 @@ def abspath(path, uri=None):
 
     path = os_abspath(path)
     if uri:
-        path = uricompose(scheme="file", authority="", path=path)
+        path = uricompose(scheme="file", authority=u.authority, path=path)
 
     return path
 
@@ -648,84 +646,87 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
     >>> os.getcwd()
     '/data/archive'
 
-    >>> cfdm.dirname('file.nc')
+    >>> cfdm.dirname("file.nc")
+    ''
+    >>> cfdm.dirname("file.nc", normalise=True)
     '/data/archive'
-    >>> cfdm.dirname('file.nc', normalise=True)
+    >>> cfdm.dirname("file.nc", normalise=True, uri=True)
+    'file:///data/archive
+    >>> cfdm.dirname("file.nc", normalise=True, uri=False)
     '/data/archive'
-    >>> cfdm.dirname('file.nc', normalise=True, uri=True)
-    'file:///data/archive'
-    >>> cfdm.dirname('file.nc', normalise=True, uri=False)
-    '/data/archive'
-    >>> cfdm.dirname('file.nc', normalise=True, sep=True)
+    >>> cfdm.dirname("file.nc", normalise=True, sep=True)
     '/data/archive/'
 
-    >>> cfdm.dirname('model/file.nc')
-    'model'
-    >>> cfdm.dirname('model/file.nc', normalise=True)
-    /data/archive/model'
-    >>> cfdm.dirname('model/file.nc', normalise=True, uri=True)
+    >>> cfdm.dirname("model/file.nc"), "model")
+    >>> cfdm.dirname("model/file.nc", normalise=True)
+    '/data/archive/model'
+    >>> cfdm.dirname("model/file.nc", normalise=True, uri=True)
     'file:///data/archive/model'
-    >>> cfdm.dirname('model/file.nc', normalise=True, uri=False)
-    /data/archive/model'
+    >>> cfdm.dirname("model/file.nc", normalise=True, uri=False)
+    '/data/archive/model'
 
-    >>> cfdm.dirname('../file.nc')
+    >>> cfdm.dirname("../file.nc")
     '..'
-    >>> cfdm.dirname('../file.nc', normalise=True)
+    >>> cfdm.dirname("../file.nc", normalise=True)
     '/data'
-    >>> cfdm.dirname('../file.nc', normalise=True, uri=True)
-    'file:///data'
-    >>> cfdm.dirname('../file.nc', normalise=True, uri=False)
+    >>> cfdm.dirname("../file.nc", normalise=True, uri=True),
+    'file://{/data}'
+    >>> cfdm.dirname("../file.nc", normalise=True, uri=False)
     '/data'
 
-    >>> cfdm.dirname('/model/file.nc')
+    >>> cfdm.dirname("/model/file.nc")
     '/model'
-    >>> cfdm.dirname('/model/file.nc', normalise=True)
+    >>> cfdm.dirname("/model/file.nc", normalise=True)
     '/model'
-    >>> cfdm.dirname('/model/file.nc', normalise=True, uri=True)
+    >>> cfdm.dirname("/model/file.nc", normalise=True, uri=True)
     'file:///model'
-    >>> cfdm.dirname('/model/file.nc', normalise=True, uri=False)
+    >>> cfdm.dirname("/model/file.nc", normalise=True, uri=False)
     '/model'
 
-    >>> cfdm.dirname('')
+    >>> cfdm.dirname("")
     ''
-    >>> cfdm.dirname('', normalise=True)
+    >>> cfdm.dirname("", normalise=True)
     '/data/archive'
-    >>> cfdm.dirname('', normalise=True, uri=True)
+    >>> cfdm.dirname("", normalise=True, uri=True)
     'file:///data/archive'
-    >>> cfdm.dirname('', normalise=True, uri=False)
+    >>> cfdm.dirname("", normalise=True, uri=False)
     '/data/archive'
-
-    >>> cfdm.dirname('https:///data/archive/file.nc')
+    >>> cfdm.dirname("https:///data/archive/file.nc")
     'https:///data/archive'
-    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True)
+    >>> cfdm.dirname("https:///data/archive/file.nc", normalise=True)
     'https:///data/archive'
-    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=True)
+    >>> cfdm.dirname("https:///data/archive/file.nc", normalise=True, uri=True)
     'https:///data/archive'
-    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=False)
+    >>> cfdm.dirname("https:///data/archive/file.nc", normalise=True, uri=False)
     ValueError: Can't set uri=False for path='https:///data/archive/file.nc'
 
-    >>> cfdm.dirname('file:///data/archive/file.nc')
+    >>> cfdm.dirname("file:///data/archive/file.nc")
     'file:///data/archive'
-    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True)
+    >>> cfdm.dirname("file:///data/archive/file.nc", normalise=True)
     'file:///data/archive'
-    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=True)
+    >>> cfdm.dirname("file:///data/archive/file.nc", normalise=True, uri=True)
     'file:///data/archive'
-    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=False)
+    >>> cfdm.dirname("file:///data/archive/file.nc", normalise=True, uri=False)
     '/data/archive'
 
-    >>> cfdm.dirname('file:///data/archive/../file.nc')
+    >>> cfdm.dirname("file:///data/archive/../file.nc")
     'file:///data/archive/..'
-    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True)
-    'file::///data'
-    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=True)
-    'file::///data'
-    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=False)
+    >>> cfdm.dirname("file:///data/archive/../file.nc", normalise=True)
+    'file:///data'
+    >>> cfdm.dirname("file:///data/archive/../file.nc", normalise=True, uri=True)
+    'file:///data'
+    >>> cfdm.dirname("file:///data/archive/../file.nc", normalise=True, uri=False)
     '/data'
 
     """
     u = urisplit(path)
     scheme = u.scheme
     path = u.path
+
+    authority = u.authority
+    if authority is None:
+        authority = ""
+
     if scheme:
         # Remote (or "file:")
         if normalise and (scheme == "file" or path.startswith(os_sep)):
@@ -738,7 +739,7 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
             path = join(path, "")
 
         if uri or uri is None:
-            path = uricompose(scheme=scheme, authority="", path=path)
+            path = uricompose(scheme=scheme, authority=authority, path=path)
         elif scheme != "file":
             raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
@@ -752,7 +753,7 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
         path = os_abspath(path)
 
     if uri:
-        path = uricompose(scheme="file", authority="", path=path)
+        path = uricompose(scheme="file", authority=authority, path=path)
 
     if sep:
         path = join(path, "")
