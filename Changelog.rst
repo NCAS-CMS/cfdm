@@ -1,3 +1,14 @@
+Version NEXTVERSION
+----------------
+
+**2025-??-??**
+
+* Set new minimum version of `dask`: ``2025.5.1``
+  (https://github.com/NCAS-CMS/cfdm/issues/339)
+* Changed dependency: ``dask>=2025.5.1``
+
+----
+
 Version 1.12.1.0
 ----------------
 

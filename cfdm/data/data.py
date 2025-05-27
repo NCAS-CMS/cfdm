@@ -8,7 +8,7 @@ from os.path import commonprefix
 
 import dask.array as da
 import numpy as np
-from dask.base import collections_to_dsk, is_dask_collection, tokenize
+from dask.base import collections_to_expr, is_dask_collection, tokenize
 from dask.optimization import cull
 from netCDF4 import default_fillvals
 from scipy.sparse import issparse
@@ -7041,10 +7041,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             _force_to_memory=_force_to_memory,
         )
 
-        if graph == "optimise":
-            return collections_to_dsk((dx,), optimize_graph=True)
-
-        return dict(collections_to_dsk((dx,), optimize_graph=False))
+        optimise_graph = graph == "optimise"
+        e = collections_to_expr((dx,), optimize_graph=optimise_graph)
+        return e.dask
 
     def tolist(self):
         """Return the data as a scalar or (nested) list.
