@@ -195,7 +195,7 @@ The cfdm package requires:
 
 * `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.
 
-* `zarr <https://pypi.org/project/zarr>`_, version 3.0.7 or newer.
+* `zarr <https://pypi.org/project/zarr>`_, version 3.0.8 or newer.
     
 * `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 

@@ -1,3 +1,4 @@
+import importlib
 import logging
 import os
 from copy import deepcopy
@@ -335,6 +336,38 @@ def _disable_logging(at_level=None):
         logging.disable()
 
 
+def _get_module_info(module, alternative_name=False, try_except=False):
+    """Helper function for processing modules for `environment`.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+    if try_except:
+        module_name = None
+        try:
+            importlib.import_module(module)
+            module_name = module
+        except ImportError:
+            if (
+                alternative_name
+            ):  # where a module has a different (e.g. old) name
+                try:
+                    importlib.import_module(alternative_name)
+                    module_name = alternative_name
+                except ImportError:
+                    pass
+
+        if not module_name:
+            return ("not available", "")
+    else:
+        module_name = module
+
+    return (
+        importlib.import_module(module_name).__version__,
+        importlib.util.find_spec(module_name).origin,
+    )
+
+
 def environment(display=True, paths=True):
     """Return the names, versions and paths of all dependencies.
 
@@ -362,62 +395,74 @@ def environment(display=True, paths=True):
     >>> cfdm.environment()
     Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
     Python: 3.12.8 /home/miniconda3/bin/python
-    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
+    packaging: 24.1 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
     numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
     cfdm.core: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
+    packaging: 24.1 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
+    udunits2 library: libudunits2.so.0
     HDF5 library: 1.14.2
     netcdf library: 4.9.4-development
     netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
-    h5netcdf: 1.3.0  /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
+    h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
     h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
+    zarr: 3.0.8 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
     s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
-    scipy: 1.15.2 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
+    scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
     dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
     cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py
-    cfdm: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cfdm/__init__.py
+    cfunits: 3.3.7 /home/miniconda3/lib/python3.12/site-packages/cfunits/__init__.py
+    cfdm: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/__init__.py
 
     >>> cfdm.environment(paths=False)
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
     Python: 3.12.8
-    packaging: 24.2
+    packaging: 24.1
     numpy: 2.2.6
     cfdm.core: NEXTVERSION
+    packaging: 24.1
+    udunits2 library: libudunits2.so.0
     HDF5 library: 1.14.2
     netcdf library: 4.9.4-development
     netCDF4: 1.7.2
     h5netcdf: 1.3.0
     h5py: 3.12.1
+    zarr: 3.0.8
     s3fs: 2024.12.0
-    scipy: 1.15.2
+    scipy: 1.15.1
     dask: 2025.5.1
     cftime: 1.6.4.post1
+    cfunits: 3.3.7
     cfdm: NEXTVERSION
 
     """
-    import cftime
-    import dask
-    import h5netcdf
-    import h5py
-    import netCDF4
-    import s3fs
-    import scipy
+    import ctypes
 
-    out = core.environment(display=False, paths=paths)  # get all core env
+    import netCDF4
+
+    # Get cfdm.core env
+    out = core.environment(display=False, paths=paths)
 
     dependency_version_paths_mapping = {
+        "packaging": _get_module_info("packaging"),
+        "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
         "HDF5 library": (netCDF4.__hdf5libversion__, ""),
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
-        "netCDF4": (netCDF4.__version__, os.path.abspath(netCDF4.__file__)),
-        "h5netcdf": (h5netcdf.__version__, os.path.abspath(h5netcdf.__file__)),
-        "h5py": (h5py.__version__, os.path.abspath(h5py.__file__)),
-        "s3fs": (s3fs.__version__, os.path.abspath(s3fs.__file__)),
-        "scipy": (scipy.__version__, os.path.abspath(scipy.__file__)),
-        "dask": (dask.__version__, os.path.abspath(dask.__file__)),
-        "cftime": (cftime.__version__, os.path.abspath(cftime.__file__)),
+        "netCDF4": _get_module_info("netCDF4"),
+        "h5netcdf": _get_module_info("h5netcdf"),
+        "h5py": _get_module_info("h5py"),
+        "zarr": _get_module_info("zarr"),
+        "s3fs": _get_module_info("s3fs"),
+        "scipy": _get_module_info("scipy"),
+        "dask": _get_module_info("dask"),
+        "cftime": _get_module_info("cftime"),
+        "cfunits": _get_module_info("cfunits"),
         "cfdm": (__version__, os.path.abspath(__file__)),
     }
     string = "{0}: {1!s}"
-    if paths:  # include path information, else exclude, when unpacking tuple
+    if paths:
+        # Include path information, else exclude, when unpacking tuple.
         string += " {2!s}"
+
     out.extend(
         [
             string.format(dep, *info)

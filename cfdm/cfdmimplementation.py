@@ -212,7 +212,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-                The deep copy.
+        The deep copy.
 
         """
         return construct.copy()
@@ -1837,7 +1837,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Auxiliary coordinate construct
+        Auxiliary coordinate construct
 
         """
         cls = self.get_class("AuxiliaryCoordinate")
@@ -1848,7 +1848,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Bounds component
+        Bounds component
 
         """
         cls = self.get_class("Bounds")
@@ -1952,7 +1952,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Coordinate reference construct
+        Coordinate reference construct
 
         """
         cls = self.get_class("CoordinateReference")
@@ -1963,7 +1963,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Count variable
+        Count variable
 
         """
         cls = self.get_class("Count")
@@ -2083,7 +2083,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Domain construct
+        Domain construct
 
         """
         cls = self.get_class("Domain")
@@ -2094,7 +2094,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Domain ancillary construct
+        Domain ancillary construct
 
         """
         cls = self.get_class("DomainAncillary")
@@ -2105,7 +2105,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Domain ancillary construct
+        Domain ancillary construct
 
         """
         cls = self.get_class("DomainAxis")
@@ -2158,7 +2158,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Field construct
+        Field construct
 
         """
         cls = self.get_class("Field")
@@ -2169,7 +2169,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Field ancillary construct
+        Field ancillary construct
 
         """
         cls = self.get_class("FieldAncillary")
@@ -2295,7 +2295,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Index variable
+        Index variable
 
         """
         cls = self.get_class("Index")
@@ -2306,7 +2306,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Interior ring variable
+        Interior ring variable
 
         """
         cls = self.get_class("InteriorRing")
@@ -2330,7 +2330,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            List variable
+        List variable
 
         """
         cls = self.get_class("List")
@@ -2360,7 +2360,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Index variable
+        Index variable
 
         """
         cls = self.get_class("TiePointIndex")
@@ -2444,7 +2444,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Node count properties bariable
+        Node count properties bariable
 
         """
         cls = self.get_class("NodeCountProperties")
@@ -2455,7 +2455,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Part node count properties variable
+        Part node count properties variable
 
         """
         cls = self.get_class("PartNodeCountProperties")

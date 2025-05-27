@@ -13,7 +13,7 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cfdm/issues/337)
 * Set new minimum version of `dask`: ``2025.5.1``
   (https://github.com/NCAS-CMS/cfdm/issues/339)
-* New dependency: ``zarr>=3.0.7``
+* New dependency: ``zarr>=3.0.8``
 * Changed dependency: ``dask>=2025.5.1``
 
 ----

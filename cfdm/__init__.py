@@ -1,4 +1,4 @@
-"""cfdm is a reference implementation of the CF data model.
+"""Cfdm is a reference implementation of the CF data model.
 
 It identifies the fundamental elements of the CF conventions and
 shows how they relate to each other, independently of the netCDF
@@ -54,6 +54,7 @@ _requires = core._requires + (
     "dask",
     "scipy",
     "h5netcdf",
+    "zarr",
     "s3fs",
     "uritools",
     "cfunits",
@@ -111,6 +112,19 @@ else:
         raise ValueError(
             f"Bad h5py version: cfdm requires h5py>={_minimum_vn}. "
             f"Got {h5py.__version__} at {h5py.__file__}"
+        )
+
+# Check the version of zarr
+try:
+    import zarr
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+else:
+    _minimum_vn = "3.0.8"
+    if Version(zarr.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            f"Bad zarr version: cfdm requires zarr>={_minimum_vn}. "
+            f"Got {zarr.__version__} at {zarr.__file__}"
         )
 
 # Check the version of s3fs

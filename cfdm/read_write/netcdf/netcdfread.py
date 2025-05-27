@@ -170,11 +170,11 @@ class NetCDFRead(IORead):
         canonical name to the coordinates to which it applies. The
         coordinates are defined by their standard names.
 
-        A coordinate reference canonical name is either the value of
-        the grid_mapping_name attribute of a grid mapping variable
-        (e.g.  'lambert_azimuthal_equal_area'), or the standard name
-        of a vertical coordinate variable with a formula_terms
-        attribute (e.g. 'ocean_sigma_coordinate').
+        A coordinate reference canonical name is either the value of the
+        grid_mapping_name attribute of a grid mapping variable (e.g.
+        'lambert_azimuthal_equal_area'), or the standard name of a
+        vertical coordinate variable with a formula_terms attribute
+        (e.g. 'ocean_sigma_coordinate').
 
         """
         return {
