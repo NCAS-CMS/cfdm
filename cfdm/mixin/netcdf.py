@@ -4617,7 +4617,7 @@ class NetCDFAggregation(NetCDFMixin):
         """Remove the netCDF aggregated_data terms.
 
         The aggregated data terms define the names of the fragment
-        array variables, and are stored in a netCDF file in an
+        array variables, as would be stored in a netCDF file in an
         "aggregated_data" attribute.
 
         .. versionadded:: (cfdm) 1.12.0.0
@@ -4636,20 +4636,20 @@ class NetCDFAggregation(NetCDFMixin):
         **Examples**
 
         >>> f.nc_set_aggregated_data(
-        ...     {'shape': 'shape',
-        ...      'location': 'location',
-        ...      'address': 'address'}
+        ...     {'map': 'fragment_map',
+        ...      'uris': 'fragment_uris',
+        ...      'identifiers': 'fragment_identifiers'}
         ... )
         >>> f.nc_has_aggregated_data()
         True
         >>> f.nc_get_aggregated_data()
-        {'shape': 'shape',
-         'location': 'location',
-         'address': 'address'}
+        {'map': 'fragment_map',
+         'uris': 'fragment_uris',
+         'identifiers': 'fragment_identifiers'}
         >>> f.nc_del_aggregated_data()
-        {'shape': 'shape',
-         'location': 'location',
-         'address': 'address'}
+        {'map': 'fragment_map',
+         'uris': 'fragment_uris',
+         'identifiers': 'fragment_identifiers'}
         >>> f.nc_has_aggregated_data()
         False
         >>> f.nc_del_aggregated_data()
@@ -4657,7 +4657,7 @@ class NetCDFAggregation(NetCDFMixin):
         >>> f.nc_get_aggregated_data()
         {}
         >>> f.nc_set_aggregated_data(
-        ...     'shape: shape, location: location address: address'
+        ...     'map: fragment_map, uris: fragment_uris identifiers: fragment_idenfiers'
         ... )
 
         """
@@ -4690,20 +4690,20 @@ class NetCDFAggregation(NetCDFMixin):
         **Examples**
 
         >>> f.nc_set_aggregated_data(
-        ...     {'shape': 'shape',
-        ...      'location': 'location',
-        ...      'address': 'address'}
+        ...     {'map': 'fragment_map',
+        ...      'uris': 'fragment_uris',
+        ...      'identifiers': 'fragment_identifiers'}
         ... )
         >>> f.nc_has_aggregated_data()
         True
         >>> f.nc_get_aggregated_data()
-        {'shape': 'shape',
-         'location': 'location',
-         'address': 'address'}
+        {'map': 'fragment_map',
+         'uris': 'fragment_uris',
+         'identifiers': 'fragment_identifiers'}
         >>> f.nc_del_aggregated_data()
-        {'shape': 'shape',
-         'location': 'location',
-         'address': 'address'}
+        {'map': 'fragment_map',
+         'uris': 'fragment_uris',
+         'identifiers': 'fragment_identifiers'}
         >>> f.nc_has_aggregated_data()
         False
         >>> f.nc_del_aggregated_data()
@@ -4711,7 +4711,7 @@ class NetCDFAggregation(NetCDFMixin):
         >>> f.nc_get_aggregated_data()
         {}
         >>> f.nc_set_aggregated_data(
-        ...     'shape: shape, location: location address: address'
+        ...     'map: fragment_map, uris: fragment_uris identifiers: fragment_idenfiers'
         ... )
 
         """
@@ -4743,20 +4743,20 @@ class NetCDFAggregation(NetCDFMixin):
         **Examples**
 
         >>> f.nc_set_aggregated_data(
-        ...     {'shape': 'shape',
-        ...      'location': 'location',
-        ...      'address': 'address'}
+        ...     {'map': 'fragment_map',
+        ...      'uris': 'fragment_uris',
+        ...      'identifiers': 'fragment_identifiers'}
         ... )
         >>> f.nc_has_aggregated_data()
         True
         >>> f.nc_get_aggregated_data()
-        {'shape': 'shape',
-         'location': 'location',
-         'address': 'address'}
+        {'map': 'fragment_map',
+         'uris': 'fragment_uris',
+         'identifiers': 'fragment_identifiers'}
         >>> f.nc_del_aggregated_data()
-        {'shape': 'shape',
-         'location': 'location',
-         'address': 'address'}
+        {'map': 'fragment_map',
+         'uris': 'fragment_uris',
+         'identifiers': 'fragment_identifiers'}
         >>> f.nc_has_aggregated_data()
         False
         >>> f.nc_del_aggregated_data()
@@ -4764,7 +4764,7 @@ class NetCDFAggregation(NetCDFMixin):
         >>> f.nc_get_aggregated_data()
         {}
         >>> f.nc_set_aggregated_data(
-        ...     'shape: shape, location: location address: address'
+        ...     'map: fragment_map, uris: fragment_uris identifiers: fragment_idenfiers'
         ... )
 
         """
@@ -4805,20 +4805,20 @@ class NetCDFAggregation(NetCDFMixin):
         **Examples**
 
         >>> f.nc_set_aggregated_data(
-        ...     {'shape': 'shape',
-        ...      'location': 'location',
-        ...      'address': 'address'}
+        ...     {'map': 'fragment_map',
+        ...      'uris': 'fragment_uris',
+        ...      'identifiers': 'fragment_identifiers'}
         ... )
         >>> f.nc_has_aggregated_data()
         True
         >>> f.nc_get_aggregated_data()
-        {'shape': 'shape',
-         'location': 'location',
-         'address': 'address'}
+        {'map': 'fragment_map',
+         'uris': 'fragment_uris',
+         'identifiers': 'fragment_identifiers'}
         >>> f.nc_del_aggregated_data()
-        {'shape': 'shape',
-         'location': 'location',
-         'address': 'address'}
+        {'map': 'fragment_map',
+         'uris': 'fragment_uris',
+         'identifiers': 'fragment_identifiers'}
         >>> f.nc_has_aggregated_data()
         False
         >>> f.nc_del_aggregated_data()
@@ -4826,7 +4826,7 @@ class NetCDFAggregation(NetCDFMixin):
         >>> f.nc_get_aggregated_data()
         {}
         >>> f.nc_set_aggregated_data(
-        ...     'shape: shape, location: location address: address'
+        ...     'map: fragment_map, uris: fragment_uris identifiers: fragment_idenfiers'
         ... )
 
         """
@@ -4850,9 +4850,9 @@ class NetCDFAggregation(NetCDFMixin):
         :Returns:
 
             `str` or `None`
-                The removed fragment type, either ``'location'`` for
-                fragment files, or ``'value'`` for fragment unique
-                values, or `None` if no fragment type was set.
+                The removed fragment type, either ``'uri'`` for
+                fragment datasets, or ``'unique_value'`` for fragment
+                unique values, or `None` if no fragment type was set.
 
         """
         return self._nc_del("aggregation_fragment_type", None)
@@ -4864,9 +4864,10 @@ class NetCDFAggregation(NetCDFMixin):
 
         :Returns:
 
-            `str`
-                The fragment type, either ``'location'`` for fragment
-                files, or ``'value'`` for fragment unique values.
+            `str` or `None`
+                The fragment type, either ``'uri'`` for fragment
+                datsets, or ``'unique_value'`` for fragment unique
+                values, or `None` for an unspecified fragment type.
 
         """
         return self._nc_get("aggregation_fragment_type", None)
@@ -4879,9 +4880,9 @@ class NetCDFAggregation(NetCDFMixin):
         :Parameters:
 
             value: `str` or `None`
-                The fragment type, either ``'location'`` for fragment
-                files, ``'value'`` for fragment unique values, or
-                `None` for an unspecified fragment type.
+                The fragment type, either ``'uri'`` for fragment
+                files, ``'unique_value'`` for fragment unique values,
+                or `None` for an unspecified fragment type.
 
         :Returns:
 

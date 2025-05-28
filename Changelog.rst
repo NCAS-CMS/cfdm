@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* Update CF aggregation keywords
+  (https://github.com/NCAS-CMS/cfdm/issues/341)
 * Set new minimum version of `dask`: ``2025.5.1``
   (https://github.com/NCAS-CMS/cfdm/issues/339)
 * Changed dependency: ``dask>=2025.5.1``

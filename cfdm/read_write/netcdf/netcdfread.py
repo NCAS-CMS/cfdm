@@ -3095,8 +3095,8 @@ class NetCDFRead(IORead):
         :Returns:
 
             `str`
-               The element dimension, possibly modified to make sure that it
-               is unique.
+               The element dimension, possibly modified to make sure
+               that it is unique.
 
         """
         g = self.read_vars
@@ -3148,8 +3148,8 @@ class NetCDFRead(IORead):
         :Returns:
 
             `str`
-               The element dimension, possibly modified to make sure that it
-               is unique.
+               The element dimension, possibly modified to make sure
+               that it is unique.
 
         """
         g = self.read_vars
@@ -6446,7 +6446,7 @@ class NetCDFRead(IORead):
         kwargs["mask"] = True
 
         fragment_array_variables = g["fragment_array_variables"]
-        standardised_terms = ("map", "location", "variable", "unique_value")
+        standardised_terms = ("map", "uris", "identifiers", "unique_values")
 
         fragment_array = {}
         for term, term_ncvar in g["parsed_aggregated_data"][ncvar].items():
@@ -6461,10 +6461,10 @@ class NetCDFRead(IORead):
             fragment_array_variable = fragment_array_variables[term_ncvar]
             fragment_array[term] = fragment_array_variable
 
-            if term == "unique_value" and kwargs["dtype"] is None:
+            if term == "unique_values" and kwargs["dtype"] is None:
                 # This is a string-valued aggregation variable with a
-                # 'value' fragment array variable, so set the correct
-                # numpy data type.
+                # 'unique_values' fragment array variable, so set the
+                # correct numpy data type.
                 kwargs["dtype"] = fragment_array_variable.dtype
 
         kwargs["fragment_array"] = fragment_array
@@ -6797,7 +6797,7 @@ class NetCDFRead(IORead):
             # status to True when there is exactly one dask chunk.
             if data.npartitions == 1:
                 data._nc_set_aggregation_write_status(True)
-                data._nc_set_aggregation_fragment_type("location")
+                data._nc_set_aggregation_fragment_type("uri")
         else:
             if construct is not None:
                 # Remove the aggregation attributes from the construct
@@ -6829,7 +6829,7 @@ class NetCDFRead(IORead):
             data._nc_set_aggregation_fragment_type(fragment_type)
 
             # Replace the directories of fragment locations
-            if fragment_type == "location":
+            if fragment_type == "uri":
                 replace_directory = g["cfa"].get("replace_directory")
                 if replace_directory:
                     try:
@@ -11315,7 +11315,7 @@ class NetCDFRead(IORead):
         return chunks
 
     def _cfa_is_aggregation_variable(self, ncvar):
-        """Return True if *ncvar* is a CF-netCDF aggregated variable.
+        """Return True if *ncvar* is a CF-netCDF aggregation variable.
 
         .. versionadded:: (cfdm) 1.12.0.0
 
@@ -11327,7 +11327,7 @@ class NetCDFRead(IORead):
         :Returns:
 
             `bool`
-                Whether or not *ncvar* is an aggregated variable.
+                Whether or not *ncvar* is an aggregation variable.
 
         """
         g = self.read_vars
