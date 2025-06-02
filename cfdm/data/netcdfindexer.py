@@ -126,12 +126,12 @@ class netcdf_indexer:
             variable:
                 The variable to be indexed. May be any variable that
                 has the same API as one of `numpy.ndarray`,
-                `netCDF4.Variable`, or `h5py.Variable` (which includes
-                `h5netcdf.Variable`). Any masking and unpacking that
-                could be applied by *variable* itself (e.g. by a
-                `netCDF4.Variable` instance) is disabled, ensuring
-                that any masking and unpacking is always done by the
-                `netcdf_indexer` instance.
+                `netCDF4.Variable`, `h5py.Variable`,
+                `h5netcdf.Variable`, or `zarr.Array`. Any masking and
+                unpacking that could be applied by *variable* itself
+                (e.g. by a `netCDF4.Variable` instance) is disabled,
+                ensuring that any masking and unpacking is always done
+                by the `netcdf_indexer` instance.
 
             mask: `bool`, optional
                 If True, the default, then an array returned by
@@ -234,8 +234,8 @@ class netcdf_indexer:
             # Assume we are here because we have one or more
             # np.newaxis values in 'index', and the variable doesn't
             # support that type of indexing. It is known that
-            # `netCDF4` raises an IndexError and `h5netcdf` raises an
-            # AttributeError.
+            # `netCDF4` and `zarr` raise an IndexError and `h5netcdf`
+            # raises an AttributeError.
 
             # Subspace the variable with the np.newaxis elements
             # removed
@@ -467,8 +467,8 @@ class netcdf_indexer:
             # variable natively supports orthogonal indexing.
             #
             # Note: `netCDF4.Variable` natively supports orthogonal
-            #       indexing; but `h5netcdf.File`, `h5py.File`, and
-            #       `numpy.ndarray`, do not.
+            #       indexing; but `h5netcdf.File`, `h5py.File`,
+            #       `zarr.Array`, and `numpy.ndarray` do not.
             data = data[tuple(index0)]
         else:
             # There are two or more list/1-d array indices, and the

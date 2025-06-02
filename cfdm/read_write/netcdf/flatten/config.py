@@ -92,7 +92,7 @@ class FlatteningRules:
 
 
 # --------------------------------------------------------------------
-# Set the flattening rules for named CF attributes
+# Define the flattening rules for named CF attributes
 # --------------------------------------------------------------------
 flattening_rules = {
     attr.name: attr

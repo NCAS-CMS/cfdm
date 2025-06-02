@@ -1056,7 +1056,7 @@ class CFDMImplementation(Implementation):
 
         """
         raise NotImplementedError(
-            "Deprecated at version NEXATVERSION. "
+            "Deprecated at version NEXTVERSION. "
             "Use 'nc_get_dataset_chunksizes' instead."
         )
 
@@ -1215,7 +1215,7 @@ class CFDMImplementation(Implementation):
 
         """
         raise NotImplementedError(
-            "Deprecated at version NEXATVERSION. "
+            "Deprecated at version NEXTVERSION. "
             "Use 'nc_set_dataset_chunksizes' instead."
         )
 
@@ -1837,7 +1837,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Auxiliary coordinate construct
+            `AuxiliaryCoordinate`
 
         """
         cls = self.get_class("AuxiliaryCoordinate")
@@ -1848,7 +1848,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Bounds component
+            `Bounds`
 
         """
         cls = self.get_class("Bounds")
@@ -1883,7 +1883,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Cell measure construct
+            `CellMeasure`
 
         """
         cls = self.get_class("CellMeasure")
@@ -1902,7 +1902,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Cell method construct
+            `CellMethod`
 
         """
         cls = self.get_class("CellMethod")
@@ -1939,7 +1939,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Coordinate conversion component
+            `CoordinateConversion`
 
         """
         cls = self.get_class("CoordinateConversion")
@@ -1952,7 +1952,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Coordinate reference construct
+            `CoordinateReference`
 
         """
         cls = self.get_class("CoordinateReference")
@@ -1963,7 +1963,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Count variable
+            `Count`
 
         """
         cls = self.get_class("Count")
@@ -1993,7 +1993,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Data instance
+            `Data`
 
         """
         cls = self.get_class("Data")
@@ -2014,7 +2014,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Datum component
+            `Datum`
 
         """
         cls = self.get_class("Datum")
@@ -2044,7 +2044,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Dimension coordinate construct
+            `DimensionCoordinate`
 
         """
         cls = self.get_class("DimensionCoordinate")
@@ -2072,7 +2072,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Dimension coordinate construct
+            `DimensionCoordinate`
 
         """
         cls = self.get_class("DimensionCoordinate")
@@ -2083,7 +2083,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Domain construct
+            `Domain`
 
         """
         cls = self.get_class("Domain")
@@ -2094,7 +2094,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Domain ancillary construct
+            `DomainAncillary`
 
         """
         cls = self.get_class("DomainAncillary")
@@ -2105,7 +2105,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Domain ancillary construct
+            `DomainAxis`
 
         """
         cls = self.get_class("DomainAxis")
@@ -2158,7 +2158,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Field construct
+            `Field`
 
         """
         cls = self.get_class("Field")
@@ -2169,7 +2169,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Field ancillary construct
+            `FieldAncillary`
 
         """
         cls = self.get_class("FieldAncillary")
@@ -2210,7 +2210,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Gathered array
+            `GatheredArray`
 
         """
         cls = self.get_class("GatheredArray")
@@ -2274,7 +2274,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Subsampled array
+            `SubsampledArray`
 
         """
         return self.get_class("SubsampledArray")(
@@ -2295,7 +2295,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Index variable
+            `Index`
 
         """
         cls = self.get_class("Index")
@@ -2306,7 +2306,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Interior ring variable
+            `InteriorRing`
 
         """
         cls = self.get_class("InteriorRing")
@@ -2319,7 +2319,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Interpolation parameter variable
+            `InterpolationParameter`
 
         """
         cls = self.get_class("InterpolationParameter")
@@ -2330,7 +2330,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        List variable
+            `List`
 
         """
         cls = self.get_class("List")
@@ -2360,7 +2360,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Index variable
+            `TiePointIndex`
 
         """
         cls = self.get_class("TiePointIndex")
@@ -2455,7 +2455,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Part node count properties variable
+            `PartNodeCountProperties`
 
         """
         cls = self.get_class("PartNodeCountProperties")
@@ -2487,7 +2487,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Ragged contigous array
+            `RaggedContigousArray`
 
         """
         cls = self.get_class("RaggedContiguousArray")
@@ -2523,7 +2523,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Ragged indexed array
+            `RaggedIndexedArray`
 
         """
         cls = self.get_class("RaggedIndexedArray")
@@ -2564,7 +2564,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-             Ragged indexed contiguous array
+             `RaggedIndexedContiguousArray`
 
         """
         cls = self.get_class("RaggedIndexedContiguousArray")

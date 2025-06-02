@@ -50,6 +50,7 @@ class ZarrArray(IndexMixin, abstract.FileArray):
         self._set_attributes(variable)
 
         self.close(zr)
+
         return array
 
     def _set_attributes(self, var):

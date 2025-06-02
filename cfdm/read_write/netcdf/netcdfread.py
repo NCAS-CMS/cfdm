@@ -798,7 +798,7 @@ class NetCDFRead(IORead):
         However, dataset names that are non-local URIs (such as those
         starting ``https:`` or ``s3:``) are assumed, without checking,
         to be netCDF files, or Zarr datasets if
-        *allowed_dataset_types*` is ``('Zarr',)``.
+        *allowed_dataset_types*` is equivalent to ``['Zarr']``.
 
         :Parameters:
 

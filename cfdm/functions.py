@@ -395,10 +395,9 @@ def environment(display=True, paths=True):
     >>> cfdm.environment()
     Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
     Python: 3.12.8 /home/miniconda3/bin/python
-    packaging: 24.1 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
+    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
     numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
     cfdm.core: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
-    packaging: 24.1 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
     udunits2 library: libudunits2.so.0
     HDF5 library: 1.14.2
     netcdf library: 4.9.4-development
@@ -416,10 +415,9 @@ def environment(display=True, paths=True):
     >>> cfdm.environment(paths=False)
     Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
     Python: 3.12.8
-    packaging: 24.1
+    packaging: 24.2
     numpy: 2.2.6
     cfdm.core: NEXTVERSION
-    packaging: 24.1
     udunits2 library: libudunits2.so.0
     HDF5 library: 1.14.2
     netcdf library: 4.9.4-development
@@ -443,7 +441,6 @@ def environment(display=True, paths=True):
     out = core.environment(display=False, paths=paths)
 
     dependency_version_paths_mapping = {
-        "packaging": _get_module_info("packaging"),
         "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
         "HDF5 library": (netCDF4.__hdf5libversion__, ""),
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
@@ -2414,13 +2411,18 @@ def _DEPRECATION_ERROR_KWARGS(
 
 
 def _DEPRECATION_ERROR_METHOD(
-    instance, method, message="", version="3.0.0", removed_at=""
+    instance, method, message="", version=None, removed_at=""
 ):
     """Error handling for deprecated kwargs methods.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
+    if version is None:
+        raise ValueError(
+            "Must set 'version' in call to _DEPRECATION_ERROR_METHOD"
+        )
+
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"
 
