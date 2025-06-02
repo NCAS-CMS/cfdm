@@ -166,31 +166,31 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertFalse(c.has_interior_ring())
         self.assertIsNone(c.del_interior_ring(None))
 
-    def test_AuxiliaryCoordinate_hdf5_chunksizes(self):
-        """Test the AuxiliaryCoordinate HDF5 chunksizes methods."""
+    def test_AuxiliaryCoordinate_dataset_chunksizes(self):
+        """Test the AuxiliaryCoordinate dataset chunksizes methods."""
         c = self.aux1.copy()
         i = cfdm.InteriorRing(data=cfdm.Data(np.arange(26).reshape(13, 2)))
         c.set_interior_ring(i)
 
-        self.assertIsNone(c.nc_set_hdf5_chunksizes([4]))
-        self.assertEqual(c.nc_hdf5_chunksizes(), (4,))
-        self.assertEqual(c.bounds.nc_hdf5_chunksizes(), (4, 2))
-        self.assertEqual(c.interior_ring.nc_hdf5_chunksizes(), (4, 2))
+        self.assertIsNone(c.nc_set_dataset_chunksizes([4]))
+        self.assertEqual(c.nc_dataset_chunksizes(), (4,))
+        self.assertEqual(c.bounds.nc_dataset_chunksizes(), (4, 2))
+        self.assertEqual(c.interior_ring.nc_dataset_chunksizes(), (4, 2))
 
-        c.nc_set_hdf5_chunksizes(1024, bounds=False, interior_ring=False)
-        self.assertEqual(c.nc_hdf5_chunksizes(), 1024)
-        self.assertEqual(c.bounds.nc_hdf5_chunksizes(), (4, 2))
-        self.assertEqual(c.interior_ring.nc_hdf5_chunksizes(), (4, 2))
+        c.nc_set_dataset_chunksizes(1024, bounds=False, interior_ring=False)
+        self.assertEqual(c.nc_dataset_chunksizes(), 1024)
+        self.assertEqual(c.bounds.nc_dataset_chunksizes(), (4, 2))
+        self.assertEqual(c.interior_ring.nc_dataset_chunksizes(), (4, 2))
 
-        c.nc_clear_hdf5_chunksizes(bounds=False, interior_ring=False)
-        self.assertIsNone(c.nc_hdf5_chunksizes())
-        self.assertEqual(c.bounds.nc_hdf5_chunksizes(), (4, 2))
-        self.assertEqual(c.interior_ring.nc_hdf5_chunksizes(), (4, 2))
+        c.nc_clear_dataset_chunksizes(bounds=False, interior_ring=False)
+        self.assertIsNone(c.nc_dataset_chunksizes())
+        self.assertEqual(c.bounds.nc_dataset_chunksizes(), (4, 2))
+        self.assertEqual(c.interior_ring.nc_dataset_chunksizes(), (4, 2))
 
-        c.nc_clear_hdf5_chunksizes()
-        self.assertIsNone(c.nc_hdf5_chunksizes())
-        self.assertIsNone(c.bounds.nc_hdf5_chunksizes())
-        self.assertIsNone(c.interior_ring.nc_hdf5_chunksizes())
+        c.nc_clear_dataset_chunksizes()
+        self.assertIsNone(c.nc_dataset_chunksizes())
+        self.assertIsNone(c.bounds.nc_dataset_chunksizes())
+        self.assertIsNone(c.interior_ring.nc_dataset_chunksizes())
 
 
 if __name__ == "__main__":

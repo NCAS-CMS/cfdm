@@ -76,13 +76,13 @@ to add more sophisticated methods.
 The cfdm package can
 
 * read :term:`field constructs <field construct>` and :term:`domain
-  constructs <domain construct>` from netCDF and CDL datasets with a
-  choice of netCDF backends,
-
-* be fully flexible with respect to HDF5 chunking,
+  constructs <domain construct>` from netCDF, CDL, and Zarr datasets
+  with a choice of netCDF backends,
 
 * read files from OPeNDAP servers and S3 object stores,
  
+* be fully flexible with respect to dataset chunking,
+
 * create new field and domain constructs in memory,
 
 * write field and domain constructs to netCDF datasets on disk,

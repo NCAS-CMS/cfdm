@@ -24,7 +24,7 @@ class TiePointIndex(
 
     {{netCDF variable}}
 
-    {{netCDF HDF5 chunks}}
+    {{netCDF dataset chunks}}
 
     The netCDF subsampled dimension name may be accessed with the
     `nc_set_subsampled_dimension`, `nc_get_subsampled_dimension`,

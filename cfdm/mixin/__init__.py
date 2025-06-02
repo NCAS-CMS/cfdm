@@ -18,7 +18,7 @@ from .netcdf import (
     NetCDFExternal,
     NetCDFGeometry,
     NetCDFGroupsMixin,
-    NetCDFHDF5,
+    NetCDFChunks,
     NetCDFInterpolationSubareaDimension,
     NetCDFMixin,
     NetCDFNodeCoordinateVariable,

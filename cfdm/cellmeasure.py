@@ -39,7 +39,7 @@ class CellMeasure(
 
     {{netCDF global attributes}}
 
-    {{netCDF HDF5 chunks}}
+    {{netCDF dataset chunks}}
 
     .. versionadded:: (cfdm) 1.7.0
 
