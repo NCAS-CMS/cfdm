@@ -32,11 +32,11 @@ class DocstringRewriteMeta(type):
     def __new__(cls, class_name, parents, attrs):
         """Combines docstring substitutions across the inheritance tree.
 
-        That is, combines docstring substitutions from all classes in the
-        inheritance tree.
+        That is, combines docstring substitutions from all classes in
+        the inheritance tree.
 
-        The value for a key that occurs in multiple classes will be taken
-        from the class closest to the child class.
+        The value for a key that occurs in multiple classes will be
+        taken from the class closest to the child class.
 
         """
         class_name_lower = class_name.lower()

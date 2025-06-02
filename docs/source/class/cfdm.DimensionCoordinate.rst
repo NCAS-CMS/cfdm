@@ -239,8 +239,8 @@ Groups
    ~cfdm.DimensionCoordinate.nc_clear_variable_groups
    ~cfdm.DimensionCoordinate.nc_set_variable_groups
 
-HDF5 chunks
-^^^^^^^^^^^
+Dataset chunks
+^^^^^^^^^^^^^^
 
 .. rubric:: Methods
 
@@ -249,9 +249,9 @@ HDF5 chunks
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.DimensionCoordinate.nc_hdf5_chunksizes
-   ~cfdm.DimensionCoordinate.nc_set_hdf5_chunksizes
-   ~cfdm.DimensionCoordinate.nc_clear_hdf5_chunksizes
+   ~cfdm.DimensionCoordinate.nc_dataset_chunksizes
+   ~cfdm.DimensionCoordinate.nc_set_dataset_chunksizes
+   ~cfdm.DimensionCoordinate.nc_clear_dataset_chunksizes
 
 Special
 -------
@@ -282,3 +282,17 @@ Docstring substitutions
    ~cfdm.DimensionCoordinate._docstring_substitutions        
    ~cfdm.DimensionCoordinate._docstring_package_depth        
    ~cfdm.DimensionCoordinate._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DimensionCoordinate.nc_clear_hdf5_chunksizes
+   ~cfdm.DimensionCoordinate.nc_hdf5_chunksizes
+   ~cfdm.DimensionCoordinate.nc_set_hdf5_chunksizes

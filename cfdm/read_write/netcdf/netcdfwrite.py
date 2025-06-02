@@ -5631,7 +5631,7 @@ class NetCDFWrite(IOWrite):
         # data, or else work it out.
         # ------------------------------------------------------------
         # Get the chunking strategy defined by the data itself
-        chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
+        chunksizes = self.implementation.nc_get_dataset_chunksizes(data)
         if chunksizes == "contiguous":
             # Contiguous as defined by 'data'
             return True, None

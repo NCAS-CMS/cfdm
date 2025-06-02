@@ -136,25 +136,25 @@ class DimensionCoordinateTest(unittest.TestCase):
         with self.assertRaises(IndexError):
             dim[[False] * dim.size]
 
-    def test_DimensionCoordinate_hdf5_chunksizes(self):
-        """Test the DimensionCoordinate HDF5 chunksizes methods."""
+    def test_DimensionCoordinate_dataset_chunksizes(self):
+        """Test the DimensionCoordinate dataset chunksizes methods."""
         c = self.dim.copy()
 
-        self.assertIsNone(c.nc_set_hdf5_chunksizes([4]))
-        self.assertEqual(c.nc_hdf5_chunksizes(), (4,))
-        self.assertEqual(c.bounds.nc_hdf5_chunksizes(), (4, 2))
+        self.assertIsNone(c.nc_set_dataset_chunksizes([4]))
+        self.assertEqual(c.nc_dataset_chunksizes(), (4,))
+        self.assertEqual(c.bounds.nc_dataset_chunksizes(), (4, 2))
 
-        c.nc_set_hdf5_chunksizes(1024, bounds=False, interior_ring=False)
-        self.assertEqual(c.nc_hdf5_chunksizes(), 1024)
-        self.assertEqual(c.bounds.nc_hdf5_chunksizes(), (4, 2))
+        c.nc_set_dataset_chunksizes(1024, bounds=False, interior_ring=False)
+        self.assertEqual(c.nc_dataset_chunksizes(), 1024)
+        self.assertEqual(c.bounds.nc_dataset_chunksizes(), (4, 2))
 
-        c.nc_clear_hdf5_chunksizes(bounds=False, interior_ring=False)
-        self.assertIsNone(c.nc_hdf5_chunksizes())
-        self.assertEqual(c.bounds.nc_hdf5_chunksizes(), (4, 2))
+        c.nc_clear_dataset_chunksizes(bounds=False, interior_ring=False)
+        self.assertIsNone(c.nc_dataset_chunksizes())
+        self.assertEqual(c.bounds.nc_dataset_chunksizes(), (4, 2))
 
-        c.nc_clear_hdf5_chunksizes()
-        self.assertIsNone(c.nc_hdf5_chunksizes())
-        self.assertIsNone(c.bounds.nc_hdf5_chunksizes())
+        c.nc_clear_dataset_chunksizes()
+        self.assertIsNone(c.nc_dataset_chunksizes())
+        self.assertIsNone(c.bounds.nc_dataset_chunksizes())
 
 
 if __name__ == "__main__":

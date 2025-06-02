@@ -60,6 +60,8 @@ class CellConnectivity(
 
     {{netCDF variable}}
 
+    {{netCDF dataset chunks}}
+
     .. versionadded:: (cfdm) 1.11.0.0
 
     """

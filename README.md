@@ -79,8 +79,8 @@ inspecting it:
 
 The ``cfdm`` package can:
 
-* read field and domain constructs from netCDF and CDL datasets with a
-  choice of netCDF backends,and in  local, http, and s3 locations,
+* read field and domain constructs from netCDF, CDL, and Zarr datasets
+  with a choice of netCDF backends, and in  local, http, and s3 locations,
 * be fully flexible with respect to HDF5 chunking,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF datasets on disk,

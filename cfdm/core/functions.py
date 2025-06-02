@@ -31,12 +31,19 @@ def environment(display=True, paths=True):
 
     **Examples**
 
+    >>> cfdm.core.environment()
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8 /home/miniconda3/bin/python
+    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
+    numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
+    cfdm.core: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
+
     >>> cfdm.core.environment(paths=False)
-    Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
-    Python: 3.11.4
-    packaging: 23.0
-    numpy: 1.25.2
-    cfdm.core: 1.11.2.0
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8
+    packaging: 24.2
+    numpy: 2.2.6
+    cfdm.core: NEXTVERSION
 
     """
     import numpy as np

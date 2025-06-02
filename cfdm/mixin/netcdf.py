@@ -4,6 +4,7 @@ from re import split
 from dask.utils import parse_bytes
 
 from ..core.functions import deepcopy
+from ..functions import _DEPRECATION_ERROR_METHOD
 
 
 class DeprecationError(Exception):
@@ -54,6 +55,28 @@ class NetCDFMixin:
             if n is not None:
                 self._set_component("netcdf", n, copy=copy)
 
+    def _get_netcdf(self):
+        """Get the ``netcdf`` component dictionary.
+
+        If the dictionary does not exist then an empty dictionary is
+        automatically created and stored.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `_set_netcdf`
+
+        :Returns:
+
+            `dict`
+
+        """
+        netcdf = self._get_component("netcdf", None)
+        if netcdf is None:
+            netcdf = {}
+            self._set_component("netcdf", netcdf, copy=False)
+
+        return netcdf
+
     def _nc_del(self, entity, default=ValueError()):
         """Remove the netCDF entity name.
 
@@ -97,7 +120,7 @@ class NetCDFMixin:
 
         """
         try:
-            return self._get_component("netcdf", {}).pop(entity)
+            return self._get_netcdf().pop(entity)
         except KeyError:
             if default is None:
                 return default
@@ -151,7 +174,7 @@ class NetCDFMixin:
 
         """
         try:
-            return self._get_component("netcdf", {})[entity]
+            return self._get_netcdf()[entity]
         except KeyError:
             if default is None:
                 return default
@@ -200,7 +223,7 @@ class NetCDFMixin:
         None
 
         """
-        return entity in self._get_component("netcdf", {})
+        return entity in self._get_netcdf()
 
     def _nc_set(self, entity, value):
         """Set the netCDF entity name.
@@ -277,6 +300,8 @@ class NetCDFMixin:
 
         .. versionadded:: (cfdm) NEXTVERSION
 
+        .. seealso:: `_get_netcdf`
+
         :Parameters:
 
             key:
@@ -290,11 +315,7 @@ class NetCDFMixin:
             `None`
 
         """
-        netcdf = self._get_component("netcdf", None)
-        if netcdf is None:
-            netcdf = {}
-            self._set_component("netcdf", netcdf, copy=False)
-
+        netcdf = self._get_netcdf()
         netcdf[key] = value
 
 
@@ -880,7 +901,7 @@ class NetCDFVariable(NetCDFMixin, NetCDFGroupsMixin):
         None
 
         """
-        return "variable" in self._get_component("netcdf", {})
+        return "variable" in self._get_netcdf()
 
     def nc_set_variable(self, value):
         """Set the netCDF variable name.
@@ -1130,7 +1151,7 @@ class NetCDFSampleDimension(NetCDFMixin, NetCDFGroupsMixin):
 
         """
         try:
-            return self._get_component("netcdf", {}).pop("sample_dimension")
+            return self._get_netcdf().pop("sample_dimension")
         except KeyError:
             if default is None:
                 return default
@@ -1179,7 +1200,7 @@ class NetCDFSampleDimension(NetCDFMixin, NetCDFGroupsMixin):
 
         """
         try:
-            return self._get_component("netcdf", {})["sample_dimension"]
+            return self._get_netcdf()["sample_dimension"]
         except KeyError:
             if default is None:
                 return default
@@ -1220,7 +1241,7 @@ class NetCDFSampleDimension(NetCDFMixin, NetCDFGroupsMixin):
         None
 
         """
-        return "sample_dimension" in self._get_component("netcdf", {})
+        return "sample_dimension" in self._get_netcdf()
 
     def nc_set_sample_dimension(self, value):
         """Set the netCDF sample dimension name.
@@ -1504,7 +1525,7 @@ class NetCDFGlobalAttributes(NetCDFMixin):
         {}
 
         """
-        out = self._get_component("netcdf", {}).get("global_attributes")
+        out = self._get_netcdf().get("global_attributes")
 
         if out is None:
             return {}
@@ -1565,7 +1586,7 @@ class NetCDFGlobalAttributes(NetCDFMixin):
         {}
 
         """
-        out = self._get_component("netcdf", {}).get("global_attributes")
+        out = self._get_netcdf().get("global_attributes")
 
         if out is None:
             out = {}
@@ -1629,7 +1650,7 @@ class NetCDFGlobalAttributes(NetCDFMixin):
         {}
 
         """
-        out = self._get_component("netcdf", {}).get("global_attributes")
+        out = self._get_netcdf().get("global_attributes")
 
         if out is None:
             out = {}
@@ -1704,7 +1725,7 @@ class NetCDFGlobalAttributes(NetCDFMixin):
         else:
             properties = properties.copy()
 
-        out = self._get_component("netcdf", {}).get("global_attributes")
+        out = self._get_netcdf().get("global_attributes")
         if out is None:
             out = {}
 
@@ -1759,7 +1780,7 @@ class NetCDFGroupAttributes(NetCDFMixin):
         {}
 
         """
-        out = self._get_component("netcdf", {}).get("group_attributes")
+        out = self._get_netcdf().get("group_attributes")
 
         if out is None:
             return {}
@@ -1809,7 +1830,7 @@ class NetCDFGroupAttributes(NetCDFMixin):
         {}
 
         """
-        out = self._get_component("netcdf", {}).get("group_attributes")
+        out = self._get_netcdf().get("group_attributes")
 
         if out is None:
             out = {}
@@ -1862,7 +1883,7 @@ class NetCDFGroupAttributes(NetCDFMixin):
         {}
 
         """
-        out = self._get_component("netcdf", {}).get("group_attributes")
+        out = self._get_netcdf().get("group_attributes")
 
         if out is None:
             out = {}
@@ -1926,7 +1947,7 @@ class NetCDFGroupAttributes(NetCDFMixin):
         else:
             properties = properties.copy()
 
-        out = self._get_component("netcdf", {}).get("group_attributes")
+        out = self._get_netcdf().get("group_attributes")
         if out is None:
             out = {}
 
@@ -2097,7 +2118,7 @@ class NetCDFExternal(NetCDFMixin):
         True
 
         """
-        return self._get_component("netcdf", {}).get("external", False)
+        return self._get_netcdf().get("external", False)
 
     def nc_set_external(self, external):
         """Set external status of a netCDF variable.
@@ -2176,7 +2197,7 @@ class NetCDFGeometry(NetCDFMixin, NetCDFGroupsMixin):
 
         """
         try:
-            return self._get_component("netcdf", {}).pop("geometry_variable")
+            return self._get_netcdf().pop("geometry_variable")
         except KeyError:
             if default is None:
                 return default
@@ -2226,7 +2247,7 @@ class NetCDFGeometry(NetCDFMixin, NetCDFGroupsMixin):
 
         """
         try:
-            return self._get_component("netcdf", {})["geometry_variable"]
+            return self._get_netcdf()["geometry_variable"]
         except KeyError:
             if default is None:
                 return default
@@ -2268,7 +2289,7 @@ class NetCDFGeometry(NetCDFMixin, NetCDFGroupsMixin):
         None
 
         """
-        return "geometry_variable" in self._get_component("netcdf", {})
+        return "geometry_variable" in self._get_netcdf()
 
     def nc_set_geometry_variable(self, value):
         """Set the netCDF geometry container variable name.
@@ -2493,63 +2514,80 @@ class NetCDFGeometry(NetCDFMixin, NetCDFGroupsMixin):
         )
 
 
-class NetCDFHDF5(NetCDFMixin):
-    """Mixin class for accessing the netCDF HDF5 chunksizes.
+class NetCDFChunks(NetCDFMixin):
+    """Mixin class for accessing the netCDF dataset chunksizes.
 
-    .. versionadded:: (cfdm) 1.7.2
+    This class replaces the deprecated `NetCDFHDF5` class.
+
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `nc_dataset_chunksizes` instead.
+
         .. versionadded:: (cfdm) 1.7.2
 
-        .. seealso:: `nc_clear_hdf5_chunksizes`,
-                     `nc_set_hdf5_chunksizes`, `{{package}}.read`,
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_hdf5_chunksizes",
+            "Use `nc_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_dataset_chunksizes(self, todict=False):
+        """Get the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
                      `{{package}}.write`
 
         :Parameters:
 
-            {{hdf5 todict: `bool`, optional}}
-
-                .. versionadded:: (cfdm) 1.11.2.0
+            {{chunk todict: `bool`, optional}}
 
         :Returns:
 
-            {{Returns nc_hdf5_chunksizes}}
+            {{Returns nc_dataset_chunksizes}}
 
         **Examples**
 
         >>> d.shape
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        >>> d.nc_dataset_chunksizes()
         (1, 35, 73)
-        >>> d.nc_hdf5_chunksizes(todict=True)
+        >>> d.nc_dataset_chunksizes(todict=True)
         {0: 1, 1: 35, 2: 73}
-        >>> d.nc_clear_hdf5_chunksizes()
+        >>> d.nc_clear_dataset_chunksizes()
         (1, 35, 73)
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_dataset_chunksizes()
         None
-        >>> d.nc_set_hdf5_chunksizes('contiguous')
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes('contiguous')
+        >>> d.nc_dataset_chunksizes()
         'contiguous'
-        >>> d.nc_set_hdf5_chunksizes('1 KiB')
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes('1 KiB')
+        >>> d.nc_dataset_chunksizes()
         1024
-        >>> d.nc_set_hdf5_chunksizes(None)
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes(None)
+        >>> d.nc_dataset_chunksizes()
         None
 
         """
-        chunksizes = self._get_component("netcdf", {}).get("hdf5_chunksizes")
+        chunksizes = self._get_netcdf().get("dataset_chunksizes")
         if todict:
             if not isinstance(chunksizes, tuple):
                 raise ValueError(
-                    "Can only set todict=True when the HDF5 chunking strategy "
-                    "comprises the maximum number of array elements in a "
-                    f"chunk along each data axis. Got: {chunksizes!r}"
+                    "Can only set todict=True when the dataset chunking "
+                    "strategy comprises the maximum number of array elements "
+                    f"in a chunk along each data axis. Got: {chunksizes!r}"
                 )
 
             chunksizes = {n: value for n, value in enumerate(chunksizes)}
@@ -2559,46 +2597,83 @@ class NetCDFHDF5(NetCDFMixin):
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
 
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `nc_clear_dataset_chunksizes` instead.
+
         .. versionadded:: (cfdm) 1.7.2
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_clear_hdf5_chunksizes",
+            "Use `nc_clear_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_clear_dataset_chunksizes(self):
+        """Clear the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
 
         :Returns:
 
             `None` or `str` or `int` or `tuple` of `int`
                 The chunking strategy prior to being cleared, as would
-                be returned by `nc_hdf5_chunksizes`.
+                be returned by `nc_dataset_chunksizes`.
 
 
         **Examples**
 
         >>> d.shape
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
-        >>> d.nc_clear_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        >>> d.nc_clear_dataset_chunksizes()
         (1, 35, 73)
-        >>> d.nc_set_hdf5_chunksizes('1 KiB')
-        >>> d.nc_clear_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes('1 KiB')
+        >>> d.nc_clear_dataset_chunksizes()
         1024
-        >>> d.nc_set_hdf5_chunksizes(None)
-        >>> print(d.nc_clear_hdf5_chunksizes())
+        >>> d.nc_set_dataset_chunksizes(None)
+        >>> print(d.nc_clear_dataset_chunksizes())
         None
 
         """
-        return self._get_component("netcdf", {}).pop("hdf5_chunksizes", None)
+        return self._get_netcdf().pop("dataset_chunksizes", None)
 
     def nc_set_hdf5_chunksizes(self, chunksizes):
         """Set the HDF5 chunking strategy for the data.
 
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `nc_dataset_chunksizes` instead.
+
         .. versionadded:: (cfdm) 1.7.2
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_set_hdf5_chunksizes",
+            "Use `nc_set_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_set_dataset_chunksizes(self, chunksizes):
+        """Set the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_clear_dataset_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
 
         :Parameters:
 
-            {{hdf5 chunksizes}}
+            {{chunk chunksizes}}
+
                   Each dictionary key is an integer that specifies an
                   axis by its position in the data array.
 
@@ -2610,44 +2685,44 @@ class NetCDFHDF5(NetCDFMixin):
 
         >>> d.shape
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        >>> d.nc_dataset_chunksizes()
         (1, 35, 73)
-        >>> d.nc_clear_hdf5_chunksizes()
+        >>> d.nc_clear_dataset_chunksizes()
         (1, 35, 73)
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_dataset_chunksizes()
         None
-        >>> d.nc_set_hdf5_chunksizes('contiguous')
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes('contiguous')
+        >>> d.nc_dataset_chunksizes()
         'contiguous'
-        >>> d.nc_set_hdf5_chunksizes('1 KiB')
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes('1 KiB')
+        >>> d.nc_dataset_chunksizes()
         1024
-        >>> d.nc_set_hdf5_chunksizes(None)
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes(None)
+        >>> d.nc_dataset_chunksizes()
         None
-        >>> d.nc_set_hdf5_chunksizes([9999, -1, None])
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes([9999, -1, None])
+        >>> d.nc_dataset_chunksizes()
         (1, 96, 73)
-        >>> d.nc_clear_hdf5_chunksizes()
+        >>> d.nc_clear_dataset_chunksizes()
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes({1: 24})
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes({1: 24})
+        >>> d.nc_dataset_chunksizes()
         (1, 24, 73)
-        >>> d.nc_set_hdf5_chunksizes({0: None, 2: 50})
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_set_dataset_chunksizes({0: None, 2: 50})
+        >>> d.nc_dataset_chunksizes()
         (1, 24, 50)
 
         """
         if chunksizes is None:
-            self.nc_clear_hdf5_chunksizes()
+            self.nc_clear_dataset_chunksizes()
             return
 
         shape = self.shape
 
         # Convert a dictionary to a sequence.
         if isinstance(chunksizes, dict):
-            org_chunksizes = self.nc_hdf5_chunksizes()
+            org_chunksizes = self.nc_dataset_chunksizes()
             if not isinstance(org_chunksizes, tuple):
                 org_chunksizes = shape
 
@@ -2701,7 +2776,18 @@ class NetCDFHDF5(NetCDFMixin):
 
                 chunksizes = tuple(c)
 
-        self._set_netcdf("hdf5_chunksizes", chunksizes)
+        self._set_netcdf("dataset_chunksizes", chunksizes)
+
+
+class NetCDFHDF5(NetCDFMixin):
+    """Mixin class for accessing the netCDF HDF5 chunksizes.
+
+    Deprecated at version NEXTVERSION and is no longer available. Use
+    `NetCDFChunks` instead.
+
+    .. versionadded:: (cfdm) 1.7.2
+
+    """
 
 
 class NetCDFUnlimitedDimension(NetCDFMixin):
@@ -2741,7 +2827,7 @@ class NetCDFUnlimitedDimension(NetCDFMixin):
         True
 
         """
-        return self._get_component("netcdf", {}).get("unlimited", False)
+        return self._get_netcdf().get("unlimited", False)
 
     def nc_set_unlimited(self, value):
         """Set the unlimited status of the a netCDF dimension.
@@ -4116,9 +4202,7 @@ class NetCDFInterpolationSubareaDimension(NetCDFMixin, NetCDFGroupsMixin):
         None
 
         """
-        return "interpolation_subarea_dimension" in self._get_component(
-            "netcdf"
-        )
+        return "interpolation_subarea_dimension" in self._get_netcdf()
 
     def nc_set_interpolation_subarea_dimension(self, value):
         """Set the netCDF interpolation subarea dimension name.
@@ -4450,7 +4534,7 @@ class NetCDFNodeCoordinateVariable(NetCDFMixin, NetCDFGroupsMixin):
         None
 
         """
-        return "node_coordinate_variable" in self._get_component("netcdf", {})
+        return "node_coordinate_variable" in self._get_netcdf()
 
     def nc_set_node_coordinate_variable(self, value):
         """Set the netCDF node coordinate variable name.

@@ -130,7 +130,7 @@ class Data(abstract.Container):
 
         :Returns:
 
-            `{{class}}`
+        `{{class}}`
 
         """
         return self

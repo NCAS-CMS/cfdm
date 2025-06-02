@@ -78,7 +78,7 @@ Data classes
    cfdm.Data
    cfdm.NetCDF4Array
    cfdm.H5netcdfArray
-   cfdm.NumpyArray
+   cfdm.ZarrArray
    cfdm.Array
 
 Data compression classes

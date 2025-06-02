@@ -39,6 +39,7 @@ from .data import (
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+    ZarrArray,
 )
 
 
@@ -212,7 +213,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-                The deep copy.
+        The deep copy.
 
         """
         return construct.copy()
@@ -1074,7 +1075,21 @@ class CFDMImplementation(Implementation):
     def nc_get_hdf5_chunksizes(self, data):
         """Get the HDF5 chunking strategy for the data.
 
+        Deprecated at NEXTVERSION and is no longer available. Use
+        `nc_get_dataset_chunksizes` instead.
+
         ..versionadded:: (cfdm) 1.7.2
+
+        """
+        raise NotImplementedError(
+            "Deprecated at version NEXTVERSION. "
+            "Use 'nc_get_dataset_chunksizes' instead."
+        )
+
+    def nc_get_dataset_chunksizes(self, data):
+        """Get the dataset chunking strategy for the data.
+
+        ..versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -1083,10 +1098,10 @@ class CFDMImplementation(Implementation):
         :Returns:
 
             `tuple` or `int` or `str` or `None`
-                The HDF5 chunking strategy.
+                The dataset chunking strategy.
 
         """
-        return data.nc_hdf5_chunksizes()
+        return data.nc_dataset_chunksizes()
 
     def nc_get_sample_dimension(self, count, default=None):
         """Return the name of the netCDF sample dimension.
@@ -1196,10 +1211,10 @@ class CFDMImplementation(Implementation):
         for attr, value in attributes.items():
             field.nc_set_group_attribute(attr, value)
 
-    def nc_set_hdf5_chunksizes(self, data, chunksizes):
-        """Set the HDF5 chunking strategy for the data.
+    def nc_set_dataset_chunksizes(self, data, chunksizes):
+        """Set the dataset chunking strategy for the data.
 
-        ..versionadded:: (cfdm) 1.11.2.0
+        ..versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -1214,7 +1229,21 @@ class CFDMImplementation(Implementation):
             `None`
 
         """
-        return data.nc_set_hdf5_chunksizes(chunksizes)
+        return data.nc_set_dataset_chunksizes(chunksizes)
+
+    def nc_set_hdf5_chunksizes(self, data, chunksizes):
+        """Set the HDF5 chunking strategy for the data.
+
+        Deprecated at NEXTVERSION and is no longer available. Use
+        `nc_set_dataset_chunksizes` instead.
+
+        ..versionadded:: (cfdm) 1.11.2.0
+
+        """
+        raise NotImplementedError(
+            "Deprecated at version NEXTVERSION. "
+            "Use 'nc_set_dataset_chunksizes' instead."
+        )
 
     def parameters(self, parent):
         """Return all parameters from a component.
@@ -1281,8 +1310,7 @@ class CFDMImplementation(Implementation):
 
         """
         raise NotImplementedError(
-            "Deprecated at version 1.8.6.0. "
-            + "Use 'equal_components' instead."
+            "Deprecated at version 1.8.6.0. Use 'equal_components' instead."
         )
 
     def equal_properties(self, property_value0, property_value1):
@@ -1919,7 +1947,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Auxiliary coordinate construct
+            `AuxiliaryCoordinate`
 
         """
         cls = self.get_class("AuxiliaryCoordinate")
@@ -1930,7 +1958,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Bounds component
+            `Bounds`
 
         """
         cls = self.get_class("Bounds")
@@ -1965,7 +1993,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Cell measure construct
+            `CellMeasure`
 
         """
         cls = self.get_class("CellMeasure")
@@ -1984,7 +2012,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Cell method construct
+            `CellMethod`
 
         """
         cls = self.get_class("CellMethod")
@@ -2021,7 +2049,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Coordinate conversion component
+            `CoordinateConversion`
 
         """
         cls = self.get_class("CoordinateConversion")
@@ -2034,7 +2062,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Coordinate reference construct
+            `CoordinateReference`
 
         """
         cls = self.get_class("CoordinateReference")
@@ -2045,7 +2073,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Count variable
+            `Count`
 
         """
         cls = self.get_class("Count")
@@ -2075,7 +2103,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Data instance
+            `Data`
 
         """
         cls = self.get_class("Data")
@@ -2096,7 +2124,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Datum component
+            `Datum`
 
         """
         cls = self.get_class("Datum")
@@ -2126,7 +2154,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Dimension coordinate construct
+            `DimensionCoordinate`
 
         """
         cls = self.get_class("DimensionCoordinate")
@@ -2154,7 +2182,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Dimension coordinate construct
+            `DimensionCoordinate`
 
         """
         cls = self.get_class("DimensionCoordinate")
@@ -2165,7 +2193,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Domain construct
+            `Domain`
 
         """
         cls = self.get_class("Domain")
@@ -2176,7 +2204,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Domain ancillary construct
+            `DomainAncillary`
 
         """
         cls = self.get_class("DomainAncillary")
@@ -2187,7 +2215,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Domain ancillary construct
+            `DomainAxis`
 
         """
         cls = self.get_class("DomainAxis")
@@ -2240,7 +2268,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Field construct
+            `Field`
 
         """
         cls = self.get_class("Field")
@@ -2251,7 +2279,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Field ancillary construct
+            `FieldAncillary`
 
         """
         cls = self.get_class("FieldAncillary")
@@ -2292,7 +2320,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Gathered array
+            `GatheredArray`
 
         """
         cls = self.get_class("GatheredArray")
@@ -2356,7 +2384,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Subsampled array
+            `SubsampledArray`
 
         """
         return self.get_class("SubsampledArray")(
@@ -2377,7 +2405,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Index variable
+            `Index`
 
         """
         cls = self.get_class("Index")
@@ -2388,7 +2416,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Interior ring variable
+            `InteriorRing`
 
         """
         cls = self.get_class("InteriorRing")
@@ -2401,7 +2429,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Interpolation parameter variable
+            `InterpolationParameter`
 
         """
         cls = self.get_class("InterpolationParameter")
@@ -2412,7 +2440,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            List variable
+            `List`
 
         """
         cls = self.get_class("List")
@@ -2461,7 +2489,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Index variable
+            `TiePointIndex`
 
         """
         cls = self.get_class("TiePointIndex")
@@ -2503,6 +2531,24 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("H5netcdfArray")
         return cls(**kwargs)
 
+    def initialise_ZarrArray(self, **kwargs):
+        """Return a `ZarrArray` instance.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+        :Returns:
+
+            `ZarrArray`
+
+        """
+        cls = self.get_class("ZarrArray")
+        return cls(**kwargs)
+
     def initialise_BoundsFromNodesArray(self, **kwargs):
         """Return a node bounds array.
 
@@ -2527,7 +2573,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Node count properties bariable
+        Node count properties bariable
 
         """
         cls = self.get_class("NodeCountProperties")
@@ -2538,7 +2584,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Part node count properties variable
+            `PartNodeCountProperties`
 
         """
         cls = self.get_class("PartNodeCountProperties")
@@ -2570,7 +2616,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Ragged contigous array
+            `RaggedContigousArray`
 
         """
         cls = self.get_class("RaggedContiguousArray")
@@ -2606,7 +2652,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Ragged indexed array
+            `RaggedIndexedArray`
 
         """
         cls = self.get_class("RaggedIndexedArray")
@@ -2647,7 +2693,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-             Ragged indexed contiguous array
+             `RaggedIndexedContiguousArray`
 
         """
         cls = self.get_class("RaggedIndexedContiguousArray")
@@ -3950,6 +3996,7 @@ _implementation = CFDMImplementation(
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
     SubsampledArray=SubsampledArray,
     TiePointIndex=TiePointIndex,
+    ZarrArray=ZarrArray,
 )
 
 
@@ -3998,7 +4045,8 @@ def implementation():
      'Index': <class 'cfdm.index.Index'>,
      'NodeCountProperties': <class 'cfdm.nodecountproperties.NodeCountProperties'>,
      'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>,
-     'Quantization': <class 'cfdm.quantization.Quantization'>}
+     'Quantization': <class 'cfdm.quantization.Quantization'>,
+     'ZarrArray': <class 'cfdm.data.zarrarray.ZarrArray'>}
 
     """
     return _implementation.copy()

@@ -28,7 +28,7 @@ class InteriorRing(
 
     {{netCDF variable}}
 
-    {{netCDF HDF5 chunks}}
+    {{netCDF dataset chunks}}
 
     The name of the netCDF dimension spanned by the interior ring
     variable's data (which does not correspond to a domain axis

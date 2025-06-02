@@ -20,6 +20,8 @@ class List(
 
     {{netCDF variable}}
 
+    {{netCDF dataset chunks}}
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

@@ -22,8 +22,8 @@ class Quantization(
     the library or client that performed the quantization, the
     software version, and any other information required to
     disambiguate the source of the algorithm employed. The text must
-    take the form "software-name version version-string
-    [(optional-information)]".
+    take the form ``software-name version version-string
+    [(optional-information)]``.
 
     The retained precision of the algorthm is defined with either the
     ``quantization_nsb`` or ``quantization_nsd`` parameter.
