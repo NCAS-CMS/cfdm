@@ -49,7 +49,7 @@ class quantizationTest(unittest.TestCase):
         """Test reading, writing, and storing quantization."""
         f = self.f1.copy()
         # Add some precision to the data
-        f.data[...] = f.array + 3.141592653589793
+        f.data[...] = f.array + np.pi
 
         # Set a quantisation instruction
         nsd = 2

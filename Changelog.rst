@@ -1,4 +1,4 @@
-Version 1.12.?.?
+Version NEXTVERSION
 ----------------
 
 **2025-??-??**
@@ -7,6 +7,13 @@ Version 1.12.?.?
   (https://github.com/NCAS-CMS/cfdm/issues/330)
 * New class: `cfdm.Quantization`
 * New class: `cfdm.mixin.QuantizationMixin`
+* Update CF aggregation keywords
+  (https://github.com/NCAS-CMS/cfdm/issues/341)
+* Set new minimum version of `dask`: ``2025.5.1``
+  (https://github.com/NCAS-CMS/cfdm/issues/339)
+* Changed dependency: ``dask>=2025.5.1``
+
+----
 
 Version 1.12.1.0
 ----------------
