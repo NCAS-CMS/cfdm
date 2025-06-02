@@ -29,7 +29,9 @@ class QuantizationTest(unittest.TestCase):
         """Test Quantization.dump."""
         self.assertEqual(
             self.q.dump(display=False),
-            "Quantization: \n    algorithm = 'bitgroom'\n    quantization_nsd = 4",
+            "Quantization: \n"
+            "    algorithm = 'bitgroom'\n"
+            "    quantization_nsd = 4",
         )
 
 

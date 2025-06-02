@@ -79,7 +79,9 @@ class quantizationTest(unittest.TestCase):
             {
                 "_QuantizeGranularBitRoundNumberOfSignificantDigits": nsd,
                 "algorithm": "granular_bitround",
-                "implementation": f"libnetcdf version {netCDF4.__netcdf4libversion__}",
+                "implementation": (
+                    f"libnetcdf version {netCDF4.__netcdf4libversion__}"
+                ),
                 "quantization_nsd": nsd,
             },
         )

@@ -23,8 +23,10 @@ class NetCDFMixin:
         """Initialise netCDF components from a source.
 
         If `{{class}}` inherits from `cfdm.core.abstract.Container`,
-        then this method is called by `_parent_initialise_from_source`
-        from within `cfdm.core.abstract.Container.__init__`.
+        then this method is called (via
+        `__{{class}}_initialise_from_source`) by
+        `_parent_initialise_from_source`, which in turn is called by
+        `cfdm.core.abstract.Container.__init__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -3526,8 +3528,10 @@ class NetCDFUnreferenced:
         """Initialise dataset compliance information from a source.
 
         If `{{class}}` inherits from `cfdm.core.abstract.Container`,
-        then this method is called by `_parent_initialise_from_source`
-        from within `cfdm.core.abstract.Container.__init__`.
+        then this method is called (via
+        `__{{class}}_initialise_from_source`) by
+        `_parent_initialise_from_source`, which in turn is called by
+        `cfdm.core.abstract.Container.__init__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4914,7 +4918,7 @@ class NetCDFAggregation(NetCDFMixin):
 
             `str` or `None`
                 The fragment type, either ``'uri'`` for fragment
-                datsets, or ``'unique_value'`` for fragment unique
+                datasets, or ``'unique_value'`` for fragment unique
                 values, or `None` for an unspecified fragment type.
 
         """

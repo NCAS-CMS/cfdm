@@ -5,6 +5,7 @@ Allyn
 arg
 args
 asdata
+astype
 atol
 ATOL
 AuxiliaryCoordinate
@@ -226,3 +227,4 @@ varid
 verboseness
 versionadded
 vlen
+ZarrArray

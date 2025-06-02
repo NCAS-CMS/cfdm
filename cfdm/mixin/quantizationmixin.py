@@ -1,5 +1,5 @@
 class QuantizationMixin:
-    """Mixin class for access to quantization metdata.
+    """Mixin class for accessing quantization metadata.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -9,8 +9,10 @@ class QuantizationMixin:
         """Initialise quantization information from a source.
 
         If `{{class}}` inherits from `cfdm.core.abstract.Container`,
-        then this method is called by `_parent_initialise_from_source`
-        from within `cfdm.core.abstract.Container.__init__`.
+        then this method is called (via
+        `__{{class}}_initialise_from_source`) by
+        `_parent_initialise_from_source`, which in turn is called by
+        `cfdm.core.abstract.Container.__init__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -91,13 +93,14 @@ class QuantizationMixin:
     def _set_quantization(self, quantization, copy=True):
         """Set quantization metadata.
 
+        The quantization metadata describes any existing quantization
+        that has already been applied to the data. Setting
+        quantization metadata does not change the actual quantization
+        (if any) of the data, and will not cause the data to be
+        quantized when written to a netCDF dataset.
+
         Any existing quantization metadata removed prior to the new
         setting.
-
-        .. warning:: Setting quantization metadata does not change the
-                     actual quantization (if any) of the data, and
-                     will not cause the data to be quantized when
-                     written to a netCDF dataset.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -145,7 +148,14 @@ class QuantizationMixin:
     def del_quantize_on_write(self, default=ValueError()):
         """Remove a quantize-on-write instruction.
 
-        See `set_quantize_on_write` for details.
+        .. note:: The existence of a quantize-on-write instruction
+                  does not mean that the data in memory has been
+                  quantized, rather it means that if the data is
+                  written to a netCDF dataset with
+                  `{{package}}.write`, then the quantization will be
+                  applied at that time to the data in the netCDF
+                  dataset on disk, leaving the data in memory
+                  unchanged.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -163,8 +173,7 @@ class QuantizationMixin:
         :Returns:
 
             `Quantization`
-                The deleted quantize-on-write instruction in a
-                quantization variable.
+                The deleted quantize-on-write instruction.
 
         **Examples**
 
@@ -180,6 +189,9 @@ class QuantizationMixin:
 
     def get_quantization(self, default=ValueError()):
         """Get quantization metadata.
+
+        The quantization metadata describes any existing quantization
+        that has already been applied to the data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -229,7 +241,14 @@ class QuantizationMixin:
     def get_quantize_on_write(self, default=ValueError()):
         """Get a quantize-on-write instruction.
 
-        See `set_quantize_on_write` for details.
+        .. note:: The existence of a quantize-on-write instruction
+                  does not mean that the data in memory has been
+                  quantized, rather it means that if the data is
+                  written to a netCDF dataset with
+                  `{{package}}.write`, then the quantization will be
+                  applied at that time to the data in the netCDF
+                  dataset on disk, leaving the data in memory
+                  unchanged.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -284,11 +303,11 @@ class QuantizationMixin:
         """Set a quantize-on-write instruction.
 
         .. note:: Setting a quantize-on-write instruction does not
-                  immediately change the data, but if the `{{class}}`
-                  is written to a netCDF dataset with
-                  `{{package}}.write`, then the quantization will be
-                  applied at that time to the data on disk, leaving
-                  the construct's data in memory unchanged.
+                  immediately change the data, but if data is written
+                  to a netCDF dataset with `{{package}}.write`, then
+                  the quantization will be applied at that time to the
+                  data in the netCDF dataset on disk, leaving the data
+                  in memory unchanged.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -298,9 +317,9 @@ class QuantizationMixin:
         :Parameters:
 
             quantization: `Quantization` or `None`, optional
-                The quantize-on-write instruction in a quantization
-                variable. By default, or if `None`, a `Quantization`
-                with no parameters is used.
+                The quantize-on-write instructions. By default, or if
+                `None`, a `Quantization` objects with no parameters is
+                used.
 
                 Its parameters may be overridden by the *algorithm*,
                 *quantization_nsd* or *quantization_nsb* keywords. If

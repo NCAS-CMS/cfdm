@@ -43,7 +43,7 @@ class Container(metaclass=DocstringRewriteMeta):
             else:
                 custom = custom.copy()
 
-            # Run initialise-from-source methods defined on parent
+            # Run any initialise-from-source methods defined on parent
             # classes.
             self._parent_initialise_from_source(source, copy)
         else:
@@ -127,7 +127,7 @@ class Container(metaclass=DocstringRewriteMeta):
         Traceback (most recent call last):
             ...
         ValueError: Missing item
-        >>> f._default(ValueError(), message="No component")  # Raises Exception
+        >>> f._default(ValueError(), message="No component")
         Traceback (most recent call last):
             ...
         ValueError: No component
@@ -311,10 +311,13 @@ class Container(metaclass=DocstringRewriteMeta):
     def _parent_initialise_from_source(self, source, copy=True):
         """Run all parent class initialise-from-source methods.
 
-        Any such methods will be called
-        ``_P__initialise_from_source``, where ``P`` is the name of a
-        parent class, and they will be applied in reverse method
-        resolution order.
+        Such methods, if they exist, will be called
+        ``_PC__initialise_from_source``, where ``PC`` is the name of a
+        parent class, and they will be applied in reverse
+        method-resolution order.
+
+        This method is ultimately called by
+        `cfdm.core.abstract.Container.__init__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -334,13 +337,14 @@ class Container(metaclass=DocstringRewriteMeta):
             `None`
 
         """
-        for P in self.__class__.__mro__[-1:0:-1]:
-            method = f"_{P.__name__}__initialise_from_source"
+        # Loop over parent classes in reverse method-resolution order
+        for PC in self.__class__.__mro__[-1:0:-1]:
+            method = f"_{PC.__name__}__initialise_from_source"
             try:
                 # Try to run the parent class method
                 getattr(self, method)(source, copy)
             except AttributeError:
-                # Parent class does not have this method
+                # This parent class does not have this method
                 pass
 
     def _set_component(self, component, value, copy=True):
