@@ -10,6 +10,10 @@ class Quantization(
 ):
     """A quantization variable.
 
+    Quantization eliminates false precision, usually by rounding the
+    least significant bits of floating-point mantissas to zeros, so
+    that a subsequent compression on disk is more efficient.
+
     A quantization variable describes a quantization algorithm via a
     collection of parameters.
 

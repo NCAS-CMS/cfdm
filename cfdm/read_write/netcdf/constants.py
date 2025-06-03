@@ -48,7 +48,7 @@ CODE1 = {
 # NetCDF formats
 # --------------------------------------------------------------------
 # NetCDF file magic numbers
-MAGIC_NUMBERS = (
+NETCDF_MAGIC_NUMBERS = (
     21382211,
     1128547841,
     1178880137,
@@ -68,7 +68,7 @@ NETCDF3_FMTS = (
 NETCDF4_FMTS = ("NETCDF4", "NETCDF4_CLASSIC")
 
 # --------------------------------------------------------------------
-# Quantisation
+# Quantization
 # --------------------------------------------------------------------
 # Map CF quantization algorithms to netCDF4 quantize_mode keyword
 # values

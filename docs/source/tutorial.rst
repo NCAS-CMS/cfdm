@@ -4222,8 +4222,8 @@ One or more external files may also be included with :ref:`cfdump
 ---------------
 
 The CF conventions have support for saving space by identifying
-unwanted missing data.  Such compression techniques store the data
-more efficiently and result in no precision loss. The CF data model,
+unwanted missing data. Such compression techniques store the data more
+efficiently and result in no precision loss. The CF data model,
 however, views compressed arrays in their uncompressed form.
 
 Therefore, the field construct contains :term:`domain axis constructs`
@@ -4924,7 +4924,6 @@ coordinate's `Data` object:
    :caption: *Get subspaces based on indices of the uncompressed
              data.*
 
-
    >>> lon = f.construct('longitude')
    >>> d = lon.data.source()
    >>> d.get_tie_point_indices()
@@ -4935,7 +4934,51 @@ coordinate's `Data` object:
 
 It is not yet, as of version 1.10.0.0, possible to write to disk a
 field construct with compression by coordinate subsampling.
-   
+
+.. _Lossy-compression-via-quantization:
+
+Lossy compression via quantization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`Lossy compression via quantization`_ eliminates false precision,
+usually by rounding the least significant bits of floating-point
+mantissas to zeros, so that a subsequent compression on disk is more
+efficient. Quantization is described by the following parameters:
+
+* The ``algorithm`` parameter names a specific quantization algorithm.
+
+* The ``implementation`` parameter contains unstandardised text that
+  concisely conveys the algorithm provenance including the name of the
+  library or client that performed the quantization, the software
+  version, and any other information required to disambiguate the
+  source of the algorithm employed. The text must take the form
+  ``software-name version version-string [(optional-information)]``.
+
+* The retained precision of the algortqhm is defined with either the
+  ``quantization_nsb`` or ``quantization_nsd`` parameter.
+
+If quantization has been applied to the data, then it may be described
+with in a `Quantization` object, accessed via the construct's
+`!get_quantization` method. To apply quantization at the time of
+writing the data to disk, use the construct's `!set_quantize_on_write`
+method:
+
+.. code-block:: python
+   :caption: *Lossy compression via quantization.*
+
+   >>> q, t = cfdm.read('file.nc')
+   >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=6)
+   >>> cfdm.write(t, 'quantized.nc')
+   >>> quantized = cfdm.read('quantized.nc')[0]
+   >>> c = quantized.get_quantization()
+   >>> c
+   <Quantization: _QuantizeBitGroomNumberOfSignificantDigits=6, algorithm=bitgroom, implementation=libnetcdf version 4.9.4-development, quantization_nsd=6>
+   >>> c.parameters()
+   {'algorithm': 'bitgroom',
+    'implementation': 'libnetcdf version 4.9.4-development',
+    '_QuantizeBitGroomNumberOfSignificantDigits': np.int32(6),
+    'quantization_nsd': np.int64(6)}
+
 ----
 
 .. _Controlling-output-messages:
@@ -5091,3 +5134,4 @@ if any, are filtered out.
 .. _domain topology construct:                   https://cfconventions.org/cf-conventions/cf-conventions.html#data-model-domain-topology
 .. _cell connectivity construct:                 https://cfconventions.org/cf-conventions/cf-conventions.html#data-model-cell-connectivity
 .. _UGRID:                                       https://cfconventions.org/cf-conventions/cf-conventions.html#ugrid-conventions
+.. _Lossy compression via quantization:          https://cfconventions.org/cf-conventions/cf-conventions.html#lossy-compression-via-quantization

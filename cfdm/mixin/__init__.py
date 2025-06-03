@@ -1,3 +1,4 @@
+from .boundsmixin import BoundsMixin
 from .container import Container
 from .files import Files
 from .quantizationmixin import QuantizationMixin

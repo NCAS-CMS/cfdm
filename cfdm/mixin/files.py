@@ -11,9 +11,9 @@ class Files:
     def __initialise_from_source(self, source=None, copy=True):
         """Initialise original file names from a source.
 
-        If `{{class}}` inherits from `cfdm.core.abstract.Container`,
-        then this method is called by `_parent_initialise_from_source`
-        from within `cfdm.core.abstract.Container.__init__`.
+        This method is called by
+        `_Container__parent_initialise_from_source`, which in turn is
+        called by `cfdm.core.Container.__init__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

@@ -824,3 +824,10 @@ lon = f.construct('longitude')
 d = lon.data.source()
 d.get_tie_point_indices()
 d.get_computational_precision()
+q, t = cfdm.read('file.nc')
+t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=6)
+cfdm.write(t, 'quantized.nc')
+quantized = cfdm.read('quantized.nc')[0]
+c = quantized.get_quantization()
+c
+c.parameters()

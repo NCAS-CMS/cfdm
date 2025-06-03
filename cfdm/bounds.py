@@ -2,6 +2,7 @@ from . import core, mixin
 
 
 class Bounds(
+    mixin.BoundsMixin,
     mixin.NetCDFVariable,
     mixin.NetCDFDimension,
     mixin.PropertiesData,
@@ -43,50 +44,6 @@ class Bounds(
     .. versionadded:: (cfdm) 1.7.0
 
     """
-
-    def __init__(
-        self,
-        properties=None,
-        data=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-                  *Parameter example:*
-                     ``properties={'standard_name': 'grid_latitude'}``
-
-            {{init data: data_like, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        if source is not None:
-            try:
-                inherited_properties = source.inherited_properties()
-            except AttributeError:
-                inherited_properties = {}
-        else:
-            inherited_properties = {}
-
-        self._set_component(
-            "inherited_properties", inherited_properties, copy=False
-        )
 
     def dump(
         self,

@@ -45,7 +45,7 @@ class Container(metaclass=DocstringRewriteMeta):
 
             # Run any initialise-from-source methods defined on parent
             # classes.
-            self._parent_initialise_from_source(source, copy)
+            self.__parent_initialise_from_source(source, copy)
         else:
             custom = {}
 
@@ -308,16 +308,14 @@ class Container(metaclass=DocstringRewriteMeta):
         """
         return component in self._components
 
-    def _parent_initialise_from_source(self, source, copy=True):
-        """Run all parent class initialise-from-source methods.
+    def __parent_initialise_from_source(self, source, copy=True):
+        """Run all initialise-from-source methods.
 
-        Such methods, if they exist, will be called
-        ``_PC__initialise_from_source``, where ``PC`` is the name of a
-        parent class, and they will be applied in reverse
-        method-resolution order.
+        Such methods, if they exist, are named
+        ``_C__initialise_from_source``, where ``C`` is the name of a
+        class in the method reolution order.
 
-        This method is ultimately called by
-        `cfdm.core.abstract.Container.__init__`.
+        This method is called by `cfdm.core.Container.__init__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -337,9 +335,10 @@ class Container(metaclass=DocstringRewriteMeta):
             `None`
 
         """
-        # Loop over parent classes in reverse method-resolution order
-        for PC in self.__class__.__mro__[-1:0:-1]:
-            method = f"_{PC.__name__}__initialise_from_source"
+        # Loop over classes in reverse method-resolution order
+        # (omitting `object`)
+        for C in self.__class__.__mro__[-2::-1]:
+            method = f"_{C.__name__}__initialise_from_source"
             try:
                 # Try to run the parent class method
                 getattr(self, method)(source, copy)

@@ -8,11 +8,9 @@ class QuantizationMixin:
     def __initialise_from_source(self, source, copy=True):
         """Initialise quantization information from a source.
 
-        If `{{class}}` inherits from `cfdm.core.abstract.Container`,
-        then this method is called (via
-        `__{{class}}_initialise_from_source`) by
-        `_parent_initialise_from_source`, which in turn is called by
-        `cfdm.core.abstract.Container.__init__`.
+        This method is called by
+        `_Container__parent_initialise_from_source`, which in turn is
+        called by `cfdm.core.Container.__init__`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -154,6 +152,11 @@ class QuantizationMixin:
     def del_quantize_on_write(self, default=ValueError()):
         """Remove a quantize-on-write instruction.
 
+        Quantization eliminates false precision, usually by rounding
+        the least significant bits of floating-point mantissas to
+        zeros, so that a subsequent compression on disk is more
+        efficient.
+
         The existence of a quantize-on-write instruction does not mean
         that the data in memory has been quantized, rather it means
         that if the data is written to a netCDF dataset with
@@ -198,6 +201,11 @@ class QuantizationMixin:
 
     def get_quantization(self, default=ValueError()):
         """Get quantization metadata.
+
+        Quantization eliminates false precision, usually by rounding
+        the least significant bits of floating-point mantissas to
+        zeros, so that a subsequent compression on disk is more
+        efficient.
 
         The quantization metadata describes any existing quantization
         that has already been applied to the data.
@@ -249,6 +257,11 @@ class QuantizationMixin:
 
     def get_quantize_on_write(self, default=ValueError()):
         """Get a quantize-on-write instruction.
+
+        Quantization eliminates false precision, usually by rounding
+        the least significant bits of floating-point mantissas to
+        zeros, so that a subsequent compression on disk is more
+        efficient.
 
         The existence of a quantize-on-write instruction does not mean
         that the data in memory has been quantized, rather it means
@@ -308,6 +321,11 @@ class QuantizationMixin:
         quantization_nsb=None,
     ):
         """Set a quantize-on-write instruction.
+
+        Quantization eliminates false precision, usually by rounding
+        the least significant bits of floating-point mantissas to
+        zeros, so that a subsequent compression on disk is more
+        efficient.
 
         The existence of a quantize-on-write instruction does not mean
         that the data in memory has been quantized, rather it means

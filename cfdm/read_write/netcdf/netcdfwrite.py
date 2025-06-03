@@ -2799,19 +2799,18 @@ class NetCDFWrite(IOWrite):
             quantize_on_write = False
 
         if q is not None:
-            # There is some quantization metadata
+            # There are some quantization metadata - either
 
             # CF quantization algorithm name (e.g. 'bitgroom')
             algorithm = self.implementation.get_parameter(q, "algorithm", None)
 
-            # CF quantization parameter name and value
+            # Get the CF quantization parameter name and value
             # (e.g. 'quantization_nsd' and 6)
             cf_parameter = CF_QUANTIZATION_PARAMETERS.get(algorithm)
             cf_ns = self.implementation.del_parameter(q, cf_parameter, None)
 
-            # NetCDF-C library quantization attribute name and value
-            # (e.g. '_QuantizeBitGroomNumberOfSignificantDigits' and
-            # 6)
+            # Remove the NetCDF-C library quantization attribute
+            # (e.g. '_QuantizeBitRoundNumberOfSignificantBits')
             netcdf_parameter = NETCDF_QUANTIZATION_PARAMETERS.get(algorithm)
             netcdf_ns = self.implementation.del_parameter(
                 q, netcdf_parameter, None
@@ -2819,9 +2818,10 @@ class NetCDFWrite(IOWrite):
 
             # Create a quantization container variable in the file, if
             # it doesn't already exist (and after having removed any
-            # quantization parameters, such as "quantization_nsd").
+            # per-variable quantization parameters, such as
+            # "quantization_nsd").
             if quantize_on_write:
-                # Set the implemention to this version of the netCDF-C
+                # Set "implemention" to this version of the netCDF-C
                 # library
                 self.implementation.set_parameter(
                     q,

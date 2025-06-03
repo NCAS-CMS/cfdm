@@ -29,7 +29,7 @@ from .. import IORead
 from ..exceptions import DatasetTypeError, ReadError
 from .constants import (
     CF_QUANTIZATION_PARAMETERS,
-    MAGIC_NUMBERS,
+    NETCDF_MAGIC_NUMBERS,
     NETCDF_QUANTIZATION_PARAMETERS,
 )
 from .flatten import netcdf_flatten
@@ -858,7 +858,7 @@ class NetCDFRead(IORead):
             d_type = None
         else:
             # Is it a netCDF-3 or netCDF-4 binary file?
-            if magic_number in MAGIC_NUMBERS:
+            if magic_number in NETCDF_MAGIC_NUMBERS:
                 d_type = "netCDF"
             else:
                 # Is it a CDL text file?
