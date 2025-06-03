@@ -8,7 +8,6 @@ from dask.utils import parse_bytes
 
 _CHUNKSIZE = "128 MiB"
 config.set({"array.chunk-size": _CHUNKSIZE})
-
 """A dictionary of useful constants.
 
 Whilst the dictionary may be modified directly, it is safer to

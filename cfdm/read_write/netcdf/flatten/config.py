@@ -23,7 +23,7 @@ max_name_len = 256
 # Separator for groups in the input dataset
 group_separator = "/"
 
-# Replacment for 'group_separator' in flattened names
+# Replacement for 'group_separator' in flattened names
 flattener_separator = "__"
 
 # Name prefix when reference can't be resolved. Only used if
@@ -92,7 +92,7 @@ class FlatteningRules:
 
 
 # --------------------------------------------------------------------
-# Set the flattening rules for named CF attributes
+# Define the flattening rules for named CF attributes
 # --------------------------------------------------------------------
 flattening_rules = {
     attr.name: attr

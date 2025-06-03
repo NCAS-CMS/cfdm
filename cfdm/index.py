@@ -24,7 +24,7 @@ class Index(
 
     {{netCDF variable}}
 
-    {{netCDF HDF5 chunks}}
+    {{netCDF dataset chunks}}
 
     The name of the netCDF dimension spanned by the index variable's
     data (which does not correspond to a domain axis construct) may be

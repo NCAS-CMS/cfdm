@@ -648,7 +648,7 @@ class NetCDFWrite(IOWrite):
                 The name of the netCDF dimension for this dimension
                 coordinate construct, including any groups structure. Note
                 that the group structure may be different to the
-                corodinate variable, and the basename.
+                coordinate variable, and the basename.
 
             coordinates: `list`
                This list may get updated in-place.
@@ -4939,7 +4939,7 @@ class NetCDFWrite(IOWrite):
             # valid_[min|max|range] attributes?
             "warn_valid": bool(warn_valid),
             "valid_properties": set(("valid_min", "valid_max", "valid_range")),
-            # Whether or not to name dimension corodinates in the
+            # Whether or not to name dimension coordinates in the
             # 'coordinates' attribute
             "coordinates": bool(coordinates),
             # Dictionary of netCDF variable names and netCDF
@@ -5526,7 +5526,7 @@ class NetCDFWrite(IOWrite):
         # data, or else work it out.
         # ------------------------------------------------------------
         # Get the chunking strategy defined by the data itself
-        chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
+        chunksizes = self.implementation.nc_get_dataset_chunksizes(data)
         if chunksizes == "contiguous":
             # Contiguous as defined by 'data'
             return True, None
@@ -5790,25 +5790,25 @@ class NetCDFWrite(IOWrite):
 
         feature_ncvar = self._cfa_write_fragment_array_variable(
             f_map,
-            aggregated_data.get(feature, f"cfa_{feature}"),
+            aggregated_data.get(feature, f"fragment_{feature}"),
             map_ncdimensions,
             chunking=chunking,
         )
         aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
-        if "location" in cfa:
+        if "uris" in cfa:
             # --------------------------------------------------------
-            # Location
+            # URIs
             # --------------------------------------------------------
-            feature = "location"
-            f_location = cfa[feature]
+            feature = "uris"
+            f_uris = cfa[feature]
 
             chunking = None
 
             # Get the fragment array netCDF dimensions from the
             # 'location' fragment array variable.
             location_ncdimensions = []
-            for ncdim, size in zip(ncdimensions, f_location.shape):
+            for ncdim, size in zip(ncdimensions, f_uris.shape):
                 cfa_ncdim = f"a_{ncdim}"
                 if cfa_ncdim not in all_dimensions:
                     # Create a new fragment array dimension
@@ -5826,21 +5826,21 @@ class NetCDFWrite(IOWrite):
 
             #            # Write the fragment array variable to the netCDF dataset
             #            if ncdimensions[0].startswith('time'):
-            #                chunking = (False, ((85*12,) + f_location.shape[1:]))
+            #                chunking = (False, ((85*12,) + f_uris.shape[1:]))
             #            else:
             chunking = None
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                f_location,
-                aggregated_data.get(feature, f"cfa_{feature}"),
+                f_uris,
+                aggregated_data.get(feature, f"fragment_{feature}"),
                 location_ncdimensions,
                 chunking=chunking,
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
             # --------------------------------------------------------
-            # Variable
+            # Identifiers
             # --------------------------------------------------------
-            feature = "variable"
+            feature = "identifiers"
 
             # Attempt to reduce variable names to a common scalar
             # value
@@ -5851,20 +5851,20 @@ class NetCDFWrite(IOWrite):
             else:
                 variable_ncdimensions = location_ncdimensions
 
-            f_variable = cfa[feature]
+            f_identifiers = cfa[feature]
 
             # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                f_variable,
-                aggregated_data.get(feature, f"cfa_{feature}"),
+                f_identifiers,
+                aggregated_data.get(feature, f"fragment_{feature}"),
                 variable_ncdimensions,
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
         else:
             # --------------------------------------------------------
-            # Unique value
+            # Unique values
             # --------------------------------------------------------
-            feature = "unique_value"
+            feature = "unique_values"
             f_unique_value = cfa[feature]
 
             # Get the fragment array netCDF dimensions from the
@@ -5883,7 +5883,7 @@ class NetCDFWrite(IOWrite):
             # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
                 f_unique_value,
-                aggregated_data.get(feature, f"cfa_{feature}"),
+                aggregated_data.get(feature, f"fragment_{feature}"),
                 unique_value_ncdimensions,
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
@@ -6076,9 +6076,9 @@ class NetCDFWrite(IOWrite):
 
         out = {"map": type(data)(aggregation_shape)}
 
-        if data.nc_get_aggregation_fragment_type() == "location":
+        if data.nc_get_aggregation_fragment_type() == "uri":
             # --------------------------------------------------------
-            # Create 'location' and 'variable' arrays
+            # Create 'uris' and 'idenftifiers' arrays
             # --------------------------------------------------------
             uri_default = g["cfa"].get("uri", "default") == "default"
             uri_relative = (
@@ -6111,8 +6111,8 @@ class NetCDFWrite(IOWrite):
 
                 aggregation_file_scheme = g["aggregation_file_scheme"]
 
-            aggregation_location = []
-            aggregation_variable = []
+            aggregation_uris = []
+            aggregation_identifiers = []
             for index, position in zip(
                 data.chunk_indices(), data.chunk_positions()
             ):
@@ -6186,24 +6186,22 @@ class NetCDFWrite(IOWrite):
                         filename, start=aggregation_file_directory
                     )
 
-                aggregation_location.append(filename)
-                aggregation_variable.append(address)
+                aggregation_uris.append(filename)
+                aggregation_identifiers.append(address)
 
             # Reshape the 1-d aggregation instruction arrays to span
             # the data dimensions, plus the extra trailing dimension
             # if there is one.
-            aggregation_location = np.array(aggregation_location).reshape(
-                a_shape
-            )
-            aggregation_variable = np.array(aggregation_variable).reshape(
-                a_shape
-            )
+            aggregation_uris = np.array(aggregation_uris).reshape(a_shape)
+            aggregation_identifiers = np.array(
+                aggregation_identifiers
+            ).reshape(a_shape)
 
-            out["location"] = type(data)(aggregation_location)
-            out["variable"] = type(data)(aggregation_variable)
+            out["uris"] = type(data)(aggregation_uris)
+            out["identifiers"] = type(data)(aggregation_identifiers)
         else:
             # ------------------------------------------------------------
-            # Create a 'value' array
+            # Create a 'unique_values' array
             # ------------------------------------------------------------
             # Transform the data so that it spans the fragment
             # dimensions with one value per fragment. If a chunk has
@@ -6237,7 +6235,7 @@ class NetCDFWrite(IOWrite):
                     "to use a unique value of missing data in this case."
                 )
 
-            out["unique_value"] = d
+            out["unique_values"] = d
 
         # Return the dictionary of Data objects
         return out

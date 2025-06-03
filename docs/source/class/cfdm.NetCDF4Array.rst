@@ -96,6 +96,7 @@ Miscellaneous
 
    ~cfdm.NetCDF4Array.copy
    ~cfdm.NetCDF4Array.to_memory
+   ~cfdm.NetCDF4Array.astype
 
 Special
 -------

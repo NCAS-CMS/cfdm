@@ -6,7 +6,7 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import parse_indices
+from ..functions import _DEPRECATION_ERROR_METHOD, parse_indices
 from . import PropertiesData
 
 logger = logging.getLogger(__name__)
@@ -1567,20 +1567,38 @@ class PropertiesDataBounds(PropertiesData):
     def nc_clear_hdf5_chunksizes(self, bounds=True, interior_ring=True):
         """Clear the HDF5 chunking strategy for the data.
 
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `nc_clear_dataset_chunksizes` instead.
+
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_clear_hdf5_chunksizes",
+            "Use `nc_clear_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_clear_dataset_chunksizes(self, bounds=True, interior_ring=True):
+        """Clear the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
 
         :Parameters:
 
             bounds: `bool`, optional
-                If True, the default, then clear the HDF5 chunking
+                If True, the default, then clear the dataset chunking
                 strategy from any bounds. If False then leave the
                 bounds chunking strategy unchanged.
 
             interior_ring: `bool`
-                If True, the default, then clear the HDF5 chunking
+                If True, the default, then clear the dataset chunking
                 strategy from a geometry interior ring variable. If
                 False then leave the geometry interior ring variable
                 chunking strategy unchanged.
@@ -1589,47 +1607,68 @@ class PropertiesDataBounds(PropertiesData):
 
             `None` or `str` or `int` or `tuple` of `int`
                 The chunking strategy prior to being cleared, as would
-                be returned by `nc_hdf5_chunksizes`.
+                be returned by `nc_dataset_chunksizes`.
 
         """
-        super().nc_clear_hdf5_chunksizes()
+        super().nc_clear_dataset_chunksizes()
 
-        # Clear the bounds HDF5 chunks
+        # Clear the bounds dataset chunks
         if bounds:
             bounds = self.get_bounds(None)
             if bounds is not None:
-                bounds.nc_clear_hdf5_chunksizes()
+                bounds.nc_clear_dataset_chunksizes()
 
-        # Clear the  interior_ring HDF5 chunks
+        # Clear the  interior_ring dataset chunks
         if interior_ring:
             interior_ring = self.get_interior_ring(None)
             if interior_ring is not None:
-                interior_ring.nc_clear_hdf5_chunksizes()
+                interior_ring.nc_clear_dataset_chunksizes()
 
     def nc_set_hdf5_chunksizes(
         self, chunksizes, bounds=True, interior_ring=True
     ):
         """Set the HDF5 chunking strategy.
 
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `nc_set_dataset_chunksizes` instead.
+
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_set_hdf5_chunksizes",
+            "Use `nc_set_dataset_chunksizes` instead.",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_set_dataset_chunksizes(
+        self, chunksizes, bounds=True, interior_ring=True
+    ):
+        """Set the dataset chunking strategy.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_clear_dataset_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
 
         :Parameters:
 
-            {{hdf5 chunksizes}}
+            {{chunk chunksizes}}
+
                   Each dictionary key is an integer that specifies an
                   axis by its position in the data array.
 
             bounds: `bool`, optional
-                If True, the default, then apply the HDF5 chunking
+                If True, the default, then apply the dataset chunking
                 strategy to the corresponding axes of any bounds. If
                 False then leave the bounds chunking strategy
                 unchanged.
 
             interior_ring: `bool`
-                If True, the default, then apply the HDF5 chunking
+                If True, the default, then apply the dataset chunking
                 strategy to the corresponding axis of a geometry
                 interior ring variable. If False then leave the
                 geometry interior ring variable chunking strategy
@@ -1640,23 +1679,23 @@ class PropertiesDataBounds(PropertiesData):
             `None`
 
         """
-        super().nc_set_hdf5_chunksizes(chunksizes)
+        super().nc_set_dataset_chunksizes(chunksizes)
 
-        c = self.nc_hdf5_chunksizes()
+        c = self.nc_dataset_chunksizes()
         if isinstance(c, tuple):
             c = {n: value for n, value in enumerate(c)}
 
-        # Set the bounds HDF5 chunks
+        # Set the bounds dataset chunks
         if bounds:
             bounds = self.get_bounds(None)
             if bounds is not None:
-                bounds.nc_set_hdf5_chunksizes(c)
+                bounds.nc_set_dataset_chunksizes(c)
 
-        # Set the  interior_ring HDF5 chunks
+        # Set the  interior_ring dataset chunks
         if interior_ring:
             interior_ring = self.get_interior_ring(None)
             if interior_ring is not None:
-                interior_ring.nc_set_hdf5_chunksizes(c)
+                interior_ring.nc_set_dataset_chunksizes(c)
 
     def set_node_count(self, node_count, copy=True):
         """Set the node count variable for geometry bounds.

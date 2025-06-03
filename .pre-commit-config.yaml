@@ -33,8 +33,9 @@ repos:
   # https://google.github.io/styleguide/pyguide.html#381-docstrings) as much
   # as possible (see https://github.com/myint/docformatter for docs, with
   # configuration as below)
-  - repo: https://github.com/myint/docformatter
-    rev: v1.4
+#  - repo: https://github.com/myint/docformatter
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.7.6
     hooks:
       - id: docformatter
         # These arguments act as the configuration for docformatter. They:
@@ -48,7 +49,7 @@ repos:
   # be detected by the 'pydocstyle' checker
   # (see http://www.pydocstyle.org/en/stable/index.html for
   # docs and see the cfdm .pydocstyle.ini file for our custom configuration)
-  - repo: https://github.com/pycqa/pydocstyle
+  - repo: https://github.com/PyCQA/pydocstyle
     rev: 6.3.0
     hooks:
       - id: pydocstyle
@@ -67,7 +68,7 @@ repos:
   # (see https://pycqa.github.io/isort/ for documentation). It is fully
   # compatible with 'black' with the lines set to ensure so in the repo's
   # pyproject.toml. Other than that and the below, no extra config is required.
-  - repo: https://github.com/pycqa/isort
+  - repo: https://github.com/PyCQA/isort
     rev: 5.13.2
     hooks:
       - id: isort

@@ -353,6 +353,21 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertTrue((c0.mask == c1.mask).all())
         self.assertTrue((c0 == c1).all())
 
+    def test_NetCDF4Array_astype(self):
+        """Test NetCDF4Array.astype."""
+        f = self.f0
+        cfdm.write(f, tmpfile)
+
+        n = cfdm.NetCDF4Array(
+            tmpfile, f.nc_get_variable(), shape=f.shape, dtype=f.dtype
+        )
+        self.assertNotEqual(n.dtype, np.dtype("int32"))
+
+        a = n.astype("int32")
+        self.assertIsInstance(a, np.ndarray)
+        self.assertEqual(a.dtype, np.dtype("int32"))
+        self.assertTrue((a == f.array.astype("int32")).all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

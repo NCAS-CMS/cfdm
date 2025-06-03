@@ -85,6 +85,7 @@ Miscellaneous
    ~cfdm.GatheredArray.get_filename
    ~cfdm.GatheredArray.get_filenames
    ~cfdm.GatheredArray.to_dask_array
+   ~cfdm.GatheredArray.astype
 
 Special
 -------

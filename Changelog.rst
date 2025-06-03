@@ -5,6 +5,33 @@ Version NEXTVERSION
 
 * New keyword parameter to `cfdm.write`: ``chunk_cache``
   (https://github.com/NCAS-CMS/cfdm/issues/328)
+* Read Zarr datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/335)
+* Read multiple datasets simultaneously with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/336)
+* New keyword parameters to `cfdm.read`: ``recursive``,
+  ``followlinks`` (https://github.com/NCAS-CMS/cfdm/issues/336)
+* New keyword parameters to `cfdm.read`: ``cdl_string``
+  (https://github.com/NCAS-CMS/cfdm/issues/337)
+* Update CF aggregation keywords
+  (https://github.com/NCAS-CMS/cfdm/issues/341)
+* Set new minimum version of `dask`: ``2025.5.1``
+  (https://github.com/NCAS-CMS/cfdm/issues/339)
+* New dependency: ``zarr>=3.0.8``
+* Changed dependency: ``dask>=2025.5.1``
+
+----
+
+Version 1.12.1.0
+----------------
+
+**2025-04-01**
+
+* Set new method `cfdm.Array.astype`
+  (https://github.com/NCAS-CMS/cfdm/issues/331)
+* Set new maximum version of `dask`: ``2025.3.0``
+  (https://github.com/NCAS-CMS/cfdm/issues/332)
+* Changed dependency: ``dask>=2025.2.0,<=2025.3.0``
 
 ----
 
