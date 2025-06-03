@@ -1334,8 +1334,8 @@ class read_writeTest(unittest.TestCase):
 
         f = cfdm.read("ugrid_[12].nc")
         self.assertEqual(len(f), 6)
-        
-   def test_write_chunk_cache(self):
+
+    def test_write_chunk_cache(self):
         """Test the cfdm.write 'chunk_cache' keyword."""
         f = self.f0
         for fmt in ("NETCDF3_CLASSIC", "NETCDF4"):
