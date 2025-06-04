@@ -373,6 +373,31 @@ class write(ReadWrite):
             *Parameter example:*
               ``least_significant_digit=3``
 
+        chunk_cache: `int` or `None`, optional
+            The amount of memory (in bytes) used in each variable's
+            chunk cache at the HDF5 level.
+
+            Ignored when not writing to a netCDF-4 format. By default,
+            or if `None`, the default netCDF-C chunk cache size of
+            16777216 bytes (i.e. 16 MiB) is used. Changing this has no
+            effect on the new netCDF-4 file on disk, but may be used
+            to prevent the available memory from filling up when a
+            very large number of netCDF-4 variables are being
+            created. Note the changing the size of the per-variable
+            chunk cache has the potential to seriously degrade
+            performance, although that may be preferable to the write
+            process failing due to lack of memory.
+
+            For instance, if 1024 netCDF-4 variables are being
+            created, then by default 17179869184 bytes (i.e. 16 GiB)
+            of memory will be needed for their chunk caches, and if
+            this is too much then the chunk cache should be reduced.
+
+            See the netCDF-C library documentation for
+            `nc_set_var_chunk_cache` for details.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         fletcher32: `bool`, optional
             If True then the Fletcher-32 HDF5 checksum algorithm is
             activated to detect compression errors. Ignored if
@@ -749,6 +774,7 @@ class write(ReadWrite):
         single=False,
         double=False,
         least_significant_digit=None,
+        chunk_cache=None,
         endian="native",
         compress=4,
         fletcher32=False,
@@ -810,6 +836,7 @@ class write(ReadWrite):
             Conventions=Conventions,
             datatype=datatype,
             least_significant_digit=least_significant_digit,
+            chunk_cache=chunk_cache,
             endian=endian,
             compress=compress,
             shuffle=shuffle,

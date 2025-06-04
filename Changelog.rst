@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* New keyword parameter to `cfdm.write`: ``chunk_cache``
+  (https://github.com/NCAS-CMS/cfdm/issues/328)
 * Read Zarr datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/335)
 * Read multiple datasets simultaneously with `cfdm.read`
