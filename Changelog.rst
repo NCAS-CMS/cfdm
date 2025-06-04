@@ -5,8 +5,14 @@ Version NEXTVERSION
 
 * Implement lossy compression via quantization
   (https://github.com/NCAS-CMS/cfdm/issues/330)
-* New class: `cfdm.Quantization`
-* New class: `cfdm.mixin.QuantizationMixin`
+* New quantization classes: `cfdm.Quantization`,
+  `cfdm.mixin.QuantizationMixin`
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
+* New quantization methods: `cfdm.Field.get_quantization`,
+  `cfdm.Field.get_quantize_on_write`,
+  `cfdm.Field.set_quantize_on_write`,
+  `cfdm.Field.del_quantize_on_write`
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
 * Read Zarr datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/335)
 * Read multiple datasets simultaneously with `cfdm.read`

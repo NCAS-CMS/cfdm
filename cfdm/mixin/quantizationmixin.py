@@ -53,14 +53,18 @@ class QuantizationMixin:
     def _del_quantization(self, default=ValueError()):
         """Remove quantization metadata.
 
-        The quantization metadata describes any existing quantization
-        that has already been applied to the data. Removing the
+        Quantization eliminates false precision, usually by rounding
+        the least significant bits of floating-point mantissas to
+        zeros, so that a subsequent compression on disk is more
+        efficient.
+
+        Quantization metadata describes any existing quantization that
+        has already been applied to the data. Removing the
         quantization metadata does not change the data in any way, and
         will not cause the data to be quantized when written to a
-        netCDF dataset.
-
-        .. warning:: Removing quantization metadata does not change
-                     the actual quantization (if any) of the data.
+        netCDF dataset. If the data has in fact been quantized, then
+        it is up to the user to set new quantization metadata to
+        describe this, with `_set_quantization`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -97,14 +101,20 @@ class QuantizationMixin:
     def _set_quantization(self, quantization, copy=True):
         """Set quantization metadata.
 
-        The quantization metadata describes any existing quantization
-        that has already been applied to the data. Setting
-        quantization metadata does not change the data in any way, and
-        will not cause the data to be quantized when written to a
-        netCDF dataset.
+        Quantization eliminates false precision, usually by rounding
+        the least significant bits of floating-point mantissas to
+        zeros, so that a subsequent compression on disk is more
+        efficient.
 
-        Any existing quantization metadata are removed prior to the
-        new setting.
+        Quantization metadata describes any existing quantization that
+        has already been applied to the data. Any existing
+        quantization metadata are removed prior to the new
+        setting. Setting quantization metadata does not change the
+        data in any way, and will not cause the data to be quantized
+        when written to a netCDF dataset. It is up to the user to
+        ensure that the new quantization metadata is consistent with
+        the data, i.e. that the data has in fact been quantized in the
+        manner described by the new quantization metadata.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -207,8 +217,8 @@ class QuantizationMixin:
         zeros, so that a subsequent compression on disk is more
         efficient.
 
-        The quantization metadata describes any existing quantization
-        that has already been applied to the data.
+        Quantization metadata describes any existing quantization that
+        has already been applied to the data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
