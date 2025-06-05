@@ -20,6 +20,7 @@ Booleans
 bool
 broadcastable
 Caron
+cdl
 CellConnectivity
 CellMeasure
 CellMethod
@@ -81,6 +82,7 @@ FieldAncillary
 FillValue
 fletcher
 fmt
+followlinks
 fortran
 fromconstructs
 fromkeys
@@ -223,8 +225,11 @@ uri
 url
 unselected
 unsqueeze
+unstandardised
 varid
 verboseness
 versionadded
 vlen
+xarray
+Zarr
 ZarrArray
