@@ -676,11 +676,11 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(9)
         self.assertTrue(d.equals(d.transpose()))
 
-        # HDF5 chunks
+        # Dataset chunks
         d = cfdm.Data(np.arange(12).reshape(1, 4, 3))
-        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        d.nc_set_dataset_chunksizes((1, 4, 3))
         d.transpose(inplace=True)
-        self.assertEqual(d.nc_hdf5_chunksizes(), (3, 4, 1))
+        self.assertEqual(d.nc_dataset_chunksizes(), (3, 4, 1))
 
     def test_Data_unique(self):
         """Test Data.unique."""
@@ -698,11 +698,11 @@ class DataTest(unittest.TestCase):
             (u.array == np.ma.array([1, 2, 4, -99], mask=[0, 0, 0, 1])).all()
         )
 
-        # HDF5 chunks
+        # Dataset chunks
         d = cfdm.Data(np.arange(12).reshape(1, 4, 3))
-        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        d.nc_set_dataset_chunksizes((1, 4, 3))
         e = d.unique()
-        self.assertIsNone(e.nc_hdf5_chunksizes())
+        self.assertIsNone(e.nc_dataset_chunksizes())
 
     def test_Data_equals(self):
         """Test Data.equals."""
@@ -1100,21 +1100,21 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.max(axes=0)
 
-        # HDF5 chunks
+        # Dataset chunks
         d = cfdm.Data(np.arange(12).reshape(1, 4, 3))
-        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        d.nc_set_dataset_chunksizes((1, 4, 3))
         e = d.squeeze()
-        self.assertEqual(e.nc_hdf5_chunksizes(), (4, 3))
+        self.assertEqual(e.nc_dataset_chunksizes(), (4, 3))
         e = d.max(axes=1)
-        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 1, 3))
+        self.assertEqual(e.nc_dataset_chunksizes(), (1, 1, 3))
         e = d.min(axes=1)
-        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 1, 3))
+        self.assertEqual(e.nc_dataset_chunksizes(), (1, 1, 3))
         e = d.sum(axes=1)
-        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 1, 3))
+        self.assertEqual(e.nc_dataset_chunksizes(), (1, 1, 3))
         e = d.max(axes=1, squeeze=True)
-        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 3))
+        self.assertEqual(e.nc_dataset_chunksizes(), (1, 3))
         e = d.sum(axes=1, squeeze=True)
-        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 3))
+        self.assertEqual(e.nc_dataset_chunksizes(), (1, 3))
 
     def test_Data_dtype_mask(self):
         """Test the dtype and mask Data methods."""
@@ -1251,12 +1251,12 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.insert_dimension(1000)
 
-        # HDF5 chunks
-        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        # Dataset chunks
+        d.nc_set_dataset_chunksizes((1, 4, 3))
         d.insert_dimension(0, inplace=True)
-        self.assertEqual(d.nc_hdf5_chunksizes(), (1, 1, 4, 3))
+        self.assertEqual(d.nc_dataset_chunksizes(), (1, 1, 4, 3))
         d.insert_dimension(-1, inplace=True)
-        self.assertEqual(d.nc_hdf5_chunksizes(), (1, 1, 4, 3, 1))
+        self.assertEqual(d.nc_dataset_chunksizes(), (1, 1, 4, 3, 1))
 
         array = np.arange(12).reshape(3, 4)
         d = cfdm.Data(array)
@@ -2101,11 +2101,11 @@ class DataTest(unittest.TestCase):
         b = d.array[0, [1, 3, 4], :][[True, False, True], ::-2]
         self.assertTrue((a == b).all())
 
-        # HDF5 chunks
+        # Dataset chunks
         d = cfdm.Data(np.arange(12).reshape(1, 4, 3))
-        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        d.nc_set_dataset_chunksizes((1, 4, 3))
         e = d[0, :2, :]
-        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 2, 3))
+        self.assertEqual(e.nc_dataset_chunksizes(), (1, 2, 3))
 
         # Integer-list indices that trigger dask optimisation (e.g. a
         # non-monotonic integer list that spans multiple chunks, and
@@ -2467,32 +2467,32 @@ class DataTest(unittest.TestCase):
             [(0, 0, 0), (0, 0, 1), (0, 0, 2), (1, 0, 0), (1, 0, 1), (1, 0, 2)],
         )
 
-    def test_Data_hdf5_chunksizes(self):
-        """Test Data.nc_hdf5_chunksizes."""
+    def test_Data_dataset_chunksizes(self):
+        """Test Data.nc_dataset_chunksizes."""
         d = cfdm.Data(np.arange(24).reshape(2, 3, 4))
-        self.assertIsNone(d.nc_hdf5_chunksizes())
-        self.assertIsNone(d.nc_set_hdf5_chunksizes([2, 2, 2]))
-        self.assertEqual(d.nc_hdf5_chunksizes(), (2, 2, 2))
-        self.assertEqual(d.nc_clear_hdf5_chunksizes(), (2, 2, 2))
-        self.assertIsNone(d.nc_hdf5_chunksizes())
+        self.assertIsNone(d.nc_dataset_chunksizes())
+        self.assertIsNone(d.nc_set_dataset_chunksizes([2, 2, 2]))
+        self.assertEqual(d.nc_dataset_chunksizes(), (2, 2, 2))
+        self.assertEqual(d.nc_clear_dataset_chunksizes(), (2, 2, 2))
+        self.assertIsNone(d.nc_dataset_chunksizes())
 
-        self.assertIsNone(d.nc_set_hdf5_chunksizes("contiguous"))
-        self.assertEqual(d.nc_hdf5_chunksizes(), "contiguous")
-        self.assertEqual(d.nc_clear_hdf5_chunksizes(), "contiguous")
-        self.assertIsNone(d.nc_hdf5_chunksizes())
+        self.assertIsNone(d.nc_set_dataset_chunksizes("contiguous"))
+        self.assertEqual(d.nc_dataset_chunksizes(), "contiguous")
+        self.assertEqual(d.nc_clear_dataset_chunksizes(), "contiguous")
+        self.assertIsNone(d.nc_dataset_chunksizes())
 
-        self.assertIsNone(d.nc_set_hdf5_chunksizes(None))
-        self.assertIsNone(d.nc_hdf5_chunksizes())
+        self.assertIsNone(d.nc_set_dataset_chunksizes(None))
+        self.assertIsNone(d.nc_dataset_chunksizes())
 
-        d.nc_clear_hdf5_chunksizes()
-        d.nc_set_hdf5_chunksizes({1: 2})
-        self.assertEqual(d.nc_hdf5_chunksizes(), (2, 2, 4))
-        d.nc_set_hdf5_chunksizes({0: 1, 2: 3})
-        self.assertEqual(d.nc_hdf5_chunksizes(), (1, 2, 3))
+        d.nc_clear_dataset_chunksizes()
+        d.nc_set_dataset_chunksizes({1: 2})
+        self.assertEqual(d.nc_dataset_chunksizes(), (2, 2, 4))
+        d.nc_set_dataset_chunksizes({0: 1, 2: 3})
+        self.assertEqual(d.nc_dataset_chunksizes(), (1, 2, 3))
 
         for chunksizes in (1024, "1 KiB"):
-            self.assertIsNone(d.nc_set_hdf5_chunksizes(chunksizes))
-            self.assertEqual(d.nc_clear_hdf5_chunksizes(), 1024)
+            self.assertIsNone(d.nc_set_dataset_chunksizes(chunksizes))
+            self.assertEqual(d.nc_clear_dataset_chunksizes(), 1024)
 
         # Bad chunk sizes
         for chunksizes in (
@@ -2504,20 +2504,22 @@ class DataTest(unittest.TestCase):
             {2: 3.14},
         ):
             with self.assertRaises(ValueError):
-                d.nc_set_hdf5_chunksizes(chunksizes)
+                d.nc_set_dataset_chunksizes(chunksizes)
 
         # todict
-        d.nc_set_hdf5_chunksizes([2, 3, 4])
-        self.assertEqual(d.nc_hdf5_chunksizes(todict=True), {0: 2, 1: 3, 2: 4})
+        d.nc_set_dataset_chunksizes([2, 3, 4])
+        self.assertEqual(
+            d.nc_dataset_chunksizes(todict=True), {0: 2, 1: 3, 2: 4}
+        )
 
         for chunksizes in (None, "contiguous", 1024):
-            d.nc_set_hdf5_chunksizes(chunksizes)
+            d.nc_set_dataset_chunksizes(chunksizes)
             with self.assertRaises(ValueError):
-                d.nc_hdf5_chunksizes(todict=True)
+                d.nc_dataset_chunksizes(todict=True)
 
         # full axis size
-        d.nc_set_hdf5_chunksizes([-1, None, 999])
-        self.assertEqual(d.nc_hdf5_chunksizes(), d.shape)
+        d.nc_set_dataset_chunksizes([-1, None, 999])
+        self.assertEqual(d.nc_dataset_chunksizes(), d.shape)
 
     def test_Data_masked_where(self):
         """Test Data.masked_where."""

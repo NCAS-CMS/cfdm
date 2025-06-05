@@ -264,33 +264,37 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(cfdm.abspath("file.nc"), f"{cwd}/file.nc")
         self.assertEqual(cfdm.abspath("../file.nc"), f"{cwd_m1}/file.nc")
         self.assertEqual(cfdm.abspath("file:///file.nc"), "file:///file.nc")
-        self.assertEqual(cfdm.abspath("file://file.nc"), f"file://{cwd}")
-        self.assertEqual(cfdm.abspath("file:/file.nc"), "file:///file.nc")
+        self.assertEqual(
+            cfdm.abspath("file://file.nc"), f"file://file.nc{cwd}"
+        )
+        self.assertEqual(cfdm.abspath("file:/file.nc"), "file:/file.nc")
         self.assertEqual(cfdm.abspath("http:///file.nc"), "http:///file.nc")
-        self.assertEqual(cfdm.abspath("http://file.nc"), "http://")
-        self.assertEqual(cfdm.abspath("http:/file.nc"), "http:///file.nc")
+        self.assertEqual(cfdm.abspath("http://file.nc"), "http://file.nc")
+        self.assertEqual(cfdm.abspath("http:/file.nc"), "http:/file.nc")
 
         self.assertEqual(
-            cfdm.abspath("file.nc", uri=True), f"file://{cwd}/file.nc"
+            cfdm.abspath("file.nc", uri=True), f"file:{cwd}/file.nc"
         )
         self.assertEqual(
-            cfdm.abspath("../file.nc", uri=True), f"file://{cwd_m1}/file.nc"
+            cfdm.abspath("../file.nc", uri=True), f"file:{cwd_m1}/file.nc"
         )
         self.assertEqual(
             cfdm.abspath("file:///file.nc", uri=True), "file:///file.nc"
         )
         self.assertEqual(
-            cfdm.abspath("file://file.nc", uri=True), f"file://{cwd}"
+            cfdm.abspath("file://file.nc", uri=True), f"file://file.nc{cwd}"
         )
         self.assertEqual(
-            cfdm.abspath("file:/file.nc", uri=True), "file:///file.nc"
+            cfdm.abspath("file:/file.nc", uri=True), "file:/file.nc"
         )
         self.assertEqual(
             cfdm.abspath("http:///file.nc", uri=True), "http:///file.nc"
         )
-        self.assertEqual(cfdm.abspath("http://file.nc", uri=True), "http://")
         self.assertEqual(
-            cfdm.abspath("http:/file.nc", uri=True), "http:///file.nc"
+            cfdm.abspath("http://file.nc", uri=True), "http://file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("http:/file.nc", uri=True), "http:/file.nc"
         )
 
         self.assertEqual(cfdm.abspath("file.nc", uri=False), f"{cwd}/file.nc")

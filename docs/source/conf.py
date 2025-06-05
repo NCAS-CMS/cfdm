@@ -132,6 +132,7 @@ intersphinx_mapping = {
     # 'netCDF4': ('https://unidata.github.io/netcdf4-python/', None),
     "cftime": ("https://unidata.github.io/cftime", None),
     "h5netcdf": ("https://h5netcdf.org", None),
+    "zarr": ("https://zarr.readthedocs.io", None),
 }
 
 # This extension is meant to help with the common pattern of having
