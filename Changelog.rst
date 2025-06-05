@@ -13,6 +13,8 @@ Version NEXTVERSION
   `cfdm.Field.set_quantize_on_write`,
   `cfdm.Field.del_quantize_on_write`
   (https://github.com/NCAS-CMS/cfdm/issues/330)
+* Improve performance in `cfdm.read` by caching any array values
+  retrieved from disk (https://github.com/NCAS-CMS/cfdm/issues/313)
 * New keyword parameter to `cfdm.write`: ``chunk_cache``
   (https://github.com/NCAS-CMS/cfdm/issues/328)
 * Read Zarr datasets with `cfdm.read`

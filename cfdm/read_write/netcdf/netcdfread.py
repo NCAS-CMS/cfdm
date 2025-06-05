@@ -1453,6 +1453,9 @@ class NetCDFRead(IORead):
             # Maps variable names to their quantization container
             # variable names
             "quantization": {},
+            # Cached data elements, keyed by variable names.
+            # --------------------------------------------------------
+            "cached_data_elements": {},
         }
 
         g = self.read_vars
@@ -11634,6 +11637,17 @@ class NetCDFRead(IORead):
         else:
             variable = g["variables"].get(ncvar)
 
+        # Check for cached data elements and use them if they exist
+        elements = g["cached_data_elements"].get(ncvar)
+        if elements is not None:
+            # Store the cached elements in the data object
+            data._set_cached_elements(elements)
+            return
+
+        # ------------------------------------------------------------
+        # Still here? then there were no cached data elements, so we
+        #             have to create them.
+        # ------------------------------------------------------------
         # Get the required element values
         size = data.size
         ndim = data.ndim
@@ -11728,6 +11742,9 @@ class NetCDFRead(IORead):
                 value = np.ma.masked_where(a == "", a)
 
             elements[index] = value
+
+        # Cache the cached data elements for this variable
+        g["cached_data_elements"][ncvar] = elements
 
         # Store the elements in the data object
         data._set_cached_elements(elements)
