@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.2.0</a></h1>
 
 
 
@@ -126,8 +126,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Field">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/field.py#L34-L3396"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFComponents</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFUnreferenced</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.field.Field</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/field.py#L35-L3409"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.quantizationmixin.QuantizationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFComponents</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFUnreferenced</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
 all the other constructs. A field corresponds to a CF-netCDF data
@@ -169,9 +169,9 @@ accessed with the <a class="reference internal" href="../method/cfdm.Field.nc_se
 <a class="reference internal" href="../method/cfdm.Field.nc_get_geometry_variable.html#cfdm.Field.nc_get_geometry_variable" title="cfdm.Field.nc_get_geometry_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_geometry_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Field.nc_geometry_variable_groups.html#cfdm.Field.nc_geometry_variable_groups" title="cfdm.Field.nc_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_geometry_variable_groups</span></code></a>,
 <a class="reference internal" href="../method/cfdm.Field.nc_clear_variable_groups.html#cfdm.Field.nc_clear_variable_groups" title="cfdm.Field.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a>, and <a class="reference internal" href="../method/cfdm.Field.nc_set_geometry_variable_groups.html#cfdm.Field.nc_set_geometry_variable_groups" title="cfdm.Field.nc_set_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_geometry_variable_groups</span></code></a>
 methods.</p>
-<p>The netCDF4 HDF5 chunks may be accessed with the
-<a class="reference internal" href="../method/cfdm.Field.nc_hdf5_chunksizes.html#cfdm.Field.nc_hdf5_chunksizes" title="cfdm.Field.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>, <a class="reference internal" href="../method/cfdm.Field.nc_set_hdf5_chunksizes.html#cfdm.Field.nc_set_hdf5_chunksizes" title="cfdm.Field.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a>, and
-<a class="reference internal" href="../method/cfdm.Field.nc_clear_hdf5_chunksizes.html#cfdm.Field.nc_clear_hdf5_chunksizes" title="cfdm.Field.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a> methods.</p>
+<p>The dataset chunks may be accessed with the
+<a class="reference internal" href="../method/cfdm.Field.nc_dataset_chunksizes.html#cfdm.Field.nc_dataset_chunksizes" title="cfdm.Field.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a>, <a class="reference internal" href="../method/cfdm.Field.nc_set_dataset_chunksizes.html#cfdm.Field.nc_set_dataset_chunksizes" title="cfdm.Field.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a>, and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_datset_chunksizes</span></code> methods.</p>
 <p>Some components exist within multiple constructs, but when written
 to a netCDF dataset the netCDF names associated with such
 components will be arbitrarily taken from one of them. The netCDF
@@ -380,9 +380,39 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
+<section id="quantization">
+<h3>Quantization<a class="headerlink" href="#quantization" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.get_quantization.html#cfdm.Field.get_quantization" title="cfdm.Field.get_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantization</span></code></a></p></td>
+<td><p>Get quantization metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field._set_quantization.html#cfdm.Field._set_quantization" title="cfdm.Field._set_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_set_quantization</span></code></a></p></td>
+<td><p>Set quantization metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field._del_quantization.html#cfdm.Field._del_quantization" title="cfdm.Field._del_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_del_quantization</span></code></a></p></td>
+<td><p>Remove quantization metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.get_quantize_on_write.html#cfdm.Field.get_quantize_on_write" title="cfdm.Field.get_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantize_on_write</span></code></a></p></td>
+<td><p>Get a quantize-on-write instruction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.set_quantize_on_write.html#cfdm.Field.set_quantize_on_write" title="cfdm.Field.set_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_quantize_on_write</span></code></a></p></td>
+<td><p>Set a quantize-on-write instruction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.del_quantize_on_write.html#cfdm.Field.del_quantize_on_write" title="cfdm.Field.del_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_quantize_on_write</span></code></a></p></td>
+<td><p>Remove a quantize-on-write instruction.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="metadata-constructs">
-<h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
+<span id="field-metadata-constructs"></span><h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -695,8 +725,8 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 </section>
-<section id="hdf5-chunks">
-<h3>HDF5 chunks<a class="headerlink" href="#hdf5-chunks" title="Permalink to this headline">¶</a></h3>
+<section id="dataset-chunks">
+<h3>Dataset chunks<a class="headerlink" href="#dataset-chunks" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -704,14 +734,14 @@ parameters are not deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_hdf5_chunksizes.html#cfdm.Field.nc_hdf5_chunksizes" title="cfdm.Field.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_dataset_chunksizes.html#cfdm.Field.nc_dataset_chunksizes" title="cfdm.Field.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a></p></td>
+<td><p>Get the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_set_hdf5_chunksizes.html#cfdm.Field.nc_set_hdf5_chunksizes" title="cfdm.Field.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Set the HDF5 chunking strategy.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_set_dataset_chunksizes.html#cfdm.Field.nc_set_dataset_chunksizes" title="cfdm.Field.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p></td>
+<td><p>Set the dataset chunking strategy.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_clear_hdf5_chunksizes.html#cfdm.Field.nc_clear_hdf5_chunksizes" title="cfdm.Field.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Clear the HDF5 chunking strategy.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_clear_dataset_chunksizes.html#cfdm.Field.nc_clear_dataset_chunksizes" title="cfdm.Field.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a></p></td>
+<td><p>Clear the dataset chunking strategy.</p></td>
 </tr>
 </tbody>
 </table>
@@ -828,6 +858,27 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 </section>
+<section id="deprecated">
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_clear_hdf5_chunksizes.html#cfdm.Field.nc_clear_hdf5_chunksizes" title="cfdm.Field.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_hdf5_chunksizes.html#cfdm.Field.nc_hdf5_chunksizes" title="cfdm.Field.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_set_hdf5_chunksizes.html#cfdm.Field.nc_set_hdf5_chunksizes" title="cfdm.Field.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 
 
@@ -839,7 +890,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-01.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

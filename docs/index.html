@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="#">cfdm 1.12.1.0</a></h1>
+<h1 class="logo"><a href="#">cfdm 1.12.2.0</a></h1>
 
 
 
@@ -121,7 +121,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <style> .small {font-size:small} </style><section id="introduction">
 <h2><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
-<p>Version 1.12.1.0 for version 1.12 of the CF conventions.</p>
+<p>Version 1.12.2.0 for version 1.12 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#functionality" id="id4"><strong>Functionality</strong></a></p></li>
@@ -181,13 +181,13 @@ file and inspecting it.</em></span><a class="headerlink" href="#id2" title="Perm
 </pre></div>
 </div>
 </div>
-<p>The cfdm package can</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code> package can</p>
 <ul class="simple">
 <li><p>read <a class="reference internal" href="cf_data_model.html#term-field-construct"><span class="xref std std-term">field constructs</span></a> and <a class="reference internal" href="cf_data_model.html#term-domain-construct"><span class="xref std std-term">domain
-constructs</span></a> from netCDF and CDL datasets with a
-choice of netCDF backends,</p></li>
-<li><p>be fully flexible with respect to HDF5 chunking,</p></li>
+constructs</span></a> from netCDF, CDL, and Zarr datasets
+with a choice of netCDF backends,</p></li>
 <li><p>read files from OPeNDAP servers and S3 object stores,</p></li>
+<li><p>be fully flexible with respect to dataset chunking,</p></li>
 <li><p>create new field and domain constructs in memory,</p></li>
 <li><p>write field and domain constructs to netCDF datasets on disk,</p></li>
 <li><p>read, write, and manipulate UGRID mesh topologies,</p></li>
@@ -199,11 +199,13 @@ hierarchical groups,</p></li>
 <li><p>test whether two constructs are the same,</p></li>
 <li><p>modify field and domain construct metadata and data,</p></li>
 <li><p>create subspaces of field and domain constructs,</p></li>
-<li><p>incorporate, and create, metadata stored in external files, and</p></li>
+<li><p>incorporate, and create, metadata stored in external files,</p></li>
 <li><p>read, write, and create data that have been compressed by convention
 (i.e. ragged or gathered arrays, or coordinate arrays compressed by
 subsampling), whilst presenting a view of the data in its
-uncompressed form.</p></li>
+uncompressed form, and</p></li>
+<li><p>read and write that data that are quantized to eliminate false
+precision.</p></li>
 </ul>
 <p>Note that the cfdm package enables the representation and creation of
 CF field constructs, but it is largely <a class="reference internal" href="philosophy.html#cf-conventions"><span class="std std-ref">up to the user to use
@@ -228,9 +230,9 @@ outside of a Python environment:</p>
 <hr class="docutils" />
 <section id="performance">
 <h3><a class="toc-backref" href="#id5"><strong>Performance</strong></a><a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h3>
-<p>As of version 1.11.2.0 (released 2025-01-28), cfdm uses <a class="reference external" href="https://docs.dask.org">Dask</a> for all of its data manipulations, which
-provides lazy, parallelised, and out-of-core computations of array
-operations.</p>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code> package uses <a class="reference internal" href="performance.html#performance"><span class="std std-ref">Dask</span></a> for all of its data
+manipulations, which provides lazy, parallelised, and out-of-core
+computations of array operations.</p>
 </section>
 <hr class="docutils" />
 <section id="command-line-utilities">
@@ -342,7 +344,7 @@ Hydrology. AMS. Retrieved from
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-01.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
