@@ -1335,6 +1335,13 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read("ugrid_[12].nc")
         self.assertEqual(len(f), 6)
 
+    def test_write_chunk_cache(self):
+        """Test the cfdm.write 'chunk_cache' keyword."""
+        f = self.f0
+        for fmt in ("NETCDF3_CLASSIC", "NETCDF4"):
+            for chunk_cache in (None, 4194304):
+                cfdm.write(f, tmpfile, fmt=fmt, chunk_cache=chunk_cache)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
