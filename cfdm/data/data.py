@@ -5963,7 +5963,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         .. versionadded:: (cfdm) 1.8.0
 
-         ..seealso:: `min`, `sum`
+        .. seealso:: `min`, `sum`
 
         :Parameters:
 
@@ -6019,7 +6019,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         .. versionadded:: (cfdm) 1.8.0
 
-         ..seealso:: `max`, `sum`
+        .. seealso:: `max`, `sum`
 
         :Parameters:
 
@@ -6828,7 +6828,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `max`, `min`
+        .. seealso:: `max`, `min`
 
         :Parameters:
 
