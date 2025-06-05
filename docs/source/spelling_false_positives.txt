@@ -92,6 +92,7 @@ Geosci
 geosciences
 geospatial
 getitem
+GiB
 Hankin
 hardmask
 Hartnett
