@@ -338,7 +338,7 @@ def _disable_logging(at_level=None):
 def _get_module_info(module, alternative_name=False, try_except=False):
     """Helper function for processing modules for `environment`.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.2.0
 
     """
     import importlib
@@ -398,7 +398,7 @@ def environment(display=True, paths=True):
     Python: 3.12.8 /home/miniconda3/bin/python
     packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
     numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
-    cfdm.core: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
+    cfdm.core: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
     udunits2 library: libudunits2.so.0
     HDF5 library: 1.14.2
     netcdf library: 4.9.4-development
@@ -411,14 +411,14 @@ def environment(display=True, paths=True):
     dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
     cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py
     cfunits: 3.3.7 /home/miniconda3/lib/python3.12/site-packages/cfunits/__init__.py
-    cfdm: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/__init__.py
+    cfdm: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/__init__.py
 
     >>> cfdm.environment(paths=False)
     Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
     Python: 3.12.8
     packaging: 24.2
     numpy: 2.2.6
-    cfdm.core: NEXTVERSION
+    cfdm.core: 1.12.2.0
     udunits2 library: libudunits2.so.0
     HDF5 library: 1.14.2
     netcdf library: 4.9.4-development
@@ -431,7 +431,7 @@ def environment(display=True, paths=True):
     dask: 2025.5.1
     cftime: 1.6.4.post1
     cfunits: 3.3.7
-    cfdm: NEXTVERSION
+    cfdm: 1.12.2.0
 
     """
     import ctypes
@@ -2416,7 +2416,7 @@ def _DEPRECATION_ERROR_METHOD(
 ):
     """Error handling for deprecated kwargs methods.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.2.0
 
     """
     if version is None:

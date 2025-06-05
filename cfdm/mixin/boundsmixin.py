@@ -1,7 +1,7 @@
 class BoundsMixin:
     """Mixin class for a bounds variable.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.2.0
 
     """
 
@@ -12,7 +12,7 @@ class BoundsMixin:
         `_Container__parent_initialise_from_source`, which in turn is
         called by `cfdm.core.Container.__init__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 

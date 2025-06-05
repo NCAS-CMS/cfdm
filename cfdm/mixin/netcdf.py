@@ -27,7 +27,7 @@ class NetCDFMixin:
         `_Container__parent_initialise_from_source`, which in turn is
         called by `cfdm.core.Container.__init__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -59,7 +59,7 @@ class NetCDFMixin:
         If the dictionary does not exist then an empty dictionary is
         automatically created and stored.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `_set_netcdf`
 
@@ -296,7 +296,7 @@ class NetCDFMixin:
         If the component does not exist then it is automatically
         created.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `_get_netcdf`
 
@@ -2517,14 +2517,14 @@ class NetCDFChunks(NetCDFMixin):
 
     This class replaces the deprecated `NetCDFHDF5` class.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.2.0
 
     """
 
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 1.12.2.0 and is no longer
         available. Use `nc_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.7.2
@@ -2534,14 +2534,14 @@ class NetCDFChunks(NetCDFMixin):
             self,
             "nc_hdf5_chunksizes",
             "Use `nc_dataset_chunksizes` instead.",
-            version="NEXTVERSION",
+            version="1.12.2.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def nc_dataset_chunksizes(self, todict=False):
         """Get the dataset chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `nc_clear_dataset_chunksizes`,
                      `nc_set_dataset_chunksizes`, `{{package}}.read`,
@@ -2595,7 +2595,7 @@ class NetCDFChunks(NetCDFMixin):
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 1.12.2.0 and is no longer
         available. Use `nc_clear_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.7.2
@@ -2605,14 +2605,14 @@ class NetCDFChunks(NetCDFMixin):
             self,
             "nc_clear_hdf5_chunksizes",
             "Use `nc_clear_dataset_chunksizes` instead.",
-            version="NEXTVERSION",
+            version="1.12.2.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def nc_clear_dataset_chunksizes(self):
         """Clear the dataset chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `nc_dataset_chunksizes`,
                      `nc_set_dataset_chunksizes`, `{{package}}.read`,
@@ -2645,7 +2645,7 @@ class NetCDFChunks(NetCDFMixin):
     def nc_set_hdf5_chunksizes(self, chunksizes):
         """Set the HDF5 chunking strategy for the data.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 1.12.2.0 and is no longer
         available. Use `nc_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.7.2
@@ -2655,14 +2655,14 @@ class NetCDFChunks(NetCDFMixin):
             self,
             "nc_set_hdf5_chunksizes",
             "Use `nc_set_dataset_chunksizes` instead.",
-            version="NEXTVERSION",
+            version="1.12.2.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def nc_set_dataset_chunksizes(self, chunksizes):
         """Set the dataset chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `nc_dataset_chunksizes`,
                      `nc_clear_dataset_chunksizes`,
@@ -2780,7 +2780,7 @@ class NetCDFChunks(NetCDFMixin):
 class NetCDFHDF5(NetCDFMixin):
     """Mixin class for accessing the netCDF HDF5 chunksizes.
 
-    Deprecated at version NEXTVERSION and is no longer available. Use
+    Deprecated at version 1.12.2.0 and is no longer available. Use
     `NetCDFChunks` instead.
 
     .. versionadded:: (cfdm) 1.7.2
@@ -3615,7 +3615,7 @@ class NetCDFUnreferenced:
         `_Container__parent_initialise_from_source`, which in turn is
         called by `cfdm.core.Container.__init__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 

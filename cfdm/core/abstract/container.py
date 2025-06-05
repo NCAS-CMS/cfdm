@@ -317,7 +317,7 @@ class Container(metaclass=DocstringRewriteMeta):
 
         This method is called by `cfdm.core.Container.__init__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 

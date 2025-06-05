@@ -4872,7 +4872,7 @@ class NetCDFWrite(IOWrite):
 
                 See `cfdm.write` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.2.0
 
             fletcher32: `bool`, optional
                 If True then the Fletcher-32 HDF5 checksum algorithm is
@@ -6367,7 +6367,7 @@ class NetCDFWrite(IOWrite):
                   or "_QuantizeBitRoundNumberOfSignificantBits") have
                   been already been removed from *quantization*.
 
-         .. versionadded:: (cfdm) NEXTVERSION
+         .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 

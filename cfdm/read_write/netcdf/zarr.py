@@ -4,7 +4,7 @@ class ZarrDimension:
     This class defines a Zarr dimension with the same API as
     `netCDF4.Dimension`.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.2.0
 
     """
 
@@ -32,7 +32,7 @@ class ZarrDimension:
 
         x.__len__() <==> len(x)
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         """
         return self.size
@@ -40,7 +40,7 @@ class ZarrDimension:
     def group(self):
         """Return the group that the dimension is a member of.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Returns:
 
@@ -55,7 +55,7 @@ class ZarrDimension:
 
         In Zarr v2 and v3, dimensions can not be unlimited.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Returns:
 

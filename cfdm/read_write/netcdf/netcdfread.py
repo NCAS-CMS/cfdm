@@ -689,7 +689,7 @@ class NetCDFRead(IORead):
     def _open_zarr(self, dataset):
         """Return an open `zarr.Group`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -3256,7 +3256,7 @@ class NetCDFRead(IORead):
     def _parse_quantization(self, parent_ncvar, attributes):
         """Parse a quantization container variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -9263,7 +9263,7 @@ class NetCDFRead(IORead):
     def _check_quantization(self, parent_ncvar, ncvar):
         """Check a quantization container variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -10850,7 +10850,7 @@ class NetCDFRead(IORead):
         If the dataset is a Zarr dataset then an exception is raised
         of the dataset has groups.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -11102,7 +11102,7 @@ class NetCDFRead(IORead):
     def _file_variable_dimensions(self, var):
         """Return the variable dimension names.
 
-         .. versionadded:: (cfdm) NEXTVERSION
+         .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -11872,7 +11872,7 @@ class NetCDFRead(IORead):
 
         Zarr v2 and v3 are supported.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -11895,7 +11895,7 @@ class NetCDFRead(IORead):
     def _create_quantization(self, ncvar):
         """Create quantization metadata.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -11919,7 +11919,7 @@ class NetCDFRead(IORead):
     def _set_quantization(self, parent, ncvar):
         """Set a quantization metadata on a construct.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 

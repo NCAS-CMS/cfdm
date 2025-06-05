@@ -258,7 +258,7 @@ class CFDMImplementation(Implementation):
     def del_parameter(self, parent, parameter, default=None):
         """Delete a parameter from a component.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -1075,21 +1075,21 @@ class CFDMImplementation(Implementation):
     def nc_get_hdf5_chunksizes(self, data):
         """Get the HDF5 chunking strategy for the data.
 
-        Deprecated at NEXTVERSION and is no longer available. Use
+        Deprecated at 1.12.2.0 and is no longer available. Use
         `nc_get_dataset_chunksizes` instead.
 
         ..versionadded:: (cfdm) 1.7.2
 
         """
         raise NotImplementedError(
-            "Deprecated at version NEXTVERSION. "
+            "Deprecated at version 1.12.2.0. "
             "Use 'nc_get_dataset_chunksizes' instead."
         )
 
     def nc_get_dataset_chunksizes(self, data):
         """Get the dataset chunking strategy for the data.
 
-        ..versionadded:: (cfdm) NEXTVERSION
+        ..versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -1214,7 +1214,7 @@ class CFDMImplementation(Implementation):
     def nc_set_dataset_chunksizes(self, data, chunksizes):
         """Set the dataset chunking strategy for the data.
 
-        ..versionadded:: (cfdm) NEXTVERSION
+        ..versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -1234,21 +1234,21 @@ class CFDMImplementation(Implementation):
     def nc_set_hdf5_chunksizes(self, data, chunksizes):
         """Set the HDF5 chunking strategy for the data.
 
-        Deprecated at NEXTVERSION and is no longer available. Use
+        Deprecated at 1.12.2.0 and is no longer available. Use
         `nc_set_dataset_chunksizes` instead.
 
         ..versionadded:: (cfdm) 1.11.2.0
 
         """
         raise NotImplementedError(
-            "Deprecated at version NEXTVERSION. "
+            "Deprecated at version 1.12.2.0. "
             "Use 'nc_set_dataset_chunksizes' instead."
         )
 
     def parameters(self, parent):
         """Return all parameters from a component.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -1685,7 +1685,7 @@ class CFDMImplementation(Implementation):
     def get_parameter(self, parent, parameter, default=None):
         """Get a parameter value from a component.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -2468,7 +2468,7 @@ class CFDMImplementation(Implementation):
     def initialise_Quantization(self, **kwargs):
         """Return a quantization metadata class.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -2534,7 +2534,7 @@ class CFDMImplementation(Implementation):
     def initialise_ZarrArray(self, **kwargs):
         """Return a `ZarrArray` instance.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -3562,7 +3562,7 @@ class CFDMImplementation(Implementation):
     def set_parameter(self, parent, parameter, value, copy=True):
         """Set a parameter on a component.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -3610,7 +3610,7 @@ class CFDMImplementation(Implementation):
     def set_quantization(self, parent, quantization, copy=True):
         """Set quantization metadata.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 

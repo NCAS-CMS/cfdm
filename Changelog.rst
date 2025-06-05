@@ -1,7 +1,7 @@
-Version NEXTVERSION
+Version 1.12.2.0
 ----------------
 
-**2025-??-??**
+**2025-06-05**
 
 * Implement lossy compression via quantization
   (https://github.com/NCAS-CMS/cfdm/issues/330)

@@ -2734,7 +2734,7 @@ class Field(
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 1.12.2.0 and is no longer
         available. Use `nc_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -2744,14 +2744,14 @@ class Field(
             self,
             "nc_hdf5_chunksizes",
             "Use `nc_dataset_chunksizes` instead.",
-            version="NEXTVERSION",
+            version="1.12.2.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def nc_dataset_chunksizes(self, todict=False):
         """Get the dataset chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `nc_clear_dataset_chunksizes`,
                      `nc_set_dataset_chunksizes`, `{{package}}.read`,
@@ -2795,7 +2795,7 @@ class Field(
     def nc_clear_hdf5_chunksizes(self, constructs=False):
         """Clear the HDF5 chunking strategy.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 1.12.2.0 and is no longer
         available. Use `nc_clear_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -2805,14 +2805,14 @@ class Field(
             self,
             "nc_clear_hdf5_chunksizes",
             "Use `nc_clear_dataset_chunksizes` instead.",
-            version="NEXTVERSION",
+            version="1.12.2.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def nc_clear_dataset_chunksizes(self, constructs=False):
         """Clear the dataset chunking strategy.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `nc_dataset_chunksizes`,
                      `nc_set_hdataset_chunksizes`, `{{package}}.read`,
@@ -2870,7 +2870,7 @@ class Field(
     ):
         """Set the HDF5 chunking strategy.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 1.12.2.0 and is no longer
         available. Use `nc_set_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -2880,7 +2880,7 @@ class Field(
             self,
             "nc_set_hdf5_chunksizes",
             "Use `nc_set_dataset_chunksizes` instead.",
-            version="NEXTVERSION",
+            version="1.12.2.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -2897,7 +2897,7 @@ class Field(
                      `nc_clear_dataset_chunksizes`,
                      `{{package}}.read`, `{{package}}.write`
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 

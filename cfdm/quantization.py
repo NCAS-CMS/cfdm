@@ -54,7 +54,7 @@ class Quantization(
 
     {{netCDF group attributes}}
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.2.0
 
     """
 
@@ -62,7 +62,7 @@ class Quantization(
     def algorithm_parameters(cls):
         """Map CF quantization algorithms to CF algorithm parameters.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Returns:
 

@@ -396,7 +396,7 @@ class write(ReadWrite):
             See the netCDF-C library documentation for
             `nc_set_var_chunk_cache` for details.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.2.0
 
         fletcher32: `bool`, optional
             If True then the Fletcher-32 HDF5 checksum algorithm is

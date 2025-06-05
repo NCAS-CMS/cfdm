@@ -6,14 +6,14 @@ from .netcdfindexer import netcdf_indexer
 class ZarrArray(IndexMixin, abstract.FileArray):
     """A Zarr array accessed with `zarr`.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.2.0
 
     """
 
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `__array__`, `index`
 
@@ -60,7 +60,7 @@ class ZarrArray(IndexMixin, abstract.FileArray):
         they have not already been defined, either during `{{class}}`
         instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -82,7 +82,7 @@ class ZarrArray(IndexMixin, abstract.FileArray):
     def close(self, dataset):
         """Close the dataset containing the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -100,7 +100,7 @@ class ZarrArray(IndexMixin, abstract.FileArray):
     def open(self):
         """Return a dataset file object and address.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Returns:
 

@@ -1,7 +1,7 @@
 class QuantizationMixin:
     """Mixin class for accessing quantization metadata.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.12.2.0
 
     """
 
@@ -12,7 +12,7 @@ class QuantizationMixin:
         `_Container__parent_initialise_from_source`, which in turn is
         called by `cfdm.core.Container.__init__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -65,7 +65,7 @@ class QuantizationMixin:
         the user to set new quantization metadata to describe this,
         with `_set_quantization`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `get_quantization`, `_set_quantization`,
                      `del_quantize_on_write`
@@ -115,7 +115,7 @@ class QuantizationMixin:
         the data, i.e. that the data has in fact been quantized in the
         manner described by the new quantization metadata.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `get_quantization`, `_del_quantization`,
                      `set_quantize_on_write`
@@ -177,7 +177,7 @@ class QuantizationMixin:
         Removing a quantize-on-write instruction means that the data
         will not be quantized when written to disk.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `get_quantize_on_write`, `set_quantize_on_write`,
                      `_del_quantization`
@@ -218,7 +218,7 @@ class QuantizationMixin:
         Quantization metadata describes any existing quantization that
         has already been applied to the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `_del_quantization`, `_set_quantization`,
                      `get_quantize_on_write`
@@ -278,7 +278,7 @@ class QuantizationMixin:
         data in the netCDF dataset on disk, leaving the data in memory
         unchanged.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `set_quantize_on_write`, `del_quantize_on_write`,
                      `get_quantization`
@@ -345,7 +345,7 @@ class QuantizationMixin:
         An existing quantization-on-write instruction is removed prior
         to the new setting.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `get_quantize_on_write`, `del_quantize_on_write`,
                      `_set_quantization`

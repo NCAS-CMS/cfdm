@@ -36,14 +36,14 @@ def environment(display=True, paths=True):
     Python: 3.12.8 /home/miniconda3/bin/python
     packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
     numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
-    cfdm.core: NEXTVERSION /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
+    cfdm.core: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
 
     >>> cfdm.core.environment(paths=False)
     Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
     Python: 3.12.8
     packaging: 24.2
     numpy: 2.2.6
-    cfdm.core: NEXTVERSION
+    cfdm.core: 1.12.2.0
 
     """
     import numpy as np

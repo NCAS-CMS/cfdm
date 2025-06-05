@@ -104,11 +104,11 @@ class read(ReadWrite):
 
         {{read recursive: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.2.0
 
         {{read followlinks: `bool`, optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.2.0
 
         {{read cdl_string: `bool`, optional}}
 
@@ -124,7 +124,7 @@ class read(ReadWrite):
             ``'Zarr'``      A Zarr v2 (xarray) or Zarr v3 dataset
             ==============  ==========================================
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.12.2.0
 
         {{read external: (sequence of) `str`, optional}}
 
@@ -190,7 +190,7 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.12.0.0
 
-        ignore_unknown_type: Deprecated at version NEXTVERSION
+        ignore_unknown_type: Deprecated at version 1.12.2.0
             Use *dataset_type* instead.
 
     :Returns:
@@ -252,7 +252,7 @@ class read(ReadWrite):
     ):
         """Read field or domain constructs from datasets.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         """
         kwargs = locals()
@@ -321,7 +321,7 @@ class read(ReadWrite):
 
         Called by `__new__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Returns:
 
@@ -406,7 +406,7 @@ class read(ReadWrite):
 
         Called by `__new__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Returns:
 
@@ -424,7 +424,7 @@ class read(ReadWrite):
 
         Called by `__new__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Returns:
 
@@ -468,7 +468,7 @@ class read(ReadWrite):
 
         Called by `__new__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -493,7 +493,7 @@ class read(ReadWrite):
 
         Called by `__new__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
@@ -526,7 +526,7 @@ class read(ReadWrite):
 
         Called by `__new__`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 

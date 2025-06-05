@@ -434,7 +434,7 @@ class PropertiesData(Properties):
                 The name of the construct's `Quantization` instance
                 created by the returned commands.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.2.0
 
             {{header: `bool`, optional}}
 
@@ -807,7 +807,7 @@ class PropertiesData(Properties):
         `{{class}}` data can not be quantized, so the default is
         always returned.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `get_quantize_on_write`
 
@@ -845,7 +845,7 @@ class PropertiesData(Properties):
         `{{class}}` data can not be quantized, so the default is
         always returned.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `get_quantization`
 
@@ -926,7 +926,7 @@ class PropertiesData(Properties):
     def nc_clear_dataset_chunksizes(self):
         """Clear the dataset chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `nc_dataset_chunksizes`,
                      `nc_set_dataset_chunksizes`, `{{package}}.read`,
@@ -946,7 +946,7 @@ class PropertiesData(Properties):
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 1.12.2.0 and is no longer
         available. Use `nc_clear_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.12.0.0
@@ -956,14 +956,14 @@ class PropertiesData(Properties):
             self,
             "nc_clear_hdf5_chunksizes",
             "Use `nc_clear_dataset_chunksizes` instead.",
-            version="NEXTVERSION",
+            version="1.12.2.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 1.12.2.0 and is no longer
         available. Use `nc_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -973,14 +973,14 @@ class PropertiesData(Properties):
             self,
             "nc_hdf5_chunksizes",
             "Use `nc_dataset_chunksizes` instead.",
-            version="NEXTVERSION",
+            version="1.12.2.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def nc_dataset_chunksizes(self, todict=False):
         """Get the dataset chunking strategy for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `nc_clear_dataset_chunksizes`,
                      `nc_set_dataset_chunksizes`, `{{package}}.read`,
@@ -1002,7 +1002,7 @@ class PropertiesData(Properties):
     def nc_set_dataset_chunksizes(self, chunksizes):
         """Set the dataset chunking strategy.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `nc_dataset_chunksizes`,
                      `nc_clear_dataset_chunksizes`,
@@ -1027,7 +1027,7 @@ class PropertiesData(Properties):
     def nc_set_hdf5_chunksizes(self, chunksizes):
         """Set the HDF5 chunking strategy.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 1.12.2.0 and is no longer
         available. Use `nc_set_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -1037,7 +1037,7 @@ class PropertiesData(Properties):
             self,
             "nc_set_hdf5_chunksizes",
             "Use `nc_set_dataset_chunksizes` instead.",
-            version="NEXTVERSION",
+            version="1.12.2.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 

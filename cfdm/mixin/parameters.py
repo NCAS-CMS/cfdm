@@ -40,7 +40,7 @@ class Parameters(Container):
     ):
         """Return the commands that would create the component.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         .. seealso:: `{{package}}.Field.creation_commands`
 
@@ -114,7 +114,7 @@ class Parameters(Container):
     ):
         """A full description.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
