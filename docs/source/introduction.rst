@@ -73,7 +73,7 @@ to add more sophisticated methods.
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
 
-The cfdm package can
+The `cfdm` package can
 
 * read :term:`field constructs <field construct>` and :term:`domain
   constructs <domain construct>` from netCDF, CDL, and Zarr datasets
@@ -139,10 +139,9 @@ outside of a Python environment:
 **Performance**
 ---------------
 
-As of version 1.11.2.0 (released 2025-01-28), cfdm uses `Dask
-<https://docs.dask.org>`_ for all of its data manipulations, which
-provides lazy, parallelised, and out-of-core computations of array
-operations.
+The `cfdm` package uses :ref:`Dask <Performance>` for all of its data
+manipulations, which provides lazy, parallelised, and out-of-core
+computations of array operations.
 
 ----
 
