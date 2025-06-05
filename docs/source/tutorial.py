@@ -831,3 +831,5 @@ quantized = cfdm.read('quantized.nc')[0]
 c = quantized.get_quantization()
 c
 c.parameters()
+t[0, 0, 0].array
+quantized[0, 0, 0].array

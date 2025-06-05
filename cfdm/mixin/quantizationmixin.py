@@ -60,11 +60,10 @@ class QuantizationMixin:
 
         Quantization metadata describes any existing quantization that
         has already been applied to the data. Removing the
-        quantization metadata does not change the data in any way, and
-        will not cause the data to be quantized when written to a
-        netCDF dataset. If the data has in fact been quantized, then
-        it is up to the user to set new quantization metadata to
-        describe this, with `_set_quantization`.
+        quantization metadata does not change the data in any way. If
+        the data has in fact already been quantized, then it is up to
+        the user to set new quantization metadata to describe this,
+        with `_set_quantization`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -87,13 +86,13 @@ class QuantizationMixin:
         **Examples**
 
         >>> f.get_quantization()
-        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
+        <{{repr}}Quantization: algorithm=bitgroom, quantization_nsd=4>
         >>> q = f._del_quantization()
         >>> print(f.get_quantization(None))
         None
         >>> f._set_quantization(q)
         >>> f.get_quantization(None)
-        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
+        <{{repr}}Quantization: algorithm=bitgroom, quantization_nsd=4>
 
         """
         return self._del_component("quantization", default)
@@ -108,8 +107,8 @@ class QuantizationMixin:
 
         Quantization metadata describes any existing quantization that
         has already been applied to the data. Any existing
-        quantization metadata are removed prior to the new
-        setting. Setting quantization metadata does not change the
+        quantization metadata are automatically removed prior to the
+        new setting. Setting quantization metadata does not change the
         data in any way, and will not cause the data to be quantized
         when written to a netCDF dataset. It is up to the user to
         ensure that the new quantization metadata is consistent with
@@ -137,13 +136,13 @@ class QuantizationMixin:
         **Examples**
 
         >>> f.get_quantization()
-        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
+        <{{repr}}Quantization: algorithm=bitgroom, quantization_nsd=4>
         >>> q = f._del_quantization()
         >>> print(f.get_quantization(None))
         None
         >>> f._set_quantization(q)
         >>> f.get_quantization()
-        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
+        <{{repr}}Quantization: algorithm=bitgroom, quantization_nsd=4>
 
         """
         q_on_w = self.get_quantize_on_write(None)
@@ -170,11 +169,10 @@ class QuantizationMixin:
         The existence of a quantize-on-write instruction does not mean
         that the data in memory has been quantized, rather it means
         that if the data is written to a netCDF dataset with
-        `{{package}}.write`, then the quantization will be applied at
-        to the data in the netCDF dataset on disk, leaving the data in
-        memory unchanged. Removing a quantize-on-write instruction
-        means that the data will not be quantized when written to
-        disk.
+        `{{package}}.write`, then quantization will be applied to the
+        data in the netCDF dataset on disk, leaving the data in memory
+        unchanged. Removing a quantize-on-write instruction means that
+        the data will not be quantized when written to disk.
 
         Removing a quantize-on-write instruction means that the data
         will not be quantized when written to disk.
@@ -201,7 +199,7 @@ class QuantizationMixin:
 
         >>> f.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=6)
         >>> f.get_quantize_on_write()
-        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=6>
+        <{{repr}}Quantization: algorithm=bitgroom, quantization_nsd=6>
         >>> q = f.del_quantize_on_write()
         >>> print(f.get_quantize_on_write(None))
         None
@@ -241,13 +239,13 @@ class QuantizationMixin:
         **Examples**
 
         >>> f.get_quantization()
-        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
+        <{{repr}}Quantization: algorithm=bitgroom, quantization_nsd=4>
         >>> q = f._del_quantization()
         >>> print(f.get_quantization(None))
         None
         >>> f._set_quantization(q)
         >>> f.get_quantization()
-        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=4>
+        <{{repr}}Quantization: algorithm=bitgroom, quantization_nsd=4>
 
         """
         q = self._get_component("quantization", None)
@@ -276,9 +274,9 @@ class QuantizationMixin:
         The existence of a quantize-on-write instruction does not mean
         that the data in memory has been quantized, rather it means
         that if the data is written to a netCDF dataset with
-        `{{package}}.write`, then the quantization will be applied at
-        to the data in the netCDF dataset on disk, leaving the data in
-        memory unchanged.
+        `{{package}}.write`, then quantization will be applied to the
+        data in the netCDF dataset on disk, leaving the data in memory
+        unchanged.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -302,7 +300,7 @@ class QuantizationMixin:
 
         >>> f.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=6)
         >>> f.get_quantize_on_write()
-        <{{package}}Quantization: algorithm=bitgroom, quantization_nsd=6>
+        <{{repr}}Quantization: algorithm=bitgroom, quantization_nsd=6>
         >>> q = f.del_quantize_on_write()
         >>> print(f.get_quantize_on_write(None))
         None
@@ -340,12 +338,9 @@ class QuantizationMixin:
         The existence of a quantize-on-write instruction does not mean
         that the data in memory has been quantized, rather it means
         that if the data is written to a netCDF dataset with
-        `{{package}}.write`, then the quantization will be applied at
-        to the data in the netCDF dataset on disk, leaving the data in
-        memory unchanged.
-
-        Setting a quantize-on-write instruction means that the data
-        will be quantized when written to disk.
+        `{{package}}.write`, then quantization will be applied to the
+        data in the netCDF dataset on disk, leaving the data in memory
+        unchanged.
 
         An existing quantization-on-write instruction is removed prior
         to the new setting.
@@ -365,7 +360,7 @@ class QuantizationMixin:
                 Its parameters may be overridden by the *algorithm*,
                 *quantization_nsd* or *quantization_nsb* keywords. If
                 the "implementation" parameter is defined then it is
-                removed (because it will get reset during a future
+                removed (because it will get reset during a subsequent
                 call to `{{package}}.write`).
 
             algorithm: `str` or `None`, optional
@@ -395,7 +390,7 @@ class QuantizationMixin:
         overriding its per-variable quantization parameter:
 
         >>> q = g.get_quantization()
-        >>> f.set_quantize_on_write(q, quantization_nsd=13))
+        >>> f.set_quantize_on_write(q, quantization_nsd=13)
 
         """
         qm = self.get_quantization(None)

@@ -4954,7 +4954,7 @@ efficient. Quantization is described by the following parameters:
   source of the algorithm employed. The text must take the form
   ``software-name version version-string [(optional-information)]``.
 
-* The retained precision of the algortqhm is defined with either the
+* The retained precision of the algorithm is defined with either the
   ``quantization_nsb`` or ``quantization_nsd`` parameter.
 
 If quantization has been applied to the data, then it may be described
@@ -4967,17 +4967,21 @@ method:
    :caption: *Lossy compression via quantization.*
 
    >>> q, t = cfdm.read('file.nc')
-   >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=6)
+   >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
    >>> cfdm.write(t, 'quantized.nc')
    >>> quantized = cfdm.read('quantized.nc')[0]
    >>> c = quantized.get_quantization()
    >>> c
-   <Quantization: _QuantizeBitGroomNumberOfSignificantDigits=6, algorithm=bitgroom, implementation=libnetcdf version 4.9.4-development, quantization_nsd=6>
+   <Quantization: _QuantizeBitGroomNumberOfSignificantDigits=1, algorithm=bitgroom, implementation=libnetcdf version 4.9.4-development, quantization_nsd=1>
    >>> c.parameters()
    {'algorithm': 'bitgroom',
     'implementation': 'libnetcdf version 4.9.4-development',
-    '_QuantizeBitGroomNumberOfSignificantDigits': np.int32(6),
-    'quantization_nsd': np.int64(6)}
+    '_QuantizeBitGroomNumberOfSignificantDigits': np.int32(1),
+    'quantization_nsd': np.int64(1)}
+   >>> t[0, 0, 0].array
+   array([[[262.8]]])
+   >>> quantized[0, 0, 0].array
+   array([[[256.]]])
 
 ----
 

@@ -799,8 +799,13 @@ class PropertiesData(Properties):
     def get_quantization(self, default=ValueError()):
         """Get quantization metadata.
 
-        `{{class}}` data can not be quantized, so the default is always
-        returned.
+        Quantization eliminates false precision, usually by rounding
+        the least significant bits of floating-point mantissas to
+        zeros, so that a subsequent compression on disk is more
+        efficient.
+
+        `{{class}}` data can not be quantized, so the default is
+        always returned.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -831,6 +836,11 @@ class PropertiesData(Properties):
 
     def get_quantize_on_write(self, default=ValueError()):
         """Get a quantize-on-write instruction.
+
+        Quantization eliminates false precision, usually by rounding
+        the least significant bits of floating-point mantissas to
+        zeros, so that a subsequent compression on disk is more
+        efficient.
 
         `{{class}}` data can not be quantized, so the default is
         always returned.

@@ -29,7 +29,7 @@ class Quantization(
     take the form ``software-name version version-string
     [(optional-information)]``.
 
-    The retained precision of the algorthm is defined with either the
+    The retained precision of the algorithm is defined with either the
     ``quantization_nsb`` or ``quantization_nsd`` parameter.
 
     For instance, the following parameters describe quantization via
@@ -68,8 +68,16 @@ class Quantization(
 
             `dict`
                 A dictionary for which a key is a CF quantization
-                algorithm name, with corresponding value of the name
-                of the CF attribute that configures it.
+                algorithm name, with a value of the name of the
+                corresponding CF per-variable configuration attribute.
+
+        **Examples**
+
+        >>> {{package}}.{{class}}.algorithm_parameters()
+        {'bitgroom': 'quantization_nsd',
+         'bitround': 'quantization_nsb',
+         'digitround': 'quantization_nsd',
+         'granular_bitround': 'quantization_nsd'}
 
         """
         return {

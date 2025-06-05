@@ -160,6 +160,8 @@ class quantizationTest(unittest.TestCase):
 
         self.assertIsNone(f._set_quantization(q0))
 
+        # Can't set a quantize_on_write instruction when there is
+        # quantization metadata
         with self.assertRaises(ValueError):
             f.set_quantize_on_write(q0)
 
