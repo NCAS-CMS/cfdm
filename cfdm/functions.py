@@ -1,4 +1,3 @@
-import importlib
 import logging
 import os
 from copy import deepcopy
@@ -342,6 +341,8 @@ def _get_module_info(module, alternative_name=False, try_except=False):
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
+    import importlib
+
     if try_except:
         module_name = None
         try:
