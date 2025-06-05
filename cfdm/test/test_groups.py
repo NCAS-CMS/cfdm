@@ -90,7 +90,6 @@ class GroupsTest(unittest.TestCase):
 
         ungrouped_file = ungrouped_file1
         grouped_file = grouped_file1
-        #        grouped_file = "delme_grouped.nc"
 
         # Add a second grid mapping
         datum = cfdm.Datum(parameters={"earth_radius": 7000000})
