@@ -65,7 +65,6 @@ class read_writeTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr3"
     )
 
-    f = cfdm.read(filename)[0]
     f0 = cfdm.example_field(0)
     f1 = cfdm.example_field(1)
 
@@ -181,7 +180,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_format(self):
         """Test the cfdm.write 'fmt' keyword."""
-        f = self.f
+        f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)
@@ -191,7 +190,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_write_netcdf_mode(self):
         """Test the `mode` parameter to `write`, notably append mode."""
-        g = self.f.copy()
+        g = cfdm.read(self.filename)[0]
 
         # Test special case #1: attempt to append fields with groups
         # (other than 'root') which should be forbidden. Using fmt="NETCDF4"
@@ -430,7 +429,7 @@ class read_writeTest(unittest.TestCase):
 
             # Check behaviour when append identical fields, as an edge case
             #   1. Set up the fields and file to use to conduct this test
-            g_new = self.f.copy()
+            g_new = cfdm.read(self.filename)[0]
             # There is an unresolved netcdf4-python issue when reading
             # VLEN arrays (see github.com/Unidata/netcdf4-python/issues/261)
             # so, until fixed, for NETCDF4 only we must delete the VLEN array
@@ -483,7 +482,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_missing_data(self):
         """Test reading and writing of netCDF with missing data."""
-        f = self.f
+        f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)[0]
@@ -527,7 +526,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_write_datatype(self):
         """Test the `datatype` keyword argument to `write`."""
-        f = self.f.copy()
+        f = cfdm.read(self.filename)[0]
         self.assertEqual(f.data.dtype, np.dtype(float))
 
         f.set_property("_FillValue", np.float64(-999.0))
@@ -543,7 +542,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(g.data.dtype, np.dtype("float32"))
 
         # Keyword single
-        f = self.f
+        f = cfdm.read(self.filename)[0]
         self.assertEqual(f.dtype, np.dtype(float))
         cfdm.write(f, tmpfile, fmt="NETCDF4", single=True)
         g = cfdm.read(tmpfile)[0]
@@ -568,7 +567,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_unlimited(self):
         """Test reading and writing with an unlimited dimension."""
-        f = self.f.copy()
+        f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf_fmts:
             domain_axes = f.domain_axes()
 
@@ -628,7 +627,7 @@ class read_writeTest(unittest.TestCase):
             check=True,
         )
 
-        f0 = self.f
+        f0 = cfdm.read(self.filename)[0]
 
         # Case (1) as above, so read in and check the fields are as should be
         f = cfdm.read(tmpfile)[0]
@@ -742,7 +741,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_Conventions(self):
         """Test the `Conventions` keyword argument to `write`."""
-        f = self.f
+        f = cfdm.read(self.filename)[0]
 
         version = "CF-" + cfdm.CF()
         other = "ACDD-1.3"
@@ -812,7 +811,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_domain(self):
         """Test the reading and writing of domain constucts."""
-        f = self.f1
+        f = cfdm.read(self.filename)[0]
         d = f.domain.copy()
 
         # 1 domain
@@ -932,7 +931,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_original_filenames(self):
         """Test the setting of original file names."""
-        f = self.f
+        f = cfdm.read(self.filename)[0]
         x = f.dimension_coordinate("grid_longitude")
 
         for a in (x, f):
