@@ -497,15 +497,9 @@ class PropertiesDataBounds(PropertiesData):
                 The name of the construct's `Bounds` instance created
                 by the returned commands.
 
-                *Parameter example:*
-                  ``name='bounds1'``
-
             interior_ring_name: `str`, optional
                 The name of the construct's `InteriorRing` instance
                 created by the returned commands.
-
-                *Parameter example:*
-                  ``name='ir1'``
 
             {{header: `bool`, optional}}
 
@@ -534,18 +528,18 @@ class PropertiesDataBounds(PropertiesData):
         c.set_bounds(b)
 
         """
-        if name in (data_name, bounds_name, interior_ring_name):
+        if name in (bounds_name, interior_ring_name):
             raise ValueError(
                 "The 'name' parameter can not have the same value as "
-                "any of the 'data_name', 'bounds_name', or "
-                f"'interior_ring_name' parameters: {name!r}"
+                "either of the 'bounds_name' or 'interior_ring_name' "
+                f"parameters: {name!r}"
             )
 
-        if data_name in (name, bounds_name, interior_ring_name):
+        if data_name in (bounds_name, interior_ring_name):
             raise ValueError(
                 "The 'data_name' parameter can not have "
-                "the same value as any of the 'name', 'bounds_name', "
-                f"or 'interior_ring_name' parameters: {data_name!r}"
+                "same value as either of the 'bounds_name' or "
+                f"'interior_ring_name' parameters: {data_name!r}"
             )
 
         namespace0 = namespace
@@ -556,7 +550,7 @@ class PropertiesDataBounds(PropertiesData):
 
         out = super().creation_commands(
             representative_data=representative_data,
-            indent=0,
+            indent=indent,
             namespace=namespace,
             string=False,
             name=name,
@@ -578,7 +572,7 @@ class PropertiesDataBounds(PropertiesData):
             out.extend(
                 bounds.creation_commands(
                     representative_data=representative_data,
-                    indent=0,
+                    indent=indent,
                     namespace=namespace0,
                     string=False,
                     name=bounds_name,
@@ -593,7 +587,7 @@ class PropertiesDataBounds(PropertiesData):
             out.extend(
                 interior_ring.creation_commands(
                     representative_data=representative_data,
-                    indent=0,
+                    indent=indent,
                     namespace=namespace0,
                     string=False,
                     name=interior_ring_name,

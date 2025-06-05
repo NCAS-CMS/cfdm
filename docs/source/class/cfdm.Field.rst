@@ -101,7 +101,24 @@ Data
    ~cfdm.Field.shape
    ~cfdm.Field.size
    
-.. _Field-Metadata-constructs:   x
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.get_quantization
+   ~cfdm.Field._set_quantization
+   ~cfdm.Field._del_quantization
+   ~cfdm.Field.get_quantize_on_write
+   ~cfdm.Field.set_quantize_on_write
+   ~cfdm.Field.del_quantize_on_write
+
+.. _Field-Metadata-constructs:
    
 Metadata constructs
 -------------------

@@ -71,7 +71,9 @@ The **cfdm** package can
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays, or coordinate arrays compressed
   by subsampling), whilst presenting a view of the data in its
-  uncompressed form.
+  uncompressed form,
+* read and write that data that are quantized to eliminate false
+  precision.
 
 Documentation
 =============

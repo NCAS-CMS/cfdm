@@ -89,6 +89,19 @@ Data
    ~cfdm.DimensionCoordinate.shape
    ~cfdm.DimensionCoordinate.size
    
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DimensionCoordinate.get_quantization
+   ~cfdm.DimensionCoordinate.get_quantize_on_write
+
 Bounds
 ------
 

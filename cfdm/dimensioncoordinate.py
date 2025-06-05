@@ -44,53 +44,6 @@ class DimensionCoordinate(
 
     """
 
-    def __init__(
-        self,
-        properties=None,
-        data=None,
-        bounds=None,
-        geometry=None,
-        interior_ring=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-               *Parameter example:*
-                  ``properties={'standard_name': 'time'}``
-
-            {{init data: data_like, optional}}
-
-            {{init bounds: `Bounds`, optional}}
-
-            {{init geometry: `str`, optional}}
-
-            {{init interior_ring: `InteriorRing`, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            properties=properties,
-            data=data,
-            bounds=bounds,
-            geometry=geometry,
-            interior_ring=interior_ring,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
-
     def dump(
         self,
         display=True,

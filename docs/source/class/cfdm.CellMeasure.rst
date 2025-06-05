@@ -94,6 +94,19 @@ Data
    ~cfdm.CellMeasure.shape
    ~cfdm.CellMeasure.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CellMeasure.get_quantization
+   ~cfdm.CellMeasure.get_quantize_on_write
+   
 Miscellaneous
 -------------
 

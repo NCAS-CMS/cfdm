@@ -3,6 +3,16 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* Implement lossy compression via quantization
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
+* New quantization classes: `cfdm.Quantization`,
+  `cfdm.mixin.QuantizationMixin`
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
+* New quantization methods: `cfdm.Field.get_quantization`,
+  `cfdm.Field.get_quantize_on_write`,
+  `cfdm.Field.set_quantize_on_write`,
+  `cfdm.Field.del_quantize_on_write`
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
 * Improve performance in `cfdm.read` by caching any array values
   retrieved from disk (https://github.com/NCAS-CMS/cfdm/issues/313)
 * New keyword parameter to `cfdm.write`: ``chunk_cache``

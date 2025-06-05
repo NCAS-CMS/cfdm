@@ -78,6 +78,19 @@ Data
    ~cfdm.List.shape
    ~cfdm.List.size    
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.List.get_quantization
+   ~cfdm.List.get_quantize_on_write
+
 Miscellaneous
 -------------
 

@@ -127,10 +127,10 @@ _docstring_substitution_definitions = {
 
             Local names may be relative paths and will have tilde and
             shell environment variables expansions applied to them,
-            folowed by the replacement of any UNIX wildcards (such as
-            ``*``, ``?``, ``[a-z]``, etc.)  the with the lst of
-            matching names. Remote names (i.e. those with an http or
-            s3 shema), however, are not transformed in any way.
+            followed by the replacement of any UNIX wildcards (such as
+            ``*``, ``?``, ``[a-z]``, etc.) with the list of matching
+            names. Remote names (i.e. those with an http or s3
+            schema), however, are not transformed in any way.
 
             Directories will be walked through to find their contents
             (recursively if *recursive* is True), unless the directory
@@ -726,10 +726,7 @@ _docstring_substitution_definitions = {
     # data_name: `str`, optional
     "{{data_name: `str`, optional}}": """data_name: `str`, optional
                 The name of the construct's `Data` instance created by
-                the returned commands.
-
-                *Parameter example:*
-                  ``name='data1'``""",
+                the returned commands.""",
     # header: `bool`, optional
     "{{header: `bool`, optional}}": """header: `bool`, optional
                 If True (the default) output a comment describing the
@@ -775,10 +772,7 @@ _docstring_substitution_definitions = {
     # name
     "{{name: `str`, optional}}": """name: `str`, optional
                 The name of the `{{class}}` instance created by the
-                returned commands.
-
-                *Parameter example:*
-                  ``name='var1'``""",
+                returned commands.""",
     # namespace
     "{{namespace: `str`, optional}}": """namespace: `str`, optional
                 The name space containing classes of the {{package}}
@@ -1255,17 +1249,17 @@ _docstring_substitution_definitions = {
                 a single aggregation at the end. If set to less than
                 that, an intermediate aggregation step will be used,
                 so that any of the intermediate or final aggregation
-                steps operates on no more than ``split_every``
-                inputs. The depth of the aggregation graph will be
-                :math:`log_{split\_every}(\textnormal{input chunks
-                along reduced axes})`. Setting to a low value can
-                reduce cache size and network transfers, at the cost
-                of more CPU and a larger dask graph.
+                steps operates on no more than *split_every*
+                inputs. The depth of the aggregation graph will be the
+                logarithm to the base *split_every* of *N*, the number
+                input chunks along reduced axes.  Setting to a low
+                value can reduce cache size and network transfers, at
+                the cost of more CPU and a larger dask graph. See
+                `dask.array.reduction` for details.
 
                 By default, `dask` heuristically decides on a good
                 value. A default can also be set globally with the
-                ``split_every`` key in `dask.config`. See
-                `dask.array.reduction` for details.""",
+                ``split_every`` key in `dask.config`.""",
     # _get_array index
     "{{index: `tuple` or `None`, optional}}": """index: `tuple` or `None`, optional
                Provide the indices that define the subspace. If `None`

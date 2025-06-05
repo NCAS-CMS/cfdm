@@ -89,6 +89,19 @@ Data
    ~cfdm.DomainAncillary.shape
    ~cfdm.DomainAncillary.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.get_quantization
+   ~cfdm.DomainAncillary.get_quantize_on_write
+
 Bounds
 ------
 

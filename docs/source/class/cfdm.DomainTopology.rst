@@ -105,6 +105,19 @@ Data
    ~cfdm.DomainTopology.shape
    ~cfdm.DomainTopology.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainTopology.get_quantization
+   ~cfdm.DomainTopology.get_quantize_on_write
+
 Bounds
 ------
 

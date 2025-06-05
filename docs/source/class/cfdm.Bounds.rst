@@ -79,6 +79,19 @@ Data
    ~cfdm.Bounds.shape
    ~cfdm.Bounds.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Bounds.get_quantization
+   ~cfdm.Bounds.get_quantize_on_write
+
 Miscellaneous
 -------------
 

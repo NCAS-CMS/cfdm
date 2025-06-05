@@ -105,6 +105,19 @@ Data
    ~cfdm.CellConnectivity.shape
    ~cfdm.CellConnectivity.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CellConnectivity.get_quantization
+   ~cfdm.CellConnectivity.get_quantize_on_write
+
 Bounds
 ------
 

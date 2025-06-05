@@ -21,7 +21,7 @@ class Container(metaclass=DocstringRewriteMeta):
     """
 
     def __init__(self, source=None, copy=True):
-        """**Initialiation**
+        """**Initialisation**
 
         :Parameters:
 
@@ -33,14 +33,19 @@ class Container(metaclass=DocstringRewriteMeta):
         self._components = {}
 
         if source is not None:
-            # WARNING: The 'custom' dictionary is only shallow copied
-            #          from source
+            # Copy the 'custom' dictionary from source.
+            #
+            # WARNING: The 'custom' dictionary is only shallow copied.
             try:
                 custom = source._get_component("custom", {})
             except AttributeError:
                 custom = {}
             else:
                 custom = custom.copy()
+
+            # Run any initialise-from-source methods defined on parent
+            # classes.
+            self.__parent_initialise_from_source(source, copy)
         else:
             custom = {}
 
@@ -122,7 +127,7 @@ class Container(metaclass=DocstringRewriteMeta):
         Traceback (most recent call last):
             ...
         ValueError: Missing item
-        >>> f._default(ValueError(), message="No component")  # Raises Exception
+        >>> f._default(ValueError(), message="No component")
         Traceback (most recent call last):
             ...
         ValueError: No component
@@ -134,6 +139,10 @@ class Container(metaclass=DocstringRewriteMeta):
         1
 
         """
+        if default is None:
+            # Fast return for the common case of default=None
+            return
+
         if isinstance(default, Exception):
             if message is not None and not default.args:
                 default = type(default)(message)
@@ -299,6 +308,44 @@ class Container(metaclass=DocstringRewriteMeta):
         """
         return component in self._components
 
+    def __parent_initialise_from_source(self, source, copy=True):
+        """Run all initialise-from-source methods.
+
+        Such methods, if they exist, are named
+        ``_C__initialise_from_source``, where ``C`` is the name of a
+        class in the method reolution order.
+
+        This method is called by `cfdm.core.Container.__init__`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            source:
+                The object from which to extract the initialisation
+                information. Typically, but not necessarily, a
+                `{{class}}` object.
+
+            copy: `bool`, optional
+                If True (the default) then deep copy the
+                initialisation information.
+
+        :Returns:
+
+            `None`
+
+        """
+        # Loop over classes in reverse method-resolution order
+        # (omitting `object`)
+        for C in self.__class__.__mro__[-2::-1]:
+            method = f"_{C.__name__}__initialise_from_source"
+            try:
+                # Try to run the parent class method
+                getattr(self, method)(source, copy)
+            except AttributeError:
+                # This parent class does not have this method
+                pass
+
     def _set_component(self, component, value, copy=True):
         """Set a component.
 
@@ -337,9 +384,6 @@ class Container(metaclass=DocstringRewriteMeta):
 
         self._components[component] = value
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def copy(self):
         """Return a deep copy.
 

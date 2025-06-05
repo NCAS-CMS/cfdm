@@ -27,6 +27,11 @@ from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
 from ..exceptions import DatasetTypeError, ReadError
+from .constants import (
+    CF_QUANTIZATION_PARAMETERS,
+    NETCDF_MAGIC_NUMBERS,
+    NETCDF_QUANTIZATION_PARAMETERS,
+)
 from .flatten import netcdf_flatten
 from .flatten.config import (
     flattener_attribute_map,
@@ -112,6 +117,7 @@ class NetCDFRead(IORead):
         "Node coordinate variable": 190,
         "Tie points coordinate variable": 200,
         "Bounds tie points variable": 201,
+        "Quantization variable": 211,
         # Purely structural
         "Compressed dimension": 300,
         "compress attribute": 301,
@@ -852,13 +858,7 @@ class NetCDFRead(IORead):
             d_type = None
         else:
             # Is it a netCDF-3 or netCDF-4 binary file?
-            if magic_number in (
-                21382211,
-                1128547841,
-                1178880137,
-                38159427,
-                88491075,
-            ):
+            if magic_number in NETCDF_MAGIC_NUMBERS:
                 d_type = "netCDF"
             else:
                 # Is it a CDL text file?
@@ -1446,6 +1446,13 @@ class NetCDFRead(IORead):
             "squeeze": bool(squeeze),
             "unsqueeze": bool(unsqueeze),
             # --------------------------------------------------------
+            # Quantization
+            # --------------------------------------------------------
+            # Maps quantization variable names to Quantization objects
+            "quantization_variable": {},
+            # Maps variable names to their quantization container
+            # variable names
+            "quantization": {},
             # Cached data elements, keyed by variable names.
             # --------------------------------------------------------
             "cached_data_elements": {},
@@ -2106,6 +2113,31 @@ class NetCDFRead(IORead):
 
             if debug:
                 logger.debug(f"    UGRID meshes:\n       {g['mesh']}")
+
+        # ------------------------------------------------------------
+        # Identify and parse all quantization container variables
+        # (CF>=1.12)
+        # ------------------------------------------------------------
+        if g["CF>=1.12"]:
+            for ncvar, attributes in variable_attributes.items():
+                if "quantization" not in attributes:
+                    # This data variable does not have a quantization
+                    # container
+                    continue
+
+                quantization_ncvar = self._parse_quantization(
+                    ncvar, variable_attributes
+                )
+
+                if not quantization_ncvar:
+                    # The quantization container has already been
+                    # parsed, or a sufficiently compliant quantization
+                    # container could not be found.
+                    continue
+
+                # Do not attempt to create a field or domain construct
+                # from a quantization container variable
+                g["do_not_create_field"].add(quantization_ncvar)
 
         if _scan_only:
             return self.read_vars
@@ -3220,6 +3252,67 @@ class NetCDFRead(IORead):
         g["variable_geometry"][parent_ncvar] = geometry_ncvar
 
         return geometry_ncvar
+
+    def _parse_quantization(self, parent_ncvar, attributes):
+        """Parse a quantization container variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent_ncvar: `str`
+                The netCDF variable name of the parent data variable.
+
+            attributes: `dict`
+                All attributes of *all* netCDF variables, keyed by netCDF
+                variable name.
+
+        :Returns:
+
+            `str` or `None`
+                 The netCDF name of the quantization container
+                 variable, or `None` if the container has already been
+                 parsed.
+
+        """
+        g = self.read_vars
+
+        ncvar = attributes[parent_ncvar]["quantization"]
+        #        quantization_attribute = attributes[parent_ncvar]["quantization"]
+
+        #       parsed_quantization = self._split_string_by_white_space(
+        #           parent_ncvar, quantization_attribute, variables=True
+        #        )
+
+        ok = self._check_quantization(parent_ncvar, ncvar)
+
+        #        ncvar = parsed_quantization[0]
+
+        q = g["quantization_variable"].get(ncvar)
+        if q is not None:
+            # We've already parsed this quantization variable
+            g["quantization"][parent_ncvar] = q
+            return
+
+        if ncvar in g["quantization_variable"]:
+            # We've already parsed this quantization variable
+            return
+
+        # Create a quantization object
+        q = self._create_quantization(ncvar)
+
+        g["quantization_variable"][ncvar] = q
+        g["quantization"][parent_ncvar] = q
+
+        logger.info(
+            f"    Quantization variable = {ncvar!r}\n"
+            f"        netCDF attributes: {attributes[ncvar]}"
+        )  # pragma: no cover
+
+        if not ok:
+            return
+
+        return ncvar
 
     def _set_ragged_contiguous_parameters(
         self,
@@ -5033,6 +5126,11 @@ class NetCDFRead(IORead):
                 for anc_ncvar in extra_anc:
                     self._reference(anc_ncvar, field_ncvar)
 
+        # -------------------------------------------------------------
+        # Set quantization metadata
+        # -------------------------------------------------------------
+        self._set_quantization(f, field_ncvar)
+
         # Add the structural read report to the field/domain
         dataset_compliance = g["dataset_compliance"][field_ncvar]
         components = dataset_compliance["non-compliance"]
@@ -5932,6 +6030,9 @@ class NetCDFRead(IORead):
         if not domain_ancillary:
             g["coordinates"][parent_ncvar].append(ncvar)
 
+        # Set quantization metadata
+        self._set_quantization(c, ncvar)
+
         # ---------------------------------------------------------
         # Return the bounded variable
         # ---------------------------------------------------------
@@ -5992,6 +6093,9 @@ class NetCDFRead(IORead):
             cell_measure, g["variable_datasetname"].get(ncvar)
         )
 
+        # Set quantization metadata
+        self._set_quantization(cell_measure, ncvar)
+
         return cell_measure
 
     def _create_interpolation_parameter(self, term, ncvar):
@@ -6049,6 +6153,9 @@ class NetCDFRead(IORead):
         self.implementation.set_original_filenames(
             param, g["variable_datasetname"][ncvar]
         )
+
+        # Set quantization metadata
+        self._set_quantization(param, ncvar)
 
         return param
 
@@ -6124,6 +6231,9 @@ class NetCDFRead(IORead):
             variable, g["variable_datasetname"][ncvar]
         )
 
+        # Set quantization metadata
+        self._set_quantization(variable, ncvar)
+
         return variable
 
     def _create_Count(self, ncvar, ncdim):
@@ -6189,6 +6299,9 @@ class NetCDFRead(IORead):
         self.implementation.set_original_filenames(
             variable, g["variable_datasetname"][ncvar]
         )
+
+        # Set quantization metadata
+        self._set_quantization(variable, ncvar)
 
         return variable
 
@@ -6258,6 +6371,9 @@ class NetCDFRead(IORead):
             variable, g["variable_datasetname"][ncvar]
         )
 
+        # Set quantization metadata
+        self._set_quantization(variable, ncvar)
+
         return variable
 
     def _create_InteriorRing(self, ncvar, ncdim):
@@ -6309,6 +6425,9 @@ class NetCDFRead(IORead):
             variable, g["variable_datasetname"][ncvar]
         )
 
+        # Set quantization metadata
+        self._set_quantization(variable, ncvar)
+
         return variable
 
     def _create_List(self, ncvar):
@@ -6354,6 +6473,9 @@ class NetCDFRead(IORead):
             variable, g["variable_datasetname"][ncvar]
         )
 
+        # Set quantization metadata
+        self._set_quantization(variable, ncvar)
+
         return variable
 
     def _create_NodeCountProperties(self, ncvar):
@@ -6392,6 +6514,9 @@ class NetCDFRead(IORead):
         self.implementation.set_original_filenames(
             variable, g["variable_datasetname"][ncvar]
         )
+
+        # Set quantization metadata
+        self._set_quantization(variable, ncvar)
 
         return variable
 
@@ -6440,6 +6565,9 @@ class NetCDFRead(IORead):
         self.implementation.set_original_filenames(
             variable, g["variable_datasetname"][ncvar]
         )
+
+        # Set quantization metadata
+        self._set_quantization(variable, ncvar)
 
         return variable
 
@@ -7073,6 +7201,9 @@ class NetCDFRead(IORead):
         self.implementation.set_original_filenames(
             field_ancillary, g["variable_datasetname"][ncvar]
         )
+
+        # Set quantization metadata
+        self._set_quantization(field_ancillary, ncvar)
 
         return field_ancillary
 
@@ -9126,6 +9257,85 @@ class NetCDFRead(IORead):
                     ok = False
 
         # TODO check tie point variable dimensions
+
+        return ok
+
+    def _check_quantization(self, parent_ncvar, ncvar):
+        """Check a quantization container variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent_ncvar: `str`
+                The netCDF variable name of the parent variable.
+
+            ncvar: `str`
+                The netCDF variable name of the quantization variable.
+
+        :Returns:
+
+            `bool`
+
+        """
+        attribute = {parent_ncvar + ":quantization": ncvar}
+
+        g = self.read_vars
+
+        ok = True
+
+        # Check that the quantization variable exists in the file
+        if ncvar not in g["internal_variables"]:
+            ncvar, message = self._missing_variable(
+                ncvar, "Quantization variable"
+            )
+            self._add_message(
+                parent_ncvar,
+                ncvar,
+                message=message,
+                attribute=attribute,
+            )
+            ok = False
+
+        attributes = g["variable_attributes"][ncvar]
+
+        implementation = attributes.get("implementation")
+        if implementation is None:
+            self._add_message(
+                parent_ncvar,
+                ncvar,
+                message=("implementation attribute", "is missing"),
+            )
+            ok = False
+
+        algorithm = attributes.get("algorithm")
+        if algorithm is None:
+            self._add_message(
+                parent_ncvar,
+                ncvar,
+                message=("algorithm attribute", "is missing"),
+            )
+            ok = False
+
+        parameter = CF_QUANTIZATION_PARAMETERS.get(algorithm)
+        if parameter is None:
+            self._add_message(
+                parent_ncvar,
+                ncvar,
+                message=(
+                    "algorithm attribute",
+                    f"has non-standardised value: {algorithm!r}",
+                ),
+            )
+            ok = False
+
+        if parameter not in g["variable_attributes"][parent_ncvar]:
+            self._add_message(
+                parent_ncvar,
+                parent_ncvar,
+                message=(f"{parameter} attribute", "is missing"),
+            )
+            ok = False
 
         return ok
 
@@ -11681,3 +11891,71 @@ class NetCDFRead(IORead):
             or isfile(join(path, ".zgroup"))  # v2
             or isfile(join(path, ".zarray"))  # v2
         )
+
+    def _create_quantization(self, ncvar):
+        """Create quantization metadata.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            ncvar: `str`
+                The netCDF name of the quantization container
+                variable.
+
+        :Returns:
+
+            `Quantization`
+                The Quantization metadata.
+
+        """
+        q = self.implementation.initialise_Quantization(
+            parameters=self.read_vars["variable_attributes"][ncvar].copy(),
+            copy=False,
+        )
+        self.implementation.nc_set_variable(q, ncvar)
+        return q
+
+    def _set_quantization(self, parent, ncvar):
+        """Set a quantization metadata on a construct.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent:
+                The construct that might be quantized.
+
+            ncvar: `str`
+                The netCDF name of the quantization container
+                variable.
+
+        :Returns:
+
+            `None`ppp
+
+        """
+        g = self.read_vars
+
+        q = g["quantization"].get(ncvar)
+        if q is None:
+            # No quantization for this construct
+            return
+
+        # Delete the parent's quantization properties, moving them to
+        # the Quantization component as appropriate.
+        q = q.copy()
+
+        attributes = g["variable_attributes"][ncvar]
+        self.implementation.del_property(parent, "quantization", None)
+
+        for attr in set(CF_QUANTIZATION_PARAMETERS.values()) | set(
+            NETCDF_QUANTIZATION_PARAMETERS.values()
+        ):
+            value = attributes.get(attr, None)
+            if value is not None:
+                self.implementation.set_parameter(q, attr, value, copy=False)
+                self.implementation.del_property(parent, attr, None)
+
+        # Set the Quantization metadata
+        self.implementation.set_quantization(parent, q, copy=False)

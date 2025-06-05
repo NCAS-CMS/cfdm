@@ -8,39 +8,40 @@ class Files:
 
     """
 
-    def _initialise_original_filenames(self, source=None):
-        """Helps to initialise original file names.
+    def __initialise_from_source(self, source=None, copy=True):
+        """Initialise original file names from a source.
 
-        Call this from inside the `!__init__` method of a class that
-        inherits from this mixin class.
+        This method is called by
+        `_Container__parent_initialise_from_source`, which in turn is
+        called by `cfdm.core.Container.__init__`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            {{init source: optional}}
+            source:
+                The object from which to extract the initialisation
+                information. Typically, but not necessarily, a
+                `{{class}}` object.
+
+            copy: `bool`, optional
+                If True (the default) then deep copy the
+                initialisation information.
 
         :Returns:
 
             `None`
 
-        **Examples**
-
-        >>> f._initialise_original_filenames(source)
-
         """
-        if source is not None:
-            # Note: Getting and setting the component directly (as
-            #       opposed to using the `_original_filenames` methods
-            #       of 'source' and 'self') should improve the
-            #       performance of `self.copy`.
-            try:
-                filenames = source._get_component("original_filenames", None)
-            except AttributeError:
-                pass
-            else:
-                if filenames:
-                    self._set_component(
-                        "original_filenames", filenames, copy=False
-                    )
+        try:
+            f = source._get_component("original_filenames", None)
+        except AttributeError:
+            pass
+        else:
+            if f is not None:
+                # No need to copy, because 'f' will be a `tuple` of
+                # `str`.
+                self._set_component("original_filenames", f, copy=False)
 
     def _original_filenames(self, define=None, update=None, clear=False):
         """The names of files containing the original data and metadata.

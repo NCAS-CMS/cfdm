@@ -288,6 +288,7 @@ from .bounds import Bounds
 from .coordinateconversion import CoordinateConversion
 from .datum import Datum
 from .interiorring import InteriorRing
+from .quantization import Quantization
 
 from .units import Units
 

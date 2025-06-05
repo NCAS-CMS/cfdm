@@ -212,19 +212,19 @@ class write(ReadWrite):
              conventions is defined then this is used instead.
 
              *Parameter example:*
-               ``Conventions='UGRID-1.0'``
+               ``Conventions='ACDD-1.3'``
 
              *Parameter example:*
-               ``Conventions=['UGRID-1.0']``
+               ``Conventions=['CMIP-6.2']``
 
              *Parameter example:*
-               ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
+               ``Conventions=['CMIP-6.2', 'ACDD-1.3']``
 
              *Parameter example:*
-               ``Conventions='CF-1.7'``
+               ``Conventions='CF-1.12'``
 
              *Parameter example:*
-               ``Conventions=['CF-1.7', 'UGRID-1.0']``
+               ``Conventions=['CF-1.12', 'CMIP-6.2']``
 
              Note that if the ``Conventions`` property is set on a
              field construct then it is ignored.

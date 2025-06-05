@@ -16,6 +16,14 @@ from ...data.dask_utils import cfdm_to_memory
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, dirname, integer_dtype
 from .. import IOWrite
+from .constants import (
+    CF_QUANTIZATION_PARAMETER_LIMITS,
+    CF_QUANTIZATION_PARAMETERS,
+    NETCDF3_FMTS,
+    NETCDF4_FMTS,
+    NETCDF_QUANTIZATION_PARAMETERS,
+    NETCDF_QUANTIZE_MODES,
+)
 from .netcdfread import NetCDFRead
 
 logger = logging.getLogger(__name__)
@@ -978,16 +986,14 @@ class NetCDFWrite(IOWrite):
             # Grid mapping
             grid_mappings = [
                 g["seen"][id(cr)]["ncvar"]
-                # TODO replace field.coordinate_references with
-                # self.implemenetation call
-                for cr in field.coordinate_references().values()
-                if (
-                    cr.coordinate_conversion.get_parameter(
-                        "grid_mapping_name", None
-                    )
-                    is not None
-                    and key in cr.coordinates()
-                )
+                for cr in self.implementation.get_coordinate_references(
+                    field
+                ).values()
+                if self.implementation.get_coordinate_conversion_parameters(
+                    cr
+                ).get("grid_mapping_name")
+                is not None
+                and key in cr.coordinates()
             ]
             gc[geometry_id].setdefault("grid_mapping", []).extend(
                 grid_mappings
@@ -2780,6 +2786,116 @@ class NetCDFWrite(IOWrite):
             "fill_value": fill_value,
             "chunk_cache": g["chunk_cache"],
         }
+
+        # ------------------------------------------------------------
+        # Create a quantization container variable, add any extra
+        # quantization attributes, and if required instruct
+        # `_createVariable`to perform the quantization.
+        # ------------------------------------------------------------
+        q = self.implementation.get_quantize_on_write(cfvar, None)
+        if q is not None:
+            quantize_on_write = True
+        else:
+            q = self.implementation.get_quantization(cfvar, None)
+            quantize_on_write = False
+
+        if q is not None:
+            # There are some quantization metadata - either
+
+            # CF quantization algorithm name (e.g. 'bitgroom')
+            algorithm = self.implementation.get_parameter(q, "algorithm", None)
+
+            # Get the CF quantization parameter name and value
+            # (e.g. 'quantization_nsd' and 6)
+            cf_parameter = CF_QUANTIZATION_PARAMETERS.get(algorithm)
+            cf_ns = self.implementation.del_parameter(q, cf_parameter, None)
+
+            # Remove the NetCDF-C library quantization attribute
+            # (e.g. '_QuantizeBitRoundNumberOfSignificantBits')
+            netcdf_parameter = NETCDF_QUANTIZATION_PARAMETERS.get(algorithm)
+            netcdf_ns = self.implementation.del_parameter(
+                q, netcdf_parameter, None
+            )
+
+            # Create a quantization container variable in the file, if
+            # it doesn't already exist (and after having removed any
+            # per-variable quantization parameters, such as
+            # "quantization_nsd").
+            if quantize_on_write:
+                # Set "implemention" to this version of the netCDF-C
+                # library
+                self.implementation.set_parameter(
+                    q,
+                    "implementation",
+                    f"libnetcdf version {netCDF4.__netcdf4libversion__}",
+                    copy=False,
+                )
+
+            q_ncvar = self._write_quantization_container(q)
+
+            # Update the variable's extra attributes
+            extra = extra.copy()
+            extra["quantization"] = q_ncvar
+            if cf_ns is not None:
+                extra[cf_parameter] = cf_ns
+
+            if not quantize_on_write:
+                # We're not performing any quantization, so also set
+                # the netCDF-C-defined attribute.
+                if netcdf_ns is not None:
+                    extra[netcdf_parameter] = netcdf_ns
+            else:
+                # ----------------------------------------------------
+                # We are going to perform quantization
+                # ----------------------------------------------------
+                quantize_mode = NETCDF_QUANTIZE_MODES.get(algorithm)
+
+                if algorithm == "digitround":
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with algorithm "
+                        f"{algorithm!r}, because it is not yet available "
+                        "from the netCDF-C library"
+                    )
+
+                if quantize_mode is None:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with non-standardised "
+                        f"algorithm {algorithm!r}. Valid algorithms are "
+                        f"{tuple(NETCDF_QUANTIZE_MODES)}"
+                    )
+
+                if g["fmt"] not in NETCDF4_FMTS:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} into a {g['fmt']} "
+                        "format file. Quantization is only possible when "
+                        f"writing to one of the {NETCDF4_FMTS} formats."
+                    )
+
+                if not datatype.startswith("f"):
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with data type "
+                        f"{datatype!r}. Only floating point data can be "
+                        "quantized."
+                    )
+
+                if cf_ns is None:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} because the "
+                        f"{cf_parameter!r} parameter has not been defined"
+                    )
+
+                u = CF_QUANTIZATION_PARAMETER_LIMITS[cf_parameter][datatype]
+                if not 1 <= cf_ns <= u:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with a {cf_parameter!r} "
+                        f"parameter value of {cf_ns}. {cf_parameter!r} must "
+                        f"lie in the range [1, {u}]"
+                    )
+
+                # Update the kwargs for `_createVariable` to perform
+                # the quantization during the write process
+                kwargs["quantize_mode"] = quantize_mode
+                kwargs["significant_digits"] = cf_ns
 
         # ------------------------------------------------------------
         # For aggregation variables, create a dictionary containing
@@ -4974,6 +5090,11 @@ class NetCDFWrite(IOWrite):
             # Dataset chunking stategy
             # --------------------------------------------------------
             "dataset_chunks": dataset_chunks,
+            # --------------------------------------------------------
+            # Quantization: Store unique Quantization objects, keyed
+            #               by their output netCDF variable names.
+            # --------------------------------------------------------
+            "quantization": {},
         }
 
         if mode not in ("w", "a", "r+"):
@@ -5223,21 +5344,19 @@ class NetCDFWrite(IOWrite):
         else:
             compression = None
 
-        netcdf3_fmts = (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        )
-        netcdf4_fmts = ("NETCDF4", "NETCDF4_CLASSIC")
-        if fmt not in netcdf3_fmts + netcdf4_fmts:
-            raise ValueError(f"Unknown output file format: {fmt}")
-        elif fmt in netcdf3_fmts:
-            if compress in netcdf3_fmts:
-                raise ValueError(f"Can't compress {fmt} format file")
-            if group in netcdf3_fmts:
-                # Can't write groups to a netCDF3 file
+        if fmt in NETCDF3_FMTS:
+            if compress:
+                # Can't compress a netCDF-3 format file
+                compress = 0
+
+            if group:
+                # Can't write groups to a netCDF-3 file
                 g["group"] = False
+        elif fmt not in NETCDF4_FMTS:
+            raise ValueError(
+                f"Unknown output file format: {fmt!r}. "
+                f"Valid formats are {NETCDF4_FMTS + NETCDF3_FMTS}"
+            )
 
         # ------------------------------------------------------------
         # Set up global/non-global attributes
@@ -6239,3 +6358,63 @@ class NetCDFWrite(IOWrite):
 
         # Return the dictionary of Data objects
         return out
+
+    def _write_quantization_container(self, quantization):
+        """Write a CF-netCDF quantization container variable.
+
+        .. note:: It is assumed, but not checked, that the
+                  per-variable parameters (such as "quantization_nsd"
+                  or "_QuantizeBitRoundNumberOfSignificantBits") have
+                  been already been removed from *quantization*.
+
+         .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            quantization: `Quantization`
+                The Quantization metadata to be written.
+
+        :Returns:
+
+            `str`
+                The netCDF variable name for the quantization
+                container.
+
+        """
+        g = self.write_vars
+
+        for ncvar, q in g["quantization"].items():
+            if self.implementation.equal_components(quantization, q):
+                # Use this existing quantization container
+                return ncvar
+
+        # Create a new quantization container variable
+        ncvar = self._create_netcdf_variable_name(
+            quantization, default="quantization"
+        )
+
+        logger.info(
+            f"    Writing {quantization!r} to netCDF variable: {ncvar}"
+        )  # pragma: no cover
+
+        kwargs = {
+            "varname": ncvar,
+            "datatype": "S1",
+            "dimensions": (),
+            "endian": g["endian"],
+        }
+        kwargs.update(g["netcdf_compression"])
+
+        if not g["dry_run"]:
+            # Create the variable
+            self._createVariable(**kwargs)
+
+            # Set the attributes
+            g["nc"][ncvar].setncatts(
+                self.implementation.parameters(quantization)
+            )
+
+        # Update the quantization dictionary
+        g["quantization"][ncvar] = quantization
+
+        return ncvar

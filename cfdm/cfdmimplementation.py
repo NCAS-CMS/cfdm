@@ -22,6 +22,7 @@ from . import (
     List,
     NodeCountProperties,
     PartNodeCountProperties,
+    Quantization,
     TiePointIndex,
 )
 from .abstract import Implementation
@@ -253,6 +254,31 @@ class CFDMImplementation(Implementation):
 
         """
         return data.insert_dimension(position=position)
+
+    def del_parameter(self, parent, parameter, default=None):
+        """Delete a parameter from a component.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent:
+                The component.
+
+            parameter: `str`
+                The name of the parameter.
+
+            default: optional
+                Return the value of the *default* parameter if the
+                parameter has not been set.
+
+        :Returns:
+
+            `dict`
+                The deleted parameter.
+
+        """
+        return parent.del_parameter(parameter, default)
 
     def del_properties(self, construct, props):
         """Remove a property from a construct.
@@ -1219,6 +1245,24 @@ class CFDMImplementation(Implementation):
             "Use 'nc_set_dataset_chunksizes' instead."
         )
 
+    def parameters(self, parent):
+        """Return all parameters from a component.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent:
+                The component.
+
+        :Returns:
+
+            `dict`
+                The parameters.
+
+        """
+        return parent.parameters()
+
     def equal_components(self, construct0, construct1, ignore_type=False):
         """Whether or not two field construct components are equal.
 
@@ -1638,6 +1682,30 @@ class CFDMImplementation(Implementation):
         """
         return construct.get_node_count(default=None)
 
+    def get_parameter(self, parent, parameter, default=None):
+        """Get a parameter value from a component.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent:
+                The component.
+
+            parameter: `str`
+                The name of the parameter.
+
+            default: optional
+                Return the value of the *default* parameter if the
+                parameter has not been set.
+
+        :Returns:
+
+            `None`
+
+        """
+        return parent.get_parameter(parameter, default=default)
+
     def get_part_node_count(self, construct):
         """Return the part node count variable of geometry coordinates.
 
@@ -1707,6 +1775,48 @@ class CFDMImplementation(Implementation):
         """
         try:
             return construct.get_property(prop, default=default)
+        except AttributeError:
+            return default
+
+    def get_quantization(self, construct, default=None):
+        """Get quantization metadata.
+
+        :Parameters:
+
+            construct:
+
+            default: optional
+
+        :Returns:
+
+            `str` or `None`
+                The geometry type.
+
+        """
+        try:
+            return construct.get_quantization(default=default)
+        except AttributeError:
+            return default
+
+    def get_quantize_on_write(self, construct, default=None):
+        """Get a quantize-on-write instruction form a construct.
+
+        :Parameters:
+
+            construct:
+                The construct.
+
+            default: optional
+                Return the value of the *default* parameter if a
+                uantize-on-write instruction has not been set.
+
+        :Returns:
+
+            `Quantization`
+
+        """
+        try:
+            return construct.get_quantize_on_write(default=default)
         except AttributeError:
             return default
 
@@ -2355,6 +2465,25 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("PointTopologyArray")
         return cls(**kwargs)
 
+    def initialise_Quantization(self, **kwargs):
+        """Return a quantization metadata class.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            kwargs: optional
+                Parameters for intialising the quantization metadata,
+                which are passed to `Quantization.__init__`.
+
+        :Returns:
+
+            `Quantization`
+
+        """
+        cls = self.get_class("Quantization")
+        return cls(**kwargs)
+
     def initialise_TiePointIndex(self):
         """Return an index variable.
 
@@ -2967,15 +3096,15 @@ class CFDMImplementation(Implementation):
     def set_coordinate_conversion(
         self, coordinate_reference, coordinate_conversion
     ):
-        """Set the coordinate conversion coordinate reference construct.
+        """Set a coordinate conversion component.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
-            coordinate_reference: coordinate reference construct
+            coordinate_reference: `CoordinateReference`
 
-            coordinate_conversion: coordinate conversion component
+            coordinate_conversion: `CoordinateConversion`
 
         :Returns:
 
@@ -3430,6 +3559,32 @@ class CFDMImplementation(Implementation):
 
         parent._original_filenames(define=set(filenames))
 
+    def set_parameter(self, parent, parameter, value, copy=True):
+        """Set a parameter on a component.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent:
+                The component to be modified.
+
+            parameter: `str`
+                The name of the parameter.
+
+            value:
+                The value of the parameter.
+
+            copy: `bool`, optional
+                If True (the default) then set a copy of *value*.
+
+        :Returns:
+
+            `None`
+
+        """
+        parent.set_parameter(parameter, value, copy=copy)
+
     def set_part_node_count_properties(
         self, parent, part_node_count, copy=True
     ):
@@ -3451,6 +3606,30 @@ class CFDMImplementation(Implementation):
 
         """
         parent.set_part_node_count(part_node_count, copy=copy)
+
+    def set_quantization(self, parent, quantization, copy=True):
+        """Set quantization metadata.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent:
+                The construct to be modified.
+
+            quantization: `Quantization`
+                The new quantization metadata.
+
+            copy: `bool`, optional
+                If True (the default) then copy *quantization* prior
+                to insertion.
+
+        :Returns:
+
+            `None`
+
+        """
+        parent._set_quantization(quantization, copy=copy)
 
     def set_interior_ring(self, parent, interior_ring, copy=True):
         """Insert an interior ring array into a coordinate.
@@ -3811,6 +3990,7 @@ _implementation = CFDMImplementation(
     H5netcdfArray=H5netcdfArray,
     NetCDF4Array=NetCDF4Array,
     PointTopologyArray=PointTopologyArray,
+    Quantization=Quantization,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
@@ -3865,6 +4045,7 @@ def implementation():
      'Index': <class 'cfdm.index.Index'>,
      'NodeCountProperties': <class 'cfdm.nodecountproperties.NodeCountProperties'>,
      'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>,
+     'Quantization': <class 'cfdm.quantization.Quantization'>,
      'ZarrArray': <class 'cfdm.data.zarrarray.ZarrArray'>}
 
     """

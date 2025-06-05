@@ -78,6 +78,19 @@ Data
    ~cfdm.Count.shape
    ~cfdm.Count.size 
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.get_quantization
+   ~cfdm.Count.get_quantize_on_write
+
 Miscellaneous
 -------------
 
