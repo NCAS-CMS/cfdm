@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Domain.dump" href="../method/cfdm.Domain.dump.html" />
-    <link rel="prev" title="cfdm.Field._docstring_method_exclusions" href="../method/cfdm.Field._docstring_method_exclusions.html" />
+    <link rel="prev" title="cfdm.Field.nc_set_hdf5_chunksizes" href="../method/cfdm.Field.nc_set_hdf5_chunksizes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.2.0</a></h1>
 
 
 
@@ -86,7 +86,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.Field._docstring_method_exclusions.html" title="previous chapter">cfdm.Field._docstring_method_exclusions</a></li>
+      <li>Previous: <a href="../method/cfdm.Field.nc_set_hdf5_chunksizes.html" title="previous chapter">cfdm.Field.nc_set_hdf5_chunksizes</a></li>
       <li>Next: <a href="../method/cfdm.Domain.dump.html" title="next chapter">cfdm.Domain.dump</a></li>
   </ul></li>
   </ul></li>
@@ -126,7 +126,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Domain">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Domain</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/domain.py#L13-L1155"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Domain</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/domain.py#L13-L1114"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFComponents</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFUnreferenced</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.properties.Properties</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domain.Domain</span></code></p>
 <p>A domain construct of the CF data model.</p>
 <p>The domain represents a set of discrete “locations” in what
@@ -184,10 +184,8 @@ across all such components with the <a class="reference internal" href="../metho
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
 the <a class="reference internal" href="../method/cfdm.Domain.set_properties.html#cfdm.Domain.set_properties" title="cfdm.Domain.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.Domain.set_property.html#cfdm.Domain.set_property" title="cfdm.Domain.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'Domain</span> <span class="pre">for</span> <span class="pre">model'}</span></code></p>
 </dd>
-</dl>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'Domain</span> <span class="pre">for</span> <span class="pre">model'}</span></code></p>
 </dd>
 <dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
 a <a class="reference internal" href="#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a> instance.</p>
@@ -667,7 +665,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-01.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CellMeasure.dump" href="../method/cfdm.CellMeasure.dump.html" />
-    <link rel="prev" title="cfdm.CellConnectivity._docstring_method_exclusions" href="../method/cfdm.CellConnectivity._docstring_method_exclusions.html" />
+    <link rel="prev" title="cfdm.CellConnectivity.nc_set_hdf5_chunksizes" href="../method/cfdm.CellConnectivity.nc_set_hdf5_chunksizes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.2.0</a></h1>
 
 
 
@@ -86,7 +86,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.CellConnectivity._docstring_method_exclusions.html" title="previous chapter">cfdm.CellConnectivity._docstring_method_exclusions</a></li>
+      <li>Previous: <a href="../method/cfdm.CellConnectivity.nc_set_hdf5_chunksizes.html" title="previous chapter">cfdm.CellConnectivity.nc_set_hdf5_chunksizes</a></li>
       <li>Next: <a href="../method/cfdm.CellMeasure.dump.html" title="next chapter">cfdm.CellMeasure.dump</a></li>
   </ul></li>
   </ul></li>
@@ -126,7 +126,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CellMeasure">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CellMeasure</code><span class="sig-paren">(</span><em class="sig-param">measure=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/cellmeasure.py#L9-L466"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CellMeasure</code><span class="sig-paren">(</span><em class="sig-param">measure=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/cellmeasure.py#L9-L419"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFExternal</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.cellmeasure.CellMeasure</span></code></p>
 <p>A cell measure construct of the CF data model.</p>
 <p>A cell measure construct provides information that is needed about
@@ -157,9 +157,9 @@ methods.</p>
 attributes may be accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code>
 methods.</p>
-<p>The netCDF4 HDF5 chunks may be accessed with the
-<a class="reference internal" href="../method/cfdm.CellMeasure.nc_hdf5_chunksizes.html#cfdm.CellMeasure.nc_hdf5_chunksizes" title="cfdm.CellMeasure.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a>, <a class="reference internal" href="../method/cfdm.CellMeasure.nc_set_hdf5_chunksizes.html#cfdm.CellMeasure.nc_set_hdf5_chunksizes" title="cfdm.CellMeasure.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a>, and
-<a class="reference internal" href="../method/cfdm.CellMeasure.nc_clear_hdf5_chunksizes.html#cfdm.CellMeasure.nc_clear_hdf5_chunksizes" title="cfdm.CellMeasure.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a> methods.</p>
+<p>The dataset chunks may be accessed with the
+<a class="reference internal" href="../method/cfdm.CellMeasure.nc_dataset_chunksizes.html#cfdm.CellMeasure.nc_dataset_chunksizes" title="cfdm.CellMeasure.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a>, <a class="reference internal" href="../method/cfdm.CellMeasure.nc_set_dataset_chunksizes.html#cfdm.CellMeasure.nc_set_dataset_chunksizes" title="cfdm.CellMeasure.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a>, and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_datset_chunksizes</span></code> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
@@ -176,14 +176,12 @@ the <a class="reference internal" href="../method/cfdm.CellMeasure.set_measure.h
 </dd>
 </dl>
 </dd>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
-<div><p>Set descriptive properties. The dictionary keys are
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
 the <a class="reference internal" href="../method/cfdm.CellMeasure.set_properties.html#cfdm.CellMeasure.set_properties" title="cfdm.CellMeasure.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.CellMeasure.set_property.html#cfdm.CellMeasure.set_property" title="cfdm.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
-</div></blockquote>
 <dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'cell_area'}</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'units':</span> <span class="pre">'metres</span> <span class="pre">2'}</span></code></p>
 </dd>
 </dl>
 </dd>
@@ -364,6 +362,24 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
+<section id="quantization">
+<h3>Quantization<a class="headerlink" href="#quantization" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.get_quantization.html#cfdm.CellMeasure.get_quantization" title="cfdm.CellMeasure.get_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantization</span></code></a></p></td>
+<td><p>Get quantization metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.get_quantize_on_write.html#cfdm.CellMeasure.get_quantize_on_write" title="cfdm.CellMeasure.get_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantize_on_write</span></code></a></p></td>
+<td><p>Get a quantize-on-write instruction.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
@@ -472,8 +488,8 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 </section>
-<section id="hdf5-chunks">
-<h3>HDF5 chunks<a class="headerlink" href="#hdf5-chunks" title="Permalink to this headline">¶</a></h3>
+<section id="dataset-chunks">
+<h3>Dataset chunks<a class="headerlink" href="#dataset-chunks" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -481,14 +497,14 @@ parameters are not deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.nc_hdf5_chunksizes.html#cfdm.CellMeasure.nc_hdf5_chunksizes" title="cfdm.CellMeasure.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.nc_dataset_chunksizes.html#cfdm.CellMeasure.nc_dataset_chunksizes" title="cfdm.CellMeasure.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a></p></td>
+<td><p>Get the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.nc_set_hdf5_chunksizes.html#cfdm.CellMeasure.nc_set_hdf5_chunksizes" title="cfdm.CellMeasure.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Set the HDF5 chunking strategy.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.nc_set_dataset_chunksizes.html#cfdm.CellMeasure.nc_set_dataset_chunksizes" title="cfdm.CellMeasure.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p></td>
+<td><p>Set the dataset chunking strategy.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.nc_clear_hdf5_chunksizes.html#cfdm.CellMeasure.nc_clear_hdf5_chunksizes" title="cfdm.CellMeasure.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
-<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.nc_clear_dataset_chunksizes.html#cfdm.CellMeasure.nc_clear_dataset_chunksizes" title="cfdm.CellMeasure.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a></p></td>
+<td><p>Clear the dataset chunking strategy for the data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -542,6 +558,27 @@ parameters are not deep copied.</p>
 </tbody>
 </table>
 </section>
+<section id="deprecated">
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.nc_clear_hdf5_chunksizes.html#cfdm.CellMeasure.nc_clear_hdf5_chunksizes" title="cfdm.CellMeasure.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.nc_hdf5_chunksizes.html#cfdm.CellMeasure.nc_hdf5_chunksizes" title="cfdm.CellMeasure.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.nc_set_hdf5_chunksizes.html#cfdm.CellMeasure.nc_set_hdf5_chunksizes" title="cfdm.CellMeasure.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 
 
@@ -553,7 +590,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-01.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

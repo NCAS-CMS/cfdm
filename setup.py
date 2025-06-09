@@ -55,8 +55,8 @@ inspecting it:
 
 The **cfdm** package can
 
-* read field and domain constructs from netCDF and CDL datasets with a choice of netCDF backends,
-* be fully flexible with respect to HDF5 chunking,
+* read field and domain constructs from netCDF, CDL, and Zarr datasets with a choice of netCDF backends,
+* be fully flexible with respect to dataset storage chunking,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF datasets on disk,
 * read, write, and manipulate UGRID mesh topologies,
@@ -71,7 +71,9 @@ The **cfdm** package can
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays, or coordinate arrays compressed
   by subsampling), whilst presenting a view of the data in its
-  uncompressed form.
+  uncompressed form,
+* read and write that data that are quantized to eliminate false
+  precision.
 
 Documentation
 =============

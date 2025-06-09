@@ -78,6 +78,19 @@ Data
    ~cfdm.InteriorRing.shape
    ~cfdm.InteriorRing.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.InteriorRing.get_quantization
+   ~cfdm.InteriorRing.get_quantize_on_write
+
 Miscellaneous
 -------------
 
@@ -129,9 +142,9 @@ NetCDF
    ~cfdm.InteriorRing.nc_get_dimension
    ~cfdm.InteriorRing.nc_has_dimension
    ~cfdm.InteriorRing.nc_set_dimension
-   ~cfdm.InteriorRing.nc_clear_hdf5_chunksizes
-   ~cfdm.InteriorRing.nc_hdf5_chunksizes
-   ~cfdm.InteriorRing.nc_set_hdf5_chunksizes
+   ~cfdm.InteriorRing.nc_clear_dataset_chunksizes
+   ~cfdm.InteriorRing.nc_dataset_chunksizes
+   ~cfdm.InteriorRing.nc_set_dataset_chunksizes
    
 Groups
 ^^^^^^
@@ -179,3 +192,17 @@ Docstring substitutions
    ~cfdm.InteriorRing._docstring_substitutions        
    ~cfdm.InteriorRing._docstring_package_depth        
    ~cfdm.InteriorRing._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.InteriorRing.nc_clear_hdf5_chunksizes
+   ~cfdm.InteriorRing.nc_hdf5_chunksizes
+   ~cfdm.InteriorRing.nc_set_hdf5_chunksizes

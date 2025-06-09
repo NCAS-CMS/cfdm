@@ -22,8 +22,8 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.CoordinateConversion.del_parameter" href="../method/cfdm.CoordinateConversion.del_parameter.html" />
-    <link rel="prev" title="cfdm.Bounds._docstring_method_exclusions" href="../method/cfdm.Bounds._docstring_method_exclusions.html" />
+    <link rel="next" title="cfdm.CoordinateConversion.dump" href="../method/cfdm.CoordinateConversion.dump.html" />
+    <link rel="prev" title="cfdm.Bounds.nc_set_hdf5_chunksizes" href="../method/cfdm.Bounds.nc_set_hdf5_chunksizes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.2.0</a></h1>
 
 
 
@@ -86,8 +86,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.Bounds._docstring_method_exclusions.html" title="previous chapter">cfdm.Bounds._docstring_method_exclusions</a></li>
-      <li>Next: <a href="../method/cfdm.CoordinateConversion.del_parameter.html" title="next chapter">cfdm.CoordinateConversion.del_parameter</a></li>
+      <li>Previous: <a href="../method/cfdm.Bounds.nc_set_hdf5_chunksizes.html" title="previous chapter">cfdm.Bounds.nc_set_hdf5_chunksizes</a></li>
+      <li>Next: <a href="../method/cfdm.CoordinateConversion.dump.html" title="next chapter">cfdm.CoordinateConversion.dump</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -126,7 +126,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CoordinateConversion">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CoordinateConversion</code><span class="sig-paren">(</span><em class="sig-param">parameters=None</em>, <em class="sig-param">domain_ancillaries=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/coordinateconversion.py#L4-L25"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CoordinateConversion</code><span class="sig-paren">(</span><em class="sig-param">parameters=None</em>, <em class="sig-param">domain_ancillaries=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/coordinateconversion.py#L4-L25"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.parametersdomainancillaries.ParametersDomainAncillaries</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.coordinateconversion.CoordinateConversion</span></code></p>
 <p>A coordinate conversion component.</p>
 <p>Specifically, a coordinate conversion component of a coordinate
@@ -188,6 +188,21 @@ parameters are not deep copied.</p>
 </dl>
 </dd></dl>
 
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CoordinateConversion.dump.html#cfdm.CoordinateConversion.dump" title="cfdm.CoordinateConversion.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="parameter-terms">
 <h2>Parameter terms<a class="headerlink" href="#parameter-terms" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
@@ -269,6 +284,9 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CoordinateConversion.equals.html#cfdm.CoordinateConversion.equals" title="cfdm.CoordinateConversion.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two instances are the same.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CoordinateConversion.creation_commands.html#cfdm.CoordinateConversion.creation_commands" title="cfdm.CoordinateConversion.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the component.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -331,7 +349,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-01.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

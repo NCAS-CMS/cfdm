@@ -92,22 +92,22 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
     integer input (lying in the valid range) to the decorated function
     will ignore the global cfdm.log_level() to configure a custom
     verbosity for the individual function call, applying to its logic
-    and any functions it calls internally and lasting only the
-    duration of the call.
+    and any functions it calls internally and lasting only the duration
+    of the call.
 
-    If verbose=None, as is the default, the log_level() determines
-    which log messages are shown, as standard.
+    If verbose=None, as is the default, the log_level() determines which
+    log messages are shown, as standard.
 
     Only use this to decorate functions which make log calls directly
     and have a 'verbose' keyword argument set to None by default.
 
-    Note that the 'calls' keyword argument is to automatically track
-    the number of decorated functions that are being (or about to be)
-    executed, with the purpose of preventing resetting of the
-    effective log level at the completion of decorated functions that
-    are called inside other decorated functions (see comments in
-    'finally' statement for further explanation).  Note (when it is of
-    concern) that this approach may not be thread-safe.
+    Note that the 'calls' keyword argument is to automatically track the
+    number of decorated functions that are being (or about to be)
+    executed, with the purpose of preventing resetting of the effective
+    log level at the completion of decorated functions that are called
+    inside other decorated functions (see comments in 'finally'
+    statement for further explanation).  Note (when it is of concern)
+    that this approach may not be thread-safe.
 
     """
     # Note that 'self' can be included in '*args' for any function calls

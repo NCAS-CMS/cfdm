@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.NetCDF4Array.get_compression_type" href="../method/cfdm.NetCDF4Array.get_compression_type.html" />
-    <link rel="prev" title="cfdm.Data._docstring_method_exclusions" href="../method/cfdm.Data._docstring_method_exclusions.html" />
+    <link rel="prev" title="cfdm.Data.nc_set_hdf5_chunksizes" href="../method/cfdm.Data.nc_set_hdf5_chunksizes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.2.0</a></h1>
 
 
 
@@ -86,7 +86,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.Data._docstring_method_exclusions.html" title="previous chapter">cfdm.Data._docstring_method_exclusions</a></li>
+      <li>Previous: <a href="../method/cfdm.Data.nc_set_hdf5_chunksizes.html" title="previous chapter">cfdm.Data.nc_set_hdf5_chunksizes</a></li>
       <li>Next: <a href="../method/cfdm.NetCDF4Array.get_compression_type.html" title="next chapter">cfdm.NetCDF4Array.get_compression_type</a></li>
   </ul></li>
   </ul></li>
@@ -126,7 +126,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.NetCDF4Array">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">NetCDF4Array</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">address=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">unpack=True</em>, <em class="sig-param">attributes=None</em>, <em class="sig-param">storage_options=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/data/netcdf4array.py#L9-L224"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NetCDF4Array" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">NetCDF4Array</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">address=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">unpack=True</em>, <em class="sig-param">attributes=None</em>, <em class="sig-param">storage_options=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/data/netcdf4array.py#L9-L224"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NetCDF4Array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.mixin.indexmixin.IndexMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.filearray.FileArray</span></code></p>
 <p>A netCDF array accessed with <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4</span></code>.</p>
 <div class="versionadded">
@@ -356,8 +356,8 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.NetCDF4Array.to_memory.html#cfdm.NetCDF4Array.to_memory" title="cfdm.NetCDF4Array.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
 <td><p>Bring data on disk into memory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.NetCDF4Array.astype</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.NetCDF4Array.astype.html#cfdm.NetCDF4Array.astype" title="cfdm.NetCDF4Array.astype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astype</span></code></a></p></td>
+<td><p>Cast the data to a specified type.</p></td>
 </tr>
 </tbody>
 </table>
@@ -411,7 +411,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-01.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

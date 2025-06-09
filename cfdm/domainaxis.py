@@ -40,29 +40,6 @@ class DomainAxis(
 
     """
 
-    def __init__(self, size=None, source=None, copy=True):
-        """**Initialisation**
-
-        :Parameters:
-
-            size: `int`, optional
-                The size of the domain axis.
-
-                The size may also be set after initialisation with the
-                `set_size` method.
-
-                *Parameter example:*
-                  ``size=192``
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(size=size, source=source, copy=copy)
-
-        self._initialise_netcdf(source)
-
     def __str__(self):
         """Called by the `str` built-in function.
 

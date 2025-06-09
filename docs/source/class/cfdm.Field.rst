@@ -101,7 +101,24 @@ Data
    ~cfdm.Field.shape
    ~cfdm.Field.size
    
-.. _Field-Metadata-constructs:   x
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.get_quantization
+   ~cfdm.Field._set_quantization
+   ~cfdm.Field._del_quantization
+   ~cfdm.Field.get_quantize_on_write
+   ~cfdm.Field.set_quantize_on_write
+   ~cfdm.Field.del_quantize_on_write
+
+.. _Field-Metadata-constructs:
    
 Metadata constructs
 -------------------
@@ -274,8 +291,8 @@ Geometries
    ~cfdm.Field.nc_set_geometry_variable_groups
    ~cfdm.Field.nc_clear_geometry_variable_groups
 
-HDF5 chunks
-^^^^^^^^^^^
+Dataset chunks
+^^^^^^^^^^^^^^
 
 .. rubric:: Methods
 
@@ -284,9 +301,9 @@ HDF5 chunks
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.Field.nc_hdf5_chunksizes
-   ~cfdm.Field.nc_set_hdf5_chunksizes
-   ~cfdm.Field.nc_clear_hdf5_chunksizes
+   ~cfdm.Field.nc_dataset_chunksizes
+   ~cfdm.Field.nc_set_dataset_chunksizes
+   ~cfdm.Field.nc_clear_dataset_chunksizes
 
 Components
 ^^^^^^^^^^
@@ -355,3 +372,17 @@ Docstring substitutions
    ~cfdm.Field._docstring_substitutions
    ~cfdm.Field._docstring_package_depth
    ~cfdm.Field._docstring_method_exclusions
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.nc_clear_hdf5_chunksizes
+   ~cfdm.Field.nc_hdf5_chunksizes
+   ~cfdm.Field.nc_set_hdf5_chunksizes

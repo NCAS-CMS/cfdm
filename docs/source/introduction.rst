@@ -73,16 +73,16 @@ to add more sophisticated methods.
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
 
-The cfdm package can
+The `cfdm` package can
 
 * read :term:`field constructs <field construct>` and :term:`domain
-  constructs <domain construct>` from netCDF and CDL datasets with a
-  choice of netCDF backends,
-
-* be fully flexible with respect to HDF5 chunking,
+  constructs <domain construct>` from netCDF, CDL, and Zarr datasets
+  with a choice of netCDF backends,
 
 * read files from OPeNDAP servers and S3 object stores,
  
+* be fully flexible with respect to dataset chunking,
+
 * create new field and domain constructs in memory,
 
 * write field and domain constructs to netCDF datasets on disk,
@@ -104,12 +104,15 @@ The cfdm package can
 
 * create subspaces of field and domain constructs,
 
-* incorporate, and create, metadata stored in external files, and
+* incorporate, and create, metadata stored in external files,
 
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays, or coordinate arrays compressed by
   subsampling), whilst presenting a view of the data in its
-  uncompressed form.
+  uncompressed form, and
+
+* read and write that data that are quantized to eliminate false
+  precision.
 
 Note that the cfdm package enables the representation and creation of
 CF field constructs, but it is largely :ref:`up to the user to use
@@ -136,10 +139,9 @@ outside of a Python environment:
 **Performance**
 ---------------
 
-As of version 1.11.2.0 (released 2025-01-28), cfdm uses `Dask
-<https://docs.dask.org>`_ for all of its data manipulations, which
-provides lazy, parallelised, and out-of-core computations of array
-operations.
+The `cfdm` package uses :ref:`Dask <Performance>` for all of its data
+manipulations, which provides lazy, parallelised, and out-of-core
+computations of array operations.
 
 ----
 

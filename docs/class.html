@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.12.1.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.12.2.0</a></h1>
 
 
 
@@ -122,7 +122,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="cfdm-classes">
 <span id="class-extended"></span><h1><strong>cfdm classes</strong><a class="headerlink" href="#cfdm-classes" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.12.1.0 for version 1.12 of the CF conventions.</p>
+<p>Version 1.12.2.0 for version 1.12 of the CF conventions.</p>
 <section id="field-construct-class">
 <h2>Field construct class<a class="headerlink" href="#field-construct-class" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
@@ -246,8 +246,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.H5netcdfArray.html#cfdm.H5netcdfArray" title="cfdm.H5netcdfArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.H5netcdfArray</span></code></a></p></td>
 <td><p>A netCDF array accessed with <code class="xref py py-obj docutils literal notranslate"><span class="pre">h5netcdf</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.NumpyArray.html#cfdm.NumpyArray" title="cfdm.NumpyArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.NumpyArray</span></code></a></p></td>
-<td><p>An underlying <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.ZarrArray.html#cfdm.ZarrArray" title="cfdm.ZarrArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ZarrArray</span></code></a></p></td>
+<td><p>A Zarr array accessed with <code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.Array.html#cfdm.Array" title="cfdm.Array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Array</span></code></a></p></td>
 <td><p>Abstract base class for a container of an underlying array.</p></td>
@@ -288,6 +288,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.CompressedArray.html#cfdm.CompressedArray" title="cfdm.CompressedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CompressedArray</span></code></a></p></td>
 <td><p>Mixin class for a container of an underlying compressed array.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cfdm.Quantization.html#cfdm.Quantization" title="cfdm.Quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Quantization</span></code></a></p></td>
+<td><p>A quantization variable.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -319,7 +322,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-01.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

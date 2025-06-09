@@ -69,7 +69,6 @@ class GroupsTest(unittest.TestCase):
                 self.assertEqual(
                     ch5.nc_variable_groups(),
                     nc.constructs[key].nc_variable_groups(),
-                    key,
                 )
 
     def setUp(self):
@@ -91,7 +90,6 @@ class GroupsTest(unittest.TestCase):
 
         ungrouped_file = ungrouped_file1
         grouped_file = grouped_file1
-        #        grouped_file = "delme_grouped.nc"
 
         # Add a second grid mapping
         datum = cfdm.Datum(parameters={"earth_radius": 7000000})
@@ -133,7 +131,7 @@ class GroupsTest(unittest.TestCase):
         grouped_file = grouped_file1
 
         h = cfdm.read(grouped_file, verbose=1)
-        self.assertEqual(len(h), 1, repr(h))
+        self.assertEqual(len(h), 1)
         h = h[0]
         self.assertTrue(f.equals(h))
 
@@ -222,7 +220,7 @@ class GroupsTest(unittest.TestCase):
         nc.close()
 
         h = cfdm.read(grouped_file)
-        self.assertEqual(len(h), 1, repr(h))
+        self.assertEqual(len(h), 1)
         self.assertTrue(f.equals(h[0], verbose=3))
 
         # ------------------------------------------------------------
@@ -240,7 +238,7 @@ class GroupsTest(unittest.TestCase):
 
         # Check that the field construct hasn't changed
         h = cfdm.read(grouped_file)
-        self.assertEqual(len(h), 1, repr(h))
+        self.assertEqual(len(h), 1)
         self.assertTrue(f.equals(h[0], verbose=2))
 
         # ------------------------------------------------------------
@@ -259,7 +257,7 @@ class GroupsTest(unittest.TestCase):
 
         # Check that the field construct hasn't changed
         h = cfdm.read(grouped_file)
-        self.assertEqual(len(h), 1, repr(h))
+        self.assertEqual(len(h), 1)
         self.assertTrue(f.equals(h[0], verbose=2))
 
         # ------------------------------------------------------------
@@ -277,7 +275,7 @@ class GroupsTest(unittest.TestCase):
 
         # Check that the field construct hasn't changed
         h = cfdm.read(grouped_file, verbose=1)
-        self.assertEqual(len(h), 1, repr(h))
+        self.assertEqual(len(h), 1)
         self.assertTrue(f.equals(h[0], verbose=2))
 
         # ------------------------------------------------------------
@@ -297,7 +295,7 @@ class GroupsTest(unittest.TestCase):
 
         # Check that the field construct hasn't changed
         h = cfdm.read(grouped_file)
-        self.assertEqual(len(h), 1, repr(h))
+        self.assertEqual(len(h), 1)
         self.assertTrue(f.equals(h[0], verbose=2))
 
         # ------------------------------------------------------------
@@ -318,7 +316,7 @@ class GroupsTest(unittest.TestCase):
 
         # Check that the field construct hasn't changed
         h = cfdm.read(grouped_file, verbose=1)
-        self.assertEqual(len(h), 1, repr(h))
+        self.assertEqual(len(h), 1)
         h = h[0]
         self.assertTrue(f.equals(h, verbose=2))
 
@@ -391,7 +389,7 @@ class GroupsTest(unittest.TestCase):
         nc.close()
 
         h = cfdm.read(grouped_file, verbose=1)
-        self.assertEqual(len(h), 1, repr(h))
+        self.assertEqual(len(h), 1)
         h = h[0]
         self.assertTrue(f.equals(h, verbose=2))
 

@@ -78,6 +78,19 @@ Data
    ~cfdm.Count.shape
    ~cfdm.Count.size 
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.get_quantization
+   ~cfdm.Count.get_quantize_on_write
+
 Miscellaneous
 -------------
 
@@ -129,9 +142,9 @@ NetCDF
    ~cfdm.Count.nc_get_dimension
    ~cfdm.Count.nc_has_dimension
    ~cfdm.Count.nc_set_dimension
-   ~cfdm.Count.nc_clear_hdf5_chunksizes
-   ~cfdm.Count.nc_hdf5_chunksizes
-   ~cfdm.Count.nc_set_hdf5_chunksizes
+   ~cfdm.Count.nc_clear_dataset_chunksizes
+   ~cfdm.Count.nc_dataset_chunksizes
+   ~cfdm.Count.nc_set_dataset_chunksizes
 
 Groups
 ^^^^^^
@@ -196,4 +209,18 @@ Docstring substitutions
    ~cfdm.Count._docstring_special_substitutions
    ~cfdm.Count._docstring_substitutions        
    ~cfdm.Count._docstring_package_depth        
-   ~cfdm.Count._docstring_method_exclusions    
+   ~cfdm.Count._docstring_method_exclusions
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.nc_clear_hdf5_chunksizes
+   ~cfdm.Count.nc_hdf5_chunksizes
+   ~cfdm.Count.nc_set_hdf5_chunksizes

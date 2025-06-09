@@ -66,10 +66,10 @@ _docstring_substitution_definitions = {
     `nc_variable_node_coordinate_groups`,
     `nc_clear_node_coordinate_variable_groups`, and
     `nc_set_node_coordinate_variable_groups` methods.""",
-    # netCDF HDF5 chunks
-    "{{netCDF HDF5 chunks}}": """The netCDF4 HDF5 chunks may be accessed with the
-    `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`, and
-    `nc_clear_hdf5_chunksizes` methods.""",
+    # netCDF dataset chunks
+    "{{netCDF dataset chunks}}": """The dataset chunks may be accessed with the
+    `nc_dataset_chunksizes`, `nc_set_dataset_chunksizes`, and
+    `nc_clear_datset_chunksizes` methods.""",
     # ----------------------------------------------------------------
     # Method description substitutions (2 levels of indentation)
     # ----------------------------------------------------------------
@@ -119,6 +119,53 @@ _docstring_substitution_definitions = {
         was produced by combining other objects that also store their
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
+    # read datasets
+    "{{read datasets: (arbitrarily nested sequence of) `str`}}": """dataset: (arbitrarily nested sequence of) `str`
+            A string, or arbitrarily nested sequence of strings,
+            giving the dataset names, or directory names, from which
+            to read field or domain constructs.
+
+            Local names may be relative paths and will have tilde and
+            shell environment variables expansions applied to them,
+            followed by the replacement of any UNIX wildcards (such as
+            ``*``, ``?``, ``[a-z]``, etc.) with the list of matching
+            names. Remote names (i.e. those with an http or s3
+            schema), however, are not transformed in any way.
+
+            Directories will be walked through to find their contents
+            (recursively if *recursive* is True), unless the directory
+            defines a Zarr dataset (which is ascertained by presence
+            in the directory of appropriate Zarr metadata files).
+
+            Remote datasets (i.e. those with an http or s3 schema) are
+            assumed to be netCDF files, or else Zarr datasets if the
+            *dataset_type* parameter is set to ``'Zarr'``.
+
+            As a special case, if the *cdl_string* parameter is True,
+            then interpretation of *datasets* changes so that each
+            string is assumed to be an actual CDL representation of a
+            dataset, rather than a than a file or directory name.
+
+            *Example:*
+              The local dataset ``file.nc`` in the user's home
+              directory could be described by any of the following:
+              ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
+              ``'~/file.nc'``, ``'~/tmp/../file.nc'``
+
+            *Example:*
+              The local datasets ``file1.nc`` and ``file2.nc`` could
+              be described by any of the following: ``['file1.nc',
+              'file2.nc']``, ``'file[12].nc'``""",
+    # read cdl_string
+    "{{read cdl_string: `bool`, optional}}": """cdl_string: `bool`, optional
+            If True and the format to read is CDL then each string
+            given by the *datasets* parameter is interpreted as a
+            string of actual CDL rather than the name of a location
+            from which field or domain constructs can be read.
+
+            Note that when `cdl_string` is True, the `fmt` parameter
+            is ignored as the format is assumed to be CDL, so in this
+            case it is not necessary to also specify ``fmt='CDL'``.""",
     # read external
     "{{read external: (sequence of) `str`, optional}}": """external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
@@ -328,7 +375,7 @@ _docstring_substitution_definitions = {
               This is the default. The Dask chunk size in bytes will
               be as close as possible the size given by
               `{{package}}.chunksize`, favouring square-like chunk
-              shapes, with the added restriction that the entirety of
+              shapes, with the added guarantee that the entirety of
               each storage chunk lies within exactly one Dask
               chunk. This strategy is general the most performant, as
               it ensures that when accessing the data, each storage
@@ -379,8 +426,8 @@ _docstring_substitution_definitions = {
             * ``'storage-exact'``
 
               Each Dask chunk will contain exactly one storage chunk
-              and each storage chunk will lie within exactly one Dask
-              chunk.
+              and each storage chunk will lie entirely within exactly
+              one Dask chunk.
 
               For instance, consider a file variable that has an array
               of 64-bit floats with shape (400, 300, 60) and a storage
@@ -412,7 +459,7 @@ _docstring_substitution_definitions = {
               favouring square-like chunk shapes. This may give
               similar Dask chunk shapes as the ``'storage-aligned'``
               option, but without the guarantee that each storage
-              chunk will lie within exactly one Dask chunk.
+              chunk will lie entirely within exactly one Dask chunk.
 
             * A byte-size given by a `str`
 
@@ -420,7 +467,8 @@ _docstring_substitution_definitions = {
               possible to the given byte-size, favouring square-like
               chunk shapes. Any string value, accepted by the *chunks*
               parameter of the `dask.array.from_array` function is
-              permitted.
+              permitted. There is no guarantee that a storage chunk
+              lies entirely within one Dask chunk.
 
               *Example:*
                 A Dask chunksize of 2 MiB may be specified as
@@ -429,12 +477,15 @@ _docstring_substitution_definitions = {
             * `-1` or `None`
 
               There is no Dask chunking, i.e. every data array has one
-              Dask chunk regardless of its size.
+              Dask chunk regardless of its size. In this case each
+              storage chunk is guaranteed to lie entirely within the
+              one Dask chunk.
 
             * Positive `int`
 
               Every dimension of all Dask chunks has this number of
-              elements.
+              elements. There is no guarantee that a storage chunk
+              lies entirely within one Dask chunk.
 
               *Example:*
                 For 3-dimensional data, *dask_chunks* of `10` will
@@ -475,13 +526,12 @@ _docstring_substitution_definitions = {
 
               *Example:*
                 If a netCDF file contains dimensions ``time``, ``z``,
-                ``lat`` and ``lon``, then ``{'ncdim%time': 12,
+                ``lat``, and ``lon``, then ``{'ncdim%time': 12,
                 'ncdim%lat', None, 'ncdim%lon': None}`` will ensure
-                that, for all applicable data arrays, all ``time``
-                axes have a `dask` chunksize of 12; all ``lat`` and
-                ``lon`` axes are not `dask` chunked; and all ``z``
-                axes are `dask` chunked to comply as closely as
-                possible with the default `dask` chunk size.
+                that all ``time`` axes have a Dask chunksize of 12;
+                all ``lat`` and ``lon`` axes are not Dask chunked; and
+                all ``z`` axes are Dask chunked to comply as closely
+                as possible with the default Dask chunk size.
 
                 If the netCDF file also contains a ``time`` coordinate
                 variable with a "standard_name" attribute of
@@ -490,24 +540,26 @@ _docstring_substitution_definitions = {
                 ``{'time': 12, 'ncdim%lat', None, 'ncdim%lon': None}``
                 or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
                 None}``.""",
-    # read store_hdf5_chunks
+    # read store_dataset_chunks
     "{{read store_dataset_chunks: `bool`, optional}}": """store_dataset_chunks: `bool`, optional
+
             If True (the default) then store the dataset chunking
             strategy for each returned data array. The dataset
             chunking strategy is then accessible via an object's
-            `nc_hdf5_chunksizes` method. When the dataset chunking
+            `nc_dataset_chunksizes` method. When the dataset chunking
             strategy is stored, it will be used when the data is
-            written to a new netCDF4 file with `{{package}}.write`
+            written to a new netCDF file with `{{package}}.write`
             (unless the strategy is modified prior to writing).
 
-            If False, or if the dataset format does not support
-            chunking, then no dataset chunking strategy is stored.
-            (i.e. an `nc_hdf5_chunksizes` method will return `None`
-            for all `Data` objects). In this case, when the data is
-            written to a new netCDF4 file, the dataset chunking
-            strategy will be determined by `{{package}}.write`.
+            If False, or if the dataset being read does not support
+            chunking (such as a netCDF-3 dataset), then no dataset
+            chunking strategy is stored (i.e. an
+            `nc_dataset_chunksizes` method will return `None` for all
+            `Data` objects). In this case, when the data is written to
+            a new netCDF file, the dataset chunking strategy will be
+            determined by `{{package}}.write`.
 
-            See the `{{package}}.write` *hdf5_chunks* parameter for
+            See the `{{package}}.write` *dataset_chunks* parameter for
             details on how the dataset chunking strategy is determined
             at the time of writing.""",
     # read cfa
@@ -633,20 +685,30 @@ _docstring_substitution_definitions = {
             are stored in the dataset. If False (the default) then the
             presence or not of size 1 dimensions is determined by how
             the data are stored in its dataset.""",
-    # read file_type
-    "{{read file_type: `None` or (sequence of) `str`, optional}}": """file_type: `None` or (sequence of) `str`, optional
-             Only read files of the given type(s). All other file
-             types are ignored. If `None` (the default) then files of
-             any valid type are read. If there are no files of the
-             given type(s), or *file_type* is empty sequence, then an
-             empty list is returned.""",
-    # read ignore_unknown_type
-    "{{read ignore_unknown_type: `bool`, optional}}": """ignore_unknown_type: `bool`, optional
-             If True then ignore any file which does not have one of
-             the valid types specified by the *file_type*
-             parameter. If False (the default) then attempting to read
-             a file with an unrecognised type will result in an
-             error.""",
+    # read dataset_type
+    "{{read dataset_type: `None` or (sequence of) `str`, optional}}": """dataset_type: `None` or (sequence of) `str`, optional
+            Only read datasets of the given type or types, ignoring
+            others. If there are no dataset of the given types, or
+            *dataset_type* is empty sequence, then an empty list is
+            returned. If `None` (the default) all datasets defined by
+            the *dataset* parameter are read, and an exception is
+            raised for any invalid dataset type.""",
+    # read recursive
+    "{{read recursive: `bool`, optional}}": """recursive: `bool`, optional
+            If True then recursively read sub-directories of any
+            directories specified with the *datasets* parameter.""",
+    # read followlinks
+    "{{read followlinks: `bool`, optional}}": """followlinks: `bool`, optional
+            If True, and *recursive* is True, then also search for
+            datasets in sub-directories which resolve to symbolic
+            links. By default directories which resolve to symbolic
+            links are ignored. Ignored of *recursive* is
+            False. Datasets which are symbolic links are always
+            followed.
+
+            Note that setting ``recursive=True, followlinks=True`` can
+            lead to infinite recursion if a symbolic link points to a
+            parent directory of itself.""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully
@@ -664,10 +726,7 @@ _docstring_substitution_definitions = {
     # data_name: `str`, optional
     "{{data_name: `str`, optional}}": """data_name: `str`, optional
                 The name of the construct's `Data` instance created by
-                the returned commands.
-
-                *Parameter example:*
-                  ``name='data1'``""",
+                the returned commands.""",
     # header: `bool`, optional
     "{{header: `bool`, optional}}": """header: `bool`, optional
                 If True (the default) output a comment describing the
@@ -713,10 +772,7 @@ _docstring_substitution_definitions = {
     # name
     "{{name: `str`, optional}}": """name: `str`, optional
                 The name of the `{{class}}` instance created by the
-                returned commands.
-
-                *Parameter example:*
-                  ``name='var1'``""",
+                returned commands.""",
     # namespace
     "{{namespace: `str`, optional}}": """namespace: `str`, optional
                 The name space containing classes of the {{package}}
@@ -923,45 +979,52 @@ _docstring_substitution_definitions = {
                 stored. The original file names of any constituent
                 parts are not updated. Can't be used with the *define*
                 parameter.""",
-    # hdf5 chunksizes
-    "{{hdf5 chunksizes}}": """chunksizes: `None` or `str` or `int` or `float` or `dict` or a sequence
+    # chunk chunksizes
+    "{{chunk chunksizes}}": """chunksizes: `None` or `str` or `int` or `float` or `dict` or a sequence
                 Set the chunking strategy for writing to a netCDF4
                 file. One of:
 
-                * `None`: No HDF5 chunking strategy has been
+                * `None`: No dataset chunking strategy has been
                   defined. The chunking strategy will be determined at
                   write time by `{{package}}.write`.
 
-                * ``'contiguous'``: The data will be written to the
-                  file contiguously, i.e. no chunking.
+                * ``'contiguous'``
 
-                * `int` or `float` or `str`: The size in bytes of the
-                  HDF5 chunks. A floating point value is rounded down
-                  to the nearest integer, and a string represents a
-                  quantity of byte units. "Square-like" chunk shapes
-                  are preferred, maximising the amount of chunks that
-                  are completely filled with data values (see the
-                  `{{package}}.write` *hdf5_chunks* parameter for
-                  details). For instance a chunksize of 1024 bytes may
-                  be specified with any of ``1024``, ``1024.9``,
-                  ``'1024'``, ``'1024.9'``, ``'1024 B'``, ``'1 KiB'``,
+                  The data will be written to the file contiguously,
+                  i.e. no chunking.
+
+                * `int` or `float` or `str`
+
+                  The size in bytes of the dataset chunks. A floating
+                  point value is rounded down to the nearest integer,
+                  and a string represents a quantity of byte
+                  units. "Square-like" chunk shapes are preferred,
+                  maximising the amount of chunks that are completely
+                  filled with data values (see the `{{package}}.write`
+                  *dataset_chunks* parameter for details). For
+                  instance a chunksize of 1024 bytes may be specified
+                  with any of ``1024``, ``1024.9``, ``'1024'``,
+                  ``'1024.9'``, ``'1024 B'``, ``'1 KiB'``,
                   ``'0.0009765625 MiB'``, etc. Recognised byte units
                   are (case insensitive): ``B``, ``KiB``, ``MiB``,
                   ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
                   ``TB``, and ``PB``. Spaces in strings are optional.
 
-                * sequence of `int` or `None`: The maximum number of
-                  array elements in a chunk along each data axis,
-                  provided in the same order as the data axes. Values
-                  are automatically limited to the full size of their
-                  corresponding data axis, but the special values
-                  `None` or ``-1`` may be used to indicate the full
-                  axis size. This chunking strategy may get
-                  automatically modified by methods that change the
-                  data shape (such as `insert_dimension`).
+                * sequence of `int` or `None`
 
-                * `dict`: The maximum number of array elements in a
-                  chunk along the axes specified by the dictionary
+                  The maximum number of array elements in a chunk
+                  along each data axis, provided in the same order as
+                  the data axes. Values are automatically limited to
+                  the full size of their corresponding data axis, but
+                  the special values `None` or ``-1`` may be used to
+                  indicate the full axis size. This chunking strategy
+                  may get automatically modified by methods that
+                  change the data shape (such as `insert_dimension`).
+
+                * `dict`
+
+                  The maximum number of array elements in a chunk
+                  along the axes specified by the dictionary
                   keys. Integer values are automatically limited to
                   the full size of their corresponding data axis, and
                   the special values `None` or ``-1`` may be used to
@@ -971,37 +1034,37 @@ _docstring_substitution_definitions = {
                   size. This chunking strategy may get automatically
                   modified by methods that change the data shape (such
                   as `insert_dimension`).""",
-    # hdf5 todict
-    "{{hdf5 todict: `bool`, optional}}": """todict: `bool`, optional
-                If True then the HDF5 chunk sizes are returned in a
+    # chunk todict
+    "{{chunk todict: `bool`, optional}}": """todict: `bool`, optional
+                If True then the dataset chunk sizes are returned in a
                 `dict` keyed by their axis positions. If False (the
-                default) then the HDF5 chunking strategy is returned
-                in the same form that it was set (i.e. as `None`,
-                `int`, `str`, or `tuple`).""",
-    # Returns nc_hdf5_chunksizes
-    "{{Returns nc_hdf5_chunksizes}}": """`None` or `str` or `int` or `dict` or `tuple` of `int`
+                default) then the dataset chunking strategy is
+                returned in the same form that it was set (i.e. as
+                `None`, `int`, `str`, or `tuple`).""",
+    # Returns nc_dataset_chunksizes
+    "{{Returns nc_dataset_chunksizes}}": """`None` or `str` or `int` or `dict` or `tuple` of `int`
                 The current chunking strategy when writing to a
                 netCDF4 file. One of:
 
-                * `None`: No HDF5 chunking strategy has been
+                * `None`: No dataset chunking strategy has been
                   defined. The chunking strategy will be determined at
                   write time by `{{package}}.write`.
 
                 * ``'contiguous'``: The data will be written to the
                   file contiguously, i.e. no chunking.
 
-                * `int` or `str`: The size in bytes of the HDF5
+                * `int` or `str`: The size in bytes of the dataset
                   chunks. A string represents a quantity of byte
                   units. "Square-like" chunk shapes are preferred,
                   maximising the amount of chunks that are completely
                   filled with data values (see the `{{package}}.write`
-                  *hdf5_chunks* parameter for details). For instance a
-                  chunksize of 1024 bytes may be specified with any of
-                  ``1024``, ``'1024'``, ``'1024 B'``, ``'1 KiB'``,
-                  ``'0.0009765625 MiB'``, etc. Recognised byte units
-                  are (case insensitive): ``B``, ``KiB``, ``MiB``,
-                  ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
-                  ``TB``, and ``PB``.
+                  *dataset_chunks* parameter for details). For
+                  instance a chunksize of 1024 bytes may be specified
+                  with any of ``1024``, ``'1024'``, ``'1024 B'``, ``'1
+                  KiB'``, ``'0.0009765625 MiB'``, etc. Recognised byte
+                  units are (case insensitive): ``B``, ``KiB``,
+                  ``MiB``, ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``,
+                  ``GB``, ``TB``, and ``PB``.
 
                 * `tuple` of `int`: The maximum number of array
                   elements in a chunk along each data axis. This
@@ -1186,17 +1249,17 @@ _docstring_substitution_definitions = {
                 a single aggregation at the end. If set to less than
                 that, an intermediate aggregation step will be used,
                 so that any of the intermediate or final aggregation
-                steps operates on no more than ``split_every``
-                inputs. The depth of the aggregation graph will be
-                :math:`log_{split\_every}(\textnormal{input chunks
-                along reduced axes})`. Setting to a low value can
-                reduce cache size and network transfers, at the cost
-                of more CPU and a larger dask graph.
+                steps operates on no more than *split_every*
+                inputs. The depth of the aggregation graph will be the
+                logarithm to the base *split_every* of *N*, the number
+                input chunks along reduced axes.  Setting to a low
+                value can reduce cache size and network transfers, at
+                the cost of more CPU and a larger dask graph. See
+                `dask.array.reduction` for details.
 
                 By default, `dask` heuristically decides on a good
                 value. A default can also be set globally with the
-                ``split_every`` key in `dask.config`. See
-                `dask.array.reduction` for details.""",
+                ``split_every`` key in `dask.config`.""",
     # _get_array index
     "{{index: `tuple` or `None`, optional}}": """index: `tuple` or `None`, optional
                Provide the indices that define the subspace. If `None`

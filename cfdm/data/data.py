@@ -28,7 +28,7 @@ from ..functions import (
 )
 from ..mixin.container import Container
 from ..mixin.files import Files
-from ..mixin.netcdf import NetCDFAggregation, NetCDFHDF5
+from ..mixin.netcdf import NetCDFAggregation, NetCDFChunks
 from ..units import Units
 from .abstract import Array
 from .creation import to_dask
@@ -55,7 +55,7 @@ from .utils import (
 logger = logging.getLogger(__name__)
 
 
-class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
+class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -408,10 +408,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             self._custom["has_deterministic_name"] = bool(deterministic)
 
-            # File components
-            self._initialise_netcdf(source)
-            self._initialise_original_filenames(source)
-
             return
 
         super().__init__(
@@ -419,10 +415,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             fill_value=fill_value,
             _use_array=False,
         )
-
-        # Initialise file components
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
 
         # Set the units
         units = self._Units_class(units, calendar=calendar)
@@ -759,17 +751,17 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             ]
             new._axes = new_axes
 
-        # Update the HDF5 chunking strategy
-        chunksizes = new.nc_hdf5_chunksizes()
+        # Update the dataset chunking strategy
+        chunksizes = new.nc_dataset_chunksizes()
         if (
             chunksizes
             and isinstance(chunksizes, tuple)
             and new.shape != original_shape
         ):
             if keepdims:
-                new.nc_set_hdf5_chunksizes(chunksizes)
+                new.nc_set_dataset_chunksizes(chunksizes)
             else:
-                new.nc_clear_hdf5_chunksizes()
+                new.nc_clear_dataset_chunksizes()
 
         return new
 
@@ -1663,12 +1655,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if axes is not None:
             d._axes = axes
 
-        # Update the HDF5 chunking strategy
+        # Update the dataset chunking strategy
         if (
-            isinstance(data.nc_hdf5_chunksizes(), tuple)
+            isinstance(data.nc_dataset_chunksizes(), tuple)
             and d.shape != original_shape
         ):
-            d.nc_clear_hdf5_chunksizes()
+            d.nc_clear_dataset_chunksizes()
 
         # Update the deterministic status
         d._update_deterministic(other)
@@ -4232,7 +4224,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         if masked:
             mask = mask.creation_commands(
-                name="mask", namespace=namespace0, indent=0, string=True
+                name="mask", namespace=namespace0, indent=indent, string=True
             )
             mask = mask.replace("mask = ", "mask=", 1)
             mask = f", {mask}"
@@ -4938,12 +4930,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         data_axes.insert(axes[0], new_axis_identifier(data_axes0))
         d._axes = data_axes
 
-        # Update the HDF5 chunking strategy
+        # Update the dataset chunking strategy
         if (
-            isinstance(d.nc_hdf5_chunksizes(), tuple)
+            isinstance(d.nc_dataset_chunksizes(), tuple)
             and d.shape != original_shape
         ):
-            d.nc_clear_hdf5_chunksizes()
+            d.nc_clear_dataset_chunksizes()
 
         return d
 
@@ -5790,12 +5782,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         data_axes.insert(position, axis)
         d._axes = data_axes
 
-        # Update the HDF5 chunking strategy
-        chunksizes = d.nc_hdf5_chunksizes()
+        # Update the dataset chunking strategy
+        chunksizes = d.nc_dataset_chunksizes()
         if chunksizes and isinstance(chunksizes, tuple):
             chunksizes = list(chunksizes)
             chunksizes.insert(position, 1)
-            d.nc_set_hdf5_chunksizes(chunksizes)
+            d.nc_set_dataset_chunksizes(chunksizes)
 
         return d
 
@@ -5971,7 +5963,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) 1.8.0
 
-         ..seealso:: `min`, `sum`
+        .. seealso:: `min`, `sum`
 
         :Parameters:
 
@@ -6027,7 +6019,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) 1.8.0
 
-         ..seealso:: `max`, `sum`
+        .. seealso:: `max`, `sum`
 
         :Parameters:
 
@@ -6578,12 +6570,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if dx.ndim != original_ndim:
             d._axes = generate_axis_identifiers(dx.ndim)
 
-        # Update the HDF5 chunking strategy
+        # Update the dataset chunking strategy
         if (
-            isinstance(d.nc_hdf5_chunksizes(), tuple)
+            isinstance(d.nc_dataset_chunksizes(), tuple)
             and d.shape != original_shape
         ):
-            d.nc_clear_hdf5_chunksizes()
+            d.nc_clear_dataset_chunksizes()
 
         return d
 
@@ -6816,13 +6808,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # Remove the squeezed axis names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
 
-        # Update the HDF5 chunking strategy
-        chunksizes = d.nc_hdf5_chunksizes()
+        # Update the dataset chunking strategy
+        chunksizes = d.nc_dataset_chunksizes()
         if chunksizes and isinstance(chunksizes, tuple):
             chunksizes = [
                 size for i, size in enumerate(chunksizes) if i not in iaxes
             ]
-            d.nc_set_hdf5_chunksizes(chunksizes)
+            d.nc_set_dataset_chunksizes(chunksizes)
 
         return d
 
@@ -6836,7 +6828,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `max`, `min`
+        .. seealso:: `max`, `min`
 
         :Parameters:
 
@@ -7147,11 +7139,11 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         d._set_dask(dx, in_memory=True)
 
-        # Update the HDF5 chunking strategy
-        chunksizes = d.nc_hdf5_chunksizes()
+        # Update the dataset chunking strategy
+        chunksizes = d.nc_dataset_chunksizes()
         if chunksizes and isinstance(chunksizes, tuple):
             chunksizes = [chunksizes[i] for i in iaxes]
-            d.nc_set_hdf5_chunksizes(chunksizes)
+            d.nc_set_dataset_chunksizes(chunksizes)
 
         return d
 
@@ -7245,12 +7237,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # Update the axis names
         d._axes = generate_axis_identifiers(dx.ndim)
 
-        # Update the HDF5 chunking strategy
+        # Update the dataset chunking strategy
         if (
-            isinstance(d.nc_hdf5_chunksizes(), tuple)
+            isinstance(d.nc_dataset_chunksizes(), tuple)
             and d.shape != original_shape
         ):
-            d.nc_clear_hdf5_chunksizes()
+            d.nc_clear_dataset_chunksizes()
 
         return d
 

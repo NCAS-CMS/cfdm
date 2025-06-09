@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.2.0</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.environment<a class="headerlink" href="#cfdm-environment" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.environment">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">environment</code><span class="sig-paren">(</span><em class="sig-param">display=True</em>, <em class="sig-param">paths=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.1.0/cfdm/functions.py#L338-L432"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.environment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">environment</code><span class="sig-paren">(</span><em class="sig-param">display=True</em>, <em class="sig-param">paths=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/functions.py#L372-L474"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.environment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the names, versions and paths of all dependencies.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
@@ -151,40 +151,46 @@ the description is returned as in a <a class="reference external" href="https://
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">environment</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35</span>
-<span class="go">Python: 3.11.4</span>
-<span class="go">packaging: 23.0</span>
-<span class="go">numpy: 1.25.2</span>
-<span class="go">cfdm.core: 1.11.2.0</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">environment</span><span class="p">()</span>
+<span class="go">Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39</span>
+<span class="go">Python: 3.12.8 /home/miniconda3/bin/python</span>
+<span class="go">packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py</span>
+<span class="go">numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py</span>
+<span class="go">cfdm.core: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py</span>
+<span class="go">udunits2 library: libudunits2.so.0</span>
 <span class="go">HDF5 library: 1.14.2</span>
-<span class="go">netcdf library: 4.9.2</span>
-<span class="go">netCDF4: 1.6.4</span>
-<span class="go">h5netcdf: 1.3.0</span>
-<span class="go">h5py: 3.10.0</span>
-<span class="go">s3fs: 2024.6.0</span>
-<span class="go">dask: 2025.2.0</span>
-<span class="go">scipy: 1.11.3</span>
-<span class="go">cftime: 1.6.2</span>
-<span class="go">cfdm: 1.11.2.0</span>
+<span class="go">netcdf library: 4.9.4-development</span>
+<span class="go">netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py</span>
+<span class="go">h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py</span>
+<span class="go">h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py</span>
+<span class="go">zarr: 3.0.8 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py</span>
+<span class="go">s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py</span>
+<span class="go">scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py</span>
+<span class="go">dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py</span>
+<span class="go">cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py</span>
+<span class="go">cfunits: 3.3.7 /home/miniconda3/lib/python3.12/site-packages/cfunits/__init__.py</span>
+<span class="go">cfdm: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/__init__.py</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">environment</span><span class="p">()</span>
-<span class="go">Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35</span>
-<span class="go">Python: 3.11.4 /home/miniconda3/bin/python</span>
-<span class="go">packaging: 23.0 /home/miniconda3/lib/python3.11/site-packages/packaging/__init__.py</span>
-<span class="go">numpy: 1.25.2 /home/miniconda3/lib/python3.11/site-packages/numpy/__init__.py</span>
-<span class="go">cfdm.core: 1.11.2.0 /home/cfdm/cfdm/core/__init__.py</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">environment</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39</span>
+<span class="go">Python: 3.12.8</span>
+<span class="go">packaging: 24.2</span>
+<span class="go">numpy: 2.2.6</span>
+<span class="go">cfdm.core: 1.12.2.0</span>
+<span class="go">udunits2 library: libudunits2.so.0</span>
 <span class="go">HDF5 library: 1.14.2</span>
-<span class="go">netcdf library: 4.9.2</span>
-<span class="go">netCDF4: 1.6.4 /home/miniconda3/lib/python3.11/site-packages/netCDF4/__init__.py</span>
-<span class="go">h5netcdf: 1.3.0 /home/miniconda3/lib/python3.11/site-packages/h5netcdf/__init__.py</span>
-<span class="go">h5py: 3.10.0 /home/miniconda3/lib/python3.11/site-packages/h5py/__init__.py</span>
-<span class="go">s3fs: 2024.6.0 /home/miniconda3/lib/python3.11/site-packages/s3fs/__init__.py</span>
-<span class="go">scipy: 1.11.3 /home/miniconda3/lib/python3.11/site-packages/scipy/__init__.py</span>
-<span class="go">dask: 2025.2.0 /home/miniconda3/lib/python3.11/site-packages/dask/__init__.py</span>
-<span class="go">cftime: 1.6.2 /home/miniconda3/lib/python3.11/site-packages/cftime/__init__.py</span>
-<span class="go">cfdm: 1.11.2.0 /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py</span>
+<span class="go">netcdf library: 4.9.4-development</span>
+<span class="go">netCDF4: 1.7.2</span>
+<span class="go">h5netcdf: 1.3.0</span>
+<span class="go">h5py: 3.12.1</span>
+<span class="go">zarr: 3.0.8</span>
+<span class="go">s3fs: 2024.12.0</span>
+<span class="go">scipy: 1.15.1</span>
+<span class="go">dask: 2025.5.1</span>
+<span class="go">cftime: 1.6.4.post1</span>
+<span class="go">cfunits: 3.3.7</span>
+<span class="go">cfdm: 1.12.2.0</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -200,7 +206,7 @@ the description is returned as in a <a class="reference external" href="https://
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-01.
+      &copy;2025, NCAS | Page built on 2025-06-05.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

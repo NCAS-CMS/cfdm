@@ -36,6 +36,65 @@ class ParametersDomainAncillaries(Parameters):
 
         return "; ".join(out)
 
+    def creation_commands(
+        self, namespace=None, indent=0, string=True, name="p", header=True
+    ):
+        """Return the commands that would create the component.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `{{package}}.Field.creation_commands`
+
+        :Parameters:
+
+            {{namespace: `str`, optional}}
+
+            {{indent: `int`, optional}}
+
+            {{string: `bool`, optional}}
+
+            {{name: `str`, optional}}
+
+            {{header: `bool`, optional}}
+
+        :Returns:
+
+            {{returns creation_commands}}
+
+        **Examples**
+
+        >>> x = {{package}}.{{class}}({'algorithm': 'granular_bitround'})
+        >>> x.nc_set_variable('var')
+        >>> print(x.creation_commands(header=False))
+        p = {{package}}.{{class}}()
+        p.set_parameters({'algorithm': 'granular_bitround'})
+        p.nc_set_variable('var')
+
+        """
+        if namespace is None:
+            namespace = self._package() + "."
+        elif namespace and not namespace.endswith("."):
+            namespace += "."
+
+        out = super().creation_commands(
+            indent=indent,
+            namespace=namespace,
+            string=False,
+            name=name,
+            header=header,
+        )
+
+        domain_ancillaries = self.domain_ancillaries()
+        if domain_ancillaries:
+            out.append(f"{name}.set_domain_ancillaries({domain_ancillaries})")
+
+        if string:
+            indent = " " * indent
+            out[0] = indent + out[0]
+            out = ("\n" + indent).join(out)
+
+        return out
+
     @_manage_log_level_via_verbosity
     def equals(
         self,
