@@ -1,7 +1,14 @@
 import logging
 import re
 
-from ..decorators import _manage_log_level_via_verbosity
+import dask.array as da
+import numpy as np
+
+from ..decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -1085,75 +1092,147 @@ class FieldDomain:
             **filter_kwargs,
         )
 
-    def create_1d_coordinates(self):
-        """TODOHEAL
+    @_inplace_enabled(default=False)
+    def create_1d_coordinates(self, persist=False, key=False, inplace=False):
+        """TODOHEALPIX.
 
         .. versionadded:: NEXTVERSION
 
-        """
-        crs = self.coordinate_reference('grid_mapping_name:healpix',
-                                        default=None)
-        if crs is None:
-            return
+        :Parameters:
 
-        key, healpix_indices = self.coordinate(???, item=True, default=(None, None))
-        if key is None:
-            return
-        
-        axis = self.get_domain_axes(key)[0]
-        dx = healpix_indices.to_dask_array(
+            persist: `bool`, optional
+                TODOHEALPIX
+
+            key: `bool`
+                TODOHEALPIX If True, return alongside the field
+                construct the key identifying the auxiliary coordinate
+                of the field with the newly-computed vertical
+                coordinates, as a 2-tuple of field and then key. If
+                False, the default, then only return the field
+                construct.
+
+                If no coordinates were computed, `None` will be
+                returned in the key (second) position of the 2-tuple.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                TODOHEALPIX
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        keys = ()
+
+        crs = f.coordinate_reference("grid_mapping_name:healpix", default=None)
+        if crs is None:
+            if key:
+                return f, keys
+
+            return f
+
+        # ------------------------------------------------------------
+        # Get the HEALPix indices as a Dask array
+        # ------------------------------------------------------------
+        c_key, healpix_index = f.coordinate(
+            "healpix_index", item=True, default=(None, None)
+        )
+        if c_key is None:
+            raise ValueError("TODOHEALPIX")
+
+        dx = healpix_index.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=False
         )
 
-        nside = 2**crs.coordinate_conversion.get_property('refinement_level')
-        order = crs.coordinate_conversion.get_property('healpix_index_method')
-        hp = astropy_healpix.HEALPix(nside=nside, order=order)
+        # ------------------------------------------------------------
+        # Define functions to create latitudes and longitudes from
+        # HEALPix indices
+        # ------------------------------------------------------------
+        refinement_level = crs.coordinate_conversion.get_property(
+            "refinement_level", None
+        )
+        if refinement_level is None:
+            raise ValueError("TODOHEALPIX")
 
-        def lon_coordinates(a):
+        healpix_index_method = crs.coordinate_conversion.get_property(
+            "healpix_index_method", None
+        )
+        if healpix_index_method is None:
+            raise ValueError("TODOHEALPIX")
+
+        if healpix_index_method == "nuniq":
+            raise ValueError("TODOHEALPIX")
+
+        from astropy_healpix import HEALPix
+
+        hp = HEALPix(nside=2**refinement_level, order=healpix_index_method)
+
+        def HEALPix_lon_coordinates(a):
             return hp.healpix_to_lonlat(a)[0].degree
-        
-        def lat_coordinates(a):                
+
+        def HEALPix_lat_coordinates(a):
             return hp.healpix_to_lonlat(a)[1].degree
-        
-        def lon_bounds(a):
+
+        def HEALPix_lon_bounds(a):
             return hp.boundaries_lonlat(a)[0].degree
-        
-        def lat_bounds(a):                
+
+        def HEALPix_lat_bounds(a):
             return hp.boundaries_lonlat(a)[1].degree
-        
-        meta = np.array((), dtype=np.dtype('float64'))
+
+        # ------------------------------------------------------------
+        # Create new latitude and longitude coordinates with bounds
+        # ------------------------------------------------------------
+        meta = np.array((), dtype=np.dtype("float64"))
 
         # Latitude coordinates
-        dx = dx.map_blocks(lat_coordinates, meta=meta)
-        lat =  self._AuxiliaryCoordinate(
-            data=self._Data(dx, 'degrees_north'),
-            properties={'standard_name': 'latitude'}
-            copy=False
+        dx = dx.map_blocks(HEALPix_lat_coordinates, meta=meta)
+        lat = f._AuxiliaryCoordinate(
+            data=f._Data(dx, "degrees_north", copy=False),
+            properties={"standard_name": "latitude"},
+            copy=False,
         )
 
         # Longitude coordinates
-        dx = dx.map_blocks(lon_coordinates, meta=meta)
-        lon =  self._AuxiliaryCoordinate(
-            data=self._Data(dx, 'degrees_east'),,
-            properties={'standard_name': 'longitude'}
-            copy=False
+        dx = dx.map_blocks(HEALPix_lon_coordinates, meta=meta)
+        lon = f._AuxiliaryCoordinate(
+            data=f._Data(dx, "degrees_east", copy=False),
+            properties={"standard_name": "longitude"},
+            copy=False,
         )
 
         # Latitude bounds
-        dx = da.blockwise(lat_bounds, "ij", dx, "i", new_axes={'j': 4},
-                          meta=meta)
-        bounds = self._Bounds(data=dx)
+        dx = da.blockwise(
+            HEALPix_lat_bounds, "ij", dx, "i", new_axes={"j": 4}, meta=meta
+        )
+        bounds = f._Bounds(data=dx)
         lat.set_bounds(bounds)
-                       
+
         # Longitude bounds
-        dx = da.blockwise(lon_bounds, "ij", dx, "i", new_axes={'j': 4},
-                          meta=meta)
-        bounds = self._Bounds(data=dx)
+        dx = da.blockwise(
+            HEALPix_lon_bounds, "ij", dx, "i", new_axes={"j": 4}, meta=meta
+        )
+        bounds = f._Bounds(data=dx)
         lon.set_bounds(bounds)
 
-        self.set_construct(lat, axes=axis, copy=False)
-        self.set_construct(lon, axes=axis, copy=False)
-                                     
+        if persist:
+            lat = lat.persist(inplace=True)
+            lon = lon.persist(inplace=True)
+
+        # ------------------------------------------------------------
+        # Set the new latitude and longitude coordinates
+        # ------------------------------------------------------------
+        axis = f.get_domain_axes(c_key)[0]
+        lat_key = f.set_construct(lat, axes=axis, copy=False)
+        lon_key = f.set_construct(lon, axes=axis, copy=False)
+        keys = (lat_key, lon_key)
+
+        if key:
+            return f, keys
+
+        return f
+
     def del_construct(self, *identity, default=ValueError(), **filter_kwargs):
         """Remove a metadata construct.
 
