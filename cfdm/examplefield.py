@@ -5913,7 +5913,6 @@ def example_fields(*n, _func=example_field):
             ======  ==================================================
             ``0``   Cell method and dimension coordinate metadata
                     constructs.
-
             ``1``   Cell method, dimension coordinate, auxiliary
                     coordinate, cell measure, coordinate reference,
                     domain ancillary and field ancillary metadata
