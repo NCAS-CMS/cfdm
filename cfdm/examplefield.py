@@ -1,5 +1,3 @@
-import numpy as np
-
 from .cfdmimplementation import implementation
 from .functions import CF
 
@@ -235,7 +233,7 @@ def example_field(n, _implementation=_implementation):
                     : cf_role=trajectory_id(cf_role=trajectory_id(1)) = [flight1]
 
     TODOHEALPIX
-    
+
     """
     # For safety given the private second argument which we might not
     # document, otherwise a user gets an obscure error if they tried, say:
@@ -5367,10 +5365,10 @@ def example_field(n, _implementation=_implementation):
                     290.0,
                 ],
                 [
-                    294.0,
-                    287.8,
+                    294.2,
+                    287.7,
                     294.6,
-                    289.9,
+                    289.5,
                     289.2,
                     293.0,
                     286.8,
@@ -5591,10 +5589,22 @@ def example_field(n, _implementation=_implementation):
         data = Data(
             [
                 [
-                    291.5,291.5,291.5,291.5,
-                    293.5,  293.5, 293.5,293.5,
-                    285.3,  285.3, 285.3,285.3,
-                    286.3, 286.3,  286.3,286.3,
+                    291.6,
+                    291.7,
+                    291.4,
+                    291.3,
+                    293.6,
+                    293.7,
+                    293.4,
+                    293.3,
+                    285.4,
+                    285.5,
+                    285.2,
+                    285.1,
+                    286.4,
+                    286.5,
+                    286.2,
+                    286.1,
                     286.2,
                     289.6,
                     285.6,
@@ -5641,10 +5651,22 @@ def example_field(n, _implementation=_implementation):
                     290.0,
                 ],
                 [
-                    294.0,294.0,294.0,294.0,
-                    287.8, 287.8, 287.8, 287.8,
-                    294.6,294.6,294.6,294.6,
-                    289.9,2289.9,89.9,289.9,
+                    294.3,
+                    294.4,
+                    294.1,
+                    294.0,
+                    287.8,
+                    287.9,
+                    287.6,
+                    287.5,
+                    294.7,
+                    294.8,
+                    294.5,
+                    294.4,
+                    289.6,
+                    289.7,
+                    289.4,
+                    289.3,
                     289.2,
                     293.0,
                     286.8,
@@ -5719,11 +5741,68 @@ def example_field(n, _implementation=_implementation):
         c.set_properties({"standard_name": "healpix_index", "units": "1"})
         c.nc_set_variable("healpix_index")
         data = Data(
-            [64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
-             76, 77, 78, 79, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-             31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
-             45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
-             59, 60, 61, 62, 63],
+            [
+                64,
+                65,
+                66,
+                67,
+                68,
+                69,
+                70,
+                71,
+                72,
+                73,
+                74,
+                75,
+                76,
+                77,
+                78,
+                79,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39,
+                40,
+                41,
+                42,
+                43,
+                44,
+                45,
+                46,
+                47,
+                48,
+                49,
+                50,
+                51,
+                52,
+                53,
+                54,
+                55,
+                56,
+                57,
+                58,
+                59,
+                60,
+                61,
+                62,
+                63,
+            ],
             units="1",
             dtype="i4",
         )
@@ -5803,7 +5882,7 @@ def example_field(n, _implementation=_implementation):
         field.set_construct(c)
         #
         # field data axes
-        field.set_data_axes(("domainaxis0", "domainaxis1"))        
+        field.set_data_axes(("domainaxis0", "domainaxis1"))
     else:
         raise ValueError(
             "Must select an example construct with an integer argument "

@@ -286,8 +286,7 @@ class NetCDFRead(IORead):
             "ocean_double_sigma_coordinate": (
                 "ocean_double_sigma_coordinate",
             ),
-            "healpix": (    "healpix_index", "latitude", "longitude" ),
-            
+            "healpix": ("healpix_index", "latitude", "longitude"),
         }
 
     def cf_interpolation_names(self):
