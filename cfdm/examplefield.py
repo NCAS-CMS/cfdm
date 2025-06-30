@@ -58,9 +58,14 @@ def example_field(n, _implementation=_implementation):
             ``11``  Discrete sampling geometry (DSG) "trajectory"
                     features.
 
-            ``12``  TODOHEALPIX
+            ``12``  A global HEALPix grid with "nested" indices at
+                    refinement level 1. The field area-weighted global
+                    means are equal to those of example field ``13``.
 
-            ``13``  TODOHEALPIX
+            ``13``  A global HEALPix grid with "nuniq" indices
+                    representing refinement levels 1 and 2. The
+                    area-weighted global means are equal to those of
+                    example field ``12``.
             ======  ==================================================
 
             See the examples for details.
@@ -232,7 +237,25 @@ def example_field(n, _implementation=_implementation):
                     : longitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[0.0, ..., 0.31]] degree_east
                     : cf_role=trajectory_id(cf_role=trajectory_id(1)) = [flight1]
 
-    TODOHEALPIX
+    >>> print(cfdm.example_field(12))
+    Field: air_temperature (ncvar%tas)
+    ----------------------------------
+    Data            : air_temperature(time(2), healpix_index(48)) K
+    Cell methods    : time(2): mean area: mean
+    Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                    : height(1) = [1.5] m
+    Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+    Coord references: grid_mapping_name:healpix
+
+    >>> print(cfdm.example_field(13))
+    Field: air_temperature (ncvar%tas)
+    ----------------------------------
+    Data            : air_temperature(time(2), healpix_index(60)) K
+    Cell methods    : time(2): mean area: mean
+    Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                    : height(1) = [1.5] m
+    Auxiliary coords: healpix_index(healpix_index(60)) = [64, ..., 63] 1
+    Coord references: grid_mapping_name:healpix
 
     """
     # For safety given the private second argument which we might not
@@ -5563,7 +5586,7 @@ def example_field(n, _implementation=_implementation):
         # cell_method: mean
         c = CellMethod()
         c.set_method("mean")
-        c.set_axes(("time",))
+        c.set_axes(("domainaxis0",))
         field.set_construct(c)
         #
         # cell_method: mean
@@ -5872,7 +5895,7 @@ def example_field(n, _implementation=_implementation):
         # cell_method: mean
         c = CellMethod()
         c.set_method("mean")
-        c.set_axes(("time",))
+        c.set_axes(("domainaxis0",))
         field.set_construct(c)
         #
         # cell_method: mean
@@ -5946,9 +5969,14 @@ def example_fields(*n, _func=example_field):
             ``11``  Discrete sampling geometry (DSG) "trajectory"
                     features.
 
-            ``12``  TODOHEALPIX
+            ``12``  A global HEALPix grid with "nested" indices at
+                    refinement level 1. The field area-weighted global
+                    means are equal to those of example field ``13``.
 
-            ``13``  TODOHEALPIX
+            ``13``  A global HEALPix grid with "nuniq" indices
+                    representing refinement levels 1 and 2. The
+                    area-weighted global means are equal to those of
+                    example field ``12``.
             ======  ==================================================
 
             If no individual field constructs are selected then all
@@ -5981,7 +6009,9 @@ def example_fields(*n, _func=example_field):
      <Field: air_temperature(time(2), ncdim%nMesh2_face(3)) K>,
      <Field: northward_wind(time(2), ncdim%nMesh2_edge(9)) ms-1>,
      <Field: air_pressure(time(2), ncdim%nMesh2_node(7)) hPa>,
-     <CF Field: mole_fraction_of_ozone_in_air(cf_role=trajectory_id(1), ncdim%trajectory(4)) ppb>] TODOHEALPIX
+     <CF Field: mole_fraction_of_ozone_in_air(cf_role=trajectory_id(1), ncdim%trajectory(4)) ppb>
+     <Field: air_temperature(time(2), healpix_index(48)) K>,
+     <Field: air_temperature(time(2), healpix_index(60)) K>]
 
     >>> cfdm.example_fields(7, 1)
     [<Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
@@ -6062,6 +6092,12 @@ def example_domain(n, _func=example_field):
 
             ``11``  Discrete sampling geometry (DSG) "trajectory"
                     features.
+
+            ``12``  A global HEALPix grid with "nested" indices at
+                    refinement level 1.
+
+            ``13``  A global HEALPix grid with "nuniq" indices
+                    representing refinement levels 1 and 2.
             ======  ==================================================
 
             See the examples for details.
@@ -6179,6 +6215,18 @@ def example_domain(n, _func=example_field):
                     : latitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[52.0, ..., 52.2]] degree_north
                     : longitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[0.0, ..., 0.31]] degree_east
                     : cf_role=trajectory_id(cf_role=trajectory_id(1)) = [flight1]
+
+    >>> print(cfdm.example_domain(12))
+    Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                    : height(1) = [1.5] m
+    Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+    Coord references: grid_mapping_name:healpix
+
+    >>> print(cfdm.example_domain(13))
+    Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                    : height(1) = [1.5] m
+    Auxiliary coords: healpix_index(healpix_index(60)) = [64, ..., 63] 1
+    Coord references: grid_mapping_name:healpix
 
     """
     return _func(n).get_domain()
