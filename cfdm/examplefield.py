@@ -5575,7 +5575,7 @@ def example_field(n, _implementation=_implementation):
         f = CoordinateConversion()
         f.set_parameters(
             {
-                "healpix_order": "nested",
+                "index_scheme": "nested",
                 "refinement_level": 1,
                 "grid_mapping_name": "healpix",
             }
@@ -5885,7 +5885,7 @@ def example_field(n, _implementation=_implementation):
         f = CoordinateConversion()
         f.set_parameters(
             {
-                "healpix_order": "nuniq",
+                "index_scheme": "nuniq",
                 "grid_mapping_name": "healpix",
             }
         )
