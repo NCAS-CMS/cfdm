@@ -6484,8 +6484,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         """Change the shape of the data without changing its values.
 
         It assumes that the array is stored in row-major order, and
-        only allows for reshapings that collapse or merge dimensions
-        like ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
+        only allows for reshapings that collapse or merge dimensions,
+        e.g. ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
@@ -6549,9 +6549,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         original_shape = self.shape
         original_ndim = len(original_shape)
 
-        dx = d.to_dask_array(
-            _force_mask_hardness=False, _force_to_memory=False
-        )
+        dx = d.to_dask_array(_force_mask_hardness=False)
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
         d._set_dask(dx, in_memory=None)
 

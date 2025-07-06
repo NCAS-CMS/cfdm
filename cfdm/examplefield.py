@@ -60,11 +60,13 @@ def example_field(n, _implementation=_implementation):
 
             ``12``  A global HEALPix grid with "nested" indices at
                     refinement level 1. The field area-weighted global
-                    means are equal to those of example field ``13``.
+                    latitude-longitude means are equal to those of
+                    example field ``13``.
 
-            ``13``  A global HEALPix grid with "nested_unique" indices
-                    representing refinement levels 1 and 2. The
-                    area-weighted global means are equal to those of
+            ``13``  A global HEALPix Multi-Order Coverage grid with
+                    "nested_unique" indices representing refinement
+                    levels 1 and 2. The area-weighted global
+                    latitude-longitude means are equal to those of
                     example field ``12``.
             ======  ==================================================
 
@@ -5971,11 +5973,13 @@ def example_fields(*n, _func=example_field):
 
             ``12``  A global HEALPix grid with "nested" indices at
                     refinement level 1. The field area-weighted global
-                    means are equal to those of example field ``13``.
+                    latitude-longitude means are equal to those of
+                    example field ``13``.
 
-            ``13``  A global HEALPix grid with "nested_unique" indices
-                    representing refinement levels 1 and 2. The
-                    area-weighted global means are equal to those of
+            ``13``  A global HEALPix Multi-Order Coverage grid with
+                    "nested_unique" indices representing refinement
+                    levels 1 and 2. The area-weighted global
+                    latitude-longitude means are equal to those of
                     example field ``12``.
             ======  ==================================================
 
@@ -6096,8 +6100,9 @@ def example_domain(n, _func=example_field):
             ``12``  A global HEALPix grid with "nested" indices at
                     refinement level 1.
 
-            ``13``  A global HEALPix grid with "nested_unique" indices
-                    representing refinement levels 1 and 2.
+            ``13``  A global HEALPix Multi-Order Coverage grid with
+                    "nested_unique" indices representing refinement
+                    levels 1 and 2.
             ======  ==================================================
 
             See the examples for details.
