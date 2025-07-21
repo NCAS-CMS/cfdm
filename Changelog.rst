@@ -1,3 +1,12 @@
+Version NEXTVERSION
+--------------
+
+**2025-??-??**
+
+* New dependency: ``distributed>=2025.5.1``
+
+----
+
 Version 1.12.2.0
 ----------------
 
