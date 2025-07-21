@@ -429,6 +429,7 @@ def environment(display=True, paths=True):
     s3fs: 2024.12.0
     scipy: 1.15.1
     dask: 2025.5.1
+    distributed: 2025.5.1
     cftime: 1.6.4.post1
     cfunits: 3.3.7
     cfdm: 1.12.2.0
@@ -452,6 +453,7 @@ def environment(display=True, paths=True):
         "s3fs": _get_module_info("s3fs"),
         "scipy": _get_module_info("scipy"),
         "dask": _get_module_info("dask"),
+        "distributed": _get_module_info("distributed"),
         "cftime": _get_module_info("cftime"),
         "cfunits": _get_module_info("cfunits"),
         "cfdm": (__version__, os.path.abspath(__file__)),
