@@ -59,15 +59,16 @@ def example_field(n, _implementation=_implementation):
                     features.
 
             ``12``  A global HEALPix grid with "nested" indices at
-                    refinement level 1. The field area-weighted global
-                    latitude-longitude means are equal to those of
-                    example field ``13``.
+                    refinement level 1. The field's area-weighted
+                    global latitude-longitude means are equal to those
+                    of example field ``13``.
 
             ``13``  A global HEALPix Multi-Order Coverage grid with
                     "nested_unique" indices representing refinement
-                    levels 1 and 2. The area-weighted global
+                    levels 1 and 2. The field's area-weighted global
                     latitude-longitude means are equal to those of
                     example field ``12``.
+
             ======  ==================================================
 
             See the examples for details.
@@ -5972,13 +5973,13 @@ def example_fields(*n, _func=example_field):
                     features.
 
             ``12``  A global HEALPix grid with "nested" indices at
-                    refinement level 1. The field area-weighted global
-                    latitude-longitude means are equal to those of
-                    example field ``13``.
+                    refinement level 1. The field's area-weighted
+                    global latitude-longitude means are equal to those
+                    of example field ``13``.
 
             ``13``  A global HEALPix Multi-Order Coverage grid with
                     "nested_unique" indices representing refinement
-                    levels 1 and 2. The area-weighted global
+                    levels 1 and 2. The field's area-weighted global
                     latitude-longitude means are equal to those of
                     example field ``12``.
             ======  ==================================================

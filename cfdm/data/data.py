@@ -560,6 +560,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         x.__float__() <==> float(x)
 
         """
+        # REVIEW: By using 'first_element', delayed operation might not be executed.
         if self.size != 1:
             raise TypeError(
                 "only length-1 arrays can be converted to "
@@ -765,6 +766,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         x.__int__() <==> int(x)
 
         """
+        # REVIEW: By using 'first_element', delayed operation might not be executed.
         if self.size != 1:
             raise TypeError(
                 "only length-1 arrays can be converted to "
@@ -6549,6 +6551,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         original_shape = self.shape
         original_ndim = len(original_shape)
 
+        # REVIEW: Can't set '_force_to_memory=False' because FileAraray object can't cope with 'dx.reshape'
         dx = d.to_dask_array(_force_mask_hardness=False)
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
         d._set_dask(dx, in_memory=None)
