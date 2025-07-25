@@ -199,7 +199,10 @@ The cfdm package requires:
     
 * `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 
-* `dask <https://pypi.org/project/dask>`_, versions 2025.5.1 or newer.
+* `dask <https://pypi.org/project/dask>`_, version 2025.5.1 or newer.
+
+* `distributed <https://pypi.org/project/distributed>`_, version 2025.5.1
+  or newer.
 
 * `packaging <https://pypi.org/project/packaging>`_, version 20.0 or
   newer.
