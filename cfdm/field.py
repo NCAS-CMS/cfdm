@@ -1787,7 +1787,7 @@ class Field(
         return out
 
     @_display_or_return
-    def dump(self, display=True, _level=0, _title=None):
+    def dump(self, data=True, display=True, _level=0, _title=None):
         """A full description of the field construct.
 
         Returns a description of all properties, including those of
@@ -1797,6 +1797,18 @@ class Field(
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
+
+            data: `bool`, optional
+                If True (the default) then display the first and last
+                Field data values. This can take a long time if the
+                data need an expensive computation (possibly including
+                a slow read from local or remote disk), in which case
+                setting *data* to False will not display these values,
+                thereby avoiding the computational cost. Note that
+                when the first and last values are displayed, they are
+                cached for fast future retrieval.
+
+                .. versionadded:: NEXTVERSION
 
             display: `bool`, optional
                 If False then return the description as a string. By
@@ -1839,12 +1851,15 @@ class Field(
             string.append(self._dump_properties(_level=_level))
 
         # Data
-        data = self.get_data(None)
-        if data is not None:
+        d = self.get_data(None)
+        if d is not None:
             x = [axis_to_name[axis] for axis in self.get_data_axes(default=())]
+            x = f"{indent0}Data({', '.join(x)})"
+            if data:
+                x += f" = {d}"
 
             string.append("")
-            string.append(f"{indent0}Data({', '.join(x)}) = {data}")
+            string.append(x)
             string.append("")
 
         # Quantization

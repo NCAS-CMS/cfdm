@@ -1,3 +1,13 @@
+Version NEXTVERSION
+----------------
+
+**2025-??-??**
+
+* New keyword parameter to `cfdm.Field.dump`: ``data``
+  (https://github.com/NCAS-CMS/cfdm/issues/345)
+
+----
+
 Version 1.12.2.0
 ----------------
 
