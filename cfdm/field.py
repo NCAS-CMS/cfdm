@@ -1801,7 +1801,7 @@ class Field(
             data: `bool`, optional
                 If True (the default) then display the first and last
                 Field data values. This can take a long time if the
-                data need an expensive computation (possibly including
+                data needs an expensive computation (possibly including
                 a slow read from local or remote disk), in which case
                 setting *data* to False will not display these values,
                 thereby avoiding the computational cost. Note that
