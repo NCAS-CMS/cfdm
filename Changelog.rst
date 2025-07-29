@@ -5,6 +5,7 @@ Version NEXTVERSION
 
 * New keyword parameter to `cfdm.Field.dump`: ``data``
   (https://github.com/NCAS-CMS/cfdm/issues/345)
+* New dependency: ``distributed>=2025.5.1``
 
 ----
 

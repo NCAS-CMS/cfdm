@@ -166,6 +166,20 @@ else:
             f"Got {dask.__version__} at {dask.__file__}"
         )
 
+# Check the version of distributed
+try:
+    import distributed
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+else:
+    _minimum_vn = "2025.5.1"
+    if Version(distributed.__version__) < Version(_minimum_vn):
+        raise ValueError(
+            "Bad distributed version: cfdm requires "
+            f"distributed>={_minimum_vn}. "
+            f"Got {distributed.__version__} at {distributed.__file__}"
+        )
+
 # Check the version of uritools
 try:
     import uritools
