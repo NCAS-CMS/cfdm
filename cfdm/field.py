@@ -1801,12 +1801,16 @@ class Field(
             data: `bool`, optional
                 If True (the default) then display the first and last
                 Field data values. This can take a long time if the
-                data needs an expensive computation (possibly including
-                a slow read from local or remote disk), in which case
-                setting *data* to False will not display these values,
-                thereby avoiding the computational cost. Note that
-                when the first and last values are displayed, they are
-                cached for fast future retrieval.
+                data needs an expensive computation (possibly
+                including a slow read from local or remote disk), in
+                which case setting *data* to False will not display
+                these values, thereby avoiding the computational
+                cost. This only applies to the Field's data - the
+                first and last values of data arrays stored in
+                metadata constructs are always displayed.
+
+                Note that when the first and last values are
+                displayed, they are cached for fast future retrieval.
 
                 .. versionadded:: NEXTVERSION
 
@@ -1856,7 +1860,19 @@ class Field(
             x = [axis_to_name[axis] for axis in self.get_data_axes(default=())]
             x = f"{indent0}Data({', '.join(x)})"
             if data:
+                # Show selected data values
                 x += f" = {d}"
+            else:
+                # Don't show any data values
+                units = d.Units
+                if units.isreftime:
+                    calendar = getattr(units, "calendar", None)
+                    if calendar is not None:
+                        x += f" {calendar}"
+                else:
+                    units = getattr(units, "units", None)
+                    if units is not None:
+                        x += f" {units}"
 
             string.append("")
             string.append(x)
