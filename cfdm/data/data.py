@@ -6276,6 +6276,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
             {{balance: `bool`, optional}}
 
+            {{inplace: `bool`, optional}}
+
         :Returns:
 
             `Data` or `None`
