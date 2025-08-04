@@ -247,7 +247,7 @@ def example_field(n, _implementation=_implementation):
     Cell methods    : time(2): mean area: mean
     Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
                     : height(1) = [1.5] m
-    Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+                    : healpix_index(healpix_index(48)) = [0, ..., 47] 1
     Coord references: grid_mapping_name:healpix
 
     >>> print(cfdm.example_field(13))
@@ -5464,8 +5464,8 @@ def example_field(n, _implementation=_implementation):
         c.nc_set_dimension("height")
         field.set_construct(c, key="domainaxis2", copy=False)
         #
-        # auxiliary_coordinate: healpix_index
-        c = AuxiliaryCoordinate()
+        # dimension_coordinate: healpix_index
+        c = DimensionCoordinate()
         c.set_properties({"standard_name": "healpix_index", "units": "1"})
         c.nc_set_variable("healpix_index")
         data = Data(
@@ -5524,7 +5524,7 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         field.set_construct(
-            c, axes=("domainaxis1",), key="auxiliarycoordinate0", copy=False
+            c, axes=("domainaxis1",), key="dimensioncoordinate2", copy=False
         )
         #
         # dimension_coordinate: time
@@ -5571,7 +5571,7 @@ def example_field(n, _implementation=_implementation):
         # coordinate_reference: grid_mapping_name:healpix
         c = CoordinateReference()
         c.nc_set_variable("healpix")
-        c.set_coordinates({"auxiliarycoordinate0"})
+        c.set_coordinates({"dimensioncoordinate2"})
         d = Datum()
         d.set_parameters({"earth_radius": 6371000})
         c.set_datum(d)
@@ -6225,7 +6225,7 @@ def example_domain(n, _func=example_field):
     >>> print(cfdm.example_domain(12))
     Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
                     : height(1) = [1.5] m
-    Auxiliary coords: healpix_index(healpix_index(48)) = [0, ..., 47] 1
+                    : healpix_index(healpix_index(48)) = [0, ..., 47] 1
     Coord references: grid_mapping_name:healpix
 
     >>> print(cfdm.example_domain(13))
