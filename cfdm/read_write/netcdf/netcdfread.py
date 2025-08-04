@@ -22,6 +22,7 @@ from packaging.version import Version
 from s3fs import S3FileSystem
 from uritools import urisplit
 
+from ...cfvalidation import get_all_current_standard_names
 from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
@@ -150,6 +151,7 @@ class NetCDFRead(IORead):
         "is not used by data variable": 15,
         "not in node_coordinates": 16,
         "is not locatable in the group hierarchy": 17,
+        "has an invalid standard name": 20,
     }
 
     def cf_datum_parameters(self):
@@ -8270,6 +8272,34 @@ class NetCDFRead(IORead):
     # elements. General CF compliance is not checked (e.g. whether or
     # not grid mapping variable has a grid_mapping_name attribute).
     # ================================================================
+    def _check_standard_name(
+        self,
+        parent_ncvar,
+        ncvar,
+        construct,
+    ):
+        """TODO."""
+        # TODO cache once so only need to ingest once
+        valid_snames = get_all_current_standard_names()
+
+        is_ok = True
+
+        # Check if there is a standard_name attr registered, and if so check
+        # validity of it
+        for sname in ("standard_name", "computed_standard_name"):
+            value = self.implementation.get_property(construct, sname, None)
+            if value is not None and value not in valid_snames:
+                is_ok = False
+
+        if not is_ok:
+            self._add_message(
+                parent_ncvar,
+                ncvar,
+                message="has an invalid standard name",
+            )
+
+        return is_ok
+
     def _check_bounds(
         self, parent_ncvar, coord_ncvar, attribute, bounds_ncvar
     ):
