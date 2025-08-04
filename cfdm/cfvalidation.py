@@ -1,3 +1,4 @@
+import logging
 import os
 import pprint
 import re
@@ -10,6 +11,9 @@ from urllib import request
 # TO parse the XML - better than using manual regex parsing!
 import xml.etree.ElementTree as ET
 
+logger = logging.getLogger(__name__)
+
+
 # I.e. the data at repo location:
 # 'https://github.com/cf-convention/cf-convention.github.io/blob/main/Data/'
 # 'cf-standard-names/current/src/cf-standard-name-table.xml' but use this
@@ -19,9 +23,6 @@ STD_NAME_CURRENT_XML_URL = (
     "cf-convention/cf-convention.github.io/refs/heads/main/Data/"
     "cf-standard-names/current/src/cf-standard-name-table.xml"
 )
-SAVE_DIR = "snames_cache"
-
-XML_STD_NAME_TAG_PATTERN = re.compile(r"<entry id=\"(.+)\">")
 
 
 def extract_names_from_xml(snames_xml):
@@ -39,23 +40,15 @@ def extract_names_from_xml(snames_xml):
 
 def get_all_current_standard_names():
     """TODO."""
-    ###print ("Retrieving XML from:", STD_NAME_CURRENT_XML_URL)
+    logger.info(
+        "Retrieving XML for set of current standard names from: ",
+        STD_NAME_CURRENT_XML_URL
+    )  # pragma: no cover
     with request.urlopen(STD_NAME_CURRENT_XML_URL) as response:
         all_snames_xml = response.read()
 
-    all_snames = extract_names_from_xml(all_snames_xml)
-    total = len(all_snames)
+    logger.debug(
+        f"Successfully retrived set of {len(all_snames_xml)} standard names"
+    )  # pragma: no cover
 
-    return all_snames, total
-
-
-def main():
-    """TODO."""
-    names, total = get_all_current_standard_names()
-
-    pprint.pprint(names)
-    print(f"Done with total of {len(names)} names parsed")
-
-
-if __name__ == "__main__":
-    main()
+    return extract_names_from_xml(all_snames_xml)
