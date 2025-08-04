@@ -3,6 +3,8 @@ import os
 import pprint
 import re
 
+from functools import lru_cache
+
 # Prefer using built-in urllib to extract XML from cf-convention.github.io repo
 # over the 'github' module to use the GitHub API directly, because it avoids
 # the need for another dependency to the CF Data Tools.
@@ -38,6 +40,7 @@ def extract_names_from_xml(snames_xml):
     return all_snames
 
 
+@lru_cache
 def get_all_current_standard_names():
     """TODO."""
     logger.info(
