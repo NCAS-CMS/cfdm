@@ -8277,19 +8277,31 @@ class NetCDFRead(IORead):
     # not grid mapping variable has a grid_mapping_name attribute).
     # ================================================================
     def _check_standard_name(
-        self,
-        parent_ncvar,
-        coord_ncvar,
-        coord,
-    ):
+            self, parent_ncvar, coord_ncvar, coord_ncvar_attrs):
         """TODO."""
+        # TODO downgrade status to info/debug
+        logger.warning("Ran _check_standard_name()")
+
         invalid_names = []
         for sn_attr in ("standard_name", "computed_standard_name"):
             # 1. Check if there is a (computed_)standard_name property
-            sn_value = self.implementation.get_property(coord, sn_attr, None)
+            sn_value = coord_ncvar_attrs.get(sn_attr)
+            logger.warning(f"%%%%%% Got sn_value of {sn_value}")
 
             # 2. Check, if requested, if is a string
-            # TODO, return early if so, to avoid getting list
+            # TODO this is not  robust check (may have numpy string type)
+            # but good enough for now whilts developing
+            if not isinstance(sn_value, str):
+                self._add_message(
+                    parent_ncvar,
+                    coord_ncvar,
+                    message=(
+                        f"has a {sn_attr} attribute value that is not a "
+                        "string"
+                    ),
+                    attribute=sn_attr,
+                    conformance="3.3.requirement.1",
+                )
 
             # 3. Check, if requested, if string is in the list of valid names
             valid_names = get_all_current_standard_names()
@@ -8303,8 +8315,13 @@ class NetCDFRead(IORead):
                 self._add_message(
                     parent_ncvar,
                     coord_ncvar,
-                    message="has an invalid standard name",
+                    message=(
+                        f"has a {sn_attr} attribute value that is not "
+                        "a valid name contained in the current standard name "
+                        "table"
+                    ),
                     attribute=sn_attr,
+                    conformance="3.3.requirement.2",
                 )
 
         return not invalid_names
@@ -8355,6 +8372,13 @@ class NetCDFRead(IORead):
         incorrect_dimensions = (variable_type, "spans incorrect dimensions")
 
         g = self.read_vars
+
+        bounds_ncvar_attrs = g["variable_attributes"][bounds_ncvar]
+        self._check_standard_name(
+            parent_ncvar,
+            bounds_ncvar,
+            bounds_ncvar_attrs,
+        )
 
         if bounds_ncvar not in g["internal_variables"]:
             bounds_ncvar, message = self._missing_variable(
