@@ -8276,7 +8276,7 @@ class NetCDFRead(IORead):
     # elements. General CF compliance is not checked (e.g. whether or
     # not grid mapping variable has a grid_mapping_name attribute).
     # ================================================================
-    def _check_standard_name(
+    def _check_standard_names(
             self, parent_ncvar, coord_ncvar, coord_ncvar_attrs,
             check_is_string=True, check_is_in_table=True,
             check_is_in_custom_list=False,
@@ -8293,7 +8293,7 @@ class NetCDFRead(IORead):
 
         """
         # TODO downgrade status to info/debug
-        logger.warning("Ran _check_standard_name()")
+        logger.warning("Ran _check_standard_names()")
 
         invalid_names = []
         any_sn_found = False
@@ -8312,7 +8312,7 @@ class NetCDFRead(IORead):
             # 2. Check, if requested, if is a string
             # TODO this is not  robust check (may have numpy string type)
             # but good enough for now whilts developing
-            if not isinstance(sn_value, str):
+            if check_is_string and not isinstance(sn_value, str):
                 invalid_sn_found = True
                 self._add_message(
                     parent_ncvar,
@@ -8326,9 +8326,10 @@ class NetCDFRead(IORead):
                 )
 
             # 3. Check, if requested, if string is in the list of valid names
-            valid_names = get_all_current_standard_names()
-
-            if sn_value is not None and sn_value not in valid_names:
+            elif (
+                    check_is_in_table and sn_value not in
+                    get_all_current_standard_names()
+            ):
                 invalid_sn_found = True
                 logger.warning(
                     f"Detected invalid standard name: '{sn_attr}' of "
@@ -8345,6 +8346,9 @@ class NetCDFRead(IORead):
                     attribute=sn_attr,
                     conformance="3.3.requirement.2",
                 )
+
+        # TODO implement check_is_in_custom_list for custom list check,
+        # if so ignore table check for efficiency
 
         if not any_sn_found:  # no (computed_)standard_name found
             return
@@ -8401,7 +8405,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         bounds_ncvar_attrs = g["variable_attributes"][bounds_ncvar]
-        self._check_standard_name(
+        self._check_standard_names(
             parent_ncvar,
             bounds_ncvar,
             bounds_ncvar_attrs,
