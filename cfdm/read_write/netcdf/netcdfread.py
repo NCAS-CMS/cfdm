@@ -4928,18 +4928,9 @@ class NetCDFRead(IORead):
                             ) in self.implementation.get_coordinates(
                                 f
                             ).items():
-                                sname_prop = self.implementation.get_property(
+                                if n == self.implementation.get_property(
                                     coord, "standard_name", None
-                                )
-
-                                # Look for invalid standard names but only
-                                # report them as invalid if they haven't
-                                # already been detected
-                                bad_snames = self._check_standard_name(
-                                    field_ncvar, n, coord, known_bad_snames)
-                                known_bad_snames.update(bad_snames)
-
-                                if n == sname_prop:
+                                ):
                                     coordinates.append(key)
 
                         # Add the datum to already existing vertical
@@ -5143,6 +5134,9 @@ class NetCDFRead(IORead):
         # -------------------------------------------------------------
         self._set_quantization(f, field_ncvar)
 
+        # -------------------------------------------------------------
+        # Compliance reporting
+        # -------------------------------------------------------------
         # Add the structural read report to the field/domain
         dataset_compliance = g["dataset_compliance"][field_ncvar]
         components = dataset_compliance["non-compliance"]
@@ -8287,31 +8281,33 @@ class NetCDFRead(IORead):
         parent_ncvar,
         coord_ncvar,
         coord,
-        known_bad_snames,
     ):
         """TODO."""
-        # TODO cache once so only need to ingest once
-        valid_snames = get_all_current_standard_names()
+        invalid_names = []
+        for sn_attr in ("standard_name", "computed_standard_name"):
+            # 1. Check if there is a (computed_)standard_name property
+            sn_value = self.implementation.get_property(coord, sn_attr, None)
 
+            # 2. Check, if requested, if is a string
+            # TODO, return early if so, to avoid getting list
 
-        # Check if there is a standard_name attr registered, and if so check
-        # validity of it
-        bad_snames = set()
-        for prop in ("standard_name", "computed_standard_name"):
-            value = self.implementation.get_property(coord, prop, None)
-            if value is not None and value not in valid_snames:
-                bad_snames.add(value)
+            # 3. Check, if requested, if string is in the list of valid names
+            valid_names = get_all_current_standard_names()
 
-        for sname in bad_snames:
-            if sname not in known_bad_snames:
-                logger.warning(f"Detected invalid standard name: {sname}")
+            if sn_value is not None and sn_value not in valid_names:
+                invalid_names.append(sn_value)
+                logger.warning(
+                    f"Detected invalid standard name: '{sn_attr}' of "
+                    f"'{sn_value}' for {coord_ncvar}"
+                )
                 self._add_message(
                     parent_ncvar,
                     coord_ncvar,
                     message="has an invalid standard name",
+                    attribute=sn_attr,
                 )
 
-        return bad_snames
+        return not invalid_names
 
     def _check_bounds(
         self, parent_ncvar, coord_ncvar, attribute, bounds_ncvar

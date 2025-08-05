@@ -10,16 +10,19 @@ from functools import lru_cache
 # the need for another dependency to the CF Data Tools.
 from urllib import request
 
-# TO parse the XML - better than using manual regex parsing!
+# To parse the XML - better than using manual regex parsing!
 import xml.etree.ElementTree as ET
 
 logger = logging.getLogger(__name__)
 
 
-# I.e. the data at repo location:
-# 'https://github.com/cf-convention/cf-convention.github.io/blob/main/Data/'
+# This is the data at the repo location:
+# 'github.com/cf-convention/cf-convention.github.io/blob/main/Data/'
 # 'cf-standard-names/current/src/cf-standard-name-table.xml' but use this
-# form under 'https://raw.githubusercontent.com' for raw XML content only
+# form under 'https://raw.githubusercontent.com/' for raw XML content only.
+# Note: the raw XML s also made available at:
+# 'cfconventions.org/Data/cf-standard-names/current/src/cf-standard-name-'
+# 'table.xml', is that a better location to grab from (may be more stable)?
 STD_NAME_CURRENT_XML_URL = (
     "https://raw.githubusercontent.com/"
     "cf-convention/cf-convention.github.io/refs/heads/main/Data/"
@@ -33,11 +36,11 @@ def extract_names_from_xml(snames_xml):
     # Want all <entry id="..."> elements. Note the regex this corresponds
     # to, from SLB older code, is 're.compile(r"<entry id=\"(.+)\">")' but
     # using the ElementTree is a much more robust means to extract
-    all_snames = [
+    all_standard_names = [
         entry.attrib["id"] for entry in root.findall(".//entry")
     ]
 
-    return all_snames
+    return all_standard_names
 
 
 @lru_cache
