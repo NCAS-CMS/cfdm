@@ -8277,21 +8277,43 @@ class NetCDFRead(IORead):
     # not grid mapping variable has a grid_mapping_name attribute).
     # ================================================================
     def _check_standard_name(
-            self, parent_ncvar, coord_ncvar, coord_ncvar_attrs):
-        """TODO."""
+            self, parent_ncvar, coord_ncvar, coord_ncvar_attrs,
+            check_is_string=True, check_is_in_table=True,
+            check_is_in_custom_list=False,
+    ):
+        """TODO.
+
+        Return values signfiy status:
+
+        1. None means there was no (computed_)standard_name for the
+           given variable.
+        2. True means standard name(s) are registered and all valid.
+        3. False means standard name(s) are registered and at least one
+           is invalid.
+
+        """
         # TODO downgrade status to info/debug
         logger.warning("Ran _check_standard_name()")
 
         invalid_names = []
+        any_sn_found = False
+        invalid_sn_found = False
         for sn_attr in ("standard_name", "computed_standard_name"):
             # 1. Check if there is a (computed_)standard_name property
             sn_value = coord_ncvar_attrs.get(sn_attr)
+            # TODO downgrade status to info/debug
             logger.warning(f"%%%%%% Got sn_value of {sn_value}")
+
+            if not sn_value:
+                continue
+
+            any_sn_found = True
 
             # 2. Check, if requested, if is a string
             # TODO this is not  robust check (may have numpy string type)
             # but good enough for now whilts developing
             if not isinstance(sn_value, str):
+                invalid_sn_found = True
                 self._add_message(
                     parent_ncvar,
                     coord_ncvar,
@@ -8307,7 +8329,7 @@ class NetCDFRead(IORead):
             valid_names = get_all_current_standard_names()
 
             if sn_value is not None and sn_value not in valid_names:
-                invalid_names.append(sn_value)
+                invalid_sn_found = True
                 logger.warning(
                     f"Detected invalid standard name: '{sn_attr}' of "
                     f"'{sn_value}' for {coord_ncvar}"
@@ -8324,7 +8346,12 @@ class NetCDFRead(IORead):
                     conformance="3.3.requirement.2",
                 )
 
-        return not invalid_names
+        if not any_sn_found:  # no (computed_)standard_name found
+            return
+        elif invalid_sn_found:  # found at least one invalid standard name
+            return False
+        else:  # found at least one and all are valid standard names
+            return True
 
     def _check_bounds(
         self, parent_ncvar, coord_ncvar, attribute, bounds_ncvar
