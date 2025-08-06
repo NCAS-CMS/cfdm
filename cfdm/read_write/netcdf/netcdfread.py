@@ -8624,6 +8624,13 @@ class NetCDFRead(IORead):
 
             ncvar = values[0]
 
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                field_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             unknown_external = ncvar in external_variables
 
             # Check that the variable exists in the file, or if not
@@ -8699,6 +8706,13 @@ class NetCDFRead(IORead):
             return False
 
         for ncvar in parsed_string:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                parent_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             # Check that the geometry variable exists in the file
             if ncvar not in g["variables"]:
                 ncvar, message = self._missing_variable(
@@ -8767,6 +8781,13 @@ class NetCDFRead(IORead):
 
         ok = True
         for ncvar in parsed_string:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                field_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             # Check that the variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
