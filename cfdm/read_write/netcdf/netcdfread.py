@@ -8283,6 +8283,11 @@ class NetCDFRead(IORead):
     ):
         """TODO.
 
+        TODO rough notes, tidy for final docstring...
+
+        Validity depends on the check_X keywords selected which
+        determine which checks to run vs skip.
+
         Return values signfiy status:
 
         1. None means there was no (computed_)standard_name for the
@@ -8293,7 +8298,15 @@ class NetCDFRead(IORead):
 
         """
         # TODO downgrade status to info/debug
-        logger.warning("Ran _check_standard_names()")
+        logger.warning("Running _check_standard_names()")
+
+        if check_is_in_custom_list and check_is_in_table:
+            raise ValueError(
+                "Can't set both 'check_is_in_custom_list' and "
+                "'check_is_in_table'. The former is expected "
+                "to check a subset of the full table hence renders the "
+                "latter redundant - set it to False with a custom list."
+            )
 
         invalid_names = []
         any_sn_found = False
@@ -8325,7 +8338,12 @@ class NetCDFRead(IORead):
                     conformance="3.3.requirement.1",
                 )
 
-            # 3. Check, if requested, if string is in the list of valid names
+            # 3. TODO implement check_is_in_custom_list for custom list check.
+            # noting that the custom list must contain only valid standard
+            # names appropriate to the context, else it defeats the point!
+
+
+            # 4. Check, if requested, if string is in the list of valid names
             elif (
                     check_is_in_table and sn_value not in
                     get_all_current_standard_names()
@@ -8346,9 +8364,6 @@ class NetCDFRead(IORead):
                     attribute=sn_attr,
                     conformance="3.3.requirement.2",
                 )
-
-        # TODO implement check_is_in_custom_list for custom list check,
-        # if so ignore table check for efficiency
 
         if not any_sn_found:  # no (computed_)standard_name found
             return
