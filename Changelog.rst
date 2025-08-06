@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* Fix `cfdm.Data.reshape` when the underlying data originate on disk
+  (https://github.com/NCAS-CMS/cfdm/issues/348)
 * New keyword parameter to `cfdm.Field.dump`: ``data``
   (https://github.com/NCAS-CMS/cfdm/issues/345)
 * New dependency: ``distributed>=2025.5.1``
