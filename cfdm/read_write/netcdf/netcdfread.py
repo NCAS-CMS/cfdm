@@ -9008,6 +9008,9 @@ class NetCDFRead(IORead):
 
         g = self.read_vars
 
+        # Note: we don't call _check_standard_names for the grid mapping
+        # check because in this case the standard_name is not standardised
+
         if not parsed_grid_mapping:
             self._add_message(
                 parent_ncvar,
@@ -9113,6 +9116,13 @@ class NetCDFRead(IORead):
         attribute = {geometry_ncvar + ":node_coordinates": node_coordinates}
 
         g = self.read_vars
+
+        geometry_ncvar_attrs = g["variable_attributes"][geometry_ncvar]
+        self._check_standard_names(
+            field_ncvar,
+            geometry_ncvar,
+            geometry_ncvar_attrs,
+        )
 
         incorrectly_formatted = (
             "node_coordinates attribute",
