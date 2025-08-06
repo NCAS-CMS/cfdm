@@ -6553,10 +6553,9 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         original_shape = self.shape
         original_ndim = len(original_shape)
 
-        # REVIEW: Can't set '_force_to_memory=False' because FileAraray object can't cope with 'dx.reshape'
         dx = d.to_dask_array(_force_mask_hardness=False)
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
-        d._set_dask(dx, in_memory=None)
+        d._set_dask(dx, in_memory=True)
 
         # Set axis names for the reshaped data
         if dx.ndim != original_ndim:
