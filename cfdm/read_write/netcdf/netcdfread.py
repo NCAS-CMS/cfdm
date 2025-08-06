@@ -8341,6 +8341,21 @@ class NetCDFRead(IORead):
             # 3. TODO implement check_is_in_custom_list for custom list check.
             # noting that the custom list must contain only valid standard
             # names appropriate to the context, else it defeats the point!
+            elif (
+                    check_is_in_custom_list and sn_value not in
+                    check_is_in_custom_list
+            ):
+                invalid_sn_found = True
+                self._add_message(
+                    parent_ncvar,
+                    coord_ncvar,
+                    message=(
+                        f"has a {sn_attr} attribute value that is not "
+                        "a valid current standard name appropriate to "
+                        "the context of the variable in question"
+                    ),
+                    attribute=sn_attr,
+                )
 
 
             # 4. Check, if requested, if string is in the list of valid names
@@ -8365,6 +8380,7 @@ class NetCDFRead(IORead):
                     conformance="3.3.requirement.2",
                 )
 
+        # Three possible return signatures to cover existence and validity:
         if not any_sn_found:  # no (computed_)standard_name found
             return
         elif invalid_sn_found:  # found at least one invalid standard name
@@ -8494,6 +8510,13 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         geometry_ncvar = g["variable_geometry"].get(field_ncvar)
+
+        geometry_ncvar_attrs = g["variable_attributes"][geometry_ncvar]
+        self._check_standard_names(
+            node_ncvar,
+            geometry_ncvar,
+            geometry_ncvar_attrs,
+        )
 
         attribute = {
             field_ncvar
