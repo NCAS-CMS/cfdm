@@ -8851,6 +8851,13 @@ class NetCDFRead(IORead):
 
         g = self.read_vars
 
+        coord_ncvar_attrs = g["variable_attributes"][coord_ncvar]
+        self._check_standard_names(
+            parent_ncvar,
+            coord_ncvar,
+            coord_ncvar_attrs,
+        )
+
         if coord_ncvar not in g["internal_variables"]:
             coord_ncvar, message = self._missing_variable(
                 coord_ncvar, "Auxiliary/scalar coordinate variable"
@@ -8917,6 +8924,13 @@ class NetCDFRead(IORead):
         )
 
         g = self.read_vars
+
+        tie_point_ncvar_attrs = g["variable_attributes"][tie_point_ncvar]
+        self._check_standard_names(
+            parent_ncvar,
+            tie_point_ncvar,
+            tie_point_ncvar_attrs,
+        )
 
         if tie_point_ncvar not in g["internal_variables"]:
             ncvar, message = self._missing_variable(
