@@ -126,6 +126,8 @@ class NetCDFRead(IORead):
         "instance_dimension attribute": 311,
         "Count dimension": 320,
         "count_dimension attribute": 321,
+        "standard_name attribute": 400,
+        "computed_standard_name attribute": 401,
     }
 
     _code1 = {
@@ -151,7 +153,15 @@ class NetCDFRead(IORead):
         "is not used by data variable": 15,
         "not in node_coordinates": 16,
         "is not locatable in the group hierarchy": 17,
-        "has an invalid standard name": 20,
+        "has a value that is not a string": 20,
+        (
+            "has a value that is not appropriate to "
+            "the context of the variable in question"
+        ): 21,
+        (
+            "has a value that is not a valid name contained "
+            "in the current standard name table"
+        ): 22,
     }
 
     def cf_datum_parameters(self):
@@ -8331,8 +8341,8 @@ class NetCDFRead(IORead):
                     parent_ncvar,
                     coord_ncvar,
                     message=(
-                        f"has a {sn_attr} attribute value that is not a "
-                        "string"
+                        f"{sn_attr} attribute",
+                        f"has a value that is not a string",
                     ),
                     attribute=sn_attr,
                     conformance="3.3.requirement.1",
@@ -8350,9 +8360,9 @@ class NetCDFRead(IORead):
                     parent_ncvar,
                     coord_ncvar,
                     message=(
-                        f"has a {sn_attr} attribute value that is not "
-                        "a valid current standard name appropriate to "
-                        "the context of the variable in question"
+                        f"{sn_attr} attribute",
+                        f"has a value that is not appropriate to "
+                        "the context of the variable in question",
                     ),
                     attribute=sn_attr,
                 )
@@ -8372,9 +8382,9 @@ class NetCDFRead(IORead):
                     parent_ncvar,
                     coord_ncvar,
                     message=(
-                        f"has a {sn_attr} attribute value that is not "
-                        "a valid name contained in the current standard name "
-                        "table"
+                        f"{sn_attr} attribute",
+                        f"has a value that is not a valid name contained "
+                        "in the current standard name table",
                     ),
                     attribute=sn_attr,
                     conformance="3.3.requirement.2",
