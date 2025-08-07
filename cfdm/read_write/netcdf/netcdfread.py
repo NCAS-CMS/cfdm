@@ -8283,8 +8283,14 @@ class NetCDFRead(IORead):
     #
     # These methods (whose names all start with "_check") check the
     # minimum required for mapping the file to CFDM structural
-    # elements. General CF compliance is not checked (e.g. whether or
-    # not grid mapping variable has a grid_mapping_name attribute).
+    # elements.
+    #
+    # General CF compliance is not checked (e.g. whether or
+    # not grid mapping variable has a grid_mapping_name attribute)
+    # except for the case of (so far):
+    #   * whether (computed_)standard_name values are valid according
+    #     to specified criteria under Section 3.3. of the Conformance
+    #     document.
     # ================================================================
     def _check_standard_names(
             self, parent_ncvar, coord_ncvar, coord_ncvar_attrs,
