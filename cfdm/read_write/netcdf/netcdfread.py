@@ -8293,7 +8293,7 @@ class NetCDFRead(IORead):
     #     document.
     # ================================================================
     def _check_standard_names(
-            self, parent_ncvar, coord_ncvar, coord_ncvar_attrs,
+            self, parent_ncvar, ncvar, ncvar_attrs,
             check_is_string=True, check_is_in_table=True,
             check_is_in_custom_list=False,
     ):
@@ -8314,7 +8314,7 @@ class NetCDFRead(IORead):
 
         """
         # TODO downgrade status to info/debug
-        logger.warning("Running _check_standard_names()")
+        logger.warning(f"Running _check_standard_names() for: {ncvar}")
 
         if check_is_in_custom_list and check_is_in_table:
             raise ValueError(
@@ -8329,7 +8329,7 @@ class NetCDFRead(IORead):
         invalid_sn_found = False
         for sn_attr in ("standard_name", "computed_standard_name"):
             # 1. Check if there is a (computed_)standard_name property
-            sn_value = coord_ncvar_attrs.get(sn_attr)
+            sn_value = ncvar_attrs.get(sn_attr)
             # TODO downgrade status to info/debug
             logger.warning(f"%%%%%% Got sn_value of {sn_value}")
 
@@ -8345,7 +8345,7 @@ class NetCDFRead(IORead):
                 invalid_sn_found = True
                 self._add_message(
                     parent_ncvar,
-                    coord_ncvar,
+                    ncvar,
                     message=(
                         f"{sn_attr} attribute",
                         f"has a value that is not a string",
@@ -8364,7 +8364,7 @@ class NetCDFRead(IORead):
                 invalid_sn_found = True
                 self._add_message(
                     parent_ncvar,
-                    coord_ncvar,
+                    ncvar,
                     message=(
                         f"{sn_attr} attribute",
                         f"has a value that is not appropriate to "
@@ -8382,11 +8382,11 @@ class NetCDFRead(IORead):
                 invalid_sn_found = True
                 logger.warning(
                     f"Detected invalid standard name: '{sn_attr}' of "
-                    f"'{sn_value}' for {coord_ncvar}"
+                    f"'{sn_value}' for {ncvar}"
                 )
                 self._add_message(
                     parent_ncvar,
-                    coord_ncvar,
+                    ncvar,
                     message=(
                         f"{sn_attr} attribute",
                         f"has a value that is not a valid name contained "
@@ -9442,8 +9442,16 @@ class NetCDFRead(IORead):
         ok = True
 
         for interp_ncvar, coords in parsed_coordinate_interpolation.items():
-            # Check that the interpolation variable exists in the file
-            if interp_ncvar not in g["internal_variables"]:
+            # Check that the interpolation variable exists in the file and
+            # if it does check standard names, if not register issue
+            if interp_ncvar in g["internal_variables"]:
+                interp_ncvar_attrs = g["variable_attributes"][interp_ncvar]
+                self._check_standard_names(
+                    parent_ncvar,
+                    interp_ncvar,
+                    interp_ncvar_attrs,
+                )
+            else:
                 ncvar, message = self._missing_variable(
                     interp_ncvar, "Interpolation variable"
                 )
