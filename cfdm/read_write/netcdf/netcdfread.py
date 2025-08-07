@@ -8640,12 +8640,15 @@ class NetCDFRead(IORead):
 
             ncvar = values[0]
 
-            ncvar_attrs = g["variable_attributes"][ncvar]
-            self._check_standard_names(
-                field_ncvar,
-                ncvar,
-                ncvar_attrs,
-            )
+            # TODO SLB: may be None here hence get() and conditional. Do
+            # we need to do this for each use of _check_standard_names?
+            ncvar_attrs = g["variable_attributes"].get(ncvar)
+            if ncvar_attrs:
+                self._check_standard_names(
+                    field_ncvar,
+                    ncvar,
+                    ncvar_attrs,
+                )
 
             unknown_external = ncvar in external_variables
 
@@ -9442,16 +9445,15 @@ class NetCDFRead(IORead):
         ok = True
 
         for interp_ncvar, coords in parsed_coordinate_interpolation.items():
-            # Check that the interpolation variable exists in the file and
-            # if it does check standard names, if not register issue
-            if interp_ncvar in g["internal_variables"]:
-                interp_ncvar_attrs = g["variable_attributes"][interp_ncvar]
-                self._check_standard_names(
-                    parent_ncvar,
-                    interp_ncvar,
-                    interp_ncvar_attrs,
-                )
-            else:
+            interp_ncvar_attrs = g["variable_attributes"][interp_ncvar]
+            self._check_standard_names(
+                parent_ncvar,
+                interp_ncvar,
+                interp_ncvar_attrs,
+            )
+
+            # Check that the interpolation variable exists in the file
+            if interp_ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
                     interp_ncvar, "Interpolation variable"
                 )
@@ -9476,6 +9478,16 @@ class NetCDFRead(IORead):
             # Check that the tie point coordinate variables exist in
             # the file
             for tie_point_ncvar in coords:
+                # TODO: is this necessary or is it covered by the interp_ncvar
+                # standard name check already?
+                tie_point_interp_ncvar_attrs = g[
+                    "variable_attributes"][tie_point_ncvar]
+                self._check_standard_names(
+                    parent_ncvar,
+                    tie_point_ncvar,
+                    tie_point_interp_ncvar_attrs,
+                )
+
                 if tie_point_ncvar not in g["internal_variables"]:
                     ncvar, message = self._missing_variable(
                         tie_point_ncvar, "Tie point coordinate variable"
