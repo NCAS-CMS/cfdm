@@ -9123,6 +9123,9 @@ class NetCDFRead(IORead):
 
         g = self.read_vars
 
+        # TODO is this necessary for the geometry_ncvar too? Note could
+        # call this in one of many methods directly below instead, so where
+        # is best to place it if needed? Investigate.
         geometry_ncvar_attrs = g["variable_attributes"][geometry_ncvar]
         self._check_standard_names(
             field_ncvar,
@@ -9161,6 +9164,13 @@ class NetCDFRead(IORead):
             # Check that the node coordinate variable exists in the
             # file
             if ncvar not in g["internal_variables"]:
+                ncvar_attrs = g["variable_attributes"][ncvar]
+                self._check_standard_names(
+                    field_ncvar,
+                    ncvar,
+                    ncvar_attrs,
+                )
+
                 ncvar, message = self._missing_variable(
                     ncvar, "Node coordinate variable"
                 )
@@ -9199,6 +9209,13 @@ class NetCDFRead(IORead):
         ok = True
 
         for ncvar in parsed_node_count:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                field_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             # Check that the node count variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
@@ -9243,6 +9260,13 @@ class NetCDFRead(IORead):
         ok = True
 
         for ncvar in parsed_part_node_count:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                field_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             # Check that the variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
@@ -9298,6 +9322,13 @@ class NetCDFRead(IORead):
             return False
 
         for ncvar in parsed_interior_ring:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                field_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             # Check that the variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
