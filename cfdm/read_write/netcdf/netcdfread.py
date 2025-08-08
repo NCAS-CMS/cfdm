@@ -10808,8 +10808,14 @@ class NetCDFRead(IORead):
                 location_index_set_ncvar,
                 message=message,
             )
-            ok = False
-            return ok
+            return False
+        else:
+            ncvar_attrs = g["variable_attributes"][location_index_set_ncvar]
+            self._check_standard_names(
+                location_index_set_ncvar,
+                location_index_set_ncvar,
+                ncvar_attrs,
+            )
 
         location_index_set_attributes = g["variable_attributes"][
             location_index_set_ncvar
@@ -10860,6 +10866,13 @@ class NetCDFRead(IORead):
                 attribute={f"{location_index_set_ncvar}:mesh": mesh_ncvar},
             )
             ok = False
+        else:
+            mesh_ncvar_attrs = g["variable_attributes"][mesh_ncvar]
+            self._check_standard_names(
+                location_index_set_ncvar,
+                mesh_ncvar,
+                mesh_ncvar_attrs,
+            )
 
         return ok
 
@@ -10916,8 +10929,14 @@ class NetCDFRead(IORead):
                     f"{parent_ncvar}:location_index_set": location_index_set_ncvar
                 },
             )
-            ok = False
-            return ok
+            return False
+        else:
+            ncvar_attrs = g["variable_attributes"][location_index_set_ncvar]
+            self._check_standard_names(
+                parent_ncvar,
+                location_index_set_ncvar,
+                ncvar_attrs,
+            )
 
         location_index_set_attributes = g["variable_attributes"][
             location_index_set_ncvar
@@ -10968,6 +10987,13 @@ class NetCDFRead(IORead):
                 attribute={f"{location_index_set_ncvar}:mesh": mesh_ncvar},
             )
             ok = False
+        else:
+            mesh_ncvar_attrs = g["variable_attributes"][mesh_ncvar]
+            self._check_standard_names(
+                parent_ncvar,
+                mesh_ncvar,
+                mesh_ncvar_attrs,
+            )
 
         parent_ncdims = self._ncdimensions(parent_ncvar)
         lis_ncdims = self._ncdimensions(location_index_set_ncvar)
