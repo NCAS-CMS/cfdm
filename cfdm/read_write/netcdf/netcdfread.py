@@ -11061,6 +11061,13 @@ class NetCDFRead(IORead):
                 attribute={f"{parent_ncvar}:mesh": mesh_ncvar},
             )
             return False
+        else:
+            mesh_ncvar_attrs = g["variable_attributes"][mesh_ncvar]
+            self._check_standard_names(
+                parent_ncvar,
+                mesh_ncvar,
+                mesh_ncvar_attrs,
+            )
 
         location = parent_attributes.get("location")
         if location is None:
@@ -11135,10 +11142,8 @@ class NetCDFRead(IORead):
                 message=(f"{connectivity_attr} attribute", "is missing"),
                 variable=mesh_ncvar,
             )
-            ok = False
-            return ok
-
-        if connectivity_ncvar not in g["internal_variables"]:
+            return False
+        elif connectivity_ncvar not in g["internal_variables"]:
             connectivity_ncvar, message = self._missing_variable(
                 connectivity_ncvar, f"{connectivity_attr} variable"
             )
@@ -11151,8 +11156,14 @@ class NetCDFRead(IORead):
                 },
                 variable=mesh_ncvar,
             )
-            ok = False
-            return ok
+            return False
+        else:
+            ncvar_attrs = g["variable_attributes"][connectivity_ncvar]
+            self._check_standard_names(
+                parent_ncvar,
+                connectivity_ncvar,
+                ncvar_attrs,
+            )
 
         parent_ncdims = self._ncdimensions(parent_ncvar)
         connectivity_ncdims = self._ncdimensions(connectivity_ncvar)[0]
