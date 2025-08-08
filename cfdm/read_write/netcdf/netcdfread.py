@@ -10532,6 +10532,13 @@ class NetCDFRead(IORead):
 
         ok = True
 
+        mesh_ncvar_attrs = g["variable_attributes"][mesh_ncvar]
+        self._check_standard_names(
+            mesh_ncvar,
+            mesh_ncvar,
+            mesh_ncvar_attrs,
+        )
+
         if mesh_ncvar not in g["internal_variables"]:
             mesh_ncvar, message = self._missing_variable(
                 mesh_ncvar, "Mesh topology variable"
@@ -10599,6 +10606,13 @@ class NetCDFRead(IORead):
                     )
                     ok = False
                 else:
+                    ncvar_attrs = g["variable_attributes"][ncvar]
+                    self._check_standard_names(
+                        mesh_ncvar,
+                        ncvar,
+                        ncvar_attrs,
+                    )
+
                     dims = []
                     ncdims = self._ncdimensions(ncvar)
                     if len(ncdims) != 1:
@@ -10639,6 +10653,7 @@ class NetCDFRead(IORead):
             ok = False
         elif topology_dimension == 2:
             ncvar = attributes.get("face_node_connectivity")
+
             if ncvar is None:
                 self._add_message(
                     mesh_ncvar,
@@ -10658,8 +10673,17 @@ class NetCDFRead(IORead):
                     attribute={f"{mesh_ncvar}:face_node_connectivity": ncvar},
                 )
                 ok = False
+            else:
+                ncvar_attrs = g["variable_attributes"][ncvar]
+                self._check_standard_names(
+                    mesh_ncvar,
+                    ncvar,
+                    ncvar_attrs,
+                )
+
         elif topology_dimension == 1:
             ncvar = attributes.get("edge_node_connectivity")
+
             if ncvar is None:
                 self._add_message(
                     mesh_ncvar,
@@ -10679,8 +10703,17 @@ class NetCDFRead(IORead):
                     attribute={f"{mesh_ncvar}:edge_node_connectivity": ncvar},
                 )
                 ok = False
+            else:
+                ncvar_attrs = g["variable_attributes"][ncvar]
+                self._check_standard_names(
+                    mesh_ncvar,
+                    ncvar,
+                    ncvar_attrs,
+                )
+
         elif topology_dimension == 3:
             ncvar = attributes.get("volume_node_connectivity")
+
             if ncvar is None:
                 self._add_message(
                     mesh_ncvar,
@@ -10705,6 +10738,13 @@ class NetCDFRead(IORead):
                     },
                 )
                 ok = False
+            else:
+                ncvar_attrs = g["variable_attributes"][ncvar]
+                self._check_standard_names(
+                    mesh_ncvar,
+                    ncvar,
+                    ncvar_attrs,
+                )
 
             ncvar = attributes.get("volume_shape_type")
             if ncvar is None:
@@ -10714,6 +10754,13 @@ class NetCDFRead(IORead):
                     message=("volume_shape_type attribute", "is missing"),
                 )
                 ok = False
+            else:
+                ncvar_attrs = g["variable_attributes"][ncvar]
+                self._check_standard_names(
+                    mesh_ncvar,
+                    ncvar,
+                    ncvar_attrs,
+                )
         else:
             self._add_message(
                 mesh_ncvar,
