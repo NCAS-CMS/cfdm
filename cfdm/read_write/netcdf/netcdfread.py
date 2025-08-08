@@ -8297,20 +8297,69 @@ class NetCDFRead(IORead):
             check_is_string=True, check_is_in_table=True,
             check_is_in_custom_list=False,
     ):
-        """TODO.
+        """Check the `(computed_)standard_name` attribute for validity.
 
-        TODO rough notes, tidy for final docstring...
+        Checks performed depend on the `check_*` input flags to enable
+        or disable given checks and can include a type check and a
+        check as to whether the name is contained in the current
+        version of the CF Conventions standard name table, else some
+        custom list which is expected to be a small subset of names
+        from the table.
 
-        Validity depends on the check_X keywords selected which
-        determine which checks to run vs skip.
+        These checks are in the context of the variable and
+        parent variable.
 
-        Return values signfiy status:
+        .. versionadded:: NEXTVERSION
 
-        1. None means there was no (computed_)standard_name for the
-           given variable.
-        2. True means standard name(s) are registered and all valid.
-        3. False means standard name(s) are registered and at least one
-           is invalid.
+        :Parameters:
+
+            parent_ncvar: `str`
+                The netCDF variable name of the parent variable.
+
+            ncvar: `str`
+                The name of the netCDF variable to perform the
+                standard names check upon.
+
+            ncvar_attrs: `str`
+                The variable attributes for the netCDF variable, as
+                stored in the 'read_vars' dictionary under the
+                'variable_attributes' key.
+
+            check_is_string: `bool`
+                Whether or not to check if the type of the attribute
+                value is a string type. By default this is checked.
+
+            check_is_in_table: `bool`
+                Whether or not to check if the attribute value is
+                identical to one of the names contained in the
+                current version of the CF Conventions standard name
+                table (as processed from the canonical XML). By
+                default this is checked.
+
+            check_is_in_custom_list: `list`
+                Whether or not to check if the attribute value is
+                identical to one of the names contained in a list
+                of custom values specified. Set to `False` to
+                disable this check, else a list of names which is
+                a small subset of those in the CF Conventions
+                standard name is expected.
+
+                .. note:: If a list is provided for
+                          `check_is_in_custom_list` it becomes
+                          redundant to check agaist the entire
+                          table, therefore `check_is_in_table`
+                          must be `False` else a `ValueError`
+                          will be raised to reiterate this.
+
+        :Returns:
+
+            `bool` or `None`
+                The outcome of the check, where `True` means
+                standard name(s) exist and are (all) valid against
+                the configured checks, `False` means standard
+                name(s) exist but at least one is invalid
+                according to those checks, and `None` means no
+                (computed_)standard_name was found.
 
         """
         # TODO downgrade status to info/debug
