@@ -8640,8 +8640,13 @@ class NetCDFRead(IORead):
 
             ncvar = values[0]
 
-            # TODO SLB: may be None here hence get() and conditional. Do
-            # we need to do this for each use of _check_standard_names?
+            # For external variables, the variable will not be in covered
+            # in read_vars["variable_attributes"], so in this case we
+            # can't rely on the ncvar key being present, hence get().
+            # Note that at present this is an outlier since only cell
+            # measures can be external (but consult
+            # https://cfconventions.org/cf-conventions/
+            # cf-conventions.html#external-variables in case this changes).
             ncvar_attrs = g["variable_attributes"].get(ncvar)
             if ncvar_attrs:
                 self._check_standard_names(
