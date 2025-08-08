@@ -9533,6 +9533,13 @@ class NetCDFRead(IORead):
 
         ok = True
 
+        ncvar_attrs = g["variable_attributes"][ncvar]
+        self._check_standard_names(
+            parent_ncvar,
+            ncvar,
+            ncvar_attrs,
+        )
+
         # Check that the quantization variable exists in the file
         if ncvar not in g["internal_variables"]:
             ncvar, message = self._missing_variable(
