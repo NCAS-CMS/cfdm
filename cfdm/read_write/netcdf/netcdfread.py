@@ -10982,7 +10982,7 @@ class NetCDFRead(IORead):
         elif mesh_ncvar not in g["mesh"]:
             self._add_message(
                 parent_ncvar,
-                location_index_set_ncvar,
+                mesh_ncvar,
                 message=("Mesh attribute", "is not a mesh topology variable"),
                 attribute={f"{location_index_set_ncvar}:mesh": mesh_ncvar},
             )
