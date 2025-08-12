@@ -1764,6 +1764,14 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([8, 9])
         self.assertEqual(len(d.reshape(1, 2)._axes), 2)
 
+        # Test when underlying data is in a `FileAarray` object
+        # (i.e. on disk)
+        f = cfdm.write(self.f0, file_A)
+        f = cfdm.read(file_A)[0]
+        d = f.data
+        e = d.reshape((1,) + d.shape)
+        self.assertTrue(np.allclose(e[0], d))
+
     def test_Data_get_units(self):
         """Test Data.get_units."""
         for units in ("", "m", "days since 2000-01-01"):
