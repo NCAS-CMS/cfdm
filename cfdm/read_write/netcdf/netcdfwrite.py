@@ -690,7 +690,7 @@ class NetCDFWrite(IOWrite):
                 create = True
 
         # If the dimension coordinate is already in the file but not
-        # in an approriate group then we have to create a new netCDF
+        # in an appropriate group then we have to create a new netCDF
         # variable. This is to prevent a downstream error ocurring
         # when the parent data variable tries to reference one of its
         # netCDF dimensions that is not in the same group nor a parent
