@@ -96,10 +96,16 @@ extensions = [
     "sphinxcontrib.spelling",
 ]
 
+
 # Boolean indicating whether to scan all found documents for
 # autosummary directives, and to generate stub pages for each
 # (http://sphinx-doc.org/latest/ext/autosummary.html)
-autosummary_generate = True
+
+# SLB, DH NOTE: we don't want to generate these stubs as they use templates
+# from _templates/autosummary which override our custom sub-section lists
+# in our class/*.rst reference files, which we want to use directly! So this
+# flag setting is crucial.
+autosummary_generate = False
 
 # Both the class’ and the __init__ method’s docstring are concatenated
 # and inserted.
