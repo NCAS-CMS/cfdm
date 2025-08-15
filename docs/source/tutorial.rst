@@ -549,8 +549,8 @@ properties may be removed with the `~Field.clear_properties` and
     'units': 'K'}
 
 
-See :py:class:`cfdm.Field.Properties` for all of the methods
-related to the properties.
+All of the methods related to the properties are listed
+:ref:`here <Field-Properties>`.
 
 ----
 
@@ -767,8 +767,8 @@ alternative means of retrieving the data instance, which allows for a
 default to be returned if no data have been set; as well as a
 `~Field.del_data` method for removing the data.
 
-See :py:class:`cfdm.Field.Data` for all of the methods and attributes
-related to the data.
+All of the methods and attributes related to the data are listed
+:ref:`here <Field-Data>`.
 
 .. _Data-axes:
 
