@@ -69,7 +69,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 # -- General configuration ----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = "2.3.1"
+needs_sphinx = "7.0.0"
 
 # rst_prolog = """
 # .. |CF| replace:: """+_get_cf_version()+"""
@@ -122,8 +122,6 @@ autodoc_member_order = "groupwise"
 # This value is a list of autodoc directive flags that should be
 # automatically applied to all autodoc
 # directives. (http://sphinx-doc.org/latest/ext/autodoc.html)
-# autodoc_default_flags = [
-#     'members', 'inherited-members', 'show-inheritance']  # deprecated
 autodoc_default_options = {
     "members": True,
     "inherited-members": True,
