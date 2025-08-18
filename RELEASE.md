@@ -1,8 +1,8 @@
-- [ ] Decide the version name to set for the new release, by
+- [x] Decide the version name to set for the new release, by
   heeding the Versioning Strategy (see
   https://ncas-cms.github.io/cfdm/releases.html#versioning-strategy).
 
-- [ ] Set the NEXTVERSION version marker across the codebase (added in PRs
+- [x] Set the NEXTVERSION version marker across the codebase (added in PRs
   to mark the next version where the exact number/name is not yet
   decided) by recursively finding all occurences within the `cfdm`
   directory and replacing them with the upcoming version name `<VN>`
@@ -15,15 +15,18 @@
   $ find cfdm/ -type f | xargs sed -i 's/NEXTVERSION/<VN>/g'
   ```
 
-- [ ] Change the "version" and "dateModified" in `codemeta.json`.
+- [x] Change the "version" and "dateModified" in `codemeta.json`.
 
-- [ ] Ensure that the requirements on dependencies and their versions are
+- [x] Ensure that the requirements on dependencies and their versions are
   up-to-date and consistent in both the `requirements.txt` file and in
   `docs/source/installation.rst`; and in the `_requires` list and
   `Version` checks in both `cfdm/core/__init__.py` and
   `cfdm/__init__.py`.
 
-- [ ] If required, change the CF conventions version in
+- [x] Change the version and date in `cfdm/core/__init__.py` (`__version__` and
+  `__date__` variables).
+
+- [x] If required, change the CF conventions version in
   `cfdm/core/__init__.py` (`__cf_version__` variable), `setup.py`, and
   `README.md`.
 
