@@ -124,7 +124,7 @@ tests_require = (
 )
 extras_require = {
     "documentation": [
-        "sphinx==2.4.5",
+        "sphinx>=7.0.0",
         "sphinx-copybutton",
         "sphinx-toggleprompt",
         "sphinxcontrib-spelling",
