@@ -174,16 +174,6 @@ Joining data
    :template: method.rst
 
    ~cfdm.Data.concatenate
-   
-Adding and removing elements
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.Data.unique
 
 Expanding the data
 ^^^^^^^^^^^^^^^^^^
@@ -307,16 +297,6 @@ Order statistics
    ~cfdm.Data.max
    ~cfdm.Data.min
 
-Sums
-^^^^
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.Data.sum
-
 Compression by convention
 -------------------------
    
@@ -358,7 +338,6 @@ Miscellaneous
    ~cfdm.Data.get_filenames
    ~cfdm.Data.get_original_filenames
    ~cfdm.Data.source
-   ~cfdm.Data.chunk_indices
 
 .. rubric:: Attributes
 	    

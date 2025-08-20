@@ -1,25 +1,22 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" data-content_root="../">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cfdm.read &#8212; Documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=541523b4" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
+    <script src="../_static/documentation_options.js?v=dae86f6c"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.write" href="cfdm.write.html" />
@@ -33,12 +30,12 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.3.0</a></h1>
 
 
 
@@ -57,16 +54,16 @@
 
 
 
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -122,10 +119,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
 
   <section id="cfdm-read">
-<h1>cfdm.read<a class="headerlink" href="#cfdm-read" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="cfdm.read">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">datasets</em>, <em class="sig-param">external=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">warn_valid=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">unpack=True</em>, <em class="sig-param">domain=False</em>, <em class="sig-param">netcdf_backend=None</em>, <em class="sig-param">storage_options=None</em>, <em class="sig-param">cache=True</em>, <em class="sig-param">dask_chunks='storage-aligned'</em>, <em class="sig-param">store_dataset_chunks=True</em>, <em class="sig-param">cfa=None</em>, <em class="sig-param">cfa_write=None</em>, <em class="sig-param">to_memory=False</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">dataset_type=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">cdl_string=False</em>, <em class="sig-param">extra_read_vars=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.2.0/cfdm/read_write/read.py#L18-L594"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
+<h1>cfdm.read<a class="headerlink" href="#cfdm-read" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="cfdm.read">
+<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dask_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storage-aligned'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsqueeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdl_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_read_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/read_write/read.py#L18-L594"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.read" title="Link to this definition">¶</a></dt>
 <dd><p>Read field or domain constructs from a dataset.</p>
 <p>The following file formats are supported: netCDF, CDL, and Zarr.</p>
 <p>NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
@@ -171,7 +168,7 @@ read by setting the <em>warnings</em> parameter.</p>
 <p><strong>CDL files</strong></p>
 <p>A file is considered to be a CDL representation of a netCDF
 dataset if it is a text file whose first non-comment line starts
-with the seven characters “netcdf ” (six letters followed by a
+with the seven characters “netcdf “ (six letters followed by a
 space). A comment line is identified as one which starts with any
 amount white space (including none) followed by “//” (two
 slashes). It is converted to a temporary netCDF4 file using the
@@ -187,7 +184,7 @@ values.</p>
 loading is employed for all data arrays, unless the <em>to_memory</em>
 parameter has been set.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -195,7 +192,7 @@ parameter has been set.</p>
 <a class="reference internal" href="../class/cfdm.Domain.html#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Domain</span></code></a>, <a class="reference internal" href="cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a></p>
 </div>
 <dl class="field-list">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
 <dt>dataset: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string, or arbitrarily nested sequence of strings,
 giving the dataset names, or directory names, from which
@@ -232,7 +229,7 @@ be described by any of the following: <code class="docutils literal notranslate"
 <dt>recursive: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then recursively read sub-directories of any
 directories specified with the <em>datasets</em> parameter.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.12.2.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.12.2.0</p>
 </div>
 </dd>
 <dt>followlinks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, and <em>recursive</em> is True, then also search for
@@ -245,7 +242,7 @@ followed.</p>
 lead to infinite recursion if a symbolic link points to a
 parent directory of itself.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.12.2.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.12.2.0</p>
 </div>
 </dd>
 <dt>cdl_string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True and the format to read is CDL then each string
@@ -264,10 +261,6 @@ the <em>dataset</em> parameter are read, and an exception is
 raised for any invalid dataset type.</p>
 <p>Valid file types are:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 75%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p><em>dataset_type</em></p></th>
 <th class="head"><p>Description</p></th>
@@ -286,7 +279,7 @@ raised for any invalid dataset type.</p>
 </tbody>
 </table>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.12.2.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.12.2.0</p>
 </div>
 </dd>
 <dt>external: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read external variables (i.e. variables which are named by
@@ -315,10 +308,6 @@ that correspond to particular types of metadata constructs.
 Ignored if <em>domain</em> is True.</p>
 <p>The <em>extra</em> parameter may be one, or a sequence, of:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 46%" />
-<col style="width: 54%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p><em>extra</em></p></th>
 <th class="head"><p>Metadata constructs</p></th>
@@ -400,7 +389,7 @@ of these properties, are automatically masked by default,
 which may not be as intended. See the <em>mask</em> parameter for
 turning off all automatic masking.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.8.3</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.3</p>
 </div>
 </dd>
 <dt>mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then mask by convention the data of
@@ -410,7 +399,7 @@ the netCDF attributes <code class="docutils literal notranslate"><span class="pr
 <code class="docutils literal notranslate"><span class="pre">_Unsigned</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_min</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_max</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">valid_range</span></code>.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.8.2</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.2</p>
 </div>
 </dd>
 <dt>unpack: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If True, the default, then unpack arrays by convention
@@ -419,7 +408,7 @@ when the data is read from disk.</p>
 following variable attributes: <code class="docutils literal notranslate"><span class="pre">add_offset</span></code>,
 <code class="docutils literal notranslate"><span class="pre">scale_factor</span></code>, and <code class="docutils literal notranslate"><span class="pre">_Unsigned</span></code>.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
 </dd>
 <dt>domain: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return only the domain constructs that are
@@ -440,7 +429,7 @@ function. For example:</p>
 </pre></div>
 </div>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.9.0.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.9.0.0</p>
 </div>
 </dd>
 <dt>netcdf_backend: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify which library, or libraries, to use for opening
@@ -450,7 +439,7 @@ open the netCDF file is used. The libraries will be used
 in the order given, until a file is successfully
 opened.}</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
 </dd>
 <dt>storage_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Pass parameters to the backend file system driver, such as
@@ -491,7 +480,7 @@ following are equivalent: <code class="docutils literal notranslate"><span class
 </li>
 </ul>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
 </dd>
 <dt>cache: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then cache the first and last array
@@ -502,7 +491,7 @@ bounds when there are two bounds per cell. For remote
 data, setting <em>cache</em> to False may speed up the parsing of
 the file.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
 </dd>
 <dt>dask_chunks: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Specify the Dask chunking for data. May be one of the
@@ -511,7 +500,7 @@ following:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">'storage-aligned'</span></code></p>
 <p>This is the default. The Dask chunk size in bytes will
 be as close as possible the size given by
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code>, favouring square-like chunk
+<a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a>, favouring square-like chunk
 shapes, with the added guarantee that the entirety of
 each storage chunk lies within exactly one Dask
 chunk. This strategy is general the most performant, as
@@ -524,19 +513,19 @@ chunk shape of (100, 5, 60). This has an overall size of
 54.93 MiB, partitioned into 240 storage chunks each of
 size 100*5*60*8 bytes = 0.23 MiB. Then:</p>
 <ul class="simple">
-<li><p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code> returns 134217728 (i.e. 128
+<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 134217728 (i.e. 128
 MiB), then the storage-aligned Dask chunks will have
 shape (400, 300, 60), giving 1 Dask chunk with size of
 54.93 MiB (compare with a Dask chunk shape of (400,
 300, 60) and size 54.93 MiB when <em>dask_chunks</em> is
 <code class="docutils literal notranslate"><span class="pre">'auto'</span></code>.)</p></li>
-<li><p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code> returns 33554432 (i.e. 32
+<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 33554432 (i.e. 32
 MiB), then the storage-aligned Dask chunks will have
 shape (200, 260, 60), giving 4 Dask chunks with a
 maximum size of 23.80 MiB (compare with a Dask chunk
 shape of (264, 264, 60) and maximum size 31.90 MiB
 when <em>dask_chunks</em> is <code class="docutils literal notranslate"><span class="pre">'auto'</span></code>.)</p></li>
-<li><p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code> returns 4194304 (i.e. 4
+<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 4194304 (i.e. 4
 MiB), then the storage-aligned Dask chunks will have
 shape (100, 85, 60), giving 16 Dask chunks with a
 maximum size of 3.89 MiB (compare with a Dask chunk
@@ -585,7 +574,7 @@ compressed array in the file.</p></li>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p>
 <p>The Dask chunk size in bytes will be as close as
-possible to the size given by <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code>,
+possible to the size given by <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a>,
 favouring square-like chunk shapes. This may give
 similar Dask chunk shapes as the <code class="docutils literal notranslate"><span class="pre">'storage-aligned'</span></code>
 option, but without the guarantee that each storage
@@ -669,7 +658,7 @@ or <code class="docutils literal notranslate"><span class="pre">{'T':</span> <sp
 </dd>
 </dl>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
 </li>
 </ul>
@@ -695,7 +684,7 @@ determined by <a class="reference internal" href="cfdm.write.html#cfdm.write" ti
 details on how the dataset chunking strategy is determined
 at the time of writing.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.11.2.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
 </div></blockquote>
 <dl>
@@ -730,7 +719,7 @@ wherever it occurs: <code class="docutils literal notranslate"><span class="pre"
 </li>
 </ul>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.12.0.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
 </div>
 </dd>
 <dt>cfa_write: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Register the intention for named construct types to be
@@ -742,10 +731,6 @@ of the setting of <em>dask_chunks</em>, which is a requirement
 for the creation CF-netCDF aggregation variables.</p>
 <p>The <em>cfa_write</em> parameter may be one, or a sequence, of:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 46%" />
-<col style="width: 54%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p><em>cfa_write</em></p></th>
 <th class="head"><p>Construct types</p></th>
@@ -800,7 +785,7 @@ be written as CF-netCDF aggregation variables:
 </dd>
 </dl>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.12.0.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
 </div>
 </dd>
 <dt>to_memory: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read all data arrays of the named construct types into
@@ -808,10 +793,6 @@ memory. By default, lazy loading is employed for all data
 arrays.</p>
 <p>The <em>to_memory</em> parameter may be one, or a sequence, of:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 46%" />
-<col style="width: 54%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p><em>to_memory</em></p></th>
 <th class="head"><p>Construct types</p></th>
@@ -862,7 +843,7 @@ arrays into memory: <code class="docutils literal notranslate"><span class="pre"
 </dd>
 </dl>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.12.0.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
 </div>
 </dd>
 <dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then remove all size 1 dimensions from field
@@ -871,7 +852,7 @@ stored in the dataset. If False (the default) then the
 presence or not of size 1 dimensions is determined by how
 the data are stored in its dataset.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.12.0.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
 </div>
 </dd>
 <dt>unsqueeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ensure that field construct data arrays span
@@ -880,14 +861,14 @@ are stored in the dataset. If False (the default) then the
 presence or not of size 1 dimensions is determined by how
 the data are stored in its dataset.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.12.0.0</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
 </div>
 </dd>
 <dt>ignore_unknown_type: Deprecated at version 1.12.2.0</dt><dd><p>Use <em>dataset_type</em> instead.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference internal" href="../class/cfdm.Domain.html#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a></dt><dd><p>The field constructs found in the dataset, or the domain
 constructs if <em>domain</em> is True. The list may be empty.</p>
@@ -928,11 +909,11 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-06-05.
+      &copy;2025, NCAS | Page built on 2025-08-18.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
       
     </div>
 

@@ -548,8 +548,9 @@ properties may be removed with the `~Field.clear_properties` and
     'standard_name': 'air_temperature',
     'units': 'K'}
 
-All of the methods related to the properties are listed :ref:`here
-<Field-Properties>`.
+
+All of the methods related to the properties are listed
+:ref:`here <Field-Properties>`.
 
 ----
 

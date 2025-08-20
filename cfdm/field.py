@@ -1812,7 +1812,7 @@ class Field(
                 Note that when the first and last values are
                 displayed, they are cached for fast future retrieval.
 
-                .. versionadded:: NEXTVERSION
+                .. versionadded:: (cfdm) 1.12.3.0
 
             display: `bool`, optional
                 If False then return the description as a string. By

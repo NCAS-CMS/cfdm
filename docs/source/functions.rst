@@ -31,8 +31,8 @@ Mathematical operations
    :toctree: function/
    :template: function.rst
 
-   cf.atol
-   cf.rtol
+   cfdm.atol
+   cfdm.rtol
 
 Resource management
 -------------------
@@ -42,8 +42,8 @@ Resource management
    :toctree: function/
    :template: function.rst
 
-   cf.configuration
-   cf.chunksize
+   cfdm.configuration
+   cfdm.chunksize
 
 Miscellaneous
 -------------
