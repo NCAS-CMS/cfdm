@@ -1,3 +1,5 @@
+import numpy as np
+
 from .cfdmimplementation import implementation
 from .functions import CF
 
@@ -247,7 +249,7 @@ def example_field(n, _implementation=_implementation):
     Cell methods    : time(2): mean area: mean
     Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
                     : height(1) = [1.5] m
-                    : healpix_index(healpix_index(48)) = [0, ..., 47] 1
+                    : healpix_index(healpix_index(48)) = [0, ..., 47]
     Coord references: grid_mapping_name:healpix
 
     >>> print(cfdm.example_field(13))
@@ -257,7 +259,7 @@ def example_field(n, _implementation=_implementation):
     Cell methods    : time(2): mean area: mean
     Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
                     : height(1) = [1.5] m
-    Auxiliary coords: healpix_index(healpix_index(60)) = [64, ..., 63] 1
+    Auxiliary coords: healpix_index(healpix_index(60)) = [64, ..., 63]
     Coord references: grid_mapping_name:healpix
 
     """
@@ -5466,62 +5468,9 @@ def example_field(n, _implementation=_implementation):
         #
         # dimension_coordinate: healpix_index
         c = DimensionCoordinate()
-        c.set_properties({"standard_name": "healpix_index", "units": "1"})
+        c.set_properties({"standard_name": "healpix_index"})
         c.nc_set_variable("healpix_index")
-        data = Data(
-            [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13,
-                14,
-                15,
-                16,
-                17,
-                18,
-                19,
-                20,
-                21,
-                22,
-                23,
-                24,
-                25,
-                26,
-                27,
-                28,
-                29,
-                30,
-                31,
-                32,
-                33,
-                34,
-                35,
-                36,
-                37,
-                38,
-                39,
-                40,
-                41,
-                42,
-                43,
-                44,
-                45,
-                46,
-                47,
-            ],
-            units="1",
-            dtype="i4",
-        )
+        data = Data(np.arange(48, dtype="int32"))
         c.set_data(data)
         field.set_construct(
             c, axes=("domainaxis1",), key="dimensioncoordinate2", copy=False
@@ -5764,7 +5713,7 @@ def example_field(n, _implementation=_implementation):
         #
         # auxiliary_coordinate: healpix_index
         c = AuxiliaryCoordinate()
-        c.set_properties({"standard_name": "healpix_index", "units": "1"})
+        c.set_properties({"standard_name": "healpix_index"})
         c.nc_set_variable("healpix_index")
         data = Data(
             [
@@ -5829,7 +5778,6 @@ def example_field(n, _implementation=_implementation):
                 62,
                 63,
             ],
-            units="1",
             dtype="i4",
         )
         c.set_data(data)
@@ -6225,13 +6173,13 @@ def example_domain(n, _func=example_field):
     >>> print(cfdm.example_domain(12))
     Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
                     : height(1) = [1.5] m
-                    : healpix_index(healpix_index(48)) = [0, ..., 47] 1
+                    : healpix_index(healpix_index(48)) = [0, ..., 47]
     Coord references: grid_mapping_name:healpix
 
     >>> print(cfdm.example_domain(13))
     Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
                     : height(1) = [1.5] m
-    Auxiliary coords: healpix_index(healpix_index(60)) = [64, ..., 63] 1
+    Auxiliary coords: healpix_index(healpix_index(60)) = [64, ..., 63]
     Coord references: grid_mapping_name:healpix
 
     """
