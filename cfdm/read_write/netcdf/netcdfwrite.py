@@ -286,8 +286,9 @@ class NetCDFWrite(IOWrite):
                 del netcdf_attrs["_FillValue"]
 
         if not g["dry_run"]:
-            g["nc"][ncvar].setncatts(netcdf_attrs)
-
+            # TODOZARR
+            self._aaa(ncvar, netcdf_attrs) 
+            
         if skip_set_fill_value:
             # Re-add as known attribute since this FV is already set
             netcdf_attrs["_FillValue"] = self.implementation.get_data(
@@ -296,6 +297,14 @@ class NetCDFWrite(IOWrite):
 
         return netcdf_attrs
 
+    def _aaa(self, ncvar, attributes):
+        """TODOZARR"""
+        g = self.write_vars
+        if g['netCDF']:
+            g["nc"][ncvar].setncatts(attributes)
+        elif g["zarr"]:
+            g["nc"][ncvar].update_attributes(attributes)            
+    
     def _character_array(self, array):
         """Converts a numpy array of strings to character data type.
 
@@ -1196,7 +1205,9 @@ class NetCDFWrite(IOWrite):
         if not g["dry_run"]:
             self._createVariable(**kwargs)
 
-            g["nc"][ncvar].setncatts(geometry_container)
+            # TODOZARR
+            #g["nc"][ncvar].setncatts(geometry_container)
+            self._aaa(ncvar, geometry_container)
 
         # Update the 'geometry_containers' dictionary
         g["geometry_containers"][ncvar] = geometry_container
@@ -2490,7 +2501,7 @@ class NetCDFWrite(IOWrite):
 
         return external
 
-    def _createVariable(self, **kwargs):
+    def _createVariable(self, kwargs):
         """Create a variable in the netCDF file.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -2498,8 +2509,24 @@ class NetCDFWrite(IOWrite):
         """
         g = self.write_vars
         ncvar = kwargs["varname"]
-        g["nc"][ncvar] = g["netcdf"].createVariable(**kwargs)
-
+        
+        if g["netCDF"]:
+            g["nc"][ncvar] = g["netcdf"].createVariable(**kwargs)
+        elif g["zarr"]:
+            # Convert netCDF4.createVariable kwargs to zarr_array
+            # kwargs
+            zarr_kwargs = {"name": ncvar,
+                           "shape": <func of dimensions),
+                           "dtype": ???,
+                           "chunks": ???,
+                           "shards": ???,
+                           "compressors": ???,
+                           "fill_value": kwargs.get("fill_value"),
+                           "dimension_names": kwargs.get("dimensions"),
+                           "overwrite": True,
+                           }
+            g["nc"][ncvar] = g["netcdf"].create_array(**zarr_kwargs)
+            
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
         """Write a grid mapping georeference to the netCDF file.
 
@@ -2546,7 +2573,7 @@ class NetCDFWrite(IOWrite):
             kwargs.update(g["netcdf_compression"])
 
             if not g["dry_run"]:
-                self._createVariable(**kwargs)
+                self._createVariable(kwargs, shape=(), )
 
             # Add named parameters
             parameters = self.implementation.get_datum_parameters(ref)
@@ -2574,7 +2601,9 @@ class NetCDFWrite(IOWrite):
                 parameters[term] = value
 
             if not g["dry_run"]:
-                g["nc"][ncvar].setncatts(parameters)
+                # TODOZARR
+                #                g["nc"][ncvar].setncatts(parameters)
+                self._aaa(ncvar, parameters)
 
             # Update the 'seen' dictionary
             g["seen"][id(ref)] = {
@@ -3142,7 +3171,7 @@ class NetCDFWrite(IOWrite):
 
         :Parameters:
 
-            data: Data instance
+            data: `Data` instance
 
             cfvar: cfdm instance
 
@@ -3226,6 +3255,8 @@ class NetCDFWrite(IOWrite):
                 meta=np.array((), dx.dtype),
             )
 
+        # TODOZARR
+        print (type(g["nc"][ncvar]))
         da.store(dx, g["nc"][ncvar], compute=True, return_stored=False)
 
     def _check_valid(self, array, cfvar=None, attributes=None):
@@ -4065,12 +4096,14 @@ class NetCDFWrite(IOWrite):
                 formula_terms = " ".join(formula_terms)
                 if not g["dry_run"] and not g["post_dry_run"]:
                     try:
-                        g["nc"][ncvar].setncattr(
-                            "formula_terms", formula_terms
-                        )
+                        # TODOZARR
+                        #       g["nc"][ncvar].setncattr(
+                        #        "formula_terms", formula_terms
+                        #          )
+                        self._aaa(ncvar, {"formula_terms": formula_terms})
                     except KeyError:
                         pass  # TODO convert to 'raise' via fixes upstream
-
+                    
                 logger.info(
                     "    Writing formula_terms attribute to "
                     f"netCDF variable {ncvar}: {formula_terms!r}"
@@ -4083,9 +4116,11 @@ class NetCDFWrite(IOWrite):
                     bounds_formula_terms = " ".join(bounds_formula_terms)
                     if not g["dry_run"] and not g["post_dry_run"]:
                         try:
-                            g["nc"][bounds_ncvar].setncattr(
-                                "formula_terms", bounds_formula_terms
-                            )
+                            # TODOZARR
+#                            g["nc"][bounds_ncvar].setncattr(
+#                                "formula_terms", bounds_formula_terms
+#                            )
+                            self._aaa(bounds_ncvar, {"formula_terms": bounds_formula_terms})
                         except KeyError:
                             pass  # TODO convert to 'raise' via fixes upstream
 
@@ -5117,6 +5152,8 @@ class NetCDFWrite(IOWrite):
                     f"{dataset_chunks!r}."
                 )
 
+        
+            
         # ------------------------------------------------------------
         # Parse the 'cfa' keyword
         # ------------------------------------------------------------
@@ -5421,7 +5458,9 @@ class NetCDFWrite(IOWrite):
         g["least_significant_digit"] = least_significant_digit
 
         g["fmt"] = fmt
-
+        g["zarr"] = fmt == "ZARR"
+        g['netCDF4'] = not g["zarr"]  
+        
         if isinstance(
             fields,
             (
@@ -6410,9 +6449,11 @@ class NetCDFWrite(IOWrite):
             self._createVariable(**kwargs)
 
             # Set the attributes
-            g["nc"][ncvar].setncatts(
-                self.implementation.parameters(quantization)
-            )
+#            g["nc"][ncvar].setncatts(
+#                self.implementation.parameters(quantization)
+#            )
+            # TODOZARR                                 
+            self._aaa(ncvar, self.implementation.parameters(quantization))
 
         # Update the quantization dictionary
         g["quantization"][ncvar] = quantization
