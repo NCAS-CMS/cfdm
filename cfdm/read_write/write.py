@@ -587,7 +587,7 @@ class write(ReadWrite):
                       number of bytes (taken either from the
                       *dataset_chunks* parameter, or as stored by the
                       data itself), "square-like" dataset chunk shapes
-                      are preferred that maximise the amount of chunks
+                      are preferred that maximise the number of chunks
                       that are completely filled with data values. For
                       example, with *dataset_chunks* of ``'4 MiB'``, a
                       data array of 64-bit floats with shape (400,
