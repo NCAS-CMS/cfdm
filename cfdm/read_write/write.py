@@ -421,13 +421,13 @@ class write(ReadWrite):
         string: `bool`, optional
             By default string-valued construct data are written as
             netCDF arrays of type string if the output file format is
-            ``'NETCDF4'``, or of type char with an extra dimension
-            denoting the maximum string length for any other output
-            file format (see the *fmt* parameter). If *string* is False
-            then string-valued construct data are written as netCDF
-            arrays of type char with an extra dimension denoting the
-            maximum string length, regardless of the selected output
-            file format.
+            ``'NETCDF4'`` or ``'ZARR3'``, or of type char with an
+            extra dimension denoting the maximum string length for any
+            other output file format (see the *fmt* parameter). If
+            *string* is False then string-valued construct data are
+            written as netCDF arrays of type char with an extra
+            dimension denoting the maximum string length, regardless
+            of the selected output file format.
 
             .. versionadded:: (cfdm) 1.8.0
 

@@ -16,12 +16,12 @@ class IO(metaclass=abc.ABCMeta):
         self.implementation = implementation
 
     @abc.abstractmethod
-    def file_close(self, *args, **kwargs):
+    def dataset_close(self, *args, **kwargs):
         """Close the dataset file."""
         raise NotImplementedError()  # pragma: no cover
 
     @abc.abstractmethod
-    def file_open(self, *args, **kwargs):
+    def dataset_open(self, *args, **kwargs):
         """Open the dataset file."""
         raise NotImplementedError()  # pragma: no cover
 
