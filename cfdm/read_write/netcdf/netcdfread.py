@@ -144,7 +144,7 @@ class NetCDFRead(IORead):
         "is not referenced in file": 9,
         "exists in the file": 10,
         "does not exist in file": 11,
-        "exists in multiple external files": 12,
+        "exists in multiple external datasets": 12,
         "has incorrect size": 13,
         "is missing": 14,
         "is not used by data variable": 15,
@@ -451,11 +451,11 @@ class NetCDFRead(IORead):
 
         return count
 
-    def file_close(self):
-        """Close all netCDF files that have been opened.
+    def dataset_close(self):
+        """Close all netCDF datasets that have been opened.
 
-        Includes the input file being read, any external files, and any
-        temporary flattened files.
+        Includes the input dataset being read, any external datasets,
+        and any temporary flattened dataset.
 
         :Returns:
 
@@ -463,16 +463,16 @@ class NetCDFRead(IORead):
 
         **Examples**
 
-        >>> r.file_close()
+        >>> r.dataset_close()
 
         """
         g = self.read_vars
 
-        # Close temporary flattened files
-        for flat_file in g["flat_files"]:
-            flat_file.close()
+        # Close temporary flattened datasets
+        for flat_dataset in g["flat_datasets"]:
+            flat_dataset.close()
 
-        if g["file_opened_with"] == "zarr":
+        if g["dataset_opened_with"] == "zarr":
             # zarr
             return
 
@@ -488,8 +488,8 @@ class NetCDFRead(IORead):
         for f in g["s3fs_File_objects"]:
             f.close()
 
-    def file_open(self, dataset, flatten=True, verbose=None):
-        """Open the netCDF file for reading.
+    def dataset_open(self, dataset, flatten=True, verbose=None):
+        """Open the netCDF dataset for reading.
 
         If the file has hierarchical groups then a flattened version
         of it is returned, and the original grouped file remains open.
@@ -513,7 +513,7 @@ class NetCDFRead(IORead):
 
         **Examples**
 
-        >>> r.file_open('file.nc')
+        >>> r.dataset_open('file.nc')
 
         """
         g = self.read_vars
@@ -561,7 +561,7 @@ class NetCDFRead(IORead):
                 )  # pragma: no cover
 
         # Map backend names to file-open functions
-        file_open_function = {
+        dataset_open_function = {
             "h5netcdf": self._open_h5netcdf,
             "netCDF4": self._open_netCDF4,
             "zarr": self._open_zarr,
@@ -573,7 +573,7 @@ class NetCDFRead(IORead):
         errors = []
         for backend in netcdf_backend:
             try:
-                nc = file_open_function[backend](dataset)
+                nc = dataset_open_function[backend](dataset)
             except KeyError:
                 errors.append(f"{backend}: Unknown netCDF backend name")
             except Exception as error:
@@ -600,7 +600,7 @@ class NetCDFRead(IORead):
         if flatten and self._dataset_has_groups(nc):
             # Create a diskless, non-persistent container for the
             # flattened file
-            flat_file = tempfile.NamedTemporaryFile(
+            flat_dataset = tempfile.NamedTemporaryFile(
                 mode="wb",
                 dir=tempfile.gettempdir(),
                 prefix="cfdm_flat_",
@@ -609,7 +609,7 @@ class NetCDFRead(IORead):
             )
 
             flat_nc = netCDF4.Dataset(
-                flat_file, "w", diskless=True, persist=False
+                flat_dataset, "w", diskless=True, persist=False
             )
             flat_nc.set_fill_off()
 
@@ -625,10 +625,10 @@ class NetCDFRead(IORead):
             nc = flat_nc
 
             g["has_groups"] = True
-            g["flat_files"].append(flat_file)
+            g["flat_datasets"].append(flat_dataset)
             g["nc_opened_with"] = "netCDF4"
         else:
-            g["nc_opened_with"] = g["file_opened_with"]
+            g["nc_opened_with"] = g["dataset_opened_with"]
 
         g["nc"] = nc
         return nc
@@ -649,7 +649,7 @@ class NetCDFRead(IORead):
 
         """
         nc = netCDF4.Dataset(filename, "r")
-        self.read_vars["file_opened_with"] = "netCDF4"
+        self.read_vars["dataset_opened_with"] = "netCDF4"
         return nc
 
     def _open_h5netcdf(self, filename):
@@ -683,7 +683,7 @@ class NetCDFRead(IORead):
             rdcc_w0=0.75,
             rdcc_nslots=4133,
         )
-        self.read_vars["file_opened_with"] = "h5netcdf"
+        self.read_vars["dataset_opened_with"] = "h5netcdf"
         return nc
 
     def _open_zarr(self, dataset):
@@ -708,7 +708,7 @@ class NetCDFRead(IORead):
             raise
 
         nc = zarr.open(dataset)
-        self.read_vars["file_opened_with"] = "zarr"
+        self.read_vars["dataset_opened_with"] = "zarr"
         return nc
 
     def cdl_to_netcdf(self, filename):
@@ -1009,7 +1009,7 @@ class NetCDFRead(IORead):
 
             dask_chunks: `str`, `int`, `None`, or `dict`, optional
                 Specify the `dask` chunking of dimensions for data in
-                the input files. See `cfdm.read` for details.
+                the input datasets. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.11.2.0
 
@@ -1020,14 +1020,14 @@ class NetCDFRead(IORead):
                 .. versionadded:: (cfdm) 1.12.0.0
 
             cfa: `dict`, optional
-                Configure the reading of CF-netCDF aggregation files.
-                See `cfdm.read` for details.
+                Configure the reading of CF-netCDF aggregation
+                datasets.  See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.12.0.0
 
             cfa_write: sequence of `str`, optional
-                Configure the reading of CF-netCDF aggregation files.
-                See `cfdm.read` for details.
+                Configure the reading of CF-netCDF aggregation
+                datasets.  See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.12.0.0
 
@@ -1051,8 +1051,8 @@ class NetCDFRead(IORead):
                 .. versionadded:: (cfdm) 1.12.0.0
 
             dataset_type: `None` or (sequence of) `str`, optional
-                Only read files of the given type(s). See `cfdm.read`
-                for details.
+                Only read datasets of the given type(s). See
+                `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.12.0.0
 
@@ -1122,7 +1122,7 @@ class NetCDFRead(IORead):
         # valid.
         #
         # Note that the `dataset_type` method is much faster than the
-        # `file_open` method at returning for unrecognised types.
+        # `dataset_open` method at returning for unrecognised types.
         # ------------------------------------------------------------
         d_type = self.dataset_type(dataset, dataset_type)
         if not d_type:
@@ -1373,8 +1373,8 @@ class NetCDFRead(IORead):
             # Assume a priori that the dataset does not have a group
             # structure
             "has_groups": False,
-            # Keep a list of flattened file names
-            "flat_files": [],
+            # Keep a list of flattened dataset names
+            "flat_datasets": [],
             # --------------------------------------------------------
             # Domains (CF>=1.9)
             # --------------------------------------------------------
@@ -1471,10 +1471,10 @@ class NetCDFRead(IORead):
             g.update(deepcopy(extra_read_vars))
 
         # ------------------------------------------------------------
-        # Open the netCDF file to be read
+        # Open the netCDF dataset to be read
         # ------------------------------------------------------------
         try:
-            nc = self.file_open(dataset, flatten=True, verbose=None)
+            nc = self.dataset_open(dataset, flatten=True, verbose=None)
         except DatasetTypeError:
             if not g["ignore_unknown_type"]:
                 raise
@@ -1573,7 +1573,7 @@ class NetCDFRead(IORead):
         dimension_isunlimited = {}
 
         # ------------------------------------------------------------
-        # For grouped files (CF>=1.8) map:
+        # For grouped datasets (CF>=1.8) map:
         #
         # * each flattened variable name to its absolute path
         # * each flattened dimension name to its absolute path
@@ -1799,10 +1799,10 @@ class NetCDFRead(IORead):
         g["variables"] = variables
 
         # The netCDF4 dataset objects that have been opened (i.e. the
-        # for parent file and any external files)
+        # for parent file and any external datasets)
         g["datasets"] = [nc]
 
-        # The names of the variable in the parent files
+        # The names of the variable in the parent datasetss
         # (i.e. excluding any external variables)
         g["internal_variables"] = set(variables)
 
@@ -2148,7 +2148,7 @@ class NetCDFRead(IORead):
         if g["CF>=1.7"]:
             logger.info(
                 f"    External variables: {g['external_variables']}\n"
-                f"    External files    : {g['external_files']}"
+                f"    External datasets : {g['external_files']}"
             )  # pragma: no cover
 
             if g["external_files"] and g["external_variables"]:
@@ -2334,9 +2334,9 @@ class NetCDFRead(IORead):
                     self._check_valid(f, c)
 
         # ------------------------------------------------------------
-        # Close all opened netCDF files
+        # Close all opened netCDF datasets
         # ------------------------------------------------------------
-        self.file_close()
+        self.dataset_close()
 
         # ------------------------------------------------------------
         # Squeeze/unsqueeze size 1 axes in field constructs
@@ -2539,7 +2539,7 @@ class NetCDFRead(IORead):
         pass
 
     def _get_variables_from_external_files(self, netcdf_external_variables):
-        """Get external variables from external files.
+        """Get external variables from external datasets.
 
         ..versionadded:: (cfdm) 1.7.0
 
@@ -2585,7 +2585,7 @@ class NetCDFRead(IORead):
 
         for external_file in external_files:
             logger.info(
-                "\nScanning external file:\n-----------------------"
+                "\nScanning external datasets:\n---------------------------"
             )  # pragma: no cover
 
             # Note: We pass in the s3 file system (if any) of the
@@ -2625,7 +2625,7 @@ class NetCDFRead(IORead):
                         ncvar,
                         message=(
                             "External variable",
-                            "exists in multiple external files",
+                            "exists in multiple external datasets",
                         ),
                         attribute=attribute,
                     )
@@ -6705,13 +6705,25 @@ class NetCDFRead(IORead):
             if return_kwargs_only:
                 return kwargs
 
-            file_opened_with = g["file_opened_with"]
-            if file_opened_with == "netCDF4":
-                array = self.implementation.initialise_NetCDF4Array(**kwargs)
-            elif file_opened_with == "h5netcdf":
-                array = self.implementation.initialise_H5netcdfArray(**kwargs)
-            elif file_opened_with == "zarr":
-                array = self.implementation.initialise_ZarrArray(**kwargs)
+            #            file_opened_with = g["file_opened_with"]
+            #            if file_opened_with == "netCDF4":
+            #                array = self.implementation.initialise_NetCDF4Array(**kwargs)
+            #            elif file_opened_with == "h5netcdf":
+            #                array = self.implementation.initialise_H5netcdfArray(**kwargs)
+            #            elif file_opened_with == "zarr":
+            #                array = self.implementation.initialise_ZarrArray(**kwargs)
+
+            match g["dataset_opened_with"]:
+                case "netCDF4":
+                    array = self.implementation.initialise_NetCDF4Array(
+                        **kwargs
+                    )
+                case "h5netcdf":
+                    array = self.implementation.initialise_H5netcdfArray(
+                        **kwargs
+                    )
+                case "zarr":
+                    array = self.implementation.initialise_ZarrArray(**kwargs)
 
             return array, kwargs
 
@@ -10862,7 +10874,7 @@ class NetCDFRead(IORead):
             `bool`
 
         """
-        if self.read_vars["file_opened_with"] == "zarr":
+        if self.read_vars["dataset_opened_with"] == "zarr":
             # zarr
             if len(tuple(nc.groups())) > 1:
                 raise ReadError(
@@ -11093,7 +11105,7 @@ class NetCDFRead(IORead):
             # netCDF4
             return {attr: var.getncattr(attr) for attr in var.ncattrs()}
         else:
-            if self.read_vars["file_opened_with"] == "zarr":
+            if self.read_vars["dataset_opened_with"] == "zarr":
                 # zarr: Remove the _ARRAY_DIMENSIONS attribute
                 attrs.pop("_ARRAY_DIMENSIONS", None)
 
@@ -11149,7 +11161,7 @@ class NetCDFRead(IORead):
         """
         # Use try/except here because the variable type could differ
         # from that implied by the value of
-        # read_vars["file_opened_with"]
+        # read_vars["dataset_opened_with"]
         try:
             # netCDF4, zarr
             return var.size

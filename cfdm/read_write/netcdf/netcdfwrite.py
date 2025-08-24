@@ -7,7 +7,6 @@ import dask.array as da
 import netCDF4
 import numpy as np
 import zarr
-
 from dask import config as dask_config
 from dask.array.core import normalize_chunks
 from dask.utils import parse_bytes
@@ -24,7 +23,8 @@ from .constants import (
     NETCDF3_FMTS,
     NETCDF4_FMTS,
     NETCDF_QUANTIZATION_PARAMETERS,
-    NETCDF_QUANTIZE_MODES, ZARR_FMTS
+    NETCDF_QUANTIZE_MODES,
+    ZARR_FMTS,
 )
 from .netcdfread import NetCDFRead
 
@@ -42,10 +42,9 @@ class AggregationError(Exception):
 
 
 class NetCDFWrite(IOWrite):
-    """A container for writing Fields to a dataset.
+    """A container for writing Fields to a netCDF dataset.
 
-    Both netCDF and Zarr output formats are supported (despite the
-    name of the class!).
+    NetCDF3, netCDF4 and Zarr output formats are supported.
 
     """
 
@@ -88,7 +87,8 @@ class NetCDFWrite(IOWrite):
         :Parameters:
 
             parent: `netCDF4.Dateset` or `netCDF4.Group` or `Zarr.Group`
-        
+                The group in which to create the new group.
+
             group_name: `str`
                 The name of the group.
 
@@ -98,12 +98,12 @@ class NetCDFWrite(IOWrite):
                 The new group object.
 
         """
-        backend = self.write_vars['backend']
-        if backend == 'netCDF4':
-            return parent.createGroup(group_name)
-    
-        if backend == 'zarr':
-            return parent.create_group(group_name)
+        match self.write_vars["backend"]:
+            case "netCDF4":
+                return parent.createGroup(group_name)
+
+            case "zarr":
+                return parent.create_group(group_name)
 
     def _create_variable_name(self, parent, default):
         """Create an appropriate name for a dataset variable.
@@ -300,7 +300,7 @@ class NetCDFWrite(IOWrite):
         if not g["dry_run"]:
             # TODOZARR
             self._set_attributes(netcdf_attrs, ncvar)
-            
+
         if skip_set_fill_value:
             # Re-add as known attribute since this FV is already set
             netcdf_attrs["_FillValue"] = self.implementation.get_data(
@@ -310,14 +310,14 @@ class NetCDFWrite(IOWrite):
         return netcdf_attrs
 
     def _set_attributes(self, attributes, ncvar=None, group=None):
-        """TODOZARR"""
+        """TODOZARR."""
         g = self.write_vars
         if ncvar is not None:
             # Set variable attributes
             x = g["nc"][ncvar]
         elif group is not None:
             # Set group-level attributes
-            x = group        
+            x = group
         else:
             raise ValueError("Must set ncvar or group")
 
@@ -325,9 +325,9 @@ class NetCDFWrite(IOWrite):
             case "netCDF":
                 x.setncatts(attributes)
             case "zarr":
-                print('ATTR=', attributes)
-                x.update_attributes(attributes)            
-    
+                print("ATTR=", attributes)
+                x.update_attributes(attributes)
+
     def _character_array(self, array):
         """Converts a numpy array of strings to character data type.
 
@@ -446,7 +446,8 @@ class NetCDFWrite(IOWrite):
         return f"{dtype.kind}{dtype.itemsize}"
 
     def _string_length_dimension(self, size):
-        """Creates a dataset dimension for string variables if necessary.
+        """Creates a dataset dimension for string variables if
+        necessary.
 
         :Parameters:
 
@@ -463,9 +464,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Create a new dimension for the maximum string length
         # ------------------------------------------------------------
-        ncdim = self._name(
-            f"strlen{size}", dimsize=size, role="string_length"
-        )
+        ncdim = self._name(f"strlen{size}", dimsize=size, role="string_length")
 
         if ncdim not in g["ncdim_to_size"]:
             # This string length dimension needs creating
@@ -477,7 +476,7 @@ class NetCDFWrite(IOWrite):
 
             if not g["dry_run"]:
                 try:
-#                    parent_group.createDimension(ncdim, size) TODOZARR
+                    #                    parent_group.createDimension(ncdim, size) TODOZARR
                     self._createDimension(parent_group, ncdim, size)
                 except RuntimeError:
                     pass  # TODO convert to 'raise' via fixes upstream
@@ -485,16 +484,14 @@ class NetCDFWrite(IOWrite):
         return ncdim
 
     def _createDimension(self, group, ncdim, size):
-        """TODOZARR
-
-        """
+        """TODOZARR."""
         match self.write_vars["backend"]:
             case "netCDF4":
                 group.createDimension(ncdim, size)
             case "zarr":
                 # Dimensions are not created in Zarr datasets
                 pass
-             
+
     def _dataset_dimensions(self, field, key, construct):
         """Returns the dataset dimension names for the construct.
 
@@ -647,8 +644,8 @@ class NetCDFWrite(IOWrite):
             # its name with its basename (CF>=1.8)
             ncdim = self._remove_group_structure(ncdim)
 
-        # Dimensions don't get written to Zarr datasets
-        if not (g["dry_run"] or g['backend'] == 'zarr'):
+        # Dimensions are not created in Zarr datasets
+        if not g["dry_run"] and g["backend"] != "zarr":
             if unlimited:
                 # Create an unlimited dimension
                 size = None
@@ -664,9 +661,9 @@ class NetCDFWrite(IOWrite):
                     if error == "NetCDF: NC_UNLIMITED size already in use":
                         raise RuntimeError(
                             message
-                            + f" In a {g['netcdf'].data_model} file only one "
-                            "unlimited dimension is allowed. Consider using "
-                            "a netCDF4 format."
+                            + f" In a {g['netcdf'].data_model} dataset only "
+                            "one unlimited dimension is allowed. Consider "
+                            "using a netCDF4 format."
                         )
 
                     raise RuntimeError(message)
@@ -758,13 +755,11 @@ class NetCDFWrite(IOWrite):
                 # No dataset variable name not correponding to a
                 # dataset dimension name has been set, so create a
                 # default dataset variable name.
-                ncvar = self._create_variable_name(
-                    coord, default="coordinate"
-                )
+                ncvar = self._create_variable_name(coord, default="coordinate")
 
             ncdim = ncvar
 
-            # Create a new dataset dimension (null-op for Zarr)
+            # Create a new dataset dimension
             unlimited = self._unlimited(f, axis)
             self._write_dimension(ncdim, f, axis, unlimited=unlimited)
 
@@ -806,9 +801,7 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         if not self._already_in_file(count_variable):
-            ncvar = self._create_variable_name(
-                count_variable, default="count"
-            )
+            ncvar = self._create_variable_name(count_variable, default="count")
 
             if create_ncdim:
                 ncdim = self._name(ncdim)
@@ -883,9 +876,7 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         if not self._already_in_file(index_variable):
-            ncvar = self._create_variable_name(
-                index_variable, default="index"
-            )
+            ncvar = self._create_variable_name(index_variable, default="index")
 
             if create_ncdim:
                 ncdim = self._name(ncdim)
@@ -915,9 +906,7 @@ class NetCDFWrite(IOWrite):
         create = not self._already_in_file(list_variable)
 
         if create:
-            ncvar = self._create_variable_name(
-                list_variable, default="list"
-            )
+            ncvar = self._create_variable_name(list_variable, default="list")
 
             # Create a new dimension
             self._write_dimension(
@@ -1234,7 +1223,7 @@ class NetCDFWrite(IOWrite):
         kwargs = {
             "varname": ncvar,
             "datatype": "S1",
-            "dimensions": (),
+#            "dimensions": (), # TODOZARR
             "endian": g["endian"],
         }
         kwargs.update(g["netcdf_compression"])
@@ -1243,7 +1232,7 @@ class NetCDFWrite(IOWrite):
             self._createVariable(**kwargs)
 
             # TODOZARR
-            #g["nc"][ncvar].setncatts(geometry_container)
+            # g["nc"][ncvar].setncatts(geometry_container)
             self._set_attributes(ncvar, geometry_container)
 
         # Update the 'geometry_containers' dictionary
@@ -1333,9 +1322,7 @@ class NetCDFWrite(IOWrite):
             # structure from the name.
             bounds_ncdim = self._remove_group_structure(bounds_ncdim)
 
-        bounds_ncdim = self._name(
-            bounds_ncdim, dimsize=size, role="bounds"
-        )
+        bounds_ncdim = self._name(bounds_ncdim, dimsize=size, role="bounds")
 
         # Check if this bounds variable has not been previously
         # created.
@@ -1371,8 +1358,10 @@ class NetCDFWrite(IOWrite):
 
                 if not g["dry_run"]:
                     try:
-                        self._createDimension(parent_group, base_bounds_ncdim, size)
-#                        parent_group.createDimension(base_bounds_ncdim, size)
+                        self._createDimension(
+                            parent_group, base_bounds_ncdim, size
+                        )
+                    #                        parent_group.createDimension(base_bounds_ncdim, size)
                     except RuntimeError:
                         raise
 
@@ -2132,9 +2121,7 @@ class NetCDFWrite(IOWrite):
         scalar_coord = self.implementation.squeeze(coord_1d, axes=0)
 
         if not self._already_in_file(scalar_coord, ()):
-            ncvar = self._create_variable_name(
-                scalar_coord, default="scalar"
-            )
+            ncvar = self._create_variable_name(scalar_coord, default="scalar")
             # If this scalar coordinate has bounds then create the
             # bounds dataset variable and add the 'bounds' or
             # 'climatology' (as appropriate) attribute to the
@@ -2229,9 +2216,7 @@ class NetCDFWrite(IOWrite):
                     f, coord, key, ncdimensions, coord_ncvar=None
                 )
             else:
-                ncvar = self._create_variable_name(
-                    coord, default="auxiliary"
-                )
+                ncvar = self._create_variable_name(coord, default="auxiliary")
 
                 # TODO: move setting of bounds ncvar to here - why?
 
@@ -2380,9 +2365,7 @@ class NetCDFWrite(IOWrite):
         if not create:
             ncvar = g["seen"][id(anc)]["ncvar"]
         else:
-            ncvar = self._create_variable_name(
-                anc, default="ancillary_data"
-            )
+            ncvar = self._create_variable_name(anc, default="ancillary_data")
 
             # Create a new field ancillary variable
             self._write_netcdf_variable(
@@ -2492,12 +2475,17 @@ class NetCDFWrite(IOWrite):
             external_variables.add(ncvar)
             if not g["dry_run"] and not g["post_dry_run"]:
                 self._set_attributes(
-                    {"external_variables": " ".join(sorted(external_variables))}
-                    )
-#                g["dataset"].setncattr(
-#                    "external_variables", " ".join(sorted(external_variables))
-#                )
-                
+                    {
+                        "external_variables": " ".join(
+                            sorted(external_variables)
+                        )
+                    }
+                )
+
+    #                g["dataset"].setncattr(
+    #                    "external_variables", " ".join(sorted(external_variables))
+    #                )
+
     def _create_external(
         self, field=None, construct_id=None, ncvar=None, ncdimensions=None
     ):
@@ -2545,59 +2533,62 @@ class NetCDFWrite(IOWrite):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        g = self.write_vars 
+        g = self.write_vars
         ncvar = kwargs["varname"]
 
         match g["backend"]:
             case "netCDF4":
                 netcdf4_kwargs = kwargs
-                # Remove Zarr-specific kwargs
-                netcdf4_kwargs.pop('shape', None) 
-                netcdf4_kwargs.pop('shards', None)
+                if "dimensions" not in kwargs:
+                    netcdf4_kwargs["dimensions"] = ()
+                    
+                if kwargs["contiguous"] and g["dataset"].data_model.startswith(
+                    "NETCDF4"
+                ):
+                    # NETCDF4 contiguous variables can't be compressed
+                    kwargs["compression"] = None
+                    kwargs["complevel"] = 0
 
-                if kwargs["contiguous"]:
-                    if g["dataset"].data_model.startswith("NETCDF4"):
-                        # NETCDF4 contiguous variables can't be compressed
-                        kwargs["compression"] = None
-                        kwargs["complevel"] = 0
-               
-                        # NETCDF4 contiguous variables can't span unlimited
-                        # dimensions
-                        unlimited_dimensions = (
-                            g["unlimited_dimensions"].intersection(
-                                kwargs.get("dimensions", ())
-                            )
+                    # NETCDF4 contiguous variables can't span unlimited
+                    # dimensions
+                    unlimited_dimensions = g[
+                        "unlimited_dimensions"
+                    ].intersection(kwargs.get("dimensions", ()))
+                    if unlimited_dimensions:
+                        data_model = g["dataset"].data_model
+                        raise ValueError(
+                            f"Can't create variable {ncvar!r} in "
+                            f"{data_model} dataset: "
+                            f"In {data_model} it is not allowed to write "
+                            "contiguous (as opposed to chunked) data "
+                            "that spans one or more unlimited dimensions: "
+                            f"{unlimited_dimensions}"
                         )
-                        if unlimited_dimensions:
-                            data_model = g["dataset"].data_model
-                            raise ValueError(
-                                f"Can't create variable {ncvar!r} in "
-                                f"{data_model} dataset from {cfvar!r}: "
-                                f"In {data_model} it is not allowed to write "
-                                "contiguous (as opposed to chunked) data "
-                                "that spans one or more unlimited dimensions: "
-                                f"{unlimited_dimensions}"
-                            )
-               
+
+                # Remove Zarr-specific kwargs
+                netcdf4_kwargs.pop("shape", None)
+                netcdf4_kwargs.pop("shards", None)
+
                 variable = g["dataset"].createVariable(**netcdf4_kwargs)
 
-            case "zarr":
-                print ('kwargs = ',  kwargs)
-                zarr_kwargs = {"name": ncvar,
-                               "shape": kwargs.get('shape', ()),
-                               "dtype": kwargs['datatype'],
-                               "chunks": kwargs.get('chunks', 'auto'),
-                               "shards": kwargs.get('shards'),
-                               "compressors": None, # TODOZARR
-                               "fill_value": kwargs.get("fill_value"),
-                               "dimension_names": kwargs.get('dimensions', ()),
-                               "overwrite": True,
-                               }
-                print ('zarr_kwargs = ',  zarr_kwargs)
+            case "zarr":                
+                print("kwargs = ", kwargs)
+                zarr_kwargs = {
+                    "name": ncvar,
+                    "dtype": kwargs["datatype"],
+                    "shape": kwargs.get("shape", ()),
+                    "dimension_names": kwargs.get("dimensions", ()),
+                    "chunks": kwargs.get("chunks", "auto"),
+                    "shards": kwargs.get("shards"),
+                    "compressors": None,  # TODOZARR
+                    "fill_value": kwargs.get("fill_value"),
+                    "overwrite": True,
+                }
+                print("zarr_kwargs = ", zarr_kwargs)
                 variable = g["dataset"].create_array(**zarr_kwargs)
 
         g["nc"][ncvar] = variable
-            
+
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
         """Write a grid mapping georeference to the dataset.
 
@@ -2638,7 +2629,7 @@ class NetCDFWrite(IOWrite):
             kwargs = {
                 "varname": ncvar,
                 "datatype": "S1",
-                "dimensions": (),
+#                 "dimensions": (), # TODOZARR
                 "endian": g["endian"],
             }
             kwargs.update(g["netcdf_compression"])
@@ -2674,7 +2665,7 @@ class NetCDFWrite(IOWrite):
             if not g["dry_run"]:
                 # TODOZARR
                 #                g["nc"][ncvar].setncatts(parameters)
-                self._set_attributes(parameters, ncvar )
+                self._set_attributes(parameters, ncvar)
 
             # Update the 'seen' dictionary
             g["seen"][id(ref)] = {
@@ -2842,7 +2833,7 @@ class NetCDFWrite(IOWrite):
             contiguous, chunksizes = self._chunking_parameters(
                 data, ncdimensions
             )
-            
+
         logger.debug(
             f"      chunksizes: {chunksizes}\n"
             f"      contiguous: {contiguous}"
@@ -2872,7 +2863,7 @@ class NetCDFWrite(IOWrite):
         ]
 
         # Get shape of arra
-        
+
         # ------------------------------------------------------------
         # Create a new dataset variable
         # ------------------------------------------------------------
@@ -2889,15 +2880,15 @@ class NetCDFWrite(IOWrite):
         }
 
         if data is not None:
-            compressed=self._compressed_data(ncdimensions)
+            compressed = self._compressed_data(ncdimensions)
             if compressed:
                 # Write data in its compressed form
                 shape = data.source().source().shape
             else:
                 shape = data.shape
 
-            kwargs['shape'] = shape
-            
+            kwargs["shape"] = shape
+
         # ------------------------------------------------------------
         # Create a quantization container variable, add any extra
         # quantization attributes, and if required instruct
@@ -2938,7 +2929,7 @@ class NetCDFWrite(IOWrite):
                         f"Can't yet quantize on write  {cfvar!r} to a Zarr "
                         "dataset TODOZARR"
                     )
-                
+
                 # Set "implemention" to this version of the netCDF-C
                 # library
                 self.implementation.set_parameter(
@@ -3045,7 +3036,7 @@ class NetCDFWrite(IOWrite):
                 # otherwise reflect the aggregated data in memory,
                 # rather than the scalar variable in the file.
                 kwargs["shape"] = ()  # zarr
-                kwargs["chunks"] = 'auto'  # zarr
+                kwargs["chunks"] = "auto"  # zarr
                 kwargs["shards"] = None  # zarr
                 kwargs["dimensions"] = ()  # netCDF4 + zarr
                 kwargs["contiguous"] = True  # netCDF4
@@ -3226,7 +3217,7 @@ class NetCDFWrite(IOWrite):
         # TODOZARR - consider always writing string arrays in zarr (rather than char arrays)
 
         datatype = self._datatype(data)
-        
+
         if data is not None and datatype == "S1":
             # --------------------------------------------------------
             # Convert a string data type numpy array into a character
@@ -3349,7 +3340,7 @@ class NetCDFWrite(IOWrite):
             )
 
         # TODOZARR
-        print (type(g["nc"][ncvar]))
+        print(type(g["nc"][ncvar]))
         da.store(dx, g["nc"][ncvar], compute=True, return_stored=False)
 
     def _check_valid(self, array, cfvar=None, attributes=None):
@@ -4195,11 +4186,11 @@ class NetCDFWrite(IOWrite):
                         #        "formula_terms", formula_terms
                         #          )
                         self._set_attributes(
-                             {"formula_terms": formula_terms}, ncvar
+                            {"formula_terms": formula_terms}, ncvar
                         )
                     except KeyError:
                         pass  # TODO convert to 'raise' via fixes upstream
-                    
+
                 logger.info(
                     "    Writing formula_terms attribute to variable "
                     f"{ncvar}: {formula_terms!r}"
@@ -4213,12 +4204,12 @@ class NetCDFWrite(IOWrite):
                     if not g["dry_run"] and not g["post_dry_run"]:
                         try:
                             # TODOZARR
-#                            g["nc"][bounds_ncvar].setncattr(
-#                                "formula_terms", bounds_formula_terms
-#                            )
+                            #                            g["nc"][bounds_ncvar].setncattr(
+                            #                                "formula_terms", bounds_formula_terms
+                            #                            )
                             self._set_attributes(
                                 {"formula_terms": bounds_formula_terms},
-                                bounds_ncvar
+                                bounds_ncvar,
                             )
                         except KeyError:
                             pass  # TODO convert to 'raise' via fixes upstream
@@ -4495,7 +4486,7 @@ class NetCDFWrite(IOWrite):
         """
         return self.implementation.nc_is_unlimited_axis(field, axis)
 
-    #def _write_group(self, parent_group, group_name):
+    # def _write_group(self, parent_group, group_name):
     #    """Creates a new parent group object.
     #
     #    .. versionadded:: (cfdm) 1.8.6.0
@@ -4579,7 +4570,7 @@ class NetCDFWrite(IOWrite):
                     f0, attr
                 )
 
-            nc = g["dataset"] # TODOZARR
+            nc = g["dataset"]  # TODOZARR
             for group in groups:
                 if group in nc.groups:
                     nc = nc.groups[group]
@@ -4734,16 +4725,16 @@ class NetCDFWrite(IOWrite):
 
         if not g["dry_run"] and not g["post_dry_run"]:
             attrs = {"Conventions": delimiter.join(g["Conventions"])}
-#            g["dataset"].setncattr(
-#                "Conventions", delimiter.join(g["Conventions"])
-#            )
+            #            g["dataset"].setncattr(
+            #                "Conventions", delimiter.join(g["Conventions"])
+            #            )
 
             # ------------------------------------------------------------
             # Write the file descriptors to the file
             # ------------------------------------------------------------
             attrs.update(g["file_descriptors"])
-#            for attr, value in g["file_descriptors"].items():
-#                g["dataset"].setncattr(attr, value)
+            #            for attr, value in g["file_descriptors"].items():
+            #                g["dataset"].setncattr(attr, value)
 
             # ------------------------------------------------------------
             # Write other global attributes to the file
@@ -4755,18 +4746,18 @@ class NetCDFWrite(IOWrite):
                 }
             )
             #          for attr in global_attributes - set(("Conventions",)):
-#                g["dataset"].setncattr(
-#                    attr, self.implementation.get_property(f0, attr)
-#                )
+            #                g["dataset"].setncattr(
+            #                    attr, self.implementation.get_property(f0, attr)
+            #                )
 
             # ------------------------------------------------------------
             # Write "forced" global attributes to the file
             # ------------------------------------------------------------
             attrs.update(force_global)
-            
+
             self._set_attributes(attrs, group=g["dataset"])
-#            for attr, v in force_global.items():
-#                g["dataset"].setncattr(attr, v)
+        #            for attr, v in force_global.items():
+        #                g["dataset"].setncattr(attr, v)
 
         g["global_attributes"] = global_attributes
 
@@ -4825,24 +4816,25 @@ class NetCDFWrite(IOWrite):
                     )
 
         g = self.write_vars
-        match g['backend']:
-            case 'netCDF4':
+        match g["backend"]:
+            case "netCDF4":
                 # mode == 'w' is safer than != 'a' in case of a typo
                 # (the letters are neighbours on a QWERTY keyboard)
                 # since 'w' is destructive.  Note that for append
                 # ('a') mode the original file is never wiped.
                 if mode == "w" and g["overwrite"]:
-                    os.remove(filename)            
-                    
+                    os.remove(filename)
+
                 try:
                     nc = netCDF4.Dataset(filename, mode, format=fmt)
                 except RuntimeError as error:
                     raise RuntimeError(f"{error}: {filename}")
 
-            case 'zarr':
+            case "zarr":
                 nc = zarr.group(
-                    filename, overwrite=g["overwrite"], zarr_format=3)
-            
+                    filename, overwrite=g["overwrite"], zarr_format=3
+                )
+
         return nc
 
     @_manage_log_level_via_verbosity
@@ -4873,7 +4865,7 @@ class NetCDFWrite(IOWrite):
         group=True,
         coordinates=False,
         omit_data=None,
-        dataset_chunks="4MiB",
+            dataset_chunks="4MiB", dataset_shards=None,
         cfa="auto",
         reference_datetime=None,
     ):
@@ -5114,6 +5106,12 @@ class NetCDFWrite(IOWrite):
                 The dataset chunking strategy. The default value is
                 "4MiB". See `cfdm.write` for details.
 
+            dataset_shards: `str`, `int`, or `float`, optional
+                The Zarr dataset sharding strategy. The default value
+                is `None`. See `cfdm.write` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
             cfa: `dict` or `None`, optional
                 Configure the creation of aggregation variables. See
                 `cfdm.write` for details.
@@ -5247,9 +5245,10 @@ class NetCDFWrite(IOWrite):
             # dataset variable
             "cfa_write_status": {},
             # --------------------------------------------------------
-            # Dataset chunking stategy
+            # Dataset chunking and  sharding stategy
             # --------------------------------------------------------
             "dataset_chunks": dataset_chunks,
+            "dataset_shards": dataset_shards,
             # --------------------------------------------------------
             # Quantization: Store unique Quantization objects, keyed
             #               by their output dataset variable names.
@@ -5277,8 +5276,6 @@ class NetCDFWrite(IOWrite):
                     f"{dataset_chunks!r}."
                 )
 
-        
-            
         # ------------------------------------------------------------
         # Parse the 'cfa' keyword
         # ------------------------------------------------------------
@@ -5584,10 +5581,10 @@ class NetCDFWrite(IOWrite):
 
         g["fmt"] = fmt
         if fmt == "ZARR3":
-            g['backend'] = 'zarr'
+            g["backend"] = "zarr"
         else:
-            g['backend'] = 'netCDF4'
-        
+            g["backend"] = "netCDF4"
+
         if isinstance(
             fields,
             (
@@ -5813,10 +5810,10 @@ class NetCDFWrite(IOWrite):
         chunksizes = self.implementation.nc_get_dataset_chunksizes(data)
         if chunksizes == "contiguous":
             # Contiguous as defined by 'data'
-            if g['zarr']:
+            if g["zarr"]:
                 # Return a single chunk
                 return False, self._shape_in_dataset(data, ncdimensions)
-            
+
             return True, None
 
         # Still here?
@@ -5832,10 +5829,10 @@ class NetCDFWrite(IOWrite):
         # dataset_chunks
         if dataset_chunks == "contiguous":
             # Contiguous as defined by 'dataset_chunks'
-            if g['zarr']:
+            if g["zarr"]:
                 # Return a single chunk
                 return False, self._shape_in_dataset(data, ncdimensions)
-            
+
             return True, None
 
         # Still here? Then work out the chunks from both the
@@ -5866,14 +5863,14 @@ class NetCDFWrite(IOWrite):
             return True, None
 
     def _shape_in_dataset(self, data, ncdimensions):
-        """TODOZARR"""
+        """TODOZARR."""
         if self._compressed_data(ncdimensions):
             d = self.implementation.get_compressed_array(data)
         else:
             d = data
-        
+
         return d.shape
-        
+
     def _compressed_data(self, ncdimensions):
         """Whether or not the data is being written in compressed form.
 
@@ -6581,7 +6578,7 @@ class NetCDFWrite(IOWrite):
         kwargs = {
             "varname": ncvar,
             "datatype": "S1",
-            "dimensions": (),
+#            "dimensions": (), # TODOZARR
             "endian": g["endian"],
         }
         kwargs.update(g["netcdf_compression"])
@@ -6591,10 +6588,10 @@ class NetCDFWrite(IOWrite):
             self._createVariable(**kwargs)
 
             # Set the attributes
-#            g["nc"][ncvar].setncatts(
-#                self.implementation.parameters(quantization)
-#            )
-            # TODOZARR                                 
+            #            g["nc"][ncvar].setncatts(
+            #                self.implementation.parameters(quantization)
+            #            )
+            # TODOZARR
             self._set_attributes(
                 self.implementation.parameters(quantization), ncvar
             )

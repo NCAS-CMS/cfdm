@@ -611,6 +611,9 @@ class write(ReadWrite):
 
             .. versionadded:: (cfdm) 1.12.0.0
 
+        dataset_shards: `str` or `int` or `float`, optional
+            TODOZARR
+    
         cfa: `str` or `dict` or `None`, optional
             Specify which netCDF variables, if any, should be written
             as CF-netCDF aggregation variables.
@@ -849,6 +852,6 @@ class write(ReadWrite):
             coordinates=coordinates,
             extra_write_vars=extra_write_vars,
             omit_data=omit_data,
-            dataset_chunks=dataset_chunks,
+            dataset_chunks=dataset_chunks, dataset_shards =dataset_shards,
             cfa=cfa,
         )
