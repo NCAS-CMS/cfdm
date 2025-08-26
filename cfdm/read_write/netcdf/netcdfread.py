@@ -8178,36 +8178,46 @@ class NetCDFRead(IORead):
             `Data`
 
         """
-        if array.dtype is None:
-            g = self.read_vars
-            if g["has_groups"]:
-                group, name = self._netCDF4_group(
-                    g["variable_grouped_dataset"][ncvar], ncvar
-                )
-                variable = group.variables.get(name)
-            else:
-                variable = g["variables"].get(ncvar)
-
-            array = variable[...]
-
-            string_type = isinstance(array, str)
-            if string_type:
-                # A netCDF string type scalar variable comes out as Python
-                # str object, so convert it to a numpy array.
-                array = np.array(array, dtype=f"U{len(array)}")
-
-            if not variable.ndim:
-                # NetCDF4 has a thing for making scalar size 1
-                # variables into 1d arrays
-                array = array.squeeze()
-
-            if not string_type:
-                # An N-d (N>=1) netCDF string type variable comes out
-                # as a numpy object array, so convert it to numpy
-                # string array.
-                array = array.astype("U", copy=False)
-                # NetCDF4 doesn't auto-mask VLEN variables
-                array = np.ma.where(array == "", np.ma.masked, array)
+        g = self.read_vars
+        match  g["nc_opened_with"]:
+            case 'zarr':
+                if array.dtype == np.dtypes.StringDType():
+                    array = array.astype("O", copy=False).astype("U", copy=False)
+                    array = np.ma.masked_values(array, "")
+               
+            case _:
+                if array.dtype is None:
+                    if g["has_groups"]:
+                        group, name = self._netCDF4_group(
+                            g["variable_grouped_dataset"][ncvar], ncvar
+                        )
+                        variable = group.variables.get(name)
+                    else:
+                        variable = g["variables"].get(ncvar)
+        
+                    array = variable[...]
+        
+                    string_type = isinstance(array, str)
+                    if string_type:
+                        # A netCDF string type scalar variable comes
+                        # out as Python str object, so convert it to a
+                        # numpy array.
+                        array = np.array(array, dtype=f"U{len(array)}")
+        
+                    if not variable.ndim:
+                        # NetCDF4 has a thing for making scalar size 1
+                        # variables into 1d arrays
+                        array = array.squeeze()
+        
+                    if not string_type:
+                        # An N-d (N>=1) netCDF string type variable
+                        # comes out as a numpy object array, so
+                        # convert it to numpy string array.
+                        array = array.astype("U", copy=False)
+                        # netCDF4 doesn't auto-mask VLEN variables
+                        # array = np.ma.where(array == "", np.ma.masked, array)
+                        array = np.ma.masked_values(array, "")
+                    
 
         # Set the dask chunking strategy
         chunks = self._dask_chunks(

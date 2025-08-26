@@ -392,7 +392,7 @@ class netcdf_indexer:
                 The default ``_FillValue``.
 
         """
-        if dtype.kind in "OS":
+        if dtype.kind in "OST":
             return default_fillvals["S1"]
 
         return default_fillvals[dtype.str[1:]]
@@ -618,7 +618,7 @@ class netcdf_indexer:
             if fvalisnan:
                 mask = np.isnan(data)
             else:
-                mask = data == fval
+                mask = np.asanyarray(data == fval)
 
             if mask.any():
                 if fill_value is None:

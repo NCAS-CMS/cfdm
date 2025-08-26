@@ -81,14 +81,12 @@ class write(ReadWrite):
     :Parameters:
 
         fields: (sequence of) `Field` or `Domain`
-            The field and domain constructs to write to the file.
+            The field and domain constructs to write to the dataset.
 
-        filename: `str`
-            The output netCDF file name. Various type of expansion are
-            applied to the file names.
-
-            Relative paths are allowed, and standard tilde and shell
-            parameter expansions are applied to the string.
+        dataset_name: `str`
+            The output dataset name. Relative paths are allowed, and
+            standard tilde and shell parameter expansions are applied
+            to the string.
 
             *Parameter example:*
               The file ``file.nc`` in the user's home directory could
@@ -100,7 +98,7 @@ class write(ReadWrite):
             The format of the output file. One of:
 
             ==========================  ==============================
-            *fmt*                       Output file type
+            *fmt*                       Output dataset type
             ==========================  ==============================
             ``'NETCDF4'``               NetCDF4 format file. This is
                                         the default.
@@ -121,12 +119,14 @@ class write(ReadWrite):
             ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
                                         file with extensions (see
                                         below)
+
+            ``'ZARR3'``                 Zarr v3
             ==========================  ==============================
 
             By default the format is ``'NETCDF4'``.
 
-            All formats support large files (i.e. those greater than
-            2GB) except ``'NETCDF3_CLASSIC'``.
+            All NETCDF formats support large files (i.e. those greater
+            than 2GB) except ``'NETCDF3_CLASSIC'``.
 
             ``'NETCDF3_64BIT_DATA'`` is a format that requires version
             4.4.0 or newer of the C library (use
@@ -146,7 +146,8 @@ class write(ReadWrite):
             and use the new features of the version 4 API.
 
         mode: `str`, optional
-            Specify the mode of write access for the output file. One of:
+            Specify the mode of write access for the output
+            datset. One of:
 
             ========  =================================================
             *mode*    Description
@@ -197,12 +198,12 @@ class write(ReadWrite):
 
             ========  =================================================
 
-            By default the file is opened with write access mode
+            By default the dataset is opened with write access mode
             ``'w'``.
 
         overwrite: `bool`, optional
-            If False then raise an error if the output file
-            pre-exists. By default a pre-existing output file is
+            If False then raise an error if the output dataset
+            pre-exists. By default a pre-existing output dataset is
             overwritten.
 
         Conventions: (sequence of) `str`, optional
@@ -261,8 +262,8 @@ class write(ReadWrite):
              construct properties, which are created as netCDF global
              attributes by default:
 
-             * the description of file contents properties (as defined
-               by the CF conventions), and
+             * the description of dataset contents properties (as
+               defined by the CF conventions), and
 
              * properties flagged as global on any of the field
                constructs being written (see
@@ -278,7 +279,7 @@ class write(ReadWrite):
              data variable corresponding to each field construct that
              contains the property.
 
-             Any global attributes that are also specified as file
+             Any global attributes that are also specified as dataset
              descriptors will not be written as netCDF global
              variables, but as netCDF data variable attributes
              instead.
@@ -316,8 +317,8 @@ class write(ReadWrite):
 
         external: `str`, optional
             Write metadata constructs that have data and are marked as
-            external to the named external file. Ignored if there are
-            no such constructs.
+            external to the named external dataset. Ignored if there
+            are no such constructs.
 
         datatype: `dict`, optional
             Specify data type conversions to be applied prior to
@@ -343,7 +344,7 @@ class write(ReadWrite):
             ``'little'``, ``'big'`` or ``'native'``. By default the
             output is native endian. See the `netCDF4 package
             <http://unidata.github.io/netcdf4-python>`_ for more
-            details.
+            details. Ignored for Zarr datsets.
 
             *Parameter example:*
               ``endian='big'``
@@ -374,8 +375,8 @@ class write(ReadWrite):
               ``least_significant_digit=3``
 
         chunk_cache: `int` or `None`, optional
-            The amount of memory (in bytes) used in each variable's
-            chunk cache at the HDF5 level.
+            The amount of memory (in bytes) used in each HDF5
+            variable's chunk cache.
 
             Ignored when not writing to a netCDF-4 format. By default,
             or if `None`, the default netCDF-C chunk cache size of
@@ -420,14 +421,14 @@ class write(ReadWrite):
 
         string: `bool`, optional
             By default string-valued construct data are written as
-            netCDF arrays of type string if the output file format is
-            ``'NETCDF4'`` or ``'ZARR3'``, or of type char with an
+            netCDF arrays of type string if the output dataset format
+            is ``'NETCDF4'`` or ``'ZARR3'``, or of type char with an
             extra dimension denoting the maximum string length for any
-            other output file format (see the *fmt* parameter). If
+            other output dataset format (see the *fmt* parameter). If
             *string* is False then string-valued construct data are
             written as netCDF arrays of type char with an extra
             dimension denoting the maximum string length, regardless
-            of the selected output file format.
+            of the selected output dataset format.
 
             .. versionadded:: (cfdm) 1.8.0
 
@@ -469,7 +470,7 @@ class write(ReadWrite):
 
             The consequence of writing out-of-range data values is
             that, by default, these values will be masked when the
-            file is subsequently read.
+            dataset is subsequently read.
 
             *Parameter example:*
               If a construct has ``valid_max`` property with value
@@ -480,11 +481,11 @@ class write(ReadWrite):
             .. versionadded:: (cfdm) 1.8.3
 
         group: `bool`, optional
-            If False then create a "flat" netCDF file, i.e. one with
-            only the root group, regardless of any group structure
+            If False then create a "flat" dataset, i.e. one with only
+            the root group, regardless of any group structure
             specified by the field constructs. By default any groups
-            defined by the netCDF interface of the field constructs and
-            its components will be created and populated.
+            defined by the netCDF interface of the field constructs
+            and its components will be created and populated.
 
             .. versionadded:: (cfdm) 1.8.6
 
@@ -500,11 +501,11 @@ class write(ReadWrite):
             Do not write the data of the named construct types.
 
             This does not affect the amount of netCDF variables and
-            dimensions that are written to the file, nor the netCDF
+            dimensions that are written to the dataset, nor the netCDF
             variables' attributes, but does not create data on disk
-            for the requested variables. The resulting file will be
+            for the requested variables. The resulting dataset will be
             smaller than it otherwise would have been, and when the
-            new file is read the data of these variables will be
+            new dataset is read the data of these variables will be
             represented by an array of all missing data.
 
             The *omit_data* parameter may be one, or a sequence, of:
@@ -535,8 +536,8 @@ class write(ReadWrite):
             .. versionadded:: (cfdm) 1.10.0.1
 
         dataset_chunks: `str` or `int` or `float`, optional
-            The dataset chunking strategy for data arrays being written
-            to the file.
+            The dataset chunking strategy for data arrays being
+            written to the dataset.
 
             By default, *dataset_chunks* is ``'4 MiB'``, i.e. 4194304
             bytes.
@@ -613,7 +614,7 @@ class write(ReadWrite):
 
         dataset_shards: `str` or `int` or `float`, optional
             TODOZARR
-    
+
         cfa: `str` or `dict` or `None`, optional
             Specify which netCDF variables, if any, should be written
             as CF-netCDF aggregation variables.
@@ -743,6 +744,9 @@ class write(ReadWrite):
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
 
+        filename: Deprecated at version NEXTVERSION
+            Use *dataset_name* instead.
+
     :Returns:
 
         `None`
@@ -764,7 +768,7 @@ class write(ReadWrite):
     def __new__(
         cls,
         fields,
-        filename,
+        dataset_name,
         fmt="NETCDF4",
         mode="w",
         overwrite=True,
@@ -790,10 +794,11 @@ class write(ReadWrite):
         coordinates=False,
         omit_data=None,
         dataset_chunks="4 MiB",
+        dataset_shards=None,
         cfa="auto",
         extra_write_vars=None,
     ):
-        """Write field and domain constructs to a netCDF file."""
+        """Write field and domain constructs to a dataset."""
         # Flatten the sequence of intput fields
         fields = tuple(cls._flat(fields))
         if not fields:
@@ -828,7 +833,7 @@ class write(ReadWrite):
         netcdf = NetCDFWrite(cls.implementation)
         netcdf.write(
             fields,
-            filename,
+            dataset_name,
             fmt=fmt,
             mode=mode,
             overwrite=overwrite,
@@ -852,6 +857,7 @@ class write(ReadWrite):
             coordinates=coordinates,
             extra_write_vars=extra_write_vars,
             omit_data=omit_data,
-            dataset_chunks=dataset_chunks, dataset_shards =dataset_shards,
+            dataset_chunks=dataset_chunks,
+            dataset_shards=dataset_shards,
             cfa=cfa,
         )
