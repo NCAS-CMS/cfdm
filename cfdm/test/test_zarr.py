@@ -2,47 +2,27 @@ import atexit
 import datetime
 import faulthandler
 import os
-import platform
 import shutil
-import subprocess
 import tempfile
 import unittest
-
-import netCDF4
-import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-from cfdm.read_write.exceptions import DatasetTypeError, ReadError
 
 warnings = False
 
 # Set up temporary directories
-n_tmp = 9
 tmpdirs = [
-    tempfile.mkdtemp("_test_zarr.zarr", dir=os.getcwd())
-    for i in range(n_tmp)
+    tempfile.mkdtemp("_test_zarr.zarr", dir=os.getcwd()) for i in range(2)
 ]
-[
-    tmp1,
-    tmp2,
-    tmp3,
-    tmp4,
-    tmp5,
-    tmp6,
-    tmp7,
-    tmp8,
-    tmp9,
-] = tmpdirs
+[tmpdir1, tmpdir2] = tmpdirs
 
 # Set up temporary files
-n_tmpfiles = 1
 tmpfiles = [
-    tempfile.mkstemp("_test_zarr.nc", dir=os.getcwd())[1]
-    for i in range(n_tmpfiles)
+    tempfile.mkstemp("_test_zarr.nc", dir=os.getcwd())[1] for i in range(2)
 ]
-[tmpfile] = tmpfiles
+[tmpfile1, tmpfile2] = tmpfiles
 
 
 def _remove_tmpdirs():
@@ -109,30 +89,67 @@ class read_writeTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-    def test_read_write_zarr_1(self):
-        """Test the writing of a named netCDF file."""
-        i = 0
-        for f in cfdm.example_fields(0, 1, 2, 3):
-            print ('\n\n==================================', i)
-            print(f)
-            tmp1 = 'tmp.zarr'
-            cfdm.write(f, tmp1, fmt='ZARR3')
-            g = cfdm.read(tmp1, verbose=1)
-            self.assertEqual(len(g) , 1)
-            g = g[0]
-            print(g)
-            
-            self.assertTrue(g.equals(f, verbose=1))
+    def test_zarr_read_write_1(self):
+        """Test Zarr read/write on example fields."""
+        for i, f in enumerate(cfdm.example_fields()):
+            if i in (8, 9, 10):
+                # Can't write UGRID yet
+                continue
 
-            print ('\n\n eq1 done\n\n')
-            # Check that the Zarr and netCDF4 encoding contain the
-            # same information
-            tmpfile = 'delme.nc'
-            cfdm.write(f, tmpfile, fmt='NETCDF4')
-            n = cfdm.read(tmpfile)[0]
-            self.assertTrue(g.equals(n))
+            cfdm.write(f, tmpdir1, fmt="ZARR3")
+            z = cfdm.read(tmpdir1)
+            self.assertEqual(len(z), 1)
+            z = z[0]
+            self.assertTrue(z.equals(f))
 
-            i += 1
+            # Check that the Zarr and netCDF4 encodings are equivalent
+            tmpfile1 = "delme.nc"
+            cfdm.write(f, tmpfile1, fmt="NETCDF4")
+            n = cfdm.read(tmpfile1)[0]
+            self.assertTrue(z.equals(n))
+
+    def test_zarr_read_write_2(self):
+        """Test Zarr read/write on test netCDF files."""
+        for filename in (
+            "DSG_timeSeries_contiguous.nc",
+            "DSG_timeSeries_indexed.nc",
+            "DSG_timeSeriesProfile_indexed_contiguous.nc",
+            "gathered.nc",
+            "geometry_1.nc",
+            "geometry_2.nc",
+            "geometry_3.nc",
+            "geometry_4.nc",
+            "string_char.nc",
+        ):
+            n = cfdm.read(filename)
+            cfdm.write(n, tmpdir1, fmt="ZARR3")
+            z = cfdm.read(tmpdir1)
+            self.assertEqual(len(z), len(n))
+            for a, b in zip(z, n):
+                self.assertTrue(a.equals(b))
+
+    def test_zarr_read_write_CFA(self):
+        """Test CF aggreagtion in Zarr."""
+        f = self.f0
+        cfdm.write(f, tmpdir1, fmt="ZARR3")
+        cfdm.write(f, tmpfile1, fmt="NETCDF4")
+
+        z = cfdm.read(tmpdir1, cfa_write="field")[0]
+        n = cfdm.read(tmpfile1, cfa_write="field")[0]
+
+        self.assertTrue(z.equals(f))
+        self.assertTrue(z.equals(n))
+
+        cfdm.write(z, tmpdir2, fmt="ZARR3", cfa="field")
+        cfdm.write(n, tmpfile2, fmt="NETCDF4", cfa="field")
+
+        z = cfdm.read(tmpdir2)[0]
+        n = cfdm.read(tmpfile2)[0]
+
+        self.assertTrue(z.equals(f))
+        self.assertTrue(z.equals(n))
+
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()

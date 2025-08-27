@@ -6,7 +6,6 @@ import re
 import dask.array as da
 import netCDF4
 import numpy as np
-import zarr
 from dask import config as dask_config
 from dask.array.core import normalize_chunks
 from dask.utils import parse_bytes
@@ -350,6 +349,12 @@ class NetCDFWrite(IOWrite):
             case "netCDF4":
                 x.setncatts(attributes)
             case "zarr":
+                # `zarr` can't encode numpy arrays in the zarr.json
+                # file
+                for attr, value in attributes.items():
+                    if isinstance(value, np.ndarray):
+                        attributes[attr] = value.tolist()
+
                 x.update_attributes(attributes)
             case _:
                 raise ValueError(f"Bad backend: {g['backend']!r}")
@@ -454,7 +459,7 @@ class NetCDFWrite(IOWrite):
         if not isinstance(variable, np.ndarray):
             data = self.implementation.get_data(variable, None)
             if data is None:
-                if fmt == "ZARR3":
+                if g["fmt"] == "ZARR3":
                     return str
 
                 return "S1"
@@ -463,7 +468,7 @@ class NetCDFWrite(IOWrite):
 
         dtype = getattr(data, "dtype", None)
         if dtype is None or dtype.kind in "SU":
-            fmt = g["fmt"] 
+            fmt = g["fmt"]
             if fmt == "NETCDF4" and g["string"]:
                 return str
 
@@ -2634,7 +2639,7 @@ class NetCDFWrite(IOWrite):
                 dtype = kwargs["datatype"]
                 if dtype == "S1":
                     dtype = str
-                    
+
                 zarr_kwargs = {
                     "name": ncvar,
                     "shape": shape,
@@ -2648,7 +2653,7 @@ class NetCDFWrite(IOWrite):
                 }
                 print("zarr_kwargs = ", zarr_kwargs)
                 variable = g["dataset"].create_array(**zarr_kwargs)
-                print('___________')
+                print("___________")
 
             case _:
                 raise ValueError(f"Bad backend: {g['backend']!r}")
@@ -2860,6 +2865,7 @@ class NetCDFWrite(IOWrite):
 
         # Do this after the dry_run return else may attempt to transform
         # the arrays with string dtype on an append-mode read iteration (bad).
+        datatype = None
         if not domain_variable:
             datatype = self._datatype(cfvar)
             data, ncdimensions = self._transform_strings(
@@ -2875,14 +2881,22 @@ class NetCDFWrite(IOWrite):
         # filled before any data is written. if the fill value is
         # False then the variable is not pre-filled.
         # ------------------------------------------------------------
-        if (
-            omit_data or fill or g["post_dry_run"]
-        ):  # or append mode's appending iteration
-            fill_value = self.implementation.get_property(
-                cfvar, "_FillValue", None
-            )
-        else:
-            fill_value = None # ppp
+        match g["backend"]:
+            case "netCDF4":
+                if (
+                    omit_data or fill or g["post_dry_run"]
+                ):  # or append mode's appending iteration
+                    fill_value = self.implementation.get_property(
+                        cfvar, "_FillValue", None
+                    )
+                else:
+                    fill_value = None
+
+            case "zarr":
+                # Set the `zarr` fill_value to the missing value of
+                # 'cfvar', defaulting to the netCDF default fill value
+                # if no missing value is available
+                fill_value = self._missing_value(cfvar, datatype)
 
         if data_variable:
             lsd = g["least_significant_digit"]
@@ -3328,7 +3342,6 @@ class NetCDFWrite(IOWrite):
             `None`
 
         """
-        print ('ncvar=', ncvar, repr(data))
         g = self.write_vars
 
         if cfa:
@@ -3342,19 +3355,16 @@ class NetCDFWrite(IOWrite):
         # Still here? The write a normal (non-aggregation) variable
         # ------------------------------------------------------------
         if compressed:
-            # Write data in its compressed form            
+            # Write data in its compressed form
             data = data.source().source()
-            print ('compressed' ,repr(data))
 
         # Get the dask array
-        print('data.fill_value', data._FillValue)
         dx = da.asanyarray(data)
 
         # Convert the data type
         new_dtype = g["datatype"].get(dx.dtype)
         if new_dtype is not None:
             dx = dx.astype(new_dtype)
-
 
         # VLEN variables can not be assigned to by masked arrays
         # (https://github.com/Unidata/netcdf4-python/pull/465), so
@@ -3379,9 +3389,40 @@ class NetCDFWrite(IOWrite):
                 attributes=attributes,
                 meta=np.array((), dx.dtype),
             )
-        print('dx', repr(dx), dx.compute())
-        print('ertertertr', repr(g["nc"][ncvar]))
+
+        if g["backend"] == "zarr":
+            # `zarr` can't write a masked array to a variable, so we
+            # have to replace missing data with the fill value.
+            dx = dx.map_blocks(
+                self._filled_array,
+                meta=np.array((), dx.dtype),
+                fill_value=g["nc"][ncvar].fill_value,
+            )
+
         da.store(dx, g["nc"][ncvar], compute=True, return_stored=False)
+
+    def _filled_array(self, array, fill_value):
+        """Replace masked values with a fill value.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            array: `numpy.ndarray`
+                The arry to be filled.
+
+            fill_value:
+                The fill value.
+
+        :Returns:
+
+            `numpy.ndarray`
+
+        """
+        if np.ma.isMA(array):
+            return array.filled(fill_value)
+
+        return array
 
     def _check_valid(self, array, cfvar=None, attributes=None):
         """Checks for array values outside of the valid range.
@@ -4888,6 +4929,14 @@ class NetCDFWrite(IOWrite):
                     raise RuntimeError(f"{error}: {dataset_name}")
 
             case "zarr":
+                try:
+                    import zarr
+                except ModuleNotFoundError as error:
+                    error.msg += (
+                        ". Install the 'zarr' package to write Zarr datasets"
+                    )
+                    raise
+
                 nc = zarr.group(
                     dataset_name, overwrite=g["overwrite"], zarr_format=3
                 )
@@ -6668,3 +6717,45 @@ class NetCDFWrite(IOWrite):
         g["quantization"][ncvar] = quantization
 
         return ncvar
+
+    def _missing_value(self, x, datatype):
+        """Get the missing value.
+
+         .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            x: construct or `Data`
+                The data for which to get the missing value.
+
+            datatype: `str` or str
+                The data type, e.g. ``'S1'``, ``'f4'``, `str`.  Used
+                to get the netCDF default fill value, but only when a
+                missing value can't be found from the attributes of
+                *x*.
+
+        :Returns:
+
+                The missing value, or `None` if no missing value could
+                be found.
+
+        """
+        try:
+            # Try 'x' as a construct
+            mv = x.get_property("_FillValue", None)
+            if mv is None:
+                mv = x.get_property("missing_value", None)
+        except AttributeError:
+            try:
+                # Try 'x' as a `Data` object
+                mv = getattr(x, "fill_value", None)
+            except AttributeError:
+                mv = None
+
+        if mv is None:
+            # Try to get the netCDF default fill value
+            mv = netCDF4.default_fillvals.get(datatype)
+            if mv is None and datatype is str:
+                mv = ""
+
+        return mv

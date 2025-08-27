@@ -263,9 +263,16 @@ class AggregatedArray(abstract.FileArray):
                 if not scalar:
                     identifier = fa_identifiers[index].item()
 
+                uri = fa_uris[index]
+                try:
+                    uri = uri.item()
+                except AttributeError:
+                    # E.g. if 'uri' is a `str` instance
+                    pass
+
                 parsed_fragment_array[index] = {
                     "map": shape,
-                    "uri": fa_uris[index].item(),
+                    "uri": uri,
                     "identifier": identifier,
                 }
         else:

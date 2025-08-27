@@ -120,7 +120,7 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 else:
-    _minimum_vn = "3.0.8"
+    _minimum_vn = "3.1.2"
     if Version(zarr.__version__) < Version(_minimum_vn):
         raise ValueError(
             f"Bad zarr version: cfdm requires zarr>={_minimum_vn}. "

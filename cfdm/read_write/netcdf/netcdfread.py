@@ -707,7 +707,7 @@ class NetCDFRead(IORead):
             error.msg += ". Install the 'zarr' package to read Zarr datasets"
             raise
 
-        nc = zarr.open(dataset)
+        nc = zarr.open(dataset, mode="r")
         self.read_vars["dataset_opened_with"] = "zarr"
         return nc
 
@@ -7091,7 +7091,7 @@ class NetCDFRead(IORead):
             #
             # b) Cached values are never really required for
             #    compression index data.
-            self._cache_data_elements(data, ncvar)
+            self._cache_data_elements(data, ncvar, attributes)
 
         # ------------------------------------------------------------
         # Set data aggregation parameters
@@ -8179,12 +8179,14 @@ class NetCDFRead(IORead):
 
         """
         g = self.read_vars
-        match  g["nc_opened_with"]:
-            case 'zarr':
+        match g["nc_opened_with"]:
+            case "zarr":
                 if array.dtype == np.dtypes.StringDType():
-                    array = array.astype("O", copy=False).astype("U", copy=False)
+                    array = array.astype("O", copy=False).astype(
+                        "U", copy=False
+                    )
                     array = np.ma.masked_values(array, "")
-               
+
             case _:
                 if array.dtype is None:
                     if g["has_groups"]:
@@ -8194,21 +8196,21 @@ class NetCDFRead(IORead):
                         variable = group.variables.get(name)
                     else:
                         variable = g["variables"].get(ncvar)
-        
+
                     array = variable[...]
-        
+
                     string_type = isinstance(array, str)
                     if string_type:
                         # A netCDF string type scalar variable comes
                         # out as Python str object, so convert it to a
                         # numpy array.
                         array = np.array(array, dtype=f"U{len(array)}")
-        
+
                     if not variable.ndim:
                         # NetCDF4 has a thing for making scalar size 1
                         # variables into 1d arrays
                         array = array.squeeze()
-        
+
                     if not string_type:
                         # An N-d (N>=1) netCDF string type variable
                         # comes out as a numpy object array, so
@@ -8217,7 +8219,6 @@ class NetCDFRead(IORead):
                         # netCDF4 doesn't auto-mask VLEN variables
                         # array = np.ma.where(array == "", np.ma.masked, array)
                         array = np.ma.masked_values(array, "")
-                    
 
         # Set the dask chunking strategy
         chunks = self._dask_chunks(
@@ -11316,14 +11317,14 @@ class NetCDFRead(IORead):
         else:
             dask_chunks = g.get("dask_chunks", "storage-aligned")
 
-        storage_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
-
         # ------------------------------------------------------------
         # None
         # ------------------------------------------------------------
         if dask_chunks is None:
             # No Dask chunking
             return -1
+
+        storage_chunks = self._dataset_chunksizes(g["variables"][ncvar])
 
         ndim = array.ndim
         if (
@@ -11610,7 +11611,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         return dask_chunks
 
-    def _cache_data_elements(self, data, ncvar):
+    def _cache_data_elements(self, data, ncvar, attributes=None):
         """Cache selected element values.
 
         Updates *data* in-place to store its first, second,
@@ -11691,6 +11692,15 @@ class NetCDFRead(IORead):
         else:
             char = False
 
+        variable = netcdf_indexer(
+            variable,
+            mask=True,
+            unpack=True,
+            always_masked_array=False,
+            orthogonal_indexing=False,
+            attributes=attributes,
+            copy=False,
+        )
         if ndim == 1:
             # Also cache the second element for 1-d data, on the
             # assumption that they may well be dimension coordinate
@@ -11706,6 +11716,7 @@ class NetCDFRead(IORead):
             else:
                 indices = (0, 1, -1)
                 values = (variable[:1], variable[1:2], variable[-1:])
+
         elif ndim == 2 and data.shape[-1] == 2:
             # Assume that 2-d data with a last dimension of size 2
             # contains coordinate bounds, for which it is useful to
@@ -11742,28 +11753,29 @@ class NetCDFRead(IORead):
             )
 
         # Create a dictionary of the element values
-        elements = {}
-        for index, value in zip(indices, values):
-            if obj:
-                value = value.astype(str)
-            elif string:
-                # Convert an array of objects to an array of strings
-                value = np.array(value, dtype="U")
-            elif char:
-                # Variable is a netCDF classic style char array, so
-                # collapse (by concatenation) the outermost (fastest
-                # varying) dimension. E.g. [['a','b','c']] becomes
-                # ['abc']
-                if dtype.kind == "U":
-                    value = value.astype("S")
+        elements = {index: value for index, value in zip(indices, values)}
+        #        for index, value in zip(indices, values):
+        # print (repr(value))
+        # if obj:
+        #    value = value.astype(str)
+        # elif string:
+        #    # Convert an array of objects to an array of strings
+        #    value = np.array(value, dtype="U")
+        # elif char:
+        #    # Variable is a netCDF classic style char array, so
+        #    # collapse (by concatenation) the outermost (fastest
+        #    # varying) dimension. E.g. [['a','b','c']] becomes
+        #    # ['abc']
+        #    if dtype.kind == "U":
+        #        value = value.astype("S")
+        #    print ('value=', value, value.dtype)
+        #    a = netCDF4.chartostring(value)
+        #    shape = a.shape
+        #    a = np.array([x.rstrip() for x in a.flat])
+        #    a = np.reshape(a, shape)
+        #    value = np.ma.masked_where(a == "", a)
 
-                a = netCDF4.chartostring(value)
-                shape = a.shape
-                a = np.array([x.rstrip() for x in a.flat])
-                a = np.reshape(a, shape)
-                value = np.ma.masked_where(a == "", a)
-
-            elements[index] = value
+        #            elements[index] = value
 
         # Cache the cached data elements for this variable
         g["cached_data_elements"][ncvar] = elements
@@ -11771,7 +11783,7 @@ class NetCDFRead(IORead):
         # Store the elements in the data object
         data._set_cached_elements(elements)
 
-    def _netcdf_chunksizes(self, variable):
+    def _dataset_chunksizes(self, variable):
         """Return the variable chunk sizes.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -11804,8 +11816,10 @@ class NetCDFRead(IORead):
             if chunks == "contiguous":
                 chunks = None
         except AttributeError:
-            # h5netcdf
+            # h5netcdf, zarr
             chunks = variable.chunks
+            if not chunks:
+                chunks = None
 
         return chunks
 

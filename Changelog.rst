@@ -1,3 +1,12 @@
+Version NEXTVERSION
+----------------
+
+**2025-??-??**
+
+* Changed dependency: ``zarr>=3.1.2``
+
+----
+
 Version 1.12.3.0
 ----------------
 

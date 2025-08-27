@@ -392,8 +392,12 @@ class netcdf_indexer:
                 The default ``_FillValue``.
 
         """
-        if dtype.kind in "OST":
+        kind = dtype.kind
+        if kind in "OS":
             return default_fillvals["S1"]
+
+        if kind == "T":
+            return ""
 
         return default_fillvals[dtype.str[1:]]
 
