@@ -8,6 +8,8 @@ import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
+import zarr
+
 import cfdm
 
 warnings = False
@@ -43,39 +45,11 @@ def _remove_tmpdirs():
 
 atexit.register(_remove_tmpdirs)
 
-filename = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-)
-
 
 class read_writeTest(unittest.TestCase):
     """Test the reading and writing of field constructs from/to disk."""
 
-    filename = filename
-
-    zarr2 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr2"
-    )
-
-    zarr3 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr3"
-    )
-
     f0 = cfdm.example_field(0)
-    f1 = cfdm.example_field(1)
-
-    string_filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "string_char.nc"
-    )
-
-    netcdf3_fmts = [
-        "NETCDF3_CLASSIC",
-        "NETCDF3_64BIT",
-        "NETCDF3_64BIT_OFFSET",
-        "NETCDF3_64BIT_DATA",
-    ]
-    netcdf4_fmts = ["NETCDF4", "NETCDF4_CLASSIC"]
-    netcdf_fmts = netcdf3_fmts + netcdf4_fmts
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -127,6 +101,29 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(len(z), len(n))
             for a, b in zip(z, n):
                 self.assertTrue(a.equals(b))
+
+    def test_zarr_read_write_shards(self):
+        """Test Zarr read/write with shards."""
+        f = self.f0.copy()
+        f.data.nc_set_dataset_chunksizes([2, 3])
+
+        cfdm.write(f, tmpdir1, fmt="ZARR3")
+        z = zarr.open(tmpdir1)
+        self.assertEqual(z["q"].chunks, (2, 3))
+        self.assertIsNone(z["q"].shards)
+
+        # Make shards comprising 4 chunks
+        cfdm.write(f, tmpdir1, fmt="ZARR3", dataset_shards=4)
+        z = zarr.open(tmpdir1)
+        self.assertEqual(z["q"].chunks, (2, 3))
+        self.assertEqual(z["q"].shards, (4, 6))
+
+        for shards in (4, [2, 2]):
+            f.data.nc_set_dataset_shards(shards)
+            cfdm.write(f, tmpdir1, fmt="ZARR3")
+            z = zarr.open(tmpdir1)
+            self.assertEqual(z["q"].chunks, (2, 3))
+            self.assertEqual(z["q"].shards, (4, 6))
 
     def test_zarr_read_write_CFA(self):
         """Test CF aggreagtion in Zarr."""

@@ -32,7 +32,7 @@ class NetCDFMixin:
         :Parameters:
 
             source:
-                The object from which to extract the initialisation
+              N  The object from which to extract the initialisation
                 information. Typically, but not necessarily, a
                 `{{class}}` object.
 
@@ -5129,3 +5129,179 @@ class NetCDFAggregation(NetCDFMixin):
             )
 
         self._nc_set_aggregation_write_status(status)
+
+
+class ZarrShards(NetCDFMixin):
+    """Mixin class for accessing dataset shard size.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+
+    def nc_dataset_shards(self, todict=False):
+        """Get the dataset shard size for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_dataset_shards`,
+                     `nc_set_dataset_shards`, `{{package}}.write`
+
+        :Parameters:
+
+            {{chunk todict: `bool`, optional}}
+
+        :Returns:
+
+            {{Returns nc_dataset_chunksizes}}
+
+        **Examples**
+
+        >>> d.shape
+        (1, 96, 73)
+        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        >>> d.nc_dataset_chunksizes()
+        (1, 35, 73)
+        >>> d.nc_dataset_chunksizes(todict=True)
+        {0: 1, 1: 35, 2: 73}
+        >>> d.nc_clear_dataset_chunksizes()
+        (1, 35, 73)
+        >>> d.nc_dataset_chunksizes()
+        None
+        >>> d.nc_set_dataset_chunksizes('contiguous')
+        >>> d.nc_dataset_chunksizes()
+        'contiguous'
+        >>> d.nc_set_dataset_chunksizes('1 KiB')
+        >>> d.nc_dataset_chunksizes()
+        1024
+        >>> d.nc_set_dataset_chunksizes(None)
+        >>> d.nc_dataset_chunksizes()
+        None
+
+        """
+        return self._get_netcdf().get("dataset_shards")
+
+    def nc_clear_dataset_shards(self):
+        """Clear the dataset shard size for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_dataset_shards`, `nc_set_dataset_shards`,
+                     `{{package}}.write`
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_dataset_chunksizes`.
+
+        **Examples**
+
+        >>> d.shape
+        (1, 96, 73)
+        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        >>> d.nc_clear_dataset_chunksizes()
+        (1, 35, 73)
+        >>> d.nc_set_dataset_chunksizes('1 KiB')
+        >>> d.nc_clear_dataset_chunksizes()
+        1024
+        >>> d.nc_set_dataset_chunksizes(None)
+        >>> print(d.nc_clear_dataset_chunksizes())
+        None
+
+        """
+        return self._get_netcdf().pop("dataset_shards", None)
+
+    def nc_set_dataset_shards(self, shards):
+        """Set the dataset sharding strategy for the data.
+
+        The sharding strategy is either the integer number of chunks
+        stored in a single storage object (e.g. a file), or else
+        `None` to indicate that there is no sharding (i.e. each chunk
+        is stored in a different storage object).
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_dataset_shards`, `nc_clear_dataset_shards`,
+                     `{{package}}.write`
+
+        :Parameters:
+
+            {{chunk chunksizes}}
+
+                  Each dictionary key is an integer that specifies an
+                  axis by its position in the data array.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.shape
+        (1, 96, 73)
+        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        >>> d.nc_dataset_chunksizes()
+        (1, 35, 73)
+        >>> d.nc_clear_dataset_chunksizes()
+        (1, 35, 73)
+        >>> d.nc_dataset_chunksizes()
+        None
+        >>> d.nc_set_dataset_chunksizes('contiguous')
+        >>> d.nc_dataset_chunksizes()
+        'contiguous'
+        >>> d.nc_set_dataset_chunksizes('1 KiB')
+        >>> d.nc_dataset_chunksizes()
+        1024
+        >>> d.nc_set_dataset_chunksizes(None)
+        >>> d.nc_dataset_chunksizes()
+        None
+        >>> d.nc_set_dataset_chunksizes([9999, -1, None])
+        >>> d.nc_dataset_chunksizes()
+        (1, 96, 73)
+        >>> d.nc_clear_dataset_chunksizes()
+        (1, 96, 73)
+        >>> d.nc_set_dataset_chunksizes({1: 24})
+        >>> d.nc_dataset_chunksizes()
+        (1, 24, 73)
+        >>> d.nc_set_dataset_chunksizes({0: None, 2: 50})
+        >>> d.nc_dataset_chunksizes()
+        (1, 24, 50)
+
+        """
+        if shards is None:
+            self.nc_clear_dataset_shards()
+            return
+
+        if isinstance(shards, Integral):
+            if shards < 1:
+                raise ValueError(
+                    f"'shards' must be None, a positive integer, or a "
+                    f"sequence positive of integers. Got {shards!r}"
+                )
+
+            self._set_netcdf("dataset_shards", shards)
+            return
+
+        try:
+            shards = tuple(shards)
+        except TypeError:
+            raise ValueError(
+                f"'shards' must be None, a positive integer, or a "
+                f"sequence positive of integers. Got {shards!r}"
+            )
+
+        shape = self.shape
+        if len(shards) != len(shape):
+            raise ValueError(
+                f"When shards is a sequence {shards!r} then it must have the "
+                f"same length as the number of data dimensions ({len(shape)})"
+            )
+
+        for n, i in enumerate(shards):
+            if not (isinstance(i, Integral) and i > 0):
+                raise ValueError(
+                    f"Shard size for dimension position {n} must be "
+                    f"a positive integer. Got {i!r}"
+                )
+
+        self._set_netcdf("dataset_shards", shards)

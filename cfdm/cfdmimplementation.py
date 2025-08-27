@@ -1103,6 +1103,23 @@ class CFDMImplementation(Implementation):
         """
         return data.nc_dataset_chunksizes()
 
+    def nc_get_dataset_shards(self, data):
+        """Get the dataset sharding strategy for the data.
+
+        ..versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `Data`
+
+        :Returns:
+
+            `int` or `tuple` or `None`
+                The dataset sharding strategy.
+
+        """
+        return data.nc_dataset_shards()
+
     def nc_get_sample_dimension(self, count, default=None):
         """Return the name of the netCDF sample dimension.
 

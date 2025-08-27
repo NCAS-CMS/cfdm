@@ -2,6 +2,8 @@ import copy
 import logging
 import os
 import re
+from math import prod
+from numbers import Integral
 
 import dask.array as da
 import netCDF4
@@ -2601,9 +2603,8 @@ class NetCDFWrite(IOWrite):
                 if "dimensions" not in kwargs:
                     netcdf4_kwargs["dimensions"] = ()
 
-                if kwargs.get("contiguous") and g[
-                    "dataset"
-                ].data_model.startswith("NETCDF4"):
+                NETCDF4 = g["dataset"].data_model.startswith("NETCDF4")
+                if NETCDF4 and kwargs.get("contiguous"):
                     # NETCDF4 contiguous variables can't be compressed
                     kwargs["compression"] = None
                     kwargs["complevel"] = 0
@@ -2624,7 +2625,7 @@ class NetCDFWrite(IOWrite):
                             f"{unlimited_dimensions}"
                         )
 
-                # Remove any Zarr-specific kwargs
+                # Remove Zarr-specific kwargs
                 netcdf4_kwargs.pop("shape", None)
                 netcdf4_kwargs.pop("shards", None)
 
@@ -2632,9 +2633,31 @@ class NetCDFWrite(IOWrite):
 
             case "zarr":
                 shape = kwargs.get("shape", ())
-                chunks = kwargs.get("chunksizes", "auto")
-                if chunks is None or not shape:
+                chunks = kwargs.get("chunksizes", shape)
+                shards = kwargs.get("shards")
+
+                if chunks is None:
                     chunks = shape
+
+                # Calculate the shard shape
+                if chunks:
+                    if isinstance(shards, Integral):
+                        n = int(shards ** (1 / len(chunks)))
+                        if n > 1:
+                            # More than one chunk per shard
+                            shards = [c * n for c in chunks]
+                        else:
+                            # One chunk per shard
+                            shards = None
+                    elif shards and prod(shards) > 1:
+                        # More than one chunk per shard
+                        shards = [c * n for c, n in zip(chunks, shards)]
+                    else:
+                        # One chunk per shard
+                        shards = None
+                else:
+                    # One chunk per shard
+                    shards = None
 
                 dtype = kwargs["datatype"]
                 if dtype == "S1":
@@ -2645,7 +2668,7 @@ class NetCDFWrite(IOWrite):
                     "shape": shape,
                     "dtype": dtype,
                     "chunks": chunks,
-                    "shards": kwargs.get("shards"),
+                    "shards": shards,
                     "fill_value": kwargs.get("fill_value"),
                     "dimension_names": kwargs.get("dimensions", ()),
                     "storage_options": g.get("storage_options"),
@@ -2907,7 +2930,7 @@ class NetCDFWrite(IOWrite):
         if chunking:
             contiguous, chunksizes = chunking
         else:
-            contiguous, chunksizes = self._chunking_parameters(
+            contiguous, chunksizes, shards = self._chunking_parameters(
                 data, ncdimensions
             )
 
@@ -2951,6 +2974,7 @@ class NetCDFWrite(IOWrite):
             "endian": g["endian"],
             "contiguous": contiguous,
             "chunksizes": chunksizes,
+            "shards": shards,
             "least_significant_digit": lsd,
             "fill_value": fill_value,
             "chunk_cache": g["chunk_cache"],
@@ -3376,6 +3400,17 @@ class NetCDFWrite(IOWrite):
                 meta=np.array((), dx.dtype),
             )
 
+        # If a Zarr variable is sharded, then rechunk the Dask array
+        # to the shards, because "when writing data, a full shard must
+        # be written in one go for optimal performance and to avoid
+        # concurrency issues."
+        # (https://zarr.readthedocs.io/en/stable/user-guide/arrays.html).
+        if g["backend"] == "zarr":
+            shards = g["nc"][ncvar].shards
+            if shards is not None:
+                print(f"Zarr: rechunking to shards {shards} from {dx.chunks}")
+                dx = dx.rechunk(shards)
+
         # Check for out-of-range values
         if g["warn_valid"]:
             if construct_type:
@@ -3399,7 +3434,15 @@ class NetCDFWrite(IOWrite):
                 fill_value=g["nc"][ncvar].fill_value,
             )
 
-        da.store(dx, g["nc"][ncvar], compute=True, return_stored=False)
+        #        try:
+        #        except AttributeError:
+        #            print ('chunks:',  g["nc"][ncvar].chunking())
+
+        from ...data.locks import netcdf_lock as lock
+
+        da.store(
+            dx, g["nc"][ncvar], compute=True, return_stored=False, lock=lock
+        )
 
     def _filled_array(self, array, fill_value):
         """Replace masked values with a fill value.
@@ -5218,7 +5261,7 @@ class NetCDFWrite(IOWrite):
                 The dataset chunking strategy. The default value is
                 "4MiB". See `cfdm.write` for details.
 
-            dataset_shards: `str`, `int`, or `float`, optional
+            dataset_shards: `int` or `None`, optional
                 The Zarr dataset sharding strategy. The default value
                 is `None`. See `cfdm.write` for details.
 
@@ -5390,11 +5433,9 @@ class NetCDFWrite(IOWrite):
 
         # Parse the 'dataset_shards' parameter
         if dataset_shards is not None:
-            try:
-                self.write_vars["dataset_shards"] = parse_bytes(dataset_shards)
-            except (ValueError, AttributeError):
+            if not isinstance(dataset_shards, Integral) or dataset_shards < 1:
                 raise ValueError(
-                    "Invalid value for the 'dataset_shards' keyword: "
+                    f"Invalid value for 'dataset_shards' keyword: "
                     f"{dataset_shards!r}."
                 )
 
@@ -5917,13 +5958,13 @@ class NetCDFWrite(IOWrite):
 
         :Returns:
 
-            2-tuple
-                The *contiguous* and *chunksizes* parameters for
-                `_createVariable`.
+            3-tuple
+                The *contiguous*, *chunksizes*, and *shards*
+                parameters for `_createVariable`.
 
         """
         if data is None:
-            return False, None
+            return False, None, None
 
         g = self.write_vars
 
@@ -5933,24 +5974,29 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Get the chunking strategy defined by the data itself
         chunksizes = self.implementation.nc_get_dataset_chunksizes(data)
+        shards = self.implementation.nc_get_dataset_shards(data)
+
         if chunksizes == "contiguous":
             # Contiguous as defined by 'data'
-            return True, None
+            return True, None, None
 
         # Still here?
+        if shards is None:
+            shards = g["dataset_shards"]
+
         dataset_chunks = g["dataset_chunks"]
         if isinstance(chunksizes, int):
             # Reset dataset chunks to the integer given by 'data'
             dataset_chunks = chunksizes
         elif chunksizes is not None:
             # Chunked as defined by the tuple of int given by 'data'
-            return False, chunksizes
+            return False, chunksizes, shards
 
         # Still here? Then work out the chunking strategy from the
         # dataset_chunks
         if dataset_chunks == "contiguous":
             # Contiguous as defined by 'dataset_chunks'
-            return True, None
+            return True, None, None
 
         # Still here? Then work out the chunks from both the
         # size-in-bytes given by dataset_chunks (e.g. 1024, or '1
@@ -5973,26 +6019,11 @@ class NetCDFWrite(IOWrite):
             # (250, 250, 4)). However, we only want one number per
             # dimension, so we choose the largest: [96, 250].
             chunksizes = [max(c) for c in chunksizes]
-            return False, chunksizes
+            return False, chunksizes, shards
         else:
             # The data is scalar, so 'chunksizes' is () => write the
             # data contiguously.
-            return True, None
-
-    #    def _shape_in_dataset(self, data, ncdimensions):
-    #        """TODOZARR."""
-    #        if data is not None:
-    #            # Get the shape from the data array
-    #            if self._compressed_data(ncdimensions):
-    #                d = self.implementation.get_compressed_array(data)
-    #            else:
-    #                d = data
-    #
-    #            return d.shape
-    #
-    #        # Still here? Then there's no data, so get the shape from the
-    #        # netCDF dimensions
-    #        return tuple([g['ncdim_to_size'][ncdim] for ncdim in ncdimensions])
+            return True, None, None
 
     def _compressed_data(self, ncdimensions):
         """Whether or not the data is being written in compressed form.
