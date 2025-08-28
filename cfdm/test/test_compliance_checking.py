@@ -251,23 +251,29 @@ class ComplianceCheckingTest(unittest.TestCase):
         """Test the `NetCDFRead._check_standard_names` method."""
         # TODO
 
-    def test_standard_names_validation_good_standard_field_read(self):
-        """Test compliance checking on a compliant standard field."""
+    def test_standard_names_validation_compliant_field(self):
+        """Test compliance checking on a compliant non-UGRID field."""
         f = self.good_standard_sn_f
-        print(f.dataset_compliance())
+        dc_output = f.dataset_compliance()
+        self.assertEqual(dc_output, dict())
 
-    def test_standard_names_validation_bad_standard_field_read(self):
-        """Test compliance checking on a non-compliant standard field."""
+        # TODO what else to test on in 'good' case?
+
+    def test_standard_names_validation_noncompliant_field(self):
+        """Test compliance checking on a non-compliant non-UGRID field."""
         f = self.bad_standard_sn_f
         pass  # TODO
 
-    def test_standard_names_validation_good_ugrid_field_read(self):
+    def test_standard_names_validation_compliant_ugrid_field(self):
         """Test compliance checking on a compliant UGRID field."""
-        f = self.good_ugrid_sn_f
-        pass  # TODO
+        f = self.good_ugrid_sn_f[0]
+        dc_output = f.dataset_compliance()
+        self.assertEqual(dc_output, dict())
 
-    def test_standard_names_validation_bad_ugrid_field_read(self):
-        """Test compliance checking on a non-compliant standard field."""
+        # TODO what else to test on in 'good' case?
+
+    def test_standard_names_validation_noncompliant_ugrid_field(self):
+        """Test compliance checking on a non-compliant UGRID field."""
         f = self.bad_ugrid_sn_f
         pass  # TODO
 
