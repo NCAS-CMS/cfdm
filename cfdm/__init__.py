@@ -210,7 +210,7 @@ del _minimum_vn
 
 from .constants import masked
 
-# Internal ones passed on so they can be used in cf-python (see
+# Note internal ones here are passed on so they can be used in cf-python (see
 # comment below)
 from .functions import (
     ATOL,
@@ -248,6 +248,8 @@ from .decorators import (
     _manage_log_level_via_verbosity,
     _display_or_return,
 )
+
+from .cfvalidation import get_all_current_standard_names
 
 from .constructs import Constructs
 

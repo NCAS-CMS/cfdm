@@ -32,8 +32,6 @@ STD_NAME_CURRENT_XML_URL = (
 
 def _extract_names_from_xml(snames_xml):
     """TODO."""
-    print("XML IS", snames_xml)
-    exit()
     root = ET.fromstring(snames_xml)
     # Want all <entry id="..."> elements. Note the regex this corresponds
     # to, from SLB older code, is 're.compile(r"<entry id=\"(.+)\">")' but

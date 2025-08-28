@@ -65,12 +65,40 @@ class ComplianceCheckingTest(unittest.TestCase):
         # TODO set bad names and then write to tempfile and read back in
 
     def test_extract_names_from_xml(self):
-        """Test the `cfvalidation.extract_names_from_xml` function."""
+        """Test the `cfvalidation._extract_names_from_xml` function."""
         # TODO
 
     def test_get_all_current_standard_names(self):
         """Test the `cfvalidation.get_all_current_standard_names` function."""
         # TODO
+        output = cfdm.cfvalidation.get_all_current_standard_names()
+        self.assertIsInstance(output, list)
+
+        # The function gets the current table so we can't know exactly how
+        # many names there will be there going forward, but given there are
+        # over 4500 names (~4900 at time of writing, Aug 2025) and there is
+        # a general upward trend with names rarely removed, we can safely
+        # assume the list is at least 4500 names long and test on this in
+        # lieu of changing exact size.
+        self.assertTrue(len(output) > 4500)
+
+        # Check some known names which won't ever be removed are in there
+        self.assertIn("longitude", output)
+        self.assertIn("latitude", output)
+        self.assertIn("time", output)
+
+        # Check a long name with plenty of underscores is in there too
+        self.assertIn(
+            "integral_wrt_time_of_radioactivity_concentration_of_113Cd_in_air",
+            output
+        )
+
+        # SLB TODO!: spotted issue with approach in that aliases are valid
+        # standard names but often historically valid only so not in the
+        # current table! Maybe we need to parse the 'alias' items too.
+        # Check known/noted alias is in there.
+        self.assertIn("atmosphere_moles_of_cfc113", output)
+        # CURRENT FAIL self.assertIn("moles_of_cfc113_in_atmosphere", output)
 
     def test_field_dataset_compliance(self):
         """Test the `Field.dataset_compliance` method.
@@ -109,3 +137,10 @@ class ComplianceCheckingTest(unittest.TestCase):
     def test_standard_names_validation_bad_ugrid_field_read(self):
         """Test compliance checking on a non-compliant standard field."""
         # TODO
+
+
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
+    cfdm.environment()
+    print("")
+    unittest.main(verbosity=2)
