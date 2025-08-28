@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 # Note: the raw XML is also made available at:
 # 'cfconventions.org/Data/cf-standard-names/current/src/cf-standard-name-'
 # 'table.xml', is that a better location to grab from (may be more stable)?
-STD_NAME_CURRENT_XML_URL = (
+_STD_NAME_CURRENT_XML_URL = (
     "https://raw.githubusercontent.com/"
     "cf-convention/cf-convention.github.io/refs/heads/main/Data/"
     "cf-standard-names/current/src/cf-standard-name-table.xml"
@@ -52,9 +52,9 @@ def get_all_current_standard_names(include_aliases=False):
     """TODO."""
     logger.info(
         "Retrieving XML for set of current standard names from: ",
-        STD_NAME_CURRENT_XML_URL
+        _STD_NAME_CURRENT_XML_URL
     )  # pragma: no cover
-    with request.urlopen(STD_NAME_CURRENT_XML_URL) as response:
+    with request.urlopen(_STD_NAME_CURRENT_XML_URL) as response:
         all_snames_xml = response.read()
 
     logger.debug(

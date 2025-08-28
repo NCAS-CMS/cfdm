@@ -9,6 +9,8 @@ import sys
 import tempfile
 import unittest
 
+from urllib import request
+
 import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
@@ -131,12 +133,9 @@ class ComplianceCheckingTest(unittest.TestCase):
         )
         self.assertIsInstance(aliases_inc_output, list)
         self.assertEqual(len(aliases_inc_output), 4)
-        self.assertIn(
-            "acoustic_area_backscattering_strength_in_sea_water",
-            aliases_inc_output
-        )
-        self.assertIn(
-            "acoustic_centre_of_mass_in_sea_water", aliases_inc_output)
+        # Check all non-aliases are there, as per above output
+        self.assertTrue(set(two_name_output).issubset(aliases_inc_output))
+        # Also should have the aliases this time
         self.assertIn(
             "chlorophyll_concentration_in_sea_water",
             aliases_inc_output
@@ -158,6 +157,19 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_get_all_current_standard_names(self):
         """Test the `cfvalidation.get_all_current_standard_names` function."""
+        # First check the URL used is actually available in case of issues
+        # arising in case GitHub endpoints go down
+        sn_xml_url = cfdm.cfvalidation._STD_NAME_CURRENT_XML_URL
+        with request.urlopen(sn_xml_url) as response:
+            self.assertEqual(
+                response.status, 200,
+                "Standard name XML inaccesible: unexpected status code "
+                f"{response.status} for reference URL of: {sn_xml_url}"
+            )  # 200 == OK
+        # SLB-DH discuss TODO: what behaviour do we want for the (v. rare)
+        # case that the URL isn't accessible? Ideally we can skip standard
+        # name validation with a warning, in these cases.
+
         output = cfdm.cfvalidation.get_all_current_standard_names()
         self.assertIsInstance(output, list)
 
