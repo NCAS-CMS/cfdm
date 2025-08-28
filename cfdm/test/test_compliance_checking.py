@@ -41,8 +41,34 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
+def _create_noncompliant_standard_field(compliant_field):
+    """TODO."""
+    pass  # TODO
+
+
+def _create_noncompliant_ugrid_field(compliant_field):
+    """TODO."""
+    pass  # TODO
+
+
 class ComplianceCheckingTest(unittest.TestCase):
     """Test CF Conventions compliance checking functionality."""
+
+    # 1. Create a file with field with invalid standard names generally
+    # using our 'kitchen sink' field as a basis
+    good_standard_sn_f = cfdm.example_field(1)
+    # TODO set bad names and then write to tempfile and read back in
+    bad_standard_sn_f = _create_noncompliant_standard_field(
+        good_standard_sn_f)
+
+    # 1. Create a file with a UGRID field with invalid standard names
+    # on UGRID components, using our core 'UGRID 1' field as a basis
+    ugrid_file_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "ugrid_1.nc"
+    )
+    good_ugrid_sn_f = cfdm.read(ugrid_file_path)
+    # TODO set bad names and then write to tempfile and read back in
+    bad_ugrid_sn_f = _create_noncompliant_ugrid_field(good_ugrid_sn_f)
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -56,19 +82,6 @@ class ComplianceCheckingTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-
-        # 1. Create a file with field with invalid standard names generally
-        # using our 'kitchen sink' field as a basis
-        bad_sn_f = cfdm.example_field(1)
-        # TODO set bad names and then write to tempfile and read back in
-
-        # 1. Create a file with a UGRID field with invalid standard names
-        # on UGRID components, using our core 'UGRID 1' field as a basis
-        ugrid_file_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "ugrid_1.nc"
-        )
-        bad_ugrid_sn_f = cfdm.read(ugrid_file_path)
-        # TODO set bad names and then write to tempfile and read back in
 
     def test_extract_names_from_xml(self):
         """Test the `cfvalidation._extract_names_from_xml` function."""
@@ -240,19 +253,23 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_good_standard_field_read(self):
         """Test compliance checking on a compliant standard field."""
-        # TODO
+        f = self.good_standard_sn_f
+        print(f.dataset_compliance())
 
     def test_standard_names_validation_bad_standard_field_read(self):
         """Test compliance checking on a non-compliant standard field."""
-        # TODO
+        f = self.bad_standard_sn_f
+        pass  # TODO
 
     def test_standard_names_validation_good_ugrid_field_read(self):
         """Test compliance checking on a compliant UGRID field."""
-        # TODO
+        f = self.good_ugrid_sn_f
+        pass  # TODO
 
     def test_standard_names_validation_bad_ugrid_field_read(self):
         """Test compliance checking on a non-compliant standard field."""
-        # TODO
+        f = self.bad_ugrid_sn_f
+        pass  # TODO
 
 
 if __name__ == "__main__":
