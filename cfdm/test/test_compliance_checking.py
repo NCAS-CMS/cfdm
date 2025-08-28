@@ -36,7 +36,7 @@ atexit.register(_remove_tmpfiles)
 
 
 class ComplianceCheckingTest(unittest.TestCase):
-    """Test compliance checking functionality."""
+    """Test CF Conventions compliance checking functionality."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -65,25 +65,47 @@ class ComplianceCheckingTest(unittest.TestCase):
         # TODO set bad names and then write to tempfile and read back in
 
     def test_extract_names_from_xml(self):
-        """Test the `extract_names_from_xml` function."""
+        """Test the `cfvalidation.extract_names_from_xml` function."""
         # TODO
 
     def test_get_all_current_standard_names(self):
-        """Test the `get_all_current_standard_names` function."""
+        """Test the `cfvalidation.get_all_current_standard_names` function."""
         # TODO
 
-    def test_standard_names_validation_standard_field_read(self):
-        """Test TODO."""
+    def test_field_dataset_compliance(self):
+        """Test the `Field.dataset_compliance` method.
+
+        Note: keeping this test here rather than in the test_Field module
+        because it requires the creation of 'bad' fields e.g. with invalid
+        standard names, and we create those as temporary files here already.
+        """
         # TODO
 
-    def test_standard_names_validation_ugrid_field_read(self):
-        """Test TODO."""
-        # TODO
+    def test_domain_dataset_compliance(self):
+        """Test the `Domain.dataset_compliance` method.
 
-    def test_dataset_compliance(self):
-        """Test the `dataset_compliance` method across supported constructs."""
+        Note: keeping this test here rather than in the test_Domain module
+        because it requires the creation of 'bad' fields e.g. with invalid
+        standard names, and we create those as temporary files here already.
+        """
         # TODO
 
     def test_check_standard_names(self):
-        """Test the `_check_standard_names` method."""
-        # TODO - move to netcdfread test
+        """Test the `NetCDFRead._check_standard_names` method."""
+        # TODO
+
+    def test_standard_names_validation_good_standard_field_read(self):
+        """Test compliance checking on a compliant standard field."""
+        # TODO
+
+    def test_standard_names_validation_bad_standard_field_read(self):
+        """Test compliance checking on a non-compliant standard field."""
+        # TODO
+
+    def test_standard_names_validation_good_ugrid_field_read(self):
+        """Test compliance checking on a compliant UGRID field."""
+        # TODO
+
+    def test_standard_names_validation_bad_ugrid_field_read(self):
+        """Test compliance checking on a non-compliant standard field."""
+        # TODO
