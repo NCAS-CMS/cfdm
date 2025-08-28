@@ -270,15 +270,62 @@ class _Flattener:
                 See `netcdf_flatten`.
 
         """
+        # Mapping of flattened attribute names to their full-path
+        # counterparts.
+        #
+        # E.g. ['Conventions: /Conventions']
         self._attr_map_value = []
+
+        # Mapping of flattened dimension names to their full-path
+        # counterparts.
+        #
+        # E.g. ['bounds2: /bounds2',
+        #       'x: /x',
+        #       'forecast__y: /forecast/y']
         self._dim_map_value = []
+
+        # Mapping of flattened variable names to their full-path
+        # counterparts.
+        #
+        # E.g. ['x_bnds: /x_bnds',
+        #       'x: /x',
+        #       'b_bounds: /b_bounds',
+        #       'b: /b',
+        #       'latitude_longitude: /latitude_longitude',
+        #       'forecast__y: /forecast/y']
         self._var_map_value = []
 
+        # Mapping of full-path dimension names to their flattened
+        # counterparts.
+        #
+        # E.g. {'/bounds2': 'bounds2',
+        #       '/x': 'x',
+        #       '/forecast/y': 'forecast__y'}
         self._dim_map = {}
+
+        # Mapping of full-path variable names to their flattened
+        # counterparts.
+        #
+        # E.g. {'/x_bnds': 'x_bnds',
+        #       '/x': 'x',
+        #       '/b_bounds': 'b_bounds',
+        #       '/b': 'b',
+        #       '/latitude_longitude': 'latitude_longitude',
+        #       '/forecast/y': 'forecast__y'}
         self._var_map = {}
 
         self._input_ds = input_ds
         self._output_ds = output_ds
+
+        if hasattr(input_ds, "_h5file"):
+            self._input_ds_backend = "h5netcdf"
+        elif hasattr(input_ds, "data_model"):
+            self._input_ds_backend = "netCDF4"
+        elif hasattr(input_ds, "store"):
+            self._input_ds_backend = "zarr"
+        else:
+            raise ValueError("TODOZARR")
+
         self._strict = bool(strict)
         self._omit_data = bool(omit_data)
         self._write_chunksize = write_chunksize
@@ -293,7 +340,7 @@ class _Flattener:
                 "be different, and output should be of the 'NETCDF4' format."
             )
 
-    def attrs(self, variable):
+    def attrs(self, variable, backend=None):
         """Return the variable attributes.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -311,14 +358,15 @@ class _Flattener:
                 names.
 
         """
-        try:
-            # h5netcdf
-            return dict(variable.attrs)
-        except AttributeError:
-            # netCDF4
-            return {
-                attr: variable.getncattr(attr) for attr in variable.ncattrs()
-            }
+        match self._backend(backend):
+            case "netCDF4":
+                return {
+                    attr: variable.getncattr(attr)
+                    for attr in variable.ncattrs()
+                }
+
+            case "h5netcdf" | "zarr":
+                return dict(variable.attrs)
 
     def chunksizes(self, variable):
         """Return the variable chunk sizes.
@@ -346,16 +394,16 @@ class _Flattener:
         None
 
         """
-        try:
-            # netCDF4
-            chunking = variable.chunking()
-            if chunking == "contiguous":
-                return None
+        match self._backend():
+            case "h5netcdf" | "zarr":
+                return variable.chunks
 
-            return chunking
-        except AttributeError:
-            # h5netcdf
-            return variable.chunks
+            case "netCDF4":
+                chunking = variable.chunking()
+                if chunking == "contiguous":
+                    return None
+
+                return chunking
 
     def contiguous(self, variable):
         """Whether or not the variable data is contiguous on disk.
@@ -380,12 +428,12 @@ class _Flattener:
         False
 
         """
-        try:
-            # netCDF4
-            return variable.chunking() == "contiguous"
-        except AttributeError:
-            # h5netcdf
-            return variable.chunks is None
+        match self._backend():
+            case "h5netcdf" | "zarr":
+                return variable.chunks is None
+
+            case "netCDF4":
+                return variable.chunking() == "contiguous"
 
     def dtype(self, variable):
         """Return the data type of a variable.
@@ -412,8 +460,10 @@ class _Flattener:
         str
 
         """
+        from numpy.dtypes import StringDType
+
         out = variable.dtype
-        if out == "O":
+        if out in ("O", StringDType()):
             out = str
 
         return out
@@ -441,13 +491,13 @@ class _Flattener:
         'native'
 
         """
-        try:
-            # netCDF4
-            return variable.endian()
-        except AttributeError:
-            # h5netcdf
-            dtype = variable.dtype
-            return _dtype_endian_lookup[getattr(dtype, "byteorder", None)]
+        match self._backend():
+            case "h5netcdf" | "zarr":
+                dtype = variable.dtype
+                return _dtype_endian_lookup[getattr(dtype, "byteorder", None)]
+
+            case "netCDF4":
+                return variable.endian()
 
     def filepath(self, dataset):
         """Return the file path for the dataset.
@@ -472,12 +522,15 @@ class _Flattener:
         '/home/data/file.nc'
 
         """
-        try:
-            # netCDF4
-            return dataset.filepath()
-        except AttributeError:
-            # h5netcdf
-            return dataset.filename
+        match self._backend():
+            case "h5netcdf":
+                return dataset.filename
+
+            case "netCDF4":
+                return dataset.filepath()
+
+            case "zarr":
+                return str(dataset.store_path)
 
     def get_dims(self, variable):
         """Return the dimensions associated with a variable.
@@ -489,29 +542,32 @@ class _Flattener:
             `list`
 
         """
-        try:
-            # netCDF4
-            return variable.get_dims()
-        except AttributeError:
-            # h5netcdf
-            dims = {}
-            dimension_names = list(variable.dimensions)
-            group = variable._parent
-            for name, dim in group.dims.items():
-                if name in dimension_names:
-                    dims[name] = dim
-                    dimension_names.remove(name)
+        match self._backend():
+            case "netCDF4":
+                return variable.get_dims()
 
-            group = group.parent
-            while group is not None and dimension_names:
+            case "h5netcdf":
+                dims = {}
+                dimension_names = list(variable.dimensions)
+                group = variable._parent
                 for name, dim in group.dims.items():
                     if name in dimension_names:
                         dims[name] = dim
                         dimension_names.remove(name)
 
                 group = group.parent
+                while group is not None and dimension_names:
+                    for name, dim in group.dims.items():
+                        if name in dimension_names:
+                            dims[name] = dim
+                            dimension_names.remove(name)
 
-            return [dims[name] for name in variable.dimensions]
+                    group = group.parent
+
+                return [dims[name] for name in variable.dimensions]
+
+            case "zarr":
+                return tuple(self._zarr_var_to_dims[variable.path])
 
     def getncattr(self, x, attr):
         """Retrieve a netCDF attribute.
@@ -527,15 +583,15 @@ class _Flattener:
         :Returns:
 
         """
-        try:
-            # netCDF4
-            return getattr(x, attr)
-        except AttributeError:
-            # h5netcdf
-            return x.attrs[attr]
+        match self._backend():
+            case "h5netcdf" | "zarr":
+                return x.attrs[attr]
+
+            case "netCDF4":
+                return getattr(x, attr)
 
     def group(self, x):
-        """Return the group that a variable belongs to.
+        """Return the group that a variable or dimension belongs to.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
@@ -544,14 +600,25 @@ class _Flattener:
             `Group`
 
         """
-        try:
-            # netCDF4
-            return x.group()
-        except AttributeError:
-            # h5netcdf
-            return x._parent
+        match self._backend():
+            case "netCDF4":
+                return x.group()
 
-    def name(self, x):
+            case "h5netcdf":
+                return x._parent
+
+            case "zarr":
+                try:
+                    # Variable
+                    group_name = group_separator.join(
+                        x.path.split(group_separator)[:-1]
+                    )
+                    return self._input_ds[group_name]
+                except AttributeError:
+                    # Dimension
+                    return x.group()
+
+    def name(self, x, backend=None):
         """Return the netCDF name, without its groups.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -561,12 +628,17 @@ class _Flattener:
             `str`
 
         """
-        out = x.name
-        if group_separator in out:
-            # h5netcdf
-            out = x.name.split(group_separator)[-1]
+        match self._backend(backend):
+            case "h5netcdf" | "netCDF4":
+                return x.name.split(group_separator)[-1]
 
-        return out
+            case "zarr":
+                try:
+                    # Variable
+                    return x.path.split(group_separator)[-1]
+                except AttributeError:
+                    # Dimension
+                    return x.name.split(group_separator)[-1]
 
     def ncattrs(self, x):
         """Return netCDF attribute names.
@@ -582,12 +654,12 @@ class _Flattener:
             `list`
 
         """
-        try:
-            # netCDF4
-            return x.ncattrs()
-        except AttributeError:
-            # h5netcdf
-            return list(x.attrs)
+        match self._backend():
+            case "h5netcdf" | "zarr":
+                return list(x.attrs)
+
+            case "netCDF4":
+                return x.ncattrs()
 
     def parent(self, group):
         """Return a simulated unix parent group.
@@ -596,13 +668,26 @@ class _Flattener:
 
         :Returns:
 
-            `str`
+            `Group` or `None`
+                The parent grup, or `None` if *group* is the root
+                group (and so has no parent).
 
         """
-        try:
-            return group.parent
-        except AttributeError:
-            return
+        match self._backend():
+            case "h5netcdf" | "netCDF4":
+                try:
+                    return group.parent
+                except AttributeError:
+                    return
+
+            case "zarr":
+                name = group.name
+                if name == group_separator:
+                    return
+
+                return self._input_ds[
+                    group_separator.join(name.split(group_separator)[:-1])
+                ]
 
     def path(self, group):
         """Return a simulated unix directory path to a group.
@@ -614,15 +699,15 @@ class _Flattener:
             `str`
 
         """
-        try:
-            # netCDF4
-            return group.path
-        except AttributeError:
-            # h5netcdf
-            try:
-                return group.name
-            except AttributeError:
-                return group_separator
+        match self._backend():
+            case "h5netcdf" | "zarr":
+                try:
+                    return group.name
+                except AttributeError:
+                    return group_separator
+
+            case "netCDF4":
+                return group.path
 
     def flatten(self):
         """Flattens and writes to output file.
@@ -675,13 +760,22 @@ class _Flattener:
         for attr_name in self.ncattrs(input_group):
             self.flatten_attribute(input_group, attr_name)
 
-        for dim in input_group.dimensions.values():
+        #        for dim in input_group.dimensions.values():
+        #            self.flatten_dimension(dim)
+
+        for dim in self._dimensions(input_group).values():
             self.flatten_dimension(dim)
 
-        for var in input_group.variables.values():
+        #        for var in input_group.variables.values():
+        #            self.flatten_variable(var)
+
+        for var in self._variables(input_group).values():
             self.flatten_variable(var)
 
-        for child_group in input_group.groups.values():
+        #        for child_group in input_group.groups.values():
+        #            self.process_group(child_group)
+
+        for child_group in self._child_groups(input_group).values():
             self.process_group(child_group)
 
     def flatten_attribute(self, input_group, attr_name):
@@ -747,6 +841,7 @@ class _Flattener:
         )
 
         # Write dimension
+        #        print ('creating dimension:', new_name,) # '(org in',  self.group(dim))
         self._output_ds.createDimension(
             new_name, (len(dim), None)[dim.isunlimited()]
         )
@@ -811,6 +906,7 @@ class _Flattener:
         else:
             fill_value = attributes.pop("_FillValue", None)
 
+        #        print ('creating variable:', new_name)# '(org in',  self.group(var))
         new_var = self._output_ds.createVariable(
             new_name,
             self.dtype(var),
@@ -1249,6 +1345,7 @@ class _Flattener:
         if search_dim:
             elt = current_group.dimensions[ref_split[-1]]
         else:
+            #  elt = current_group.variables[ref_split[-1]]
             elt = current_group.variables[ref_split[-1]]
 
         # Get absolute reference
@@ -1299,31 +1396,39 @@ class _Flattener:
 
         """
         if search_dim:
-            dims_or_vars = current_group.dimensions
+            #            dims_or_vars = current_group.dimensions # TODOZARR
+            dims_or_vars = self._dimensions(current_group)
         else:
-            dims_or_vars = current_group.variables
+            #            dims_or_vars = current_group.variables
+            dims_or_vars = self._variables(current_group)
 
         # Found in current group
         if ref in dims_or_vars.keys():
             return dims_or_vars[ref]
 
         local_apex_reached = (
-            local_apex_reached or ref in current_group.dimensions.keys()
+            #            local_apex_reached or ref in current_group.dimensions.keys()
+            local_apex_reached
+            or ref in self._dimensions(current_group).keys()
         )
 
         # Check if have to continue looking in parent group
         # - normal search: continue until root is reached
         # - coordinate variable: continue until local apex is reached
+        parent_group = self.parent(current_group)
         if is_coordinate_variable:
-            top_reached = local_apex_reached or current_group.parent is None
+            #            top_reached = local_apex_reached or current_group.parent is None
+            top_reached = local_apex_reached or parent_group is None
         else:
-            top_reached = current_group.parent is None
+            #            top_reached = current_group.parent is None
+            top_reached = parent_group is None
 
         # Search up
         if not top_reached:
             return self.search_by_proximity(
                 ref,
-                current_group.parent,
+                # current_group.parent,
+                parent_group,
                 search_dim,
                 local_apex_reached,
                 is_coordinate_variable,
@@ -1375,7 +1480,7 @@ class _Flattener:
             `None`
 
         """
-        var_attrs = self.attrs(var)
+        var_attrs = self.attrs(var, "netCDF4")
         for name in referencing_attributes.intersection(var_attrs):
             # Parse attribute value
             parsed_attribute = parse_attribute(name, var_attrs[name])
@@ -1423,7 +1528,7 @@ class _Flattener:
             `None`
 
         """
-        var_attrs = self.attrs(var)
+        var_attrs = self.attrs(var, "netCDF4")
         for name in referencing_attributes.intersection(var_attrs):
             # Parse attribute value
             value = var_attrs[name]
@@ -1448,8 +1553,8 @@ class _Flattener:
             var.setncattr(name, new_attr_value)
 
             logging.info(
-                f"        Value of {self.name(var)}.{name} changed "
-                f"from {value!r} to {new_attr_value!r}"
+                f"        Value of {self.name(var, 'netCDF4')}.{name} "
+                f"changed from {value!r} to {new_attr_value!r}"
             )
 
     def adapt_name(self, resolved_ref, rules):
@@ -1678,6 +1783,100 @@ class _Flattener:
 
         warnings.warn(message)
         return f"{ref_not_found_error}_{ref}"
+
+    def _dimensions(self, group):
+        """Return dimensions that are defined in this group.
+        
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            group: 
+
+        :Returns:
+
+            
+        """
+        match self._backend():
+            case "h5netcdf" | "netCDF4":
+                return group.dimensions
+
+            case "zarr":
+                from ..zarr import ZarrDimension
+
+                #                print(group)
+                if not hasattr(self, "_zarr_dims"):
+                    # Cache the ZarrDimension objects, keyed by
+                    # dimension basename.
+                    self._zarr_dims = {}
+
+                if not hasattr(self, "_zarr_var_to_dims"):
+                    # Cache each variable's ZarrDimension objects,
+                    # keyed by the full-path variable name.
+                    self._zarr_var_to_dims = {}
+
+                dimensions = {}
+                for v in group.array_values():
+                    dimension_names = v.metadata.dimension_names
+                    if dimension_names is None:
+                        # Scalar variable
+                        continue
+
+                    for name, size in zip(dimension_names, v.shape):
+                        if name in self._zarr_dims:
+                            continue
+
+                        basename = name.split(group_separator)[-1]
+                        if basename in dimensions:
+                            continue
+
+                        zd = ZarrDimension(basename, size, group)
+                        dimensions[basename] = zd
+                        self._zarr_dims[name] = zd
+
+                self._zarr_dims.update(dimensions)
+
+                #                print('      dimensions =',dimensions)
+                #                print('      self._zarr_dims =',tuple(self._zarr_dims))
+
+                # Map zarr variables to their dimension objects
+                for v in group.array_values():
+                    dimension_names = v.metadata.dimension_names
+                    if dimension_names is None:
+                        # Scalar variable
+                        dimension_names = ()
+
+                    self._zarr_var_to_dims[v.path] = [
+                        self._zarr_dims[name] for name in dimension_names
+                    ]
+
+                #                print('      self._zarr_var_to_dims=',tuple(self._zarr_var_to_dims))
+
+                return dimensions
+
+    def _variables(self, group):
+        """Return variables that are defined in this group."""
+        match self._backend():
+            case "h5netcdf" | "netCDF4":
+                return group.variables
+
+            case "zarr":
+                return dict(group.arrays())
+
+    def _child_groups(self, group):
+        """Return groups that are defined in this group."""
+        match self._backend():
+            case "h5netcdf" | "netCDF4":
+                return group.groups
+
+            case "zarr":
+                return dict(group.groups())
+
+    def _backend(self, name=None):
+        if name is None:
+            return self._input_ds_backend
+
+        return name
 
 
 class AttributeParsingException(Exception):

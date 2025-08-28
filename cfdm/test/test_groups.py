@@ -171,6 +171,7 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         name = "grid_latitude"
         g.construct(name).bounds.nc_set_variable_groups(["forecast"])
+        grouped_file = "grouped_file.nc"
         cfdm.write(g, grouped_file)
 
         nc = netCDF4.Dataset(grouped_file, "r")

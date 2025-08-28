@@ -83,7 +83,7 @@ class read_writeTest(unittest.TestCase):
             self.assertTrue(z.equals(n))
 
     def test_zarr_read_write_2(self):
-        """Test Zarr read/write on test netCDF files."""
+        """Test Zarr read/write on various netCDF files."""
         for filename in (
             "DSG_timeSeries_contiguous.nc",
             "DSG_timeSeries_indexed.nc",
@@ -102,18 +102,24 @@ class read_writeTest(unittest.TestCase):
             for a, b in zip(z, n):
                 self.assertTrue(a.equals(b))
 
-    def test_zarr_read_write_shards(self):
-        """Test Zarr read/write with shards."""
+    def test_zarr_read_write_chunks_shards(self):
+        """Test Zarr read/write with chunks and shards."""
         f = self.f0.copy()
         f.data.nc_set_dataset_chunksizes([2, 3])
 
         cfdm.write(f, tmpdir1, fmt="ZARR3")
+        z = cfdm.read(tmpdir1)[0]
+        self.assertTrue(z.equals(f))
+
         z = zarr.open(tmpdir1)
         self.assertEqual(z["q"].chunks, (2, 3))
         self.assertIsNone(z["q"].shards)
 
         # Make shards comprising 4 chunks
         cfdm.write(f, tmpdir1, fmt="ZARR3", dataset_shards=4)
+        z = cfdm.read(tmpdir1)[0]
+        self.assertTrue(z.equals(f))
+
         z = zarr.open(tmpdir1)
         self.assertEqual(z["q"].chunks, (2, 3))
         self.assertEqual(z["q"].shards, (4, 6))
@@ -121,6 +127,9 @@ class read_writeTest(unittest.TestCase):
         for shards in (4, [2, 2]):
             f.data.nc_set_dataset_shards(shards)
             cfdm.write(f, tmpdir1, fmt="ZARR3")
+            z = cfdm.read(tmpdir1)[0]
+            self.assertTrue(z.equals(f))
+
             z = zarr.open(tmpdir1)
             self.assertEqual(z["q"].chunks, (2, 3))
             self.assertEqual(z["q"].shards, (4, 6))

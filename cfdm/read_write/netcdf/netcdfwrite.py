@@ -99,12 +99,15 @@ class NetCDFWrite(IOWrite):
                 The new group object.
 
         """
-        match self.write_vars["backend"]:
+        g = self.write_vars
+        match g["backend"]:
             case "netCDF4":
                 return parent.createGroup(group_name)
 
             case "zarr":
-                return parent.create_group(group_name)
+                return parent.create_group(
+                    group_name, overwrite=g["overwrite"]
+                )
 
             case _:
                 raise ValueError(
@@ -702,7 +705,7 @@ class NetCDFWrite(IOWrite):
         # this dataset dimension.
         parent_group = self._parent_group(ncdim)
 
-        if g["group"] and "/" in ncdim:
+        if g["group"] and "/" in ncdim and g["backend"] != "zarr":
             # This dimension needs to go into a sub-group so replace
             # its name with its basename (CF>=1.8)
             ncdim = self._remove_group_structure(ncdim)
@@ -2639,25 +2642,34 @@ class NetCDFWrite(IOWrite):
                 if chunks is None:
                     chunks = shape
 
-                # Calculate the shard shape
-                if chunks:
-                    if isinstance(shards, Integral):
-                        n = int(shards ** (1 / len(chunks)))
-                        if n > 1:
-                            # More than one chunk per shard
-                            shards = [c * n for c in chunks]
-                        else:
-                            # One chunk per shard
-                            shards = None
-                    elif shards and prod(shards) > 1:
-                        # More than one chunk per shard
-                        shards = [c * n for c, n in zip(chunks, shards)]
-                    else:
-                        # One chunk per shard
+                if shards is not None:
+                    # Calculate the shard shape in the format expected
+                    # by `zarr.create_array`, i.e. shards are defined
+                    # by how many array elements along each dimension
+                    # are in each shard.
+                    if chunks == shape:
+                        # One chunk per shard.
+                        #
+                        # It doesn't matter what 'shards' is, because
+                        # the data only has one chunk.
                         shards = None
-                else:
-                    # One chunk per shard
-                    shards = None
+                    else:
+                        ndim = len(chunks)
+                        if isinstance(shards, Integral):
+                            n = int(shards ** (1 / ndim))
+                            shards = (n,) * ndim
+
+                        if prod(shards) > 1:
+                            # More than one chunk per shard.
+                            #
+                            # E.g. shards=(10, 11, 12), chunks=(10, 20,
+                            #      30) => shards=(100, 220, 360)
+                            shards = [c * n for c, n in zip(chunks, shards)]
+                        else:
+                            # One chunk per shard.
+                            #
+                            # E.g. shards=(1, 1, 1) => shards=None
+                            shards = None
 
                 dtype = kwargs["datatype"]
                 if dtype == "S1":
@@ -2837,11 +2849,11 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.10.1.0
 
-            chunking: sequence of `int`, optional
-                Set `netCDF4.createVariable` 'contiguous' and
-                `chunksizes` parameters (in that order). If not set
-                (the default), then these parameters are inferred from
-                the data.
+            chunking: sequence, optional
+                Set `_createVariable` 'contiguous', 'chunksizes', and
+                'shards' parameters (in that order). If `None` (the
+                default), then these parameters are inferred from the
+                data.
 
                 .. versionadded:: (cfdm) 1.12.0.0
 
@@ -2928,7 +2940,7 @@ class NetCDFWrite(IOWrite):
 
         # Set the dataset chunk strategy
         if chunking:
-            contiguous, chunksizes = chunking
+            contiguous, chunksizes, shards = chunking
         else:
             contiguous, chunksizes, shards = self._chunking_parameters(
                 data, ncdimensions
@@ -2955,22 +2967,11 @@ class NetCDFWrite(IOWrite):
                     )
 
         # ------------------------------------------------------------
-        # Replace dataset dimension names with their basenames
-        # (CF>=1.8)
-        # ------------------------------------------------------------
-        ncdimensions_basename = [
-            self._remove_group_structure(ncdim) for ncdim in ncdimensions
-        ]
-
-        # Get shape of arra
-
-        # ------------------------------------------------------------
         # Create a new dataset variable
         # ------------------------------------------------------------
         kwargs = {
             "varname": ncvar,
             "datatype": datatype,
-            "dimensions": ncdimensions_basename,
             "endian": g["endian"],
             "contiguous": contiguous,
             "chunksizes": chunksizes,
@@ -2979,6 +2980,22 @@ class NetCDFWrite(IOWrite):
             "fill_value": fill_value,
             "chunk_cache": g["chunk_cache"],
         }
+
+        # ------------------------------------------------------------
+        # Replace dataset dimension names with their basenames
+        # (CF>=1.8)
+        # ------------------------------------------------------------
+        if g["backend"] == "zarr":
+            # ... but not for Zarr. This is because Zarr doesn't have
+            # the concept of dimensions belonging to a group (unlike
+            # netCDF), so by keeping the group structure in the
+            # dimension names we can know which group they belong to.
+            kwargs["dimensions"] = ncdimensions
+        else:
+            ncdimensions_basename = [
+                self._remove_group_structure(ncdim) for ncdim in ncdimensions
+            ]
+            kwargs["dimensions"] = ncdimensions_basename
 
         if data is not None:
             compressed = self._compressed_data(ncdimensions)
@@ -4664,12 +4681,14 @@ class NetCDFWrite(IOWrite):
                     f0, attr
                 )
 
-            nc = g["dataset"]  # TODOZARR
-            for group in groups:
-                if group in nc.groups:
-                    nc = nc.groups[group]
-                else:
-                    nc = self._createGroup(nc, group)
+            #            nc = g["dataset"]  # TODOZARR
+            nc = self._get_group(g["dataset"], groups)
+            #            for group in groups:
+            #                print ('     nc.groups=', repr(nc.groups))
+            #                if group in nc.groups:
+            #                    nc = nc.groups[group]
+            #                else:
+            #                    nc = self._createGroup(nc, group)
 
             if not g["dry_run"]:
                 #                nc.setncatts(this_group_attributes)
@@ -4678,6 +4697,45 @@ class NetCDFWrite(IOWrite):
             group_attributes[groups] = tuple(this_group_attributes)
 
         g["group_attributes"] = group_attributes
+
+    def _get_group(self, parent, groups):
+        """Get the group of *nc* defined by *groups*.
+
+        The group will be created if it doesn't already exist.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent: `netCDF4.Dateset` or `netCDF4.Group` or `Zarr.Group`
+                The group in which to find or create  new group.
+
+            groups: sequence of `str`
+                The group defined by the sequence of its subgroups
+                realtive to *parent*, e.g. ``('forecast', 'model')``.
+
+        :Returns:
+
+            `netCDF4.Group` or `Zarr.Group`
+                The group.
+
+        """
+        match self.write_vars["backend"]:
+            case "netCDF4":
+                for group in groups:
+                    if group in parent.groups:
+                        parent = parent.groups[group]
+                    else:
+                        parent = self._createGroup(parent, group)
+
+            case "zarr":
+                group = "/".join(groups)
+                if group in parent:
+                    parent = parent[group]
+                else:
+                    parent = self._createGroup(parent, group)
+
+        return parent
 
     def _write_global_attributes(self, fields):
         """Writes all global properties to the dataset.
@@ -5959,7 +6017,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             3-tuple
-                The *contiguous*, *chunksizes*, and *shards*
+                The 'contiguous', 'chunksizes', and 'shards'
                 parameters for `_createVariable`.
 
         """
@@ -6400,9 +6458,9 @@ class NetCDFWrite(IOWrite):
                 Any attributes to attach to the variable.
 
             chunking: sequence, optional
-                Set `_createVariable` 'contiguous' and `chunksizes`
-                parameters (in that order) for the fragment array
-                variable. If not set (the default), then these
+                Set `_createVariable` 'contiguous', 'chunksizes', and
+                'shards' parameters (in that order) for the fragment
+                array variable. If `None` (the default), then these
                 parameters are inferred from the data.
 
         :Returns:
