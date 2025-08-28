@@ -30,8 +30,10 @@ STD_NAME_CURRENT_XML_URL = (
 )
 
 
-def extract_names_from_xml(snames_xml):
+def _extract_names_from_xml(snames_xml):
     """TODO."""
+    print("XML IS", snames_xml)
+    exit()
     root = ET.fromstring(snames_xml)
     # Want all <entry id="..."> elements. Note the regex this corresponds
     # to, from SLB older code, is 're.compile(r"<entry id=\"(.+)\">")' but
@@ -57,4 +59,4 @@ def get_all_current_standard_names():
         f"Successfully retrived set of {len(all_snames_xml)} standard names"
     )  # pragma: no cover
 
-    return extract_names_from_xml(all_snames_xml)
+    return _extract_names_from_xml(all_snames_xml)
