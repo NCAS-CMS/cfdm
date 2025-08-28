@@ -71,7 +71,9 @@ class ComplianceCheckingTest(unittest.TestCase):
     def test_extract_names_from_xml(self):
         """Test the `cfvalidation._extract_names_from_xml` function."""
         # Check with a small 'dummy' XML table which is the current table
-        # but with only the first two names included, w/ or w/o aliases
+        # but with only the first two names included, w/ or w/o a few aliases
+        # (note the aliases don't match up to the two included names but
+        # this is irrelevant to the testing so OK)
         two_name_table_start = """<?xml version="1.0"?>
             <standard_name_table xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://cfconventions.org/Data/schema-files/cf-standard-name-table-2.0.xsd">
             <version_number>92</version_number>
@@ -105,7 +107,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         table_end = "</standard_name_table>"
 
         two_name_output = cfdm.cfvalidation._extract_names_from_xml(
-            two_name_table_start + table_end)
+            two_name_table_start + table_end, include_aliases=False)
         self.assertIsInstance(two_name_output, list)
         self.assertEqual(len(two_name_output), 2)
         self.assertIn(
@@ -115,28 +117,47 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertIn(
             "acoustic_centre_of_mass_in_sea_water", two_name_output)
 
-        two_name_output_w_aliases = cfdm.cfvalidation._extract_names_from_xml(
-            two_name_table_start + include_two_aliases + table_end)
-        self.assertIsInstance(two_name_output_w_aliases, list)
-        self.assertEqual(len(two_name_output_w_aliases), 4)
+        # No aliases in this table therefore expect same output as before
+        # when setting 'include_aliases=True'
+        self.assertEqual(
+            cfdm.cfvalidation._extract_names_from_xml(
+                two_name_table_start + table_end, include_aliases=True),
+            two_name_output
+        )
+
+        aliases_inc_output = cfdm.cfvalidation._extract_names_from_xml(
+            two_name_table_start + include_two_aliases + table_end,
+            include_aliases=True
+        )
+        self.assertIsInstance(aliases_inc_output, list)
+        self.assertEqual(len(aliases_inc_output), 4)
         self.assertIn(
             "acoustic_area_backscattering_strength_in_sea_water",
-            two_name_output_w_aliases
+            aliases_inc_output
         )
         self.assertIn(
-            "acoustic_centre_of_mass_in_sea_water", two_name_output_w_aliases)
+            "acoustic_centre_of_mass_in_sea_water", aliases_inc_output)
         self.assertIn(
             "chlorophyll_concentration_in_sea_water",
-            two_name_output_w_aliases
+            aliases_inc_output
         )
         self.assertIn(
             "concentration_of_chlorophyll_in_sea_water",
-            two_name_output_w_aliases
+            aliases_inc_output
+        )
+
+        # When setting 'include_aliases=True' should ignore the two aliases
+        # in table so expect same as two_name_output
+        self.assertEqual(
+            cfdm.cfvalidation._extract_names_from_xml(
+                two_name_table_start + include_two_aliases + table_end,
+                include_aliases=False
+            ),
+            two_name_output
         )
 
     def test_get_all_current_standard_names(self):
         """Test the `cfvalidation.get_all_current_standard_names` function."""
-        # TODO
         output = cfdm.cfvalidation.get_all_current_standard_names()
         self.assertIsInstance(output, list)
 
@@ -159,12 +180,29 @@ class ComplianceCheckingTest(unittest.TestCase):
             output
         )
 
-        # SLB TODO!: spotted issue with approach in that aliases are valid
-        # standard names but often historically valid only so not in the
-        # current table! Maybe we need to parse the 'alias' items too.
-        # Check known/noted alias is in there.
+        # Check a standard name with known alias
         self.assertIn("atmosphere_moles_of_cfc113", output)
-        # CURRENT FAIL self.assertIn("moles_of_cfc113_in_atmosphere", output)
+        # Since the default behaviour is to not include aliases, this alias
+        # of the above should not be in the list
+        self.assertNotIn("moles_of_cfc113_in_atmosphere", output)
+
+        aliases_inc_output = cfdm.cfvalidation.get_all_current_standard_names(
+            include_aliases=True
+        )
+        self.assertIsInstance(aliases_inc_output, list)
+
+        # As with above length check, can't be sure of eact amount as it
+        # changes but we can safely put a lower limit on it. At time of
+        # writing, Aug 2025) there are over 5500 names including aliases
+        # (where there are ~500 aliases as opposed to non-alias names) so
+        # set 5000 as a good limit (> 4500 check w/ include_aliases=False)
+        self.assertTrue(len(aliases_inc_output) > 5000)
+
+        # Check all non-aliases are there, as above
+        self.assertTrue(set(output).issubset(aliases_inc_output))
+        
+        # This time the alias should be included
+        self.assertIn("moles_of_cfc113_in_atmosphere", aliases_inc_output)
 
     def test_field_dataset_compliance(self):
         """Test the `Field.dataset_compliance` method.

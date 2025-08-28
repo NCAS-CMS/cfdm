@@ -30,7 +30,7 @@ STD_NAME_CURRENT_XML_URL = (
 )
 
 
-def _extract_names_from_xml(snames_xml):
+def _extract_names_from_xml(snames_xml, include_aliases):
     """TODO."""
     root = ET.fromstring(snames_xml)
     # Want all <entry id="..."> elements. Note the regex this corresponds
@@ -39,12 +39,16 @@ def _extract_names_from_xml(snames_xml):
     all_standard_names = [
         entry.attrib["id"] for entry in root.findall(".//entry")
     ]
+    if include_aliases:
+        all_standard_names += [
+            entry.attrib["id"] for entry in root.findall(".//alias")
+        ]
 
     return all_standard_names
 
 
 @lru_cache
-def get_all_current_standard_names():
+def get_all_current_standard_names(include_aliases=False):
     """TODO."""
     logger.info(
         "Retrieving XML for set of current standard names from: ",
@@ -57,4 +61,5 @@ def get_all_current_standard_names():
         f"Successfully retrived set of {len(all_snames_xml)} standard names"
     )  # pragma: no cover
 
-    return _extract_names_from_xml(all_snames_xml)
+    return _extract_names_from_xml(
+        all_snames_xml, include_aliases=include_aliases)
