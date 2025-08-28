@@ -249,7 +249,10 @@ from .decorators import (
     _display_or_return,
 )
 
-from .cfvalidation import get_all_current_standard_names
+from .cfvalidation import (
+    get_all_current_standard_names,
+    _extract_names_from_xml
+)
 
 from .constructs import Constructs
 

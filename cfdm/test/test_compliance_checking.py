@@ -15,12 +15,16 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
-n_tmpfiles = 1
+
+n_tmpfiles = 2
 tmpfiles = [
     tempfile.mkstemp("_test_functions.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-(temp_file,) = tmpfiles
+(
+    tmpfile0,
+    tmpfile1,
+) = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -66,7 +70,69 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_extract_names_from_xml(self):
         """Test the `cfvalidation._extract_names_from_xml` function."""
-        # TODO
+        # Check with a small 'dummy' XML table which is the current table
+        # but with only the first two names included, w/ or w/o aliases
+        two_name_table_start = """<?xml version="1.0"?>
+            <standard_name_table xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://cfconventions.org/Data/schema-files/cf-standard-name-table-2.0.xsd">
+            <version_number>92</version_number>
+            <conventions>CF-StandardNameTable-92</conventions>
+            <first_published>2025-07-24T14:20:46Z</first_published>
+            <last_modified>2025-07-24T14:20:46Z</last_modified>
+            <institution>Centre for Environmental Data Analysis</institution>
+            <contact>support@ceda.ac.uk</contact>
+
+
+            <entry id="acoustic_area_backscattering_strength_in_sea_water">
+               <canonical_units>1</canonical_units>
+               <description>Acoustic area backscattering strength is 10 times the log10 of the ratio of the area backscattering coefficient to the reference value, 1 (m2 m-2). Area backscattering coefficient is the integral of the volume backscattering coefficient over a defined distance. Volume backscattering coefficient is the linear form of acoustic_volume_backscattering_strength_in_sea_water. For further details see MacLennan et. al (2002) doi:10.1006/jmsc.2001.1158.</description>
+            </entry>
+
+            <entry id="acoustic_centre_of_mass_in_sea_water">
+               <canonical_units>m</canonical_units>
+               <description>Acoustic centre of mass is the average of all sampled depths weighted by their volume backscattering coefficient. Volume backscattering coefficient is the linear form of acoustic_volume_backscattering_strength_in_sea_water. For further details see Urmy et. al (2012) doi:10.1093/icesjms/fsr205.</description>
+            </entry>
+        """
+        include_two_aliases = """<alias id="chlorophyll_concentration_in_sea_water">
+              <entry_id>mass_concentration_of_chlorophyll_in_sea_water</entry_id>
+
+            </alias>
+
+            <alias id="concentration_of_chlorophyll_in_sea_water">
+              <entry_id>mass_concentration_of_chlorophyll_in_sea_water</entry_id>
+
+            </alias>
+        """
+        table_end = "</standard_name_table>"
+
+        two_name_output = cfdm.cfvalidation._extract_names_from_xml(
+            two_name_table_start + table_end)
+        self.assertIsInstance(two_name_output, list)
+        self.assertEqual(len(two_name_output), 2)
+        self.assertIn(
+            "acoustic_area_backscattering_strength_in_sea_water",
+            two_name_output
+        )
+        self.assertIn(
+            "acoustic_centre_of_mass_in_sea_water", two_name_output)
+
+        two_name_output_w_aliases = cfdm.cfvalidation._extract_names_from_xml(
+            two_name_table_start + include_two_aliases + table_end)
+        self.assertIsInstance(two_name_output_w_aliases, list)
+        self.assertEqual(len(two_name_output_w_aliases), 4)
+        self.assertIn(
+            "acoustic_area_backscattering_strength_in_sea_water",
+            two_name_output_w_aliases
+        )
+        self.assertIn(
+            "acoustic_centre_of_mass_in_sea_water", two_name_output_w_aliases)
+        self.assertIn(
+            "chlorophyll_concentration_in_sea_water",
+            two_name_output_w_aliases
+        )
+        self.assertIn(
+            "concentration_of_chlorophyll_in_sea_water",
+            two_name_output_w_aliases
+        )
 
     def test_get_all_current_standard_names(self):
         """Test the `cfvalidation.get_all_current_standard_names` function."""
