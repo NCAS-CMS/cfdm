@@ -274,7 +274,7 @@ class read_writeTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Move the index variable to the /forecast group
         # ------------------------------------------------------------
-        f.data.get_index().nc_set_variable_groups(["forecast"])
+#        f.data.get_index().nc_set_variable_groups(["forecast"])
 
         # ------------------------------------------------------------
         # Move the coordinates that span the element dimension to the

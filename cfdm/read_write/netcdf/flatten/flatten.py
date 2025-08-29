@@ -405,7 +405,7 @@ class _Flattener:
             case "netCDF4":
                 chunking = variable.chunking()
                 if chunking == "contiguous":
-                    return None
+                    return
 
                 return chunking
 
@@ -543,7 +543,7 @@ class _Flattener:
 
         :Returns:
 
-            `list`
+            `list` of dimension objects
 
         """
         match self._backend():
@@ -666,23 +666,23 @@ class _Flattener:
                 return x.ncattrs()
 
     def parent(self, group):
-        """Return a simulated unix parent group.
+        """Return the parent group.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
         :Returns:
 
             `Group` or `None`
-                The parent grup, or `None` if *group* is the root
+                The parent group, or `None` if *group* is the root
                 group (and so has no parent).
 
         """
         match self._backend():
             case "h5netcdf" | "netCDF4":
-                try:
-                    return group.parent
-                except AttributeError:
-                    return
+#                try:
+                return group.parent
+#                except AttributeError:
+#                    return
 
             case "zarr":
                 name = group.name
@@ -769,7 +769,6 @@ class _Flattener:
 
         for dim in self._dimensions(input_group).values():
             self.flatten_dimension(dim)
-
         #        for var in input_group.variables.values():
         #            self.flatten_variable(var)
 
@@ -1080,7 +1079,7 @@ class _Flattener:
                 The absolute path to the reference.
 
         """
-        print ('A', orig_ref, rules.name)
+#        print ('\nA', orig_ref, rules.name)
         ref = orig_ref
         absolute_ref = None
         ref_type = ""
@@ -1126,7 +1125,6 @@ class _Flattener:
 
         # Reference is to be searched by proximity
         else:
-            print (9999)
             method = "Proximity"
             absolute_ref, ref_type = self.resolve_reference_proximity(
                 ref,
@@ -1135,7 +1133,6 @@ class _Flattener:
                 orig_var,
                 rules,
             )
-            print ('abs =', absolute_ref)
 
         # Post-search checks and return result
         return self.resolve_reference_post_processing(
@@ -1198,14 +1195,14 @@ class _Flattener:
             False,
             stop_at_local_apex,
         )
-#        print ( 'resolved_var = ',resolved_var )
+
         # If failed and alternative possible, second tentative
         if resolved_var is None and resolve_alt:
             if resolve_dim_or_var:
                 ref_type = "variable"
             else:
                 ref_type = "dimension"
-            print ('ref_type =' , ref_type)
+
             resolved_var = self.search_by_proximity(
                 ref,
                 self.group(orig_var),
@@ -1333,26 +1330,30 @@ class _Flattener:
         """
         # Go up parent groups
         while ref.startswith("../"):
-            if current_group.parent is None:
-                return None
+            parent = self.parent(current_group) 
+            if parent is None:
+                return
 
             ref = ref[3:]
-            current_group = current_group.parent
+            current_group = parent
 
         # Go down child groups
         ref_split = ref.split(group_separator)
         for g in ref_split[:-1]:
             try:
-                current_group = current_group.groups[g]
+#                current_group = current_group.groups[g]
+                current_group = self._child_groups(current_group)[g]
             except KeyError:
-                return None
+                return
 
         # Get variable or dimension
         if search_dim:
-            elt = current_group.dimensions[ref_split[-1]]
+#            elt = current_group.dimensions[ref_split[-1]]
+            elt = tuple(self._dimensions(current_group))[ref_split[-1]]
+
         else:
             #  elt = current_group.variables[ref_split[-1]]
-            elt = current_group.variables[ref_split[-1]]
+            elt = tuple(self._variables(current_group))[ref_split[-1]]
 
         # Get absolute reference
         return self.pathname(self.group(elt), self.name(elt))
@@ -1401,11 +1402,9 @@ class _Flattener:
                 `None`.
 
         """
-        print ( 'search_dim=', search_dim, current_group)
         if search_dim:
             #            dims_or_vars = current_group.dimensions # TODOZARR
             dims_or_vars = self._dimensions(current_group)
-            print (dims_or_vars)
         else:
             #            dims_or_vars = current_group.variables
             dims_or_vars = self._variables(current_group)
@@ -1415,7 +1414,7 @@ class _Flattener:
             return dims_or_vars[ref]
 
         local_apex_reached = (
-            #            local_apex_reached or ref in current_group.dimensions.keys()
+            # local_apex_reached or ref in current_group.dimensions.keys()
             local_apex_reached
             or ref in dims_or_vars # TODOZARR self._dimensions(current_group).keys()
         )
@@ -1433,10 +1432,8 @@ class _Flattener:
 
         # Search up
         if not top_reached:
-            print ('not top_reached')
             return self.search_by_proximity(
                 ref,
-                # current_group.parent,
                 parent_group,
                 search_dim,
                 local_apex_reached,
@@ -1445,9 +1442,10 @@ class _Flattener:
 
         elif is_coordinate_variable and local_apex_reached:
             # Coordinate variable and local apex reached, so search
-            # down in siblings
+            # down in siblings.
             found_elt = None
-            for child_group in current_group.groups.values():
+#            for child_group in current_group.groups.values():
+            for child_group in self._child_groups(current_group).values():
                 found_elt = self.search_by_proximity(
                     ref,
                     child_group,
@@ -1460,9 +1458,8 @@ class _Flattener:
 
             return found_elt
 
-        else:
-            # Did not find
-            return None
+        # Did not find
+        return
 
     def resolve_references(self, var, old_var):
         """Resolve references.
@@ -1819,7 +1816,7 @@ class _Flattener:
 
             case "zarr":
                 from ..zarr import ZarrDimension
-
+                print('Group:', repr(self.name(group)))
                 if not hasattr(self, "_zarr_dims"):
                     # Mapping of dimension names to Dimension objects.
                     #
@@ -1839,6 +1836,8 @@ class _Flattener:
                     #       'forecast/y': [<ZarrDimension: y, size(10)>]}
                     self._zarr_var_to_dims = {}
 
+                # Loop round this group's variables, finding the
+                # dimension_names for each one.
                 dimensions = {}
                 for v in group.array_values():
                     dimension_names = v.metadata.dimension_names
@@ -1860,10 +1859,10 @@ class _Flattener:
 
                 self._zarr_dims.update(dimensions)
 
-                #                print('      dimensions =',dimensions)
-#                print('      self._zarr_dims =',list(self._zarr_dims))
+                print('      self._zarr_dims =',self._zarr_dims)
 
-                # Map variables to their dimension objects
+                # Map this group's variables to their dimension
+                # objects
                 for v in group.array_values():
                     dimension_names = v.metadata.dimension_names
                     if dimension_names is None:
@@ -1874,9 +1873,9 @@ class _Flattener:
                         self._zarr_dims[name] for name in dimension_names
                     ]
 
-                #                    print("      self._zarr_var_to_dims=", self._zarr_var_to_dims)
+                print("      self._zarr_var_to_dims=", self._zarr_var_to_dims)
 
-                print('durrent group dimensions', dimensions)
+                print('current group dimensions', dimensions)
                 return dimensions
 
     def _variables(self, group):
