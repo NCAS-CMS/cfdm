@@ -105,6 +105,9 @@ class NetCDFWrite(IOWrite):
                 return parent.createGroup(group_name)
 
             case "zarr":
+                if group_name in parent:
+                    return parent[group_name]
+
                 return parent.create_group(
                     group_name, overwrite=g["overwrite"]
                 )
@@ -1824,8 +1827,8 @@ class NetCDFWrite(IOWrite):
             )
 
         for group_name in name.split("/")[1:-1]:
-            if group_name not in parent_group:
-                parent_group = self._createGroup(parent_group, group_name)
+            #            if group_name not in parent_group:
+            parent_group = self._createGroup(parent_group, group_name)
 
         return parent_group
 

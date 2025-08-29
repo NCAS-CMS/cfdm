@@ -305,6 +305,7 @@ class GroupsTest(unittest.TestCase):
         g.nc_set_component_variable("interior_ring", "interior_ring")
         g.nc_set_component_variable_groups("interior_ring", ["forecast"])
 
+        grouped_file='grouped_file.nc'
         cfdm.write(g, grouped_file)
 
         # Check that the variable is in the right group

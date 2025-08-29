@@ -317,6 +317,7 @@ class _Flattener:
         self._input_ds = input_ds
         self._output_ds = output_ds
 
+        # Record the backend that defines 'input_ds'
         if hasattr(input_ds, "_h5file"):
             self._input_ds_backend = "h5netcdf"
         elif hasattr(input_ds, "data_model"):
@@ -324,7 +325,10 @@ class _Flattener:
         elif hasattr(input_ds, "store"):
             self._input_ds_backend = "zarr"
         else:
-            raise ValueError("TODOZARR")
+            raise ValueError(
+                "Unknown type of 'input_ds'. Must be one of h5netcdf.File, "
+                f"netCDF4.Dataset, or zarr.Group. Got {type(input_ds)}"
+            )
 
         self._strict = bool(strict)
         self._omit_data = bool(omit_data)
@@ -340,7 +344,7 @@ class _Flattener:
                 "be different, and output should be of the 'NETCDF4' format."
             )
 
-    def attrs(self, variable, backend=None):
+    def attrs(self, variable, dataset=None):
         """Return the variable attributes.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -358,7 +362,7 @@ class _Flattener:
                 names.
 
         """
-        match self._backend(backend):
+        match self._backend(dataset):
             case "netCDF4":
                 return {
                     attr: variable.getncattr(attr)
@@ -618,7 +622,7 @@ class _Flattener:
                     # Dimension
                     return x.group()
 
-    def name(self, x, backend=None):
+    def name(self, x, dataset=None):
         """Return the netCDF name, without its groups.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -628,7 +632,7 @@ class _Flattener:
             `str`
 
         """
-        match self._backend(backend):
+        match self._backend(dataset):
             case "h5netcdf" | "netCDF4":
                 return x.name.split(group_separator)[-1]
 
@@ -841,7 +845,6 @@ class _Flattener:
         )
 
         # Write dimension
-        #        print ('creating dimension:', new_name,) # '(org in',  self.group(dim))
         self._output_ds.createDimension(
             new_name, (len(dim), None)[dim.isunlimited()]
         )
@@ -906,7 +909,6 @@ class _Flattener:
         else:
             fill_value = attributes.pop("_FillValue", None)
 
-        #        print ('creating variable:', new_name)# '(org in',  self.group(var))
         new_var = self._output_ds.createVariable(
             new_name,
             self.dtype(var),
@@ -1078,6 +1080,7 @@ class _Flattener:
                 The absolute path to the reference.
 
         """
+        print ('A', orig_ref, rules.name)
         ref = orig_ref
         absolute_ref = None
         ref_type = ""
@@ -1105,7 +1108,7 @@ class _Flattener:
                 ref_type = "dimension"
             else:
                 ref_type = "variable"
-
+                
             absolute_ref = self.search_by_relative_path(
                 orig_ref, self.group(orig_var), resolve_dim_or_var
             )
@@ -1123,6 +1126,7 @@ class _Flattener:
 
         # Reference is to be searched by proximity
         else:
+            print (9999)
             method = "Proximity"
             absolute_ref, ref_type = self.resolve_reference_proximity(
                 ref,
@@ -1131,6 +1135,7 @@ class _Flattener:
                 orig_var,
                 rules,
             )
+            print ('abs =', absolute_ref)
 
         # Post-search checks and return result
         return self.resolve_reference_post_processing(
@@ -1193,14 +1198,14 @@ class _Flattener:
             False,
             stop_at_local_apex,
         )
-
+#        print ( 'resolved_var = ',resolved_var )
         # If failed and alternative possible, second tentative
         if resolved_var is None and resolve_alt:
             if resolve_dim_or_var:
                 ref_type = "variable"
             else:
                 ref_type = "dimension"
-
+            print ('ref_type =' , ref_type)
             resolved_var = self.search_by_proximity(
                 ref,
                 self.group(orig_var),
@@ -1217,8 +1222,9 @@ class _Flattener:
                 ),
                 ref_type,
             )
-        else:
-            return None, ""
+
+        # Unresolved
+        return None, ""
 
     def resolve_reference_post_processing(
         self, absolute_ref, orig_ref, orig_var, rules, ref_type, method
@@ -1268,7 +1274,7 @@ class _Flattener:
         elif absolute_ref is None:
             # Not found, so raise exception.
             absolute_ref = self.handle_reference_error(
-                orig_ref, self.path(self.group(orig_var))
+                rules.name, orig_ref, self.path(self.group(orig_var))
             )
         else:
             # Found
@@ -1395,21 +1401,23 @@ class _Flattener:
                 `None`.
 
         """
+        print ( 'search_dim=', search_dim, current_group)
         if search_dim:
             #            dims_or_vars = current_group.dimensions # TODOZARR
             dims_or_vars = self._dimensions(current_group)
+            print (dims_or_vars)
         else:
             #            dims_or_vars = current_group.variables
             dims_or_vars = self._variables(current_group)
 
         # Found in current group
-        if ref in dims_or_vars.keys():
+        if ref in dims_or_vars: #.keys():
             return dims_or_vars[ref]
 
         local_apex_reached = (
             #            local_apex_reached or ref in current_group.dimensions.keys()
             local_apex_reached
-            or ref in self._dimensions(current_group).keys()
+            or ref in dims_or_vars # TODOZARR self._dimensions(current_group).keys()
         )
 
         # Check if have to continue looking in parent group
@@ -1425,6 +1433,7 @@ class _Flattener:
 
         # Search up
         if not top_reached:
+            print ('not top_reached')
             return self.search_by_proximity(
                 ref,
                 # current_group.parent,
@@ -1480,7 +1489,7 @@ class _Flattener:
             `None`
 
         """
-        var_attrs = self.attrs(var, "netCDF4")
+        var_attrs = self.attrs(var, "output")
         for name in referencing_attributes.intersection(var_attrs):
             # Parse attribute value
             parsed_attribute = parse_attribute(name, var_attrs[name])
@@ -1528,7 +1537,7 @@ class _Flattener:
             `None`
 
         """
-        var_attrs = self.attrs(var, "netCDF4")
+        var_attrs = self.attrs(var, "output")
         for name in referencing_attributes.intersection(var_attrs):
             # Parse attribute value
             value = var_attrs[name]
@@ -1553,7 +1562,7 @@ class _Flattener:
             var.setncattr(name, new_attr_value)
 
             logging.info(
-                f"        Value of {self.name(var, 'netCDF4')}.{name} "
+                f"        Value of {self.name(var, 'output')}.{name} "
                 f"changed from {value!r} to {new_attr_value!r}"
             )
 
@@ -1614,7 +1623,7 @@ class _Flattener:
 
         else:
             # If not found, raise exception
-            return self.handle_reference_error(resolved_ref)
+            return self.handle_reference_error(rules.name, resolved_ref)
 
     def pathname(self, group, name):
         """Compose full path name to an element in a group structure.
@@ -1750,7 +1759,7 @@ class _Flattener:
 
         return new_name
 
-    def handle_reference_error(self, ref, context=None):
+    def handle_reference_error(self, role, ref, context=None):
         """Handle reference error.
 
         Depending on the `_strict` mode, either raise an exception or
@@ -1761,8 +1770,12 @@ class _Flattener:
 
         :Parameters:
 
+            role: `str`
+                The CF role of the reference,
+                e.g. ``'instance_dimension'``, ``'cell_measures'``.
+
             ref: `str`
-                The reference
+                The reference.
 
             context: `str`
                 Additional context information to add to message.
@@ -1774,7 +1787,7 @@ class _Flattener:
                 `UnresolvedReferenceException` is raised.
 
         """
-        message = f"Reference {ref!r} could not be resolved"
+        message = f"{role} reference {ref!r} could not be resolved"
         if context is not None:
             message = f"{message} from {context}"
 
@@ -1792,8 +1805,12 @@ class _Flattener:
         :Parameters:
 
             group:
+                The group to inspect.
 
         :Returns:
+
+            `dict`-like
+                The dimensions, keyed by their names.
 
         """
         match self._backend():
@@ -1803,12 +1820,12 @@ class _Flattener:
             case "zarr":
                 from ..zarr import ZarrDimension
 
-                #                print(group)
                 if not hasattr(self, "_zarr_dims"):
                     # Mapping of dimension names to Dimension objects.
                     #
                     # E.g. {'x': <ZarrDimension: x, size(9)>,
                     #       'y': <ZarrDimension: y, size(10)>,
+                    #       'bounds2': <ZarrDimension: bounds2, size(2)>,
                     #       '/forecast/y': <ZarrDimension: y, size(10)>}
                     self._zarr_dims = {}
 
@@ -1839,14 +1856,14 @@ class _Flattener:
 
                         zd = ZarrDimension(basename, size, group)
                         dimensions[basename] = zd
-                        self._zarr_dims[name] = zd
+                        self._zarr_dims[name] = zd # TODOZARR RESOLVE NAME?
 
                 self._zarr_dims.update(dimensions)
 
                 #                print('      dimensions =',dimensions)
-                # print('      self._zarr_dims =',self._zarr_dims)
+#                print('      self._zarr_dims =',list(self._zarr_dims))
 
-                # Map zarr variables to their dimension objects
+                # Map variables to their dimension objects
                 for v in group.array_values():
                     dimension_names = v.metadata.dimension_names
                     if dimension_names is None:
@@ -1857,14 +1874,27 @@ class _Flattener:
                         self._zarr_dims[name] for name in dimension_names
                     ]
 
-                    print(
-                        "      self._zarr_var_to_dims=", self._zarr_var_to_dims
-                    )
+                #                    print("      self._zarr_var_to_dims=", self._zarr_var_to_dims)
 
+                print('durrent group dimensions', dimensions)
                 return dimensions
 
     def _variables(self, group):
-        """Return variables that are defined in this group."""
+        """Return variables that are defined in this group.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            group:
+                The group to inspect.
+
+        :Returns:
+
+            `dict`-like
+                The variables, keyed by their names.
+
+        """
         match self._backend():
             case "h5netcdf" | "netCDF4":
                 return group.variables
@@ -1873,7 +1903,21 @@ class _Flattener:
                 return dict(group.arrays())
 
     def _child_groups(self, group):
-        """Return groups that are defined in this group."""
+        """Return groups that are defined in this group.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            group:
+                The group to inspect.
+
+        :Returns:
+
+            `dict`-like
+                The groups, keyed by their names.
+
+        """
         match self._backend():
             case "h5netcdf" | "netCDF4":
                 return group.groups
@@ -1881,12 +1925,32 @@ class _Flattener:
             case "zarr":
                 return dict(group.groups())
 
-    def _backend(self, name=None):
-        if name is None:
+    def _backend(self, dataset=None):
+        """Return the name of the backend that defines a dataset.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset: `str` or `None`
+                If set to ``'output'`` then the name of the output
+                dateset backend will be returned. If `None` (the
+                default) then the name of backend that defines the
+                input dataset is returned.
+
+        :Returns:
+
+            `str`
+                The backend name.
+
+        """
+        if dataset is None:
             return self._input_ds_backend
 
-        return name
+        if dataset == "output":
+            return "netCDF4"
 
+        raise("Bad value of 'dataset'")
 
 class AttributeParsingException(Exception):
     """Exception for unparsable attribute.

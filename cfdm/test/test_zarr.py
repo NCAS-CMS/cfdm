@@ -77,7 +77,6 @@ class read_writeTest(unittest.TestCase):
             self.assertTrue(z.equals(f))
 
             # Check that the Zarr and netCDF4 encodings are equivalent
-            tmpfile1 = "delme.nc"
             cfdm.write(f, tmpfile1, fmt="NETCDF4")
             n = cfdm.read(tmpfile1)[0]
             self.assertTrue(z.equals(n))
@@ -137,6 +136,7 @@ class read_writeTest(unittest.TestCase):
     def test_zarr_read_write_CFA(self):
         """Test CF aggreagtion in Zarr."""
         f = self.f0
+
         cfdm.write(f, tmpdir1, fmt="ZARR3")
         cfdm.write(f, tmpfile1, fmt="NETCDF4")
 
@@ -154,6 +154,180 @@ class read_writeTest(unittest.TestCase):
 
         self.assertTrue(z.equals(f))
         self.assertTrue(z.equals(n))
+
+    def test_zarr_groups(self):
+        """Test for the general handling of Zarr hierarchical groups."""
+        f = cfdm.example_field(1)
+
+        # Add a second grid mapping
+        datum = cfdm.Datum(parameters={"earth_radius": 7000000})
+        conversion = cfdm.CoordinateConversion(
+            parameters={"grid_mapping_name": "latitude_longitude"}
+        )
+
+        grid = cfdm.CoordinateReference(
+            coordinate_conversion=conversion,
+            datum=datum,
+            coordinates=["auxiliarycoordinate0", "auxiliarycoordinate1"],
+        )
+
+        f.set_construct(grid)
+
+        grid0 = f.construct("grid_mapping_name:rotated_latitude_longitude")
+        grid0.del_coordinate("auxiliarycoordinate0")
+        grid0.del_coordinate("auxiliarycoordinate1")
+
+        grouped_dir = tmpdir1
+        grouped_file = tmpfile1
+
+        # Set some groups
+        f.nc_set_variable_groups(["forecast", "model"])
+        f.construct("grid_latitude").bounds.nc_set_variable_groups(["forecast"])
+        for name in (
+            "longitude",  # Auxiliary coordinate
+            "latitude",  # Auxiliary coordinate
+            "long_name=Grid latitude name",  # Auxiliary coordinate
+            "measure:area",  # Cell measure
+            "surface_altitude",  # Domain ancillary
+            "air_temperature standard_error",  # Field ancillary
+            "grid_mapping_name:rotated_latitude_longitude",
+            "time",  # Dimension coordinate
+            "grid_latitude",  # Dimension coordinate
+        ):
+            f.construct(name).nc_set_variable_groups(["forecast"])
+        
+        # Check the groups
+        cfdm.write(f, grouped_file, fmt='NETCDF4')
+        cfdm.write(f, grouped_dir, fmt='ZARR3')
+        
+        n = cfdm.read(grouped_file)[0]
+        z = cfdm.read(grouped_dir)[0]
+        self.assertTrue(z.equals(n))
+        self.assertTrue(z.equals(f))
+
+        # Directly check the groups in the Zarr dataset
+        x = zarr.open(grouped_dir)
+        self.assertEqual(list(x.group_keys()), ['forecast'])
+        self.assertEqual(list(x['forecast'].group_keys()), ['model'])
+
+        cfdm.write(z, tmpdir2, fmt='ZARR3')
+        z1 = cfdm.read(tmpdir2)[0]
+        self.assertTrue(z1.equals(f))        
+        
+    def test_zarr_groups_dimension(self):
+        """Test the dimensions of Zarr hierarchical groups."""
+        f = self.f0.copy()
+
+        grouped_dir = tmpdir1
+        grouped_file = tmpfile1
+
+        # Set some groups
+        f.nc_set_variable_groups(["forecast", "model"])
+        for construct in f.constructs.filter_by_data().values():
+            construct.nc_set_variable_groups(["forecast"])
+
+        for construct in f.coordinates().values():
+            try:
+                construct.bounds.nc_set_variable_groups(["forecast"])
+            except ValueError:
+                pass
+
+        domain_axis = f.domain_axis("latitude")
+        domain_axis.nc_set_dimension_groups(["forecast"])
+
+        # Check the groups
+        cfdm.write(f, grouped_file, fmt='NETCDF4')
+        cfdm.write(f, grouped_dir, fmt='ZARR3')
+
+        n = cfdm.read(grouped_file)[0]
+        z = cfdm.read(grouped_dir)[0]
+        self.assertTrue(z.equals(n))
+        self.assertTrue(z.equals(f))
+
+    def test_zarr_groups_compression(self):
+        """Test the compression of Zarr hierarchical groups."""
+        f = cfdm.example_field(4)
+
+        grouped_dir = 'tmpdir1'
+        grouped_file = 'tmpfile1.nc'
+
+        f.compress("indexed_contiguous", inplace=True)
+        f.data.get_count().nc_set_variable("count")
+        f.data.get_index().nc_set_variable("index")
+
+    
+        # Set some groups. (Write the read the field first to create
+        # the compressions variables on disk.)
+        cfdm.write(f, tmpfile2)
+        f = cfdm.read(tmpfile2)[0]
+        
+        # ------------------------------------------------------------
+        # Move the field construct to the /forecast/model group
+        # ------------------------------------------------------------
+        f.nc_set_variable_groups(["forecast", "model"])
+
+        # ------------------------------------------------------------
+        # Move the count variable to the /forecast group
+        # ------------------------------------------------------------
+        f.data.get_count().nc_set_variable_groups(["forecast"])
+
+        # ------------------------------------------------------------
+        # Move the index variable to the /forecast group
+        # ------------------------------------------------------------
+        f.data.get_index().nc_set_variable_groups(["forecast"])
+
+        # ------------------------------------------------------------
+        # Move the coordinates that span the element dimension to the
+        # /forecast group
+        # ------------------------------------------------------------
+        f.construct("altitude").nc_set_variable_groups(["forecast"])
+
+        # ------------------------------------------------------------
+        # Move the sample dimension to the /forecast group
+        # ------------------------------------------------------------
+        f.data.get_count().nc_set_sample_dimension_groups(["forecast"])
+        print(f)
+        cfdm.write(f, grouped_file, fmt='NETCDF4')
+        cfdm.write(f, grouped_dir, fmt='ZARR3')
+
+        n = cfdm.read(grouped_file)
+        z = cfdm.read(grouped_dir)
+        print(n)
+        print (z)
+
+        n = n[0]
+        z = z[0]
+        self.assertTrue(z.equals(n, verbose=-1))
+        self.assertTrue(z.equals(f))
+
+    def test_zarr_groups_geometry(self):
+        """Test that geometries are considered in the correct Zarr groups."""
+        f = cfdm.example_field(6)
+
+        grouped_dir = tmpdir1
+        grouped_file = tmpfile1.nc
+        
+        cfdm.write(f, tmpfile2)
+        f = cfdm.read(tmpfile2)[0]
+        
+        # Set some groups
+        f.nc_set_variable_groups(["forecast", "model"])
+        f.nc_set_geometry_variable_groups(["forecast"])
+        f.coordinate("longitude").bounds.nc_set_variable_groups(["forecast"])
+        f.nc_set_component_variable_groups("node_count", ["forecast"])
+        f.nc_set_component_variable_groups("part_node_count", ["forecast"])
+        f.nc_set_component_variable("interior_ring", "interior_ring")
+        f.nc_set_component_variable_groups("interior_ring", ["forecast"])
+
+        # Check the groups
+        cfdm.write(f, grouped_file, fmt='NETCDF4')
+        cfdm.write(f, grouped_dir, fmt='ZARR3')
+
+        n = cfdm.read(grouped_file)[0]
+        z = cfdm.read(grouped_dir)[0]
+        self.assertTrue(z.equals(n))
+        self.assertTrue(z.equals(f))
+
 
 
 if __name__ == "__main__":
