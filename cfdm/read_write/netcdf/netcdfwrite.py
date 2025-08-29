@@ -109,11 +109,6 @@ class NetCDFWrite(IOWrite):
                     group_name, overwrite=g["overwrite"]
                 )
 
-            case _:
-                raise ValueError(
-                    f"Bad backend: {self.write_vars['backend']!r}"
-                )  # pragma: no cover
-
     def _create_variable_name(self, parent, default):
         """Create an appropriate name for a dataset variable.
 
@@ -361,8 +356,6 @@ class NetCDFWrite(IOWrite):
                         attributes[attr] = value.tolist()
 
                 x.update_attributes(attributes)
-            case _:
-                raise ValueError(f"Bad backend: {g['backend']!r}")
 
     def _character_array(self, array):
         """Converts a numpy array of strings to character data type.
@@ -553,10 +546,6 @@ class NetCDFWrite(IOWrite):
             case "zarr":
                 # Dimensions are not created in Zarr datasets
                 pass
-            case _:
-                raise ValueError(
-                    f"Bad backend: {self.write_vars['backend']!r}"
-                )  # pragma: no cover
 
     def _dataset_dimensions(self, field, key, construct):
         """Returns the dataset dimension names for the construct.
@@ -1835,7 +1824,8 @@ class NetCDFWrite(IOWrite):
             )
 
         for group_name in name.split("/")[1:-1]:
-            parent_group = self._createGroup(parent_group, group_name)
+            if group_name not in parent_group:
+                parent_group = self._createGroup(parent_group, group_name)
 
         return parent_group
 
@@ -2689,9 +2679,6 @@ class NetCDFWrite(IOWrite):
                 print("zarr_kwargs = ", zarr_kwargs)
                 variable = g["dataset"].create_array(**zarr_kwargs)
                 print("___________")
-
-            case _:
-                raise ValueError(f"Bad backend: {g['backend']!r}")
 
         g["nc"][ncvar] = variable
 
@@ -4699,7 +4686,7 @@ class NetCDFWrite(IOWrite):
         g["group_attributes"] = group_attributes
 
     def _get_group(self, parent, groups):
-        """Get the group of *nc* defined by *groups*.
+        """Get the group of *parent* defined by *groups*.
 
         The group will be created if it doesn't already exist.
 
@@ -4708,11 +4695,11 @@ class NetCDFWrite(IOWrite):
         :Parameters:
 
             parent: `netCDF4.Dateset` or `netCDF4.Group` or `Zarr.Group`
-                The group in which to find or create  new group.
+                The group in which to find or create new group.
 
             groups: sequence of `str`
                 The group defined by the sequence of its subgroups
-                realtive to *parent*, e.g. ``('forecast', 'model')``.
+                relative to *parent*, e.g. ``('forecast', 'model')``.
 
         :Returns:
 
@@ -5038,11 +5025,12 @@ class NetCDFWrite(IOWrite):
                     )
                     raise
 
-                nc = zarr.group(
-                    dataset_name, overwrite=g["overwrite"], zarr_format=3
+                nc = zarr.create_group(
+                    dataset_name,
+                    overwrite=g["overwrite"],
+                    zarr_format=3,
+                    storage_options=g.get("storage_options"),
                 )
-            case _:
-                raise ValueError(f"Bad backend: {g['backend']!r}")
 
         return nc
 

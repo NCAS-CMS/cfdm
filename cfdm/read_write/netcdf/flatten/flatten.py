@@ -1786,16 +1786,15 @@ class _Flattener:
 
     def _dimensions(self, group):
         """Return dimensions that are defined in this group.
-        
+
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            group: 
+            group:
 
         :Returns:
 
-            
         """
         match self._backend():
             case "h5netcdf" | "netCDF4":
@@ -1806,13 +1805,21 @@ class _Flattener:
 
                 #                print(group)
                 if not hasattr(self, "_zarr_dims"):
-                    # Cache the ZarrDimension objects, keyed by
-                    # dimension basename.
+                    # Mapping of dimension names to Dimension objects.
+                    #
+                    # E.g. {'x': <ZarrDimension: x, size(9)>,
+                    #       'y': <ZarrDimension: y, size(10)>,
+                    #       '/forecast/y': <ZarrDimension: y, size(10)>}
                     self._zarr_dims = {}
 
                 if not hasattr(self, "_zarr_var_to_dims"):
-                    # Cache each variable's ZarrDimension objects,
-                    # keyed by the full-path variable name.
+                    # Mapping of variable names to their Dimension objects.
+                    #
+                    # E.g. {'x': [<ZarrDimension: x, size(9)>],
+                    #       'x_bnds': [<ZarrDimension: x, size(9)>,
+                    #                  <ZarrDimension: bounds2, size(2)>],
+                    #       'latitude_longitude': [],
+                    #       'forecast/y': [<ZarrDimension: y, size(10)>]}
                     self._zarr_var_to_dims = {}
 
                 dimensions = {}
@@ -1837,7 +1844,7 @@ class _Flattener:
                 self._zarr_dims.update(dimensions)
 
                 #                print('      dimensions =',dimensions)
-                #                print('      self._zarr_dims =',tuple(self._zarr_dims))
+                # print('      self._zarr_dims =',self._zarr_dims)
 
                 # Map zarr variables to their dimension objects
                 for v in group.array_values():
@@ -1850,7 +1857,9 @@ class _Flattener:
                         self._zarr_dims[name] for name in dimension_names
                     ]
 
-                #                print('      self._zarr_var_to_dims=',tuple(self._zarr_var_to_dims))
+                    print(
+                        "      self._zarr_var_to_dims=", self._zarr_var_to_dims
+                    )
 
                 return dimensions
 

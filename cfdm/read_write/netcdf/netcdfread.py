@@ -8185,15 +8185,7 @@ class NetCDFRead(IORead):
 
         # Deal with strings
         match g["original_dataset_opened_with"]:
-            case "zarr":
-                if array.dtype == np.dtypes.StringDType():
-                    array = array.astype("O", copy=False).astype(
-                        "U", copy=False
-                    )
-                    array = np.ma.masked_values(array, "")
-
-            case _:
-                # h5netcdf | netCDF4
+            case "h5netcdf" | "netCDF4":
                 if array.dtype is None:
                     if g["has_groups"]:
                         group, name = self._netCDF4_group(
@@ -8225,6 +8217,13 @@ class NetCDFRead(IORead):
                         # netCDF4 doesn't auto-mask VLEN variables
                         # array = np.ma.where(array == "", np.ma.masked, array)
                         array = np.ma.masked_values(array, "")
+
+            case "zarr":
+                if array.dtype == np.dtypes.StringDType():
+                    array = array.astype("O", copy=False).astype(
+                        "U", copy=False
+                    )
+                    array = np.ma.masked_values(array, "")
 
         # Set the dask chunking strategy
         chunks = self._dask_chunks(
@@ -11014,8 +11013,8 @@ class NetCDFRead(IORead):
                 A dictionary of the dimensions keyed by their names.
 
         """
-#        if hasattr(self, "_cached_file_dimensions"):
-#            return self._cached_file_dimensions
+        #        if hasattr(self, "_cached_file_dimensions"):
+        #            return self._cached_file_dimensions
 
         match self.read_vars["nc_opened_with"]:
             case "h5netcdf" | "netCDF4":
@@ -11034,7 +11033,7 @@ class NetCDFRead(IORead):
                         }
                     )
 
- #       self._cached_file_dimensions = dimensions
+        #       self._cached_file_dimensions = dimensions
 
         return dimensions
 
