@@ -18,6 +18,7 @@ import logging
 import re
 import warnings
 
+from ....functions import is_log_level_debug
 from .config import (
     flattener_attribute_map,
     flattener_dimension_map,
@@ -28,6 +29,8 @@ from .config import (
     max_name_len,
     ref_not_found_error,
 )
+
+logger = logging.getLogger(__name__)
 
 # Mapping from numpy dtype endian format to that expected by netCDF4
 _dtype_endian_lookup = {
@@ -50,7 +53,7 @@ def netcdf_flatten(
     omit_data=False,
     write_chunksize=134217728,
 ):
-    """Create a flattened version of a grouped netCDF dataset.
+    """Create a flattened version of a grouped dataset.
 
     **CF-netCDF coordinate variables**
 
@@ -84,7 +87,7 @@ def netcdf_flatten(
 
         input_ds:
             The dataset to be flattened, that has the same API as
-            `netCDF4.Dataset` or `h5netcdf.File`.
+            `netCDF4.Dataset`, `h5netcdf.File`, or `zarr.Group`
 
         output_ds: `netCDF4.Dataset`
             A container for the flattened dataset.
@@ -232,7 +235,7 @@ def generate_var_attr_str(d):
 
 
 class _Flattener:
-    """Information and methods needed to flatten a netCDF dataset.
+    """Information and methods needed to flatten a dataset.
 
     Contains the input file, the output file being flattened, and all
     the logic of the flattening process.
@@ -255,7 +258,7 @@ class _Flattener:
 
             input_ds:
                 The dataset to be flattened, that has the same API as
-                `netCDF4.Dataset` or `h5netcdf.File`.
+                `netCDF4.Dataset`, `h5netcdf.File`, or `zarr.Group`.
 
             output_ds: `netCDF4.Dataset`
                 A container for the flattened dataset.
@@ -277,7 +280,7 @@ class _Flattener:
         self._attr_map_value = []
 
         # Mapping of flattened dimension names to their full-path
-        # counterparts.
+        # counterparts
         #
         # E.g. ['bounds2: /bounds2',
         #       'x: /x',
@@ -285,7 +288,7 @@ class _Flattener:
         self._dim_map_value = []
 
         # Mapping of flattened variable names to their full-path
-        # counterparts.
+        # counterparts
         #
         # E.g. ['x_bnds: /x_bnds',
         #       'x: /x',
@@ -296,7 +299,7 @@ class _Flattener:
         self._var_map_value = []
 
         # Mapping of full-path dimension names to their flattened
-        # counterparts.
+        # counterparts
         #
         # E.g. {'/bounds2': 'bounds2',
         #       '/x': 'x',
@@ -304,7 +307,7 @@ class _Flattener:
         self._dim_map = {}
 
         # Mapping of full-path variable names to their flattened
-        # counterparts.
+        # counterparts
         #
         # E.g. {'/x_bnds': 'x_bnds',
         #       '/x': 'x',
@@ -313,6 +316,24 @@ class _Flattener:
         #       '/latitude_longitude': 'latitude_longitude',
         #       '/forecast/y': 'forecast__y'}
         self._var_map = {}
+
+        # Mapping of full-path group names to the dimensions defined
+        # therein
+        #
+        # E.g. {'/': {'feature': <ZarrDimension: feature, size(58)>,
+        #             'station': <ZarrDimension: station, size(3)>},
+        #       '/forecast': {'element': <ZarrDimension: element, size(118)>},
+        #       '/forecast/model': {}}
+        self._group_to_dims = {}
+
+        # Mapping of variable names to their Dimension objects.
+        #
+        # E.g. {'x': [<ZarrDimension: x, size(9)>],
+        #       'x_bnds': [<ZarrDimension: x, size(9)>,
+        #                  <ZarrDimension: bounds2, size(2)>],
+        #       'latitude_longitude': [],
+        #       'forecast/y': [<ZarrDimension: y, size(10)>]}
+        self._var_to_dims = {}
 
         self._input_ds = input_ds
         self._output_ds = output_ds
@@ -344,6 +365,8 @@ class _Flattener:
                 "be different, and output should be of the 'NETCDF4' format."
             )
 
+        self._debug = is_log_level_debug(logger)
+
     def attrs(self, variable, dataset=None):
         """Return the variable attributes.
 
@@ -352,8 +375,7 @@ class _Flattener:
         :Parameters:
 
             variable:
-                The variable, that has the same API as
-                `netCDF4.Variable` or `h5netcdf.Variable`.
+                The variable object.
 
         :Returns:
 
@@ -380,8 +402,7 @@ class _Flattener:
         :Parameters:
 
             variable:
-                The variable, that has the same API as
-                `netCDF4.Variable` or `h5netcdf.Variable`.
+                The variable object.
 
         :Returns:
 
@@ -417,8 +438,7 @@ class _Flattener:
         :Parameters:
 
             variable:
-                The variable, that has the same API as
-                `netCDF4.Variable` or `h5netcdf.Variable`.
+                The variable object.
 
         :Returns:
 
@@ -447,8 +467,7 @@ class _Flattener:
         :Parameters:
 
             variable:
-                The variable, that has the same API as
-                `netCDF4.Variable` or `h5netcdf.Variable`.
+                The variable object.
 
         :Returns:
 
@@ -480,8 +499,7 @@ class _Flattener:
         :Parameters:
 
             variable:
-                The variable, that has the same API as
-                `netCDF4.Variable` or `h5netcdf.Variable`.
+                The variable object.
 
         :Returns:
 
@@ -511,8 +529,7 @@ class _Flattener:
         :Parameters:
 
             dataset:
-                The dataset, that has the same API as
-                `netCDF4.Dataset` or `h5netcdf.File`.
+                The dataset.
 
         :Returns:
 
@@ -571,7 +588,7 @@ class _Flattener:
                 return [dims[name] for name in variable.dimensions]
 
             case "zarr":
-                return tuple(self._zarr_var_to_dims[variable.path])
+                return tuple(self._var_to_dims[variable.path])
 
     def getncattr(self, x, attr):
         """Retrieve a netCDF attribute.
@@ -679,10 +696,7 @@ class _Flattener:
         """
         match self._backend():
             case "h5netcdf" | "netCDF4":
-#                try:
                 return group.parent
-#                except AttributeError:
-#                    return
 
             case "zarr":
                 name = group.name
@@ -697,6 +711,11 @@ class _Flattener:
         """Return a simulated unix directory path to a group.
 
         .. versionadded:: (cfdm) 1.11.2.0
+
+        :Parameters:
+
+            group:
+                The group object.
 
         :Returns:
 
@@ -726,7 +745,10 @@ class _Flattener:
         input_ds = self._input_ds
         output_ds = self._output_ds
 
-        logging.info(f"Flattening the groups of {self.filepath(input_ds)}")
+        if self._debug:
+            logger.debug(
+                f"Flattening the groups of {self.filepath(input_ds)}"
+            )  # pragma: no cover
 
         # Flatten product
         self.process_group(input_ds)
@@ -737,10 +759,12 @@ class _Flattener:
         output_ds.setncattr(flattener_variable_map, self._var_map_value)
 
         # Browse flattened variables to rename references:
-        logging.info(
-            "    Browsing flattened variables to rename references "
-            "in attributes"
-        )
+        if self._debug:
+            logger.debug(
+                "    Browsing flattened variables to rename references "
+                "in attributes"
+            )  # pragma: no cover
+
         for var in output_ds.variables.values():
             self.adapt_references(var)
 
@@ -751,15 +775,18 @@ class _Flattener:
 
         :Parameters:
 
-            input_group: `str`
-                The group to flatten.
+            input_group:
+                The group object to flatten.
 
         :Returns:
 
             `None`
 
         """
-        logging.info(f"    Browsing group {self.path(input_group)}")
+        if self._debug:
+            logger.debug(
+                f"    Browsing group {self.path(input_group)}"
+            )  # pragma: no cover
 
         for attr_name in self.ncattrs(input_group):
             self.flatten_attribute(input_group, attr_name)
@@ -788,8 +815,8 @@ class _Flattener:
 
         :Parameters:
 
-            input_group: `str`
-                The group containing the attribute to flatten.
+            input_group:
+                The group object containing the attribute to flatten.
 
             attr_name: `str`
                 The name of the attribute.
@@ -799,13 +826,14 @@ class _Flattener:
             `None`
 
         """
-        logging.info(
-            f"        Copying attribute {attr_name} from "
-            f"group {self.path(input_group)} to root"
-        )
-
         # Create new name
         new_attr_name = self.generate_flattened_name(input_group, attr_name)
+
+        if self._debug:
+            logger.debug(
+                f"        Creating global attribute {new_attr_name!r} from "
+                f"group {self.path(input_group)}"
+            )  # pragma: no cover
 
         # Write attribute
         self._output_ds.setncattr(
@@ -825,23 +853,28 @@ class _Flattener:
         :Parameters:
 
             dim:
-                The dimension to flatten, that has the same API as
-                `netCDF4.Dimension` or `h5netcdf.Dimension`.
+                The dimension object to flatten.
 
         :Returns:
 
             `None`
 
         """
-        logging.info(
-            f"    Copying dimension {self.name(dim)} from "
-            f"group {self.path(self.group(dim))} to root"
-        )
+        # logger.debug(
+        #    f"    Creating dimension {self.name(dim)!r} from "
+        #    f"group {self.path(self.group(dim))} to root"
+        # )
 
         # Create new name
-        new_name = self.generate_flattened_name(
-            self.group(dim), self.name(dim)
-        )
+        group = self.group(dim)
+        name = self.name(dim)
+        new_name = self.generate_flattened_name(group, name)
+
+        if self._debug:
+            logger.debug(
+                f"        Creating dimension {new_name!r} from "
+                f"group {self.path(group)}"
+            )  # pragma: no cover
 
         # Write dimension
         self._output_ds.createDimension(
@@ -849,15 +882,11 @@ class _Flattener:
         )
 
         # Store new name in dict for resolving references later
-        self._dim_map[self.pathname(self.group(dim), self.name(dim))] = (
-            new_name
-        )
+        self._dim_map[self.pathname(group, name)] = new_name
 
         # Add to name mapping attribute
         self._dim_map_value.append(
-            self.generate_mapping_str(
-                self.group(dim), self.name(dim), new_name
-            )
+            self.generate_mapping_str(group, name, new_name)
         )
 
     def flatten_variable(self, var):
@@ -868,18 +897,17 @@ class _Flattener:
         :Parameters:
 
             var:
-                The variable, that has the same API as
-                `netCDF4.Variable` or `h5netcdf.Variable`.
+                The variable object.
 
         :Returns:
 
             `None`
 
         """
-        logging.info(
-            f"        Copying variable {self.name(var)} from "
-            f"group {self.path(self.group(var))} to root"
-        )
+        # logger.debug(
+        #    f"    Copying variable {self.name(var)!r} from "
+        #    f"group {self.path(self.group(var))} to root"
+        # )
 
         # Create new name
         new_name = self.generate_flattened_name(
@@ -897,8 +925,11 @@ class _Flattener:
         )
 
         # Write variable
-        fullname = self.pathname(self.group(var), self.name(var))
-        logging.info(f"        Creating variable {new_name} from {fullname}")
+        if self._debug:
+            logger.debug(
+                f"        Creating variable {new_name!r} from "
+                f"{self.pathname(self.group(var), self.name(var))!r}"
+            )  # pragma: no cover
 
         attributes = self.attrs(var)
 
@@ -1009,13 +1040,11 @@ class _Flattener:
         :Parameters:
 
             old_var:
-                The variable where the data should be copied from,
-                that has the same API as `netCDF4.Variable` or
-                `h5netcdf.Variable`.
+                The variable object where the data should be copied
+                from.
 
             new_var:
-                The new variable in which to copy the data, that has the
-                same API as `netCDF4.Variable` or `h5netcdf.Variable`.
+                The new variable object in which to copy the data.
 
         :Returns:
 
@@ -1028,10 +1057,12 @@ class _Flattener:
             (self.write_chunksize // (old_var.dtype.itemsize * ndim)),
         ) * ndim
 
-        logging.info(
-            f"        Copying {self.name(old_var)!r} data in chunks of "
-            f"{chunk_shape}"
-        )
+        if self._debug:
+            logger.debug(
+                f"        Copying {self.name(old_var)!r} data in chunks of "
+                f"{chunk_shape}"
+            )  # pragma: no cover
+
         # Initial position vector
         pos = [0] * ndim
 
@@ -1066,9 +1097,7 @@ class _Flattener:
                 The reference to resolve.
 
             orig_var:
-                The original variable containing the reference, that
-                has the same API as `netCDF4.Variable` or
-                `h5netcdf.Variable`.
+                The original variable object containing the reference.
 
             rules: `FlatteningRules`
                 The flattening rules that apply to the reference.
@@ -1079,7 +1108,6 @@ class _Flattener:
                 The absolute path to the reference.
 
         """
-#        print ('\nA', orig_ref, rules.name)
         ref = orig_ref
         absolute_ref = None
         ref_type = ""
@@ -1107,7 +1135,7 @@ class _Flattener:
                 ref_type = "dimension"
             else:
                 ref_type = "variable"
-                
+
             absolute_ref = self.search_by_relative_path(
                 orig_ref, self.group(orig_var), resolve_dim_or_var
             )
@@ -1165,9 +1193,7 @@ class _Flattener:
                 and vice versa.
 
             orig_var:
-                The original variable containing the reference, that
-                has the same API as `netCDF4.Variable` or
-                `h5netcdf.Variable`.
+                The original variable object containing the reference.
 
             rules: `FlatteningRules`
                 The flattening rules that apply to the reference.
@@ -1239,9 +1265,7 @@ class _Flattener:
                 The original reference.
 
             orig_var:
-                The original variable containing the reference, that
-                has the same API as `netCDF4.Variable` or
-                `h5netcdf.Variable`.
+                The original variable object containing the reference.
 
             rules: `FlatteningRules`
                 The flattening rules that apply to the reference.
@@ -1262,10 +1286,12 @@ class _Flattener:
         """
         # If not found and accept standard name, assume standard name
         if absolute_ref is None and rules.accept_standard_names:
-            logging.info(
-                f"            Reference to {orig_ref!r} not "
-                "resolved. Assumed to be a standard name."
-            )
+            if self._debug:
+                logger.debug(
+                    f"            Reference to {orig_ref!r} not "
+                    "resolved. Assumed to be a standard name."
+                )  # pragma: no cover
+
             ref_type = "standard_name"
             absolute_ref = orig_ref
         elif absolute_ref is None:
@@ -1275,10 +1301,11 @@ class _Flattener:
             )
         else:
             # Found
-            logging.info(
-                f"            {method} reference to {ref_type} "
-                f"{orig_ref!r} resolved as {absolute_ref!r}"
-            )
+            if self._debug:
+                logger.debug(
+                    f"            {method} reference to {ref_type} "
+                    f"{orig_ref!r} resolved as {absolute_ref!r}"
+                )  # pragma: no cover
 
         # If variables refs are limited to coordinate variable,
         # additional check
@@ -1293,10 +1320,12 @@ class _Flattener:
                 or self._input_ds[absolute_ref].ndim > 0
             )
         ):
-            logging.info(
-                f"            Reference to {orig_ref!r} is not a "
-                "scalar coordinate variable. Assumed to be a standard name."
-            )
+            if self._debug:
+                logger.debug(
+                    f"            Reference to {orig_ref!r} is not a scalar "
+                    "coordinate variable. Assumed to be a standard name."
+                )  # pragma: no cover
+
             absolute_ref = orig_ref
 
         # Return result
@@ -1315,8 +1344,8 @@ class _Flattener:
             ref: `str`
                 The reference to resolve.
 
-            current_group: `str`
-                The current group of the reference.
+            current_group:
+                The current group object of the reference.
 
             search_dim: `bool`
                 If True then search for a dimension, otherwise a
@@ -1330,7 +1359,7 @@ class _Flattener:
         """
         # Go up parent groups
         while ref.startswith("../"):
-            parent = self.parent(current_group) 
+            parent = self.parent(current_group)
             if parent is None:
                 return
 
@@ -1341,18 +1370,15 @@ class _Flattener:
         ref_split = ref.split(group_separator)
         for g in ref_split[:-1]:
             try:
-#                current_group = current_group.groups[g]
                 current_group = self._child_groups(current_group)[g]
             except KeyError:
                 return
 
         # Get variable or dimension
         if search_dim:
-#            elt = current_group.dimensions[ref_split[-1]]
             elt = tuple(self._dimensions(current_group))[ref_split[-1]]
 
         else:
-            #  elt = current_group.variables[ref_split[-1]]
             elt = tuple(self._variables(current_group))[ref_split[-1]]
 
         # Get absolute reference
@@ -1383,7 +1409,7 @@ class _Flattener:
                 The reference to resolve.
 
             current_group:
-                The current group where searching.
+                The current group object where searching.
 
             search_dim: `bool`
                 If True then search for a dimension, otherwise a
@@ -1410,13 +1436,14 @@ class _Flattener:
             dims_or_vars = self._variables(current_group)
 
         # Found in current group
-        if ref in dims_or_vars: #.keys():
+        if ref in dims_or_vars:  # .keys():
             return dims_or_vars[ref]
 
         local_apex_reached = (
             # local_apex_reached or ref in current_group.dimensions.keys()
             local_apex_reached
-            or ref in dims_or_vars # TODOZARR self._dimensions(current_group).keys()
+            or ref
+            in dims_or_vars  # TODOZARR self._dimensions(current_group).keys()
         )
 
         # Check if have to continue looking in parent group
@@ -1444,7 +1471,7 @@ class _Flattener:
             # Coordinate variable and local apex reached, so search
             # down in siblings.
             found_elt = None
-#            for child_group in current_group.groups.values():
+            #            for child_group in current_group.groups.values():
             for child_group in self._child_groups(current_group).values():
                 found_elt = self.search_by_proximity(
                     ref,
@@ -1472,14 +1499,11 @@ class _Flattener:
         :Parameters:
 
             var:
-                The flattened variable in which references should be
-                renamed with absolute references, that has the same
-                API as `netCDF4.Variable` or `h5netcdf.Variable`.
+                The flattened variable object in which references
+                should be renamed with absolute references.
 
             old_var:
-                The original variable (in group structure), that has
-                the same API as `netCDF4.Variable` or
-                `h5netcdf.Variable`.
+                The original variable object (in group structure).
 
         :Returns:
 
@@ -1525,9 +1549,8 @@ class _Flattener:
         :Parameters:
 
             var:
-                The flattened variable in which references should be
-                renamed with new names, that has the same API as
-                `netCDF4.Variable` or `h5netcdf.Variable`.
+                The flattened variable object in which references
+                should be renamed with new names.
 
         :Returns:
 
@@ -1558,10 +1581,12 @@ class _Flattener:
             new_attr_value = generate_var_attr_str(adapted_parsed_attr)
             var.setncattr(name, new_attr_value)
 
-            logging.info(
-                f"        Value of {self.name(var, 'output')}.{name} "
-                f"changed from {value!r} to {new_attr_value!r}"
-            )
+            if self._debug:
+                logger.debug(
+                    "        Value of attribute "
+                    f"{self.name(var, 'output')}.{name} "
+                    f"changed from {value!r} to {new_attr_value!r}"
+                )  # pragma: no cover
 
     def adapt_name(self, resolved_ref, rules):
         """Apapt the name.
@@ -1570,6 +1595,8 @@ class _Flattener:
         exception or continue with a warning.
 
         .. versionadded:: (cfdm) 1.11.2.0
+
+        :Parameters:
 
             resolved_ref: `str`
                 The resolved reference.
@@ -1622,7 +1649,7 @@ class _Flattener:
             # If not found, raise exception
             return self.handle_reference_error(rules.name, resolved_ref)
 
-    def pathname(self, group, name):
+    def pathname(self, group, name=None):
         """Compose full path name to an element in a group structure.
 
         .. versionadded:: (cfdm) 1.11.2.0
@@ -1630,7 +1657,7 @@ class _Flattener:
         :Parameters:
 
             current_group:
-                The group containing the dimension or variable.
+                The group object containing the dimension or variable.
 
             name: `str`
                 The name of the dimension or variable.
@@ -1643,7 +1670,7 @@ class _Flattener:
         """
         if self.parent(group) is None:
             return group_separator + name
-
+            
         return group_separator.join((self.path(group), name))
 
     def generate_mapping_str(self, input_group, name, new_name):
@@ -1657,8 +1684,8 @@ class _Flattener:
         :Parameters:
 
             input_group:
-                The group containing the non-flattened dimension or
-                variable.
+                The group object containing the non-flattened
+                dimension or variable.
 
             name: `str`
                 The name of the non-flattened dimension or variable.
@@ -1716,7 +1743,7 @@ class _Flattener:
         :Parameters:
 
             input_group:
-                The group containing the dimension or variable.
+                The group object containing the dimension or variable.
 
             orig_name: `str`
                 The original name of the dimension or variable.
@@ -1802,7 +1829,7 @@ class _Flattener:
         :Parameters:
 
             group:
-                The group to inspect.
+                The group object.
 
         :Returns:
 
@@ -1815,27 +1842,25 @@ class _Flattener:
                 return group.dimensions
 
             case "zarr":
+                group_name = self.path(group)
+                #                print('Group:', repr( group_name ))
+                dimensions = self._group_to_dims.get(group_name)
+                if dimensions is not None:
+                    # We've already found this group's dimensions
+                    return dimensions
+
                 from ..zarr import ZarrDimension
-                print('Group:', repr(self.name(group)))
+
                 if not hasattr(self, "_zarr_dims"):
-                    # Mapping of dimension names to Dimension objects.
+                    # Mapping of dimension names *as they appear in
+                    # the Zarr dataset* to Dimension objects.
                     #
                     # E.g. {'x': <ZarrDimension: x, size(9)>,
                     #       'y': <ZarrDimension: y, size(10)>,
                     #       'bounds2': <ZarrDimension: bounds2, size(2)>,
                     #       '/forecast/y': <ZarrDimension: y, size(10)>}
                     self._zarr_dims = {}
-
-                if not hasattr(self, "_zarr_var_to_dims"):
-                    # Mapping of variable names to their Dimension objects.
-                    #
-                    # E.g. {'x': [<ZarrDimension: x, size(9)>],
-                    #       'x_bnds': [<ZarrDimension: x, size(9)>,
-                    #                  <ZarrDimension: bounds2, size(2)>],
-                    #       'latitude_longitude': [],
-                    #       'forecast/y': [<ZarrDimension: y, size(10)>]}
-                    self._zarr_var_to_dims = {}
-
+      
                 # Loop round this group's variables, finding the
                 # dimension_names for each one.
                 dimensions = {}
@@ -1849,19 +1874,62 @@ class _Flattener:
                         if name in self._zarr_dims:
                             continue
 
-                        basename = name.split(group_separator)[-1]
-                        if basename in dimensions:
+                        name_split = name.split(group_separator)
+                        basename = name_split[-1]
+
+                        #if group_separator in name:                            
+                        #    if name.startswith(group_separator):
+                        #        g = group_separator.join(name_split[:-1])
+                        #        if g == group_name:
+                        #            # Dimension is defined in the
+                        #            # current group
+                        #            name = basename
+                        #        else:                                    
+                        #            for i in range(2, ???):
+                        #                g = group_separator.join(name_split[:-i])
+                        #                if g in self._group_to_dims and basename in self._group_to_dims.setdefault(, {}):
+                        #                    
+                        #                    
+                        #
+                        #    
+                        #    if dim_group is this group:
+                        #        name = basename
+                        #    elif dim exissts in dim_group:
+                        #        continue
+                        #
+                        #if name == basename and name in dimensions:
+                        #    # Already seen this dim in this group
+                        #    continue
+
+                        if name in dimensions:
+                            # Already seen this dim in this group
                             continue
+
+#                        basename = name.split(group_separator)[-1]
+
+#                        # Check for basename in parnet groups, and if
+#                        # it's not there then create the imension in
+#                        # this group
+#                        if name.startswith(group_separator):
+#                            found = False
+#                            for g in name.split(group_separator)[1:-1:-1]:
+#                                if basename in self._group_to_dims.get(g, ()):
+#                                    found = True
+#                                
+#                            if found :
+#                                continue
+#                        if basename in dimensions:
+#                            continue
 
                         zd = ZarrDimension(basename, size, group)
                         dimensions[basename] = zd
-                        self._zarr_dims[name] = zd # TODOZARR RESOLVE NAME?
+                        self._zarr_dims[name] = zd
 
                 self._zarr_dims.update(dimensions)
 
-                print('      self._zarr_dims =',self._zarr_dims)
-
-                # Map this group's variables to their dimension
+                # print('        self._zarr_dims =',list(self._zarr_dims))
+              
+                # Map this group's variable names to their dimension
                 # objects
                 for v in group.array_values():
                     dimension_names = v.metadata.dimension_names
@@ -1869,13 +1937,16 @@ class _Flattener:
                         # Scalar variable
                         dimension_names = ()
 
-                    self._zarr_var_to_dims[v.path] = [
+                    self._var_to_dims[v.path] = [
                         self._zarr_dims[name] for name in dimension_names
                     ]
 
-                print("      self._zarr_var_to_dims=", self._zarr_var_to_dims)
-
-                print('current group dimensions', dimensions)
+                print(group_name)
+                # print("      self._var_to_dims=", self._var_to_dims)
+                # print('        current group dimensions', list(dimensions))
+                self._group_to_dims.setdefault(group_name, {})
+                self._group_to_dims[group_name].update(dimensions)
+                print('        self._group_to_dims =',self._group_to_dims)
                 return dimensions
 
     def _variables(self, group):
@@ -1886,7 +1957,7 @@ class _Flattener:
         :Parameters:
 
             group:
-                The group to inspect.
+                The group object.
 
         :Returns:
 
@@ -1909,7 +1980,7 @@ class _Flattener:
         :Parameters:
 
             group:
-                The group to inspect.
+                The group object.
 
         :Returns:
 
@@ -1949,7 +2020,8 @@ class _Flattener:
         if dataset == "output":
             return "netCDF4"
 
-        raise("Bad value of 'dataset'")
+        raise ("Bad value of 'dataset'")
+
 
 class AttributeParsingException(Exception):
     """Exception for unparsable attribute.
