@@ -2001,16 +2001,6 @@ class _Flattener:
                         if g == "":
                             g = group_separator
 
-                    elif name.endswith(group_separator):
-                        # --------------------------------------------
-                        # E.g. g = "/group1/group2/"
-                        # --------------------------------------------
-                        raise DimensionParsingException(
-                            "Dimension names can not end with the group "
-                            f"separator {group_separator!r}: {name!r} "
-                            f"(group {group_name!r}, variable {v.name!r})"
-                        )
-
                     elif name.startswith(f"..{group_separator}"):
                         # --------------------------------------------
                         # Relative path dimension name with upward
@@ -2035,76 +2025,33 @@ class _Flattener:
 
                         g = group_separator.join((self.path(current_group), g))
 
-                    elif ".." in name_split[:-1]:
+                    elif name.endswith(group_separator):
+                        # --------------------------------------------
+                        # E.g. g = "/group1/group2/"
+                        # --------------------------------------------
+                        raise DimensionParsingException(
+                            "Dimension names can not end with the group "
+                            f"separator {group_separator!r}: {name!r} "
+                            f"(group {group_name!r}, variable {v.name!r})"
+                        )
+
+                    elif f"..{group_separator}" in name:
                         # --------------------------------------------
                         # Relative path dimension name with upward
                         # path traversals not at the start of the name
                         #
                         # E.g. "/group1/../group2/dim"
                         # E.g. "../group1/../group2/dim"
-                        # E.g. "../group1/../group2/../dim"
                         # --------------------------------------------
-                        current_group = group
-                        while ".." in name_split[:-1]:
-                            index = name_split.index("..")
-                            parent_group = self.parent(current_group)
-                            name_split[index] = 
-                            current_group = parent_group
-                            g = g[3:]
-                            if parent_group is None:
-                                # We've gone beyond the root group!
-                                raise DimensionParsingException(
-                                    "Unresolvable upward path traversals "
-                                    f"in dimension name: {name!r} "
-                                    f"(group {group_name!r}, "
-                                    f"variable {v.name!r})"
-                                )
-
-                        g = group_separator.join((self.path(current_group), g))
-
-
-#                    elif name.startswith(f"..{group_separator}"):
-#                        # --------------------------------------------
-#                        # Relative path dimension name with upward
-#                        # path traversals at the start of the name
-#                        #
-#                        # E.g. "../group1/group2/dim"
-#                        # E.g. "../../group1/group2/dim"
-#                        # --------------------------------------------
-#                        current_group = group
-#                        while g.startswith(f"..{group_separator}"):
-#                            parent_group = self.parent(current_group)
-#                            current_group = parent_group
-#                            g = g[3:]
-#                            if parent_group is None:
-#                                # We've gone beyond the root group!
-#                                raise DimensionParsingException(
-#                                    "Unresolvable upward path traversals "
-#                                    f"in dimension name: {name!r} "
-#                                    f"(group {group_name!r}, "
-#                                    f"variable {v.name!r})"
-#                                )
-#
-#                        g = group_separator.join((self.path(current_group), g))
-#
-#                    elif f"..{group_separator}" in name:
-#                        # --------------------------------------------
-#                        # Relative path dimension name with upward
-#                        # path traversals not at the start of the name
-#                        #
-#                        # E.g. "/group1/../group2/dim"
-#                        # E.g. "../group1/../group2/dim"
-#                        # E.g. "../group1/../group2/../dim"
-#                        # --------------------------------------------
-#                        raise DimensionParsingException(
-#                            "In Zarr datasets, can't yet deal with a "
-#                            "relative path dimension name with upward path "
-#                            f"traversals in middle of the name: {name!r} "
-#                            f"(group {group_name!r}, variable {v.name!r}). "
-#                            "Please raise an issue at "
-#                            "https://github.com/NCAS-CMS/cfdm/issues "
-#                            "if you really do need this feature."
-#                        )
+                        raise DimensionParsingException(
+                            "In Zarr datasets, can't yet deal with a "
+                            "relative path dimension name with upward path "
+                            f"traversals in middle of the name: {name!r} "
+                            f"(group {group_name!r}, variable {v.name!r}). "
+                            "Please raise an issue at "
+                            "https://github.com/NCAS-CMS/cfdm/issues "
+                            "if you really do need this feature."
+                        )
 
                     else:
                         # --------------------------------------------
