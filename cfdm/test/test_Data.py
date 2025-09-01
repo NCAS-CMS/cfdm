@@ -2864,7 +2864,7 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.nc_dataset_shards())
 
         self.assertIsNone(d.nc_set_dataset_shards(None))
-        self.assertIsNone(d.nc_dataset_shards(None))
+        self.assertIsNone(d.nc_dataset_shards())
 
         self.assertIsNone(d.nc_set_dataset_shards(100))
         self.assertEqual(d.nc_dataset_shards(), 100)

@@ -1262,6 +1262,27 @@ class CFDMImplementation(Implementation):
             "Use 'nc_set_dataset_chunksizes' instead."
         )
 
+    def nc_set_dataset_shards(self, data, shards):
+        """Set the dataset sharding strategy for the data.
+
+        ..versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `Data`
+
+            shards: `None` or `int` or sewunce of `int`
+                Set the sharding strategy when writing to a Zarr
+                dataset.
+
+        :Returns:
+
+            `None`
+
+        """
+        print(shards)
+        return data.nc_set_dataset_shards(shards)
+
     def parameters(self, parent):
         """Return all parameters from a component.
 

@@ -116,8 +116,9 @@ class read_writeTest(unittest.TestCase):
 
         # Make shards comprising 4 chunks
         cfdm.write(f, tmpdir1, fmt="ZARR3", dataset_shards=4)
-        z = cfdm.read(tmpdir1)[0]
+        z = cfdm.read(tmpdir1, store_dataset_shards=False)[0]
         self.assertTrue(z.equals(f))
+        self.assertIsNone(z.data.nc_dataset_shards())
 
         z = zarr.open(tmpdir1)
         self.assertEqual(z["q"].chunks, (2, 3))
@@ -128,6 +129,7 @@ class read_writeTest(unittest.TestCase):
             cfdm.write(f, tmpdir1, fmt="ZARR3")
             z = cfdm.read(tmpdir1)[0]
             self.assertTrue(z.equals(f))
+            self.assertEqual(z.data.nc_dataset_shards(), (2, 2))
 
             z = zarr.open(tmpdir1)
             self.assertEqual(z["q"].chunks, (2, 3))

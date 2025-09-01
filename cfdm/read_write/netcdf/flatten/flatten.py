@@ -41,6 +41,8 @@ _dtype_endian_lookup = {
     None: "native",
 }
 
+# TODOZARR = _ARRAY_DIMENSIONS, parse and remove !
+
 # Set of netCDF attributes that contain references to dimensions or
 # variables
 referencing_attributes = set(flattening_rules)

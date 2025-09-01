@@ -472,17 +472,18 @@ class NetCDFRead(IORead):
         for flat_dataset in g["flat_datasets"]:
             flat_dataset.close()
 
-        if g["original_dataset_opened_with"] == "zarr":
-            # zarr: No need to close
-            return
-
-        # netCDF4, h5netcdf
         for nc in g["datasets"]:
-            nc.close()
+            try:
+                nc.close()
+            except AttributeError:
+                pass
 
         # Close the original grouped file (v1.8.8.1)
         if "nc_grouped" in g:
-            g["nc_grouped"].close()
+            try:
+                g["nc_grouped"].close()
+            except AttributeError:
+                pass
 
         # Close s3fs.File objects
         for f in g["s3fs_File_objects"]:
@@ -933,6 +934,7 @@ class NetCDFRead(IORead):
         cache=True,
         dask_chunks="storage-aligned",
         store_dataset_chunks=True,
+        store_dataset_shards=True,
         cfa=None,
         cfa_write=None,
         to_memory=None,
@@ -1018,6 +1020,12 @@ class NetCDFRead(IORead):
                  for details.
 
                 .. versionadded:: (cfdm) 1.12.0.0
+
+            store_dataset_shards: `bool`, optional
+                 Store the dataset sharding strategy. See `cfdm.read`
+                 for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             cfa: `dict`, optional
                 Configure the reading of CF-netCDF aggregation
@@ -1433,9 +1441,11 @@ class NetCDFRead(IORead):
             # Dask chunking of aggregated data for selected constructs
             "cfa_write": cfa_write,
             # --------------------------------------------------------
-            # Whether or not to store the dataset chunking strategy
+            # Whether or not to store the dataset chunking and
+            # sharding strategy
             # --------------------------------------------------------
             "store_dataset_chunks": bool(store_dataset_chunks),
+            "store_dataset_shards": bool(store_dataset_shards),
             # --------------------------------------------------------
             # Constructs to read into memory
             # --------------------------------------------------------
@@ -8244,15 +8254,26 @@ class NetCDFRead(IORead):
             **kwargs,
         )
 
-        # Store the dataset chunking
-        if self.read_vars["store_dataset_chunks"] and ncvar is not None:
-            # Only store the dataset chunking if 'data' has the same
-            # shape as its netCDF variable. This may not be the case
-            # for variables compressed by convention (e.g. some DSG
-            # variables).
-            chunks, shape = self._get_dataset_chunks(ncvar)
-            if shape == data.shape:
-                self.implementation.nc_set_dataset_chunksizes(data, chunks)
+        if ncvar is not None:
+            # Store the dataset chunking
+            if self.read_vars["store_dataset_chunks"]:
+                # Only store the dataset chunking if 'data' has the
+                # same shape as its netCDF variable. This may not be
+                # the case for variables compressed by convention
+                # (e.g. some DSG variables).
+                chunks, shape = self._get_dataset_chunks(ncvar)
+                if shape == data.shape:
+                    self.implementation.nc_set_dataset_chunksizes(data, chunks)
+
+            # Store the dataset sharding
+            if self.read_vars["store_dataset_shards"]:
+                # Only store the dataset sharding if 'data' has the
+                # same shape as its netCDF variable. This may not be
+                # the case for variables compressed by convention
+                # (e.g. some DSG variables).
+                shards, shape = self._get_dataset_shards(ncvar)
+                if shards is not None and shape == data.shape:
+                    self.implementation.nc_set_dataset_shards(data, shards)
 
         return data
 
@@ -10892,7 +10913,7 @@ class NetCDFRead(IORead):
                 return bool(nc.groups)
 
             case "zarr":
-                return bool(tuple(nc.groups()))
+                return bool(tuple(nc.group_keys()))
 
     #        if self.read_vars["dataset_opened_with"] == "zarr":
     #            return bool(tuple(nc.groups()))
@@ -11215,9 +11236,10 @@ class NetCDFRead(IORead):
 
             case "zarr":
                 attrs = dict(var.attrs)
-                if self.read_vars["original_dataset_opened_with"] == "zarr":
-                    # zarr: Remove the _ARRAY_DIMENSIONS attribute
-                    attrs.pop("_ARRAY_DIMENSIONS", None)  # TODOZARR
+
+                # Remove the _ARRAY_DIMENSIONS from Zarr v2 attributes
+                if var.info._zarr_format == 2:
+                    attrs.pop("_ARRAY_DIMENSIONS", None)
 
                 return attrs
 
@@ -12132,3 +12154,48 @@ class NetCDFRead(IORead):
 
         # Set the Quantization metadata
         self.implementation.set_quantization(parent, q, copy=False)
+
+    def _get_dataset_shards(self, ncvar):
+        """Return a netCDF variable's dataset storage shards.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+           ncvar: `str`
+                The netCDF variable name.
+
+        :Returns:
+
+            2-tuple:
+                The variable's sharding strategy and its shape. If the
+                dataset is not Zarr, then (`None`, `None`) is
+                returned.
+
+
+        **Examples**
+
+        >>> n._get_dataset_shards('tas')
+        [1, 2, 3], (12, 324, 432)
+        >>> n._get_dataset_chunks('pr')
+        None, (12, 324, 432)
+
+        """
+        g = self.read_vars
+        if g["original_dataset_opened_with"] != "zarr":
+            # Only Zarr datasets have shards
+            return None, None
+
+        if g["has_groups"]:
+            nc = g["nc_grouped"]
+        else:
+            nc = g["nc"]
+
+        var = nc[ncvar]
+        shards = var.shards
+        if shards is not None:
+            # Re-cast 'shards' as the number of chunks (as opposed to
+            # data elemnents) along each of its dimensions
+            shards = [s // c for s, c in zip(shards, var.chunks)]
+
+        return shards, var.shape

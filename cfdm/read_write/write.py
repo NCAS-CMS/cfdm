@@ -612,8 +612,41 @@ class write(ReadWrite):
 
             .. versionadded:: (cfdm) 1.12.0.0
 
-        dataset_shards: `str` or `int` or `float`, optional
-            TODOZARR
+        dataset_shards: `None` or `int`, optional
+            When writing to a Zarr dataset, sharding provides a
+            mechanism to store multiple chunks in a single storage
+            object or file. This can be useful because traditional
+            file systems and object storage systems may have
+            performance issues storing and accessing many
+            files. Additionally, small files can be inefficient to
+            store if they are smaller than the block size of the file
+            system.
+
+            The *dataset_shards* parameter is ignored when writing to
+            a non-Zarr datset.
+
+            If any `Data` being written already stores its own dataset
+            sharding strategy (i.e. its `Data.nc_dataset_shards`
+            method returns something other than `None`) then, for that
+            data array alone, it is used in preference to the strategy
+            defined by the *dataset_shards* parameter.
+
+            The *dataset_shards* parameter may be one of:
+
+            * `None`
+
+               No sharding.
+
+            * `int`
+
+              The integer number of chunks to be stored in a single
+              shard, favouring an equal number of chunks along each
+              shard dimenson.
+
+            *Example:*
+              For two-dimensional `Data`, ``dataset_shards=9`` will
+              result in shards that span 3 chunks along each
+              dimension.
 
         cfa: `str` or `dict` or `None`, optional
             Specify which netCDF variables, if any, should be written

@@ -170,6 +170,10 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.11.2.0
 
+        {{read store_dataset_shards: `bool`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         {{read cfa: `dict`, optional}}
 
             .. versionadded:: (cfdm) 1.12.0.0
@@ -238,6 +242,7 @@ class read(ReadWrite):
         cache=True,
         dask_chunks="storage-aligned",
         store_dataset_chunks=True,
+        store_dataset_shards=True,
         cfa=None,
         cfa_write=None,
         to_memory=False,
@@ -564,6 +569,7 @@ class read(ReadWrite):
                         "cache",
                         "dask_chunks",
                         "store_dataset_chunks",
+                        "store_dataset_shards",
                         "cfa",
                         "cfa_write",
                         "to_memory",

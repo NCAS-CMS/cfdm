@@ -2545,7 +2545,7 @@ class NetCDFChunks(NetCDFMixin):
 
         .. seealso:: `nc_clear_dataset_chunksizes`,
                      `nc_set_dataset_chunksizes`, `{{package}}.read`,
-                     `{{package}}.write`
+                     `nc_dataset_shards`, `{{package}}.write`
 
         :Parameters:
 
@@ -2616,7 +2616,7 @@ class NetCDFChunks(NetCDFMixin):
 
         .. seealso:: `nc_dataset_chunksizes`,
                      `nc_set_dataset_chunksizes`, `{{package}}.read`,
-                     `{{package}}.write`
+                     `nc_dataset_shards`, `{{package}}.write`
 
         :Returns:
 
@@ -2666,7 +2666,8 @@ class NetCDFChunks(NetCDFMixin):
 
         .. seealso:: `nc_dataset_chunksizes`,
                      `nc_clear_dataset_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
+                     `nc_dataset_shards`, `{{package}}.read`,
+                     `{{package}}.write`
 
         :Parameters:
 
@@ -5131,51 +5132,57 @@ class NetCDFAggregation(NetCDFMixin):
         self._nc_set_aggregation_write_status(status)
 
 
-class ZarrShards(NetCDFMixin):
+class NetCDFShards(NetCDFMixin):
     """Mixin class for accessing dataset shard size.
+
+    When writing to a Zarr dataset, sharding provides a mechanism to
+    store multiple chunks in a single storage object or file. This can
+    be useful because traditional file systems and object storage
+    systems may have performance issues storing and accessing many
+    files. Additionally, small files can be inefficient to store if
+    they are smaller than the block size of the file system.
+
+    The sharding strategy is ignored when writing to a non-Zarr
+    datset.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
-    def nc_dataset_shards(self, todict=False):
+    def nc_dataset_shards(self):
         """Get the dataset shard size for the data.
+
+        {{sharding description}}
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_clear_dataset_shards`,
-                     `nc_set_dataset_shards`, `{{package}}.write`
-
-        :Parameters:
-
-            {{chunk todict: `bool`, optional}}
+                     `nc_set_dataset_shards`, `nc_dataset_chunksizes`,
+                     `{{package}}.write`
 
         :Returns:
 
-            {{Returns nc_dataset_chunksizes}}
+            `None` or `int` or sequence of `int`
+                The current sharding strateg. One of:
+
+                {{sharding options}}
 
         **Examples**
 
         >>> d.shape
-        (1, 96, 73)
-        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        (1, 100, 200)
         >>> d.nc_dataset_chunksizes()
-        (1, 35, 73)
-        >>> d.nc_dataset_chunksizes(todict=True)
-        {0: 1, 1: 35, 2: 73}
-        >>> d.nc_clear_dataset_chunksizes()
-        (1, 35, 73)
-        >>> d.nc_dataset_chunksizes()
+        (1, 30, 50)
+        >>> d.nc_set_dataset_shards(4)
+        >>> d.nc_dataset_shards()
+        4
+        >>> d.nc_clear_dataset_shards()
+        4
+        >>> print(d.nc_dataset_shards())
         None
-        >>> d.nc_set_dataset_chunksizes('contiguous')
-        >>> d.nc_dataset_chunksizes()
-        'contiguous'
-        >>> d.nc_set_dataset_chunksizes('1 KiB')
-        >>> d.nc_dataset_chunksizes()
-        1024
-        >>> d.nc_set_dataset_chunksizes(None)
-        >>> d.nc_dataset_chunksizes()
-        None
+        >>> d.nc_set_dataset_shards((5, 4))
+        >>> d.nc_dataset_shards()
+        (5, 4)
 
         """
         return self._get_netcdf().get("dataset_shards")
@@ -5183,30 +5190,36 @@ class ZarrShards(NetCDFMixin):
     def nc_clear_dataset_shards(self):
         """Clear the dataset shard size for the data.
 
+        {{sharding description}}
+
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_dataset_shards`, `nc_set_dataset_shards`,
-                     `{{package}}.write`
+                     `nc_dataset_chunksizes`, `{{package}}.write`
 
         :Returns:
 
-            `None` or `str` or `int` or `tuple` of `int`
-                The chunking strategy prior to being cleared, as would
-                be returned by `nc_dataset_chunksizes`.
+            `None` or `int` or sequence of `int`
+                The cleared sharding strategy. One of:
+
+                {{sharding options}}
 
         **Examples**
 
         >>> d.shape
-        (1, 96, 73)
-        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
-        >>> d.nc_clear_dataset_chunksizes()
-        (1, 35, 73)
-        >>> d.nc_set_dataset_chunksizes('1 KiB')
-        >>> d.nc_clear_dataset_chunksizes()
-        1024
-        >>> d.nc_set_dataset_chunksizes(None)
-        >>> print(d.nc_clear_dataset_chunksizes())
+        (1, 100, 200)
+        >>> d.nc_dataset_chunksizes()
+        (1, 30, 50)
+        >>> d.nc_set_dataset_shards(4)
+        >>> d.nc_dataset_shards()
+        4
+        >>> d.nc_clear_dataset_shards()
+        4
+        >>> print(d.nc_dataset_shards())
         None
+        >>> d.nc_set_dataset_shards((5, 4))
+        >>> d.nc_dataset_shards()
+        (5, 4)
 
         """
         return self._get_netcdf().pop("dataset_shards", None)
@@ -5214,22 +5227,23 @@ class ZarrShards(NetCDFMixin):
     def nc_set_dataset_shards(self, shards):
         """Set the dataset sharding strategy for the data.
 
-        The sharding strategy is either the integer number of chunks
-        stored in a single storage object (e.g. a file), or else
-        `None` to indicate that there is no sharding (i.e. each chunk
-        is stored in a different storage object).
+        {{sharding description}}
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_dataset_shards`, `nc_clear_dataset_shards`,
-                     `{{package}}.write`
+                     `nc_dataset_chunksizes`, `{{package}}.write`
 
         :Parameters:
 
-            {{chunk chunksizes}}
+            shards: `None` or `int` or sequence of `int`
+                The new sharding strategy. One of:
 
-                  Each dictionary key is an integer that specifies an
-                  axis by its position in the data array.
+                {{sharding options}}
+
+                *Example:*
+                  For two dimensional data, the following are
+                  equivalent: ``25`` and ``(5, 5)``.
 
         :Returns:
 
@@ -5238,34 +5252,22 @@ class ZarrShards(NetCDFMixin):
         **Examples**
 
         >>> d.shape
-        (1, 96, 73)
-        >>> d.nc_set_dataset_chunksizes([1, 35, 73])
+        (1, 100, 200)
         >>> d.nc_dataset_chunksizes()
-        (1, 35, 73)
-        >>> d.nc_clear_dataset_chunksizes()
-        (1, 35, 73)
-        >>> d.nc_dataset_chunksizes()
+        (1, 30, 50)
+        >>> d.nc_set_dataset_shards(4)
+        >>> d.nc_dataset_shards()
+        4
+        >>> d.nc_clear_dataset_shards()
+        4
+        >>> print(d.nc_dataset_shards())
         None
-        >>> d.nc_set_dataset_chunksizes('contiguous')
-        >>> d.nc_dataset_chunksizes()
-        'contiguous'
-        >>> d.nc_set_dataset_chunksizes('1 KiB')
-        >>> d.nc_dataset_chunksizes()
-        1024
-        >>> d.nc_set_dataset_chunksizes(None)
-        >>> d.nc_dataset_chunksizes()
+        >>> d.nc_set_dataset_shards((5, 4))
+        >>> d.nc_dataset_shards()
+        (5, 4)
+        >>> d.nc_set_dataset_shards(None)
+        >>> print(d.nc_dataset_shards())
         None
-        >>> d.nc_set_dataset_chunksizes([9999, -1, None])
-        >>> d.nc_dataset_chunksizes()
-        (1, 96, 73)
-        >>> d.nc_clear_dataset_chunksizes()
-        (1, 96, 73)
-        >>> d.nc_set_dataset_chunksizes({1: 24})
-        >>> d.nc_dataset_chunksizes()
-        (1, 24, 73)
-        >>> d.nc_set_dataset_chunksizes({0: None, 2: 50})
-        >>> d.nc_dataset_chunksizes()
-        (1, 24, 50)
 
         """
         if shards is None:
@@ -5276,7 +5278,7 @@ class ZarrShards(NetCDFMixin):
             if shards < 1:
                 raise ValueError(
                     f"'shards' must be None, a positive integer, or a "
-                    f"sequence positive of integers. Got {shards!r}"
+                    f"sequence positive of integers. Got: {shards!r}"
                 )
 
             self._set_netcdf("dataset_shards", shards)
@@ -5287,21 +5289,21 @@ class ZarrShards(NetCDFMixin):
         except TypeError:
             raise ValueError(
                 f"'shards' must be None, a positive integer, or a "
-                f"sequence positive of integers. Got {shards!r}"
+                f"sequence positive of integers. Got: {shards!r}"
             )
 
-        shape = self.shape
-        if len(shards) != len(shape):
+        if len(shards) != len(self.shape):
             raise ValueError(
-                f"When shards is a sequence {shards!r} then it must have the "
-                f"same length as the number of data dimensions ({len(shape)})"
+                f"When shards is a sequence it must have the same length as "
+                f"the number of data dimensions ({len(self.shape)}): "
+                f"Got: {shards!r} "
             )
 
         for n, i in enumerate(shards):
             if not (isinstance(i, Integral) and i > 0):
                 raise ValueError(
                     f"Shard size for dimension position {n} must be "
-                    f"a positive integer. Got {i!r}"
+                    f"a positive integer. Got: {i!r}"
                 )
 
         self._set_netcdf("dataset_shards", shards)

@@ -28,7 +28,7 @@ from ..functions import (
 )
 from ..mixin.container import Container
 from ..mixin.files import Files
-from ..mixin.netcdf import NetCDFAggregation, NetCDFChunks, ZarrShards
+from ..mixin.netcdf import NetCDFAggregation, NetCDFChunks, NetCDFShards
 from ..units import Units
 from .abstract import Array
 from .creation import to_dask
@@ -56,7 +56,7 @@ logger = logging.getLogger(__name__)
 
 
 class Data(
-    Container, NetCDFAggregation, NetCDFChunks, ZarrShards, Files, core.Data
+    Container, NetCDFAggregation, NetCDFChunks, NetCDFShards, Files, core.Data
 ):
     """An N-dimensional data array with units and masked values.
 

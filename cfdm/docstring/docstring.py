@@ -542,7 +542,6 @@ _docstring_substitution_definitions = {
                 None}``.""",
     # read store_dataset_chunks
     "{{read store_dataset_chunks: `bool`, optional}}": """store_dataset_chunks: `bool`, optional
-
             If True (the default) then store the dataset chunking
             strategy for each returned data array. The dataset
             chunking strategy is then accessible via an object's
@@ -555,13 +554,30 @@ _docstring_substitution_definitions = {
             chunking (such as a netCDF-3 dataset), then no dataset
             chunking strategy is stored (i.e. an
             `nc_dataset_chunksizes` method will return `None` for all
-            `Data` objects). In this case, when the data is written to
-            a new netCDF file, the dataset chunking strategy will be
-            determined by `{{package}}.write`.
+            returned `Data` objects). In this case, when the data is
+            written to a new netCDF file, the dataset chunking
+            strategy will be determined by `{{package}}.write`.
 
             See the `{{package}}.write` *dataset_chunks* parameter for
             details on how the dataset chunking strategy is determined
             at the time of writing.""",
+    # read store_dataset_shards
+    "{{read store_dataset_shards: `bool`, optional}}": """store_dataset_shards: `bool`, optional
+            If True (the default) then store the dataset sharding
+            strategy for each returned data array. The dataset
+            sharding strategy is then accessible via an object's
+            `nc_dataset_shards` method. When the dataset sharding
+            strategy is stored, it will be used when the data is
+            written to a new Zarr dataset with `{{package}}.write`
+            (unless the strategy is modified prior to writing).
+
+            If False, or if the dataset being read does not support
+            sharding (such as a netCDF-4 dataset), then no dataset
+            sharding strategy is stored (i.e. an `nc_dataset_shards`
+            method will return `None` for all returned `Data`
+            objects). In this case, when the data is written to a new
+            Zarr dataset, the dataset shardinging strategy will be
+            determined by `{{package}}.write`.""",
     # read cfa
     "{{read cfa: `dict`, optional}}": """cfa: `dict`, optional
             Configure the reading of CF-netCDF aggregation files.
@@ -1319,6 +1335,17 @@ _docstring_substitution_definitions = {
                 names, are normalised to absolute paths prior to the
                 replacement. If False (the default) then no
                 normalisation is done.""",
+    # sharding
+    "{{sharding description}}": """When writing to a Zarr dataset, sharding provides a mechanism
+        to store multiple chunks in a single storage object or
+        file. This can be useful because traditional file systems and
+        object storage systems may have performance issues storing and
+        accessing many files. Additionally, small files can be
+        inefficient to store if they are smaller than the block size
+        of the file system.
+
+        The sharding strategy is ignored when writing to a non-Zarr
+        datset.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
@@ -1346,4 +1373,18 @@ _docstring_substitution_definitions = {
     "{{Returns original filenames}}": """The original file names in normalised absolute
                 form. If there are no original files then an empty
                 `set` will be returned.""",
+    # sharding options
+    "{{sharding options}}": """* `None`
+
+                  No sharding.
+
+                * `int`
+
+                  The integer number of chunks to be stored in a
+                  single shard, favouring an equal number of chunks
+                  along each shard dimenson.
+
+                * sequence of `int`
+
+                  The number of chunks along each shard dimension.""",
 }
