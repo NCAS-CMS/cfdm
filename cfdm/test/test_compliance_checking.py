@@ -49,12 +49,11 @@ def _create_noncompliant_names_field(compliant_field, temp_file):
     with Dataset(temp_file, "r+") as nc:
         field_all_varnames = list(nc.variables.keys())
         # Store a bad name which is the variable name prepended with 'badname_'
-        # - this makes it an invalid name and one we can identify as being
-        # tied to the original variable, for testing purposes.
+        # - this makes it a certain invalid name and one we can identify as
+        # being tied to the original variable, for testing purposes.
         bad_name_mapping = {
             varname: "badname_"+ varname for varname in field_all_varnames
         }
-        print("BAD NAME MAPPING IS", bad_name_mapping)
 
         for var_name, bad_std_name in bad_name_mapping.items():
             var = nc.variables[var_name]
@@ -278,8 +277,69 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_noncompliant_field(self):
         """Test compliance checking on a non-compliant non-UGRID field."""
+        # TODO remove reference to sn attribute in reason string since this
+        # is noted separately in the dict value!
+        expected_reason = (
+            "standard_name attribute "
+            "has a value that is not a valid name contained "
+            "in the current standard name table"
+        )
+        expected_code = 400022
+        expected_noncompl_dict = {
+            "attribute": "standard_name",
+            "code": expected_code,
+            "reason": expected_reason,
+        }
+
         f = self.bad_standard_sn_f
-        pass  # TODO
+        dc_output = f.dataset_compliance()
+
+        #from pprint import pprint
+        # pprint(dc_output)
+
+        # 'ta' is the field variable we test on
+        self.assertIn("non-compliance", dc_output["ta"])
+        noncompliance = dc_output["ta"]["non-compliance"]
+
+        expected_keys = [
+            "atmosphere_hybrid_height_coordinate",
+            "atmosphere_hybrid_height_coordinate_bounds",
+            "latitude_1",
+            "longitude_1",
+            "time",
+            "x",
+            "x_bnds"
+            "y",
+            "y_bnds",
+            "b",
+            "b_bounds",
+            "surface_altitude",
+            "rotated_latitude_longitude",
+            "auxiliary",
+            "cell_measure",
+            "air_temperature_standard_error",
+        ]
+        for varname in expected_keys:
+            noncompl_dict = noncompliance.get(varname)
+            self.assertIsNotNone(noncompl_dict)
+            self.assertIsInstance(noncompl_dict, list)
+            self.assertEqual(len(noncompl_dict), 1)
+
+            # Safe to unpack after test above
+            noncompl_dict = noncompl_dict[0]
+            self.assertIn("attribute", noncompl_dict)
+            self.assertEqual(noncompl_dict["attribute"], "standard_name")
+            self.assertIn("code", noncompl_dict)
+            self.assertEqual(noncompl_dict["code"], expected_code)
+            self.assertIn("reason", noncompl_dict)
+            self.assertEqual(noncompl_dict["reason"], expected_reason)
+
+            # Final check to ensure there isn't anything else in there.
+            # If keys are missing will be reported to fail more spefically
+            # on per-key-value checks above
+            self.assertEqual(noncompl_dict, expected_noncompl_dict)
+
+        # TODO what else to check here?
 
     def test_standard_names_validation_compliant_ugrid_field(self):
         """Test compliance checking on a compliant UGRID field."""
@@ -291,7 +351,7 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_noncompliant_ugrid_field(self):
         """Test compliance checking on a non-compliant UGRID field."""
-        f = self.bad_ugrid_sn_f
+        # f = self.bad_ugrid_sn_f
         pass  # TODO
 
 
