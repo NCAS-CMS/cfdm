@@ -9,6 +9,7 @@ import sys
 import tempfile
 import unittest
 
+from netCDF4 import Dataset
 from urllib import request
 
 import numpy as np
@@ -20,7 +21,7 @@ import cfdm
 
 n_tmpfiles = 2
 tmpfiles = [
-    tempfile.mkstemp("_test_functions.nc", dir=os.getcwd())[1]
+    tempfile.mkstemp("_test_compliance_check.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
 (
@@ -41,14 +42,25 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-def _create_noncompliant_standard_field(compliant_field):
+def _create_noncompliant_names_field(compliant_field, temp_file):
     """TODO."""
-    pass  # TODO
+    cfdm.write(compliant_field, temp_file)
 
+    with Dataset(temp_file, "r+") as nc:
+        field_all_varnames = list(nc.variables.keys())
+        # Store a bad name which is the variable name prepended with 'badname_'
+        # - this makes it an invalid name and one we can identify as being
+        # tied to the original variable, for testing purposes.
+        bad_name_mapping = {
+            varname: "badname_"+ varname for varname in field_all_varnames
+        }
+        print("BAD NAME MAPPING IS", bad_name_mapping)
 
-def _create_noncompliant_ugrid_field(compliant_field):
-    """TODO."""
-    pass  # TODO
+        for var_name, bad_std_name in bad_name_mapping.items():
+            var = nc.variables[var_name]
+            var.standard_name = bad_std_name
+
+    return cfdm.read(temp_file)[0]
 
 
 class ComplianceCheckingTest(unittest.TestCase):
@@ -58,8 +70,10 @@ class ComplianceCheckingTest(unittest.TestCase):
     # using our 'kitchen sink' field as a basis
     good_standard_sn_f = cfdm.example_field(1)
     # TODO set bad names and then write to tempfile and read back in
-    bad_standard_sn_f = _create_noncompliant_standard_field(
-        good_standard_sn_f)
+    bad_standard_sn_f = _create_noncompliant_names_field(
+        good_standard_sn_f, tmpfile0)
+    print("Bad STANDARD is", bad_standard_sn_f)
+    bad_standard_sn_f.dump()
 
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
@@ -68,7 +82,10 @@ class ComplianceCheckingTest(unittest.TestCase):
     )
     good_ugrid_sn_f = cfdm.read(ugrid_file_path)
     # TODO set bad names and then write to tempfile and read back in
-    bad_ugrid_sn_f = _create_noncompliant_ugrid_field(good_ugrid_sn_f)
+    #bad_ugrid_sn_f = _create_noncompliant_names_field(
+    #    good_ugrid_sn_f, tmpfile1)
+    # TODO SLB we can't write UGRID files using cf at the moment, so need
+    # to find another way to create UGRID dataset with bad names to test on
 
     def setUp(self):
         """Preparations called immediately before each test method."""
