@@ -2679,9 +2679,8 @@ class NetCDFWrite(IOWrite):
                     "storage_options": g.get("storage_options"),
                     "overwrite": g["overwrite"],
                 }
-                print("zarr_kwargs = ", zarr_kwargs)
+
                 variable = g["dataset"].create_array(**zarr_kwargs)
-                print("___________")
 
         g["nc"][ncvar] = variable
 
@@ -3385,6 +3384,8 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Still here? The write a normal (non-aggregation) variable
         # ------------------------------------------------------------
+        zarr = g["backend"] == "zarr"
+
         if compressed:
             # Write data in its compressed form
             data = data.source().source()
@@ -3407,16 +3408,23 @@ class NetCDFWrite(IOWrite):
                 meta=np.array((), dx.dtype),
             )
 
-        # If a Zarr variable is sharded, then rechunk the Dask array
-        # to the shards, because "when writing data, a full shard must
-        # be written in one go for optimal performance and to avoid
-        # concurrency issues."
-        # (https://zarr.readthedocs.io/en/stable/user-guide/arrays.html).
-        if g["backend"] == "zarr":
+        # Initialise the file lock for the data writing from Dask
+        lock = None
+
+        # Rechunk the Dask array to shards, if applicable.
+        if zarr:
+            # When a Zarr variable is sharded, the Dask array must be
+            # rechunked to the shards because "when writing data, a
+            # full shard must be written in one go for optimal
+            # performance and to avoid concurrency issues."
+            # https://zarr.readthedocs.io/en/stable/user-guide/arrays.html#sharding
             shards = g["nc"][ncvar].shards
             if shards is not None:
-                print(f"Zarr: rechunking to shards {shards} from {dx.chunks}")
                 dx = dx.rechunk(shards)
+                # This rechunking has aligned Dask chunk boundaries
+                # with Zarr chunk boundaries, so we don't need to lock
+                # the write.
+                lock = False
 
         # Check for out-of-range values
         if g["warn_valid"]:
@@ -3432,7 +3440,7 @@ class NetCDFWrite(IOWrite):
                 meta=np.array((), dx.dtype),
             )
 
-        if g["backend"] == "zarr":
+        if zarr:
             # `zarr` can't write a masked array to a variable, so we
             # have to replace missing data with the fill value.
             dx = dx.map_blocks(
@@ -3441,11 +3449,10 @@ class NetCDFWrite(IOWrite):
                 fill_value=g["nc"][ncvar].fill_value,
             )
 
-        #        try:
-        #        except AttributeError:
-        #            print ('chunks:',  g["nc"][ncvar].chunking())
-
-        from ...data.locks import netcdf_lock as lock
+        if lock is None:
+            # We need to define the file lock for data writing from
+            # Dask
+            from ...data.locks import netcdf_lock as lock
 
         da.store(
             dx, g["nc"][ncvar], compute=True, return_stored=False, lock=lock

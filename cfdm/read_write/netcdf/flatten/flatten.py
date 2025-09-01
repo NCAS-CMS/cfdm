@@ -86,8 +86,9 @@ def netcdf_flatten(
     :Parameters:
 
         input_ds:
-            The dataset to be flattened, that has the same API as
-            `netCDF4.Dataset`, `h5netcdf.File`, or `zarr.Group`
+            The dataset to be flattened. Must be an object with the
+            the same API as `netCDF4.Dataset` or `h5netcdf.File`, or
+            else a `zarr.Group` object.
 
         output_ds: `netCDF4.Dataset`
             A container for the flattened dataset.
@@ -257,8 +258,9 @@ class _Flattener:
         :Parameters:
 
             input_ds:
-                The dataset to be flattened, that has the same API as
-                `netCDF4.Dataset`, `h5netcdf.File`, or `zarr.Group`.
+                The dataset to be flattened. Must be an object with
+                the the same API as `netCDF4.Dataset` or
+                `h5netcdf.File`, or else a `zarr.Group` object.
 
             output_ds: `netCDF4.Dataset`
                 A container for the flattened dataset.
@@ -324,6 +326,10 @@ class _Flattener:
         #             'station': <ZarrDimension: station, size(3)>},
         #       '/forecast': {'element': <ZarrDimension: element, size(118)>},
         #       '/forecast/model': {}}
+        #
+        # Cuurently this mapping is only required for an input
+        # `zarr.Group` dataset, and is populated by
+        # `_populate_dimension_maps`.
         self._group_to_dims = {}
 
         # Mapping of variable names to their Dimension objects.
@@ -333,6 +339,10 @@ class _Flattener:
         #                  <ZarrDimension: bounds2, size(2)>],
         #       'latitude_longitude': [],
         #       'forecast/y': [<ZarrDimension: y, size(10)>]}
+        #
+        # Cuurently this mapping is only required for an input
+        # `zarr.Group` dataset, and is populated by
+        # `_populate_dimension_maps`.
         self._var_to_dims = {}
 
         self._input_ds = input_ds
@@ -529,7 +539,7 @@ class _Flattener:
         :Parameters:
 
             dataset:
-                The dataset.
+                The dataset object.
 
         :Returns:
 
@@ -1430,21 +1440,16 @@ class _Flattener:
 
         """
         if search_dim:
-            #            dims_or_vars = current_group.dimensions # TODOZARR
             dims_or_vars = self._dimensions(current_group)
         else:
-            #            dims_or_vars = current_group.variables
             dims_or_vars = self._variables(current_group)
 
         # Found in current group
-        if ref in dims_or_vars:  # .keys():
+        if ref in dims_or_vars:
             return dims_or_vars[ref]
 
-        local_apex_reached = (
-            # local_apex_reached or ref in current_group.dimensions.keys()
-            local_apex_reached
-            or ref
-            in dims_or_vars  # TODOZARR self._dimensions(current_group).keys()
+        local_apex_reached = local_apex_reached or ref in self._dimensions(
+            current_group
         )
 
         # Check if have to continue looking in parent group
@@ -1452,10 +1457,8 @@ class _Flattener:
         # - coordinate variable: continue until local apex is reached
         parent_group = self.parent(current_group)
         if is_coordinate_variable:
-            #            top_reached = local_apex_reached or current_group.parent is None
             top_reached = local_apex_reached or parent_group is None
         else:
-            #            top_reached = current_group.parent is None
             top_reached = parent_group is None
 
         # Search up
@@ -1472,7 +1475,6 @@ class _Flattener:
             # Coordinate variable and local apex reached, so search
             # down in siblings.
             found_elt = None
-            #            for child_group in current_group.groups.values():
             for child_group in self._child_groups(current_group).values():
                 found_elt = self.search_by_proximity(
                     ref,
@@ -1846,9 +1848,10 @@ class _Flattener:
             case "zarr":
                 group_name = self.path(group)
                 if group_name not in self._group_to_dims:
-                    # Populate the `_group_to_dims` dictionary (we
-                    # should only to this once per call of `flatten`)
-                    self._populate_group_to_dims(group)
+                    # Populate the `_group_to_dims` and `_var_to_dims`
+                    # dictionaries (we only need do this once per call
+                    # of `flatten`)
+                    self._populate_dimension_maps(group)
 
                 return self._group_to_dims[group_name]
 
@@ -1875,37 +1878,111 @@ class _Flattener:
             case "zarr":
                 return dict(group.arrays())
 
-    def _populate_group_to_dims(self, group):
-        """Populate the `self._group_to_dims` dictionary.
+    def _populate_dimension_maps(self, group):
+        """Populate the dimension map dictionaries.
 
         For the given group and all of its child groups, a mapping of
         full-path group names to the unique dimensions implied by the
-        varibles therein will be added to `self._group_to_dims`. For
+        varibles therein will be added to `_group_to_dims`. For
         instance::
 
-           {'/': {'feature': <ZarrDimension: feature, size(58)>,
-                  'station': <ZarrDimension: station, size(3)>},
-            '/forecast': {'element': <ZarrDimension: element, size(118)>},
+           {'/': {},
+            'bounds2': <ZarrDimension: bounds2, size(2)>,
+            'x': <ZarrDimension: x, size(9)>},
+            '/forecast': {'y': <ZarrDimension: y, size(10)>},
             '/forecast/model': {}}
+
+
+        For the given group and all of its child groups, a mapping of
+        full-path variables names to their dimensions will be added to
+        `_var_to_dims`. For instance::
+
+           {'/latitude_longitude': [],
+            '/x': [<ZarrDimension: x, size(9)>],
+            '/x_bnds': [<ZarrDimension: x, size(9)>
+                        <ZarrDimension: bounds2, size(2)>],
+            '/forecast/cell_measure': [<ZarrDimension: x, size(9)>,
+                                       <ZarrDimension: y, size(10)>],
+            '/forecast/latitude': [<ZarrDimension: y, size(10)>,
+                                   <ZarrDimension: x, size(9)>],
+            '/forecast/longitude': [<ZarrDimension: x, size(9)>,
+                                    <ZarrDimension: y, size(10)>],
+            '/forecast/rotated_latitude_longitude': [],
+            '/forecast/time': [],
+            '/forecast/y': [<ZarrDimension: y, size(10)>],
+            '/forecast/y_bnds': [<ZarrDimension: y, size(10)>,
+                                 <ZarrDimension: bounds2, size(2)>],
+            '/forecast/model/ta': [<ZarrDimension: y, size(10)>,
+                                   <ZarrDimension: x, size(9)>]}
 
         **Zarr**
 
-        This is only required for a Zarr grouped dataset, for which
-        this information is not explicitly defined in the format's
-        data model (unlike for netCDF-3 and netCDF-4 datasets).
+        Populating the `_group_to_dims` dictionary is only
+        required for a Zarr grouped dataset, for which this
+        information is not explicitly defined in the format's data
+        model (unlike for netCDF-3 and netCDF-4 datasets).
 
         To create the mapping, we need to impose an understanding of
         CF dimensions and groups onto the contents of the Zarr
-        dataset:
+        dataset. In CF, every dimension is explicitly declared in a
+        unique group, and that dimension may be referenced from
+        another group by applying one of the standardised CF search
+        algorithms (search by absolute path, search by relative path,
+        and search by proximity).
 
-        * A dimension name which contains no '/' (group separator)
-          characters is assumed assumed to be the same logical
-          dimension object as one with the same name and same size in
-          one of its parent groups, if one exists. When multiple
-          parents contain the dimension name, the parent closest to
-          the root dimension is used.
+        In Zarr v3, a variable may name its dimensions, but there is
+        no "dimension class" in the data model that allows variables
+        and attributes to reference an explicit dimension defined in a
+        specific group. However, such a dimension class is required
+        when viewing the Zarr dataset with the netCDF data model, and
+        so a virtual "ZarrDimension" object that defines a dimension
+        in a unique group needs to be inferred.
 
-        * An exception is raised if a dimension name ends with '/'.
+        For dimension names that are absolute paths
+        (e.g. '/group1/dim') or relative paths that include a group
+        reference (e.g. 'group1/dim' or '../group1/dim') the group in
+        which to create the dimension is unambiguously defined. When a
+        dimension name has no path (e.g. 'dim') it may refer to a
+        logical dimension with that name in an ancestor group.  In all
+        cases we have to consider the possibility that the size of
+        variable's dimension may not match the size of the
+        corresponding dimension ZarrDimension object. In this case,
+        depending on the nature of the Zarr dimension names, we must
+        either fail or else define a new ZarrDimension in a different
+        group.
+
+        In this example, we must fail because only one ZarrDimension
+        object is implied ('dim' in group '/group1'), but the two
+        variables which require that dimension have different sizes (3
+        and 999)::
+
+           /
+           ├── variable1 (3,) (group/dim,)
+           ├── group1
+           │   ├── variable2 (999,) (dim,)
+
+        In this example we can reasonably create two ZarrDimension
+        objects: 'dim' in group '/' with size 3, and 'dim' in group
+        '/group1' with size 999::
+
+           /
+           ├── variable1 (3,) (dim,)
+           ├── group1
+           │   ├── variable2 (999,) (dim,)
+
+        In this example, we have no way of knowing if the 'dim' of
+        'variable2' is the same logical dimension as the 'dim' of
+        'variable1', or not::
+
+           /
+           ├── variable1 (3,) (dim,)
+           ├── group1
+           │   ├── variable2 (3,) (dim,)
+
+        Both options can be made to work, but this code always assumes
+        the former case, i.e. 'dim' of 'variable2' is the same logical
+        dimension as the 'dim' of 'variable1', and so only one
+        ZarrDimension object is created: 'dim' in group '/'.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1933,6 +2010,11 @@ class _Flattener:
         for v in dict(sorted(group.arrays())).values():
             dimension_names = v.metadata.dimension_names
             if dimension_names is None:
+                if v.shape:
+                    raise DimensionParsingException(
+                        "Non-scalar variable has no dimension names: {v.name}"
+                    )
+
                 # Scalar variable has no dimensions
                 var_to_dims[v.name] = []
                 continue
@@ -1942,61 +2024,67 @@ class _Flattener:
                 name_split = name.split(group_separator)
                 basename = name_split[-1]
 
+                # ----------------------------------------------------
+                # Define 'g' as the absolute path name of the group in
+                # which to register the logical dimension object for
+                # this dimension 'name'
+                # ----------------------------------------------------
                 if group_separator not in name:
                     # ------------------------------------------------
                     # Relative path dimension name which contains no
-                    # '/' characters and which has no upward path
-                    # traversals
+                    # '/' characters.
                     #
                     # E.g. "dim"
                     #
-                    # We're looking for a dimension with the same name
-                    # and same size in one of its parent groups, if
-                    # one exists. If multiple parents contain it, the
-                    # parent closest to the root dimension is chosen.
+                    # Search by proximity for a dimension that already
+                    # exists.
                     # ------------------------------------------------
                     found_dim_in_parent = False
                     group_split = group_name.split(group_separator)
-                    for n in range(1, len(group_split)):
-                        parent_group = input_ds[
-                            group_separator.join(group_split)[:n]
-                        ]
-                        g = self.path(parent_group)
-                        # Loop over variables in the parent group,
-                        # sorted by variable name.
-                        for parent_v in dict(
-                            sorted(parent_group.arrays())
-                        ).values():
-                            dimensions2 = parent_v.metadata.dimension_names
-                            if dimensions2 is None or name not in dimensions2:
-                                continue
+                    for n in range(len(group_split) - 1, 0, -1):
+                        g = group_separator.join(group_split[:n])
+                        if g == "":
+                            g = group_separator
 
-                            zd = group_to_dims[g].get(basename)
-                            if zd is not None and zd.size == size:
-                                # Dimension 'basename' is already
-                                # defined in 'parent_group'
-                                found_dim_in_parent = True
-                                break
-
-                        if found_dim_in_parent:
-                            # Dimension 'basename' is already defined
-                            # in a parent group
+                        zarr_dim = group_to_dims[g].get(basename)
+                        if zarr_dim is not None and zarr_dim.size == size:
+                            # Found a dimension in this parent group
+                            # with the right name and size
+                            found_dim_in_parent = True
                             break
 
                     if not found_dim_in_parent:
                         # Dimension 'basename' could not be matched to
                         # any parent group dimensions, so it needs to
-                        # be defined in 'group'.
+                        # be defined in the current group.
                         g = group_name
 
                 else:
                     g = group_separator.join(name_split[:-1])
-                    if name.startswith(group_separator):
+                    if name.endswith(group_separator):
                         # --------------------------------------------
-                        # Absolute path dimension name
+                        # Dimension name that ends with '/'
                         #
-                        # E.g. "/group1/group2/dim"
+                        # E.g. g = "dim/"
+                        # E.g. g = "group1/dim/"
+                        # --------------------------------------------
+                        raise DimensionParsingException(
+                            "Dimension names can't end with the group "
+                            f"separator ({group_separator}): "
+                            f"dimension_name={name}, variable={v.name}"
+                        )
+
+                    elif (
+                        name.startswith(group_separator)
+                        and f"..{group_separator}" not in name
+                    ):
+                        # --------------------------------------------
+                        # Absolute path dimension name that starts
+                        # with '/', and has no upward path traversals
+                        # ('../').
+                        #
                         # E.g. "/dim"
+                        # E.g. "/group1/dim"
                         # --------------------------------------------
                         if g == "":
                             g = group_separator
@@ -2004,7 +2092,8 @@ class _Flattener:
                     elif name.startswith(f"..{group_separator}"):
                         # --------------------------------------------
                         # Relative path dimension name with upward
-                        # path traversals at the start of the name
+                        # path traversals ('../') at the start of the
+                        # name
                         #
                         # E.g. "../group1/group2/dim"
                         # E.g. "../../group1/group2/dim"
@@ -2014,40 +2103,34 @@ class _Flattener:
                             parent_group = self.parent(current_group)
                             current_group = parent_group
                             g = g[3:]
-                            if parent_group is None:
-                                # We've gone beyond the root group!
+                            if parent_group is None and g.startswith(
+                                f"..{group_separator}"
+                            ):
+                                # We're about to go beyond the root
+                                # group!
                                 raise DimensionParsingException(
-                                    "Unresolvable upward path traversals "
-                                    f"in dimension name: {name!r} "
-                                    f"(group {group_name!r}, "
-                                    f"variable {v.name!r})"
+                                    "Upward path traversals in dimension "
+                                    "name go beyond the root group: "
+                                    f"dimension_name={name}, variable={v.name}"
                                 )
 
                         g = group_separator.join((self.path(current_group), g))
 
-                    elif name.endswith(group_separator):
-                        # --------------------------------------------
-                        # E.g. g = "/group1/group2/"
-                        # --------------------------------------------
-                        raise DimensionParsingException(
-                            "Dimension names can not end with the group "
-                            f"separator {group_separator!r}: {name!r} "
-                            f"(group {group_name!r}, variable {v.name!r})"
-                        )
-
                     elif f"..{group_separator}" in name:
                         # --------------------------------------------
                         # Relative path dimension name with upward
-                        # path traversals not at the start of the name
+                        # path traversals ('../') not at the start of
+                        # the name
                         #
                         # E.g. "/group1/../group2/dim"
+                        # E.g. "group1/../group2/dim"
                         # E.g. "../group1/../group2/dim"
                         # --------------------------------------------
                         raise DimensionParsingException(
                             "In Zarr datasets, can't yet deal with a "
                             "relative path dimension name with upward path "
-                            f"traversals in middle of the name: {name!r} "
-                            f"(group {group_name!r}, variable {v.name!r}). "
+                            f"traversals (../) in middle of the name: "
+                            f"dimension_name={name}, variable={v.name}. "
                             "Please raise an issue at "
                             "https://github.com/NCAS-CMS/cfdm/issues "
                             "if you really do need this feature."
@@ -2055,39 +2138,39 @@ class _Flattener:
 
                     else:
                         # --------------------------------------------
-                        # Relative path dimension name which contain
+                        # Relative path dimension name which contains
                         # '/' and which has no upward path traversals
                         #
-                        # E.g. "group2/group3"
+                        # E.g. "group2/dim"
                         # --------------------------------------------
                         g = group_separator.join((group_name, g))
 
                 if g in group_to_dims:
-                    zd = group_to_dims[g].get(basename)
-                    if zd is not None:
-                        # Dimension 'basename' is already defined
-                        if zd.size != size:
+                    zarr_dim = group_to_dims[g].get(basename)
+                    if zarr_dim is not None:
+                        # Dimension 'basename' is already registered
+                        # in group 'g'
+                        if zarr_dim.size != size:
                             raise DimensionParsingException(
-                                f"Dimension {name!r} of variable {v.name!r} "
-                                f"has the wrong size ({size!r}). It should "
-                                f"match the size of dimension {basename!r} "
-                                f"in group {group_name!r} ({zd.size})"
+                                f"Dimension {name} of variable {v.name} "
+                                f"has the wrong size: {size}. It should "
+                                f"have the size {zarr_dim.size}"
                             )
 
-                        var_to_dims.setdefault(v.name, []).append(zd)
+                        var_to_dims.setdefault(v.name, []).append(zarr_dim)
                         continue
-                else:
-                    group_to_dims[g] = {}
+                #                else:
+                #                    group_to_dims[g] = {}
 
                 # Still here? Then we're ready to define dimension
-                # 'basename'
-                zd = ZarrDimension(basename, size, input_ds[g])
-                var_to_dims.setdefault(v.name, []).append(zd)
-                group_to_dims[g][basename] = zd
+                # 'basename' as a ZarrDimension object.
+                zarr_dim = ZarrDimension(basename, size, input_ds[g])
+                var_to_dims.setdefault(v.name, []).append(zarr_dim)
+                group_to_dims[g][basename] = zarr_dim
 
         # Recursively scan all child groups
         for g in group.group_values():
-            self._populate_group_to_dims(g)
+            self._populate_dimension_maps(g)
 
     def _child_groups(self, group):
         """Return groups that are defined in this group.

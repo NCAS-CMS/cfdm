@@ -155,7 +155,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(z.equals(f))
         self.assertTrue(z.equals(n))
 
-    def test_zarr_groups(self):
+    def test_zarr_groups_1(self):
         """Test for the general handling of Zarr hierarchical groups."""
         f = cfdm.example_field(1)
 
@@ -273,7 +273,7 @@ class read_writeTest(unittest.TestCase):
         cfdm.write(f, grouped_dir, fmt="ZARR3")
 
         n = cfdm.read(grouped_file)
-        z = cfdm.read(grouped_dir, verbose=-1)
+        z = cfdm.read(grouped_dir)
 
         n = n[0]
         z = z[0]
