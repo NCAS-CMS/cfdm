@@ -8438,7 +8438,7 @@ class NetCDFRead(IORead):
                     ncvar,
                     message=(
                         f"{sn_attr} attribute",
-                        f"has a value that is not a valid name contained "
+                        "has a value that is not a valid name contained "
                         "in the current standard name table",
                     ),
                     attribute=sn_attr,

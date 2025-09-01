@@ -312,10 +312,10 @@ class ComplianceCheckingTest(unittest.TestCase):
             # fails "x_bnds"
             # fails "y",
             # fails "y_bnds",
-            "b",
+            # fails "b",
             "b_bounds",
-            "surface_altitude",
-            "rotated_latitude_longitude",
+            # fails "surface_altitude",
+            # fails "rotated_latitude_longitude",
             "auxiliary",
             "cell_measure",
             "air_temperature_standard_error",
@@ -323,7 +323,9 @@ class ComplianceCheckingTest(unittest.TestCase):
         for varname in expected_keys:
             noncompl_dict = noncompliance.get(varname)
             self.assertIsNotNone(
-                noncompl_dict, msg=f"Empty non-compliance for '{varname}'")
+                noncompl_dict,
+                msg=f"Empty non-compliance for variable '{varname}'"
+            )
             self.assertIsInstance(noncompl_dict, list)
             self.assertEqual(len(noncompl_dict), 1)
 

@@ -105,7 +105,6 @@ def get_all_current_standard_names(include_aliases=False):
     )  # pragma: no cover
     with request.urlopen(_STD_NAME_CURRENT_XML_URL) as response:
         all_snames_xml = response.read()
-        print("TYPE OF ALL_SNAMES_XML IS:", type(all_snames_xml))
 
     logger.debug(
         f"Successfully retrieved list of {len(all_snames_xml)} standard names"
