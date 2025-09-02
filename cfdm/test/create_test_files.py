@@ -1964,8 +1964,13 @@ def _make_subsampled_2(filename):
     return filename
 
 
-def _make_ugrid_1(filename):
-    """Create a UGRID file with a 2-d mesh topology."""
+def _make_ugrid_1(filename, standard_names):
+    """Create a UGRID file with a 2-d mesh topology.
+
+    Standard names to set are input as a dicionary parameter to facilitate
+    testing on CF compliance checking for a UGRID dataset in the
+    test_compliance_checking module.
+    """
     n = netCDF4.Dataset(filename, "w")
 
     n.Conventions = f"CF-{VN} UGRID-1.0"
@@ -2028,39 +2033,39 @@ def _make_ugrid_1(filename):
 
     # Mesh node coordinates
     Mesh2_node_x = n.createVariable("Mesh2_node_x", "f4", ("nMesh2_node",))
-    Mesh2_node_x.standard_name = "longitude"
+    Mesh2_node_x.standard_name = standard_names[0]
     Mesh2_node_x.units = "degrees_east"
     Mesh2_node_x[...] = [-45, -43, -45, -43, -45, -43, -40]
 
     Mesh2_node_y = n.createVariable("Mesh2_node_y", "f4", ("nMesh2_node",))
-    Mesh2_node_y.standard_name = "latitude"
+    Mesh2_node_y.standard_name = standard_names[1]
     Mesh2_node_y.units = "degrees_north"
     Mesh2_node_y[...] = [35, 35, 33, 33, 31, 31, 34]
 
     # Optional mesh face and edge coordinate variables
     Mesh2_face_x = n.createVariable("Mesh2_face_x", "f4", ("nMesh2_face",))
-    Mesh2_face_x.standard_name = "longitude"
+    Mesh2_face_x.standard_name = standard_names[0]
     Mesh2_face_x.units = "degrees_east"
     Mesh2_face_x[...] = [-44, -44, -42]
 
     Mesh2_face_y = n.createVariable("Mesh2_face_y", "f4", ("nMesh2_face",))
-    Mesh2_face_y.standard_name = "latitude"
+    Mesh2_face_y.standard_name = standard_names[1]
     Mesh2_face_y.units = "degrees_north"
     Mesh2_face_y[...] = [34, 32, 34]
 
     Mesh2_edge_x = n.createVariable("Mesh2_edge_x", "f4", ("nMesh2_edge",))
-    Mesh2_edge_x.standard_name = "longitude"
+    Mesh2_edge_x.standard_name = standard_names[0]
     Mesh2_edge_x.units = "degrees_east"
     Mesh2_edge_x[...] = [-41.5, -41.5, -43, -44, -45, -44, -45, -44, -43]
 
     Mesh2_edge_y = n.createVariable("Mesh2_edge_y", "f4", ("nMesh2_edge",))
-    Mesh2_edge_y.standard_name = "latitude"
+    Mesh2_edge_y.standard_name = standard_names[1]
     Mesh2_edge_y.units = "degrees_north"
     Mesh2_edge_y[...] = [34.5, 33.5, 34, 35, 34, 33, 32, 31, 32]
 
     # Non-mesh coordinates
     t = n.createVariable("time", "f8", ("time",))
-    t.standard_name = "time"
+    t.standard_name = standard_names[2]
     t.units = "seconds since 2016-01-01 00:00:00"
     t.bounds = "time_bounds"
     t[...] = [43200, 129600]
@@ -2070,7 +2075,7 @@ def _make_ugrid_1(filename):
 
     # Data variables
     ta = n.createVariable("ta", "f4", ("time", "nMesh2_face"))
-    ta.standard_name = "air_temperature"
+    ta.standard_name = standard_names[3]
     ta.units = "K"
     ta.mesh = "Mesh2"
     ta.location = "face"
@@ -2078,7 +2083,7 @@ def _make_ugrid_1(filename):
     ta[...] = [[282.96, 282.69, 283.21], [281.53, 280.99, 281.23]]
 
     v = n.createVariable("v", "f4", ("time", "nMesh2_edge"))
-    v.standard_name = "northward_wind"
+    v.standard_name = standard_names[4]
     v.units = "ms-1"
     v.mesh = "Mesh2"
     v.location = "edge"
@@ -2089,7 +2094,7 @@ def _make_ugrid_1(filename):
     ]
 
     pa = n.createVariable("pa", "f4", ("time", "nMesh2_node"))
-    pa.standard_name = "air_pressure"
+    pa.standard_name = standard_names[5]
     pa.units = "hPa"
     pa.mesh = "Mesh2"
     pa.location = "node"
@@ -2340,7 +2345,30 @@ string_char_file = _make_string_char_file("string_char.nc")
 subsampled_file_1 = _make_subsampled_1("subsampled_1.nc")
 subsampled_file_1 = _make_subsampled_2("subsampled_2.nc")
 
-ugrid_1 = _make_ugrid_1("ugrid_1.nc")
+# To facilitate testing UGRID file for test_compliance_checking module,
+# we need a UGRID dataset with invalid standard names but can't create one
+# from a temp_file edit to 'ugrid_1.nc' because we can't yet write UGRID. So
+# have a standard names input dictionary here, for now, to create
+# a pair of files, one with good and one with bad names.
+ugrid_1_valid_standard_names = [
+    "longitude",
+    "latitude",
+    "time",
+    "air_temperature",
+    "northward_wind",
+    "air_pressure",
+]
+ugrid_1_bad_standard_names = [
+    "badname_" + name for name in ugrid_1_valid_standard_names
+]
+ugrid_1 = _make_ugrid_1(
+    "ugrid_1.nc",
+    ugrid_1_valid_standard_names
+)
+ugrid_1_bad_names = _make_ugrid_1(
+    "ugrid_1_bad_names.nc",
+    ugrid_1_bad_standard_names,
+)
 ugrid_2 = _make_ugrid_2("ugrid_2.nc")
 
 aggregation_value = _make_aggregation_value("aggregation_value.nc")
