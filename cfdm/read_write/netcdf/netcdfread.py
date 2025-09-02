@@ -8379,6 +8379,9 @@ class NetCDFRead(IORead):
         for sn_attr in ("standard_name", "computed_standard_name"):
             # 1. Check if there is a (computed_)standard_name property
             sn_value = ncvar_attrs.get(sn_attr)
+            attribute_value = {
+                f"{ncvar}:{sn_attr}": sn_value
+            }
             # TODO downgrade status to info/debug
             logger.warning(f"%%%%%% Got sn_value of {sn_value}")
 
@@ -8388,18 +8391,18 @@ class NetCDFRead(IORead):
             any_sn_found = True
 
             # 2. Check, if requested, if is a string
-            # TODO this is not  robust check (may have numpy string type)
+            # TODO this is not a robust check (may have numpy string type)
             # but good enough for now whilts developing
             if check_is_string and not isinstance(sn_value, str):
                 invalid_sn_found = True
                 self._add_message(
                     parent_ncvar,
                     ncvar,
+                    attribute=attribute_value,
                     message=(
                         f"{sn_attr} attribute",
                         f"has a value that is not a string",
                     ),
-                    attribute=sn_attr,
                     conformance="3.3.requirement.1",
                 )
 
@@ -8414,12 +8417,12 @@ class NetCDFRead(IORead):
                 self._add_message(
                     parent_ncvar,
                     ncvar,
+                    attribute=attribute_value,
                     message=(
                         f"{sn_attr} attribute",
                         f"has a value that is not appropriate to "
                         "the context of the variable in question",
                     ),
-                    attribute=sn_attr,
                 )
 
 
@@ -8441,7 +8444,7 @@ class NetCDFRead(IORead):
                         "has a value that is not a valid name contained "
                         "in the current standard name table",
                     ),
-                    attribute=sn_attr,
+                    attribute=attribute_value,
                     conformance="3.3.requirement.2",
                 )
 

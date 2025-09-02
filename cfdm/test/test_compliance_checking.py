@@ -43,7 +43,7 @@ atexit.register(_remove_tmpfiles)
 
 
 def _create_noncompliant_names_field(compliant_field, temp_file):
-    """TODO."""
+    """Create a copy of a field with bad standard names on all variables."""
     cfdm.write(compliant_field, temp_file)
 
     with Dataset(temp_file, "r+") as nc:
@@ -71,8 +71,7 @@ class ComplianceCheckingTest(unittest.TestCase):
     # TODO set bad names and then write to tempfile and read back in
     bad_standard_sn_f = _create_noncompliant_names_field(
         good_standard_sn_f, tmpfile0)
-    print("Bad STANDARD is", bad_standard_sn_f)
-    bad_standard_sn_f.dump()
+    ### bad_standard_sn_f.dump()  # SB DEBUG
 
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
@@ -80,11 +79,15 @@ class ComplianceCheckingTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)), "ugrid_1.nc"
     )
     good_ugrid_sn_f = cfdm.read(ugrid_file_path)
-    # TODO set bad names and then write to tempfile and read back in
-    #bad_ugrid_sn_f = _create_noncompliant_names_field(
-    #    good_ugrid_sn_f, tmpfile1)
-    # TODO SLB we can't write UGRID files using cf at the moment, so need
-    # to find another way to create UGRID dataset with bad names to test on
+    # Note we can't write UGRID files using cf at the moment, so needed
+    # another way to create UGRID dataset with bad names to test on
+    # and the simplest is to write extra 'bad names' file alongside
+    # 'ugrid_1.nc' in create_test_files module.
+    bad_names_ugrid_file_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "ugrid_1_bad_names.nc"
+    )
+    bad_ugrid_sn_f = cfdm.read(bad_names_ugrid_file_path)
+    ### bad_standard_sn_f.dump()  # SB DEBUG
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -285,8 +288,9 @@ class ComplianceCheckingTest(unittest.TestCase):
             "in the current standard name table"
         )
         expected_code = 400022
+        # Excludes attribute which we expect in there but depends on varname
+        # so add that expected key in during the iteration over varnames
         expected_noncompl_dict = {
-            "attribute": "standard_name",
             "code": expected_code,
             "reason": expected_reason,
         }
@@ -294,6 +298,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         f = self.bad_standard_sn_f
         dc_output = f.dataset_compliance()
 
+        # SLB DEV
         from pprint import pprint
         pprint(dc_output)
 
@@ -331,12 +336,20 @@ class ComplianceCheckingTest(unittest.TestCase):
 
             # Safe to unpack after test above
             noncompl_dict = noncompl_dict[0]
-            self.assertIn("attribute", noncompl_dict)
-            self.assertEqual(noncompl_dict["attribute"], "standard_name")
+
             self.assertIn("code", noncompl_dict)
             self.assertEqual(noncompl_dict["code"], expected_code)
             self.assertIn("reason", noncompl_dict)
             self.assertEqual(noncompl_dict["reason"], expected_reason)
+
+            # Form expected attribute which needs the varname and bad name
+            expected_attribute = {
+                f"{varname}:standard_name": f"badname_{varname}"
+            }
+            expected_noncompl_dict["attribute"] = expected_attribute
+
+            self.assertIn("attribute", noncompl_dict)
+            self.assertEqual(noncompl_dict["attribute"], expected_attribute)
 
             # Final check to ensure there isn't anything else in there.
             # If keys are missing will be reported to fail more spefically
@@ -355,8 +368,18 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_noncompliant_ugrid_field(self):
         """Test compliance checking on a non-compliant UGRID field."""
-        # f = self.bad_ugrid_sn_f
-        pass  # TODO
+        f = self.bad_ugrid_sn_f
+
+        # TODO add error to run to say need to run 'create_test_files'
+
+        # TODO see from below that not all bad names gte set - but want
+        # that, so should update create_test_files method to set on all
+        # for bad case.
+        with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
+            field_all_varnames = list(nc.variables.keys())
+            print("VERIFY")
+            for varname, var in nc.variables.items():
+                print(varname, getattr(var, "standard_name", "No standard_name"))
 
 
 if __name__ == "__main__":
