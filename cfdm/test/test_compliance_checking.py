@@ -294,30 +294,30 @@ class ComplianceCheckingTest(unittest.TestCase):
         f = self.bad_standard_sn_f
         dc_output = f.dataset_compliance()
 
-        #from pprint import pprint
-        # pprint(dc_output)
+        from pprint import pprint
+        pprint(dc_output)
 
         # 'ta' is the field variable we test on
         self.assertIn("non-compliance", dc_output["ta"])
         noncompliance = dc_output["ta"]["non-compliance"]
 
         expected_keys = [
-            # itself? "ta",
+            # POSSIBLY SOLVED, ATTRIBUTE FIX itself? "ta",
             # fails "atmosphere_hybrid_height_coordinate",
             "atmosphere_hybrid_height_coordinate_bounds",
             "latitude_1",
             "longitude_1",
             "time",
-            # fails "x",
-            # fails "x_bnds"
-            # fails "y",
-            # fails "y_bnds",
+            # SOLVED, DIM COORDS fails "x",
+            # POSSIBLY SOLVED, DIM COORDS fails "x_bnds"
+            # SOLVED, DIM COORDS fails "y",
+            # POSSIBLY SOLVED, DIM COORDS fails "y_bnds",
             # fails "b",
             "b_bounds",
             # fails "surface_altitude",
             # fails "rotated_latitude_longitude",
             "auxiliary",
-            "cell_measure",
+            "cell_measure",  # ATTRIBUTES FIX SHOULDN'T APPEAR
             "air_temperature_standard_error",
         ]
         for varname in expected_keys:
