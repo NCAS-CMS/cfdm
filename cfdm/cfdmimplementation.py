@@ -1280,7 +1280,6 @@ class CFDMImplementation(Implementation):
             `None`
 
         """
-        print(shards)
         return data.nc_set_dataset_shards(shards)
 
     def parameters(self, parent):

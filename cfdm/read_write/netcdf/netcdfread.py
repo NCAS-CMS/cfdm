@@ -11237,24 +11237,11 @@ class NetCDFRead(IORead):
             case "zarr":
                 attrs = dict(var.attrs)
 
-                # Remove the _ARRAY_DIMENSIONS from Zarr v2 attributes
-                if var.info._zarr_format == 2:
+                # Remove _ARRAY_DIMENSIONS from Zarr v2 attributes
+                if var.metadata.zarr_format == 2:
                     attrs.pop("_ARRAY_DIMENSIONS", None)
 
                 return attrs
-
-    #         try:
-    #            # h5netcdf, zarr
-    #            attrs = dict(var.attrs)
-    #        except AttributeError:
-    #            # netCDF4
-    #            return {attr: var.getncattr(attr) for attr in var.ncattrs()}
-    #        else:
-    #            if self.read_vars["dataset_opened_with"] == "zarr":
-    #                # zarr: Remove the _ARRAY_DIMENSIONS attribute
-    #                attrs.pop("_ARRAY_DIMENSIONS", None)
-    #
-    #            return attrs
 
     def _file_variable_dimensions(self, var):
         """Return the variable dimension names.
