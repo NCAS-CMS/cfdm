@@ -615,7 +615,13 @@ class NetCDFRead(IORead):
             flat_nc.set_fill_off()
 
             # Flatten the file
-            netcdf_flatten(nc, flat_nc, strict=False, omit_data=True)
+            netcdf_flatten(
+                nc,
+                flat_nc,
+                strict=False,
+                omit_data=True,
+                dimension_search=g["group_dimension_search"],
+            )
 
             # Store the original grouped file. This is primarily
             # because the unlimited dimensions in the flattened
@@ -943,6 +949,7 @@ class NetCDFRead(IORead):
         dataset_type=None,
         cdl_string=False,
         ignore_unknown_type=False,
+        group_dimension_search="furthest_ancestor",
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -1075,6 +1082,12 @@ class NetCDFRead(IORead):
                 Provide any already-open S3 file systems.
 
                 .. versionadded:: (cfdm) 1.11.2.0
+
+            group_dimension_search: `str`, optional
+                How to interpret a group dimension name that has no
+                path. See `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -1381,6 +1394,7 @@ class NetCDFRead(IORead):
             # Assume a priori that the dataset does not have a group
             # structure
             "has_groups": False,
+            "group_dimension_search": group_dimension_search,
             # Keep a list of flattened dataset names
             "flat_datasets": [],
             # --------------------------------------------------------
@@ -6718,14 +6732,6 @@ class NetCDFRead(IORead):
             if return_kwargs_only:
                 return kwargs
 
-            #            file_opened_with = g["file_opened_with"]
-            #            if file_opened_with == "netCDF4":
-            #                array = self.implementation.initialise_NetCDF4Array(**kwargs)
-            #            elif file_opened_with == "h5netcdf":
-            #                array = self.implementation.initialise_H5netcdfArray(**kwargs)
-            #            elif file_opened_with == "zarr":
-            #                array = self.implementation.initialise_ZarrArray(**kwargs)
-
             match g["original_dataset_opened_with"]:
                 case "netCDF4":
                     array = self.implementation.initialise_NetCDF4Array(
@@ -10915,21 +10921,6 @@ class NetCDFRead(IORead):
             case "zarr":
                 return bool(tuple(nc.group_keys()))
 
-    #        if self.read_vars["dataset_opened_with"] == "zarr":
-    #            return bool(tuple(nc.groups()))
-    #            # zarr
-    #            #if len(tuple(nc.groups())) > 1:
-    #            #if tuple(nc.groups()):
-    #            #   raise ReadError(
-    #            #        "Can't read Zarr dataset that has groups: "
-    #            #        f"{self.read_vars['dataset']}"
-    #            #    )
-    #            #
-    #            #return False
-    #
-    #        # netCDF4, h5netcdf
-    #        return bool(nc.groups)
-
     def _file_global_attribute(self, nc, attr):
         """Return a global attribute from a dataset.
 
@@ -10955,13 +10946,6 @@ class NetCDFRead(IORead):
             case "netCDF4":
                 return nc.getncattr(attr)
 
-    #        try:
-    #            # netCDF4
-    #            return nc.getncattr(attr)
-    #        except AttributeError:
-    #            # h5netcdf, zarr
-    #            return nc.attrs[attr]
-
     def _file_global_attributes(self, nc):
         """Return the global attributes from a dataset.
 
@@ -10986,13 +10970,6 @@ class NetCDFRead(IORead):
 
             case "netCDF4":
                 return {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
-
-    #        try:
-    #            # h5netcdf, zarr
-    #            return nc.attrs
-    #        except AttributeError:
-    #            # netCDF4
-    #            return {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
 
     def _file_group_variables(self, group):
         """Return all variables in a group.
@@ -11034,9 +11011,6 @@ class NetCDFRead(IORead):
                 A dictionary of the dimensions keyed by their names.
 
         """
-        #        if hasattr(self, "_cached_file_dimensions"):
-        #            return self._cached_file_dimensions
-
         match self.read_vars["nc_opened_with"]:
             case "h5netcdf" | "netCDF4":
                 dimensions = dict(nc.dimensions)
@@ -11054,28 +11028,7 @@ class NetCDFRead(IORead):
                         }
                     )
 
-        #       self._cached_file_dimensions = dimensions
-
         return dimensions
-
-    #       try:
-    #           # netCDF4, h5netcdf
-    #           return nc.dimensions
-    #       except AttributeError:
-    #           # zarr
-    #           dimensions = {}
-    #           for var in self._file_variables(nc).values():
-    #               dimensions.update(
-    #                   {
-    #                       name: ZarrDimension(name, size, nc)
-    #                       for name, size in zip(
-    #                           self._file_variable_dimensions(var), var.shape
-    #                       )
-    #                       if name not in dimensions
-    #                   }
-    #               )
-    #
-    #           return dimensions
 
     def _file_dimension(self, nc, dim_name):
         """Return a dimension from the root group of a dataset.
@@ -11127,13 +11080,6 @@ class NetCDFRead(IORead):
             case "zarr":
                 return False
 
-    #        try:
-    #            # netCDF4, h5netcdf
-    #            return self._file_dimension(nc, dim_name).isunlimited()
-    #        except Exception:
-    #            # zarr
-    #            return False
-
     def _file_dimension_size(self, nc, dim_name):
         """Return a dimension's size.
 
@@ -11179,13 +11125,6 @@ class NetCDFRead(IORead):
 
             case "zarr":
                 return dict(nc.arrays())
-
-    #        try:
-    #            # netCDF4, h5netcdf
-    #            return nc.variables
-    #        except AttributeError:
-    #            # zarr
-    #            return dict(nc.arrays())
 
     def _file_variable(self, nc, var_name):
         """Return a variable.
@@ -11276,54 +11215,6 @@ class NetCDFRead(IORead):
                 except AttributeError:
                     # Zarr v2
                     return tuple(var.attrs["_ARRAY_DIMENSIONS"])
-
-    #       try:
-    #            # netCDF4, h5netcdf
-    #            return var.dimensions
-    #        except AttributeError:
-    #            try:
-    #                # zarr v3
-    #                dimension_names = var.metadata.dimension_names
-    #                if dimension_names is None:
-    #                    # scalar variable
-    #                    dimension_names = ()
-    #
-    #                return dimension_names
-    #            except AttributeError:
-    #                # zarr v2
-    #                return tuple(var.attrs["_ARRAY_DIMENSIONS"])
-
-    #    def _file_variable_size(self, var):
-    #        """Return the size of a variable's array.
-    #
-    #        .. versionadded:: (cfdm) 1.11.2.0
-    #
-    #        :Parameters:
-    #
-    #            var: `netCDF4.Variable`, `h5netcdf.Variable`, or `zarr.Array`
-    #                The variable.
-    #
-    #        :Returns:
-    #
-    #            `int`
-    #                The array size.
-    #
-    #        """
-    #        match self.read_vars["dataset_opened_with"]:
-    #            case 'netCDF4'|'zarr':
-    #                return var.size
-    #
-    #            case 'h5netcdf':
-    #                return prod(var.shape)
-    #        # Use try/except here because the variable type could differ
-    #        # from that implied by the value of
-    #        # read_vars["dataset_opened_with"]
-    #        try:
-    #            # netCDF4, zarr
-    #            return var.size
-    #        except AttributeError:
-    #            # h5netcdf
-    #            return prod(var.shape)
 
     def _get_storage_options(self, dataset, parsed_dataset):
         """Get the storage options for accessing a file.
@@ -11851,17 +11742,26 @@ class NetCDFRead(IORead):
             # Also cache the second element for 1-d data, on the
             # assumption that they may well be dimension coordinate
             # data.
+            #
+            # TODOZARR - do something more clever when all values lie in one chunk. Maybe?
             if size == 1:
                 indices = (0, -1)
                 value = variable[...]
-                values = (value, value)
+                values = [value, value]
             elif size == 2:
                 indices = (0, 1, -1)
-                value = variable[-1:]
-                values = (variable[:1], value, value)
+                values = variable[...].tolist()
+                values += [values[-1]]
+                # value = variable[-1:]
+                # values = (variable[:1], value, value)
+            elif size == 3:
+                indices = (0, 1, -1)
+                values = variable[...].tolist()
             else:
                 indices = (0, 1, -1)
-                values = (variable[:1], variable[1:2], variable[-1:])
+                values = variable[:2].tolist() + [variable[-1:]]
+        #                v01 = variable[:2]
+        #                values = (v01[0], v01[1], variable[-1:])
 
         elif ndim == 2 and data.shape[-1] == 2:
             # Assume that 2-d data with a last dimension of size 2
@@ -11870,58 +11770,39 @@ class NetCDFRead(IORead):
             # last cells.
             indices = (0, 1, -2, -1)
             ndim1 = ndim - 1
-            values = (
-                variable[(slice(0, 1),) * ndim1 + (slice(0, 1),)],
-                variable[(slice(0, 1),) * ndim1 + (slice(1, 2),)],
-            )
+            v = variable[(slice(0, 1),) * ndim1 + (slice(0, 2),)]
+            values = v.squeeze().tolist()
+            #            values = (
+            #                variable[(slice(0, 1),) * ndim1 + (slice(0, 1),)],
+            #                variable[(slice(0, 1),) * ndim1 + (slice(1, 2),)],
+            #            )
             if data.size == 2:
                 values = values + values
             else:
-                values += (
-                    variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)],
-                    variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
-                )
+                v = variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 2),)]
+                values += v.squeeze().tolist()
+        #                    variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)],
+        #                    variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
+        #                ]
         elif size == 1:
             indices = (0, -1)
             value = variable[...]
-            values = (value, value)
+            values = [value, value]
         elif size == 3:
             indices = (0, 1, -1)
             if char:
-                values = variable[...].reshape(3, variable.shape[-1])
+                values = variable[...].reshape(3, variable.shape[-1]).tolist()
             else:
-                values = variable[...].flatten()
+                values = variable[...].flatten().tolist()
         else:
             indices = (0, -1)
-            values = (
+            values = [
                 variable[(slice(0, 1),) * ndim],
                 variable[(slice(-1, None, 1),) * ndim],
-            )
+            ]
 
         # Create a dictionary of the element values
         elements = {index: value for index, value in zip(indices, values)}
-        #        for index, value in zip(indices, values):
-        # print (repr(value))
-        # if obj:
-        #    value = value.astype(str)
-        # elif string:
-        #    # Convert an array of objects to an array of strings
-        #    value = np.array(value, dtype="U")
-        # elif char:
-        #    # Variable is a netCDF classic style char array, so
-        #    # collapse (by concatenation) the outermost (fastest
-        #    # varying) dimension. E.g. [['a','b','c']] becomes
-        #    # ['abc']
-        #    if dtype.kind == "U":
-        #        value = value.astype("S")
-        #    print ('value=', value, value.dtype)
-        #    a = netCDF4.chartostring(value)
-        #    shape = a.shape
-        #    a = np.array([x.rstrip() for x in a.flat])
-        #    a = np.reshape(a, shape)
-        #    value = np.ma.masked_where(a == "", a)
-
-        #            elements[index] = value
 
         # Cache the cached data elements for this variable
         g["cached_data_elements"][ncvar] = elements

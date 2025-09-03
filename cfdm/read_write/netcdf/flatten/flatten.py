@@ -52,7 +52,7 @@ def netcdf_flatten(
     strict=True,
     omit_data=False,
     write_chunksize=134217728,
-    dimension_mode="ancestor",
+    dimension_search="furthest_ancestor",
 ):
     """Create a flattened version of a grouped CF dataset.
 
@@ -119,37 +119,47 @@ def netcdf_flatten(
             *input_ds* to *output_ds* for each piece. Ignored if
             *omit_data* is True.
 
-        dimension_mode: `str`, optional
-            How to interpret a dimension name that has no path,
-            i.e. one that contains no group-separator characters, such
-            as ``dim``, as opposed to ``group/dim`` or ``/group/dim``,
-            etc.
+        dimension_search: `str`, optional
+            How to interpret a sub-group dimension name that has no
+            path, i.e. that contains no group-separator characters,
+            such as ``dim`` (as opposed to ``group/dim``,
+            ``/group/dim``, etc.). Such a dimension name could be a
+            variable array dimension name, or be referenced by
+            variable attribute.
 
-            This is only required for Zarr input datasets, for which
-            there is no means of indicating whether the same dimension
-            name that appears in different groups correspond to each
-            other, or not.
+            This is only required for reading a Zarr dataset, for
+            which there is no means of indicating whether the same
+            dimension names that appear in different groups correspond
+            to each other, or not.
 
-            For non-Zarr datasets that adhere to the netCDF data
-            model, *dimension_mode* is ignored because any
+            For a non-Zarr dataset that adheres to the netCDF data
+            model, *dimension_search* is ignored because any
             correspondence between dimensions is already explicitly
-            recorded in these datasets.
+            recorded.
 
-            The *dimension_mode* parameter must be one of:
+            The *dimension_search* parameter must be one of:
 
-            * ``'ancestor'``
+            * ``'furthest_ancestor'``
 
-              This is the default. Assume that the dimension is the
-              same as one with the same name and size defined in an
-              ancestor group, if one exists. If multiple such
-              dimensions exist, then the correspondence is with the
-              dimension in the ancestor group that is furthest way
-              from the root group.
+              This is the default. Assume that the Zarr sub-group
+              dimension is the same as the one with the same name and
+              size in an ancestor group, if one exists. If multiple
+              such dimensions exist, then the correspondence is with
+              the dimension in the ancestor group that is furthest
+              away from the sub-group.
 
-             * ``'local'``
+            * ``'closet_ancestor'``
 
-               Assume that the dimension is different to any with same
-               name defined in ancestor groups.
+              Assume that the Zarr sub-group dimension is the same as
+              the dimension with the same name and size in an ancestor
+              group, if one exists. If multiple such dimensions exist,
+              then the correspondence is with the dimension in the
+              ancestor group that is closest to the sub-group.
+
+            * ``'local'``
+
+              Assume that the Zarr sub-group dimension is different to
+              any with the same name and size in ancestor groups.
 
              .. versionadded:: (cfdm) NEXTVERSION
 
@@ -164,7 +174,7 @@ def netcdf_flatten(
         strict,
         omit_data=omit_data,
         write_chunksize=write_chunksize,
-        dimension_mode=dimension_mode,
+        dimension_search=dimension_search,
     ).flatten()
 
 
@@ -295,7 +305,7 @@ class _Flattener:
         strict=True,
         omit_data=False,
         write_chunksize=134217728,
-        dimension_mode="ancestor",
+        dimension_search="furthest_ancestor",
     ):
         """**Initialisation**
 
@@ -318,7 +328,7 @@ class _Flattener:
             write_chunksize: `int`, optional
                 See `netcdf_flatten`.
 
-            dimension_mode: `str`, optional
+            dimension_search: `str`, optional
                 See `netcdf_flatten`.
 
                 .. versionadded:: (cfdm) NEXTVERSION
@@ -413,7 +423,7 @@ class _Flattener:
         self._strict = bool(strict)
         self._omit_data = bool(omit_data)
         self._write_chunksize = write_chunksize
-        self._dimension_mode = dimension_mode
+        self._dimension_search = dimension_search
 
         if (
             output_ds == input_ds
@@ -1905,8 +1915,8 @@ class _Flattener:
         :Returns:
 
             `dict`-like
-                The dimensions defined in the group, keyed by the
-                group name.
+                The dimensions defined in the group, keyed by their
+                names.
 
         """
         match self._backend():
@@ -2011,7 +2021,7 @@ class _Flattener:
         group_to_dims = self._group_to_dims
         var_to_dims = self._var_to_dims
 
-        dimension_mode = self._dimension_mode
+        dimension_search = self._dimension_search
 
         # Initialise mapping from the group to its ZarrDimension
         # objects. Use 'setdefault' because a previous call to
@@ -2050,48 +2060,57 @@ class _Flattener:
                     #
                     # E.g. "dim"
                     # ------------------------------------------------
-                    if dimension_mode == "ancestor":
-                        # Assume that the dimension is the same as one
-                        # with the same name and size defined in an
-                        # ancestor group, if one exists. If multiple
-                        # such dimensions exist, then the
-                        # correspondence is with the dimension in the
-                        # ancestor group that is furthest way from the
-                        # root group.
-                        #
-                        # E.g. if the current group is /g1/g2/g3 then
-                        # search groups /g1/g2, /g1, and / in that
-                        # order, stopping if a match is found. If no
-                        # match is found then we define the dimension
-                        # in the current group.
-                        found_dim_in_ancestor = False
+                    if dimension_search in (
+                        "furthest_ancestor",
+                        "closest_ancestor",
+                    ):
+                        # Find the names of all ancestor groups, in
+                        # the appropriate order for searching.
                         group_split = group_name.split(group_separator)
-                        for n in range(len(group_split) - 1, 0, -1):
-                            g = group_separator.join(group_split[:n])
-                            if g == "":
-                                g = group_separator
+                        ancestor_names = [
+                            group_separator.join(group_split[:n])
+                            for n in range(1, len(group_split))
+                        ]
+                        ancestor_names[0] = group_separator
+                        # E.g. if the current group is /g1/g2/g3 then
+                        #      the ancestor group names are [/, /g1,
+                        #      /g1/g2]
 
+                        if dimension_search == "closest_ancestor":
+                            # "closest_ancestor" searching requires
+                            # the ancestor group names to be reversed,
+                            # e.g. [/g1/g2, /g1, /]
+                            ancestor_names = ancestor_names[::-1]
+
+                        # Search through the ancestors in order,
+                        # stopping if we find a matching dimension.
+                        found_dim_in_ancestor = False
+                        for g in ancestor_names:
                             zarr_dim = group_to_dims[g].get(basename)
                             if zarr_dim is not None and zarr_dim.size == size:
-                                # Found a dimension in this parent
-                                # group with the right name and size
+                                # Found a dimension in this ancestor
+                                # group 'g' with the right name and
+                                # size
                                 found_dim_in_ancestor = True
                                 break
 
                         if not found_dim_in_ancestor:
                             # Dimension 'basename' could not be
-                            # matched to any parent group dimensions,
-                            # so define it in the current group.
+                            # matched to any ancestor group
+                            # dimensions, so define it in the current
+                            # group.
                             g = group_name
 
-                    elif dimension_mode == "local":
+                    elif dimension_search == "local":
                         # Assume that the dimension is different to
-                        # any with same name defined in an ancestor
-                        # group.
+                        # any with same name and size defined in any
+                        # ancestor group.
                         g = group_name
+
                     else:
                         raise DimensionParsingException(
-                            "Bad value of 'dimension_mode': {dimension_mode!r}"
+                            "Bad value of dimension_search: "
+                            f"{dimension_search!r}"
                         )
                 else:
                     g = group_separator.join(name_split[:-1])
@@ -2123,7 +2142,7 @@ class _Flattener:
                         raise DimensionParsingException(
                             "In Zarr datasets, can't yet deal with a "
                             "relative path dimension name with upward path "
-                            f"traversals (../) in middle of the name: "
+                            "traversals (../) in middle of the name: "
                             f"dataset={self.dataset_name()} "
                             f"variable={var_name} "
                             f"dimension_name={name}"

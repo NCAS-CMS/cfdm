@@ -194,6 +194,10 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.12.0.0
 
+        {{read group_dimension_search: `str`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         ignore_unknown_type: Deprecated at version 1.12.2.0
             Use *dataset_type* instead.
 
@@ -253,6 +257,7 @@ class read(ReadWrite):
         followlinks=False,
         cdl_string=False,
         extra_read_vars=None,
+        group_dimension_search="furthest_ancestor",
         **kwargs,
     ):
         """Read field or domain constructs from datasets.
@@ -578,6 +583,7 @@ class read(ReadWrite):
                         "dataset_type",
                         "cdl_string",
                         "extra_read_vars",
+                        "group_dimension_search",
                     )
                 }
 

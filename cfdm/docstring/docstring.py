@@ -725,6 +725,48 @@ _docstring_substitution_definitions = {
             Note that setting ``recursive=True, followlinks=True`` can
             lead to infinite recursion if a symbolic link points to a
             parent directory of itself.""",
+    # read group_dimension_search
+    "{{read group_dimension_search: `str`, optional}}": """group_dimension_search: `str`, optional
+            How to interpret a sub-group dimension name that has no
+            path, i.e. that contains no group-separator characters,
+            such as ``dim`` (as opposed to ``group/dim``,
+            ``/group/dim``, etc.). Such a dimension name could be a
+            variable array dimension name, or be referenced by
+            variable attribute.
+
+            This is only required for reading a Zarr dataset, for
+            which there is no means of indicating whether the same
+            dimension names that appear in different groups correspond
+            to each other, or not.
+
+            For a non-Zarr dataset that adheres to the netCDF data
+            model, *group_dimension_search* is ignored because any
+            correspondence between dimensions is already explicitly
+            recorded.
+
+            The *group_dimension_search* parameter must be one of:
+
+            * ``'furthest_ancestor'``
+
+              This is the default. Assume that the Zarr sub-group
+              dimension is the same as the one with the same name and
+              size in an ancestor group, if one exists. If multiple
+              such dimensions exist, then the correspondence is with
+              the dimension in the ancestor group that is furthest
+              away from the sub-group.
+
+            * ``'closet_ancestor'``
+
+              Assume that the Zarr sub-group dimension is the same as
+              the dimension with the same name and size in an ancestor
+              group, if one exists. If multiple such dimensions exist,
+              then the correspondence is with the dimension in the
+              ancestor group that is closest to the sub-group.
+
+            * ``'local'``
+
+              Assume that the Zarr sub-group dimension is different to
+              any with the same name and size in ancestor groups.""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully
