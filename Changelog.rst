@@ -3,7 +3,11 @@ Version NEXTVERSION
 
 **2025-??-??**
 
-* Changed dependency: ``zarr>=3.1.2``
+* Write Zarr v3 datasets with `cfdm.write`, and allow the reading of
+  grouped Zarr v2 and v3 datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/???)
+* New optional dependency: ``zarr>=3.1.2``
+* Removed dependency (now optional): ``zarr>=3.0.8``
 
 ----
 
@@ -39,7 +43,7 @@ Version 1.12.2.0
   retrieved from disk (https://github.com/NCAS-CMS/cfdm/issues/313)
 * New keyword parameter to `cfdm.write`: ``chunk_cache``
   (https://github.com/NCAS-CMS/cfdm/issues/328)
-* Read Zarr datasets with `cfdm.read`
+* Read Zarr v2 and v3 datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/335)
 * Read multiple datasets simultaneously with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/336)

@@ -2631,6 +2631,7 @@ class NetCDFWrite(IOWrite):
                 shards = kwargs.get("shards")
 
                 if chunks is None:
+                    # One chunk for the entire array
                     chunks = shape
 
                 if shards is not None:
@@ -2937,6 +2938,7 @@ class NetCDFWrite(IOWrite):
         logger.debug(
             f"      chunksizes: {chunksizes}\n"
             f"      contiguous: {contiguous}"
+            f"      shards    : {shards}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -3441,7 +3443,8 @@ class NetCDFWrite(IOWrite):
 
         if zarr:
             # `zarr` can't write a masked array to a variable, so we
-            # have to replace missing data with the fill value.
+            # have to manually replace missing data with the fill
+            # value.
             dx = dx.map_blocks(
                 self._filled_array,
                 meta=np.array((), dx.dtype),
@@ -3451,7 +3454,7 @@ class NetCDFWrite(IOWrite):
         if lock is None:
             # We need to define the dataset lock for data writing from
             # Dask
-            from ...data.locks import netcdf_lock as lock
+            from cfdm.data.locks import netcdf_lock as lock
 
         da.store(
             dx, g["nc"][ncvar], compute=True, return_stored=False, lock=lock
@@ -5023,7 +5026,8 @@ class NetCDFWrite(IOWrite):
                     import zarr
                 except ModuleNotFoundError as error:
                     error.msg += (
-                        ". Install the 'zarr' package to write Zarr datasets"
+                        ". Install the 'zarr' package "
+                        "(https://pypi.org/project/zarr) to read Zarr datasets"
                     )
                     raise
 
@@ -5913,6 +5917,9 @@ class NetCDFWrite(IOWrite):
                 fletcher32=fletcher32,
                 shuffle=shuffle,
                 extra_write_vars=extra_write_vars,
+                chunk_cache=chunk_cache,
+                dataset_chunks=g["dataset_chunks"],
+                dataset_shards=g["dataset_shards"],
             )
 
     def _int32(self, array):

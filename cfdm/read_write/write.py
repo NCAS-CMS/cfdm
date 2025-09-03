@@ -6,21 +6,21 @@ from .netcdf import NetCDFWrite
 
 
 class write(ReadWrite):
-    """Write field and domain constructs to a netCDF file.
+    """Write field and domain constructs to a netCDF or Zarr dataset.
 
-    **File format**
+    **Dataset format**
 
-    See the *fmt* parameter for details on which output netCDF file
+    See the *fmt* parameter for details on which output dataset
     formats are supported.
 
-    **NetCDF variable and dimension names**
+    **Dataset variable and dimension names**
 
-    These names are stored within constructs read a from dataset, or
-    may be set manually. They are used when writing a field construct
-    to the file. If a name has not been set then one will be
-    constructed (usually based on the standard name if it exists). The
-    names may be modified internally to prevent duplication in the
-    file.
+    These names are stored within constructs and are either read a
+    from another dataset or may be set manually. They are used when
+    writing a field construct to the dataset. If a name has not been
+    set then one will be constructed (usually based on the standard
+    name if it exists). The names may be modified internally to
+    prevent duplication in the dataset.
 
     Each construct, or construct component, that corresponds to a
     netCDF variable has the following methods to get, set and remove a
@@ -33,19 +33,19 @@ class write(ReadWrite):
     `~{{package}}.DomainAxis.nc_set_dimension` and
     `~{{package}}.DomainAxis.nc_del_dimension`.
 
-    **NetCDF attributes**
+    **Dataset attributes**
 
-    Field construct properties may be written as netCDF global
-    attributes and/or netCDF data variable attributes. See the
-    *file_descriptors*, *global_attributes* and *variable_attributes*
-    parameters for details.
+    Field construct properties may be written as global attributes
+    (i.e. attributes of the root group) and/or data variable
+    attributes. See the *file_descriptors*, *global_attributes* and
+    *variable_attributes* parameters for details.
 
     **External variables**
 
-    Metadata constructs marked as external are omitted from the file
-    and referred to via the netCDF ``external_variables`` global
-    attribute. However, omitted constructs may be written to an
-    external file (see the *external* parameter for details).
+    Metadata constructs marked as external are omitted from the
+    dataset and referred to via the CF ``external_variables`` global
+    attribute. However, the omitted constructs may be written to an
+    external dataset (see the *external* parameter for details).
 
     **NetCDF unlimited dimensions**
 
@@ -95,7 +95,7 @@ class write(ReadWrite):
               ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
 
         fmt: `str`, optional
-            The format of the output file. One of:
+            The format of the output dataset. One of:
 
             ==========================  ==============================
             *fmt*                       Output dataset type
@@ -120,13 +120,13 @@ class write(ReadWrite):
                                         file with extensions (see
                                         below)
 
-            ``'ZARR3'``                 Zarr v3
+            ``'ZARR3'``                 Zarr v3 dataset
             ==========================  ==============================
 
             By default the format is ``'NETCDF4'``.
 
             All NETCDF formats support large files (i.e. those greater
-            than 2GB) except ``'NETCDF3_CLASSIC'``.
+            than 2GB), except ``'NETCDF3_CLASSIC'``.
 
             ``'NETCDF3_64BIT_DATA'`` is a format that requires version
             4.4.0 or newer of the C library (use
@@ -152,14 +152,14 @@ class write(ReadWrite):
             ========  =================================================
             *mode*    Description
             ========  =================================================
-            ``'w'``   Open a new file for writing to. If it exists and
-                      *overwrite* is True then the file is deleted
-                      prior to being recreated.
+            ``'w'``   Open a new dataset for writing to. If it exists
+                      and *overwrite* is True then the dataset is
+                      deleted prior to being recreated.
 
-            ``'a'``   Open an existing file for appending new
+            ``'a'``   Open an existing dataset for appending new
                       information to. The new information will be
                       incorporated whilst the original contents of the
-                      file will be preserved.
+                      dataset will be preserved.
 
                       In practice this means that new fields will be
                       created, whilst the original fields will not be
@@ -168,7 +168,7 @@ class write(ReadWrite):
 
                       For append mode, note the following:
 
-                      * Global attributes on the file
+                      * Global attributes on the dataset
                         will remain the same as they were originally,
                         so will become inaccurate where appended fields
                         have incompatible attributes. To rectify this,
@@ -178,7 +178,7 @@ class write(ReadWrite):
                         `nc_set_global_attribute`.
 
                       * Fields with incompatible ``featureType`` to
-                        the original file cannot be appended.
+                        the original dataset cannot be appended.
 
                       * At present fields with groups cannot be
                         appended, but this will be possible in a future
@@ -340,7 +340,7 @@ class write(ReadWrite):
               numpy.dtype('int32')}``.
 
         endian: `str`, optional
-            The endian-ness of the output file. Valid values are
+            The endian-ness of the output dataset. Valid values are
             ``'little'``, ``'big'`` or ``'native'``. By default the
             output is native endian. See the `netCDF4 package
             <http://unidata.github.io/netcdf4-python>`_ for more
@@ -553,21 +553,24 @@ class write(ReadWrite):
 
             .. note:: By default, a data array returned by
                       `{{package}}.read` stores its dataset chunking
-                      strategy from the file being read. When this
+                      strategy from the dataset being read. When this
                       happens that same dataset chunking strategy will
                       be used when the data is written to a new
-                      netCDF4 file, unless the strategy was modified
-                      or removed prior to writing. To prevent the
-                      dataset chunking strategy from the original file
-                      being stored, see the *store_dataset_chunks*
-                      parameter to `{{package}}.read`.
+                      netCDF4 or Zarr dataset, unless the strategy was
+                      modified or removed prior to writing. To prevent
+                      the dataset chunking strategy from the original
+                      dataset being stored, see the
+                      *store_dataset_chunks* parameter to
+                      `{{package}}.read`.
 
             The *dataset_chunks* parameter may be one of:
 
             * ``'contiguous'``
 
-              The data will written to the file contiguously, i.e. no
-              chunking.
+              The data will written to the dataset contiguously,
+              i.e. no chunking. For a Zarr dataset, this is
+              implemented as a single dataset chunk for the entire
+              array.
 
             * `int` or `float` or `str`
 
@@ -750,18 +753,18 @@ class write(ReadWrite):
 
             * ``'uri'``: `str`
 
-              Specify the URI format of the fragment file names.
+              Specify the URI format of the fragment dataset names.
 
-              If ``'default'`` (the default) then the fragment file
+              If ``'default'`` (the default) then the fragment dataset
               names will be written with the same URI formats that
-              they had when read from input files (for file names
-              originating from the reading of normal non-aggregation
-              variables, this will result in absolute URIs). If
-              ``'absolute'`` then all fragment file names will be
-              written as absolute URIs. If ``'relative'`` then all
-              fragment file names will be written as relative-path URI
-              references URIs, relative to the location of the
-              aggregation file.
+              they had when read from input datasets (for dataset
+              names originating from the reading of normal
+              non-aggregation variables, this will result in absolute
+              URIs). If ``'absolute'`` then all fragment dataset names
+              will be written as absolute URIs. If ``'relative'`` then
+              all fragment dataset names will be written as
+              relative-path URI references URIs, relative to the
+              location of the aggregation dataset.
 
             * ``'strict'``: `bool`
 

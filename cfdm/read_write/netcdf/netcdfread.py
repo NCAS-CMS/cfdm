@@ -619,7 +619,7 @@ class NetCDFRead(IORead):
                 nc,
                 flat_nc,
                 strict=False,
-                omit_data=True,
+                copy_data=False,
                 dimension_search=g["group_dimension_search"],
             )
 
@@ -711,7 +711,10 @@ class NetCDFRead(IORead):
         try:
             import zarr
         except ModuleNotFoundError as error:
-            error.msg += ". Install the 'zarr' package to read Zarr datasets"
+            error.msg += (
+                ". Install the 'zarr' package "
+                "(https://pypi.org/project/zarr) to read Zarr datasets"
+            )
             raise
 
         nc = zarr.open(dataset, mode="r")
@@ -11360,7 +11363,7 @@ class NetCDFRead(IORead):
             # No Dask chunking
             return -1
 
-        storage_chunks = self._dataset_chunksizes(g["variables"][ncvar])
+        storage_chunks = self._variable_chunksizes(g["variables"][ncvar])
 
         ndim = array.ndim
         if (
@@ -11705,30 +11708,23 @@ class NetCDFRead(IORead):
             return
 
         # ------------------------------------------------------------
-        # Still here? then there were no cached data elements, so we
-        #             have to create them.
+        # Still here? Then there were no cached data elements, so we
+        # have to create them.
         # ------------------------------------------------------------
+
+        # Include optimisations for the common case that the entire
+        # array is stored in one dataset chunk (which does *not*
+        # include netCDF contiguous arrays), that prevent the reading
+        # of that chunk multiple times.
+        one_chunk = self._variable_chunksizes(variable) == variable.shape
+
         # Get the required element values
         size = data.size
         ndim = data.ndim
 
-        # Whether or not this is an array of strings
-        dtype = variable.dtype
-        string = dtype == str
-        obj = not string and dtype.kind == "O"
-
-        # Whether or not this is an array of chars
-        if (
-            not (string or obj)
-            and dtype.kind in "SU"
-            and variable.ndim == ndim + 1
-        ):
-            # This variable is a netCDF classic style char array with
-            # a trailing dimension that needs to be collapsed
-            char = True
-        else:
-            char = False
-
+        # Get the values using `netcdf_indexer`, as this conveniently
+        # deals with different type of indexing, string and character
+        # arrays, etc.
         variable = netcdf_indexer(
             variable,
             mask=True,
@@ -11742,8 +11738,6 @@ class NetCDFRead(IORead):
             # Also cache the second element for 1-d data, on the
             # assumption that they may well be dimension coordinate
             # data.
-            #
-            # TODOZARR - do something more clever when all values lie in one chunk. Maybe?
             if size == 1:
                 indices = (0, -1)
                 value = variable[...]
@@ -11752,16 +11746,15 @@ class NetCDFRead(IORead):
                 indices = (0, 1, -1)
                 values = variable[...].tolist()
                 values += [values[-1]]
-                # value = variable[-1:]
-                # values = (variable[:1], value, value)
             elif size == 3:
                 indices = (0, 1, -1)
                 values = variable[...].tolist()
             else:
                 indices = (0, 1, -1)
-                values = variable[:2].tolist() + [variable[-1:]]
-        #                v01 = variable[:2]
-        #                values = (v01[0], v01[1], variable[-1:])
+                if one_chunk:
+                    values = variable[list(indices)].tolist()
+                else:
+                    values = variable[:2].tolist() + [variable[-1:]]
 
         elif ndim == 2 and data.shape[-1] == 2:
             # Assume that 2-d data with a last dimension of size 2
@@ -11770,36 +11763,39 @@ class NetCDFRead(IORead):
             # last cells.
             indices = (0, 1, -2, -1)
             ndim1 = ndim - 1
-            v = variable[(slice(0, 1),) * ndim1 + (slice(0, 2),)]
-            values = v.squeeze().tolist()
-            #            values = (
-            #                variable[(slice(0, 1),) * ndim1 + (slice(0, 1),)],
-            #                variable[(slice(0, 1),) * ndim1 + (slice(1, 2),)],
-            #            )
+            if one_chunk:
+                v = variable[...]
+            else:
+                v = variable
+
+            index = (slice(0, 1),) * ndim1 + (slice(0, 2),)
+            values = v[index].squeeze().tolist()
             if data.size == 2:
                 values = values + values
             else:
-                v = variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 2),)]
-                values += v.squeeze().tolist()
-        #                    variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)],
-        #                    variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
-        #                ]
+                index = (slice(-1, None, 1),) * ndim1 + (slice(0, 2),)
+                values += v[index].squeeze().tolist()
+
+            del v
+
         elif size == 1:
             indices = (0, -1)
             value = variable[...]
             values = [value, value]
         elif size == 3:
             indices = (0, 1, -1)
-            if char:
-                values = variable[...].reshape(3, variable.shape[-1]).tolist()
-            else:
-                values = variable[...].flatten().tolist()
+            values = variable[...].flatten().tolist()
         else:
             indices = (0, -1)
-            values = [
-                variable[(slice(0, 1),) * ndim],
-                variable[(slice(-1, None, 1),) * ndim],
-            ]
+            if one_chunk:
+                v = variable[...]
+                values = [v.item(0), v.item(-1)]
+                del v
+            else:
+                values = [
+                    variable[(slice(0, 1),) * ndim],
+                    variable[(slice(-1, None, 1),) * ndim],
+                ]
 
         # Create a dictionary of the element values
         elements = {index: value for index, value in zip(indices, values)}
@@ -11810,8 +11806,8 @@ class NetCDFRead(IORead):
         # Store the elements in the data object
         data._set_cached_elements(elements)
 
-    def _dataset_chunksizes(self, variable):
-        """Return the variable chunk sizes.
+    def _variable_chunksizes(self, variable):
+        """Return the dataset variable chunk sizes.
 
         .. versionadded:: (cfdm) 1.11.2.0
 

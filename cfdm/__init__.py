@@ -114,19 +114,6 @@ else:
             f"Got {h5py.__version__} at {h5py.__file__}"
         )
 
-# Check the version of zarr
-try:
-    import zarr
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-else:
-    _minimum_vn = "3.1.2"
-    if Version(zarr.__version__) < Version(_minimum_vn):
-        raise ValueError(
-            f"Bad zarr version: cfdm requires zarr>={_minimum_vn}. "
-            f"Got {zarr.__version__} at {zarr.__file__}"
-        )
-
 # Check the version of s3fs
 try:
     import s3fs

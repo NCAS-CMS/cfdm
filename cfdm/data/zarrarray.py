@@ -97,10 +97,15 @@ class ZarrArray(IndexMixin, abstract.FileArray):
         # `zarr.Group` objects don't need closing
         pass
 
-    def open(self):
-        """Return a dataset file object and address.
+    def open(self, **kwargs):
+        """Return a dataset object and address.
 
         .. versionadded:: (cfdm) 1.12.2.0
+
+        :Parameters:
+
+            kwargs: optional
+                Extra keyword arguments to `zarr.open`.
 
         :Returns:
 
@@ -109,6 +114,13 @@ class ZarrArray(IndexMixin, abstract.FileArray):
                 variable name of the data within the dataset.
 
         """
-        import zarr
+        try:
+            import zarr
+        except ModuleNotFoundError as error:
+            error.msg += (
+                ". Install the 'zarr' package "
+                "(https://pypi.org/project/zarr) to read Zarr datasets"
+            )
+            raise
 
-        return super().open(zarr.open, mode="r")
+        return super().open(zarr.open, mode="r", **kwargs)
