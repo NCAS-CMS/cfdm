@@ -5,7 +5,9 @@ Version NEXTVERSION
 
 * Write Zarr v3 datasets with `cfdm.write`, and allow the reading of
   grouped Zarr v2 and v3 datasets with `cfdm.read`
-  (https://github.com/NCAS-CMS/cfdm/issues/???)
+  (https://github.com/NCAS-CMS/cfdm/issues/354)
+* Read Zarr v2 and v3 datasets that contain a group hierarchy with
+  `cfdm.read` (https://github.com/NCAS-CMS/cfdm/issues/355)
 * New optional dependency: ``zarr>=3.1.2``
 * Removed dependency (now optional): ``zarr>=3.0.8``
 
