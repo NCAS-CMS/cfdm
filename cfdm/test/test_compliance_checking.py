@@ -19,14 +19,13 @@ faulthandler.enable()  # to debug seg faults and timeouts
 import cfdm
 
 
-n_tmpfiles = 2
+n_tmpfiles = 1
 tmpfiles = [
     tempfile.mkstemp("_test_compliance_check.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
 (
     tmpfile0,
-    tmpfile1,
 ) = tmpfiles
 
 
@@ -67,18 +66,18 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     # 1. Create a file with field with invalid standard names generally
     # using our 'kitchen sink' field as a basis
-    good_standard_sn_f = cfdm.example_field(1)
+    good_general_sn_f = cfdm.example_field(1)
     # TODO set bad names and then write to tempfile and read back in
-    bad_standard_sn_f = _create_noncompliant_names_field(
-        good_standard_sn_f, tmpfile0)
-    ### bad_standard_sn_f.dump()  # SB DEBUG
+    bad_general_sn_f = _create_noncompliant_names_field(
+        good_general_sn_f, tmpfile0)
+    ### bad_general_sn_f.dump()  # SB DEBUG
 
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
     ugrid_file_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "ugrid_1.nc"
     )
-    good_ugrid_sn_f = cfdm.read(ugrid_file_path)
+    good_ugrid_sn_f = cfdm.read(ugrid_file_path)[0]
     # Note we can't write UGRID files using cf at the moment, so needed
     # another way to create UGRID dataset with bad names to test on
     # and the simplest is to write extra 'bad names' file alongside
@@ -86,8 +85,8 @@ class ComplianceCheckingTest(unittest.TestCase):
     bad_names_ugrid_file_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "ugrid_1_bad_names.nc"
     )
-    bad_ugrid_sn_f = cfdm.read(bad_names_ugrid_file_path)
-    ### bad_standard_sn_f.dump()  # SB DEBUG
+    bad_ugrid_sn_f = cfdm.read(bad_names_ugrid_file_path)[0]
+    bad_ugrid_sn_f.dump()  # SB DEBUG
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -272,7 +271,7 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_compliant_field(self):
         """Test compliance checking on a compliant non-UGRID field."""
-        f = self.good_standard_sn_f
+        f = self.good_general_sn_f
         dc_output = f.dataset_compliance()
         self.assertEqual(dc_output, dict())
 
@@ -280,8 +279,6 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_noncompliant_field(self):
         """Test compliance checking on a non-compliant non-UGRID field."""
-        # TODO remove reference to sn attribute in reason string since this
-        # is noted separately in the dict value!
         expected_reason = (
             "standard_name attribute "
             "has a value that is not a valid name contained "
@@ -295,12 +292,12 @@ class ComplianceCheckingTest(unittest.TestCase):
             "reason": expected_reason,
         }
 
-        f = self.bad_standard_sn_f
+        f = self.bad_general_sn_f
         dc_output = f.dataset_compliance()
 
         # SLB DEV
-        from pprint import pprint
-        pprint(dc_output)
+        # from pprint import pprint
+        # pprint(dc_output)
 
         # 'ta' is the field variable we test on
         self.assertIn("non-compliance", dc_output["ta"])
@@ -360,7 +357,7 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_compliant_ugrid_field(self):
         """Test compliance checking on a compliant UGRID field."""
-        f = self.good_ugrid_sn_f[0]
+        f = self.good_ugrid_sn_f
         dc_output = f.dataset_compliance()
         self.assertEqual(dc_output, dict())
 
@@ -368,18 +365,85 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_noncompliant_ugrid_field(self):
         """Test compliance checking on a non-compliant UGRID field."""
-        f = self.bad_ugrid_sn_f
+        expected_reason = (
+            "standard_name attribute "
+            "has a value that is not a valid name contained "
+            "in the current standard name table"
+        )
+        expected_code = 400022
+        # Excludes attribute which we expect in there but depends on varname
+        # so add that expected key in during the iteration over varnames
+        expected_noncompl_dict = {
+            "code": expected_code,
+            "reason": expected_reason,
+        }
 
+        f = self.bad_ugrid_sn_f
+        dc_output = f.dataset_compliance()
+
+        # SLB DEV
         # TODO add error to run to say need to run 'create_test_files'
 
         # TODO see from below that not all bad names gte set - but want
         # that, so should update create_test_files method to set on all
         # for bad case.
-        with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
-            field_all_varnames = list(nc.variables.keys())
-            print("VERIFY")
-            for varname, var in nc.variables.items():
-                print(varname, getattr(var, "standard_name", "No standard_name"))
+        # with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
+        #     field_all_varnames = list(nc.variables.keys())
+        #     print("VERIFY")
+        #     for varname, var in nc.variables.items():
+        #         print(varname, getattr(var, "standard_name", "No standard_name"))
+
+        from pprint import pprint
+        pprint(dc_output)
+
+        # 'ta' is the field variable we test on
+        self.assertIn("non-compliance", dc_output["ta"])
+        noncompliance = dc_output["ta"]["non-compliance"]
+
+        expected_keys = [
+            # POSSIBLY SOLVED, ATTRIBUTE FIX itself? "ta",
+            "Mesh2_node_x",
+            "Mesh2_node_y",
+            "Mesh2_face_x",
+            "Mesh2_face_y",
+            "Mesh2_edge_x",
+            "Mesh2_edge_y",
+            "time",
+            "v",
+            "pa",
+        ]
+        for varname in expected_keys:
+            noncompl_dict = noncompliance.get(varname)
+            self.assertIsNotNone(
+                noncompl_dict,
+                msg=f"Empty non-compliance for variable '{varname}'"
+            )
+            self.assertIsInstance(noncompl_dict, list)
+            self.assertEqual(len(noncompl_dict), 1)
+
+            # Safe to unpack after test above
+            noncompl_dict = noncompl_dict[0]
+
+            self.assertIn("code", noncompl_dict)
+            self.assertEqual(noncompl_dict["code"], expected_code)
+            self.assertIn("reason", noncompl_dict)
+            self.assertEqual(noncompl_dict["reason"], expected_reason)
+
+            # Form expected attribute which needs the varname and bad name
+            expected_attribute = {
+                f"{varname}:standard_name": f"badname_{varname}"
+            }
+            expected_noncompl_dict["attribute"] = expected_attribute
+
+            self.assertIn("attribute", noncompl_dict)
+            self.assertEqual(noncompl_dict["attribute"], expected_attribute)
+
+            # Final check to ensure there isn't anything else in there.
+            # If keys are missing will be reported to fail more spefically
+            # on per-key-value checks above
+            self.assertEqual(noncompl_dict, expected_noncompl_dict)
+
+        # TODO what else to check here?
 
 
 if __name__ == "__main__":
