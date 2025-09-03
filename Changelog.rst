@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2025-??-??**
 
+* Write UGRID datasets with `cfdm.write`
+  (https://github.com/NCAS-CMS/cfdm/issues/271)
 * Write Zarr v3 datasets with `cfdm.write`, and allow the reading of
   grouped Zarr v2 and v3 datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/354)

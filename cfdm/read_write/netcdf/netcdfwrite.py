@@ -1021,7 +1021,7 @@ class NetCDFWrite(IOWrite):
         return ncvar
 
     def _create_geometry_container(self, field):
-        """Create a geometry container variable in the dataset.
+        """Create a geometry container.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -1031,8 +1031,7 @@ class NetCDFWrite(IOWrite):
 
         :Returns:
 
-            `dict`
-                A representation off the CF geometry container
+            `dict` A representation off the CF geometry container
                 variable for field construct. If there is no geometry
                 container then the dictionary is empty.
 
@@ -1041,7 +1040,7 @@ class NetCDFWrite(IOWrite):
 
         gc = {}
         for key, coord in self.implementation.get_auxiliary_coordinates(
-            field
+                field
         ).items():
             geometry_type = self.implementation.get_geometry(coord, None)
             if geometry_type not in self.cf_geometry_types():
@@ -3733,6 +3732,8 @@ class NetCDFWrite(IOWrite):
             ).get("grid_mapping_name", False)
         ]
 
+        field_ncvar = self._create_variable_name(f, default=default)
+
         # Check if the field or domain has a domain topology construct
         # (CF>=1.11)
         ugrid = self.implementation.has_domain_topology(f)
@@ -3741,6 +3742,56 @@ class NetCDFWrite(IOWrite):
                 "Can't yet write UGRID datasets. "
                 "This feature is coming soon ..."
             )
+        
+            ugrid_domain_topology = self.implementation.domain_topology(f)
+
+            # get horizontal Domain construct
+            ugrid_domain = self.implementation.domain(f).copy()
+            # remove non-UGRID-related metadats constructs
+            ugrid_axis = f.get_data_axes(ugrid_domain_topology)
+            for key in ugrid_domain.constructs(
+                    filter_by_type=(
+                        'auxiliary_coordinate',
+                        'domain_topology',
+                        'cell_connectivity'
+                    ).inverse_filter().filter_by_data()
+            ):
+                if f.get_data_axes(key) != (ugrid_axis,):
+                    ugrid_domain.del_construct(key)
+
+            for key, cr in ugrid_domain.coordinate_references().items():
+                if cr.coordinate_conversion.has_property('standad_name'):
+                    ugrid_domain.del_construct(key)
+        
+            # normalise indices
+            for key , c in ugrid_domain.constructs(
+                    filter_by_type=(
+                        'domain_topology',
+                        'cell_connectivity'
+                    )
+            ).items():
+                c.normalise(inplace=True)
+
+            # Check for ugrid_domain being in the cache
+            for d in g['cached_meshes']:
+                if ugrid_domain.equals(d['domain']):
+                    d['PARENTS'].append(field_ncvar)
+                
+                
+            # Cache this mesh
+            g['cached_meshes'].append(
+                {
+                    'domain': ugrid_domain,
+                    'ncvar': "NCVAR of mesh variable",
+                    'topology_dimension': "Depends on dt.get_cell()",
+                    'node_coordinates' = [],
+                    'edge_coordinates' = [],
+                    'face_coordinates' = [],
+                    'edge_node_connectivity': [],
+                    'face_node_connectivity': [],
+                    'PARENTS': [], # ncvars of data and domain variables
+            })
+
 
         field_coordinates = self.implementation.get_coordinates(f)
 
@@ -4389,8 +4440,8 @@ class NetCDFWrite(IOWrite):
         else:
             default = "domain"
 
-        ncvar = self._create_variable_name(f, default=default)
-
+        field_ncvar = self._create_variable_name(f, default=default)
+        
         ncdimensions = data_ncdimensions
 
         extra = {}
@@ -4400,7 +4451,7 @@ class NetCDFWrite(IOWrite):
             cell_measures = " ".join(cell_measures)
             logger.info(
                 "    Writing cell_measures attribute to "
-                f"variable {ncvar}: {cell_measures!r}"
+                f"variable {field_ncvar}: {cell_measures!r}"
             )  # pragma: no cover
 
             extra["cell_measures"] = cell_measures
@@ -4410,7 +4461,7 @@ class NetCDFWrite(IOWrite):
             coordinates = " ".join(coordinates)
             logger.info(
                 "    Writing coordinates attribute to "
-                f"variable {ncvar}: {coordinates!r}"
+                f"variable {field_ncvar}: {coordinates!r}"
             )  # pragma: no cover
 
             extra["coordinates"] = coordinates
@@ -4420,7 +4471,7 @@ class NetCDFWrite(IOWrite):
             grid_mapping = " ".join(grid_mapping)
             logger.info(
                 "    Writing grid_mapping attribute to "
-                f"variable {ncvar}: {grid_mapping!r}"
+                f"variable {field_ncvar}: {grid_mapping!r}"
             )  # pragma: no cover
 
             extra["grid_mapping"] = grid_mapping
@@ -4431,7 +4482,7 @@ class NetCDFWrite(IOWrite):
             ancillary_variables = re.sub(r"\s+", " ", ancillary_variables)
             logger.info(
                 "    Writing ancillary_variables attribute to "
-                f"variable {ncvar}: {ancillary_variables!r}"
+                f"variable {field_ncvar}: {ancillary_variables!r}"
             )  # pragma: no cover
 
             extra["ancillary_variables"] = ancillary_variables
@@ -4468,7 +4519,7 @@ class NetCDFWrite(IOWrite):
                 cell_methods = " ".join(cell_methods_strings)
                 logger.info(
                     "    Writing cell_methods attribute to "
-                    f"variable {ncvar}: {cell_methods}"
+                    f"variable {field_ncvar}: {cell_methods}"
                 )  # pragma: no cover
 
                 extra["cell_methods"] = cell_methods
@@ -4484,6 +4535,17 @@ class NetCDFWrite(IOWrite):
                 )
                 extra["geometry"] = gc_ncvar
 
+        # ------------------------------------------------------------
+        # UGRID mesh container (CF>=1.11)
+        # ------------------------------------------------------------
+        if g["output_version"] >= g["CF-1.11"]:            
+            mesh_ncvar = self._create_mesh_ncvar(f)
+            if mesh_ncvar:
+                extra["mesh"] = mesh_ncvar
+                
+                # Get location from f.domain_topology().get_cell()
+                extra["location"] = location
+                
         # ------------------------------------------------------------
         # Create a new data/domain dataset variable
         # ------------------------------------------------------------
@@ -4506,7 +4568,7 @@ class NetCDFWrite(IOWrite):
         # automatically changed to () within the
         # _write_netcdf_variable method. CF-1.9
         self._write_netcdf_variable(
-            ncvar,
+            field_ncvar,
             ncdimensions,
             f,
             self.implementation.get_data_axes(f, None),
@@ -4520,7 +4582,7 @@ class NetCDFWrite(IOWrite):
         if add_to_seen:
             seen[id_f] = {
                 "variable": org_f,
-                "ncvar": ncvar,
+                "ncvar": field_ncvar,
                 "ncdims": ncdimensions,
             }
 
@@ -6850,3 +6912,131 @@ class NetCDFWrite(IOWrite):
                 mv = ""
 
         return mv
+
+    def _create_mesh_ncvar(self, field):
+        """Create a geometry container.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            field: `Field` or `Domain`
+
+        :Returns:
+
+            `str` or `None`
+        """
+        g = self.write_vars
+
+        domain_topology = self.implementation.domain_topology(f)
+        if domain_topology is None:
+            # Not UGRID
+            return
+
+        mesh_id = f.domain.get_mesh_id(None)
+        
+        # get horizontal Domain construct
+        domain = self.implementation.domain(f).copy()
+        domain.clear_properties()
+        
+        # remove non-UGRID-related metadats constructs
+        ugrid_axis = f.get_data_axes(domain_topology)
+        for key in domain.constructs(
+                filter_by_type=(
+                    'auxiliary_coordinate',
+                    'domain_topology',
+                    'cell_connectivity'
+                ).inverse_filter().filter_by_data()
+        ):
+            if f.get_data_axes(key) != (ugrid_axis,):
+                domain.del_construct(key)
+ 
+        for key, cr in domain.coordinate_references().items():
+            if cr.coordinate_conversion.has_property('standad_name'):
+                domain.del_construct(key)
+    
+        # normalise indices
+        for key , c in domain.constructs(
+                filter_by_type=(
+                    'domain_topology',
+                    'cell_connectivity'
+                )
+        ).items():
+            c.normalise(inplace=True)
+ 
+        if mesh_id is None:
+            for ncvar, mc in g['mesh_containers'].items():
+                if mc['mesh_id'] is not None:                    
+                    continue
+                
+                if domain.equals(d['domain']):
+                    return ncvar
+
+            # Still here? Then create new container with no mesh id
+            ncvar = self._create_mesh_container(domain, mesh_id=None)
+            return ncvar
+
+        # Still here? The Create new container with no mish id
+        for ncvar, d in g['mesh_containers'].values():
+            if mc['mesh_id'] == mesh_id:
+                if self._update_mesh(mc, domain):
+                    return ncvar
+
+                mesh_id = None
+
+        # Still here? Then Create new container with no mesh id
+        ncvar = self._create_mesh_container(domain, mesh_id=mesh_id)
+        return ncvar
+    
+    def _create_mesh_container(domain, mesh_id):
+        """Create mesh container dictionary from domain         
+        
+        """
+        ncvar = self.implementation.nc_get_mesh_variable(
+            domain, default="mesh_container"
+        )
+        ncvar = self._name(ncvar)
+
+        mc = {
+            'domain': domain,
+            'topology_dimension': "Depends on dt.get_cell()",
+            'node_coordinates' = [],
+            'edge_coordinates' = [],
+            'face_coordinates' = [],
+            'edge_node_connectivity': [],
+            'face_node_connectivity': [],
+            }
+
+        g['mesh_containers'][ncvar] = mc
+
+
+    def _update_mesh(self, mc, domain):
+        """Update mc with domain    is possible
+
+        return False if not possible
+
+        return True if domain  fir with mc
+
+        """
+        pass
+    
+    def _write_mesh_variables(self, field, mesh_container):
+        """Write a mesh container to the dataset.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `str`
+                The dataset variable name for the mesh container.
+
+        """
+                # DO THIS AFTER ALL FIELDS HAVE BEEN WRITEN
+        g = self.write_vars
+
+        for ncvar, gc in g["mesh_containers"].items():
+            if geometry_container == gc:
+                # Use this existing mesh container
+                return ncvar
+
+        # Still here? Then 

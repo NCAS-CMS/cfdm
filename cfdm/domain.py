@@ -1112,3 +1112,83 @@ class Domain(
             c.uncompress(inplace=True)
 
         return d
+
+    def create_other_mesh(self, normalise=True):
+        """TODOUGRID"""
+        d = self.copy()
+        dt = self.domain_topology()        
+        if dt.get_cell() == "face":
+            # create nodes
+            node_ids, index = np.unique(dt , return_index=True)
+
+            node_ids  = node_ids.compressed()
+            size = node_ids.size
+            index= index[:size]
+            node_axis = d.set_construct(d._DomainAxis(index.size))
+
+            #point_topology = d._DomainTopology(cell="point", data=node_ids)
+            #d.set_construct(point_topology, axes=node_axis, copy=False)
+
+            node_lons = f.coordinate('longitude').bounds.data.flatten()[index]
+            node_lats = f.coordinate('latitude').bounds.data.flatten()[index]
+
+            lon = d._AuxiliaryCoordinate(data=node_lons, properties={})
+            lat = d._AuxiliaryCoordinate(data=node_lats, properties={})
+            d.set_construct(lon, axes=node_axis, copy=False)
+            d.set_construct(lat, axes=node_axis, copy=False)
+
+            # need to got from face_topology to edge_node_connectivity
+
+            edge_node_connectivity = []
+            for xx in face_topology.array:
+                node =  xx[0]
+                xx = xx.compressed().tolist()
+                for i, j in zip(xx[:-1], xx[1:]):
+                    uu = sorted((i, j))
+                    if uu not in edge_node_connectivity:
+                        edge_node_connectivity.append(uu)
+                
+                uu = sorted((xx[-1], xx[0]))
+                if uu not in edge_node_connectivity:
+                    edge_node_connectivity.append(uu)
+              
+            
+            # need to got from point_topology to edge_node_connectivity
+
+            edge_node_connectivity = []
+            for xx in point_topology.array:
+                xx = xx.compressed().tolist()
+                node =  xx[0]
+                for i in xx[1:]:
+                    uu = sorted((node, i))
+                    if uu not in edge_node_connectivity:
+                        edge_node_connectivity.append(uu)
+
+                    
+        # In [8]: print(f.domain_topology().array)
+        # [[0 1 2 -- --]
+        #  [1 0 3 6 --]
+        #  [2 0 4 3 --]
+        #  [3 2 1 5 6]
+        #  [4 5 2 -- --]
+        #  [5 4 3 -- --]
+        #  [6 3 1 -- --]]
+
+        if edge_connectivity:
+            # create node connectivty
+            
+#In [5]: print(f.domain_topology().array)
+#[[2 3 1 0]
+# [4 5 3 2]
+# [1 3 6 --]]
+#            
+#In [24]: print(f.coordinate('latitude').bounds.array)
+#[[33.0 33.0 35.0 35.0]
+# [31.0 31.0 33.0 33.0]
+# [34.0 35.0 33.0 --]]
+#
+#In [25]: print(f.coordinate('longitude').bounds.array)
+#[[-45.0 -43.0 -43.0 -45.0]
+# [-45.0 -43.0 -43.0 -45.0]
+# [-40.0 -43.0 -43.0 --]]
+
