@@ -1969,8 +1969,24 @@ def _make_ugrid_1(filename, standard_names):
 
     Standard names to set are input as a dicionary parameter to facilitate
     testing on CF compliance checking for a UGRID dataset in the
-    test_compliance_checking module.
+    test_compliance_checking module. This should either be 6 names long
+    or TODO names long where in the latter case extra standard names will
+    be set on all other variables which have no standard name in
+    ugrid_1, namely on:
+    * Mesh2
+    * Mesh2_face_nodes
+    * Mesh2_edge_nodes
+    * Mesh2_face_edges
+    * Mesh2_face_links
+    * Mesh2_edge_face_links
+    * time_bounds
+
     """
+
+    extra_sn_setting = False
+    if len(standard_names) == 13:
+        extra_sn_setting = True
+
     n = netCDF4.Dataset(filename, "w")
 
     n.Conventions = f"CF-{VN} UGRID-1.0"
@@ -1994,12 +2010,16 @@ def _make_ugrid_1(filename, standard_names):
     Mesh2.face_edge_connectivity = "Mesh2_face_edges"
     Mesh2.face_face_connectivity = "Mesh2_face_links"
     Mesh2.edge_face_connectivity = "Mesh2_edge_face_links"
+    if extra_sn_setting:
+        Mesh2.standard_name = standard_names[6]
 
     Mesh2_face_nodes = n.createVariable(
         "Mesh2_face_nodes", "i4", ("nMesh2_face", "Four"), fill_value=-99
     )
     Mesh2_face_nodes.long_name = "Maps every face to its corner nodes"
     Mesh2_face_nodes[...] = [[2, 3, 1, 0], [4, 5, 3, 2], [1, 3, 6, -99]]
+    if extra_sn_setting:
+        Mesh2_face_nodes.standard_name = standard_names[7]
 
     Mesh2_edge_nodes = n.createVariable(
         "Mesh2_edge_nodes", "i4", ("Two", "nMesh2_edge")
@@ -2009,12 +2029,16 @@ def _make_ugrid_1(filename, standard_names):
         [1, 3, 3, 0, 2, 2, 2, 5, 3],
         [6, 6, 1, 1, 0, 3, 4, 4, 5],
     ]
+    if extra_sn_setting:
+        Mesh2_edge_nodes.standard_name = standard_names[8]
 
     # Optional mesh topology variables
     Mesh2_face_edges = n.createVariable(
         "Mesh2_face_edges", "i4", ("nMesh2_face", "Four"), fill_value=-99
     )
     Mesh2_face_edges.long_name = "Maps every face to its edges."
+    if extra_sn_setting:
+        Mesh2_face_edges.standard_name = standard_names[9]
 
     Mesh2_face_links = n.createVariable(
         "Mesh2_face_links", "i4", ("nMesh2_face", "Four"), fill_value=-99
@@ -2025,11 +2049,15 @@ def _make_ugrid_1(filename, standard_names):
         [0, -99, -99, -99],
         [0, -99, -99, -99],
     ]
+    if extra_sn_setting:
+        Mesh2_face_links.standard_name = standard_names[10]
 
     Mesh2_edge_face_links = n.createVariable(
         "Mesh2_edge_face_links", "i4", ("nMesh2_edge", "Two"), fill_value=-99
     )
     Mesh2_edge_face_links.long_name = "neighbour faces for edges"
+    if extra_sn_setting:
+        Mesh2_edge_face_links.standard_name = standard_names[11]
 
     # Mesh node coordinates
     Mesh2_node_x = n.createVariable("Mesh2_node_x", "f4", ("nMesh2_node",))
@@ -2072,6 +2100,8 @@ def _make_ugrid_1(filename, standard_names):
 
     t_bounds = n.createVariable("time_bounds", "f8", ("time", "Two"))
     t_bounds[...] = [[0, 86400], [86400, 172800]]
+    if extra_sn_setting:
+        t_bounds.standard_name = standard_names[12]
 
     # Data variables
     ta = n.createVariable("ta", "f4", ("time", "nMesh2_face"))
@@ -2358,16 +2388,25 @@ ugrid_1_valid_standard_names = [
     "northward_wind",
     "air_pressure",
 ]
-ugrid_1_bad_standard_names = [
-    "badname_" + name for name in ugrid_1_valid_standard_names
-]
 ugrid_1 = _make_ugrid_1(
     "ugrid_1.nc",
     ugrid_1_valid_standard_names
 )
+ugrid_1_bad_standard_names = [
+    "badname_" + name for name in ugrid_1_valid_standard_names
+]
+ugrid_1_bad_standard_names += [
+    "badname_Mesh2",  # index 6
+    "badname_Mesh2_face_nodes",
+    "badname_Mesh2_edge_nodes",
+    "badname_Mesh2_face_edges",
+    "badname_Mesh2_face_links",
+    "badname_Mesh2_edge_face_links",
+    "badname_time_bounds",  # index 12
+]
+
 ugrid_1_bad_names = _make_ugrid_1(
-    "ugrid_1_bad_names.nc",
-    ugrid_1_bad_standard_names,
+    "ugrid_1_bad_names.nc", ugrid_1_bad_standard_names,
 )
 ugrid_2 = _make_ugrid_2("ugrid_2.nc")
 

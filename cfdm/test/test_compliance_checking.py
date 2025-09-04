@@ -70,7 +70,7 @@ class ComplianceCheckingTest(unittest.TestCase):
     # TODO set bad names and then write to tempfile and read back in
     bad_general_sn_f = _create_noncompliant_names_field(
         good_general_sn_f, tmpfile0)
-    ### bad_general_sn_f.dump()  # SB DEBUG
+    ### bad_general_sn_f.dump()  # SB DEV
 
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
@@ -85,8 +85,7 @@ class ComplianceCheckingTest(unittest.TestCase):
     bad_names_ugrid_file_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "ugrid_1_bad_names.nc"
     )
-    bad_ugrid_sn_f = cfdm.read(bad_names_ugrid_file_path)[0]
-    bad_ugrid_sn_f.dump()  # SB DEBUG
+    bad_ugrid_sn_fields = cfdm.read(bad_names_ugrid_file_path)
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -363,8 +362,8 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         # TODO what else to test on in 'good' case?
 
-    def test_standard_names_validation_noncompliant_ugrid_field(self):
-        """Test compliance checking on a non-compliant UGRID field."""
+    def test_standard_names_validation_noncompliant_ugrid_fields(self):
+        """Test compliance checking on non-compliant UGRID fields."""
         expected_reason = (
             "standard_name attribute "
             "has a value that is not a valid name contained "
@@ -378,8 +377,11 @@ class ComplianceCheckingTest(unittest.TestCase):
             "reason": expected_reason,
         }
 
-        f = self.bad_ugrid_sn_f
-        dc_output = f.dataset_compliance()
+        # Fields for testing on: those in ugrid_1 with bad names pre-set
+        f1, f2, f3 = self.bad_ugrid_sn_fields  # unpack to shorter names
+        dc_output_1 = f1.dataset_compliance()
+        dc_output_2 = f2.dataset_compliance()
+        dc_output_3 = f2.dataset_compliance()
 
         # SLB DEV
         # TODO add error to run to say need to run 'create_test_files'
@@ -387,30 +389,151 @@ class ComplianceCheckingTest(unittest.TestCase):
         # TODO see from below that not all bad names gte set - but want
         # that, so should update create_test_files method to set on all
         # for bad case.
-        # with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
-        #     field_all_varnames = list(nc.variables.keys())
-        #     print("VERIFY")
-        #     for varname, var in nc.variables.items():
-        #         print(varname, getattr(var, "standard_name", "No standard_name"))
+        with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
+            field_all_varnames = list(nc.variables.keys())
+            print("VERIFY")
+            for varname, var in nc.variables.items():
+                print(varname, getattr(var, "standard_name", "No standard_name"))
 
         from pprint import pprint
-        pprint(dc_output)
+        pprint(dc_output_1)
 
-        # 'ta' is the field variable we test on
-        self.assertIn("non-compliance", dc_output["ta"])
-        noncompliance = dc_output["ta"]["non-compliance"]
+        # 'pa' is the field variable we test on
+        self.assertIn("non-compliance", dc_output_1["pa"])
+        noncompliance = dc_output_1["pa"]["non-compliance"]
 
         expected_keys = [
-            # POSSIBLY SOLVED, ATTRIBUTE FIX itself? "ta",
-            "Mesh2_node_x",
-            "Mesh2_node_y",
-            "Mesh2_face_x",
+            # itself? "pa",
+            # not for this field "v",
+            # not for this field "ta",
+            "time",
+            "time_bounds",
+            "Mesh2",
+            "Mesh2_node_x",  # aka longitude?
+            "Mesh2_node_y",  # aka latitude?
+            "Mesh2_face_x",  # ... etc.
             "Mesh2_face_y",
             "Mesh2_edge_x",
             "Mesh2_edge_y",
+            "Mesh2_face_nodes",
+            "Mesh2_edge_nodes",
+            "Mesh2_face_edges",
+            "Mesh2_face_links",
+            "Mesh2_edge_face_links",
+        ]
+        for varname in expected_keys:
+            noncompl_dict = noncompliance.get(varname)
+            self.assertIsNotNone(
+                noncompl_dict,
+                msg=f"Empty non-compliance for variable '{varname}'"
+            )
+            self.assertIsInstance(noncompl_dict, list)
+            self.assertEqual(len(noncompl_dict), 1)
+
+            # Safe to unpack after test above
+            noncompl_dict = noncompl_dict[0]
+
+            self.assertIn("code", noncompl_dict)
+            self.assertEqual(noncompl_dict["code"], expected_code)
+            self.assertIn("reason", noncompl_dict)
+            self.assertEqual(noncompl_dict["reason"], expected_reason)
+
+            # Form expected attribute which needs the varname and bad name
+            expected_attribute = {
+                f"{varname}:standard_name": f"badname_{varname}"
+            }
+            expected_noncompl_dict["attribute"] = expected_attribute
+
+            self.assertIn("attribute", noncompl_dict)
+            self.assertEqual(noncompl_dict["attribute"], expected_attribute)
+
+            # Final check to ensure there isn't anything else in there.
+            # If keys are missing will be reported to fail more spefically
+            # on per-key-value checks above
+            self.assertEqual(noncompl_dict, expected_noncompl_dict)
+
+        from pprint import pprint
+        pprint(dc_output_2)
+
+        # 'ta' is the field variable we test on
+        self.assertIn("non-compliance", dc_output_2["ta"])
+        noncompliance = dc_output_2["ta"]["non-compliance"]
+
+        expected_keys = [
+            # itself? "ta",
+            # not for this field "pa",
+            # not for this field "v",
             "time",
-            "v",
-            "pa",
+            "time_bounds",
+            "Mesh2",
+            "Mesh2_node_x",  # aka longitude?
+            "Mesh2_node_y",  # aka latitude?
+            "Mesh2_face_x",  # ... etc.
+            "Mesh2_face_y",
+            "Mesh2_edge_x",
+            "Mesh2_edge_y",
+            "Mesh2_face_nodes",
+            "Mesh2_edge_nodes",
+            "Mesh2_face_edges",
+            "Mesh2_face_links",
+            "Mesh2_edge_face_links",
+        ]
+        for varname in expected_keys:
+            noncompl_dict = noncompliance.get(varname)
+            self.assertIsNotNone(
+                noncompl_dict,
+                msg=f"Empty non-compliance for variable '{varname}'"
+            )
+            self.assertIsInstance(noncompl_dict, list)
+            self.assertEqual(len(noncompl_dict), 1)
+
+            # Safe to unpack after test above
+            noncompl_dict = noncompl_dict[0]
+
+            self.assertIn("code", noncompl_dict)
+            self.assertEqual(noncompl_dict["code"], expected_code)
+            self.assertIn("reason", noncompl_dict)
+            self.assertEqual(noncompl_dict["reason"], expected_reason)
+
+            # Form expected attribute which needs the varname and bad name
+            expected_attribute = {
+                f"{varname}:standard_name": f"badname_{varname}"
+            }
+            expected_noncompl_dict["attribute"] = expected_attribute
+
+            self.assertIn("attribute", noncompl_dict)
+            self.assertEqual(noncompl_dict["attribute"], expected_attribute)
+
+            # Final check to ensure there isn't anything else in there.
+            # If keys are missing will be reported to fail more spefically
+            # on per-key-value checks above
+            self.assertEqual(noncompl_dict, expected_noncompl_dict)
+
+        from pprint import pprint
+        pprint(dc_output_3)
+
+        # 'v' is the field variable we test on
+        self.assertIn("non-compliance", dc_output_3["v"])
+        noncompliance = dc_output_3["v"]["non-compliance"]
+
+        expected_keys = [
+            # itself? "v",
+            # not for this field "ta",
+            # not for this field "pa",
+            "time",
+            "time_bounds",
+            "Mesh2",
+            "Mesh2_node_x",  # aka longitude?
+            "Mesh2_node_y",  # aka latitude?
+            "Mesh2_face_x",  # ... etc.
+            "Mesh2_face_y",
+            "Mesh2_edge_x",
+            "Mesh2_edge_y",
+            "Mesh2_face_nodes",
+            "Mesh2_edge_nodes",
+            "Mesh2_face_edges",
+            "Mesh2_face_links",
+            "Mesh2_edge_face_links",
         ]
         for varname in expected_keys:
             noncompl_dict = noncompliance.get(varname)
