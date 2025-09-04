@@ -66,11 +66,11 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     # 1. Create a file with field with invalid standard names generally
     # using our 'kitchen sink' field as a basis
-    good_general_sn_f = cfdm.example_field(1)
+    good_snames_general_field = cfdm.example_field(1)
     # TODO set bad names and then write to tempfile and read back in
-    bad_general_sn_f = _create_noncompliant_names_field(
-        good_general_sn_f, tmpfile0)
-    ### bad_general_sn_f.dump()  # SB DEV
+    bad_snames_general_field = _create_noncompliant_names_field(
+        good_snames_general_field, tmpfile0)
+    ### bad_snames_general_field.dump()  # SB DEV
 
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
@@ -270,7 +270,7 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_compliant_field(self):
         """Test compliance checking on a compliant non-UGRID field."""
-        f = self.good_general_sn_f
+        f = self.good_snames_general_field
         dc_output = f.dataset_compliance()
         self.assertEqual(dc_output, dict())
 
@@ -291,7 +291,7 @@ class ComplianceCheckingTest(unittest.TestCase):
             "reason": expected_reason,
         }
 
-        f = self.bad_general_sn_f
+        f = self.bad_snames_general_field
         dc_output = f.dataset_compliance()
 
         # SLB DEV
@@ -389,11 +389,11 @@ class ComplianceCheckingTest(unittest.TestCase):
         # TODO see from below that not all bad names gte set - but want
         # that, so should update create_test_files method to set on all
         # for bad case.
-        with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
-            field_all_varnames = list(nc.variables.keys())
-            print("VERIFY")
-            for varname, var in nc.variables.items():
-                print(varname, getattr(var, "standard_name", "No standard_name"))
+        # with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
+        #     field_all_varnames = list(nc.variables.keys())
+        #     print("VERIFY")
+        #     for varname, var in nc.variables.items():
+        #         print(varname, getattr(var, "standard_name", "No standard_name"))
 
         from pprint import pprint
         pprint(dc_output_1)
