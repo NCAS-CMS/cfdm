@@ -1040,7 +1040,7 @@ class NetCDFWrite(IOWrite):
 
         gc = {}
         for key, coord in self.implementation.get_auxiliary_coordinates(
-                field
+            field
         ).items():
             geometry_type = self.implementation.get_geometry(coord, None)
             if geometry_type not in self.cf_geometry_types():
@@ -1354,7 +1354,7 @@ class NetCDFWrite(IOWrite):
             # CF>=1.8 and we have geometry bounds, which are dealt
             # with separately
             # --------------------------------------------------------
-            extra = self._write_node_coordinates(
+            extra = self._write_geometry_node_coordinates(
                 f, coord, coord_ncvar, coord_ncdimensions
             )
             return extra
@@ -1477,10 +1477,10 @@ class NetCDFWrite(IOWrite):
 
         return extra
 
-    def _write_node_coordinates(
+    def _write_geometry_node_coordinates(
         self, f, coord, coord_ncvar, coord_ncdimensions
     ):
-        """Create a node coordinates dataset variable.
+        """Create a geometry node coordinates dataset variable.
 
         This will create:
 
@@ -2299,6 +2299,55 @@ class NetCDFWrite(IOWrite):
 
         return coordinates
 
+    def _write_ugrid_node_coordinate(self, node_coord, ncdimensions):
+        """Write auxiliary coordinates and bounds to the dataset.
+
+        If an equal TODOUGRIDauxiliary coordinate has already been written to
+        the dataset then the input coordinate is not written.
+
+        :Parameters:
+
+            f: Field construct
+
+            key: `str`
+                The identifier of the coordinate construct,
+                e.g. ``'auxiliarycoordinate1'``.
+
+            coord: Coordinate construct
+
+            coordinates: `list`
+
+            ncdimension
+                *f* may be `None` if there are no bounds
+
+        :Returns:
+
+            `list`
+                The list of auxiliary coordinate dataset variable
+                names updated in place.
+
+        """
+        g = self.write_vars
+
+        already_in_file = self._already_in_file(node_coord, ncdimensions)
+
+        if already_in_file:
+            ncvar = g["seen"][id(node_coord)]["ncvar"]
+        else:
+            ncvar = self._create_variable_name(node_coord, default="auxiliary")
+
+            # Create a new UGRID node coordinate variable, if it has
+            # data
+            if self.implementation.get_data(node_coord, None) is not None:
+                self._write_netcdf_variable(
+                    ncvar,
+                    ncdimensions,
+                    node_coord,
+                    None,
+                )
+
+        return ncvar
+
     def _write_domain_ancillary(self, f, key, anc):
         """Write a domain ancillary and its bounds to the dataset.
 
@@ -2427,6 +2476,162 @@ class NetCDFWrite(IOWrite):
                 ncvar,
                 ncdimensions,
                 anc,
+                self.implementation.get_data_axes(f, key),
+            )
+
+        g["key_to_ncvar"][key] = ncvar
+        g["key_to_ncdims"][key] = ncdimensions
+
+        return ncvar
+
+    def _write_domain_topology(
+        self,
+        f,
+        key,
+        domain_topology,
+    ):
+        """Write a field ancillary to the dataset.
+
+        If an equal domain topology has already been written to the
+        dataset then it is not re-written.
+
+        .. versionadded: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            f : `Field` or `Domain`
+
+            key : `str`
+
+            domain_topology : `DomainTopology`
+
+        :Returns:
+
+            `str`
+                The dataset variable name of the domain topology
+                object. If no domain topology variable was written
+                then an empty string is returned.
+
+        **Examples**
+
+        >>> ncvar = _write_domain_topology(f, 'domaintopology0', dt)
+
+        """
+        g = self.write_vars
+
+        ncdimensions = self._dataset_dimensions(f, key, domain_topology)
+
+        # Get name of the connectivty dimension
+        size = domain_topology.data.shape[-1]
+        #        connectivity_ncdim = domain_topology.nc_get_connectivity_dimension(
+        #            domain_topology, f"bounds{size}"
+        #        )
+        connectivity_ncdim = f"bounds{size}"  # TODOUGRID
+
+        ncdimensions = ncdimensions + (connectivity_ncdim,)
+
+        if self._already_in_file(domain_topology, ncdimensions):
+            # This domain topology variable has been previously
+            # created, so no need to do so again.
+            ncvar = g["seen"][id(domain_topology)]["ncvar"]
+        else:
+            # This domain topology variable has not been previously
+            # created, so create it now.
+            if connectivity_ncdim not in g["ncdim_to_size"]:
+                print("size=", size)
+                self._write_dimension(connectivity_ncdim, f, size=size)
+
+            cell = domain_topology.get_cell()
+            ncvar = self._create_variable_name(
+                domain_topology, default=f"{cell}_node_connectivity"
+            )
+
+            self._write_netcdf_variable(
+                ncvar,
+                ncdimensions,
+                domain_topology,
+                self.implementation.get_data_axes(f, key),
+            )
+
+        g["key_to_ncvar"][key] = ncvar
+        g["key_to_ncdims"][key] = ncdimensions
+
+        return ncvar
+
+    def _write_cell_connectivity(self, f, key, cell_connectivity):
+        """Write a field ancillary to the dataset.
+
+        If an equal domain topology has already been written to the
+        dataset then it is not re-written.
+
+        .. versionadded: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            f : `Field` or `Domain`
+
+            key : `str`
+
+            cell_connectivity : `CellConnectivity`
+
+        :Returns:
+
+            `str`
+                The dataset variable name of the domain topology
+                object. If no domain topology variable was written
+                then an empty string is returned.
+
+        **Examples**
+
+        >>> ncvar = _write_domain_topology(f, 'domaintopology0', dt)
+
+        """
+        g = self.write_vars
+
+        cell = "face"
+        ncdimensions = self._dataset_dimensions(f, key, cell_connectivity)
+
+        # Get name of the connectivty dimension
+        size = cell_connectivity.data.shape[-1] - 1
+        #        connectivity_ncdim = domain_topology.nc_get_connectivity_dimension(
+        #            domain_topology, f"connectivity{size}"
+        #        )
+        connectivity_ncdim = f"connectivity{size}"  # TODOUGRID
+
+        ncdimensions = ncdimensions + (connectivity_ncdim,)
+
+        if self._already_in_file(cell_connectivity, ncdimensions):
+            # This cell_connectivity variable has been previously
+            # created, so no need to do so again.
+            ncvar = g["seen"][id(cell_connectivity)]["ncvar"]
+        else:
+            # This cell_connectivity variable has not been previously
+            # created, so create it now.
+            if connectivity_ncdim not in g["ncdim_to_size"]:
+                print("size=", size)
+                self._write_dimension(connectivity_ncdim, f, size=size)
+
+            connectivity = cell_connectivity.get_connectivity("cell")
+            print (connectivity, cell)
+            if (
+                (connectivity, cell) == ("edge", "face")
+                or (connectivity, cell) == ("node", "edge")
+                or (connectivity, cell) == ("face", "volume")
+            ):
+                default = f"{cell}_{cell}_connectivity"  # TODOUGRID
+
+            ncvar = self._create_variable_name(
+                cell_connectivity, default=default
+            )
+
+            cell_connectivity = (
+                cell_connectivity.normalise()
+            )  # TODOUGRID not twie!
+
+            self._write_netcdf_variable(
+                ncvar,
+                ncdimensions,
+                cell_connectivity[:, 1:],
                 self.implementation.get_data_axes(f, key),
             )
 
@@ -3732,67 +3937,6 @@ class NetCDFWrite(IOWrite):
             ).get("grid_mapping_name", False)
         ]
 
-        field_ncvar = self._create_variable_name(f, default=default)
-
-        # Check if the field or domain has a domain topology construct
-        # (CF>=1.11)
-        ugrid = self.implementation.has_domain_topology(f)
-        if ugrid:
-            raise NotImplementedError(
-                "Can't yet write UGRID datasets. "
-                "This feature is coming soon ..."
-            )
-        
-            ugrid_domain_topology = self.implementation.domain_topology(f)
-
-            # get horizontal Domain construct
-            ugrid_domain = self.implementation.domain(f).copy()
-            # remove non-UGRID-related metadats constructs
-            ugrid_axis = f.get_data_axes(ugrid_domain_topology)
-            for key in ugrid_domain.constructs(
-                    filter_by_type=(
-                        'auxiliary_coordinate',
-                        'domain_topology',
-                        'cell_connectivity'
-                    ).inverse_filter().filter_by_data()
-            ):
-                if f.get_data_axes(key) != (ugrid_axis,):
-                    ugrid_domain.del_construct(key)
-
-            for key, cr in ugrid_domain.coordinate_references().items():
-                if cr.coordinate_conversion.has_property('standad_name'):
-                    ugrid_domain.del_construct(key)
-        
-            # normalise indices
-            for key , c in ugrid_domain.constructs(
-                    filter_by_type=(
-                        'domain_topology',
-                        'cell_connectivity'
-                    )
-            ).items():
-                c.normalise(inplace=True)
-
-            # Check for ugrid_domain being in the cache
-            for d in g['cached_meshes']:
-                if ugrid_domain.equals(d['domain']):
-                    d['PARENTS'].append(field_ncvar)
-                
-                
-            # Cache this mesh
-            g['cached_meshes'].append(
-                {
-                    'domain': ugrid_domain,
-                    'ncvar': "NCVAR of mesh variable",
-                    'topology_dimension': "Depends on dt.get_cell()",
-                    'node_coordinates' = [],
-                    'edge_coordinates' = [],
-                    'face_coordinates' = [],
-                    'edge_node_connectivity': [],
-                    'face_node_connectivity': [],
-                    'PARENTS': [], # ncvars of data and domain variables
-            })
-
-
         field_coordinates = self.implementation.get_coordinates(f)
 
         owning_coordinates = []
@@ -4433,6 +4577,24 @@ class NetCDFWrite(IOWrite):
             ]
 
         # ------------------------------------------------------------
+        # Domain topology variables (CF>=1.11)
+        # ------------------------------------------------------------
+        domain_topologies = [
+            self._write_domain_topology(f, key, dt)
+            for key, dt in self.implementation.get_domain_topologies(f).items()
+        ]
+
+        # ------------------------------------------------------------
+        # Cell connectivity variables (CF>=1.11)
+        # ------------------------------------------------------------
+        cell_connectivities = [
+            self._write_cell_connectivity(f, key, cc)
+            for key, cc in self.implementation.get_cell_connectivities(
+                f
+            ).items()
+        ]
+
+        # ------------------------------------------------------------
         # Create the data/domain dataset variable
         # ------------------------------------------------------------
         if field:
@@ -4441,7 +4603,7 @@ class NetCDFWrite(IOWrite):
             default = "domain"
 
         field_ncvar = self._create_variable_name(f, default=default)
-        
+
         ncdimensions = data_ncdimensions
 
         extra = {}
@@ -4538,14 +4700,16 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # UGRID mesh container (CF>=1.11)
         # ------------------------------------------------------------
-        if g["output_version"] >= g["CF-1.11"]:            
-            mesh_ncvar = self._create_mesh_ncvar(f)
-            if mesh_ncvar:
+        if g["output_version"] >= g["CF-1.11"]:
+            mesh_ncvar = self._get_mesh_ncvar(f)
+            if mesh_ncvar is not None:
                 extra["mesh"] = mesh_ncvar
-                
-                # Get location from f.domain_topology().get_cell()
-                extra["location"] = location
-                
+                location = f.domain_topology().get_cell()
+                extra["location"] = location  # TODOUGRID
+
+        import pprint
+
+        pprint.pprint(g["mesh_containers"])
         # ------------------------------------------------------------
         # Create a new data/domain dataset variable
         # ------------------------------------------------------------
@@ -5527,6 +5691,10 @@ class NetCDFWrite(IOWrite):
             #               by their output dataset variable names.
             # --------------------------------------------------------
             "quantization": {},
+            # --------------------------------------------------------
+            # UGRID:
+            # --------------------------------------------------------
+            "mesh_containers": {},
         }
 
         if mode not in ("w", "a", "r+"):
@@ -5695,9 +5863,7 @@ class NetCDFWrite(IOWrite):
             group=group,
         )
 
-        if mode == "w":  # only one iteration required in this simple case
-            return
-        elif mode == "a":  # need another iteration to append after reading
+        if mode == "a":  # need another iteration to append after reading
             self.write_vars["dry_run"] = False
             self.write_vars["post_dry_run"] = True  # i.e. follows a dry run
 
@@ -5955,6 +6121,9 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         for f in fields:
             self._write_field_or_domain(f)
+
+        # TODOUGRID
+        self._write_ugrid_mesh_variables()
 
         # ------------------------------------------------------------
         # Write all of the buffered data to disk
@@ -6913,130 +7082,486 @@ class NetCDFWrite(IOWrite):
 
         return mv
 
-    def _create_mesh_ncvar(self, field):
-        """Create a geometry container.
+    def _get_mesh_ncvar(self, parent):
+        """Create TODOUGRID
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            field: `Field` or `Domain`
+            parent: `Field` or `Domain`
 
         :Returns:
 
             `str` or `None`
+
         """
         g = self.write_vars
 
-        domain_topology = self.implementation.domain_topology(f)
-        if domain_topology is None:
-            # Not UGRID
+        ncvar_new, mesh_new = self._create_mesh_container(parent)
+        if ncvar_new is None:
             return
 
-        mesh_id = f.domain.get_mesh_id(None)
-        
-        # get horizontal Domain construct
-        domain = self.implementation.domain(f).copy()
-        domain.clear_properties()
-        
-        # remove non-UGRID-related metadats constructs
-        ugrid_axis = f.get_data_axes(domain_topology)
-        for key in domain.constructs(
-                filter_by_type=(
-                    'auxiliary_coordinate',
-                    'domain_topology',
-                    'cell_connectivity'
-                ).inverse_filter().filter_by_data()
-        ):
-            if f.get_data_axes(key) != (ugrid_axis,):
-                domain.del_construct(key)
- 
-        for key, cr in domain.coordinate_references().items():
-            if cr.coordinate_conversion.has_property('standad_name'):
-                domain.del_construct(key)
-    
-        # normalise indices
-        for key , c in domain.constructs(
-                filter_by_type=(
-                    'domain_topology',
-                    'cell_connectivity'
-                )
-        ).items():
-            c.normalise(inplace=True)
- 
-        if mesh_id is None:
-            for ncvar, mc in g['mesh_containers'].items():
-                if mc['mesh_id'] is not None:                    
-                    continue
+        mesh_id = mesh_new["mesh_id"]
+        for ncvar, mesh in g["mesh_containers"].items():
+            if mesh_id is None:
+                if self._equal_meshes0(mesh, mesh_new):
+                    # No mesh id has been set, and the parent's mesh
+                    # has already been defined.
+                    return ncvar
                 
-                if domain.equals(d['domain']):
-                    return ncvar
+            elif self._linked_meshed(mesh, mesh_new):
+                # The parent's mesh is linked to one that has already
+                # been defined, so they can be combined to form a new
+                # mesh.
+                self._update_mesh(mesh, mesh_new)
+                return ncvar
 
-            # Still here? Then create new container with no mesh id
-            ncvar = self._create_mesh_container(domain, mesh_id=None)
-            return ncvar
+        # Still here? Then the parent's mesh has not already been
+        # defined, so save it.
+        g["mesh_containers"][ncvar_new] = mesh_new
+        return ncvar_new
 
-        # Still here? The Create new container with no mish id
-        for ncvar, d in g['mesh_containers'].values():
-            if mc['mesh_id'] == mesh_id:
-                if self._update_mesh(mc, domain):
-                    return ncvar
-
-                mesh_id = None
-
-        # Still here? Then Create new container with no mesh id
-        ncvar = self._create_mesh_container(domain, mesh_id=mesh_id)
-        return ncvar
-    
-    def _create_mesh_container(domain, mesh_id):
-        """Create mesh container dictionary from domain         
+    def _equal_meshes(self, mesh, mesh1):
+        """Create mesh container dictionary from domain       TODOUGRID.
+        
+        .. versionadded:: (cfdm) NEXTVERSION
+        
+        :Returns:
+        
+            `bool`
         
         """
-        ncvar = self.implementation.nc_get_mesh_variable(
-            domain, default="mesh_container"
-        )
-        ncvar = self._name(ncvar)
+        if set(mesh) != set(mesh1):
+            # Different keys
+            return False
 
-        mc = {
-            'domain': domain,
-            'topology_dimension': "Depends on dt.get_cell()",
-            'node_coordinates' = [],
-            'edge_coordinates' = [],
-            'face_coordinates' = [],
-            'edge_node_connectivity': [],
-            'face_node_connectivity': [],
-            }
+        for key in ("mesh_id", "topology_dimension"):
+            if mesh[key] != mesh1[key]:
+                return False
 
-        g['mesh_containers'][ncvar] = mc
+        keys = [
+            "node_coordinates",
+            "face_coordinates",
+            "edge_coordinates",
+            "volume_coordinates",
+            "face_node_connectivity",
+            "edge_node_connectivity",
+            "volume_node_connectivity",
+            "face_face_connectivity",
+            "edge_edge_connectivity",
+            "volume_volume_connectivity",
+        ]
+        for key in keys:
+            if key not in mesh:
+                continue
 
+            if len(mesh[key]) != len(mesh1[key]):
+                return False
 
-    def _update_mesh(self, mc, domain):
-        """Update mc with domain    is possible
+            for c1, c0 in zip(mesh[key], mesh1[key]):
+                if not c1.equals(c0):
+                    return False
 
-        return False if not possible
+        # Still here? Then the two meshes are identical
+        return True
 
-        return True if domain  fir with mc
-
-        """
-        pass
-    
-    def _write_mesh_variables(self, field, mesh_container):
-        """Write a mesh container to the dataset.
+    def _create_mesh_container(self, parent):
+        """Create mesh container dictionary from domain TODOUGRID.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
-            `str`
-                The dataset variable name for the mesh container.
+            `bool`
 
         """
-                # DO THIS AFTER ALL FIELDS HAVE BEEN WRITEN
         g = self.write_vars
 
-        for ncvar, gc in g["mesh_containers"].items():
-            if geometry_container == gc:
-                # Use this existing mesh container
-                return ncvar
+        domain_topologies = self.implementation.get_domain_topologies(parent)
+        if not domain_topologies:
+            # Not UGRID
+            return
 
-        # Still here? Then 
+        if len(domain_topologies) > 1:
+            raise ValueError("TODOUGRID")
+
+        key, domain_topology = domain_topologies.popitem()
+        ugrid_axis = self.implementation.get_data_axes(parent, key)[0]
+
+        ncvar_cell_node_connectivity = [g["key_to_ncvar"][key]]
+
+        ugrid_coordinates = self.implementation.get_auxiliary_coordinates(
+            parent, axes=(ugrid_axis,), exact=True
+        )
+        # Sort the coordinates into a list
+        cell_coordinates = list(ugrid_coordinates.values())
+
+        print(ugrid_coordinates, g["key_to_ncvar"])
+        ncvar_cell_coordinates = [
+            g["key_to_ncvar"][key] for key in ugrid_coordinates
+        ]
+
+        cell = domain_topology.get_cell(None)
+        if cell == "point":
+            topology_dimension = 0
+            node_coordinates = cell_coordinates
+            ncvar_node_coordinates = cell_coordinates
+        else:
+            match cell:
+                case "face":
+                    topology_dimension = 2
+                case "edge":
+                    topology_dimension = 1
+                case "volume":
+                    topology_dimension = 3
+                case _:
+                    raise ("TODOUGRID")
+
+            node_coordinates = []
+            index = None
+            for key, c in ugrid_coordinates.items():
+                if index is None:
+                    node_ids, index = np.unique(
+                        domain_topology, return_index=True
+                    )
+                    if node_ids[-1] is np.ma.masked:
+                        index = index[:-1]
+
+                    print("node_ids =", node_ids)
+                    print("   index =", index)
+
+                bounds = c.get_bounds(None)
+                if bounds is None:
+                    raise ValueError("TODOUGRID")
+
+                nodes = parent._AuxiliaryCoordinate(  # TODOUGRID
+                    data=bounds.data.flatten()[index],
+                    properties=c.properties(),
+                )
+                node_coordinates.append(nodes)
+
+                ncvar_node_coordinates = []
+
+            del index
+
+        mesh = {
+            "mesh_id": self.implementation.get_mesh_id(parent),
+            "topology_dimension": topology_dimension,
+            "node_coordinates": node_coordinates,
+            f"{cell}_coordinates": cell_coordinates,
+            f"{cell}_node_connectivity": [domain_topology.normalise()],
+        }
+
+        mesh["attributes"] = {
+            "node_coordinates": ncvar_node_coordinates,
+            f"{cell}_coordinates": ncvar_cell_coordinates,
+            f"{cell}_node_connectivity": ncvar_cell_node_connectivity,
+        }
+
+        for (
+            cc_key,
+            cell_connectivity,
+        ) in self.implementation.get_cell_connectivities(parent).items():
+            connectivity = cell_connectivity.get_connectivity(None)
+            if (
+                (connectivity, cell) == ("edge", "face")
+                or (connectivity, cell) == ("node", "edge")
+                or (connectivity, cell) == ("face", "volume")
+            ):
+                key = f"{cell}_{cell}_connectivity"
+                mesh[key] = [cell_connectivity.normalise()]
+                mesh["attributes"][key] = [g["key_to_ncvar"][cc_key]]
+            else:
+                raise ValueError("TODOUGRID")
+
+        print("mesh:")
+        import pprint
+
+        pprint.pprint(mesh)
+
+        #        ncvar = self.implementation.get_mesh_id(parent, default="mesh")# TODOUGRID
+        ncvar = self._name("mesh")  # TODOUGRID
+
+        return ncvar, mesh
+
+    def _linked_meshes(self, mesh, mesh1):
+        """TODOUGRID.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `bool`
+
+        """
+        if mesh["mesh_id"] is None or mesh1["mesh_id"] is None:
+            # At least one mesh id is unset
+            return False
+
+        if mesh["mesh_id"] != mesh1["mesh_id"]:
+            # Different mesh ids
+            return False
+
+        # Find the keys that are in both meshes
+        keys = [
+            "node_coordinates",
+            "edge_coordinates",
+            "face_coordinates",
+            "volume_coordinates",
+            "edge_node_connectivity",
+            "face_node_connectivity",
+            "volume_node_connectivity",
+            "edge_edge_connectivity",
+            "face_face_connectivity",
+            "volume_volume_connectivity",
+        ]
+        keys = [key for key in keys if  key in mesh and key in mesh1]
+
+        print("Checking common keys:", keys)
+        # Check the common keys for equality
+        for key in keys:
+            if len(mesh[key]) != len(mesh1[key]):
+                # Different numbers of constructs
+                return False
+            
+            for c, c1 in zip(mesh[key], mesh1[key]):
+                if not c.equals(c1):
+                    # Non-matching construct pair
+                    return False
+
+        # Still here? Then mesh and mesh1 must be part of the same
+        # uber-mesh, because their shared keys have the same values.
+        return True
+
+    def _update_mesh(self, mesh, mesh1):
+        """Update mesh wit h a linked mesh TODOUGRID.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `None`
+
+        """
+        mesh["topology_dimension"] = max(
+            mesh["topology_dimension"], mesh1["topology_dimension"]
+        )
+
+        print(
+            f"Setting topology_dimension {mesh['topology_dimension']} "
+            f"to mesh with mesh_id={mesh['mesh_id']!r}"
+        )
+
+        for key, value in mesh1.items():
+            if key not in mesh:
+                # This key is not in for 'mesh', so copy it from
+                # 'mesh1'.
+                mesh[key] = value.copy()
+                mesh["attributes"][key] = mesh1["attributes"][key].copy()
+
+                print(
+                    f"Adding key {key!r} to mesh with mesh_id={mesh['mesh_id']!r}"
+                )
+
+    def _write_ugrid_mesh_variables(self):
+        """Write mesh variables to the dataset.TODOUGRID.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `None`
+
+        """
+        # DO THIS AFTER ALL FIELDS HAVE BEEN WRITEN
+        g = self.write_vars
+
+        for mesh_ncvar, mesh in g["mesh_containers"].items():
+            # --------------------------------------------------------
+            # Create the mesh variable attributes.
+            #
+            # E.g.
+            #
+            # {'mesh_id':
+            #    'f51e5aa5e2b0439f9fae4f04e51556f7',
+            #  'topology_dimension':
+            #    2,
+            #  'face_coordinates':
+            #    [<AuxiliaryCoordinate: longitude(3) degrees_east>,
+            #     <AuxiliaryCoordinate: latitude(3) degrees_north>],
+            #  'face_node_connectivity':
+            #    [<DomainTopology: cell:face(3, 4) >],
+            #  'node_coordinates':
+            #    [<AuxiliaryCoordinate: longitude(7) degrees_east>,
+            #     <AuxiliaryCoordinate: latitude(7) degrees_north>],
+            #  'attributes':
+            #    {'face_coordinates': ['Mesh2_face_x', 'Mesh2_face_y'],
+            #     'face_face_connectivity': ['Mesh2_face_links'],
+            #     'face_node_connectivity': ['Mesh2_face_nodes'],
+            #     'node_coordinates': []}}
+            #
+            # becomes:
+            #
+            # {'topology_dimension': 2,
+            #  'face_coordinates': 'Mesh2_face_x Mesh2_face_y',
+            #  'face_node_connectivity': 'Mesh2_face_nodes',
+            #  'node_coordinates': 'longitude latitude'}
+            # --------------------------------------------------------
+            mesh = mesh.copy()
+
+            # Replace lists of constructs with attribute names
+            #
+            # E.g. [<construct>, <construct>] -> 'x y'
+            for key, value in mesh["attributes"].items():
+                if value:
+                    mesh[key] = " ".join(value)
+
+            # If dataset variable names for node coordinates have not
+            # been defined, it's because the node coordinates have not
+            # been written to the dataset. So let's write them now,
+            # and get their variable names.
+            if not mesh["attributes"]["node_coordinates"]:
+                # Create a new node dimension in the same group as
+                # the mesh variable
+                ncdim = "nodes"
+                mesh_group = self._groups(mesh_ncvar)
+                if mesh_group:
+                    ncdim = mesh_group + ncdim
+
+                n_nodes = mesh["node_coordinates"][0].size
+                ncdim = self._name(ncdim, dimsize=n_nodes, role="ugrid_nodes")
+                self._write_dimension(ncdim, None, size=n_nodes)
+
+                # Write the node coordinates to file, in the
+                ncvars = [
+                    self._write_ugrid_node_coordinate(nc, (ncdim,))
+                    for nc in mesh["node_coordinates"]
+                ]
+                mesh["node_coordinates"] = " ".join(ncvars)
+
+            del mesh["mesh_id"]
+            del mesh["attributes"]
+
+            print("mesh ATTR:")
+            import pprint
+
+            pprint.pprint(mesh)
+
+            # --------------------------------------------------------
+            # Create the mesh variable and set its attributes
+            # --------------------------------------------------------
+            logger.info(
+                f"    Writing mesh container variable: {mesh_ncvar}\n"
+                f"        {mesh}"
+            )  # pragma: no cover
+
+            kwargs = {
+                "varname": mesh_ncvar,
+                "datatype": "S1",
+                "endian": g["endian"],
+            }
+            kwargs.update(g["netcdf_compression"])
+
+            self._createVariable(**kwargs)
+            self._set_attributes(mesh, mesh_ncvar)
+
+"""
+Mesh2_face_nodes =
+  2, 3, 1, 0
+  4, 5, 3, 2
+  1, 3, 6, _
+
+Mesh2_edge_nodes =
+  1, 6,
+  3, 6,
+  3, 1,
+  0, 1,
+  2, 0,
+  2, 3,
+  2, 4,
+  5, 4,
+  3, 5 ;
+
+
+if every edge belongs to at least one face, we're done!
+
+* for each element Mesh2_edge_nodes[i, 0], find wereever that value
+  appear in Mesh2_face_nodes (or find the row of Mesh2_face_nodes that
+  contains both of Mesh2_edge_nodes[i, [0, 1]]
+
+* where it appears, check "either side" in Mesh2_face_nodes for the
+  corresponding value in Mesh2_edge_nodes[i, 1].
+
+* If we find it, then edge i belongs to a face.
+
+ddd = []
+for i in range(Mesh2_face_nodes.shape[0]):
+    ddd.append(np.ma.where(Mesh2_face_nodes== i))
+
+for edge in Mesh2_edge_nodes:
+    faces_indices = np.intersect1d(ddd[edge[0]][0], ddd[edge[1]][0])
+    if not face_indices:
+       return False
+
+    found_face = False
+    for j in face_indices:
+        face = Mesh2_face_nodes[j]
+
+        try:
+            if edge[1] in (face[ddd[edge[0]][1]] +/- 1):
+                found_face = True
+                break
+        except:
+            face = face.compressed()
+            if (   edge[0] == face[0] and  edge[1] = face[-1]
+                or edge[1] == face[0] and  edge[0] = face[-1]):
+                found_face = True
+                break
+
+
+        if not found_face:
+            return False
+
+empty_col = np.ma.masked_all( Mesh2_face_nodes[:-1] + (1,), dtype= Mesh2_face_nodes.dtype)
+
+x = np.ma.concatenate((empty_col,  Mesh2_face_nodes), axis=-1)
+x[:, 0] =  Mesh2_face_nodes[:, n_nodes]
+x[:,1:] = Mesh2_face_nodes
+Mesh2_face_nodes = x
+
+ddd = []
+for i in range(Mesh2_face_nodes.shape[0]):
+    w = np.ma.where(Mesh2_face_nodes==i)
+    ddd.apend(w[0])
+    eee.apend(w[1])
+
+
+for edge in Mesh2_edge_nodes:
+    faces_indices = np.intersect1d(ddd[edge[0]][0], ddd[edge[1]][0])
+    if not face_indices:
+       return False
+
+
+
+Mesh2_face_nodes =
+  0, 2, 3, 1, 0
+  2, 4, 5, 3, 2
+  6, 1, 3, 6, _
+
+Mesh2_edge_nodes =
+  1, 6,
+  3, 6,
+  3, 1,
+  0, 1,
+  2, 0,
+  2, 3,
+  2, 4,
+  5, 4,
+  3, 5 ;
+
+ddd  = ( [0, 0], [0, 2], [0, 2], [0, 1, 2]. ...) # rows
+eee  = ( [0, 4], [3, 1], [1, 0], [2, 3, 2]. ...) # cols
+
+
+"""

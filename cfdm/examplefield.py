@@ -4785,7 +4785,7 @@ def example_field(n, _implementation=_implementation):
         c.set_properties({"long_name": "Maps every face to its corner nodes"})
         c.nc_set_variable("Mesh2_face_nodes")
         data = Data(
-            [[2, 3, 1, 0], [4, 5, 3, 2], [1, 3, 6, -99]],
+            [[2, 3, 1, 0], [4, 5, 3, 2], [6, 1, 3, -99]],
             dtype="i4",
             mask_value=-99,
         )

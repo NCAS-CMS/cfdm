@@ -419,6 +419,25 @@ class CFDMImplementation(Implementation):
 
         return self.nc_get_variable(bounds, default=default)
 
+    def get_cell_connectivities(self, parent):
+        """Return the cell connectivities from a parent.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+                The parent object.
+
+        :Returns:
+
+            `dict`
+                A dictionary whose values are cell connectivity
+                objects, keyed by unique identifiers.
+
+        """
+        return parent.cell_connectivities(todict=True)
+
     def get_cell_measures(self, field):
         """Return all of the cell measure constructs of a field.
 
@@ -1011,6 +1030,25 @@ class CFDMImplementation(Implementation):
 
         """
         return field.domain_axes(todict=True)[axis].get_size()
+
+    def get_domain_topologies(self, parent):
+        """Return the domain topologies from  a parent.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+                The parent object.
+
+        :Returns:
+
+            `dict`
+                A dictionary whose values are domain topology objects,
+                keyed by unique identifiers.
+
+        """
+        return parent.domain_topologies(todict=True)
 
     def get_sample_dimension_position(self, construct):
         """Returns the position of the compressed data sample dimension.
@@ -1651,6 +1689,13 @@ class CFDMImplementation(Implementation):
 
         """
         return cell_measure.get_measure(default=None)
+
+    def get_mesh_id(self, parent):
+        """TODOUGRID."""
+        try:
+            return parent.get_mesh_id(None)
+        except AttributeError:
+            return
 
     def get_original_filenames(self, parent):
         """Get the original names of the files containing the construct.
