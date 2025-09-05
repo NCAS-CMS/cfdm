@@ -10053,6 +10053,13 @@ class NetCDFRead(IORead):
             # The location index set has already been parsed
             return
 
+        ncvar_attrs = g["variable_attributes"][location_index_set_ncvar]
+        self._check_standard_names(
+            location_index_set_ncvar,
+            location_index_set_ncvar,
+            ncvar_attrs,
+        )
+
         if not self._ugrid_check_location_index_set(location_index_set_ncvar):
             return
 
@@ -10123,6 +10130,14 @@ class NetCDFRead(IORead):
         # coordinates. E.g. ("Mesh2_node_x", "Mesh2_node_y")
         nodes_ncvar = mesh.coordinates_ncvar["node"]
 
+        # g = self.read_vars
+        # ncvar_attrs = g["variable_attributes"][nodes_ncvar]
+        # self._check_standard_names(
+        #     parent_ncvar,
+        #     nodes_ncvar,
+        #     ncvar_attrs,
+        # )
+
         # Get the netCDF variable names of the cell
         # coordinates. E.g. ("Mesh1_face_x", "Mesh1_face_y"), or None
         # if there aren't any.
@@ -10175,6 +10190,13 @@ class NetCDFRead(IORead):
                     f,
                     mesh,
                     location,
+                )
+                g = self.read_vars
+                ncvar_attrs = g["variable_attributes"][node_ncvar]
+                self._check_standard_names(
+                    parent_ncvar,
+                    node_ncvar,
+                    ncvar_attrs,
                 )
 
                 self.implementation.nc_set_node_coordinate_variable(
@@ -10349,6 +10371,14 @@ class NetCDFRead(IORead):
             # Can't create a domain topology construct without an
             # appropriate connectivity attribute
             return
+
+        g = self.read_vars
+        ncvar_attrs = g["variable_attributes"][connectivity_ncvar]
+        self._check_standard_names(
+            parent_ncvar,
+            connectivity_ncvar,
+            ncvar_attrs,
+        )
 
         if not self._ugrid_check_connectivity_variable(
             parent_ncvar,
