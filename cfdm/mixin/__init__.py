@@ -21,7 +21,7 @@ from .netcdf import (
     NetCDFGeometry,
     NetCDFGroupsMixin,
     NetCDFChunks,
-    NetCDFInterpolationSubareaDimension,
+    NetCDFInterpolationSubareaDimension,NetCDFMeshVariable,
     NetCDFMixin,
     NetCDFNodeCoordinateVariable,
     NetCDFSampleDimension,

@@ -13,7 +13,8 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
 
     """
 
-    def _connected_nodes(self, node, node_connectivity, masked):
+    @classmethod
+    def _connected_nodes(self, node, node_connectivity, masked, edges=False):
         """Return nodes that are joined to *node* by face edges.
 
         The input *node* is included at the start of the returned
@@ -33,11 +34,32 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
                 Whether or not *node_connectivity* has masked
                 elements.
 
+            edges: `bool`, optional
+                By default *edges* is False and a flat list of nodes,
+                including *node* itself at the start, is returned. If
+                True then a list of edge definitions (i.e. a list of
+                sorted tuple pairs of nodes) is returned instead.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
         :Returns:
 
             `list`
                 All nodes that are joined to *node*, including *node*
                 itself at the start.
+
+
+        **Examples**
+
+        >>> p._connected_nodes(7, nc)
+        [7, 2, 1, 9]
+        >>> p._connected_nodes(2, nc)
+        [2, 8, 7]
+
+        >>> p._connected_nodes(7, nc, edges=True)
+        [(2, 7), (1, 7), (7, 9)]
+        >>> p._connected_nodes(2, nc, edges=True)
+        [(2, 8), (2, 7)]
 
         """
         if masked:
@@ -69,7 +91,12 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
 
         nodes = list(set(nodes))
 
-        # Insert 'node' at the front of the list
-        nodes.insert(0, node)
+        if edges:
+            # Return a list of ordered edge definitions
+            nodes = [(node, n) if node < n else (n, node) for n in nodes]
+        else:
+            # Return a flat list of nodes, including 'node' at the
+            # start.
+            nodes.insert(0, node)
 
         return nodes

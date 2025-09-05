@@ -86,8 +86,8 @@ class Mesh:
     # The netCDF dimension spanned by the cells for each
     # location. E.g. {'node': 'nNodes', 'edge': 'nEdges'}
     ncdim: dict = field(default_factory=dict)
-    # A unique identifier for the mesh. E.g. 'df10184d806ef1a10f5035e'
-    mesh_id: Any = None
+#    # A unique identifier for the mesh. E.g. 'df10184d806ef1a10f5035e'
+#    mesh_id: Any = None
 
 
 class NetCDFRead(IORead):
@@ -4760,9 +4760,9 @@ class NetCDFRead(IORead):
                 ncvar = self.implementation.nc_get_variable(cell_connectivity)
                 ncvar_to_key[ncvar] = key
 
-        if ugrid:
-            # Set the mesh identifier
-            self.implementation.set_mesh_id(f, mesh.mesh_id)
+#        if ugrid:
+#            # Set the mesh identifier
+#            self.implementation.set_mesh_id(f, mesh.mesh_id)
 
         # ------------------------------------------------------------
         # Add coordinate reference constructs from formula_terms
@@ -9685,7 +9685,7 @@ class NetCDFRead(IORead):
         mesh = Mesh(
             mesh_ncvar=mesh_ncvar,
             mesh_attributes=attributes,
-            mesh_id=uuid4().hex,
+#            mesh_id=uuid4().hex,
         )
 
         locations = ("node", "edge", "face")
@@ -9829,7 +9829,7 @@ class NetCDFRead(IORead):
             location_index_set_attributes=location_index_set_attributes,
             location=location,
             index_set=index_set,
-            mesh_id=uuid4().hex,
+#            mesh_id=uuid4().hex,
         )
 
     def _ugrid_create_auxiliary_coordinates(
