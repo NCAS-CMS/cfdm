@@ -147,15 +147,42 @@ class Subarray(Array):
                 The converted data.
 
         """
+        print ('_asanyarray:', repr(data))
         context_manager = self._get_component("context_manager")
         if context_manager:
             # Convert the data to a numpy array within the given
             # runtime context
             with context_manager():
+                
+#                try:
+#                    print(999.5, repr(data.compute().array))
+#                except AttributeError:
+#                    pass
                 if indices is not None:
                     data = data[indices]
+#                print (111, repr(data))
+                try:
+                    print(111.5, repr(data.compute()),
+                          repr(np.asanyarray(data.compute())),
+                          repr(np.asanyarray(data)),
+                          repr(data.compute().__array__()),
+                          )
+                except AttributeError:
+                    pass
 
+#                if  data 
+#                print (type(data))
+#                if is_dask_collection(data):#
                 data = np.asanyarray(data)
+
+#                data = np.ma.array(data)
+                print (222, repr(data))
+#                if not data.mask.ndim and  not data.mask:
+#                    data = np.array(data)
+##                    
+ #                   print (333, repr(data))
+ #               
+ #               print (444, repr(data))
         else:
             if indices is not None:
                 data = data[indices]

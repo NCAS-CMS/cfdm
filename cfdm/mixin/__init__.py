@@ -13,6 +13,7 @@ from .parametersdomainancillaries import ParametersDomainAncillaries
 
 from .netcdf import (
     NetCDFComponents,
+    NetCDFConnectivityDimension,
     NetCDFGlobalAttributes,
     NetCDFGroupAttributes,
     NetCDFUnlimitedDimension,
@@ -21,7 +22,8 @@ from .netcdf import (
     NetCDFGeometry,
     NetCDFGroupsMixin,
     NetCDFChunks,
-    NetCDFInterpolationSubareaDimension,NetCDFMeshVariable,
+    NetCDFInterpolationSubareaDimension,
+    NetCDFMeshVariable,
     NetCDFMixin,
     NetCDFNodeCoordinateVariable,
     NetCDFSampleDimension,

@@ -2532,8 +2532,8 @@ class NetCDFWrite(IOWrite):
 
         # Normalise the array, so that the node ids are 0, 1, ...
         domain_topology = domain_topology.normalise()
-        g['domain_topologies'][key] = domain_topology
-        
+        g["domain_topologies"][key] = domain_topology
+
         if self._already_in_file(domain_topology, ncdimensions):
             # This domain topology variable has been previously
             # created, so no need to do so again.
@@ -2594,19 +2594,18 @@ class NetCDFWrite(IOWrite):
 
         # Normalise the array, so that the cell ids are 0, 1, ...
         cell_connectivity = cell_connectivity.normalise()
-        g['cell_connectivities'][key] = cell_connectivity
-        
+        g["cell_connectivities"][key] = cell_connectivity
+
         # Remove the first column, which (now that the array has been
         # normalised) just contains the index of each row (0, 1, ...)
         # and is not needed in the dataset.
-        cell_connectivity=cell_connectivity  [:, 1:]
-        
-        # Get names of the connectivty variable dimensions
-        size = cell_connectivity.data.shape[-1] - 1
-        connectivity_ncdim = cell_connectivity.nc_get_connectivity_dimension(
-            domain_topology, f"connectivity{size}"
-        )
+        cell_connectivity = cell_connectivity[:, 1:]
 
+        # Get the names of the connectivty variable dimensions
+        size = cell_connectivity.data.shape[-1]
+        connectivity_ncdim = cell_connectivity.nc_get_connectivity_dimension(
+            f"connectivity{size}"
+        )
         ncdimensions = self._dataset_dimensions(f, key, cell_connectivity)
         ncdimensions += (connectivity_ncdim,)
 
@@ -2618,7 +2617,6 @@ class NetCDFWrite(IOWrite):
             # This cell_connectivity variable has not been previously
             # created, so create it now.
             if connectivity_ncdim not in g["ncdim_to_size"]:
-                print("size=", size)
                 self._write_dimension(connectivity_ncdim, f, size=size)
 
             match cell_connectivity.get_connectivity("cell"):
@@ -2628,7 +2626,7 @@ class NetCDFWrite(IOWrite):
                     cell = "edge"
                 case "face":
                     cell = "volume"
-                    
+
             ncvar = self._create_variable_name(
                 cell_connectivity, default="{cell}_{cell}_connectivity"
             )
@@ -3379,7 +3377,7 @@ class NetCDFWrite(IOWrite):
         logger.info(
             f"        to variable: {ncvar}({', '.join(ncdimensions)})"
         )  # pragma: no cover
-
+        print (kwargs)
         try:
             self._createVariable(**kwargs)
         except RuntimeError as error:
@@ -3944,12 +3942,12 @@ class NetCDFWrite(IOWrite):
 
         # Initialise the dictionary of the field/domain's normalised
         # domain topologies
-        g['domain_topologies'] = {}
+        g["domain_topologies"] = {}
 
         # Initialise the dictionary of the field/domain's normalised
         # cell connectivities
-        g['cell_connectivities'] = {}
-        
+        g["cell_connectivities"] = {}
+
         field_coordinates = self.implementation.get_coordinates(f)
 
         owning_coordinates = []
@@ -7117,10 +7115,10 @@ class NetCDFWrite(IOWrite):
             return
 
         for ncvar, mesh in g["meshes"].items():
-            if self._linked_meshes(mesh, mesh_new):                
+            if self._linked_meshes(mesh, mesh_new):
                 self._update_mesh(mesh, mesh_new)
                 return ncvar
-            
+
         # Still here? Then the parent's mesh has not already been
         # defined, so save it.
         g["meshes"][ncvar_new] = mesh_new
@@ -7139,14 +7137,14 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         # Get any domain topology constructs
-        domain_topologies = g['domain_topologies']
+        domain_topologies = g["domain_topologies"]
         if not domain_topologies:
             # Not UGRID
             return None, None
 
         # Initialise the output mesh container
         mesh = {"attributes": {}}
-        
+
         if len(domain_topologies) > 1:
             raise ValueError("Can't write TODOUGRID")
 
@@ -7231,7 +7229,7 @@ class NetCDFWrite(IOWrite):
                     properties=c.properties(),
                 )
                 coords.persist(inplace=True)
-                
+
                 node_coordinates.append(coords)
 
             del index
@@ -7252,13 +7250,13 @@ class NetCDFWrite(IOWrite):
             )
 
         # Cell connectivities
-        for cc_key, cell_connectivity in g['cell_connectivities'].items():
+        for cc_key, cell_connectivity in g["cell_connectivities"].items():
             connectivity = cell_connectivity.get_connectivity(None)
             if (
-                    (connectivity, cell) == ("edge", "face") 
-                    or (connectivity, cell) == ("node", "edge")
-                    or (connectivity, cell) == ("face", "volume")
-                    ):
+                (connectivity, cell) == ("edge", "face")
+                or (connectivity, cell) == ("node", "edge")
+                or (connectivity, cell) == ("face", "volume")
+            ):
                 key = f"{cell}_{cell}_connectivity"
                 mesh[key] = [cell_connectivity.normalise()]
                 mesh["attributes"][key] = [g["key_to_ncvar"][cc_key]]
@@ -7500,8 +7498,8 @@ class NetCDFWrite(IOWrite):
             #  'face_node_connectivity': 'Mesh2_face_nodes',
             #  'node_coordinates': 'longitude latitude'}
             # --------------------------------------------------------
-            attributes = {'topology_dimension': mesh['topology_dimension']}
-            
+            attributes = {"topology_dimension": mesh["topology_dimension"]}
+
             # Convert non-empty lists of constructs to space-separated
             # variable names
             #

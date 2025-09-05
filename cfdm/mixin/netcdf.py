@@ -5592,7 +5592,7 @@ class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
 
         An alternative technique for removing the group structure is
         to set the netCDF mesh variable name, with
-        `nc_set_mesh_variable`, with no ``/``q characters.
+        `nc_set_mesh_variable`, with no ``/`` characters.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5634,7 +5634,6 @@ class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
             nc_groups=self.nc_mesh_variable_groups,
         )
 
-#ppp
 
 class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF connectivity dimension name.
@@ -5656,9 +5655,9 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
 
             default: optional
                 Return the value of the *default* parameter if the
-                netCDF connectivity dimension name has not been set. If set
-                to an `Exception` instance then it will be raised
-                instead.
+                netCDF connectivity dimension name has not been
+                set. If set to an `Exception` instance then it will be
+                raised instead.
 
         :Returns:
 
@@ -5690,7 +5689,8 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
 
             return self._default(
                 default,
-                f"{self.__class__.__name__} has no netCDF connectivity dimension name",
+                f"{self.__class__.__name__} has no netCDF connectivity "
+                "dimension name",
             )
 
     def nc_get_connectivity_dimension(self, default=ValueError()):
@@ -5706,9 +5706,9 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
 
             default: optional
                 Return the value of the *default* parameter if the
-                netCDF connectivity dimension name has not been set. If set
-                to an `Exception` instance then it will be raised
-                instead.
+                netCDF connectivity dimension name has not been
+                set. If set to an `Exception` instance then it will be
+                raised instead.
 
         :Returns:
 
@@ -5740,7 +5740,8 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
 
             return self._default(
                 default,
-                f"{self.__class__.__name__} has no netCDF connectivity dimension name",
+                f"{self.__class__.__name__} has no netCDF connectivity "
+                "dimension name",
             )
 
     def nc_has_connectivity_dimension(self):
@@ -5755,8 +5756,8 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
         :Returns:
 
             `bool`
-                `True` if the netCDF connectivity dimension name has been set,
-                otherwise `False`.
+                `True` if the netCDF connectivity dimension name has
+                been set, otherwise `False`.
 
         **Examples**
 
@@ -6000,4 +6001,3 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
             nc_set=self.nc_set_connectivity_dimension,
             nc_groups=self.nc_connectivity_dimension_groups,
         )
-
