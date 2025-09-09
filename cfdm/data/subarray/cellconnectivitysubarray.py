@@ -30,6 +30,8 @@ class CellConnectivitySubarray(MeshSubarray):
         .. versionadded:: (cfdm) 1.11.0.0
 
         """
+        print ("CellConnectivitySubarray.__getitem__")
+
         start_index = self.start_index
         shape = self.shape
         start = 0
@@ -37,9 +39,9 @@ class CellConnectivitySubarray(MeshSubarray):
         if start_index:
             start += 1
             stop += 1
-
+        print (111, type(self.data))
         data = self._select_data(check_mask=False)
-
+        print (112)
         if np.ma.isMA(data):
             empty = np.ma.empty
         else:

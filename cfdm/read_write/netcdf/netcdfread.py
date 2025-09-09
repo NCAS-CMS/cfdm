@@ -12,7 +12,6 @@ from math import log, nan, prod
 from numbers import Integral
 from os.path import isdir, isfile, join
 from typing import Any
-from uuid import uuid4
 
 import netCDF4
 import numpy as np
@@ -40,6 +39,9 @@ from .flatten.config import (
     flattener_variable_map,
 )
 from .zarr import ZarrDimension
+
+# from uuid import uuid4
+
 
 logger = logging.getLogger(__name__)
 
@@ -339,7 +341,9 @@ class NetCDFRead(IORead):
 
         """
         return {
+            "edge_edge_connectivity": "node",
             "face_face_connectivity": "edge",
+            "volume_volume_connectivity": "face",
         }
 
     def ugrid_mesh_topology_attributes(self):
@@ -2140,8 +2144,11 @@ class NetCDFRead(IORead):
                     # location_index_set
                     self._ugrid_parse_location_index_set(attributes)
 
-            if debug:
-                logger.debug(f"    UGRID meshes:\n       {g['mesh']}")
+            if debug:   
+                from pprint import pformat             
+                logger.debug(
+                    f"    UGRID meshes:\n       {pformat(g['mesh'])}"
+                )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Identify and parse all quantization container variables
@@ -4719,6 +4726,7 @@ class NetCDFRead(IORead):
 
         # ------------------------------------------------------------
         # Add a domain topology construct derived from UGRID
+        # (CF>=1.11)
         # ------------------------------------------------------------
         if ugrid:
             domain_topology = mesh.domain_topologies.get(location)
@@ -4741,6 +4749,7 @@ class NetCDFRead(IORead):
 
         # ------------------------------------------------------------
         # Add a cell connectivity construct derived from UGRID
+        # (CF>=1.11)
         # ------------------------------------------------------------
         if ugrid:
             for cell_connectivity in mesh.cell_connectivities.get(
@@ -9672,6 +9681,7 @@ class NetCDFRead(IORead):
                 "face_face_connectivity",
                 "face_edge_connectivity",
                 "edge_node_connectivity",
+                    "edge_edge_connectivity",
                 "edge_face_connectivity",
                 "volume_node_connectivity",
                 "volume_edge_connectivity",
@@ -10208,7 +10218,7 @@ class NetCDFRead(IORead):
                 location. May be an empty list.
 
         """
-        if location != "face":
+        if location not in ("face", "edge"):
             return []
 
         attributes = mesh.mesh_attributes

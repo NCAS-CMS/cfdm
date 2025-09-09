@@ -103,11 +103,18 @@ class Topology:
             move_missing_values = True
 
         if smallest_id is not None and data.min() < smallest_id:
+            # TODOUGRID: whilst missing data is erroneously being
+            # replaced with a negative fill_value, we end up here when
+            # we might no need to.
+            print('TODOUGRID: Remove this print statement when the subarray data thing is fixed', data.min(),smallest_id)
             data = np.ma.where(data < smallest_id, np.ma.masked, data)
             move_missing_values = True
 
         if move_missing_values:
-            # Move missing values to the end of each row
+            # Move missing values to the end of each row.
+            #
+            # Note: this might reorder the each row (excluding the
+            # firt column).
             data[:, 1:].sort(axis=1, endwith=True)
 
         if remove_empty_columns:

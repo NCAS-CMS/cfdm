@@ -70,7 +70,16 @@ class PropertiesData(Properties):
 
         data = self.get_data(None, _fill_value=False)
         if data is not None:
-            new.set_data(data[indices], copy=False)
+            original_shape = data.shape
+            data = data[indices]
+            # TODUUGRID - this might need replicating in cf-pytohn ...????
+            if 0 in data.shape:
+                raise IndexError(
+                    f"Index {indices!r} selects no elements from "
+                    f"data with shape {original_shape}"
+                )
+            
+            new.set_data(data, copy=False)
 
         return new
 

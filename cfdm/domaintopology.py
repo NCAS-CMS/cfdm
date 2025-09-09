@@ -4,6 +4,7 @@ from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 
 class DomainTopology(
     mixin.NetCDFVariable,
+    mixin.NetCDFConnectivityDimension,
     mixin.Topology,
     mixin.PropertiesData,
     mixin.Files,
@@ -305,6 +306,49 @@ class DomainTopology(
 
         return super().identities(generator=generator, **kwargs)
 
+    def face_to_edge(self, n_nodes=None, normalised=False):
+        """TODOUGRID"""
+        from cfdm.data.subarray import PointTopologyFromFacesSubarray
+        
+        connected_nodes = PointTopologyFromFacesSubarray._connected_nodes
+            
+        cell = self.get_cell(None):
+        if cell != "face":
+            raise ValueError("TODOUGRID")
+
+        d = self
+        if not normalised:
+            d = d.normalise()
+        
+        faces = d.array
+        masked = np.ma.is_masked(faces)
+
+        if n_nodes is None:
+            unique = np.unique(faces)
+            n_nodes = unique.size
+            if masked:
+                n_nodes -= 1             
+        
+        # Loop round nodes.
+        #
+        # Note: This assumes that the domain topology has already
+        #       been normalised to have values in the range [0,
+        #       n_nodes-1]
+        face_edges = []
+        face_edges_extend = face_edges.extend
+        for n in range(n_nodes):
+            face_edges_extend(connected_nodes(n, faces, masked, edges=True))
+
+        del faces
+
+        face_edges = sorted(set(face_edges))
+        
+        edges = d.copy()
+        edges.set_cell("edge")
+        edges.set_data(face_edges, copy=False)
+
+        return edges
+    
     @_inplace_enabled(default=False)
     def normalise(
         self, start_index=0, remove_empty_columns=False, inplace=False

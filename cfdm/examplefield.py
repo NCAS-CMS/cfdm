@@ -4737,7 +4737,7 @@ def example_field(n, _implementation=_implementation):
         data = Data([-44, -44, -42], units="degrees_east", dtype="f8")
         c.set_data(data)
         b = Bounds()
-        b.nc_set_variable("Mesh2_node_x_bounds")
+        b.nc_set_variable("Mesh2_face_x_bounds")
         data = Data(
             [
                 [-45, -43, -43, -45],
@@ -4763,7 +4763,7 @@ def example_field(n, _implementation=_implementation):
         data = Data([34, 32, 34], units="degrees_north", dtype="f8")
         c.set_data(data)
         b = Bounds()
-        b.nc_set_variable("Mesh2_node_y_bounds")
+        b.nc_set_variable("Mesh2_face_y_bounds")
         data = Data(
             [
                 [33, 33, 35, 35],
@@ -4904,7 +4904,7 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.nc_set_variable("Mesh2_node_x_bounds")
+        b.nc_set_variable("Mesh2_edge_x_bounds")
         data = Data(
             [
                 [-43, -40],
@@ -4939,7 +4939,7 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.nc_set_variable("Mesh2_node_y_bounds")
+        b.nc_set_variable("Mesh2_edge_y_bounds")
         data = Data(
             [
                 [35, 34],

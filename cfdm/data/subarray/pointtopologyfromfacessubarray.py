@@ -38,7 +38,8 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
                 By default *edges* is False and a flat list of nodes,
                 including *node* itself at the start, is returned. If
                 True then a list of edge definitions (i.e. a list of
-                sorted tuple pairs of nodes) is returned instead.
+                sorted, hashable tuple pairs of nodes) is returned
+                instead.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -78,16 +79,23 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
         for face_nodes in node_connectivity[faces]:
             if masked:
                 face_nodes = face_nodes.compressed()
+            else:
+                face_nodes = face_nodes.flatten()
 
             face_nodes = face_nodes.tolist()
-            face_nodes.append(face_nodes[0])
-            nodes_extend(
-                [
-                    m
-                    for m, n in zip(face_nodes[:-1], face_nodes[1:])
-                    if n == node
-                ]
-            )
+
+            # Find the position of 'node' in the face, and get it's
+            # neighbours.
+            index = face_nodes.index(node)
+            if not index:
+                # 'node' is in position 0
+                nodes_extend((face_nodes[-1], face_nodes[1]))
+            elif index == len(face_nodes) - 1:
+                # 'node' is in position -1
+                nodes_extend((face_nodes[-2], face_nodes[0]))
+            else:
+                # 'node' is in any other position
+                nodes_extend((face_nodes[index - 1], face_nodes[index + 1]))
 
         nodes = list(set(nodes))
 

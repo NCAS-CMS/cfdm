@@ -147,42 +147,56 @@ class Subarray(Array):
                 The converted data.
 
         """
-        print ('_asanyarray:', repr(data))
+#        print("_asanyarray:", repr(data))
+        print(self.indices)
         context_manager = self._get_component("context_manager")
         if context_manager:
             # Convert the data to a numpy array within the given
             # runtime context
             with context_manager():
-                
-#                try:
-#                    print(999.5, repr(data.compute().array))
-#                except AttributeError:
-#                    pass
+
+                #                try:
+                #                    print(999.5, repr(data.compute().array))
+                #                except AttributeError:
+                #                    pass
+                #print('AA',indices, type(data))
+                #try:
+                #    if indices == (slice(0, 0, None),):
+                #        print (repr(data))
+                #        print(type(self))
+                #        print (self.__dict__)
+                #        print(1/0)
+                #except ValueError:
+                #    pass
                 if indices is not None:
                     data = data[indices]
-#                print (111, repr(data))
-                try:
-                    print(111.5, repr(data.compute()),
-                          repr(np.asanyarray(data.compute())),
-                          repr(np.asanyarray(data)),
-                          repr(data.compute().__array__()),
-                          )
-                except AttributeError:
-                    pass
+                #                print (111, repr(data))
+                #                try:
+                #                    print(
+                #                        111.5,
+                #                        repr(data.compute()),
+                #                        repr(np.asanyarray(data.compute())),
+                #                        repr(np.asanyarray(data)),
+                #                        repr(data.compute().__array__()),
+                #                    )
+                #                except AttributeError:
+                #                    pass
 
-#                if  data 
-#                print (type(data))
-#                if is_dask_collection(data):#
+                #                if  data
+                #                print (type(data))
+                #                if is_dask_collection(data):#
+#                print('AA', type(data),repr(data))
                 data = np.asanyarray(data)
+#                print('BB',indices, type(data))
 
-#                data = np.ma.array(data)
-                print (222, repr(data))
-#                if not data.mask.ndim and  not data.mask:
-#                    data = np.array(data)
-##                    
- #                   print (333, repr(data))
- #               
- #               print (444, repr(data))
+                #                data = np.ma.array(data)
+        #                print(222, repr(data))
+        #                if not data.mask.ndim and  not data.mask:
+        #                    data = np.array(data)
+        ##
+        #                   print (333, repr(data))
+        #
+        #               print (444, repr(data))
         else:
             if indices is not None:
                 data = data[indices]

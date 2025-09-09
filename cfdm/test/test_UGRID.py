@@ -76,10 +76,6 @@ class UGRIDTest(unittest.TestCase):
                     g.cell_connectivity().get_connectivity(), "edge"
                 )
 
-        # Check that all fields have the same mesh id
-        mesh_ids1 = set(g.get_mesh_id() for g in f1)
-        self.assertEqual(len(mesh_ids1), 1)
-
         f2 = cfdm.read(self.filename2)
         self.assertEqual(len(f2), 3)
         for g in f2:
@@ -97,13 +93,6 @@ class UGRIDTest(unittest.TestCase):
                 self.assertEqual(
                     g.cell_connectivity().get_connectivity(), "edge"
                 )
-
-        # Check that all fields have the same mesh id
-        mesh_ids2 = set(g.get_mesh_id() for g in f2)
-        self.assertEqual(len(mesh_ids2), 1)
-
-        # Check that the different files have different mesh ids
-        self.assertNotEqual(mesh_ids1, mesh_ids2)
 
     def test_UGRID_data(self):
         """Test reading of UGRID data."""
@@ -176,10 +165,6 @@ class UGRIDTest(unittest.TestCase):
                 self.assertEqual(
                     g.cell_connectivity().get_connectivity(), "edge"
                 )
-
-        # Check that all domains have the same mesh id
-        mesh_ids1 = set(g.get_mesh_id() for g in d1)
-        self.assertEqual(len(mesh_ids1), 1)
 
 
 if __name__ == "__main__":

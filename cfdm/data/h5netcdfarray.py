@@ -82,6 +82,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
             self.close(dataset0)
             del dataset, dataset0
 
+#        print('End of H5netcdfArray._getarray:', array, type(array))
         return array
 
     def _group(self, dataset, groups):
