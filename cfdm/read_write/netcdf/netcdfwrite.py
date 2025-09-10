@@ -4714,7 +4714,12 @@ class NetCDFWrite(NetCDFWriteUrid, IOWrite):
             mesh_ncvar = self._ugrid_get_mesh_ncvar(f)
             if mesh_ncvar is not None:
                 extra["mesh"] = mesh_ncvar
-                extra["location"] = f.domain_topology().get_cell()
+
+                location = f.domain_topology().get_cell()
+                if location == "point":
+                    location = "node"
+                    
+                extra["location"] = location
 
         # ------------------------------------------------------------
         # Create a new data/domain dataset variable

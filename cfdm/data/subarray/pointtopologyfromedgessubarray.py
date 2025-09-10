@@ -13,7 +13,7 @@ class PointTopologyFromEdgesSubarray(PointTopology, MeshSubarray):
 
     """
 
-    def _connected_nodes(self, node, node_connectivity, masked):
+    def _connected_nodes(self, node, node_connectivity, masked, edges=False):
         """Return the nodes that are joined to *node* by edges.
 
         The input *node* is included at the start of the returned
@@ -33,11 +33,16 @@ class PointTopologyFromEdgesSubarray(PointTopology, MeshSubarray):
                 Whether or not *node_connectivity* has masked
                 elements.
 
+            edges: `bool`, optional
+                TODOUGRID
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
         :Returns:
 
             `list`
                 All nodes that are joined to *node*, including *node*
-                itself at the start.
+                itself at the start.TODOUGRID
 
         """
         nodes = sorted(

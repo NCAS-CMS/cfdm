@@ -47,7 +47,7 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
 
             `list`
                 All nodes that are joined to *node*, including *node*
-                itself at the start.
+                itself at the start. TODOUGRID
 
 
         **Examples**

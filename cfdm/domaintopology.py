@@ -1,3 +1,5 @@
+import numpy as np
+
 from . import core, mixin
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 
@@ -305,49 +307,6 @@ class DomainTopology(
             kwargs["pre"] = pre
 
         return super().identities(generator=generator, **kwargs)
-
-    def face_to_edge(self, n_nodes=None, normalised=False):
-        """TODOUGRID"""
-        from cfdm.data.subarray import PointTopologyFromFacesSubarray
-        
-        connected_nodes = PointTopologyFromFacesSubarray._connected_nodes
-            
-        cell = self.get_cell(None):
-        if cell != "face":
-            raise ValueError("TODOUGRID")
-
-        d = self
-        if not normalised:
-            d = d.normalise()
-        
-        faces = d.array
-        masked = np.ma.is_masked(faces)
-
-        if n_nodes is None:
-            unique = np.unique(faces)
-            n_nodes = unique.size
-            if masked:
-                n_nodes -= 1             
-        
-        # Loop round nodes.
-        #
-        # Note: This assumes that the domain topology has already
-        #       been normalised to have values in the range [0,
-        #       n_nodes-1]
-        face_edges = []
-        face_edges_extend = face_edges.extend
-        for n in range(n_nodes):
-            face_edges_extend(connected_nodes(n, faces, masked, edges=True))
-
-        del faces
-
-        face_edges = sorted(set(face_edges))
-        
-        edges = d.copy()
-        edges.set_cell("edge")
-        edges.set_data(face_edges, copy=False)
-
-        return edges
     
     @_inplace_enabled(default=False)
     def normalise(
@@ -473,3 +432,145 @@ class DomainTopology(
 
         d.set_data(data, copy=False)
         return d
+
+    @_inplace_enabled(default=True)
+    def sort(self, inplace=True): 
+        """TODOUGRID
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            inplace: `bool`, optional
+                If True (the default) then do the operation in-place
+                and return `None`.
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The sorted domain topology construct, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        TODOUGRID
+
+        """  
+        cell = self.get_cell(None)
+        if cell not in ("edge", "node"):
+            raise ValueError("TODOUGRID")
+
+        d = _inplace_enabled_define_and_cleanup(self)
+    
+        data = d.array
+        data.sort(1)
+        data = sorted(data.tolist())
+        data = d._Data(data, dtype=d.dtype, chunks=self.data.chunks)
+        d.set_data(data, copy=False)
+
+        return d
+    
+    def to_edge(self, nodes=None, sort=False):
+        """TODOUGRID
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            nodes: optional
+                The unique node ids. Must be `None` for a "point"
+                domain topology (for which the unique nodes ids are
+                easily inferred from the data).
+
+            sort: `bool`
+                TODOUGRID 
+
+        :Returns:
+
+            `{{class}}`
+                TODOUGRID
+
+        **Examples**
+
+        TODOUGRID
+
+        """
+        edges = []
+        edges_extend = edges.extend
+            
+        cell = self.get_cell(None)
+
+        # Deal with simple "edge" case first
+        if cell == "edge":
+            if sort:
+                edges = self.sort(inplace=False)
+            else:
+                edges = self.copy()
+
+            return edges
+
+        # Still here? Then deal with the other cell types.
+        if cell == "point":
+            if nodes is not None:
+                raise ValueError("TODOUGRID")
+            
+            points = self.array
+            masked = np.ma.is_masked(points)
+            
+            # Loop round the nodes, finding the node-pairs that define the
+            # edges.
+            for row in points:
+                if masked:
+                    row = row.compressed()
+                    
+                node = row[0]
+                row = row[1:].tolist()
+                edges_extend(
+                    [(node, n) if node < n else (n, node) for n in row]
+                )
+
+            del points, row
+            
+        elif cell == "face":
+            from cfdm.data.subarray import PointTopologyFromFacesSubarray
+            
+            connected_nodes = PointTopologyFromFacesSubarray._connected_nodes
+    
+            faces = self.array
+            masked = np.ma.is_masked(faces)
+            
+            if nodes is None:
+                # Find the unique node ids
+                nodes = np.unique(faces).tolist()
+                if masked:
+                    nodes = nodes[:-1]
+                    
+            # Loop round the nodes, finding the node-pairs that define
+            # the edges.
+            for n in nodes:
+                edges_extend(connected_nodes(n, faces, masked, edges=True))
+    
+            del faces, nodes
+            
+        else:
+            raise NotImplementedError("Can't get edges from {cell!r} cells")
+        
+        # Remove duplicates to get the set of unique edges.
+        #
+        # Every edge currently appears twice in the 'face_edges'
+        # list. E.g. edge (1, 5) will appear once from processing node
+        # 1, and once from processing node 5.
+        edges = set(edges)
+    
+        if sort:            
+            edges = sorted(edges)
+        else:
+            edges = list(edges)
+
+        edges = self._Data(edges, dtype=self.dtype)
+        
+        out = self.copy()
+        out.set_cell("edge")
+        out.set_data(edges, copy=False)
+
+        return out
