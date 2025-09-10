@@ -10134,7 +10134,7 @@ class NetCDFRead(IORead):
         # Create data
         if cell == "point":
             properties["long_name"] = (
-                "Maps every point to its connected points"
+                "Maps every node to its connected nodes"
             )
             indices, kwargs = self._create_netcdfarray(connectivity_ncvar)
             n_nodes = self.read_vars["internal_dimension_sizes"][

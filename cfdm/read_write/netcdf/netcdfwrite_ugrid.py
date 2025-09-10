@@ -47,11 +47,14 @@ class NetCDFWriteUrid:
 
         g = self.write_vars
 
+        # Normalise the array, so that its N node ids are 0, ..., N-1
+        domain_topology.normalise(inplace=True)
+        g["domain_topologies"][key] = domain_topology
+
         cell = domain_topology.get_cell(None)
         if cell == "point":
-            # There's no corresponding UGRID variable
-            domain_topology.normalise(inplace=True)
-            g["domain_topologies"][key] = domain_topology
+            # There's no corresponding UGRID variable for "point"
+            # cells, so just return.
             return None
 
         if cell == "volume":
@@ -67,10 +70,6 @@ class NetCDFWriteUrid:
                 f"{domain_topology!r}"
             )
                     
-        # Normalise the array, so that its N node ids are 0, ..., N-1
-        domain_topology.normalise(inplace=True)
-        g["domain_topologies"][key] = domain_topology
-
         # Get the netCDF dimensions
         size = domain_topology.data.shape[-1]
         ncdimensions = self._dataset_dimensions(parent, key, domain_topology)
@@ -388,8 +387,6 @@ class NetCDFWriteUrid:
                 returned as `None`.
 
         """
-        print ('TODOUGRID: need to makes sure node lcaiton field gets right node dimension: " nodes = 7; double pa(time, nMesh2_node) "')
-
         g = self.write_vars
 
         # Get the dictionary of *normalised* domain topology
@@ -411,7 +408,7 @@ class NetCDFWriteUrid:
 
         # Get the UGRID domain axis
         key, domain_topology = domain_topologies.popitem()
-        print (key, repr(domain_topology))
+
         ugrid_axis = self.implementation.get_data_axes(parent, key)[0]
 
         # Get the dataset variable name of the domain topology
@@ -493,9 +490,6 @@ class NetCDFWriteUrid:
                         # the `np.unique` outputs)
                         index = index[:-1]
 
-                    print("node_ids =", node_ids)
-                    print("   index =", index)
-
                 # Create, from the cell bounds, an Auxiliary
                 # Coordinate that contains the unique node
                 # coordinates.
@@ -546,11 +540,6 @@ class NetCDFWriteUrid:
             mesh[key] = [cell_connectivity]
             mesh["attributes"][key] = [g["key_to_ncvar"][cc_key]]
 
-        print("New mesh:")
-        import pprint
-
-        pprint.pprint(mesh)
-
         # Get the dataset mesh variable name
         ncvar = parent.nc_get_mesh_variable("mesh")
         ncvar = self._name(ncvar)
@@ -582,7 +571,6 @@ class NetCDFWriteUrid:
         ]
         keys = [k for k in keys if k in mesh and k in mesh1]
 
-        print("Checking common keys:", keys)
         # Check the common keys for equality
         for key in keys:
             if len(mesh[key]) != len(mesh1[key]):
@@ -603,15 +591,37 @@ class NetCDFWriteUrid:
                 if not found_match:
                     # No constructs match, so the meshes are not
                     # linked
-                    print ('not linked 3. key=', key, c.array, c1.array)
                     return False
 
         # Still here? Then all of the keys common to both meshes are
         # the same. Now check the non-common keys for consistency.
         #
-        # I.e. If the two meshes have different types of domain
-        # topolgies (e.g. edge and face), then check that each one
-        # implies the other.
+        # If the two meshes have different types of domain topolgies
+        # (e.g. edge and face), then check that each one implies the
+        # other.
+        for cell in ("face", "node"):
+            edges = mesh.get("edge_node_connectivity")
+            cells = mesh.get(f"{cell}_node_connectivity")
+            if edges and cells:
+                # Already got both cell types
+                continue
+            
+            if edges and not cells:
+                cells = mesh1.get(f"{cell}_node_connectivity")
+            elif cells and not edges:
+                edges = mesh1.get("edge_node_connectivity")
+                
+            if edges and cells:
+                # 'face_node_connectivity' and
+                # 'edge_node_connectivity' are defined in the separate
+                # meshes, so check them for consistency.
+                n_nodes = mesh["node_coordinates"][0].size
+                if not self._ugrid_check_edges(
+                        "cell", n_nodes, edges[0], cells[0]
+                ):
+                    return False
+                
+        
         edges = mesh.get("edge_node_connectivity")
         faces = mesh.get("face_node_connectivity")
         if not (edges and faces):
@@ -630,24 +640,41 @@ class NetCDFWriteUrid:
                 ):
                     return False
 
+        # If the two meshes have different types of domain topolgies
+        # (e.g. edge and face), then check that each one implies the
+        # other.
         edges = mesh.get("edge_node_connectivity")
-        nodes = mesh.get("node_node_connectivity")
-        if not (edges and nodes):
-            if edges and not nodes:
-                nodes = mesh1.get("node_node_connectivity")
+        points = mesh.get("node_node_connectivity")
+        if not (edges and points):
+            if edges and not points:
+                points = mesh1.get("node_node_connectivity")
             elif nodes and not edges:
                 edges = mesh1.get("edge_node_connectivity")
 
-            if edges and nodes:
-                # 'node_node_connectivity' and
-                # 'edge_node_connectivity' are defined in the separate
-                # meshes, so check them for consistency.
-                n_nodes = mesh["node_coordinates"][0].size
-                if not self._ugrid_check_edges_and_nodes(
-                    n_nodes, edges[0], nodes[0]
+            if (edges
+                and points
+                and not self._ugrid_check_edges_and_points(
+                    edges[0], points[0])
                 ):
                     return False
 
+        # If the two meshes have different types of domain topolgies
+        # (e.g. edge and face), then check that each one implies the
+        # other.
+        faces = mesh.get("face_node_connectivity")
+        points = mesh.get("node_node_connectivity")
+        if not (faces and points):
+            if faces and not nodes:
+                points = mesh1.get("node_node_connectivity")
+            elif nodes and not faces:
+                faces = mesh1.get("face_node_connectivity")
+
+            if faces and points:
+                n_nodes = mesh["node_coordinates"][0].size
+                if not self._ugrid_check_points_and_faces(
+                    n_nodes, edges[0], points[0]
+                ):
+                    return False
 
         volumes = mesh.get("volume_node_connectivity")
         if volumes:
@@ -659,13 +686,12 @@ class NetCDFWriteUrid:
 
         # Still here? Then 'mesh' and 'mesh1' are part of the same
         # uber-mesh.
-        print ('LNKED')
         return True
 
     def _ugrid_check_edges_and_faces(
         self, n_nodes, edge_node_connectivity, face_node_connectivity
     ):
-        """Whether or not edges imply faces, and vice verse.
+        """Whether or not edges imply faces, and vice versa.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -675,10 +701,10 @@ class NetCDFWriteUrid:
                 The number of unique nodes.
 
             edge_node_connectivity: `DomainTopology`
-                The UGRID "edge_node_connectivity" array.
+                The "edge" domain topology.
 
             face_node_connectivity: `DomainTopology`
-                The UGRID "face_node_connectivity" array.
+                The "face" domain topology.
 
         :Returns:
 
@@ -708,52 +734,42 @@ class NetCDFWriteUrid:
 
         # Return True if the unique edges of the faces are identical
         # to the given edges
+        if face_edges.data.shape != edges.data.shape:
+            return False
+        
         return bool((face_edges.data == edges.data).all())
 
-    def _ugrid_check_edges_and_nodes(
-        self, n_nodes, edge_node_connectivity, node_node_connectivity
+    def _ugrid_check_edges_and_points(
+        self, edge_node_connectivity, node_node_connectivity
     ):
-        """Whether or not edges imply faces, and vice verse.
+        """Whether or not edges imply nodes, and vice versa.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            n_node: `int`
-                The number of unique nodes.
-
             edge_node_connectivity: `DomainTopology`
-                The UGRID "edge_node_connectivity" array.
+                The "edge" domain topology.
 
             node_node_connectivity: `DomainTopology`
-                The UGRID "face_node_connectivity" array.
+                The "point" domain topology.
 
         :Returns:
 
             `bool`
-                True if the edges imply the faces, and the faces imply
+                True if the edges imply the nodes, and the nodes imply
                 the edges.
 
         """
-#        # Fast checks that are sufficient (but not necessary)
-#        # conditions for the edges and faces being incompatible
-#        if edge_node_connectivity.size > face_node_connectivity.data.size:
-#            # There are more given edges than can possibly by defined
-#            # by the faces
-#            return False
-#
-#        if edge_node_connectivity.size < face_node_connectivity.size + 2:
-#            # There are fewer given edges than can possibly by defined
-#            # by the faces
-#            return False
-
-        # Still here? Find the set of unique edges that are implied by
-        # the nodes
-        node_edges = node_node_connectivity.to_edge(sort=True)
+        # Find the set of unique edges that are implied by the nodes
+        point_edges = node_node_connectivity.to_edge(sort=True)
         edges = edge_node_connectivity.sort(inplace=False)
 
         # Return True if the unique edges of the faces are identical
         # to the given edges
+        if node_edges.data.shape != edges.data.shape:
+            return False
+        
         return bool((node_edges.data == edges.data).all())
 
     def _ugrid_update_mesh(self, mesh, mesh1):
@@ -770,8 +786,6 @@ class NetCDFWriteUrid:
             mesh["topology_dimension"], mesh1["topology_dimension"]
         )
 
-        print(f"Setting topology_dimension {mesh['topology_dimension']}")
-
         for key, value in mesh1.items():
             if key not in mesh:
                 # This key is not in for 'mesh', so copy it from
@@ -779,20 +793,11 @@ class NetCDFWriteUrid:
                 # value.
                 mesh[key] = value.copy()
                 mesh["attributes"][key] = mesh1["attributes"][key].copy()
-                print(f"Adding key {key!r} to mesh")
 
         key = 'node_coordinates'        
         if  key in mesh1["attributes"] and key not in mesh["attributes"]:
-            print(f"Adding key {key!r} to mesh")
             mesh["attributes"][key] = mesh1["attributes"][key].copy()
               
-            
-
-        print("UPDATED mesh:")
-        import pprint
-        
-        pprint.pprint(mesh)
-
     def _ugrid_write_mesh_variables(self):
         """Write any mesh variables to the dataset.
 
@@ -879,11 +884,6 @@ class NetCDFWriteUrid:
                     for nc in mesh["node_coordinates"]
                 ]
                 attributes["node_coordinates"] = " ".join(ncvars)
-
-            print("mesh ATTR:")
-            import pprint
-
-            pprint.pprint(attributes)
 
             # --------------------------------------------------------
             # Create the mesh variable and set its attributes
