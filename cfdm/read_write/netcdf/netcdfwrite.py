@@ -3941,13 +3941,13 @@ class NetCDFWrite(NetCDFWriteUrid, IOWrite):
             ).get("grid_mapping_name", False)
         ]
 
-        # Initialise the dictionary of the field/domain's *normalised*
+        # Initialise the dictionary of the field/domain's normalised
         # domain topologies
-        g["domain_topologies"] = {}
+        g["normalised_domain_topologies"] = {}
 
-        # Initialise the dictionary of the field/domain's *normalised*
+        # Initialise the dictionary of the field/domain's normalised
         # cell connectivities
-        g["cell_connectivities"] = {}
+        g["normalised_cell_connectivities"] = {}
 
         field_coordinates = self.implementation.get_coordinates(f)
 
@@ -4718,7 +4718,7 @@ class NetCDFWrite(NetCDFWriteUrid, IOWrite):
                 location = f.domain_topology().get_cell()
                 if location == "point":
                     location = "node"
-                    
+
                 extra["location"] = location
 
         # ------------------------------------------------------------

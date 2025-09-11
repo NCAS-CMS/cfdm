@@ -121,7 +121,7 @@ class MeshArray(CompressedArray):
             **self.conformed_data(),
             **self.subarray_parameters(),
         }
-        print ('subarray_kwargs=', subarray_kwargs)
+        print("subarray_kwargs=", subarray_kwargs)
         for u_indices, u_shape, c_indices, _ in zip(*self.subarrays()):
             subarray = Subarray(
                 indices=c_indices,

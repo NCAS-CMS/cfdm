@@ -2144,8 +2144,9 @@ class NetCDFRead(IORead):
                     # location_index_set
                     self._ugrid_parse_location_index_set(attributes)
 
-            if debug:   
-                from pprint import pformat             
+            if debug:
+                from pprint import pformat
+
                 logger.debug(
                     f"    UGRID meshes:\n       {pformat(g['mesh'])}"
                 )  # pragma: no cover
@@ -9681,7 +9682,7 @@ class NetCDFRead(IORead):
                 "face_face_connectivity",
                 "face_edge_connectivity",
                 "edge_node_connectivity",
-                    "edge_edge_connectivity",
+                "edge_edge_connectivity",
                 "edge_face_connectivity",
                 "volume_node_connectivity",
                 "volume_edge_connectivity",
@@ -10133,9 +10134,7 @@ class NetCDFRead(IORead):
 
         # Create data
         if cell == "point":
-            properties["long_name"] = (
-                "Maps every node to its connected nodes"
-            )
+            properties["long_name"] = "Maps every node to its connected nodes"
             indices, kwargs = self._create_netcdfarray(connectivity_ncvar)
             n_nodes = self.read_vars["internal_dimension_sizes"][
                 mesh.ncdim[location]

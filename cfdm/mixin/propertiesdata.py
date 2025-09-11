@@ -78,7 +78,7 @@ class PropertiesData(Properties):
                     f"Index {indices!r} selects no elements from "
                     f"data with shape {original_shape}"
                 )
-            
+
             new.set_data(data, copy=False)
 
         return new

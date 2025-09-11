@@ -147,7 +147,7 @@ class Subarray(Array):
                 The converted data.
 
         """
-#        print("_asanyarray:", repr(data))
+        #        print("_asanyarray:", repr(data))
         print(self.indices)
         context_manager = self._get_component("context_manager")
         if context_manager:
@@ -159,14 +159,14 @@ class Subarray(Array):
                 #                    print(999.5, repr(data.compute().array))
                 #                except AttributeError:
                 #                    pass
-                #print('AA',indices, type(data))
-                #try:
+                # print('AA',indices, type(data))
+                # try:
                 #    if indices == (slice(0, 0, None),):
                 #        print (repr(data))
                 #        print(type(self))
                 #        print (self.__dict__)
                 #        print(1/0)
-                #except ValueError:
+                # except ValueError:
                 #    pass
                 if indices is not None:
                     data = data[indices]
@@ -185,11 +185,11 @@ class Subarray(Array):
                 #                if  data
                 #                print (type(data))
                 #                if is_dask_collection(data):#
-#                print('AA', type(data),repr(data))
+                #                print('AA', type(data),repr(data))
                 data = np.asanyarray(data)
-#                print('BB',indices, type(data))
+        #                print('BB',indices, type(data))
 
-                #                data = np.ma.array(data)
+        #                data = np.ma.array(data)
         #                print(222, repr(data))
         #                if not data.mask.ndim and  not data.mask:
         #                    data = np.array(data)

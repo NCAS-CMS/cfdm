@@ -307,7 +307,7 @@ class DomainTopology(
             kwargs["pre"] = pre
 
         return super().identities(generator=generator, **kwargs)
-    
+
     @_inplace_enabled(default=False)
     def normalise(
         self, start_index=0, remove_empty_columns=False, inplace=False
@@ -326,6 +326,8 @@ class DomainTopology(
         nodes.
 
         .. versionadded:: (cfdm) 1.11.0.0
+
+        .. seealso:: `sort`, `to_edge`
 
         :Parameters:
 
@@ -403,8 +405,7 @@ class DomainTopology(
         cell = self.get_cell(None)
         if cell is None:
             raise ValueError(
-                f"Can't normalise {self.__class__.__name__} with unknown "
-                "cell type"
+                f"Can't normalise {self!r} with unknown cell type"
             )
 
         d = _inplace_enabled_define_and_cleanup(self)
@@ -428,82 +429,242 @@ class DomainTopology(
                 data, start_index, remove_empty_columns
             )
         else:
-            raise ValueError(f"Can't normalise: Unknown cell type {cell!r}")
+            raise ValueError(
+                f"Can't normalise {self!r}: Unknown cell type {cell!r}"
+            )
 
         d.set_data(data, copy=False)
         return d
 
-    @_inplace_enabled(default=True)
-    def sort(self, inplace=True): 
-        """TODOUGRID
+    def sort(self):
+        """Sort the domain topology node ids.
+
+        Only edge and node domain topologies can be sorted.
+
+        .. note:: The purpose of this method is to facilitate the
+                  comparison of normalised domain topologies, to see
+                  if they belong to the same UGRID mesh. The sorted
+                  domain topology will, in general, be inconsistent
+                  with other metadata, such as the node geo-locations
+                  stored as domain cell bounds or coordinates.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        :Parameters:
-
-            inplace: `bool`, optional
-                If True (the default) then do the operation in-place
-                and return `None`.
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The sorted domain topology construct, or `None` if the
-                operation was in-place.
-
-        **Examples**
-
-        TODOUGRID
-
-        """  
-        cell = self.get_cell(None)
-        if cell not in ("edge", "node"):
-            raise ValueError("TODOUGRID")
-
-        d = _inplace_enabled_define_and_cleanup(self)
-    
-        data = d.array
-        data.sort(1)
-        data = sorted(data.tolist())
-        data = d._Data(data, dtype=d.dtype, chunks=self.data.chunks)
-        d.set_data(data, copy=False)
-
-        return d
-    
-    def to_edge(self, nodes=None, sort=False):
-        """TODOUGRID
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            nodes: optional
-                The unique node ids. Must be `None` for a "point"
-                domain topology (for which the unique nodes ids are
-                easily inferred from the data).
-
-            sort: `bool`
-                TODOUGRID 
+        .. seealso:: `normalise`, `to_edge`
 
         :Returns:
 
             `{{class}}`
-                TODOUGRID
+                The sorted domain topology construct.
 
         **Examples**
 
-        TODOUGRID
+        >>> f= {{package}}.example_field(9)
+        >>> print(f)
+        Field: northward_wind (ncvar%v)
+        -------------------------------
+        Data            : northward_wind(time(2), ncdim%nMesh2_edge(9)) ms-1
+        Cell methods    : time(2): point (interval: 3600 s)
+        Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+        Auxiliary coords: longitude(ncdim%nMesh2_edge(9)) = [-41.5, ..., -43.0] degrees_east
+                        : latitude(ncdim%nMesh2_edge(9)) = [34.5, ..., 32.0] degrees_north
+        Topologies      : cell:edge(ncdim%nMesh2_edge(9), 2) = [[1, ..., 5]]
+        Connectivities  : connectivity:node(ncdim%nMesh2_edge(9), 6) = [[0, ..., --]]
+        >>> dt = f.domain_topology()
+        >>> print(dt.array)
+        [[1 6]
+         [3 6]
+         [3 1]
+         [0 1]
+         [2 0]
+         [2 3]
+         [2 4]
+         [5 4]
+         [3 5]]
+        >>> print(dt.sort().array)
+        [[0 1]
+         [0 2]
+         [1 3]
+         [1 6]
+         [2 3]
+         [2 4]
+         [3 5]
+         [3 6]
+         [4 5]]
+
+        >>> f= {{package}}.example_field(10)
+        >>> print(f)
+        Field: air_pressure (ncvar%pa)
+        ------------------------------
+        Data            : air_pressure(time(2), ncdim%nMesh2_node(7)) hPa
+        Cell methods    : time(2): point (interval: 3600 s)
+        Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+        Auxiliary coords: longitude(ncdim%nMesh2_node(7)) = [-45.0, ..., -40.0] degrees_east
+                        : latitude(ncdim%nMesh2_node(7)) = [35.0, ..., 34.0] degrees_north
+        Topologies      : cell:point(ncdim%nMesh2_node(7), 5) = [[0, ..., --]]
+        >>> print(f.domain_topology().array)
+        >>> dt = f.domain_topology()
+        >>> dt = dt[::-1]
+        >>> print(dt.array)
+        [[6 3 1 -- --]
+         [5 4 3 -- --]
+         [4 2 5 -- --]
+         [3 2 1 5 6]
+         [2 0 3 4 --]
+         [1 6 0 3 --]
+         [0 1 2 -- --]]
+        >>> print(dt.sort().array)
+        [[0 1 2 -- --]
+         [1 0 3 6 --]
+         [2 0 3 4 --]
+         [3 1 2 5 6]
+         [4 2 5 -- --]
+         [5 3 4 -- --]
+         [6 1 3 -- --]]
+
+        """
+        cell = self.get_cell(None)
+        if cell not in ("edge", "point"):
+            raise ValueError(f"Can't sort {self!r} with {cell} cells")
+
+        data = self.array
+
+        if cell == "edge":
+            # Sort within each row
+            data.sort(axis=1)
+            # Sort over rows
+            data = sorted(data.tolist())
+
+        elif cell == "point":
+            # Sort within each row from column 1
+            data[:, 1:] = np.ma.sort(data[:, 1:], axis=1, endwith=True)
+            # Sort over rows by value in column 0
+            data = data[data[:, 0].argsort()]
+
+        data = self._Data(data, dtype=self.dtype, chunks=self.data.chunks)
+
+        d = self.copy()
+        d.set_data(data, copy=False)
+
+        return d
+
+    def to_edge(self, sort=False, face_nodes=None):
+        """Create a domain topology of edges.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `normalise`, `sort`
+
+        :Parameters:
+
+            sort: `bool`
+                If True then sort output edges. This is equivalent to,
+                but faster than, setting *sort* to False and sorting
+                the returned `{{class}}` with its `sort` method.
+
+            face_nodes: `None` or sequence of `int`, optional
+                The unique node ids for 'face' cells. If `None` (the
+                default) then the node ids will be inferred from the
+                data, at some computational expense. The order of the
+                nodes is immaterial.
+
+                .. note:: No checks are carried out to ensure that the
+                          given *face_nodes* match the actual node ids
+                          stored in the data, and a mis-match will
+                          result in an incorrect result.
+
+        :Returns:
+
+            `{{class}}`
+                The domain topology construct of unique edges.
+
+        **Examples**
+
+        >>> f= {{package}}.example_field(8)
+        >>> print(f)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(time(2), ncdim%nMesh2_face(3)) K
+        Cell methods    : time(2): point (interval: 3600 s)
+        Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+        Auxiliary coords: longitude(ncdim%nMesh2_face(3)) = [-44.0, -44.0, -42.0] degrees_east
+                        : latitude(ncdim%nMesh2_face(3)) = [34.0, 32.0, 34.0] degrees_north
+        Topologies      : cell:face(ncdim%nMesh2_face(3), 4) = [[2, ..., --]]
+        Connectivities  : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]
+        >>> dt = f[0].domain_topology()
+        >>> print(dt.array)
+        [[2 3 1 0]
+         [4 5 3 2]
+         [6 1 3 --]]
+        >>> dt.to_edge()
+        <DomainTopology: cell:edge(9, 2) >
+        >>> print(dt.to_edge().array)
+        [[0 1]
+         [2 4]
+         [2 3]
+         [0 2]
+         [4 5]
+         [3 6]
+         [1 6]
+         [1 3]
+         [3 5]]
+        >>> print(dt.to_edge(sort=True).array)
+        [[0 1]
+         [0 2]
+         [1 3]
+         [1 6]
+         [2 3]
+         [2 4]
+         [3 5]
+         [3 6]
+         [4 5]]
+
+        >>> f= {{package}}.example_field(10)
+        >>> print(f)
+        Field: air_pressure (ncvar%pa)
+        ------------------------------
+        Data            : air_pressure(time(2), ncdim%nMesh2_node(7)) hPa
+        Cell methods    : time(2): point (interval: 3600 s)
+        Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+        Auxiliary coords: longitude(ncdim%nMesh2_node(7)) = [-45.0, ..., -40.0] degrees_east
+                        : latitude(ncdim%nMesh2_node(7)) = [35.0, ..., 34.0] degrees_north
+        Topologies      : cell:point(ncdim%nMesh2_node(7), 5) = [[0, ..., --]]
+        >>> dt = f[0].domain_topology()
+        >>> print(dt.array)
+        [[0 1 2 -- --]
+         [1 6 0 3 --]
+         [2 0 3 4 --]
+         [3 2 1 5 6]
+         [4 2 5 -- --]
+         [5 4 3 -- --]
+         [6 3 1 -- --]]
+        >>> dt.to_edge()
+        <DomainTopology: cell:edge(9, 2) >
+        >>> print(dt.to_edge(sort=True).array)
+        [[0 1]
+         [0 2]
+         [1 3]
+         [1 6]
+         [2 3]
+         [2 4]
+         [3 5]
+         [3 6]
+         [4 5]]
 
         """
         edges = []
         edges_extend = edges.extend
-            
+
         cell = self.get_cell(None)
+        if face_nodes is not None and cell != "face":
+            raise ValueError(
+                "Can't set 'face_nodes' for {self!r} with {cell} cells"
+            )
 
         # Deal with simple "edge" case first
         if cell == "edge":
             if sort:
-                edges = self.sort(inplace=False)
+                edges = self.sort()
             else:
                 edges = self.copy()
 
@@ -511,18 +672,15 @@ class DomainTopology(
 
         # Still here? Then deal with the other cell types.
         if cell == "point":
-            if nodes is not None:
-                raise ValueError("TODOUGRID")
-            
             points = self.array
             masked = np.ma.is_masked(points)
-            
-            # Loop round the nodes, finding the node-pairs that define the
-            # edges.
+
+            # Loop round the nodes, finding the node-pairs that define
+            # the edges.
             for row in points:
                 if masked:
                     row = row.compressed()
-                    
+
                 node = row[0]
                 row = row[1:].tolist()
                 edges_extend(
@@ -530,45 +688,47 @@ class DomainTopology(
                 )
 
             del points, row
-            
+
         elif cell == "face":
             from cfdm.data.subarray import PointTopologyFromFacesSubarray
-            
+
             connected_nodes = PointTopologyFromFacesSubarray._connected_nodes
-    
+
             faces = self.array
             masked = np.ma.is_masked(faces)
-            
-            if nodes is None:
+
+            if face_nodes is None:
                 # Find the unique node ids
-                nodes = np.unique(faces).tolist()
+                face_nodes = np.unique(faces).tolist()
                 if masked:
-                    nodes = nodes[:-1]
-                    
-            # Loop round the nodes, finding the node-pairs that define
-            # the edges.
-            for n in nodes:
+                    face_nodes = face_nodes[:-1]
+
+            # Loop round the face nodes, finding the node-pairs that
+            # define the edges.
+            for n in face_nodes:
                 edges_extend(connected_nodes(n, faces, masked, edges=True))
-    
-            del faces, nodes
-            
+
+            del faces, face_nodes
+
         else:
-            raise NotImplementedError("Can't get edges from {cell!r} cells")
-        
+            raise NotImplementedError(
+                f"Can't get edges from {self!r} with {cell} cells"
+            )
+
         # Remove duplicates to get the set of unique edges.
         #
         # Every edge currently appears twice in the 'face_edges'
         # list. E.g. edge (1, 5) will appear once from processing node
         # 1, and once from processing node 5.
         edges = set(edges)
-    
-        if sort:            
+
+        if sort:
             edges = sorted(edges)
         else:
             edges = list(edges)
 
         edges = self._Data(edges, dtype=self.dtype)
-        
+
         out = self.copy()
         out.set_cell("edge")
         out.set_data(edges, copy=False)

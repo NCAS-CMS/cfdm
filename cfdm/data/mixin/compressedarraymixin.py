@@ -25,8 +25,8 @@ class CompressedArrayMixin:
                 couldn't be ascertained how to form the `dask` array.
 
         """
-        print ("TODOUGRID")
-        return  array # print ("TODOUGRID")
+        print("TODOUGRID")
+        return array  # print ("TODOUGRID")
         try:
             return array.to_dask_array()
         except AttributeError:
@@ -74,7 +74,7 @@ class CompressedArrayMixin:
                 The `dask` array representation.
 
         """
-#        print ('to_dask_array')
+        #        print ('to_dask_array')
         from functools import partial
 
         from dask import config
@@ -98,9 +98,9 @@ class CompressedArrayMixin:
         #       the compressed data is part of the same dask graph as
         #       the compressed subarrays.
         conformed_data = self.conformed_data()
-#        conformed_data = {
-#            k: self._lock_file_read(v) for k, v in conformed_data.items()
-#        }
+        #        conformed_data = {
+        #            k: self._lock_file_read(v) for k, v in conformed_data.items()
+        #        }
         subarray_kwargs = {**conformed_data, **self.subarray_parameters()}
 
         # Get the (cfdm) subarray class
