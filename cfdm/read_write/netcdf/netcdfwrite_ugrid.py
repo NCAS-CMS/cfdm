@@ -823,7 +823,7 @@ class NetCDFWriteUrid:
         if face_edges is None:
             n_nodes = face["node_coordinates"][0].size
             face_edges = face["face_node_connectivity"][0].to_edge(
-                nodes=range(n_nodes), sort=True
+                face_nodes=range(n_nodes), sort=True
             )
             face["sorted_edges"]["face_node_connectivity"] = face_edges
             face["sorted_edges"]["edge_node_connectivity"] = face_edges
@@ -838,8 +838,8 @@ class NetCDFWriteUrid:
     def _ugrid_update_mesh(self, mesh, mesh1):
         """Update an original mesh with another linked mesh.
 
-        Elements unique to the linked mesh are copied to the original
-        mesh.
+        Elements unique to the other linked mesh are copied to the
+        original mesh.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -856,7 +856,7 @@ class NetCDFWriteUrid:
             `None`
 
         """
-        # Update topology_dimension
+        # Update the topology dimension
         mesh["topology_dimension"] = max(
             mesh["topology_dimension"], mesh1["topology_dimension"]
         )
@@ -873,7 +873,7 @@ class NetCDFWriteUrid:
             if key not in mesh["sorted_edges"]:
                 # This key is not in mesh["sorted_edges"], so copy it
                 # from mesh1["sorted_edges"]. Note: any such key will
-                # be a `DomainTopology`.
+                # have a `DomainTopology` value.
                 mesh["sorted_edges"][key] = value.copy()
 
         # If applicable, make sure that the node coordinates and their

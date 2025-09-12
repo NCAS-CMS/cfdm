@@ -49,9 +49,15 @@ class PointTopology:
         cols_extend = cols.extend
         u_extend = u.extend
 
-        # WARNING: (TODOUGRID) This loop is a potential performance
-        #          bottleneck.
-        for node in np.unique(node_connectivity).tolist():
+        unique_nodes = np.unique(node_connectivity)
+        if masked:
+            # Remove missing value from uniwue nodes
+            unique_nodes = unique_nodes[:-1]
+
+        unique_nodes = unique_nodes.tolist()
+
+        # WARNING (TODO): This loop is a potential performance bottleneck.
+        for node in unique_nodes:
             # Find the collection of all nodes that are joined to this
             # node via links in the mesh, including this node itself
             # (which will be at the start of the list).
@@ -62,6 +68,8 @@ class PointTopology:
             pointers_append(p)
             cols_extend(range(n_nodes))
             u_extend(nodes)
+
+        del unique_nodes
 
         u = np.array(u, dtype=integer_dtype(largest_node_id))
         u = csr_array((u, cols, pointers))

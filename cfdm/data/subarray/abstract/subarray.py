@@ -156,7 +156,6 @@ class Subarray(Array):
                     data = data[indices]
 
                 data = np.asanyarray(data)
-
         else:
             if indices is not None:
                 data = data[indices]

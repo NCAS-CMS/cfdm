@@ -1,6 +1,7 @@
 import atexit
 import datetime
 import faulthandler
+import itertools
 import os
 import platform
 import subprocess
@@ -270,9 +271,6 @@ class read_writeTest(unittest.TestCase):
                 if fmt == "NETCDF4_CLASSIC" and ex_field_n in (6, 7):
                     continue
 
-                print(
-                    "TODOUGRID: excluding example fields 8, 9, 10 until writing UGRID is enabled"
-                )
                 if ex_field_n in (8, 9, 10):
                     continue
 
@@ -307,9 +305,7 @@ class read_writeTest(unittest.TestCase):
             # Now do the same test, but appending all of the example fields in
             # one operation rather than one at a time, to check that it works.
             cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
-            print(
-                "TODOUGRID: excluding example fields 8, 9, 10 until writing UGRID is enabled"
-            )
+
             append_ex_fields = cfdm.example_fields(*range(8))
             del append_ex_fields[1]  # note: can remove after Issue #141 closed
             # Note: can remove this del when Issue #140 is closed:
@@ -1340,6 +1336,53 @@ class read_writeTest(unittest.TestCase):
         for fmt in ("NETCDF3_CLASSIC", "NETCDF4"):
             for chunk_cache in (None, 4194304):
                 cfdm.write(f, tmpfile, fmt=fmt, chunk_cache=chunk_cache)
+
+    def test_read_write_ugrid(self):
+        """Test the cfdm.write with UGRID."""
+        # ------------------------------------------------------------
+        # Face, edge, and point fields/domains that are all part of
+        # the same UGRID mesh
+        # ------------------------------------------------------------
+        ugrid_fields = cfdm.example_fields(8, 9, 10)
+        ugrid_domains = [f.domain for f in ugrid_fields]
+
+        # Test for equality with the fields defined in memory. Only
+        # works for face (8) and edge (9) domains.
+        domain = False
+        for ugrid in (ugrid_fields, ugrid_domains):
+            for f in ugrid[:2]:
+                cfdm.write(f, tmpfile)
+                g = cfdm.read(tmpfile, domain=domain) # TODOUGRID problem with read for domain=Truenot write :)
+                self.assertEqual(len(g), 1)
+                self.assertTrue(g[0].equals(f))
+
+            domain = True
+
+        # Test round-tripping fields with multiple fields/domain
+        #
+        # Get the indices of 'ugrid' for all possible combinations:
+        # combinations = [(0,), (1,), ..., (2, 0, 1), (2, 1, 0)]
+        combinations = [
+            i for n in range(1, 4) for i in itertools.permutations(range(3), n)
+        ]
+
+        domain = False
+        for ugrid in (ugrid_fields, ugrid_domains):
+            for indices in combinations:
+                f = []
+                for i in indices:
+                    f.append(ugrid_fields[i])
+
+                cfdm.write(f, tmpfile)
+                g = cfdm.read(tmpfile, domain=domain)
+                self.assertEqual(len(g), len(f))
+
+                cfdm.write(g, tmpfile1)
+                h = cfdm.read(tmpfile1, domain=domain)
+                self.assertEqual(len(h), len(g))
+                self.assertTrue(h[0].equals(g[0]))
+
+            domain = True
 
 
 if __name__ == "__main__":
