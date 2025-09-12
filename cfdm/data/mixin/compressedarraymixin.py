@@ -26,7 +26,7 @@ class CompressedArrayMixin:
 
         """
         print("TODOUGRID")
-        return array  # print ("TODOUGRID")
+        return array
         try:
             return array.to_dask_array()
         except AttributeError:

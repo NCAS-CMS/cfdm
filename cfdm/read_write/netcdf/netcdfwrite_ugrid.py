@@ -22,12 +22,13 @@ class NetCDFWriteUrid:
 
         :Parameters:
 
-            parent : `Field` or `Domain`
-                The parent Field or Domain.
+            parent : `Field` or `Domain` or `None`
+                The parent Field or Domain. Set to `None` if there is
+                no parent.
 
-            key : `str`
+            key : `str` or `None`
                 The internal identifier of the domain topology
-                construct.
+                construct. Set to `None` if *parent* is `None`.
 
             domain_topology : `DomainTopology`
                 The Domain Topology construct to be written.
@@ -49,7 +50,8 @@ class NetCDFWriteUrid:
 
         # Normalise the array, so that its N node ids are 0, ..., N-1
         domain_topology.normalise(inplace=True)
-        g["normalised_domain_topologies"][key] = domain_topology
+        if key is not None:
+            g["normalised_domain_topologies"][key] = domain_topology
 
         cell = domain_topology.get_cell(None)
         if cell == "point":
@@ -71,15 +73,29 @@ class NetCDFWriteUrid:
             )
 
         # Get the netCDF dimensions
-        size = domain_topology.data.shape[-1]
-        ncdimensions = self._dataset_dimensions(parent, key, domain_topology)
+        size0, size1 = domain_topology.data.shape
+        if parent is not None:
+            # Get the number-of-cells dimension name from the parent
+            cells_ncdim = self._dataset_dimensions(
+                parent, key, domain_topology
+            )
+            cells_ncdim = cells_ncdim[0]
+        else:
+            # Get the number-of-cells dimension name without reference
+            # to a parent
+            cells_ncdim = self._name(
+                f"{cell}s", dimsize=size0, role=f"ugrid_{cell}"
+            )
+
+        # Get the connectivity dimension name from the DomainTopology
         connectivity_ncdim = domain_topology.nc_get_connectivity_dimension(
-            f"connectivity{size}"
+            f"connectivity{size1}"
         )
         connectivity_ncdim = self._name(
-            connectivity_ncdim, dimsize=size, role="ugrid_connectivity"
+            connectivity_ncdim, dimsize=size1, role="ugrid_connectivity"
         )
-        ncdimensions = ncdimensions + (connectivity_ncdim,)
+
+        ncdimensions = (cells_ncdim, connectivity_ncdim)
 
         if self._already_in_file(domain_topology, ncdimensions):
             # This domain topology variable has been previously
@@ -88,8 +104,14 @@ class NetCDFWriteUrid:
         else:
             # This domain topology variable has not been previously
             # created, so create it now.
+
+            if cells_ncdim not in g["ncdim_to_size"]:
+                # Create a new number-of-cells netCDF dimension
+                self._write_dimension(cells_ncdim, parent, size=size0)
+
             if connectivity_ncdim not in g["ncdim_to_size"]:
-                self._write_dimension(connectivity_ncdim, parent, size=size)
+                # Create a new connectivity netCDF dimension
+                self._write_dimension(connectivity_ncdim, parent, size=size1)
 
             ncvar = self._create_variable_name(
                 domain_topology, default=f"{cell}_node_connectivity"
@@ -99,11 +121,17 @@ class NetCDFWriteUrid:
             dtype = integer_dtype(domain_topology.data.size)
             domain_topology.data.dtype = dtype
 
+            if parent is not None:
+                # Get domain axis keys from the parent
+                domain_axes = self.implementation.get_data_axes(parent, key)
+            else:
+                domain_axes = None
+
             self._write_netcdf_variable(
                 ncvar,
                 ncdimensions,
                 domain_topology,
-                self.implementation.get_data_axes(parent, key),
+                domain_axes,
             )
 
         g["key_to_ncvar"][key] = ncvar
@@ -275,9 +303,7 @@ class NetCDFWriteUrid:
             # Parent is not UGRID
             return
 
-        print ('ncvar_new =', ncvar_new, sorted(mesh_new))
         for ncvar, mesh in g["meshes"].items():
-            print ('       ', ncvar)
             if self._ugrid_linked_meshes(mesh, mesh_new):
                 # The mesh is either A) identical to another parent's
                 # mesh, or B) represents a different location (node,
@@ -569,7 +595,10 @@ class NetCDFWriteUrid:
 
         :Parameters:
 
-            mesh, mesh1: `dict`, `dict`
+            mesh: `dict`
+                The two mesh dictionaries to be compared.
+
+            mesh1: `dict`
                 The two mesh dictionaries to be compared.
 
         :Returns:
@@ -619,34 +648,46 @@ class NetCDFWriteUrid:
         # equal values.
 
         # Now check the non-common connectivity keys for consistency
+        locations = ("edge", "node", "face", "volume")
         location_mesh = {}
-        for location in ("node", "edge", "face", "volume"):
+        for location in locations:
             key = f"{location}_node_connectivity"
             if key in common_keys:
                 continue
-            # TODOUGRID wrong - run with prints ....
+
+            if key in mesh1:
+                location_mesh[location] = mesh1
+                break
+
+        for location in locations:
+            key = f"{location}_node_connectivity"
+            if key in common_keys or key in location_mesh:
+                continue
+
             if key in mesh:
                 location_mesh[location] = mesh
-            elif key in mesh1:
-                location_mesh[location] = mesh1
+                break
 
-        print (2222, list(location_mesh))
         if len(location_mesh) == 2:
+            # 'location_mesh' has two keys, one for each mesh, and
+            # each key represents a domain topology that is not
+            # present in the other mesh.
+            #
+            # Each pair of domain topology cell types needs secial
+            # treatment.
             if set(location_mesh) == set(("edge", "face")):
-                print (99999999999999)
                 if not self._ugrid_check_edge_face(**location_mesh):
-                    print (1111111119999999)
                     return False
-                
+
             elif set(location_mesh) == set(("node", "edge")):
                 if not self._ugrid_check_node_edge(**location_mesh):
                     return False
-                
+
             elif set(location_mesh) == set(("node", "face")):
                 if not self._ugrid_check_node_face(**location_mesh):
                     return False
 
-            elif "volume" in cells:
+            elif "volume" in location_mesh:
                 # Placeholder exception to remind us to do some work,
                 # should volume cells ever make it into CF.
                 raise NotImplementedError(
@@ -866,6 +907,9 @@ class NetCDFWriteUrid:
         g = self.write_vars
 
         for mesh_ncvar, mesh in g["meshes"].items():
+            import pprint
+
+            pprint.pprint(mesh)
             # --------------------------------------------------------
             # Create the mesh variable attributes.
             #
@@ -930,6 +974,29 @@ class NetCDFWriteUrid:
                     for nc in mesh["node_coordinates"]
                 ]
                 attributes["node_coordinates"] = " ".join(ncvars)
+
+            # For a "point" cell domain mesh, we have an "edge" domain
+            # topology, we so should write it to the datset as an
+            # edge_node_connectivity variable.
+            if not mesh["topology_dimension"]:
+                # Write the edge_node_connectivity variable to the
+                # dataset.
+                #
+                # Note that there is no parent Field or Domain for the
+                # "edge" DomainTopology.
+                edges = mesh["sorted_edges"].get("node_node_connectivity")
+                if edges is None:
+                    edges = mesh["node_node_connectivity"][0].to_edge(
+                        sort=True
+                    )
+
+                ncvar = self._write_domain_topology(None, None, edges)
+                if ncvar is not None:
+                    attributes["edge_node_connectivity"] = ncvar
+
+                    # Set topology dimension to 1, now that we've
+                    # included edge_node_connectivity.
+                    attributes["topology_dimension"] = 1
 
             # --------------------------------------------------------
             # Create the mesh variable and set its attributes
