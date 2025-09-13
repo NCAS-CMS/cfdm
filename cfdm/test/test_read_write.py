@@ -1346,13 +1346,18 @@ class read_writeTest(unittest.TestCase):
         ugrid_fields = cfdm.example_fields(8, 9, 10)
         ugrid_domains = [f.domain for f in ugrid_fields]
 
+        face, edge, point = (0, 1, 2)
+        
         # Test for equality with the fields defined in memory. Only
         # works for face (8) and edge (9) domains.
         domain = False
         for ugrid in (ugrid_fields, ugrid_domains):
-            for f in ugrid[:2]:
+            for cell in (face, edge):
+                f = ugrid[cell]
                 cfdm.write(f, tmpfile)
-                g = cfdm.read(tmpfile, domain=domain) # TODOUGRID problem with read for domain=Truenot write :)
+                g = cfdm.read(
+                    tmpfile, domain=domain
+                )
                 self.assertEqual(len(g), 1)
                 self.assertTrue(g[0].equals(f))
 
@@ -1360,7 +1365,9 @@ class read_writeTest(unittest.TestCase):
 
         # Test round-tripping fields with multiple fields/domain
         #
-        # Get the indices of 'ugrid' for all possible combinations:
+        # Get the indices of 'ugrid' for all possible combinations of
+        # field/domains:
+        #
         # combinations = [(0,), (1,), ..., (2, 0, 1), (2, 1, 0)]
         combinations = [
             i for n in range(1, 4) for i in itertools.permutations(range(3), n)
@@ -1368,10 +1375,10 @@ class read_writeTest(unittest.TestCase):
 
         domain = False
         for ugrid in (ugrid_fields, ugrid_domains):
-            for indices in combinations:
+            for cells in combinations:
                 f = []
-                for i in indices:
-                    f.append(ugrid_fields[i])
+                for cell in cells:
+                    f.append(ugrid_fields[cell])
 
                 cfdm.write(f, tmpfile)
                 g = cfdm.read(tmpfile, domain=domain)
@@ -1385,6 +1392,39 @@ class read_writeTest(unittest.TestCase):
             domain = True
 
 
+    def test_read_write_ugrid_domain(self):
+        """Test the cfdm.read and cfdm.write with UGRID domains."""
+        # ------------------------------------------------------------
+        # Face, edge, and point fields/domains that are all part of
+        # the same UGRID mesh
+        # ------------------------------------------------------------
+        ugrid_fields = cfdm.example_fields(8, 9, 10)
+        ugrid = [f.domain for f in ugrid_fields]
+
+        face, edge, point = (0, 1, 2)
+        
+        # Test for equality with the fields defined in memory. Only
+        # works for face (8) and edge (9) domains.
+        for cell in (face, edge ):
+            d = ugrid[cell]
+            cfdm.write(d, tmpfile)
+            e = cfdm.read(tmpfile, domain=True)
+            self.assertEqual(len(e), 2)
+            self.assertTrue(e[0].equals(d, verbose=-1))
+            self.assertEqual(e[1].domain_topology().get_cell(), 'point')
+            
+        for cell , x in zip((face, edge, point ), ('point', 'point', 'edge')):
+            d = ugrid[cell]
+            cfdm.write(d, tmpfile)
+            e = cfdm.read(tmpfile, domain=True)
+            self.assertEqual(len(e), 2)
+
+            cfdm.write(e, tmpfile1)
+            f = cfdm.read(tmpfile1, domain=True)
+            self.assertEqual(len(f), len(e))            
+            self.assertTrue(f[0].equals(e[0], verbose=-1))
+#            self.assertEqual(e[1].domain_topology().get_cell(), x)
+            
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()

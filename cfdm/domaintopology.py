@@ -439,14 +439,25 @@ class DomainTopology(
     def sort(self):
         """Sort the domain topology node ids.
 
-        Only edge and node domain topologies can be sorted.
+        Only edge and point domain topologies can be sorted.
 
+        Sorting is across both dimensions. In general, dimension 1 is
+        sorted first, and then dimension 0 is sort by its first
+        column.
+
+        For an edge domain topology, column 1 is also sorted within
+        each unique column 0 value.
+
+        For a point dimension topology, column 0 is omitted from the
+        dimension 1 sort (because it contains the node id
+        definition for each row).
+        
         .. note:: The purpose of this method is to facilitate the
                   comparison of normalised domain topologies, to see
                   if they belong to the same UGRID mesh. The sorted
                   domain topology will, in general, be inconsistent
                   with other metadata, such as the node geo-locations
-                  stored as domain cell bounds or coordinates.
+                  stored as domain cell coordinates or cell bounds.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
