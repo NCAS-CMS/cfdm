@@ -1,6 +1,7 @@
 import atexit
 import datetime
 import faulthandler
+import itertools
 import os
 import tempfile
 import unittest
@@ -14,12 +15,12 @@ import cfdm
 warnings = False
 
 # Set up temporary files
-n_tmpfiles = 1
+n_tmpfiles = 2
 tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-[tmpfile1] = tmpfiles
+[tmpfile, tmpfile1] = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -165,6 +166,89 @@ class UGRIDTest(unittest.TestCase):
                 self.assertEqual(
                     g.cell_connectivity().get_connectivity(), "edge"
                 )
+
+    def test_read_write_UGRID_field(self):
+        """Test the cfdm.read and cfdm.write with UGRID fields."""
+        # Face, edge, and point fields that are all part of the same
+        # UGRID mesh
+        ugrid = cfdm.example_fields(8, 9, 10)
+
+        face, edge, point = (0, 1, 2)
+
+        # Test for equality with the fields defined in memory. Only
+        # works for face (8) and edge (9) fields.
+        for cell in (face, edge):
+            f = ugrid[cell]
+            cfdm.write(f, tmpfile)
+            g = cfdm.read(tmpfile)
+            self.assertEqual(len(g), 1)
+            self.assertTrue(g[0].equals(f))
+
+        # Test round-tripping fields with multiple fields
+        #
+        # Get the indices of 'ugrid' for all possible combinations of
+        # fields:
+        #
+        # combinations = [(0,), (1,), ..., (2, 0, 1), (2, 1, 0)]
+        combinations = [
+            i
+            for n in range(1, 4)
+            for i in itertools.permutations([face, edge, point], n)
+        ]
+
+        for cells in combinations:
+            f = []
+            for cell in cells:
+                f.append(ugrid[cell])
+
+            cfdm.write(f, tmpfile)
+            g = cfdm.read(tmpfile)
+            self.assertEqual(len(g), len(f))
+
+            cfdm.write(g, tmpfile1)
+            h = cfdm.read(tmpfile1)
+            self.assertEqual(len(h), len(g))
+            self.assertTrue(h[0].equals(g[0]))
+
+    def test_read_write_UGRID_domain(self):
+        """Test the cfdm.read and cfdm.write with UGRID domains."""
+        # Face, edge, and point fields/domains that are all part of
+        # the same UGRID mesh
+        ugrid = [f.domain for f in cfdm.example_fields(8, 9, 10)]
+
+        face, edge, point = (0, 1, 2)
+
+        # Test for equality with the fields defined in memory. Only
+        # works for face (8) and edge (9) domains.
+        for cell in (face, edge):
+            d = ugrid[cell]
+            cfdm.write(d, tmpfile)
+            e = cfdm.read(tmpfile, domain=True)
+            self.assertEqual(len(e), 2)
+            self.assertTrue(e[0].equals(d))
+            self.assertEqual(e[1].domain_topology().get_cell(), "point")
+
+        # Test round-tripping fields with all three domains
+        combinations = list(itertools.permutations([face, edge, point], 3))
+
+        for cells in combinations:
+            d = []
+            for cell in cells:
+                d.append(ugrid[cell])
+
+            cfdm.write(d, tmpfile)
+            e = cfdm.read(tmpfile, domain=True)
+            self.assertEqual(len(e), len(d))
+
+            cfdm.write(e, tmpfile1)
+            f = cfdm.read(tmpfile1, domain=True)
+            self.assertEqual(len(f), len(e))
+            for i, j in zip(f, e):
+                self.assertTrue(i.equals(j))
+
+        # TODOUGRID: Other types of domain read/write are tricky, and
+        #            possibly even reasonably not round-trippable, but
+        #            that's an issue for another day ...
 
 
 if __name__ == "__main__":

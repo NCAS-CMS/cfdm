@@ -451,7 +451,7 @@ class DomainTopology(
         For a point dimension topology, column 0 is omitted from the
         dimension 1 sort (because it contains the node id
         definition for each row).
-        
+
         .. note:: The purpose of this method is to facilitate the
                   comparison of normalised domain topologies, to see
                   if they belong to the same UGRID mesh. The sorted

@@ -5,7 +5,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-class NetCDFWriteUrid:
+class NetCDFWriteUgrid:
     """Mixin class for writing UGRID meshes to a dataset.
 
     .. versionadded: (cfdm) NEXTVERSION
@@ -907,9 +907,6 @@ class NetCDFWriteUrid:
         g = self.write_vars
 
         for mesh_ncvar, mesh in g["meshes"].items():
-            import pprint
-
-            pprint.pprint(mesh)
             # --------------------------------------------------------
             # Create the mesh variable attributes.
             #
@@ -938,7 +935,10 @@ class NetCDFWriteUrid:
             #  'face_coordinates': 'Mesh2_face_x Mesh2_face_y',
             #  'face_node_connectivity': 'Mesh2_face_nodes'}
             # --------------------------------------------------------
-            attributes = {"topology_dimension": mesh["topology_dimension"]}
+            attributes = {
+                "cf_role": "mesh_topology",
+                "topology_dimension": mesh["topology_dimension"],
+            }
 
             # Convert non-empty lists of constructs to space-separated
             # variable names
