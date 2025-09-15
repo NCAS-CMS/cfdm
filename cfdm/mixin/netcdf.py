@@ -32,7 +32,7 @@ class NetCDFMixin:
         :Parameters:
 
             source:
-              N  The object from which to extract the initialisation
+                The object from which to extract the initialisation
                 information. Typically, but not necessarily, a
                 `{{class}}` object.
 
@@ -5143,7 +5143,7 @@ class NetCDFShards(NetCDFMixin):
     they are smaller than the block size of the file system.
 
     The sharding strategy is ignored when writing to a non-Zarr
-    datset.
+    dataset.
 
     .. versionadded:: (cfdm) NEXTVERSION
 

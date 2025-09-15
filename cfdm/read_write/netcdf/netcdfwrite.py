@@ -873,10 +873,10 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             # Create the sample dimension
             # --------------------------------------------------------
-            _ = self.implementation.nc_get_sample_dimension(
+            sample_ncdim = self.implementation.nc_get_sample_dimension(
                 count_variable, "element"
             )
-            sample_ncdim = self._name(_)
+            sample_ncdim = self._name(sample_ncdim)
             self._write_dimension(
                 sample_ncdim,
                 f,
@@ -1416,7 +1416,6 @@ class NetCDFWrite(IOWrite):
                         self._createDimension(
                             parent_group, base_bounds_ncdim, size
                         )
-                    #                        parent_group.createDimension(base_bounds_ncdim, size)
                     except RuntimeError:
                         raise
 
@@ -2140,8 +2139,8 @@ class NetCDFWrite(IOWrite):
     ):
         """Write a scalar coordinate and its bounds to the dataset.
 
-        It is assumed that the input coordinate is has size 1, but
-        this is not checked.
+        It is assumed that the input coordinate has size 1, but this
+        is not checked.
 
         If an equal scalar coordinate has already been written to the
         dataset then the input coordinate is not written.
@@ -2635,10 +2634,12 @@ class NetCDFWrite(IOWrite):
                     chunks = shape
 
                 if shards is not None:
-                    # Calculate the shard shape in the format expected
-                    # by `zarr.create_array`, i.e. shards are defined
-                    # by how many array elements along each dimension
-                    # are in each shard.
+                    # create the shard shape in the format expected by
+                    # `zarr.create_array`, 'shards' is curerntly
+                    # defined by how many *chunks* along each
+                    # dimension are in each shard, but `zarr required
+                    # shards defined by how many *array elements*
+                    # along each dimension are in each shard.
                     if chunks == shape:
                         # One chunk per shard.
                         #
@@ -2648,6 +2649,13 @@ class NetCDFWrite(IOWrite):
                     else:
                         ndim = len(chunks)
                         if isinstance(shards, Integral):
+                            # Make a conservative estimate of how many
+                            # whole chunks along each dimension are in
+                            # a shard. This may result in fewer than
+                            # 'shards' chunks in each shard, but is
+                            # guaranteed to give us a shard shape of
+                            # less than the data shape, which is a
+                            # `zarr` requirement.
                             n = int(shards ** (1 / ndim))
                             shards = (n,) * ndim
 
@@ -2936,9 +2944,9 @@ class NetCDFWrite(IOWrite):
             )
 
         logger.debug(
-            f"      chunksizes: {chunksizes}\n"
-            f"      contiguous: {contiguous}"
-            f"      shards    : {shards}"
+            f"      chunksizes: {chunksizes!r}\n"
+            f"      contiguous: {contiguous!r}"
+            f"      shards    : {shards!r}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -2976,10 +2984,11 @@ class NetCDFWrite(IOWrite):
         # (CF>=1.8)
         # ------------------------------------------------------------
         if g["backend"] == "zarr":
-            # ... but not for Zarr. This is because Zarr doesn't have
-            # the concept of dimensions belonging to a group (unlike
-            # netCDF), so by keeping the group structure in the
-            # dimension names we can know which group they belong to.
+            # ... but not for Zarr. This is because the Zarr data
+            # model doesn't have the concept of dimensions belonging
+            # to a group (unlike netCDF), so by keeping the group
+            # structure in the dimension names we can know which group
+            # they belong to.
             kwargs["dimensions"] = ncdimensions
         else:
             ncdimensions_basename = [

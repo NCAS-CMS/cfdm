@@ -620,7 +620,7 @@ class NetCDFRead(IORead):
                 flat_nc,
                 strict=False,
                 copy_data=False,
-                dimension_search=g["group_dimension_search"],
+                group_dimension_search=g["group_dimension_search"],
             )
 
             # Store the original grouped file. This is primarily
@@ -1039,18 +1039,18 @@ class NetCDFRead(IORead):
 
             cfa: `dict`, optional
                 Configure the reading of CF-netCDF aggregation
-                datasets.  See `cfdm.read` for details.
+                datasets. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.12.0.0
 
             cfa_write: sequence of `str`, optional
                 Configure the reading of CF-netCDF aggregation
-                datasets.  See `cfdm.read` for details.
+                datasets. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.12.0.0
 
             to_memory: (sequence) of `str`, optional
-                Whether or not to bring data arrays into memory.  See
+                Whether or not to bring data arrays into memory. See
                 `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.12.0.0
@@ -6687,7 +6687,6 @@ class NetCDFRead(IORead):
 
         ndim = variable.ndim
         shape = variable.shape
-        #        size = self._file_variable_size(variable)
         size = prod(shape)
 
         if size < 2:
@@ -9605,22 +9604,19 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`
+            nc: `netCDF4.Dataset` or `h5netcdf.Group` or `zarr.Group`
 
             name: `str`
 
         :Returns:
 
-            (`netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`, `str`)
+            2-`tuple`:
+                The group object, and the relative-path variable name.
 
         **Examples**
 
-        >>> group, name = n._netCDF4_group(nc, 'time')
-        >>> group.name, name
-        ('/', 'time')
-        >>> group, name = n._netCDF4_group(nc, '/surfacelayer/Z')
-        >>> group.name, name
-        ('surfacelayer', 'Z')
+        >>> n._netCDF4_group(nc, '/forecast/count')
+        (<Group file:///home/david/cfdm/cfdm/test/tmpdir1/forecast>. 'count')
 
         """
         group = nc
@@ -11650,7 +11646,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         return dask_chunks
 
-    def _cache_data_elements(self, data, ncvar, attributes=None):
+    def _cache_data_elements(self, data, ncvar, attributes):
         """Cache selected element values.
 
         Updates *data* in-place to store its first, second,
@@ -11678,6 +11674,11 @@ class NetCDFRead(IORead):
                 The name of the netCDF variable that contains the
                 data.
 
+            attributes: `dict`
+                The attributes of the netCDF variable.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
         :Returns:
 
             `None`
@@ -11695,7 +11696,6 @@ class NetCDFRead(IORead):
             group, name = self._netCDF4_group(
                 g["variable_grouped_dataset"][ncvar], ncvar
             )
-            #            variable = group.variables.get(name)
             variable = self._file_group_variables(group).get(name)
         else:
             variable = g["variables"].get(ncvar)
@@ -11734,6 +11734,10 @@ class NetCDFRead(IORead):
             attributes=attributes,
             copy=False,
         )
+
+        # Get the cached values, minimising the number of "gets" on
+        # the dataset by not accessing the same chunk twice, where
+        # possible.
         if ndim == 1:
             # Also cache the second element for 1-d data, on the
             # assumption that they may well be dimension coordinate

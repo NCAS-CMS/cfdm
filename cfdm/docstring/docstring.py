@@ -550,13 +550,12 @@ _docstring_substitution_definitions = {
             written to a new netCDF file with `{{package}}.write`
             (unless the strategy is modified prior to writing).
 
-            If False, or if the dataset being read does not support
-            chunking (such as a netCDF-3 dataset), then no dataset
-            chunking strategy is stored (i.e. an
-            `nc_dataset_chunksizes` method will return `None` for all
-            returned `Data` objects). In this case, when the data is
-            written to a new netCDF file, the dataset chunking
-            strategy will be determined by `{{package}}.write`.
+            If False then no dataset chunking strategy is stored
+            (i.e. the `nc_dataset_chunksizes` method will return
+            `None` for all returned `Data` objects). In this case,
+            when the data is written to a new dataset, the dataset
+            chunking strategy will be determined by
+            `{{package}}.write`.
 
             See the `{{package}}.write` *dataset_chunks* parameter for
             details on how the dataset chunking strategy is determined
@@ -572,11 +571,11 @@ _docstring_substitution_definitions = {
             (unless the strategy is modified prior to writing).
 
             If False, or if the dataset being read does not support
-            sharding (such as a netCDF-4 dataset), then no dataset
-            sharding strategy is stored (i.e. an `nc_dataset_shards`
+            sharding (such as a netCDF dataset), then no dataset
+            sharding strategy is stored (i.e. the `nc_dataset_shards`
             method will return `None` for all returned `Data`
             objects). In this case, when the data is written to a new
-            Zarr dataset, the dataset shardinging strategy will be
+            Zarr dataset, the dataset sharding strategy will be
             determined by `{{package}}.write`.""",
     # read cfa
     "{{read cfa: `dict`, optional}}": """cfa: `dict`, optional
@@ -730,9 +729,9 @@ _docstring_substitution_definitions = {
             How to interpret a sub-group dimension name that has no
             path, i.e. that contains no group-separator characters,
             such as ``dim`` (as opposed to ``group/dim``,
-            ``/group/dim``, etc.). Such a dimension name could be a
-            variable array dimension name, or be referenced by
-            variable attribute.
+            ``/group/dim``, ``../dim``, etc.). Such a dimension name
+            could be a variable array dimension name, or be referenced
+            by variable attribute.
 
             This is only required for reading a Zarr dataset, for
             which there is no means of indicating whether the same
@@ -740,9 +739,10 @@ _docstring_substitution_definitions = {
             to each other, or not.
 
             For a non-Zarr dataset that adheres to the netCDF data
-            model, *group_dimension_search* is ignored because any
+            model (such as a netCDF-4 dataset),
+            *group_dimension_search* **is ignored** because any
             correspondence between dimensions is already explicitly
-            recorded.
+            defined.
 
             The *group_dimension_search* parameter must be one of:
 
@@ -752,8 +752,9 @@ _docstring_substitution_definitions = {
               dimension is the same as the one with the same name and
               size in an ancestor group, if one exists. If multiple
               such dimensions exist, then the correspondence is with
-              the dimension in the ancestor group that is furthest
-              away from the sub-group.
+              the dimension in the ancestor group that is **furthest
+              away** from the sub-group (i.e. that is closest to the
+              root group).
 
             * ``'closet_ancestor'``
 
@@ -761,12 +762,13 @@ _docstring_substitution_definitions = {
               the dimension with the same name and size in an ancestor
               group, if one exists. If multiple such dimensions exist,
               then the correspondence is with the dimension in the
-              ancestor group that is closest to the sub-group.
+              ancestor group that is **closest to** the sub-group
+              (i.e. that is furthest away from the root group).
 
             * ``'local'``
 
               Assume that the Zarr sub-group dimension is different to
-              any with the same name and size in ancestor groups.""",
+              any with the same name and size in all ancestor groups.""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully
@@ -1387,7 +1389,7 @@ _docstring_substitution_definitions = {
         of the file system.
 
         The sharding strategy is ignored when writing to a non-Zarr
-        datset.""",
+        dataset.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
@@ -1424,7 +1426,7 @@ _docstring_substitution_definitions = {
 
                   The integer number of chunks to be stored in a
                   single shard, favouring an equal number of chunks
-                  along each shard dimenson.
+                  along each shard dimension.
 
                 * sequence of `int`
 
