@@ -8382,8 +8382,9 @@ class NetCDFRead(IORead):
             attribute_value = {
                 f"{ncvar}:{sn_attr}": sn_value
             }
-            # TODO downgrade status to info/debug
-            logger.warning(f"%%%%%% Got sn_value of {sn_value}")
+            logger.debug(
+                f"Found a {sn_attr} of '{sn_value}' on {ncvar}"
+            )
 
             if not sn_value:
                 continue
@@ -8392,7 +8393,7 @@ class NetCDFRead(IORead):
 
             # 2. Check, if requested, if is a string
             # TODO this is not a robust check (may have numpy string type)
-            # but good enough for now whilts developing
+            # but good enough for now whilst developing
             if check_is_string and not isinstance(sn_value, str):
                 invalid_sn_found = True
                 self._add_message(
@@ -8406,9 +8407,7 @@ class NetCDFRead(IORead):
                     conformance="3.3.requirement.1",
                 )
 
-            # 3. TODO implement check_is_in_custom_list for custom list check.
-            # noting that the custom list must contain only valid standard
-            # names appropriate to the context, else it defeats the point!
+            # 3. Check, if requested, that the SN is in the custom list given
             elif (
                     check_is_in_custom_list and sn_value not in
                     check_is_in_custom_list
@@ -8424,7 +8423,6 @@ class NetCDFRead(IORead):
                         "the context of the variable in question",
                     ),
                 )
-
 
             # 4. Check, if requested, if string is in the list of valid names
             elif (
@@ -10795,7 +10793,6 @@ class NetCDFRead(IORead):
 
         elif topology_dimension == 3:
             ncvar = attributes.get("volume_node_connectivity")
-
             if ncvar is None:
                 self._add_message(
                     mesh_ncvar,
