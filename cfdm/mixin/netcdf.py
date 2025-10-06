@@ -5133,14 +5133,14 @@ class NetCDFAggregation(NetCDFMixin):
 
 
 class NetCDFShards(NetCDFMixin):
-    """Mixin class for accessing dataset shard size.
+    """Mixin class for accessing Zarr dataset shard size.
 
     When writing to a Zarr dataset, sharding provides a mechanism to
     store multiple chunks in a single storage object or file. This can
     be useful because traditional file systems and object storage
-    systems may have performance issues storing and accessing many
-    files. Additionally, small files can be inefficient to store if
-    they are smaller than the block size of the file system.
+    systems may have performance issues storing and accessing a large
+    number of files. Additionally, small files can be inefficient to
+    store if they are smaller than the block size of the file system.
 
     The sharding strategy is ignored when writing to a non-Zarr
     dataset.
@@ -5150,7 +5150,7 @@ class NetCDFShards(NetCDFMixin):
     """
 
     def nc_dataset_shards(self):
-        """Get the dataset shard size for the data.
+        """Get the Zarr dataset shard size for the data.
 
         {{sharding description}}
 
@@ -5188,7 +5188,7 @@ class NetCDFShards(NetCDFMixin):
         return self._get_netcdf().get("dataset_shards")
 
     def nc_clear_dataset_shards(self):
-        """Clear the dataset shard size for the data.
+        """Clear the Zarr dataset shard size for the data.
 
         {{sharding description}}
 
@@ -5225,7 +5225,7 @@ class NetCDFShards(NetCDFMixin):
         return self._get_netcdf().pop("dataset_shards", None)
 
     def nc_set_dataset_shards(self, shards):
-        """Set the dataset sharding strategy for the data.
+        """Set the Zarr dataset sharding strategy for the data.
 
         {{sharding description}}
 

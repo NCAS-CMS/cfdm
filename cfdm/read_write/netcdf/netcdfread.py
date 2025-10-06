@@ -952,7 +952,7 @@ class NetCDFRead(IORead):
         dataset_type=None,
         cdl_string=False,
         ignore_unknown_type=False,
-        group_dimension_search="furthest_ancestor",
+        group_dimension_search="closest_ancestor",
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -9616,7 +9616,7 @@ class NetCDFRead(IORead):
         **Examples**
 
         >>> n._netCDF4_group(nc, '/forecast/count')
-        (<Group file:///home/david/cfdm/cfdm/test/tmpdir1/forecast>. 'count')
+        (<Group file:///home/david/cfdm/cfdm/test/tmpdir1/forecast>, 'count')
 
         """
         group = nc
@@ -11203,17 +11203,19 @@ class NetCDFRead(IORead):
                 return var.dimensions
 
             case "zarr":
-                try:
-                    # Zarr v3
-                    dimension_names = var.metadata.dimension_names
-                    if dimension_names is None:
-                        # Scalar variable
-                        dimension_names = ()
+                match var.metadata.zarr_format:
+                    case 3:
+                        # Zarr v3
+                        dimension_names = var.metadata.dimension_names
+                        if dimension_names is None:
+                            # Scalar variable
+                            dimension_names = ()
 
-                    return dimension_names
-                except AttributeError:
-                    # Zarr v2
-                    return tuple(var.attrs["_ARRAY_DIMENSIONS"])
+                        return dimension_names
+
+                    case 2:
+                        # Zarr v2
+                        return tuple(var.attrs["_ARRAY_DIMENSIONS"])
 
     def _get_storage_options(self, dataset, parsed_dataset):
         """Get the storage options for accessing a file.

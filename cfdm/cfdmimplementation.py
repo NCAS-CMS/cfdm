@@ -1104,7 +1104,7 @@ class CFDMImplementation(Implementation):
         return data.nc_dataset_chunksizes()
 
     def nc_get_dataset_shards(self, data):
-        """Get the dataset sharding strategy for the data.
+        """Get the Zarr dataset sharding strategy for the data.
 
         ..versionadded:: (cfdm) NEXTVERSION
 
@@ -1263,7 +1263,7 @@ class CFDMImplementation(Implementation):
         )
 
     def nc_set_dataset_shards(self, data, shards):
-        """Set the dataset sharding strategy for the data.
+        """Set the Zarr dataset sharding strategy for the data.
 
         ..versionadded:: (cfdm) NEXTVERSION
 

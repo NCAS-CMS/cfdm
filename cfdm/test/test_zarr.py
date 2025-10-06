@@ -219,7 +219,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(z1.equals(f))
 
     def test_zarr_groups_dimension(self):
-        """Test the dimensions of Zarr hierarchical groups."""
+        """Test Zarr groups dimensions."""
         f = self.f0.copy()
 
         grouped_dir = tmpdir1
@@ -248,8 +248,15 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(z.equals(n))
         self.assertTrue(z.equals(f))
 
-    def test_zarr_groups_compression(self):
-        """Test the compression of Zarr hierarchical groups."""
+        # Check that grouped netCDF datasets can only be read with
+        # 'closest_ancestor'
+        cfdm.read(grouped_file, group_dimension_search="closest_ancestor")
+        for gsn in ("furthest_ancestor", "local", "BAD VALUE"):
+            with self.assertRaises(ValueError):
+                cfdm.read(grouped_file, group_dimension_search=gsn)
+
+    def test_zarr_groups_DSG(self):
+        """Test Zarr groups containing DSGs."""
         f = cfdm.example_field(4)
 
         grouped_dir = "tmpdir1"
@@ -283,7 +290,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(z.equals(f))
 
     def test_zarr_groups_geometry(self):
-        """Test that geometries in Zarr groups."""
+        """Test Zarr groups containing cell geometries."""
         f = cfdm.example_field(6)
 
         grouped_dir = tmpdir1
@@ -309,6 +316,14 @@ class read_writeTest(unittest.TestCase):
         z = cfdm.read(grouped_dir)[0]
         self.assertTrue(z.equals(n))
         self.assertTrue(z.equals(f))
+
+    def test_zarr_read_v2(self):
+        """Test reading Zarr v2."""
+        f2 = cfdm.read("example_field_0.zarr2")
+        f3 = cfdm.read("example_field_0.zarr3")
+        self.assertEqual(len(f2), len(f3))
+        self.assertEqual(len(f2), 1)
+        self.assertTrue(f2[0].equals(f3[0]))
 
 
 if __name__ == "__main__":

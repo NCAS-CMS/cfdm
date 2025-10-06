@@ -52,7 +52,7 @@ def netcdf_flatten(
     output_ds,
     strict=True,
     copy_data=True,
-    group_dimension_search="furthest_ancestor",
+    group_dimension_search="closest_ancestor",
 ):
     """Create a flattened version of a grouped CF dataset.
 
@@ -108,51 +108,61 @@ def netcdf_flatten(
             actually create these arrays in memory or on disk.
 
         group_dimension_search: `str`, optional
-            How to interpret a sub-group dimension name that has no
-            path, i.e. that contains no group-separator characters,
-            such as ``dim`` (as opposed to ``group/dim``,
-            ``/group/dim``, ``../dim``, etc.). Such a dimension name
-            could be a variable array dimension name, or be referenced
-            by variable attribute.
-
-            This is only required for reading a Zarr dataset, for
-            which there is no means of indicating whether the same
-            dimension names that appear in different groups correspond
-            to each other, or not.
-
-            For a non-Zarr dataset that adheres to the netCDF data
-            model (such as a netCDF-4 dataset),
-            *group_dimension_search* **is ignored** because any
-            correspondence between dimensions is already explicitly
-            defined.
-
-            The *group_dimension_search* parameter must be one of:
-
-            * ``'furthest_ancestor'``
-
-              This is the default. Assume that the Zarr sub-group
-              dimension is the same as the one with the same name and
-              size in an ancestor group, if one exists. If multiple
-              such dimensions exist, then the correspondence is with
-              the dimension in the ancestor group that is **furthest
-              away** from the sub-group (i.e. that is closest to the
-              root group).
+            How to interpret a dimension name that contains no
+            group-separator characters, such as ``dim`` (as opposed to
+            ``group/dim``, ``/group/dim``, ``../dim``, etc.). The
+            *group_dimension_search* parameter must be one of:
 
             * ``'closet_ancestor'``
 
-              Assume that the Zarr sub-group dimension is the same as
-              the dimension with the same name and size in an ancestor
+              This is the default and is the behaviour defined by the
+              CF conventions (section 2.7 Groups).
+
+              Assume that the sub-group dimension is the same as the
+              dimension with the same name and size in an ancestor
               group, if one exists. If multiple such dimensions exist,
               then the correspondence is with the dimension in the
-              ancestor group that is **closest to** the sub-group
+              ancestor group that is **closest** to the sub-group
               (i.e. that is furthest away from the root group).
 
+            * ``'furthest_ancestor'``
+
+              This behaviour is different to that defined by the CF
+              conventions (section 2.7 Groups).
+
+              Assume that the sub-group dimension is the same as the
+              one with the same name and size in an ancestor group, if
+              one exists. If multiple such dimensions exist, then the
+              correspondence is with the dimension in the ancestor
+              group that is **furthest away** from the sub-group
+              (i.e. that is closest to the root group).
+
             * ``'local'``
+
+              This behaviour is different to that defined by the CF
+              conventions (section 2.7 Groups).
 
               Assume that the Zarr sub-group dimension is different to
               any with the same name and size in all ancestor groups.
 
-             .. versionadded:: (cfdm) NEXTVERSION
+            .. note:: For netCDF dataset, for which it is inherently
+                      well-defined in which group a dimension is
+                      defined, *group_dimension_search* may only take
+                      the default value of ``'closet_ancestor'`, which
+                      applies the behaviour defined by the CF
+                      conventions (section 2.7 Groups).
+
+                      For a Zarr dataset, for which there is no means
+                      of indicating whether or not the same dimension
+                      names that appear in different groups correspond
+                      to each other, setting this parameter may be
+                      necessary for the correct interpretation of the
+                      dataset in the event that its dimensions are
+                      named in a manner that is inconsistent with CF
+                      rules defined by the CF conventions (section 2.7
+                      Groups).
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
     :Returns:
 
@@ -294,7 +304,7 @@ class _Flattener:
         output_ds,
         strict=True,
         copy_data=True,
-        group_dimension_search="furthest_ancestor",
+        group_dimension_search="closest_ancestor",
     ):
         """**Initialisation**
 
@@ -1936,6 +1946,14 @@ class _Flattener:
         """
         match self._backend():
             case "h5netcdf" | "netCDF4":
+                if self._group_dimension_search != "closest_ancestor":
+                    raise ValueError(
+                        f"For netCDF dataset {self.dataset_name()}, "
+                        "group_dimension_search keyword must be "
+                        "'closest_ancestor'. "
+                        f"Got {self._group_dimension_search!r}"
+                    )
+
                 return group.dimensions
 
             case "zarr":
@@ -2075,8 +2093,8 @@ class _Flattener:
                     # E.g. "dim"
                     # ------------------------------------------------
                     if group_dimension_search in (
-                        "furthest_ancestor",
                         "closest_ancestor",
+                        "furthest_ancestor",
                     ):
                         # Find the names of all ancestor groups, in
                         # the appropriate order for searching.

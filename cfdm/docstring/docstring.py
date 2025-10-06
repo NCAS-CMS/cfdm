@@ -726,49 +726,60 @@ _docstring_substitution_definitions = {
             parent directory of itself.""",
     # read group_dimension_search
     "{{read group_dimension_search: `str`, optional}}": """group_dimension_search: `str`, optional
-            How to interpret a sub-group dimension name that has no
-            path, i.e. that contains no group-separator characters,
-            such as ``dim`` (as opposed to ``group/dim``,
-            ``/group/dim``, ``../dim``, etc.). Such a dimension name
-            could be a variable array dimension name, or be referenced
-            by variable attribute.
 
-            This is only required for reading a Zarr dataset, for
-            which there is no means of indicating whether the same
-            dimension names that appear in different groups correspond
-            to each other, or not.
-
-            For a non-Zarr dataset that adheres to the netCDF data
-            model (such as a netCDF-4 dataset),
-            *group_dimension_search* **is ignored** because any
-            correspondence between dimensions is already explicitly
-            defined.
-
-            The *group_dimension_search* parameter must be one of:
-
-            * ``'furthest_ancestor'``
-
-              This is the default. Assume that the Zarr sub-group
-              dimension is the same as the one with the same name and
-              size in an ancestor group, if one exists. If multiple
-              such dimensions exist, then the correspondence is with
-              the dimension in the ancestor group that is **furthest
-              away** from the sub-group (i.e. that is closest to the
-              root group).
+            How to interpret a dimension name that contains no
+            group-separator characters, such as ``dim`` (as opposed to
+            ``group/dim``, ``/group/dim``, ``../dim``, etc.). The
+            *group_dimension_search* parameter must be one of:
 
             * ``'closet_ancestor'``
 
-              Assume that the Zarr sub-group dimension is the same as
-              the dimension with the same name and size in an ancestor
+              This is the default and is the behaviour defined by the
+              CF conventions (section 2.7 Groups).
+
+              Assume that the sub-group dimension is the same as the
+              dimension with the same name and size in an ancestor
               group, if one exists. If multiple such dimensions exist,
               then the correspondence is with the dimension in the
-              ancestor group that is **closest to** the sub-group
+              ancestor group that is **closest** to the sub-group
               (i.e. that is furthest away from the root group).
+
+            * ``'furthest_ancestor'``
+
+              This behaviour is different to that defined by the CF
+              conventions (section 2.7 Groups).
+
+              Assume that the sub-group dimension is the same as the
+              one with the same name and size in an ancestor group, if
+              one exists. If multiple such dimensions exist, then the
+              correspondence is with the dimension in the ancestor
+              group that is **furthest away** from the sub-group
+              (i.e. that is closest to the root group).
 
             * ``'local'``
 
+              This behaviour is different to that defined by the CF
+              conventions (section 2.7 Groups).
+
               Assume that the Zarr sub-group dimension is different to
-              any with the same name and size in all ancestor groups.""",
+              any with the same name and size in all ancestor groups.
+
+            .. note:: For netCDF dataset, for which it is inherently
+                      well-defined in which group a dimension is
+                      defined, *group_dimension_search* may only take
+                      the default value of ``'closet_ancestor'`, which
+                      applies the behaviour defined by the CF
+                      conventions (section 2.7 Groups).
+
+                      For a Zarr dataset, for which there is no means
+                      of indicating whether or not the same dimension
+                      names that appear in different groups correspond
+                      to each other, setting this parameter may be
+                      necessary for the correct interpretation of the
+                      dataset in the event that its dimensions are
+                      named in a manner that is inconsistent with CF
+                      rules defined by the CF conventions (section 2.7
+                      Groups).""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully
@@ -1384,9 +1395,9 @@ _docstring_substitution_definitions = {
         to store multiple chunks in a single storage object or
         file. This can be useful because traditional file systems and
         object storage systems may have performance issues storing and
-        accessing many files. Additionally, small files can be
-        inefficient to store if they are smaller than the block size
-        of the file system.
+        accessing large number of files. Additionally, small files can
+        be inefficient to store if they are smaller than the block
+        size of the file system.
 
         The sharding strategy is ignored when writing to a non-Zarr
         dataset.""",
