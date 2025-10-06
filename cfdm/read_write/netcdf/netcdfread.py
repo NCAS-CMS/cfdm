@@ -42,6 +42,9 @@ from .flatten.config import (
 )
 from .zarr import ZarrDimension
 
+from pprint import pformat, pprint  # DEBUG
+
+
 logger = logging.getLogger(__name__)
 
 _cached_temporary_files = {}
@@ -4266,8 +4269,6 @@ class NetCDFRead(IORead):
                         f"for {field_ncvar!r}."
                     )
                     if is_log_level_debug(logger):
-                        from pprint import pformat
-
                         logger.debug(
                             f"Mesh dictionary is: {pformat(g['mesh'])}"
                         )
@@ -5539,9 +5540,15 @@ class NetCDFRead(IORead):
                 "non-compliance": {},
             },
         )
-        g["dataset_compliance"][parent_ncvar]["non-compliance"].setdefault(
+
+        noncomp = g["dataset_compliance"][parent_ncvar][
+            "non-compliance"].setdefault(
             ncvar, []
-        ).append(d)
+        )
+        # d may already be registered in the list, so don't add twice
+        # TODO but that could be a bug in the _add_message use - check.
+        if d not in noncomp:
+            noncomp.append(d)
 
         e = g["component_report"].setdefault(variable, {})
         e.setdefault(ncvar, []).append(d)
@@ -8915,6 +8922,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         coord_ncvar_attrs = g["variable_attributes"][coord_ncvar]
+        pprint(coord_ncvar_attrs)
         self._check_standard_names(
             parent_ncvar,
             coord_ncvar,
@@ -9877,6 +9885,7 @@ class NetCDFRead(IORead):
 
         return group, path[-1]
 
+    # N - is umbrella one, so maybe not?
     def _ugrid_parse_mesh_topology(self, mesh_ncvar, attributes):
         """Parse a UGRID mesh topology or location index set variable.
 
@@ -9951,6 +9960,13 @@ class NetCDFRead(IORead):
             else:
                 ncvar = attributes.get(f"{location}_node_connectivity")
 
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                mesh_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             ncdim = self.read_vars["variable_dimensions"].get(ncvar)
             if ncdim is None:
                 continue
@@ -10023,6 +10039,7 @@ class NetCDFRead(IORead):
 
         g["mesh"][mesh_ncvar] = mesh
 
+    # Y
     def _ugrid_parse_location_index_set(self, parent_attributes):
         """Parse a UGRID location index set variable.
 
@@ -10086,6 +10103,7 @@ class NetCDFRead(IORead):
             mesh_id=uuid4().hex,
         )
 
+    # Y
     def _ugrid_create_auxiliary_coordinates(
         self,
         parent_ncvar,
@@ -10126,14 +10144,6 @@ class NetCDFRead(IORead):
         # Get the netCDF variable names of the node
         # coordinates. E.g. ("Mesh2_node_x", "Mesh2_node_y")
         nodes_ncvar = mesh.coordinates_ncvar["node"]
-
-        # g = self.read_vars
-        # ncvar_attrs = g["variable_attributes"][nodes_ncvar]
-        # self._check_standard_names(
-        #     parent_ncvar,
-        #     nodes_ncvar,
-        #     ncvar_attrs,
-        # )
 
         # Get the netCDF variable names of the cell
         # coordinates. E.g. ("Mesh1_face_x", "Mesh1_face_y"), or None
@@ -10209,6 +10219,7 @@ class NetCDFRead(IORead):
         mesh.auxiliary_coordinates[location] = auxs
         return auxs
 
+    # N
     def _ugrid_create_bounds_from_nodes(
         self,
         parent_ncvar,
@@ -10321,6 +10332,7 @@ class NetCDFRead(IORead):
 
         return aux
 
+    # Y
     def _ugrid_create_domain_topology(self, parent_ncvar, f, mesh, location):
         """Create a domain topology construct.
 
@@ -10451,6 +10463,7 @@ class NetCDFRead(IORead):
 
         return domain_topology
 
+    # N
     def _ugrid_create_cell_connectivities(
         self, parent_ncvar, f, mesh, location
     ):
@@ -10551,6 +10564,7 @@ class NetCDFRead(IORead):
 
         return [connectivity]
 
+    # N
     def _ugrid_cell_dimension(self, location, connectivity_ncvar, mesh):
         """The connectivity variable dimension that indexes the cells.
 
@@ -10588,6 +10602,7 @@ class NetCDFRead(IORead):
 
         return cell_dim
 
+    # Y
     def _ugrid_check_mesh_topology(self, mesh_ncvar):
         """Check a UGRID mesh topology variable.
 
@@ -10850,6 +10865,7 @@ class NetCDFRead(IORead):
 
         return ok
 
+    # Y
     def _ugrid_check_location_index_set(
         self,
         location_index_set_ncvar,
@@ -10954,6 +10970,7 @@ class NetCDFRead(IORead):
 
         return ok
 
+    # Y
     def _ugrid_check_field_location_index_set(
         self,
         parent_ncvar,
@@ -11091,6 +11108,7 @@ class NetCDFRead(IORead):
         self._include_component_report(parent_ncvar, location_index_set_ncvar)
         return ok
 
+    # Y
     def _ugrid_check_field_mesh(
         self,
         parent_ncvar,
@@ -11178,6 +11196,7 @@ class NetCDFRead(IORead):
         self._include_component_report(parent_ncvar, mesh_ncvar)
         return ok
 
+    # Y
     def _ugrid_check_connectivity_variable(
         self, parent_ncvar, mesh_ncvar, connectivity_ncvar, connectivity_attr
     ):
