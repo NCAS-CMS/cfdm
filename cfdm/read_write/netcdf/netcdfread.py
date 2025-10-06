@@ -8362,8 +8362,7 @@ class NetCDFRead(IORead):
                 (computed_)standard_name was found.
 
         """
-        # TODO downgrade status to info/debug
-        logger.warning(f"Running _check_standard_names() for: {ncvar}")
+        logger.debug(f"Running _check_standard_names() for: {ncvar}")
 
         if check_is_in_custom_list and check_is_in_table:
             raise ValueError(
@@ -8391,10 +8390,10 @@ class NetCDFRead(IORead):
 
             any_sn_found = True
 
-            # 2. Check, if requested, if is a string
-            # TODO this is not a robust check (may have numpy string type)
-            # but good enough for now whilst developing
-            if check_is_string and not isinstance(sn_value, str):
+            # 2. Check, if requested, if name is a native or numpy string type
+            if check_is_string and not (
+                    isinstance(sn_value, (str, np.str_, np.bytes_))
+            ):
                 invalid_sn_found = True
                 self._add_message(
                     parent_ncvar,
