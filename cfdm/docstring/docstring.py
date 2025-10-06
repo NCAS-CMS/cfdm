@@ -562,7 +562,7 @@ _docstring_substitution_definitions = {
             at the time of writing.""",
     # read store_dataset_shards
     "{{read store_dataset_shards: `bool`, optional}}": """store_dataset_shards: `bool`, optional
-            If True (the default) then store the dataset sharding
+            If True (the default) then store the Zarr dataset sharding
             strategy for each returned data array. The dataset
             sharding strategy is then accessible via an object's
             `nc_dataset_shards` method. When the dataset sharding
