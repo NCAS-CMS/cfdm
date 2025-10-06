@@ -1,3 +1,13 @@
+Version NEXTVERSION
+----------------
+
+**2025-10-??**
+
+* When changing array data type, retain cached data elements cast to
+  the new type (https://github.com/NCAS-CMS/cfdm/issues/358)
+
+----
+
 Version 1.12.3.0
 ----------------
 
