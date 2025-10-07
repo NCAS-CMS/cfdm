@@ -5549,6 +5549,8 @@ class NetCDFRead(IORead):
         # TODO but that could be a bug in the _add_message use - check.
         if d not in noncomp:
             noncomp.append(d)
+        print("SLB DEBUG")
+        pprint(d)
 
         e = g["component_report"].setdefault(variable, {})
         e.setdefault(ncvar, []).append(d)
@@ -5590,9 +5592,14 @@ class NetCDFRead(IORead):
         g = self.read_vars
         component_report = g["component_report"].get(ncvar)
         if component_report:
+            # TODO SLB suspected bug fix from original code, i.e:
+            # x = g["dataset_compliance"][parent_ncvar]["non-compliance"]
+            # if ncvar not in x:
+            #     x[ncvar] = []
+            # x[ncvar].extend(component_report[ncvar])
             g["dataset_compliance"][parent_ncvar]["non-compliance"].setdefault(
                 ncvar, []
-            ).extend(component_report)
+            ).extend(component_report[ncvar])
 
     def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Find a domain axis identifier for the variable's dimensions.

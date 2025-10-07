@@ -70,7 +70,6 @@ class ComplianceCheckingTest(unittest.TestCase):
     # TODO set bad names and then write to tempfile and read back in
     bad_snames_general_field = _create_noncompliant_names_field(
         good_snames_general_field, tmpfile0)
-    ### bad_snames_general_field.dump()  # SB DEV
 
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
@@ -274,8 +273,6 @@ class ComplianceCheckingTest(unittest.TestCase):
         dc_output = f.dataset_compliance()
         self.assertEqual(dc_output, dict())
 
-        # TODO what else to test on in 'good' case?
-
     def test_standard_names_validation_noncompliant_field(self):
         """Test compliance checking on a non-compliant non-UGRID field."""
         expected_reason = (
@@ -295,8 +292,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         dc_output = f.dataset_compliance()
 
         # SLB DEV
-        # from pprint import pprint
-        # pprint(dc_output)
+        from pprint import pprint
+        pprint(dc_output)
 
         # 'ta' is the field variable we test on
         self.assertIn("non-compliance", dc_output["ta"])
@@ -352,15 +349,11 @@ class ComplianceCheckingTest(unittest.TestCase):
             # on per-key-value checks above
             self.assertEqual(noncompl_dict, expected_noncompl_dict)
 
-        # TODO what else to check here?
-
     def test_standard_names_validation_compliant_ugrid_field(self):
         """Test compliance checking on a compliant UGRID field."""
         f = self.good_ugrid_sn_f
         dc_output = f.dataset_compliance()
         self.assertEqual(dc_output, dict())
-
-        # TODO what else to test on in 'good' case?
 
     def test_standard_names_validation_noncompliant_ugrid_fields(self):
         """Test compliance checking on non-compliant UGRID fields."""
@@ -386,14 +379,14 @@ class ComplianceCheckingTest(unittest.TestCase):
         # SLB DEV
         # TODO add error to run to say need to run 'create_test_files'
 
-        # TODO see from below that not all bad names gte set - but want
+        # TODO see from below that not all bad names get set - but want
         # that, so should update create_test_files method to set on all
         # for bad case.
-        # with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
-        #     field_all_varnames = list(nc.variables.keys())
-        #     print("VERIFY")
-        #     for varname, var in nc.variables.items():
-        #         print(varname, getattr(var, "standard_name", "No standard_name"))
+        with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
+            field_all_varnames = list(nc.variables.keys())
+            print("VERIFY")
+            for varname, var in nc.variables.items():
+                print(varname, getattr(var, "standard_name", "No standard_name"))
 
         from pprint import pprint
         pprint(dc_output_1)
@@ -565,8 +558,6 @@ class ComplianceCheckingTest(unittest.TestCase):
             # If keys are missing will be reported to fail more spefically
             # on per-key-value checks above
             self.assertEqual(noncompl_dict, expected_noncompl_dict)
-
-        # TODO what else to check here?
 
 
 if __name__ == "__main__":
