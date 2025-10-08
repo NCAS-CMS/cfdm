@@ -5,6 +5,9 @@ Version NEXTVERSION
 
 * When changing array data type, retain cached data elements cast to
   the new type (https://github.com/NCAS-CMS/cfdm/issues/358)
+* Fix bug that prevented `cfdm.read` from reading a file with ``#``
+  characters in its file name
+  (https://github.com/NCAS-CMS/cfdm/issues/356)
 
 ----
 
