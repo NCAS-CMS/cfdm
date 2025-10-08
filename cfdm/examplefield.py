@@ -257,8 +257,6 @@ def example_field(n, _implementation=_implementation):
 
     Data = _implementation.get_class("Data")
 
-    #    mesh_id = "f51e5aa5e2b0439f9fae4f04e51556f7"
-
     if n == 0:
         f = Field()
 
@@ -4681,7 +4679,6 @@ def example_field(n, _implementation=_implementation):
             dtype="f8",
         )
         f.set_data(data)
-        #        f.set_mesh_id(mesh_id)
         #
         # domain_axis: ncdim%time
         c = DomainAxis()
@@ -4844,7 +4841,6 @@ def example_field(n, _implementation=_implementation):
             dtype="f8",
         )
         f.set_data(data)
-        #        f.set_mesh_id(mesh_id)
         #
         # domain_axis: ncdim%time
         c = DomainAxis()
@@ -5050,7 +5046,6 @@ def example_field(n, _implementation=_implementation):
             dtype="f8",
         )
         f.set_data(data)
-        #        f.set_mesh_id(mesh_id)
         #
         # domain_axis: ncdim%time
         c = DomainAxis()

@@ -82,16 +82,19 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
 
             row = row.tolist()
 
-            # Find the position of 'node' in the face, and get its
-            # neighbours.
+            # Get the neighbours of 'node', which is in position 'col'
+            # in the face.
             if not col:
-                # 'node' is in position 0
+                # 'node' is in position 0, so it's neighbours are in
+                # positions -1 and 1
                 nodes_extend((row[-1], row[1]))
             elif col == len(row) - 1:
-                # 'node' is in position -1
+                # 'node' is in position -1, so it's neighbours are in
+                # positions -2 and 0
                 nodes_extend((row[-2], row[0]))
             else:
-                # 'node' is in any other position
+                # 'node' is in any other position (col), so it's
+                # neighbours are in positions col-1 and col+1
                 nodes_extend((row[col - 1], row[col + 1]))
 
         nodes = list(set(nodes))
@@ -100,7 +103,7 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
             # Return a list of ordered edge definitions
             nodes = [(node, n) if node < n else (n, node) for n in nodes]
         else:
-            # Return a flat list of nodes, including 'node' at the
+            # Return a flat list of nodes, inserting 'node' at the
             # start.
             nodes.insert(0, node)
 

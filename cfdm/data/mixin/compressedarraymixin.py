@@ -8,46 +8,46 @@ class CompressedArrayMixin:
 
     """
 
-    #    def _lock_file_read(self, array):
-    #        """Try to return an array that doesn't support concurrent reads.
-    #
-    #        .. versionadded:: (cfdm) 1.11.2.0
-    #
-    #        :Parameters:
-    #
-    #            array: array_like
-    #                The array to process.
-    #
-    #        :Returns"
-    #
-    #            `dask.array.Array` or array_like
-    #                The new `dask` array, or the orginal array if it
-    #                couldn't be ascertained how to form the `dask` array.
-    #
-    #        """
-    #        try:
-    #            return array.to_dask_array()
-    #        except AttributeError:
-    #            pass
-    #
-    #        try:
-    #            chunks = array.chunks
-    #        except AttributeError:
-    #            chunks = "auto"
-    #
-    #        try:
-    #            array = array.source()
-    #        except (ValueError, AttributeError):
-    #            pass
-    #
-    #        try:
-    #            array.get_filename()
-    #        except AttributeError:
-    #            pass
-    #        else:
-    #            array = da.from_array(array, chunks=chunks, lock=True)
-    #
-    #        return array
+    def _lock_file_read(self, array):
+        """Try to return an array that doesn't support concurrent reads.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        :Parameters:
+
+            array: array_like
+                The array to process.
+
+        :Returns"
+
+            `dask.array.Array` or array_like
+                The new `dask` array, or the orginal array if it
+                couldn't be ascertained how to form the `dask` array.
+
+        """
+        try:
+            return array.to_dask_array()
+        except AttributeError:
+            pass
+
+        try:
+            chunks = array.chunks
+        except AttributeError:
+            chunks = "auto"
+
+        try:
+            array = array.source()
+        except (ValueError, AttributeError):
+            pass
+
+        try:
+            array.get_filename()
+        except AttributeError:
+            pass
+        else:
+            array = da.from_array(array, chunks=chunks, lock=True)
+
+        return array
 
     def to_dask_array(self, chunks="auto"):
         """Convert the data to a `dask` array.

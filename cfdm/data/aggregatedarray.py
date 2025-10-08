@@ -265,9 +265,10 @@ class AggregatedArray(abstract.FileArray):
 
                 uri = fa_uris[index]
                 try:
+                    # 'uri' is a size 1 numpy array
                     uri = uri.item()
                 except AttributeError:
-                    # E.g. if 'uri' is a `str` instance
+                    # E.g. 'uri' is a `str` instance
                     pass
 
                 parsed_fragment_array[index] = {

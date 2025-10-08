@@ -257,7 +257,7 @@ class read(ReadWrite):
         followlinks=False,
         cdl_string=False,
         extra_read_vars=None,
-        group_dimension_search="furthest_ancestor",
+        group_dimension_search="closest_ancestor",
         **kwargs,
     ):
         """Read field or domain constructs from datasets.

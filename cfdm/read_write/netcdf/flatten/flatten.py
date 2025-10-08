@@ -52,7 +52,7 @@ def netcdf_flatten(
     output_ds,
     strict=True,
     copy_data=True,
-    dimension_search="furthest_ancestor",
+    group_dimension_search="closest_ancestor",
 ):
     """Create a flattened version of a grouped CF dataset.
 
@@ -107,49 +107,62 @@ def netcdf_flatten(
             be represented by the fill value, but without having to
             actually create these arrays in memory or on disk.
 
-        dimension_search: `str`, optional
-            How to interpret a sub-group dimension name that has no
-            path, i.e. that contains no group-separator characters,
-            such as ``dim`` (as opposed to ``group/dim``,
-            ``/group/dim``, etc.). Such a dimension name could be a
-            variable array dimension name, or be referenced by
-            variable attribute.
-
-            This is only required for reading a Zarr dataset, for
-            which there is no means of indicating whether the same
-            dimension names that appear in different groups correspond
-            to each other, or not.
-
-            For a non-Zarr dataset that adheres to the netCDF data
-            model, *dimension_search* is ignored because any
-            correspondence between dimensions is already explicitly
-            recorded.
-
-            The *dimension_search* parameter must be one of:
-
-            * ``'furthest_ancestor'``
-
-              This is the default. Assume that the Zarr sub-group
-              dimension is the same as the one with the same name and
-              size in an ancestor group, if one exists. If multiple
-              such dimensions exist, then the correspondence is with
-              the dimension in the ancestor group that is furthest
-              away from the sub-group.
+        group_dimension_search: `str`, optional
+            How to interpret a dimension name that contains no
+            group-separator characters, such as ``dim`` (as opposed to
+            ``group/dim``, ``/group/dim``, ``../dim``, etc.). The
+            *group_dimension_search* parameter must be one of:
 
             * ``'closet_ancestor'``
 
-              Assume that the Zarr sub-group dimension is the same as
-              the dimension with the same name and size in an ancestor
+              This is the default and is the behaviour defined by the
+              CF conventions (section 2.7 Groups).
+
+              Assume that the sub-group dimension is the same as the
+              dimension with the same name and size in an ancestor
               group, if one exists. If multiple such dimensions exist,
               then the correspondence is with the dimension in the
-              ancestor group that is closest to the sub-group.
+              ancestor group that is **closest** to the sub-group
+              (i.e. that is furthest away from the root group).
+
+            * ``'furthest_ancestor'``
+
+              This behaviour is different to that defined by the CF
+              conventions (section 2.7 Groups).
+
+              Assume that the sub-group dimension is the same as the
+              one with the same name and size in an ancestor group, if
+              one exists. If multiple such dimensions exist, then the
+              correspondence is with the dimension in the ancestor
+              group that is **furthest away** from the sub-group
+              (i.e. that is closest to the root group).
 
             * ``'local'``
 
-              Assume that the Zarr sub-group dimension is different to
-              any with the same name and size in ancestor groups.
+              This behaviour is different to that defined by the CF
+              conventions (section 2.7 Groups).
 
-             .. versionadded:: (cfdm) NEXTVERSION
+              Assume that the Zarr sub-group dimension is different to
+              any with the same name and size in all ancestor groups.
+
+            .. note:: For netCDF dataset, for which it is inherently
+                      well-defined in which group a dimension is
+                      defined, *group_dimension_search* may only take
+                      the default value of ``'closet_ancestor'`, which
+                      applies the behaviour defined by the CF
+                      conventions (section 2.7 Groups).
+
+                      For a Zarr dataset, for which there is no means
+                      of indicating whether or not the same dimension
+                      names that appear in different groups correspond
+                      to each other, setting this parameter may be
+                      necessary for the correct interpretation of the
+                      dataset in the event that its dimensions are
+                      named in a manner that is inconsistent with CF
+                      rules defined by the CF conventions (section 2.7
+                      Groups).
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
     :Returns:
 
@@ -161,7 +174,7 @@ def netcdf_flatten(
         output_ds,
         strict,
         copy_data=copy_data,
-        dimension_search=dimension_search,
+        group_dimension_search=group_dimension_search,
     ).flatten()
 
 
@@ -291,7 +304,7 @@ class _Flattener:
         output_ds,
         strict=True,
         copy_data=True,
-        dimension_search="furthest_ancestor",
+        group_dimension_search="closest_ancestor",
     ):
         """**Initialisation**
 
@@ -311,7 +324,7 @@ class _Flattener:
             copy_data: `bool`, optional
                 See `netcdf_flatten`.
 
-            dimension_search: `str`, optional
+            group_dimension_search: `str`, optional
                 See `netcdf_flatten`.
 
                 .. versionadded:: (cfdm) NEXTVERSION
@@ -405,7 +418,7 @@ class _Flattener:
 
         self._strict = bool(strict)
         self._copy_data = bool(copy_data)
-        self._dimension_search = dimension_search
+        self._group_dimension_search = group_dimension_search
 
         if (
             output_ds == input_ds
@@ -1933,6 +1946,14 @@ class _Flattener:
         """
         match self._backend():
             case "h5netcdf" | "netCDF4":
+                if self._group_dimension_search != "closest_ancestor":
+                    raise ValueError(
+                        f"For netCDF dataset {self.dataset_name()}, "
+                        "group_dimension_search keyword must be "
+                        "'closest_ancestor'. "
+                        f"Got {self._group_dimension_search!r}"
+                    )
+
                 return group.dimensions
 
             case "zarr":
@@ -2032,7 +2053,7 @@ class _Flattener:
         input_ds = self._input_ds
         group_to_dims = self._group_to_dims
         var_to_dims = self._var_to_dims
-        dimension_search = self._dimension_search
+        group_dimension_search = self._group_dimension_search
 
         # Initialise mapping from the group to its ZarrDimension
         # objects. Use 'setdefault' because a previous call to
@@ -2071,9 +2092,9 @@ class _Flattener:
                     #
                     # E.g. "dim"
                     # ------------------------------------------------
-                    if dimension_search in (
-                        "furthest_ancestor",
+                    if group_dimension_search in (
                         "closest_ancestor",
+                        "furthest_ancestor",
                     ):
                         # Find the names of all ancestor groups, in
                         # the appropriate order for searching.
@@ -2087,7 +2108,7 @@ class _Flattener:
                         #      the ancestor group names are [/, /g1,
                         #      /g1/g2]
 
-                        if dimension_search == "closest_ancestor":
+                        if group_dimension_search == "closest_ancestor":
                             # "closest_ancestor" searching requires
                             # the ancestor group order to be reversed,
                             # e.g. [/g1/g2, /g1, /]
@@ -2112,7 +2133,7 @@ class _Flattener:
                             # group.
                             g = group_name
 
-                    elif dimension_search == "local":
+                    elif group_dimension_search == "local":
                         # Assume that the dimension is different to
                         # any with same name and size defined in any
                         # ancestor group.
@@ -2120,8 +2141,8 @@ class _Flattener:
 
                     else:
                         raise DimensionParsingException(
-                            "Bad 'dimension_search' value: "
-                            f"{dimension_search!r}"
+                            "Bad 'group_dimension_search' value: "
+                            f"{group_dimension_search!r}"
                         )
                 else:
                     g = group_separator.join(name_split[:-1])
@@ -2144,11 +2165,13 @@ class _Flattener:
                         # --------------------------------------------
                         # Relative path dimension name with upward
                         # path traversals ('../') not at the start of
-                        # the name
+                        # the name.
                         #
                         # E.g. "/group1/../group2/dim"
                         # E.g. "group1/../group2/dim"
                         # E.g. "../group1/../group2/dim"
+                        #
+                        # Note that "../../dim" is not such a case.
                         # --------------------------------------------
                         raise DimensionParsingException(
                             "In Zarr datasets, can't yet deal with a "
@@ -2157,7 +2180,8 @@ class _Flattener:
                             f"dataset={self.dataset_name()} "
                             f"variable={var_name} "
                             f"dimension_name={name}"
-                            "\n\nPlease raise an issue at "
+                            "\n\n"
+                            "Please raise an issue at "
                             "https://github.com/NCAS-CMS/cfdm/issues "
                             "if you would like this feature."
                         )
@@ -2170,6 +2194,7 @@ class _Flattener:
                         #
                         # E.g. "../group1/dim"
                         # E.g. "../../group1/dim"
+                        # E.g. "../../dim"
                         # --------------------------------------------
                         current_group = group
                         while g.startswith(f"..{group_separator}"):
