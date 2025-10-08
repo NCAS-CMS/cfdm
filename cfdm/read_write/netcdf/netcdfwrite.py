@@ -2596,8 +2596,10 @@ class NetCDFWrite(IOWrite):
                 if "dimensions" not in kwargs:
                     netcdf4_kwargs["dimensions"] = ()
 
+                contiguous = kwargs.get("contiguous")
+
                 NETCDF4 = g["dataset"].data_model.startswith("NETCDF4")
-                if NETCDF4 and kwargs.get("contiguous"):
+                if NETCDF4 and contiguous:
                     # NETCDF4 contiguous variables can't be compressed
                     kwargs["compression"] = None
                     kwargs["complevel"] = 0
@@ -2618,6 +2620,9 @@ class NetCDFWrite(IOWrite):
                             f"{unlimited_dimensions}"
                         )
 
+                if contiguous:
+                    netcdf4_kwargs.pop("fletcher32", None)
+
                 # Remove Zarr-specific kwargs
                 netcdf4_kwargs.pop("shape", None)
                 netcdf4_kwargs.pop("shards", None)
@@ -2637,11 +2642,11 @@ class NetCDFWrite(IOWrite):
                     # create the shard shape in the format expected by
                     # `zarr.create_array`, 'shards' is curerntly
                     # defined by how many *chunks* along each
-                    # dimension are in each shard, but `zarr required
+                    # dimension are in each shard, but `zarr requires
                     # shards defined by how many *array elements*
                     # along each dimension are in each shard.
                     if chunks == shape:
-                        # One chunk per shard.
+                        # One chunk
                         #
                         # It doesn't matter what 'shards' is, because
                         # the data only has one chunk.
