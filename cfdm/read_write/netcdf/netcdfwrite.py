@@ -6743,7 +6743,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                         # string-append, rather than via `uricompose`
                         # in case the fragment contains more than one
                         # # character.
-                        filename += f"#{fragment}"
+                        dataset_name += f"#{fragment}"
 
                 if uri_relative:
                     scheme = uri.scheme
