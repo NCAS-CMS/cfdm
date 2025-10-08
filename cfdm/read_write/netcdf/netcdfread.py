@@ -5469,12 +5469,12 @@ class NetCDFRead(IORead):
 
     def _add_message(
         self,
-        parent_ncvar,
+        top_ancestor_ncvar,
         ncvar,
+        direct_parent_ncvar=None,
         message=None,
         attribute=None,
         dimensions=None,
-        variable=None,
         conformance=None,
     ):
         """Stores and logs a message about an issue with a field.
@@ -5483,18 +5483,43 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            parent_ncvar: `str`
-                The netCDF variable name of the parent variable.
+            top_ancestor_ncvar: `str`
+                The netCDF variable name of the ancestor variable
+                under which to register the component problem at the
+                top level.
+
+                This is usually the parent variable of the variable
+                `ncvar` which has the component problem, but may be
+                a higher parent e.g. grandparent variable, when there is
+                an intermediate parent variable in which the problem
+                should also be registered using `direct_parent_ncvar`,
+                or `ncvar` itself, where no parent variable exists or
+                is relevant.
 
                 *Parameter example:*
                   ``'tas'``
 
             ncvar: `str`
-                The netCDF variable name of the parent component that
+                The netCDF variable name with the component that
                 has the problem.
 
                 *Parameter example:*
                   ``'rotated_latitude_longitude'``
+
+            direct_parent_ncvar: `str` or `None`, optional
+                The netCDF variable name of the variable which is the
+                direct parent of the variable `ncvar` which has the
+                component problem, only to be provided if a higher
+                parent such as a grandparent variable is set as
+                the `top_ancestor_ncvar` where it is also important
+                to register the problem on the direct parent.
+
+                If `None`, the default, then the problem is not
+                not registered for any further (parent) variable
+                than `top_ancestor_ncvar`.
+
+                *Parameter example:*
+                  ``'time'``
 
             message: (`str`, `str`), optional
 
@@ -5509,8 +5534,6 @@ class NetCDFRead(IORead):
 
                 *Parameter example:*
                   ``dimensions=('lat', 'lon')``
-
-            variable: `str`, optional
 
         """
         g = self.read_vars
@@ -5530,30 +5553,28 @@ class NetCDFRead(IORead):
         if dimensions is not None:
             d["dimensions"] = dimensions
 
-        if variable is None:
-            variable = ncvar
+        if direct_parent_ncvar is None:
+            direct_parent_ncvar = ncvar
 
         g["dataset_compliance"].setdefault(
-            parent_ncvar,
+            top_ancestor_ncvar,
             {
                 "CF version": self.implementation.get_cf_version(),
                 "non-compliance": {},
             },
         )
 
-        noncomp = g["dataset_compliance"][parent_ncvar][
-            "non-compliance"].setdefault(
-            ncvar, []
-        )
-        # d may already be registered in the list, so don't add twice
-        # TODO but that could be a bug in the _add_message use - check.
-        if d not in noncomp:
-            noncomp.append(d)
-        print("SLB DEBUG")
-        pprint(d)
+        g["dataset_compliance"][top_ancestor_ncvar]["non-compliance"].setdefault(
+           ncvar, []
+        ).append(d)
 
-        e = g["component_report"].setdefault(variable, {})
-        e.setdefault(ncvar, []).append(d)
+        # Only add a component report if there is need i.e. if the direct
+        # parent ncvar is not the same as the top_ancestor_ncvar
+        if direct_parent_ncvar != top_ancestor_ncvar:
+            e = g["component_report"].setdefault(direct_parent_ncvar, {})
+            # print("cr is before:", g["component_report"])
+            e.setdefault(ncvar, []).append(d)
+            # print("cr is after:", g["component_report"])
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
@@ -5581,8 +5602,8 @@ class NetCDFRead(IORead):
                   ``'tas'``
 
             ncvar: `str`
-                The netCDF variable name of the parent component that
-                has the problem.
+                The netCDF variable name of the variable with
+                the component that has the problem.
 
         :Returns:
 
@@ -5592,14 +5613,9 @@ class NetCDFRead(IORead):
         g = self.read_vars
         component_report = g["component_report"].get(ncvar)
         if component_report:
-            # TODO SLB suspected bug fix from original code, i.e:
-            # x = g["dataset_compliance"][parent_ncvar]["non-compliance"]
-            # if ncvar not in x:
-            #     x[ncvar] = []
-            # x[ncvar].extend(component_report[ncvar])
             g["dataset_compliance"][parent_ncvar]["non-compliance"].setdefault(
                 ncvar, []
-            ).extend(component_report[ncvar])
+            ).append(component_report)
 
     def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Find a domain axis identifier for the variable's dimensions.
