@@ -7,7 +7,7 @@ from os.path import expanduser, expandvars, isdir, join
 from uritools import urisplit
 
 from ..decorators import _manage_log_level_via_verbosity
-from ..functions import is_log_level_info
+from ..functions import abspath, is_log_level_info
 from .abstract import ReadWrite
 from .exceptions import DatasetTypeError
 from .netcdf import NetCDFRead
@@ -362,7 +362,7 @@ class read(ReadWrite):
                 continue
 
             # Glob files/directories on disk
-            datasets1 = u.path
+            datasets1 = abspath(datasets1, uri=False)
 
             n_datasets = 0
             for x in iglob(datasets1):
