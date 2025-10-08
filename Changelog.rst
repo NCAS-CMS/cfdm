@@ -15,6 +15,17 @@ Version NEXTVERSION
 
 ----
 
+Version 1.12.3.1
+----------------
+  
+**2025-10-??**
+
+* Fix bug that prevented `cfdm.read` from reading a file with ``#``
+  characters in its file name
+  (https://github.com/NCAS-CMS/cfdm/issues/356)
+
+----
+
 Version 1.12.3.0
 ----------------
 

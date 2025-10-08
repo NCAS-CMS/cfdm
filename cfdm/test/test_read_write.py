@@ -23,6 +23,8 @@ tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
+tmpfiles.append(tempfile.mkstemp("#test_read_write.nc", dir=os.getcwd())[1])
+
 [
     tmpfile,
     tmpfileh,
@@ -33,6 +35,7 @@ tmpfiles = [
     tmpfilec3,
     tmpfile0,
     tmpfile1,
+    tmpfile_hash,
 ] = tmpfiles
 
 
@@ -1335,6 +1338,21 @@ class read_writeTest(unittest.TestCase):
         for fmt in ("NETCDF3_CLASSIC", "NETCDF4"):
             for chunk_cache in (None, 4194304):
                 cfdm.write(f, tmpfile, fmt=fmt, chunk_cache=chunk_cache)
+
+    def test_read_write_file_name(self):
+        """Test the cfdm.read with particular file name types."""
+        # File name with a # in it
+        f = self.f0
+        # Check that the file is empty before writing
+        self.assertEqual(os.path.getsize(tmpfile_hash), 0)
+
+        cfdm.write(f, tmpfile_hash)
+
+        # Check that the written file is not empty
+        self.assertGreater(os.path.getsize(tmpfile_hash), 0)
+
+        g = cfdm.read(tmpfile_hash)[0]
+        self.assertTrue(g.equals(f))
 
 
 if __name__ == "__main__":
