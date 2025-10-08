@@ -2916,12 +2916,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 # Re-instate cached elements, cast to the new dtype.
                 cache1 = {}
                 for i, a in cache.items():
-                    if a is np.ma.masked:
-                        pass
-                    elif np.ma.isMA(a):
-                        a = np.ma.array(a, dtype=value)
-                    else:
-                        a = np.array(a, dtype=value)
+                    if a is not np.ma.masked:
+                        a = np.asanyarray(a, dtype=value)
 
                     cache1[i] = a
 
