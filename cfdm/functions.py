@@ -585,7 +585,9 @@ def abspath(path, uri=None):
     u = urisplit(path)
     scheme = u.scheme
     path = u.path
+
     if scheme:
+        # Remote or "file"
         if scheme == "file" or path.startswith(os_sep):
             path = os_abspath(path)
 
@@ -594,11 +596,18 @@ def abspath(path, uri=None):
         elif scheme != "file":
             raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
-        return path
+    else:
+        # Local
+        path = os_abspath(path)
+        if uri:
+            path = uricompose(scheme="file", authority=u.authority, path=path)
 
-    path = os_abspath(path)
-    if uri:
-        path = uricompose(scheme="file", authority=u.authority, path=path)
+    fragment = u.fragment
+    if fragment is not None:
+        # Append a URI fragment. Do this with a string-append, rather
+        # than via `uricompose` in case the fragment contains more
+        # than one # character.
+        path += f"#{fragment}"
 
     return path
 
@@ -735,27 +744,31 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
         if not isdir:
             path = os_dirname(path)
 
-        if sep:
-            path = join(path, "")
-
         if uri or uri is None:
             path = uricompose(scheme=scheme, authority=authority, path=path)
         elif scheme != "file":
             raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
-        return path
+    else:
+        # Local file
+        if not isdir:
+            path = os_dirname(path)
 
-    # Local file
-    if not isdir:
-        path = os_dirname(path)
+        if normalise:
+            path = os_abspath(path)
 
-    if normalise:
-        path = os_abspath(path)
+        if uri:
+            path = uricompose(scheme="file", authority=authority, path=path)
 
-    if uri:
-        path = uricompose(scheme="file", authority=authority, path=path)
+    fragment = u.fragment
+    if fragment is not None:
+        # Append a URI fragment. Do this with a string-append, rather
+        # than via `uricompose` in case the fragment contains more
+        # than one # character.
+        path += f"#{fragment}"
 
     if sep:
+        # Append the directory separator
         path = join(path, "")
 
     return path
