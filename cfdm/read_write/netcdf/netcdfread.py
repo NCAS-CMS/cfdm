@@ -857,7 +857,7 @@ class NetCDFRead(IORead):
             return "netCDF"
 
         # Still here? Then check for a local Zarr dataset
-        dataset = u.path
+        dataset = abspath(dataset, uri=False)
         if isdir(dataset) and cls.is_zarr(dataset):
             return "Zarr"
 

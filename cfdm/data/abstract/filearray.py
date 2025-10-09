@@ -464,8 +464,8 @@ class FileArray(Array):
         filename = self.get_filename(normalise=True)
         url = urlparse(filename)
         if url.scheme == "file":
-            # Convert a file URI into an absolute path
-            filename = url.path
+            # Convert a file URI into an absolute local path
+            filename = abspath(filename, uri=False)
         elif url.scheme == "s3":
             # Create an openable S3 file object
             storage_options = self.get_storage_options(
