@@ -439,14 +439,31 @@ class DomainTopology(
     def sort(self):
         """Sort the domain topology node ids.
 
-        Only edge and node domain topologies can be sorted.
+        Only edge and point domain topologies can be sorted.
+
+        Sorting is across both dimensions. In general, dimension 1 is
+        sorted first, and then dimension 0 is sort by its first
+        column.
+
+        Sorting is across both array dimensions. In general, dimension
+        1 is sorted first, and then dimension 0 is sort by the values
+        in the first column.
+
+        For an edge domain topology, the second column is also sorted
+        within each unique first column value.
+
+        For a point dimension topology, the first column is omitted
+        from the dimension 1 sort (because it contains the node id
+        definition for each row).
+
+        See the below for examples.
 
         .. note:: The purpose of this method is to facilitate the
                   comparison of normalised domain topologies, to see
                   if they belong to the same UGRID mesh. The sorted
                   domain topology will, in general, be inconsistent
                   with other metadata, such as the node geo-locations
-                  stored as domain cell bounds or coordinates.
+                  stored as domain cell coordinates or cell bounds.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -502,7 +519,6 @@ class DomainTopology(
         Auxiliary coords: longitude(ncdim%nMesh2_node(7)) = [-45.0, ..., -40.0] degrees_east
                         : latitude(ncdim%nMesh2_node(7)) = [35.0, ..., 34.0] degrees_north
         Topologies      : cell:point(ncdim%nMesh2_node(7), 5) = [[0, ..., --]]
-        >>> print(f.domain_topology().array)
         >>> dt = f.domain_topology()
         >>> dt = dt[::-1]
         >>> print(dt.array)
@@ -596,9 +612,10 @@ class DomainTopology(
         [[2 3 1 0]
          [4 5 3 2]
          [6 1 3 --]]
-        >>> dt.to_edge()
+        >>> edge = dt.to_edge()
+        >>> edge
         <DomainTopology: cell:edge(9, 2) >
-        >>> print(dt.to_edge().array)
+        >>> print(edge.array)
         [[0 1]
          [2 4]
          [2 3]
@@ -715,11 +732,12 @@ class DomainTopology(
                 f"Can't get edges from {self!r} with {cell} cells"
             )
 
-        # Remove duplicates to get the set of unique edges.
+        # Remove duplicates to get the set of unique edges, because
+        # every edge currently appears twice in the 'face_edges'
+        # list.
         #
-        # Every edge currently appears twice in the 'face_edges'
-        # list. E.g. edge (1, 5) will appear once from processing node
-        # 1, and once from processing node 5.
+        # E.g. edge (1, 5) will appear once from processing node 1,
+        #      and once from processing node 5.
         edges = set(edges)
 
         if sort:

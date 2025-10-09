@@ -1300,13 +1300,16 @@ class SubsampledArray(CompressedArrayMixin, CompressedArray):
         # TODO: This won't be necessary if this is refactored so that
         #       arrays are part of the same dask graph as the
         #       compressed subarrays.
-        #        compressed_data = self._lock_file_read(compressed_data)
-        #        parameters = {
-        #            k: self._lock_file_read(v) for k, v in parameters.items()
-        #        }
-        #        dependent_tie_points = {
-        #            k: self._lock_file_read(v) for k, v in dependent_tie_points.items()
-        #        }
+        #
+        # COMMENTED OUT, BUT MIGHT NEED IT
+
+        # compressed_data = self._lock_file_read(compressed_data)
+        # parameters = {
+        #    k: self._lock_file_read(v) for k, v in parameters.items()
+        # }
+        # dependent_tie_points = {
+        #    k: self._lock_file_read(v) for k, v in dependent_tie_points.items()
+        # }
 
         # Get the (cfdm) subarray class
         Subarray = self.get_Subarray()

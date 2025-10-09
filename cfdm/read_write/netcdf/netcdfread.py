@@ -90,10 +90,6 @@ class Mesh:
     ncdim: dict = field(default_factory=dict)
 
 
-#    # A unique identifier for the mesh. E.g. 'df10184d806ef1a10f5035e'
-#    mesh_id: Any = None
-
-
 class NetCDFRead(IORead):
     """A container for instantiating Fields from a netCDF dataset."""
 
@@ -626,7 +622,7 @@ class NetCDFRead(IORead):
                 flat_nc,
                 strict=False,
                 copy_data=False,
-                dimension_search=g["group_dimension_search"],
+                group_dimension_search=g["group_dimension_search"],
             )
 
             # Store the original grouped file. This is primarily
@@ -958,7 +954,7 @@ class NetCDFRead(IORead):
         dataset_type=None,
         cdl_string=False,
         ignore_unknown_type=False,
-        group_dimension_search="furthest_ancestor",
+        group_dimension_search="closest_ancestor",
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -1045,18 +1041,18 @@ class NetCDFRead(IORead):
 
             cfa: `dict`, optional
                 Configure the reading of CF-netCDF aggregation
-                datasets.  See `cfdm.read` for details.
+                datasets. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.12.0.0
 
             cfa_write: sequence of `str`, optional
                 Configure the reading of CF-netCDF aggregation
-                datasets.  See `cfdm.read` for details.
+                datasets. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.12.0.0
 
             to_memory: (sequence) of `str`, optional
-                Whether or not to bring data arrays into memory.  See
+                Whether or not to bring data arrays into memory. See
                 `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.12.0.0
@@ -2221,17 +2217,39 @@ class NetCDFRead(IORead):
                 all_fields_or_domains[ncvar] = field_or_domain
 
         # ------------------------------------------------------------
-        # Create domain constructs from UGRID mesh topology variables
+        # Create domain constructs from UGRID mesh topology variables,
+        # but only for mesh locations that haven't been accounted for
+        # by data or domain variables.
         # ------------------------------------------------------------
         if domain and g["UGRID_version"] is not None:
             locations = ("node", "edge", "face")
-            for ncvar in g["variables"]:
-                if ncvar not in g["mesh"]:
+            for mesh_ncvar in g["variables"]:
+                if mesh_ncvar not in g["mesh"]:
                     continue
 
                 for location in locations:
+                    # If any existing field/domain used this
+                    # mesh/location combinnation, then we don't need
+                    # to create a another new domain for it.
+                    create_domain = True
+                    for ncvar in all_fields_or_domains:
+                        attributes = g["variable_attributes"].get(ncvar)
+                        if attributes is None:
+                            continue
+
+                        if (
+                            attributes.get("mesh") == mesh_ncvar
+                            and attributes.get("location") == location
+                        ):
+                            create_domain = False
+                            break
+
+                    if not create_domain:
+                        continue
+
+                    # Still here? Create a new domain.
                     mesh_domain = self._create_field_or_domain(
-                        ncvar,
+                        mesh_ncvar,
                         domain=domain,
                         location=location,
                     )
@@ -2306,6 +2324,7 @@ class NetCDFRead(IORead):
                     [ncvar for ncvar in sorted(g["do_not_create_field"])]
                 )
             )  # pragma: no cover
+
         logger.info(
             "    Unreferenced netCDF variables:\n        "
             + "\n        ".join(unreferenced_variables)
@@ -3919,10 +3938,18 @@ class NetCDFRead(IORead):
         g["dataset_compliance"][field_ncvar]["dimensions"] = dimensions
         g["dataset_compliance"][field_ncvar].setdefault("non-compliance", {})
 
-        logger.info(
-            "    Converting netCDF variable "
-            f"{field_ncvar}({', '.join(dimensions)}) to a {construct_type}:"
-        )  # pragma: no cover
+        if mesh_topology:
+            logger.info(
+                "    Converting netCDF mesh topology variable "
+                f"{field_ncvar}({', '.join(dimensions)}) to a "
+                f"{construct_type}:"
+            )  # pragma: no cover
+        else:
+            logger.info(
+                "    Converting netCDF variable "
+                f"{field_ncvar}({', '.join(dimensions)}) to a "
+                f"{construct_type}:"
+            )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Combine the global and group properties with the data
@@ -4733,7 +4760,7 @@ class NetCDFRead(IORead):
             domain_topology = mesh.domain_topologies.get(location)
             if domain_topology is not None:
                 logger.detail(
-                    "        [m] Inserting "
+                    f"        [m] Inserting {location} "
                     f"{domain_topology.__class__.__name__} with data shape "
                     f"{self.implementation.get_data_shape(domain_topology)}"
                 )  # pragma: no cover
@@ -4757,7 +4784,7 @@ class NetCDFRead(IORead):
                 location, ()
             ):
                 logger.detail(
-                    "        [n] Inserting "
+                    f"        [n] Inserting {location} "
                     f"{cell_connectivity.__class__.__name__} with data shape "
                     f"{self.implementation.get_data_shape(cell_connectivity)}"
                 )  # pragma: no cover
@@ -4771,10 +4798,6 @@ class NetCDFRead(IORead):
                 self._reference(ncvar, field_ncvar)
                 ncvar = self.implementation.nc_get_variable(cell_connectivity)
                 ncvar_to_key[ncvar] = key
-
-        #        if ugrid:
-        #            # Set the mesh identifier
-        #            self.implementation.set_mesh_id(f, mesh.mesh_id)
 
         # ------------------------------------------------------------
         # Add coordinate reference constructs from formula_terms
@@ -6699,7 +6722,6 @@ class NetCDFRead(IORead):
 
         ndim = variable.ndim
         shape = variable.shape
-        #        size = self._file_variable_size(variable)
         size = prod(shape)
 
         if size < 2:
@@ -9617,22 +9639,19 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            nc: `netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`
+            nc: `netCDF4.Dataset` or `h5netcdf.Group` or `zarr.Group`
 
             name: `str`
 
         :Returns:
 
-            (`netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`, `str`)
+            2-`tuple`:
+                The group object, and the relative-path variable name.
 
         **Examples**
 
-        >>> group, name = n._netCDF4_group(nc, 'time')
-        >>> group.name, name
-        ('/', 'time')
-        >>> group, name = n._netCDF4_group(nc, '/surfacelayer/Z')
-        >>> group.name, name
-        ('surfacelayer', 'Z')
+        >>> n._netCDF4_group(nc, '/forecast/count')
+        (<Group file:///home/david/cfdm/cfdm/test/tmpdir1/forecast>, 'count')
 
         """
         group = nc
@@ -9698,7 +9717,6 @@ class NetCDFRead(IORead):
         mesh = Mesh(
             mesh_ncvar=mesh_ncvar,
             mesh_attributes=attributes,
-            #            mesh_id=uuid4().hex,
         )
 
         locations = ("node", "edge", "face")
@@ -9842,7 +9860,6 @@ class NetCDFRead(IORead):
             location_index_set_attributes=location_index_set_attributes,
             location=location,
             index_set=index_set,
-            #            mesh_id=uuid4().hex,
         )
 
     def _ugrid_create_auxiliary_coordinates(
@@ -11218,17 +11235,19 @@ class NetCDFRead(IORead):
                 return var.dimensions
 
             case "zarr":
-                try:
-                    # Zarr v3
-                    dimension_names = var.metadata.dimension_names
-                    if dimension_names is None:
-                        # Scalar variable
-                        dimension_names = ()
+                match var.metadata.zarr_format:
+                    case 3:
+                        # Zarr v3
+                        dimension_names = var.metadata.dimension_names
+                        if dimension_names is None:
+                            # Scalar variable
+                            dimension_names = ()
 
-                    return dimension_names
-                except AttributeError:
-                    # Zarr v2
-                    return tuple(var.attrs["_ARRAY_DIMENSIONS"])
+                        return dimension_names
+
+                    case 2:
+                        # Zarr v2
+                        return tuple(var.attrs["_ARRAY_DIMENSIONS"])
 
     def _get_storage_options(self, dataset, parsed_dataset):
         """Get the storage options for accessing a file.
@@ -11661,7 +11680,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         return dask_chunks
 
-    def _cache_data_elements(self, data, ncvar, attributes=None):
+    def _cache_data_elements(self, data, ncvar, attributes):
         """Cache selected element values.
 
         Updates *data* in-place to store its first, second,
@@ -11689,6 +11708,11 @@ class NetCDFRead(IORead):
                 The name of the netCDF variable that contains the
                 data.
 
+            attributes: `dict`
+                The attributes of the netCDF variable.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
         :Returns:
 
             `None`
@@ -11706,7 +11730,6 @@ class NetCDFRead(IORead):
             group, name = self._netCDF4_group(
                 g["variable_grouped_dataset"][ncvar], ncvar
             )
-            #            variable = group.variables.get(name)
             variable = self._file_group_variables(group).get(name)
         else:
             variable = g["variables"].get(ncvar)
@@ -11745,6 +11768,10 @@ class NetCDFRead(IORead):
             attributes=attributes,
             copy=False,
         )
+
+        # Get the cached values, minimising the number of "gets" on
+        # the dataset by not accessing the same chunk twice, where
+        # possible.
         if ndim == 1:
             # Also cache the second element for 1-d data, on the
             # assumption that they may well be dimension coordinate

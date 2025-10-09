@@ -23,7 +23,9 @@ class ZarrDimension:
                 The group that the dimension is a member of.
 
             reference_variable: `zarr.Array`, optional
-                The variable that provided the dimension defintion.
+                The variable that provided the dimension definition.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         """
         self._name = name
@@ -108,8 +110,8 @@ class ZarrDimension:
         :Returns:
 
             `zarr.Array` or `None`
-                The variable that provided the dimension defintion, or
-                `None` if it wasn't provided during instance
+                The variable that provided the dimension definition,
+                or `None` if it wasn't provided during instance
                 initialisation.
 
         """

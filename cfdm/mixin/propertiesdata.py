@@ -72,7 +72,7 @@ class PropertiesData(Properties):
         if data is not None:
             original_shape = data.shape
             data = data[indices]
-            # TODOUGRID - this might need replicating in cf-pytohn ...????
+
             if 0 in data.shape:
                 raise IndexError(
                     f"Index {indices!r} selects no elements from "

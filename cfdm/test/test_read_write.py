@@ -273,9 +273,6 @@ class read_writeTest(unittest.TestCase):
                 if fmt == "NETCDF4_CLASSIC" and ex_field_n in (6, 7):
                     continue
 
-                print(
-                    "TODOUGRID: excluding example fields 8, 9, 10 until writing UGRID is enabled"
-                )
                 if ex_field_n in (8, 9, 10):
                     continue
 
@@ -310,9 +307,7 @@ class read_writeTest(unittest.TestCase):
             # Now do the same test, but appending all of the example fields in
             # one operation rather than one at a time, to check that it works.
             cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
-            print(
-                "TODOUGRID: excluding example fields 8, 9, 10 until writing UGRID is enabled"
-            )
+
             append_ex_fields = cfdm.example_fields(*range(8))
             del append_ex_fields[1]  # note: can remove after Issue #141 closed
             # Note: can remove this del when Issue #140 is closed:

@@ -252,13 +252,15 @@ class netcdf_indexer:
             # E.g.     index : (1, np.newaxis, slice(1, 5))
             #      =>  index1: (1, slice(1, 5))
             #      and index2: (slice(None), np.newaxis, slice(None))
-        except ValueError:
+        except (ValueError, TypeError):
             # Something went wrong, which is indicative of the
             # variable not supporting the appropriate slicing method
             # (e.g. `h5netcdf` might have returned "ValueError: Step
-            # must be >= 1 (got -2)"). Therefore we'll just get the
-            # entire array as a numpy array, and then try indexing
-            # that.
+            # must be >= 1 (got -2)" or "TypeError: Indexing elements
+            # must be in increasing order").
+            #
+            # Therefore we'll just get the entire array as a numpy
+            # array, and then try indexing that.
             data = self._index(Ellipsis)
             data = self._index(index, data=data)
 
@@ -397,6 +399,8 @@ class netcdf_indexer:
             return default_fillvals["S1"]
 
         if kind == "T":
+            # np.dtypes.StringDType, which stores variable-width
+            # string data in a UTF-8 encoding, as used by `zarr`)
             return ""
 
         return default_fillvals[dtype.str[1:]]
@@ -622,6 +626,9 @@ class netcdf_indexer:
             if fvalisnan:
                 mask = np.isnan(data)
             else:
+                # Must use `np.asanyarray` here, to ensure that that
+                # 'mask' is a never a `bool`, which would make the
+                # following 'mask.any' call' fail.
                 mask = np.asanyarray(data == fval)
 
             if mask.any():

@@ -1142,7 +1142,7 @@ class CFDMImplementation(Implementation):
         return data.nc_dataset_chunksizes()
 
     def nc_get_dataset_shards(self, data):
-        """Get the dataset sharding strategy for the data.
+        """Get the Zarr dataset sharding strategy for the data.
 
         ..versionadded:: (cfdm) NEXTVERSION
 
@@ -1301,7 +1301,7 @@ class CFDMImplementation(Implementation):
         )
 
     def nc_set_dataset_shards(self, data, shards):
-        """Set the dataset sharding strategy for the data.
+        """Set the Zarr dataset sharding strategy for the data.
 
         ..versionadded:: (cfdm) NEXTVERSION
 
@@ -1689,13 +1689,6 @@ class CFDMImplementation(Implementation):
 
         """
         return cell_measure.get_measure(default=None)
-
-    #    def get_mesh_id(self, parent):
-    #        """TODOUGRID."""
-    #        try:
-    #            return parent.get_mesh_id(None)
-    #        except AttributeError:
-    #            return
 
     def get_original_filenames(self, parent):
         """Get the original names of the files containing the construct.
@@ -3468,26 +3461,6 @@ class CFDMImplementation(Implementation):
             calendar=data.get_calendar(None),
         )
         construct.set_data(data)
-
-    #    def set_mesh_id(self, parent, mesh_id):
-    #        """Set a mesh identifier.
-    #
-    #        .. versionadded:: (cfdm)  1.11.0.0
-    #
-    #        :Parameters:
-    #
-    #            parent: construct
-    #                The construct on which to set the mesh id
-    #
-    #            mesh_id:
-    #                The mesh identifier.
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        """
-    #        parent.set_mesh_id(mesh_id)
 
     def nc_set_external(self, construct):
         """Set the external status of a construct.
