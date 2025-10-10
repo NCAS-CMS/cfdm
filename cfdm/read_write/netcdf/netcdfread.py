@@ -3635,7 +3635,7 @@ class NetCDFRead(IORead):
                             "is incorrectly formatted",
                         ),
                         attribute=attribute,
-                        variable=coord_ncvar,
+                        direct_parent_ncvar=coord_ncvar,
                     )
 
                 for x in parsed_bounds_formula_terms:
@@ -3652,7 +3652,7 @@ class NetCDFRead(IORead):
                                 "is incorrectly formatted",
                             ),
                             attribute=bounds_attribute,
-                            variable=coord_ncvar,
+                            direct_parent_ncvar=coord_ncvar,
                         )
                         continue
 
@@ -3668,7 +3668,7 @@ class NetCDFRead(IORead):
                             ncvar,
                             message=message,
                             attribute=bounds_attribute,
-                            variable=coord_ncvar,
+                            direct_parent_ncvar=coord_ncvar,
                         )
                         continue
 
@@ -3681,7 +3681,7 @@ class NetCDFRead(IORead):
                                 "has incompatible terms",
                             ),
                             attribute=bounds_attribute,
-                            variable=coord_ncvar,
+                            direct_parent_ncvar=coord_ncvar,
                         )
                         continue
 
@@ -3705,7 +3705,7 @@ class NetCDFRead(IORead):
                                     "coordinate variable",
                                 ),
                                 attribute=bounds_attribute,
-                                variable=coord_ncvar,
+                                direct_parent_ncvar=coord_ncvar,
                             )
                             continue
 
@@ -3719,7 +3719,7 @@ class NetCDFRead(IORead):
                             ),
                             attribute=bounds_attribute,
                             dimensions=dimensions,
-                            variable=coord_ncvar,
+                            direct_parent_ncvar=coord_ncvar,
                         )
                         continue
                     # WRONG - need to account for char arrays:
@@ -3733,7 +3733,7 @@ class NetCDFRead(IORead):
                             ),
                             attribute=bounds_attribute,
                             dimensions=dimensions,
-                            variable=coord_ncvar,
+                            direct_parent_ncvar=coord_ncvar,
                         )
                         continue
 
@@ -3751,7 +3751,7 @@ class NetCDFRead(IORead):
                             "has incompatible terms",
                         ),
                         attribute=bounds_attribute,
-                        variable=coord_ncvar,
+                        direct_parent_ncvar=coord_ncvar,
                     )
 
             else:
@@ -3804,7 +3804,7 @@ class NetCDFRead(IORead):
                                 "has no bounds",
                             ),
                             attribute=attribute,
-                            variable=coord_ncvar,
+                            direct_parent_ncvar=coord_ncvar,
                         )
 
     def _missing_variable(self, ncvar, message0):
@@ -5509,7 +5509,7 @@ class NetCDFRead(IORead):
             direct_parent_ncvar: `str` or `None`, optional
                 The netCDF variable name of the variable which is the
                 direct parent of the variable `ncvar` which has the
-                component problem, only to be provided if a higher
+                component problem, *only to be provided* if a higher
                 parent such as a grandparent variable is set as
                 the `top_ancestor_ncvar` where it is also important
                 to register the problem on the direct parent.
@@ -5553,9 +5553,6 @@ class NetCDFRead(IORead):
         if dimensions is not None:
             d["dimensions"] = dimensions
 
-        if direct_parent_ncvar is None:
-            direct_parent_ncvar = ncvar
-
         g["dataset_compliance"].setdefault(
             top_ancestor_ncvar,
             {
@@ -5569,8 +5566,8 @@ class NetCDFRead(IORead):
         ).append(d)
 
         # Only add a component report if there is need i.e. if the direct
-        # parent ncvar is not the same as the top_ancestor_ncvar
-        if direct_parent_ncvar != top_ancestor_ncvar:
+        # parent ncvar is defined so not the same as the top ancestor ncvar
+        if direct_parent_ncvar:
             e = g["component_report"].setdefault(direct_parent_ncvar, {})
             # print("cr is before:", g["component_report"])
             e.setdefault(ncvar, []).append(d)
@@ -8323,7 +8320,8 @@ class NetCDFRead(IORead):
     #     document.
     # ================================================================
     def _check_standard_names(
-            self, parent_ncvar, ncvar, ncvar_attrs,
+            self, top_ancestor_ncvar,
+            ncvar, ncvar_attrs, direct_parent_ncvar=None,
             check_is_string=True, check_is_in_table=True,
             check_is_in_custom_list=False,
     ):
@@ -8336,24 +8334,47 @@ class NetCDFRead(IORead):
         custom list which is expected to be a small subset of names
         from the table.
 
-        These checks are in the context of the variable and
-        parent variable.
+        These checks are in the context of the variable and at least
+        one parent variable (though the parent can be set at the variable
+        itself should no parent exist or be relevant).
 
         .. versionadded:: NEXTVERSION
 
         :Parameters:
 
-            parent_ncvar: `str`
-                The netCDF variable name of the parent variable.
+            top_ancestor_ncvar: `str`
+                The netCDF variable name of the ancestor variable
+                under which to register the bad standard name at
+                the top level.
+
+                This is usually the parent variable of the variable
+                `ncvar` which has the component problem, but may be
+                a higher parent e.g. grandparent variable, when there is
+                an intermediate parent variable in which the problem
+                should also be registered using `direct_parent_ncvar`,
+                or `ncvar` itself, where no parent variable exists or
+                is relevant.
 
             ncvar: `str`
-                The name of the netCDF variable to perform the
-                standard names check upon.
+                The netCDF variable name with the component that
+                has the bad standard name.
 
             ncvar_attrs: `str`
                 The variable attributes for the netCDF variable, as
                 stored in the 'read_vars' dictionary under the
                 'variable_attributes' key.
+
+            direct_parent_ncvar: `str` or `None`, optional
+                The netCDF variable name of the variable which is the
+                direct parent of the variable `ncvar` which has the
+                bad standard name, *only to be provided* if a higher
+                parent such as a grandparent variable is set as
+                the `top_ancestor_ncvar` where it is also important
+                to register the problem on the direct parent.
+
+                If `None`, the default, then the bad standard name
+                is not not registered for any further (parent)
+                variable than `top_ancestor_ncvar`.
 
             check_is_string: `bool`
                 Whether or not to check if the type of the attribute
@@ -8426,7 +8447,7 @@ class NetCDFRead(IORead):
             ):
                 invalid_sn_found = True
                 self._add_message(
-                    parent_ncvar,
+                    top_ancestor_ncvar,
                     ncvar,
                     attribute=attribute_value,
                     message=(
@@ -8434,6 +8455,7 @@ class NetCDFRead(IORead):
                         f"has a value that is not a string",
                     ),
                     conformance="3.3.requirement.1",
+                    direct_parent_ncvar=direct_parent_ncvar,
                 )
 
             # 3. Check, if requested, that the SN is in the custom list given
@@ -8443,7 +8465,7 @@ class NetCDFRead(IORead):
             ):
                 invalid_sn_found = True
                 self._add_message(
-                    parent_ncvar,
+                    top_ancestor_ncvar,
                     ncvar,
                     attribute=attribute_value,
                     message=(
@@ -8451,6 +8473,7 @@ class NetCDFRead(IORead):
                         f"has a value that is not appropriate to "
                         "the context of the variable in question",
                     ),
+                    direct_parent_ncvar=direct_parent_ncvar,
                 )
 
             # 4. Check, if requested, if string is in the list of valid names
@@ -8464,7 +8487,7 @@ class NetCDFRead(IORead):
                     f"'{sn_value}' for {ncvar}"
                 )
                 self._add_message(
-                    parent_ncvar,
+                    top_ancestor_ncvar,
                     ncvar,
                     message=(
                         f"{sn_attr} attribute",
@@ -8473,6 +8496,7 @@ class NetCDFRead(IORead):
                     ),
                     attribute=attribute_value,
                     conformance="3.3.requirement.2",
+                    direct_parent_ncvar=direct_parent_ncvar,
                 )
 
         # Three possible return signatures to cover existence and validity:
@@ -8546,7 +8570,7 @@ class NetCDFRead(IORead):
                 bounds_ncvar,
                 message=message,
                 attribute=attribute,
-                variable=coord_ncvar,
+                direct_parent_ncvar=coord_ncvar,
             )
             return False
 
@@ -8563,7 +8587,7 @@ class NetCDFRead(IORead):
                     message=incorrect_dimensions,
                     attribute=attribute,
                     dimensions=g["variable_dimensions"][bounds_ncvar],
-                    variable=coord_ncvar,
+                    direct_parent_ncvar=coord_ncvar,
                 )
                 ok = False
 
@@ -8574,7 +8598,7 @@ class NetCDFRead(IORead):
                 message=incorrect_dimensions,
                 attribute=attribute,
                 dimensions=g["variable_dimensions"][bounds_ncvar],
-                variable=coord_ncvar,
+                direct_parent_ncvar=coord_ncvar,
             )
             ok = False
 
@@ -8628,7 +8652,7 @@ class NetCDFRead(IORead):
                 node_ncvar,
                 message=message,
                 attribute=attribute,
-                variable=field_ncvar,
+                direct_parent_ncvar=field_ncvar,
             )
             return False
 
@@ -8643,7 +8667,7 @@ class NetCDFRead(IORead):
                     "not in node_coordinates",
                 ),
                 attribute=attribute,
-                variable=field_ncvar,
+                direct_parent_ncvar=field_ncvar,
             )
             ok = False
 
@@ -10972,7 +10996,7 @@ class NetCDFRead(IORead):
                 mesh_ncvar,
                 message=message,
                 attribute={f"{location_index_set_ncvar}:mesh": mesh_ncvar},
-                variable=location_index_set_ncvar,
+                direct_parent_ncvar=location_index_set_ncvar,
             )
             ok = False
         elif mesh_ncvar not in g["mesh"]:
@@ -11094,7 +11118,7 @@ class NetCDFRead(IORead):
                 mesh_ncvar,
                 message=message,
                 attribute={f"{location_index_set_ncvar}:mesh": mesh_ncvar},
-                variable=location_index_set_ncvar,
+                direct_parent_ncvar=location_index_set_ncvar,
             )
             ok = False
         elif mesh_ncvar not in g["mesh"]:
@@ -11260,7 +11284,7 @@ class NetCDFRead(IORead):
                 parent_ncvar,
                 connectivity_ncvar,
                 message=(f"{connectivity_attr} attribute", "is missing"),
-                variable=mesh_ncvar,
+                direct_parent_ncvar=mesh_ncvar,
             )
             return False
         elif connectivity_ncvar not in g["internal_variables"]:
@@ -11274,7 +11298,7 @@ class NetCDFRead(IORead):
                 attribute={
                     f"{mesh_ncvar}:{connectivity_attr}": connectivity_ncvar
                 },
-                variable=mesh_ncvar,
+                direct_parent_ncvar=mesh_ncvar,
             )
             return False
         else:
@@ -11283,6 +11307,7 @@ class NetCDFRead(IORead):
                 parent_ncvar,
                 connectivity_ncvar,
                 ncvar_attrs,
+                direct_parent_ncvar=mesh_ncvar,
             )
 
         parent_ncdims = self._ncdimensions(parent_ncvar)
