@@ -1377,7 +1377,9 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(array)
         e = d.masked_values(1.1)
         ea = e.array
-        a = np.ma.masked_values(array, 1.1, rtol=cfdm.rtol(), atol=cfdm.atol())
+        a = np.ma.masked_values(
+            array, 1.1, rtol=float(cfdm.rtol()), atol=float(cfdm.atol())
+        )
         self.assertTrue(np.isclose(ea, a).all())
         self.assertTrue((ea.mask == a.mask).all())
         self.assertIsNone(d.masked_values(1.1, inplace=True))
