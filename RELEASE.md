@@ -17,8 +17,8 @@
 
 - [ ] Edit the name of the `NEXTVERSION` milestone in GitHub to be the
       upcoming version `<VN>` (replacing `<VN>` appropriately,
-      e.g. `1.12.0.0`). Then create a new `NEXTVERSION` milestone
-      in GitHub.
+      e.g. `1.12.0.0`). Then close new `<VN>` milestone, and create a
+      new `NEXTVERSION` milestone.
 
 - [ ] Change the "version" and "dateModified" in `codemeta.json`.
 
