@@ -18,7 +18,8 @@ logger = getLogger(__name__)
 class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
-    The following file formats are supported: netCDF, CDL, and Zarr.
+    The following dataset formats are supported: netCDF, CDL, and
+    Zarr.
 
     NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
     server, or in an S3 object store.
