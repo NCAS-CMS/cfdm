@@ -6629,13 +6629,13 @@ class NetCDFWrite(IOWrite):
                             authority="",
                             path=uri.path,
                         )
-                        fragment = uri.fragment
-                        if fragment is not None:
+                        uri_fragment = uri.fragment
+                        if uri_fragment is not None:
                             # Append a URI fragment. Do this with a
                             # string-append, rather than via
                             # `uricompose` in case the fragment
                             # contains more than one # character.
-                            aggregation_file_directory += f"#{fragment}"
+                            aggregation_file_directory += f"#{uri_fragment}"
 
                     g["aggregation_file_directory"] = (
                         aggregation_file_directory
@@ -6697,13 +6697,13 @@ class NetCDFWrite(IOWrite):
                         authority="",
                         path=uri.path,
                     )
-                    fragment = uri.fragment
-                    if fragment is not None:
+                    uri_fragment = uri.fragment
+                    if uri_fragment is not None:
                         # Append a URI fragment. Do this with a
                         # string-append, rather than via `uricompose`
                         # in case the fragment contains more than one
                         # # character.
-                        filename += f"#{fragment}"
+                        dataset_name += f"#{uri_fragment}"
 
                 if uri_relative:
                     scheme = uri.scheme

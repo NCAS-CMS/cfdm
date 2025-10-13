@@ -47,7 +47,7 @@ _dtype_endian_lookup = {
 referencing_attributes = set(flattening_rules)
 
 
-def netcdf_flatten(
+def dataset_flatten(
     input_ds,
     output_ds,
     strict=True,
@@ -56,22 +56,24 @@ def netcdf_flatten(
 ):
     """Create a flattened version of a grouped CF dataset.
 
-    **CF-netCDF coordinate variables**
+    The following dataset formats can be flattened: netCDF and Zarr.
 
-    When a CF-netCDF coordinate variable in the input dataset is in a
+    **CF coordinate variables**
+
+    When a CF coordinate variable (i.e. a one-dimensional variable
+    with the same name as its dimension) in the input dataset is in a
     different group to its corresponding dimension, the same variable
-    in the output flattened dataset will no longer be a CF-netCDF
-    coordinate variable, as its name will be prefixed with a different
-    group identifier than its dimension.
+    in the output flattened dataset will no longer be a CF coordinate
+    variable, as its name will be prefixed with a different group
+    identifier than its dimension.
 
     In such cases it is up to the user to apply the proximal and
     lateral search algorithms to the flattened dataset returned by
-    `netcdf_flatten`, in conjunction with the mappings defined in the
+    `dataset_flatten`, in conjunction with the mappings defined in the
     newly created global attributes ``_flattener_variable_map`` and
-    ``_flattener_dimension_map``, to find which netCDF variables are
-    acting as CF coordinate variables in the flattened dataset. See
-    https://cfconventions.org/cf-conventions/cf-conventions.html#groups
-    for details.
+    ``_flattener_dimension_map``, to find which variables are acting
+    as CF coordinate variables in the flattened dataset. See CF
+    conventions section 2.7 Groups for details.
 
     For example, if an input dataset has dimension ``lat`` in the root
     group and coordinate variable ``lat(lat)`` in group ``/group1``,
@@ -87,9 +89,9 @@ def netcdf_flatten(
     :Parameters:
 
         input_ds:
-            The dataset to be flattened. Must be an object with the
-            the same API as `netCDF4.Dataset` or `h5netcdf.File`, or
-            else a `zarr.Group` object.
+            The dataset to be flattened. Must be an open dataet object
+            with the same API as `netCDF4.Dataset`, `h5netcdf.File`,
+            or `zarr.Group`.
 
         output_ds: `netCDF4.Dataset`
             A container for the flattened dataset that will get
@@ -113,7 +115,7 @@ def netcdf_flatten(
             ``group/dim``, ``/group/dim``, ``../dim``, etc.). The
             *group_dimension_search* parameter must be one of:
 
-            * ``'closet_ancestor'``
+            * ``'closest_ancestor'``
 
               This is the default and is the behaviour defined by the
               CF conventions (section 2.7 Groups).
@@ -142,14 +144,14 @@ def netcdf_flatten(
               This behaviour is different to that defined by the CF
               conventions (section 2.7 Groups).
 
-              Assume that the Zarr sub-group dimension is different to
-              any with the same name and size in all ancestor groups.
+              Assume that the sub-group dimension is different to any
+              with the same name and size in all ancestor groups.
 
-            .. note:: For netCDF dataset, for which it is inherently
+            .. note:: For a netCDF dataset, for which it is always
                       well-defined in which group a dimension is
                       defined, *group_dimension_search* may only take
-                      the default value of ``'closet_ancestor'`, which
-                      applies the behaviour defined by the CF
+                      the default value of ``'closest_ancestor'`,
+                      which applies the behaviour defined by the CF
                       conventions (section 2.7 Groups).
 
                       For a Zarr dataset, for which there is no means
@@ -292,7 +294,7 @@ class _Flattener:
     Contains the input file, the output file being flattened, and all
     the logic of the flattening process.
 
-    See `netcdf_flatten` for detais.
+    See `dataset_flatten` for detais.
 
     .. versionadded:: (cfdm) 1.11.2.0
 
@@ -319,13 +321,13 @@ class _Flattener:
                 A container for the flattened dataset.
 
             strict: `bool`, optional
-                See `netcdf_flatten`.
+                See `dataset_flatten`.
 
             copy_data: `bool`, optional
-                See `netcdf_flatten`.
+                See `dataset_flatten`.
 
             group_dimension_search: `str`, optional
-                See `netcdf_flatten`.
+                See `dataset_flatten`.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -2032,7 +2034,7 @@ class _Flattener:
         information is not explicitly defined in the format's data
         model (unlike for netCDF and HDF5 datasets).
 
-        See `netcdf_flatten` for details
+        See `dataset_flatten` for details
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -2088,7 +2090,9 @@ class _Flattener:
                 if group_separator not in name:
                     # ------------------------------------------------
                     # Relative path dimension name which contains no
-                    # '/' characters.
+                    # '/' characters. The behaviour depends on the
+                    # search algorithm defined by
+                    # 'group_dimension_search'.
                     #
                     # E.g. "dim"
                     # ------------------------------------------------
@@ -2164,8 +2168,8 @@ class _Flattener:
                     elif f"{group_separator}..{group_separator}" in name:
                         # --------------------------------------------
                         # Relative path dimension name with upward
-                        # path traversals ('../') not at the start of
-                        # the name.
+                        # path traversals ('../') *not* at the start
+                        # of the name.
                         #
                         # E.g. "/group1/../group2/dim"
                         # E.g. "group1/../group2/dim"

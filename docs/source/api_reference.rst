@@ -16,7 +16,7 @@ Version |release| for version |version| of the CF conventions.
   * :py:class:`cfdm.AuxiliaryCoordinate`
   * :py:class:`cfdm.CellMeasure`
   * :py:class:`cfdm.CellMethod`
-  * :py:class:`cfdm.Coordinatereference`
+  * :py:class:`cfdm.CoordinateReference`
   * :py:class:`cfdm.DimensionCoordinate`
   * :py:class:`cfdm.DomainAncillary`
   * :py:class:`cfdm.DomainAxis`

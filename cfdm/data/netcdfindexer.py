@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 class netcdf_indexer:
     """A data indexer that also applies netCDF masking and unpacking.
 
-    Here "netCDF4" refers to the API of the netCDF data model, rather
+    Here "netCDF" refers to the API of the netCDF data model, rather
     than any particular dataset encoding or software library API.
 
     Indexing may be orthogonal or non-orthogonal. Orthogonal indexing

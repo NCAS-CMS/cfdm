@@ -726,13 +726,12 @@ _docstring_substitution_definitions = {
             parent directory of itself.""",
     # read group_dimension_search
     "{{read group_dimension_search: `str`, optional}}": """group_dimension_search: `str`, optional
-
             How to interpret a dimension name that contains no
             group-separator characters, such as ``dim`` (as opposed to
             ``group/dim``, ``/group/dim``, ``../dim``, etc.). The
             *group_dimension_search* parameter must be one of:
 
-            * ``'closet_ancestor'``
+            * ``'closest_ancestor'``
 
               This is the default and is the behaviour defined by the
               CF conventions (section 2.7 Groups).
@@ -764,11 +763,11 @@ _docstring_substitution_definitions = {
               Assume that the Zarr sub-group dimension is different to
               any with the same name and size in all ancestor groups.
 
-            .. note:: For netCDF dataset, for which it is inherently
+            .. note:: For a netCDF dataset, for which it is always
                       well-defined in which group a dimension is
                       defined, *group_dimension_search* may only take
-                      the default value of ``'closet_ancestor'`, which
-                      applies the behaviour defined by the CF
+                      the default value of ``'closest_ancestor'`,
+                      which applies the behaviour defined by the CF
                       conventions (section 2.7 Groups).
 
                       For a Zarr dataset, for which there is no means

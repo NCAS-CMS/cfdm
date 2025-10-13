@@ -6,7 +6,9 @@ from .netcdf import NetCDFWrite
 
 
 class write(ReadWrite):
-    """Write field and domain constructs to a netCDF or Zarr dataset.
+    """Write field and domain constructs to a dataset.
+
+    The following dataset formats are supported: netCDF and Zarr.
 
     **Dataset format**
 

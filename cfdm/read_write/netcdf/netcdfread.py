@@ -32,7 +32,7 @@ from .constants import (
     NETCDF_MAGIC_NUMBERS,
     NETCDF_QUANTIZATION_PARAMETERS,
 )
-from .flatten import netcdf_flatten
+from .flatten import dataset_flatten
 from .flatten.config import (
     flattener_attribute_map,
     flattener_dimension_map,
@@ -615,7 +615,7 @@ class NetCDFRead(IORead):
             flat_nc.set_fill_off()
 
             # Flatten the file
-            netcdf_flatten(
+            dataset_flatten(
                 nc,
                 flat_nc,
                 strict=False,
@@ -954,7 +954,7 @@ class NetCDFRead(IORead):
         ignore_unknown_type=False,
         group_dimension_search="closest_ancestor",
     ):
-        """Reads a netCDF dataset from file or OPenDAP URL.
+        """Reads a netCDF or Zarr dataset from file or OPenDAP URL.
 
         Read fields from a netCDF file on disk or from an OPeNDAP
         server location.
