@@ -35,7 +35,7 @@ else:
         )
 
 # Check the version of python
-_minimum_vn = "3.9.0"
+_minimum_vn = "3.10.0"
 if Version(python_version()) < Version(_minimum_vn):
     raise ValueError(
         f"Bad python version: cfdm.core requires python>={_minimum_vn}. "
