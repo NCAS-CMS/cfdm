@@ -1,7 +1,7 @@
-Version NEXTVERSION
+Version 1.12.3.1
 ----------------
 
-**2025-10-??**
+**2025-10-15**
 
 * Python 3.9 support removed
   (https://github.com/NCAS-CMS/cfdm/issues/353)
@@ -18,6 +18,7 @@ Version 1.12.3.0
 ----------------
 
 **2025-08-18**
+
 
 * Fix `cfdm.Data.reshape` when the underlying data originate on disk
   (https://github.com/NCAS-CMS/cfdm/issues/348)
