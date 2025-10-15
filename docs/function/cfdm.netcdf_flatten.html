@@ -6,26 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cfdm.netcdf_flatten &#8212; Documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=541523b4" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=dae86f6c"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/documentation_options.js?v=7e90eb75"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=b578dfe4"></script>
     <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.atol" href="cfdm.atol.html" />
+    <link rel="next" title="cfdm.CF" href="cfdm.CF.html" />
     <link rel="prev" title="cfdm.write" href="cfdm.write.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
@@ -35,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.3.1</a></h1>
 
 
 
@@ -84,7 +85,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../functions.html"><strong>cfdm functions</strong></a><ul>
       <li>Previous: <a href="cfdm.write.html" title="previous chapter">cfdm.write</a></li>
-      <li>Next: <a href="cfdm.atol.html" title="next chapter">cfdm.atol</a></li>
+      <li>Next: <a href="cfdm.CF.html" title="next chapter">cfdm.CF</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -122,7 +123,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.netcdf_flatten<a class="headerlink" href="#cfdm-netcdf-flatten" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cfdm.netcdf_flatten">
-<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">netcdf_flatten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omit_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">134217728</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/read_write/netcdf/flatten/flatten.py#L46-L123"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.netcdf_flatten" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">netcdf_flatten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omit_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">134217728</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.1/cfdm/read_write/netcdf/flatten/flatten.py#L46-L123"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.netcdf_flatten" title="Link to this definition">¶</a></dt>
 <dd><p>Create a flattened version of a grouped netCDF dataset.</p>
 <p><strong>CF-netCDF coordinate variables</strong></p>
 <p>When a CF-netCDF coordinate variable in the input dataset is in a
@@ -157,11 +158,11 @@ attribute will contain the mapping <code class="docutils literal notranslate"><s
 </dd>
 <dt>output_ds: <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code></dt><dd><p>A container for the flattened dataset.</p>
 </dd>
-<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then failing to resolve a reference
+<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, the default, then failing to resolve a reference
 raises an exception. If False, a warning is issued and
 flattening is continued.</p>
 </dd>
-<dt>omit_data: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do not copy the data of any variables from
+<dt>omit_data: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do not copy the data of any variables from
 <em>input_ds</em> to <em>output_ds</em>. This does not affect the amount
 of netCDF variables and dimensions that are written to the
 file, nor the netCDF variables’ attributes, but for all
@@ -172,7 +173,7 @@ accessed the data of these variables will be represented
 by an array of all missing data. If False, the default,
 then all data arrays are copied.</p>
 </dd>
-<dt>write_chunksize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>When <em>omit_data</em> is False, the copying of data is done
+<dt>write_chunksize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>When <em>omit_data</em> is False, the copying of data is done
 piecewise to keep memory usage down. <em>write_chunksize</em> is
 the size in bytes of how much data is copied from
 <em>input_ds</em> to <em>output_ds</em> for each piece. Ignored if
@@ -194,11 +195,11 @@ the size in bytes of how much data is copied from
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-08-18.
+      &#169;2025, NCAS | Page built on 2025-10-15.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
-      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 

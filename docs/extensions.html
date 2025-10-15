@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Extensions &#8212; Documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b3523f8e" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=541523b4" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a5d0ad34" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=056948bf" />
-    <script src="_static/documentation_options.js?v=dae86f6c"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/documentation_options.js?v=7e90eb75"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=b578dfe4"></script>
@@ -24,8 +24,9 @@
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
@@ -35,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.12.3.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.12.3.1</a></h1>
 
 
 
@@ -117,7 +118,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="extensions">
 <span id="id1"></span><h1><strong>Extensions</strong><a class="headerlink" href="#extensions" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.12.3.0 for version 1.12 of the CF conventions.</p>
+<p>Version 1.12.3.1 for version 1.12 of the CF conventions.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#the-custom-dictionary" id="id14"><strong>The _custom dictionary</strong></a></p></li>
@@ -131,10 +132,10 @@ is straight forward. For example:</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text"><em>Create a new implementation with a new field construct
 class.</em></span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfdm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cfdm</span>
 
-<span class="k">class</span> <span class="nc">my_Field</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">my_Field</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;I am a </span><span class="si">{!r}</span><span class="s1"> instance&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 </pre></div>
@@ -160,7 +161,7 @@ constructs</em></span><a class="headerlink" href="#id3" title="Link to this code
 <div class="code-block-caption"><span class="caption-text"><em>Define new functions that can read into my_Field
 instances, and write write my_Field instances to
 datasets on disk.</em></span><a class="headerlink" href="#id4" title="Link to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">functools</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_read</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">,</span>
 <span class="gp">... </span>                            <span class="n">_implementation</span><span class="o">=</span><span class="n">my_implementation</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_write</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">,</span>
@@ -219,16 +220,16 @@ subclass of <code class="xref py py-obj docutils literal notranslate"><span clas
 in overridden methods.</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text"><em>Create an implementation with a different API.</em></span><a class="headerlink" href="#id8" title="Link to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">my_Field_2</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
-   <span class="k">def</span> <span class="nf">my_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">my_Field_2</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
+   <span class="k">def</span><span class="w"> </span><span class="nf">my_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">       </span><span class="sd">&quot;&quot;&quot;Get coordinate constructs with a different API.&quot;&quot;&quot;</span>
        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span>
        <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="p">:</span>
            <span class="k">return</span> <span class="p">{}</span>
        <span class="k">return</span> <span class="n">c</span>
 
-<span class="k">class</span> <span class="nc">my_CFDMImplementation</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">CFDMImplementation</span><span class="p">):</span>
-   <span class="k">def</span> <span class="nf">get_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">my_CFDMImplementation</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">CFDMImplementation</span><span class="p">):</span>
+   <span class="k">def</span><span class="w"> </span><span class="nf">get_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
 <span class="w">       </span><span class="sd">&quot;&quot;&quot;Get coordinate constructs from a my_Field_2 instance,</span>
 <span class="sd">       using its different API.</span>
 <span class="sd">       &quot;&quot;&quot;</span>
@@ -288,8 +289,8 @@ other aspects it unchanged</p>
 <div class="literal-block-wrapper docutils container" id="id10">
 <div class="code-block-caption"><span class="caption-text"><em>Modify the mapping of netCDF elements to CF data model
 instances.</em></span><a class="headerlink" href="#id10" title="Link to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">my_NetCDFRead</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">read_write</span><span class="o">.</span><span class="n">netcdf</span><span class="o">.</span><span class="n">NetCDFRead</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">my_NetCDFRead</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">read_write</span><span class="o">.</span><span class="n">netcdf</span><span class="o">.</span><span class="n">NetCDFRead</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read my fields from a netCDF file on disk or from</span>
 <span class="sd">        an OPeNDAP server location, using my modified mapping</span>
 <span class="sd">        from netCDF to the CF data model.</span>
@@ -303,7 +304,7 @@ instances.</em></span><a class="headerlink" href="#id10" title="Link to this cod
 <div class="code-block-caption"><span class="caption-text"><em>Create a new read-from-disk function that uses the
 modified mapping.</em></span><a class="headerlink" href="#id11" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_netcdf</span> <span class="o">=</span> <span class="n">my_NetCDFRead</span><span class="p">(</span><span class="n">my_implementation_2</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">my_read_3</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_read_3</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read my field constructs from a dataset.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">my_netcdf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 </pre></div>
@@ -332,10 +333,10 @@ an external subclass, yet can be transferred to copied instances using
 the inherited cfdm infrastructure. The <code class="xref py py-obj docutils literal notranslate"><span class="pre">_custom</span></code> dictionary is shallow
 copied, rather than deep copied, when using the standard cfdm deep
 copy method techniques (i.e. the <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code> method, initialisation with
-the <em>source</em> parameter, or applying the <a class="reference internal" href="class/copy.html#copy.deepcopy" title="copy.deepcopy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function) so
+the <em>source</em> parameter, or applying the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function) so
 that subclasses of cfdm are not committed to potentially expensive
 deep copies of the dictionary values, of which cfdm has no
-knowledge. Note that calling <a class="reference internal" href="class/copy.html#copy.deepcopy" title="copy.deepcopy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> on a cfdm (sub)class
+knowledge. Note that calling <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> on a cfdm (sub)class
 only invokes its <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code> method. The cfdm library itself does not
 use the <code class="xref py py-obj docutils literal notranslate"><span class="pre">_custom</span></code> dictionary, other than to pass on a shallow copy of
 it to copied instances.</p>
@@ -349,15 +350,15 @@ never updating such mutables in-place (which can be acceptable for
 private quantities which are tightly controlled); or else include
 extra code that does deep copy such mutables when any deep copy (or
 equivalent) operation is called. The latter approach should be
-implemented in the subclass’s <a class="reference internal" href="class/cfdm.__init__.html#cfdm.__init__" title="cfdm.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a> method, similarly to this:</p>
+implemented in the subclass’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code> method, similarly to this:</p>
 <div class="literal-block-wrapper docutils container" id="id13">
 <div class="code-block-caption"><span class="caption-text"><em>If desired, ensure that the _custom dictionary ‘x’
 value is deep copied when a deep copy of an instance is
 requested.</em></span><a class="headerlink" href="#id13" title="Link to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">copy</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
-<span class="k">class</span> <span class="nc">my_Field_3</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">my_Field_3</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">_use_data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
                          <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">_use_data</span><span class="o">=</span><span class="n">_use_data</span><span class="p">)</span>
@@ -409,11 +410,11 @@ always work on its cf-python counterpart.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-08-18.
+      &#169;2025, NCAS | Page built on 2025-10-15.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
-      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 
