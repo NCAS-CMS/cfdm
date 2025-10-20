@@ -12,7 +12,7 @@ Version NEXTVERSION
 * Removed dependency (now optional): ``zarr>=3.0.8``
 
 ----
-  
+
 Version 1.12.3.1
 ----------------
 
@@ -33,7 +33,6 @@ Version 1.12.3.0
 ----------------
 
 **2025-08-18**
-
 
 * Fix `cfdm.Data.reshape` when the underlying data originate on disk
   (https://github.com/NCAS-CMS/cfdm/issues/348)

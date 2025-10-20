@@ -259,8 +259,8 @@ class read_writeTest(unittest.TestCase):
         """Test Zarr groups containing DSGs."""
         f = cfdm.example_field(4)
 
-        grouped_dir = "tmpdir1"
-        grouped_file = "tmpfile1.nc"
+        grouped_dir = tmpdir1
+        grouped_file = tmpfile1
 
         f.compress("indexed_contiguous", inplace=True)
         f.data.get_count().nc_set_variable("count")
