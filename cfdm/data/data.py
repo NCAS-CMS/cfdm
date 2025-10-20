@@ -2909,8 +2909,21 @@ class Data(
             _force_mask_hardness=False, _force_to_memory=True
         )
         if dx.dtype != value:
+            cache = self._get_cached_elements().copy()
+
             dx = dx.astype(value)
             self._set_dask(dx, in_memory=True)
+
+            if cache:
+                # Re-instate cached elements, cast to the new dtype.
+                cache1 = {}
+                for i, a in cache.items():
+                    if a is not np.ma.masked:
+                        a = np.asanyarray(a, dtype=value)
+
+                    cache1[i] = a
+
+                self._set_cached_elements(cache1)
 
     @property
     def fill_value(self):
