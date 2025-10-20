@@ -6666,7 +6666,6 @@ class NetCDFRead(IORead):
             group, name = self._netCDF4_group(
                 g["variable_grouped_dataset"][ncvar], ncvar
             )
-            #            variable = group.variables.get(name)
             variable = self._file_group_variables(group).get(name)
 
         else:

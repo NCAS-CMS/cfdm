@@ -265,7 +265,7 @@ class AggregatedArray(abstract.FileArray):
 
                 uri = fa_uris[index]
                 try:
-                    # 'uri' is a size 1 numpy array
+                    # 'uri' is scalar numpy string type
                     uri = uri.item()
                 except AttributeError:
                     # E.g. 'uri' is a `str` instance
