@@ -1377,7 +1377,9 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(array)
         e = d.masked_values(1.1)
         ea = e.array
-        a = np.ma.masked_values(array, 1.1, rtol=cfdm.rtol(), atol=cfdm.atol())
+        a = np.ma.masked_values(
+            array, 1.1, rtol=float(cfdm.rtol()), atol=float(cfdm.atol())
+        )
         self.assertTrue(np.isclose(ea, a).all())
         self.assertTrue((ea.mask == a.mask).all())
         self.assertIsNone(d.masked_values(1.1, inplace=True))
@@ -2850,6 +2852,30 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.shape, shape)
             self.assertEqual(d.dtype, dtype_out)
             self.assertTrue((d.array == np.zeros(shape, dtype=dtype_in)).all())
+
+    def test_Data_dtype(self):
+        """Test Data.dtype."""
+        d = cfdm.Data([[280, 278, -99, -99]], mask=[[0, 0, 1, 1]], dtype=float)
+        self.assertTrue(d.dtype, "float64")
+
+        _ = repr(d)
+        cache0 = d._get_cached_elements().copy()
+        self.assertTrue(cache0)
+
+        for a in cache0.values():
+            if a is not np.ma.masked:
+                self.assertEqual(a.dtype, d.dtype)
+
+        d.dtype = "float32"
+        self.assertTrue(d.dtype, "float32")
+
+        cache1 = d._get_cached_elements().copy()
+        self.assertTrue(cache1)
+        self.assertEqual(cache0, cache1)
+
+        for a in cache1.values():
+            if a is not np.ma.masked:
+                self.assertEqual(a.dtype, d.dtype)
 
 
 if __name__ == "__main__":
