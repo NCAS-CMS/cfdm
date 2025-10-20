@@ -380,7 +380,10 @@ class read(ReadWrite):
                 if isdir(x):
                     if is_zarr(x):
                         # This directory is a Zarr dataset, so don't
-                        # look in any subdirectories.
+                        # look in any subdirectories, which we contain
+                        # the dataset chunks (but note - it is allowed
+                        # for non-chunk subdirectories to exist, but
+                        # if they do we're going to ignore them!).
                         n_datasets += 1
                         yield x
                         continue

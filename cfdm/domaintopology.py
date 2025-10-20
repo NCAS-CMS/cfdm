@@ -441,10 +441,6 @@ class DomainTopology(
 
         Only edge and point domain topologies can be sorted.
 
-        Sorting is across both dimensions. In general, dimension 1 is
-        sorted first, and then dimension 0 is sort by its first
-        column.
-
         Sorting is across both array dimensions. In general, dimension
         1 is sorted first, and then dimension 0 is sort by the values
         in the first column.
@@ -456,14 +452,16 @@ class DomainTopology(
         from the dimension 1 sort (because it contains the node id
         definition for each row).
 
-        See the below for examples.
+        See the examples for more details.
 
         .. note:: The purpose of this method is to facilitate the
                   comparison of normalised domain topologies, to see
                   if they belong to the same UGRID mesh. The sorted
                   domain topology will, in general, be inconsistent
                   with other metadata, such as the node geo-locations
-                  stored as domain cell coordinates or cell bounds.
+                  stored as domain cell coordinates or cell
+                  bounds. For this reason, `sort` is not allowed to
+                  occur in-place.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -565,7 +563,11 @@ class DomainTopology(
         return d
 
     def to_edge(self, sort=False, face_nodes=None):
-        """Create a domain topology of edges.
+        """Create a new domain topology of edges.
+
+        The edges will defined from the original domain topology,
+        either as sides of faces, or the links between nodes, or
+        copied from the existing edges.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -582,12 +584,15 @@ class DomainTopology(
                 The unique node ids for 'face' cells. If `None` (the
                 default) then the node ids will be inferred from the
                 data, at some computational expense. The order of the
-                nodes is immaterial.
+                nodes is immaterial. Providing *face_nodes* is an
+                optimisation in the case that these are known
+                externally.
 
-                .. note:: No checks are carried out to ensure that the
-                          given *face_nodes* match the actual node ids
-                          stored in the data, and a mis-match will
-                          result in an incorrect result.
+                .. warning:: No checks are carried out to ensure that
+                             the given *face_nodes* match the actual
+                             node ids stored in the data, and a
+                             mis-match will result in an exceptiion
+                             or, worse, an incorrect result.
 
         :Returns:
 
@@ -698,7 +703,7 @@ class DomainTopology(
                 if masked:
                     row = row.compressed()
 
-                node = row[0]
+                node = int(row[0])
                 row = row[1:].tolist()
                 edges_extend(
                     [(node, n) if node < n else (n, node) for n in row]
@@ -733,8 +738,7 @@ class DomainTopology(
             )
 
         # Remove duplicates to get the set of unique edges, because
-        # every edge currently appears twice in the 'face_edges'
-        # list.
+        # every edge currently appears twice in the 'edges' list.
         #
         # E.g. edge (1, 5) will appear once from processing node 1,
         #      and once from processing node 5.

@@ -27,21 +27,28 @@ class PointTopology:
         start_index = self.start_index
         node_connectivity = self._select_data(check_mask=True)
 
-        masked = np.ma.isMA(node_connectivity)
-
-        # E.g. faces: node_connectivity = [[3 4 2 1]
-        #                                  [5 6 4 3]
-        #                                  [7 2 4 --]]
+        # ------------------------------------------------------------
+        # E.g. For faces, 'node_connectivity' might be (two
+        #      quadrilaterals and a triangle):
         #
-        # E.g. edges: node_connectivity = [[2 7]
-        #                                  [4 7]
-        #                                  [4 2]
-        #                                  [1 2]
-        #                                  [3 1]
-        #                                  [3 4]
-        #                                  [3 5]
-        #                                  [6 5]
-        #                                  [4 6]]
+        #      [[3 4 2 1 ]
+        #       [5 6 4 3 ]
+        #       [7 2 4 --]]
+        #
+        # E.g. For edges, 'node_connectivity' might be
+        #
+        #      [[2 7]
+        #       [4 7]
+        #       [4 2]
+        #       [1 2]
+        #       [3 1]
+        #       [3 4]
+        #       [3 5]
+        #       [6 5]
+        #       [4 6]]
+        # ------------------------------------------------------------
+
+        masked = np.ma.isMA(node_connectivity)
 
         largest_node_id = node_connectivity.max()
         if not start_index:
@@ -98,13 +105,17 @@ class PointTopology:
         # Mask all zeros
         u = np.ma.where(u == 0, np.ma.masked, u)
 
-        # E.g. faces and edges: u = [[1 2 3 -- --]
-        #                            [2 1 4 7 --]
-        #                            [3 1 4 5 --]
-        #                            [4 2 3 6 7]
-        #                            [5 3 6 -- --]
-        #                            [6 4 5 -- --]
-        #                            [7 2 4 -- --]]
+        # ------------------------------------------------------------
+        # E.g. For both of the face and edges examples above, 'u' is
+        #
+        #      [[1 2 3 -- --]
+        #       [2 1 4 7  --]
+        #       [3 1 4 5  --]
+        #       [4 2 3 6  7 ]
+        #       [5 3 6 -- --]
+        #       [6 4 5 -- --]
+        #       [7 2 4 -- --]]
+        # ------------------------------------------------------------
 
         if not start_index:
             # Subtract 1 to get back to zero-based node identities

@@ -1366,9 +1366,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         size = data.shape[-1]
 
-        #        bounds_ncdim = self._name('bounds{0}'.format(size),
-        #                                  dimsize=size, role='bounds')
-
         bounds_ncdim = self.implementation.nc_get_dimension(
             bounds, f"bounds{size}"
         )
@@ -1827,7 +1824,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             )
 
         for group_name in name.split("/")[1:-1]:
-            #            if group_name not in parent_group:
             parent_group = self._createGroup(parent_group, group_name)
 
         return parent_group
@@ -4912,16 +4908,11 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         if not g["dry_run"] and not g["post_dry_run"]:
             attrs = {"Conventions": delimiter.join(g["Conventions"])}
-            #            g["dataset"].setncattr(
-            #                "Conventions", delimiter.join(g["Conventions"])
-            #            )
 
             # ------------------------------------------------------------
             # Write the file descriptors to the dataset
             # ------------------------------------------------------------
             attrs.update(g["file_descriptors"])
-            #            for attr, value in g["file_descriptors"].items():
-            #                g["dataset"].setncattr(attr, value)
 
             # ------------------------------------------------------------
             # Write other global attributes to the dataset
@@ -4932,10 +4923,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                     for attr in global_attributes - set(("Conventions",))
                 }
             )
-            #          for attr in global_attributes - set(("Conventions",)):
-            #                g["dataset"].setncattr(
-            #                    attr, self.implementation.get_property(f0, attr)
-            #                )
 
             # ------------------------------------------------------------
             # Write "forced" global attributes to the dataset
@@ -4943,8 +4930,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             attrs.update(force_global)
 
             self._set_attributes(attrs, group=g["dataset"])
-        #            for attr, v in force_global.items():
-        #                g["dataset"].setncattr(attr, v)
 
         g["global_attributes"] = global_attributes
 
@@ -5149,7 +5134,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 *mode*    Description
                 ========  =================================================
 
-                ``'w'``-- Open a new dataset for writing to. If it
+                ``'w'``   Open a new dataset for writing to. If it
                           exists and *overwrite* is True then the
                           dataset is deleted prior to being recreated.
 

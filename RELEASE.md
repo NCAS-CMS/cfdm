@@ -15,6 +15,11 @@
   $ find cfdm/ -type f | xargs sed -i 's/NEXTVERSION/<VN>/g'
   ```
 
+- [ ] Edit the name of the `NEXTVERSION` milestone in GitHub to be the
+      upcoming version `<VN>` (replacing `<VN>` appropriately,
+      e.g. `1.12.0.0`). Then close the new `<VN>` milestone, and create
+      a new `NEXTVERSION` milestone.
+
 - [ ] Change the "version" and "dateModified" in `codemeta.json`.
 
 - [ ] Ensure that the requirements on dependencies and their versions are

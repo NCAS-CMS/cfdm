@@ -571,12 +571,12 @@ _docstring_substitution_definitions = {
             (unless the strategy is modified prior to writing).
 
             If False, or if the dataset being read does not support
-            sharding (such as a netCDF dataset), then no dataset
-            sharding strategy is stored (i.e. the `nc_dataset_shards`
-            method will return `None` for all returned `Data`
-            objects). In this case, when the data is written to a new
-            Zarr dataset, the dataset sharding strategy will be
-            determined by `{{package}}.write`.""",
+            sharding (such as a Zarr v2 or netCDF dataset), then no
+            dataset sharding strategy is stored (i.e. the
+            `nc_dataset_shards` method will return `None` for all
+            returned `Data` objects). In this case, when the data is
+            written to a new Zarr dataset, the dataset sharding
+            strategy will be determined by `{{package}}.write`.""",
     # read cfa
     "{{read cfa: `dict`, optional}}": """cfa: `dict`, optional
             Configure the reading of CF-netCDF aggregation files.
@@ -1390,13 +1390,16 @@ _docstring_substitution_definitions = {
                 replacement. If False (the default) then no
                 normalisation is done.""",
     # sharding
-    "{{sharding description}}": """When writing to a Zarr dataset, sharding provides a mechanism
-        to store multiple chunks in a single storage object or
-        file. This can be useful because traditional file systems and
-        object storage systems may have performance issues storing and
-        accessing large number of files. Additionally, small files can
-        be inefficient to store if they are smaller than the block
-        size of the file system.
+    "{{sharding description}}": """
+        When writing to a Zarr dataset, sharding provides a mechanism
+        to store multiple dataset chunks in a single storage object or
+        file. Without sharding, each dataset chunk is written to its
+        own file. Traditional file systems and object storage systems
+        may have performance issues storing and accessing large number
+        of files, and small files can be inefficient to store if they
+        are smaller than the block size of the file system. Sharding
+        can improve performance by creating fewer, and larger, files
+        for storing the dataset chunks.
 
         The sharding strategy is ignored when writing to a non-Zarr
         dataset.""",
@@ -1434,9 +1437,9 @@ _docstring_substitution_definitions = {
 
                 * `int`
 
-                  The integer number of chunks to be stored in a
-                  single shard, favouring an equal number of chunks
-                  along each shard dimension.
+                  The integer number of dataset chunks to be stored in
+                  a single shard, favouring an equal number of dataset
+                  chunks along each shard dimension.
 
                 * sequence of `int`
 

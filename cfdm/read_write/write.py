@@ -619,13 +619,15 @@ class write(ReadWrite):
 
         dataset_shards: `None` or `int`, optional
             When writing to a Zarr dataset, sharding provides a
-            mechanism to store multiple chunks in a single storage
-            object or file. This can be useful because traditional
-            file systems and object storage systems may have
-            performance issues storing and accessing many
-            files. Additionally, small files can be inefficient to
-            store if they are smaller than the block size of the file
-            system.
+            mechanism to store multiple dataset chunks in a single
+            storage object or file. Without sharding, each dataset
+            chunk is written to its own file. Traditional file systems
+            and object storage systems may have performance issues
+            storing and accessing large number of files, and small
+            files can be inefficient to store if they are smaller than
+            the block size of the file system. Sharding can improve
+            performance by creating fewer, and larger, files for
+            storing the dataset chunks.
 
             The *dataset_shards* parameter is ignored when writing to
             a non-Zarr datset.
@@ -644,12 +646,12 @@ class write(ReadWrite):
 
             * `int`
 
-              The integer number of chunks to be stored in a single
-              shard, favouring an equal number of chunks along each
-              shard dimenson.
+              The integer number of dataset chunks to be stored in a
+              single shard, favouring an equal number of dataset
+              chunks along each shard dimenson.
 
             *Example:*
-              For two-dimensional `Data`, ``dataset_shards=9`` will
+              For two-dimensional data, ``dataset_shards=9`` will
               result in shards that span 3 chunks along each
               dimension.
 

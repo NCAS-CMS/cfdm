@@ -38,8 +38,7 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
                 By default *edges* is False and a flat list of nodes,
                 including *node* itself at the start, is returned. If
                 True then a list of edge definitions (i.e. a list of
-                sorted, hashable tuple pairs of nodes) is returned
-                instead.
+                ordered 2-tuples of nodes) is returned instead.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -53,14 +52,14 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
         **Examples**
 
         >>> p._connected_nodes(7, nc)
-        [7, 2, 1, 9]
+        [7, 1, 2, 9]
         >>> p._connected_nodes(7, nc, edges=True)
-        [(2, 7), (1, 7), (7, 9)]
+        [(1, 7), (2, 7), (7, 9)]
 
         >>> p._connected_nodes(2, nc)
-        [2, 8, 7]
+        [2,  7, 8]
         >>> p._connected_nodes(2, nc, edges=True)
-        [(2, 8), (2, 7)]
+        [(2, 7), (2, 8)]
 
         """
         if masked:
@@ -97,7 +96,7 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
                 # neighbours are in positions col-1 and col+1
                 nodes_extend((row[col - 1], row[col + 1]))
 
-        nodes = list(set(nodes))
+        nodes = sorted(set(nodes))
 
         if edges:
             # Return a list of ordered edge definitions

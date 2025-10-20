@@ -29,7 +29,7 @@ cfdm works for Linux, Mac and Windows operating systems.
 **Python versions**
 -------------------
 
-cfdm works for Python versions 3.9 or newer.
+cfdm works for Python versions 3.10 or newer.
 
 ----
 
@@ -185,7 +185,7 @@ Required
 
 The cfdm package requires:
 
-* `Python <https://www.python.org>`_, version 3.9 or newer.
+* `Python <https://www.python.org>`_, version 3.10 or newer.
 
 * `numpy <http://www.numpy.org>`_, version 2.0.0 or newer.
 

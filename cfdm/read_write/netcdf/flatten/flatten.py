@@ -1951,7 +1951,7 @@ class _Flattener:
                 if self._group_dimension_search != "closest_ancestor":
                     raise ValueError(
                         f"For netCDF dataset {self.dataset_name()}, "
-                        "group_dimension_search keyword must be "
+                        "the group_dimension_search keyword must be "
                         "'closest_ancestor'. "
                         f"Got {self._group_dimension_search!r}"
                     )
@@ -2057,7 +2057,7 @@ class _Flattener:
         var_to_dims = self._var_to_dims
         group_dimension_search = self._group_dimension_search
 
-        # Initialise mapping from the group to its ZarrDimension
+        # Initialise the mapping from this group to its ZarrDimension
         # objects. Use 'setdefault' because a previous call to
         # `_populate_dimension_maps` might already have done this.
         group_to_dims.setdefault(group_name, {})
@@ -2244,7 +2244,7 @@ class _Flattener:
 
                 zarr_dim = None
                 if g in group_to_dims:
-                    # Group 'g' is already registered
+                    # Group 'g' is already registered in the mapping
                     zarr_dim = group_to_dims[g].get(basename)
                     if zarr_dim is not None:
                         # Dimension 'basename' is already registered
@@ -2260,7 +2260,7 @@ class _Flattener:
                                 f"dimension_name={name}"
                             )
                 else:
-                    # Initialise group 'g'
+                    # Initialise group 'g' in the mapping
                     group_to_dims[g] = {}
 
                 if zarr_dim is None:

@@ -1,7 +1,7 @@
 Version NEXTVERSION
 ----------------
 
-**2025-??-??**
+**2025-12-??**
 
 * Write UGRID datasets with `cfdm.write`
   (https://github.com/NCAS-CMS/cfdm/issues/271)
@@ -18,13 +18,16 @@ Version NEXTVERSION
 Version 1.12.3.1
 ----------------
 
-**2025-10-??**
+**2025-10-15**
 
+* Python 3.9 support removed
+  (https://github.com/NCAS-CMS/cfdm/issues/353)
 * When changing array data type, retain cached data elements cast to
   the new type (https://github.com/NCAS-CMS/cfdm/issues/358)
 * Fix bug that prevented `cfdm.read` from reading a file with ``#``
   characters in its file name
   (https://github.com/NCAS-CMS/cfdm/issues/356)
+* Changed dependency: ``Python>=3.10.0``
 
 ----
 
