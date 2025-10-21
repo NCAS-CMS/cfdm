@@ -1,13 +1,20 @@
 import logging
 import os
+import sys
 from copy import deepcopy
 from functools import total_ordering
-from urllib.parse import urlparse
+from math import isnan
+from numbers import Integral
+from os import sep as os_sep
+from os.path import abspath as os_abspath
+from os.path import dirname as os_dirname
+from os.path import join
 
-import cftime
-import netcdf_flattener
 import numpy as np
-import scipy
+#from dask import config as _config
+#from dask.base import is_dask_collection
+#from dask.utils import parse_bytes
+from uritools import uricompose, urisplit
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
@@ -28,7 +35,16 @@ _docstring_substitution_definitions = _subs
 del _subs
 
 
-def configuration(atol=None, rtol=None, log_level=None):
+class DeprecationError(Exception):
+    pass
+
+
+def configuration(
+    atol=None,
+    rtol=None,
+    log_level=None,
+    chunksize=None,
+):
     """Views and sets constants in the project-wide configuration.
 
     The full list of global constants that are provided in a
@@ -37,6 +53,7 @@ def configuration(atol=None, rtol=None, log_level=None):
     * `atol`
     * `rtol`
     * `log_level`
+    * `chunksize`
 
     These are all constants that apply throughout `cfdm`, except for
     in specific functions only if overridden by the corresponding
@@ -53,7 +70,7 @@ def configuration(atol=None, rtol=None, log_level=None):
 
     .. versionadded:: (cfdm) 1.8.6
 
-    .. seealso:: `atol`, `rtol`, `log_level`
+    .. seealso:: `atol`, `rtol`, `log_level`, `chunksize`
 
     :Parameters:
 
@@ -77,6 +94,12 @@ def configuration(atol=None, rtol=None, log_level=None):
             * ``'DETAIL'`` (``3``);
             * ``'DEBUG'`` (``-1``).
 
+        chunksize: `float` or `Constant`, optional
+            The new chunksize in bytes. The default is to not change
+            the current behaviour.
+
+            .. versionadded:: (cfdm) 1.11.2.0
+
     :Returns:
 
         `Configuration`
@@ -91,11 +114,13 @@ def configuration(atol=None, rtol=None, log_level=None):
     >>> cfdm.configuration()
     <{{repr}}Configuration: {'atol': 2.220446049250313e-16,
                      'rtol': 2.220446049250313e-16,
-                     'log_level': 'WARNING'}>
+                     'log_level': 'WARNING',
+                     'chunksize': 134217728}>
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
-     'log_level': 'WARNING'}
+     'log_level': 'WARNING',
+     'chunksize': 134217728}
 
     Make a change to one constant and see that it is reflected in the
     configuration:
@@ -105,7 +130,8 @@ def configuration(atol=None, rtol=None, log_level=None):
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
-     'log_level': 'DEBUG'}
+     'log_level': 'DEBUG',
+     'chunksize': 134217728}
 
     Access specific values by key querying, noting the equivalency to
     using its bespoke function:
@@ -120,23 +146,34 @@ def configuration(atol=None, rtol=None, log_level=None):
     >>> print(cfdm.configuration(atol=5e-14, log_level='INFO'))
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
-     'log_level': 'DEBUG'}
+     'log_level': 'DEBUG',
+     'chunksize': 134217728}
     >>> print(cfdm.configuration())
-    {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
+    {'atol': 5e-14,
+     'rtol': 2.220446049250313e-16,
+     'log_level': 'INFO',
+     'chunksize': 134217728}
 
     Set a single constant without using its bespoke function:
 
     >>> print(cfdm.configuration(rtol=1e-17))
-    {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
+    {'atol': 5e-14,
+     'rtol': 2.220446049250313e-16,
+     'log_level': 'INFO',
+     'chunksize': 134217728}
     >>> cfdm.configuration()
-    {'atol': 5e-14, 'rtol': 1e-17, 'log_level': 'INFO'}
+    {'atol': 5e-14,
+     'rtol': 1e-17,
+     'log_level': 'INFO',
+     'chunksize': 134217728}
 
     Use as a context manager:
 
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
-     'log_level': 'WARNING'}
+     'log_level': 'WARNING',
+     'chunksize': 134217728}
     >>> with cfdm.configuration(atol=9, rtol=10):
     ...     print(cfdm.configuration())
     ...
@@ -144,11 +181,16 @@ def configuration(atol=None, rtol=None, log_level=None):
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
-     'log_level': 'WARNING'}
+     'log_level': 'WARNING',
+     'chunksize': 134217728}
 
     """
     return _configuration(
-        Configuration, new_atol=atol, new_rtol=rtol, new_log_level=log_level
+        Configuration,
+        new_atol=atol,
+        new_rtol=rtol,
+        new_log_level=log_level,
+        new_chunksize=chunksize,
     )
 
 
@@ -193,6 +235,7 @@ def _configuration(_Configuration, **kwargs):
         "new_atol": atol,
         "new_rtol": rtol,
         "new_log_level": log_level,
+        "new_chunksize": chunksize,
     }
 
     old_values = {}
@@ -293,6 +336,40 @@ def _disable_logging(at_level=None):
         logging.disable()
 
 
+def _get_module_info(module, alternative_name=False, try_except=False):
+    """Helper function for processing modules for `environment`.
+
+    .. versionadded:: (cfdm) 1.12.2.0
+
+    """
+    import importlib
+
+    if try_except:
+        module_name = None
+        try:
+            importlib.import_module(module)
+            module_name = module
+        except ImportError:
+            if (
+                alternative_name
+            ):  # where a module has a different (e.g. old) name
+                try:
+                    importlib.import_module(alternative_name)
+                    module_name = alternative_name
+                except ImportError:
+                    pass
+
+        if not module_name:
+            return ("not available", "")
+    else:
+        module_name = module
+
+    return (
+        importlib.import_module(module_name).__version__,
+        importlib.util.find_spec(module_name).origin,
+    )
+
+
 def environment(display=True, paths=True):
     """Return the names, versions and paths of all dependencies.
 
@@ -318,50 +395,75 @@ def environment(display=True, paths=True):
     **Examples**
 
     >>> cfdm.environment()
-    Platform: Linux-5.14.0-1048-oem-x86_64-with-glibc2.31
-    HDF5 library: 1.12.1
-    netcdf library: 4.8.1
-    Python: 3.9.12 /home/user/miniconda3/bin/python
-    netCDF4: 1.6.0 /home/user/miniconda3/lib/python3.9/site-packages/netCDF4/__init__.py
-    numpy: 1.22.3 /home/user/miniconda3/lib/python3.9/site-packages/numpy/__init__.py
-    cfdm.core: 1.11.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/core/__init__.py
-    scipy: 1.11.3 /home/user/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
-    cftime: 1.6.1 /home/user/miniconda3/lib/python3.9/site-packages/cftime/__init__.py
-    netcdf_flattener: 1.2.0 /home/user/miniconda3/lib/python3.9/site-packages/netcdf_flattener/__init__.py
-    cfdm: 1.11.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/__init__.py
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8 /home/miniconda3/bin/python
+    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
+    numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
+    cfdm.core: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
+    udunits2 library: libudunits2.so.0
+    HDF5 library: 1.14.2
+    netcdf library: 4.9.4-development
+    netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
+    h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
+    h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
+    zarr: 3.0.8 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
+    s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
+    scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
+    dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
+    cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py
+    cfunits: 3.3.7 /home/miniconda3/lib/python3.12/site-packages/cfunits/__init__.py
+    cfdm: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/__init__.py
 
     >>> cfdm.environment(paths=False)
-    HDF5 library: 1.12.1
-    netcdf library: 4.8.1
-    Python: 3.9.12
-    netCDF4: 1.6.0
-    numpy: 1.22.3
-    cfdm.core: 1.11.0.0
-    scipy: 1.11.3
-    cftime: 1.6.1
-    netcdf_flattener: 1.2.0
-    cfdm: 1.11.0.0
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8
+    packaging: 24.2
+    numpy: 2.2.6
+    cfdm.core: 1.12.2.0
+    udunits2 library: libudunits2.so.0
+    HDF5 library: 1.14.2
+    netcdf library: 4.9.4-development
+    netCDF4: 1.7.2
+    h5netcdf: 1.3.0
+    h5py: 3.12.1
+    zarr: 3.0.8
+    s3fs: 2024.12.0
+    scipy: 1.15.1
+    dask: 2025.5.1
+    distributed: 2025.5.1
+    cftime: 1.6.4.post1
+    cfunits: 3.3.7
+    cfdm: 1.12.2.0
 
     """
-    out = core.environment(display=False, paths=paths)  # get all core env
+    import ctypes
 
-    try:
-        netcdf_flattener_version = netcdf_flattener.__version__
-    except AttributeError:
-        netcdf_flattener_version = "unknown version"
+    import netCDF4
+
+    # Get cfdm.core env
+    out = core.environment(display=False, paths=paths)
 
     dependency_version_paths_mapping = {
-        "scipy": (scipy.__version__, os.path.abspath(scipy.__file__)),
-        "cftime": (cftime.__version__, os.path.abspath(cftime.__file__)),
-        "netcdf_flattener": (
-            netcdf_flattener_version,
-            os.path.abspath(netcdf_flattener.__file__),
-        ),
+        "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
+        "HDF5 library": (netCDF4.__hdf5libversion__, ""),
+        "netcdf library": (netCDF4.__netcdf4libversion__, ""),
+        "netCDF4": _get_module_info("netCDF4"),
+        "h5netcdf": _get_module_info("h5netcdf"),
+        "h5py": _get_module_info("h5py"),
+        "zarr": _get_module_info("zarr"),
+        "s3fs": _get_module_info("s3fs"),
+        "scipy": _get_module_info("scipy"),
+        "dask": _get_module_info("dask"),
+        "distributed": _get_module_info("distributed"),
+        "cftime": _get_module_info("cftime"),
+        "cfunits": _get_module_info("cfunits"),
         "cfdm": (__version__, os.path.abspath(__file__)),
     }
     string = "{0}: {1!s}"
-    if paths:  # include path information, else exclude, when unpacking tuple
+    if paths:
+        # Include path information, else exclude, when unpacking tuple.
         string += " {2!s}"
+
     out.extend(
         [
             string.format(dep, *info)
@@ -393,52 +495,284 @@ def CF():
     **Examples**
 
     >>> CF()
-    '1.11'
+    '1.12'
 
     """
     return __cf_version__
 
 
-def abspath(filename):
-    """Return a normalised absolute version of a file name.
-
-    If a string containing URL is provided then it is returned
-    unchanged.
+def abspath(path, uri=None):
+    """Return a normalised absolute version of a path.
 
     .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
-        filename: `str`
-            The name of the file.
+        path: `str`
+            The file or directory path.
+
+        uri: `None` or `bool`, optional
+            If True then the returned path will begin with a URI
+            scheme component followed by a ``:`` character, such as
+            ``file://data/file.nc``, ``https://remote/data/file.nc``,
+            etc.). If False then the returned path will not begin with
+            a URI scheme component only if the input *path* does. If
+            `None` (the default) then the returned path will begin
+            with a URI scheme component if the input *path* does.
+
+            .. versionadded:: (cfdm) 1.12.0.0
 
     :Returns:
 
         `str`
-            The normalised absolutised version of *filename*.
+            The normalised absolutised version of the path.
 
     **Examples**
 
     >>> import os
     >>> os.getcwd()
     '/data/archive'
-    >>> cfdm.abspath('file.nc')
+
+    >>> cfdm.abspath("")
+    '/data/archive'
+    >>> cfdm.abspath("file.nc")
     '/data/archive/file.nc'
-    >>> cfdm.abspath('..//archive///file.nc')
+    >>> cfdm.abspath("../file.nc")
+    '/data/file.nc'
+    >>> cfdm.abspath("file:///file.nc")
+    'file:///file.nc'
+    >>> cfdm.abspath("file://file.nc")
+    'file://file.nc/data/archive'
+    >>> cfdm.abspath("file:/file.nc")
+    'file:/file.nc'
+    >>> cfdm.abspath("http:///file.nc")
+    'http:///file.nc'
+    >>> cfdm.abspath("http://file.nc")
+    'http://file.nc'
+    >>> cfdm.abspath("http:/file.nc")
+    'http:/file.nc'
+
+    >>> cfdm.abspath("file.nc", uri=True)
+    'file:/data/archive/file.nc'
+    >>> cfdm.abspath("../file.nc", uri=True)
+    'file:/data/file.nc'
+    >>> cfdm.abspath("file:///file.nc", uri=True)
+    'file:///file.nc'
+    >>> cfdm.abspath("file://file.nc", uri=True)
+    'file://file.nc/data/archive'
+    >>> cfdm.abspath("file:/file.nc", uri=True)
+    'file:/file.nc'
+    >>> cfdm.abspath("http:///file.nc", uri=True)
+    'http:///file.nc'
+    >>> cfdm.abspath("http://file.nc", uri=True)
+    'http://file.nc'
+    >>> cfdm.abspath("http:/file.nc", uri=True)
+    'http:/file.nc'
+
+    >>> cfdm.abspath("file.nc", uri=False)
     '/data/archive/file.nc'
-    >>> cfdm.abspath('http://data/archive/file.nc')
-    'http://data/archive/file.nc'
+    >>> cfdm.abspath("../file.nc", uri=False)
+    '/data/file.nc'
+    >>> cfdm.abspath("file:///file.nc", uri=False)
+    '/file.nc'
+    >>> cfdm.abspath("file://file.nc", uri=False)
+    '/data/archive'
+    >>> cfdm.abspath("file:/file.nc", uri=False)
+    '/file.nc'
+     >>> cfdm.abspath("http:///file.nc", uri=False)
+    ValueError: Can't set uri=False for path='http:///file.nc'
 
     """
-    u = urlparse(filename)
+    u = urisplit(path)
     scheme = u.scheme
-    if not scheme:
-        return os.path.abspath(filename)
+    path = u.path
 
-    if scheme == "file":
-        return u.path
+    if scheme:
+        # Remote or "file"
+        if scheme == "file" or path.startswith(os_sep):
+            path = os_abspath(path)
 
-    return filename
+        if uri or uri is None:
+            path = uricompose(scheme=scheme, authority=u.authority, path=path)
+        elif scheme != "file":
+            raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
+
+    else:
+        # Local
+        path = os_abspath(path)
+        if uri:
+            path = uricompose(scheme="file", authority=u.authority, path=path)
+
+    fragment = u.fragment
+    if fragment is not None:
+        # Append a URI fragment. Do this with a string-append, rather
+        # than via `uricompose` in case the fragment contains more
+        # than one # character.
+        path += f"#{fragment}"
+
+    return path
+
+
+def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
+    """Return the directory of a path.
+
+    .. versionadded:: (cfdm) 1.12.0.0
+
+    :Parameters:
+
+        path: `str`
+            The name of the path.
+
+        normalise: `bool`, optional
+            If True then normalise the path by resolving it to an
+            absolute path. If False (the default) then no
+            normalisation is done.
+
+        uri: `None` or `bool`, optional
+            If True then the returned directory will begin with a URI
+            scheme component followed by a ``:`` character, such as
+            ``file://data/file.nc``, ``https://remote/data/file.nc``,
+            etc.). If False then the returned directory will not begin
+            with a URI scheme component. If `None` (the default) then
+            the returned directory will begin with a URI scheme
+            component if the input *path* does.
+
+        isdir: `bool`, optional
+            Set to True if *path* represents a directory, rather than
+            a file.
+
+        sep: `bool`, optional
+            Set to True to add a trailing path separator to the
+            returned directory.
+
+    :Returns:
+
+        `str`
+            The directory of the path.
+
+    **Examples**
+
+    >>> import os
+    >>> os.getcwd()
+    '/data/archive'
+
+    >>> cfdm.dirname("file.nc")
+    ''
+    >>> cfdm.dirname("file.nc", normalise=True)
+    '/data/archive'
+    >>> cfdm.dirname("file.nc", normalise=True, uri=True)
+    'file:///data/archive
+    >>> cfdm.dirname("file.nc", normalise=True, uri=False)
+    '/data/archive'
+    >>> cfdm.dirname("file.nc", normalise=True, sep=True)
+    '/data/archive/'
+
+    >>> cfdm.dirname("model/file.nc"), "model")
+    >>> cfdm.dirname("model/file.nc", normalise=True)
+    '/data/archive/model'
+    >>> cfdm.dirname("model/file.nc", normalise=True, uri=True)
+    'file:///data/archive/model'
+    >>> cfdm.dirname("model/file.nc", normalise=True, uri=False)
+    '/data/archive/model'
+
+    >>> cfdm.dirname("../file.nc")
+    '..'
+    >>> cfdm.dirname("../file.nc", normalise=True)
+    '/data'
+    >>> cfdm.dirname("../file.nc", normalise=True, uri=True),
+    'file://{/data}'
+    >>> cfdm.dirname("../file.nc", normalise=True, uri=False)
+    '/data'
+
+    >>> cfdm.dirname("/model/file.nc")
+    '/model'
+    >>> cfdm.dirname("/model/file.nc", normalise=True)
+    '/model'
+    >>> cfdm.dirname("/model/file.nc", normalise=True, uri=True)
+    'file:///model'
+    >>> cfdm.dirname("/model/file.nc", normalise=True, uri=False)
+    '/model'
+
+    >>> cfdm.dirname("")
+    ''
+    >>> cfdm.dirname("", normalise=True)
+    '/data/archive'
+    >>> cfdm.dirname("", normalise=True, uri=True)
+    'file:///data/archive'
+    >>> cfdm.dirname("", normalise=True, uri=False)
+    '/data/archive'
+    >>> cfdm.dirname("https:///data/archive/file.nc")
+    'https:///data/archive'
+    >>> cfdm.dirname("https:///data/archive/file.nc", normalise=True)
+    'https:///data/archive'
+    >>> cfdm.dirname("https:///data/archive/file.nc", normalise=True, uri=True)
+    'https:///data/archive'
+    >>> cfdm.dirname("https:///data/archive/file.nc", normalise=True, uri=False)
+    ValueError: Can't set uri=False for path='https:///data/archive/file.nc'
+
+    >>> cfdm.dirname("file:///data/archive/file.nc")
+    'file:///data/archive'
+    >>> cfdm.dirname("file:///data/archive/file.nc", normalise=True)
+    'file:///data/archive'
+    >>> cfdm.dirname("file:///data/archive/file.nc", normalise=True, uri=True)
+    'file:///data/archive'
+    >>> cfdm.dirname("file:///data/archive/file.nc", normalise=True, uri=False)
+    '/data/archive'
+
+    >>> cfdm.dirname("file:///data/archive/../file.nc")
+    'file:///data/archive/..'
+    >>> cfdm.dirname("file:///data/archive/../file.nc", normalise=True)
+    'file:///data'
+    >>> cfdm.dirname("file:///data/archive/../file.nc", normalise=True, uri=True)
+    'file:///data'
+    >>> cfdm.dirname("file:///data/archive/../file.nc", normalise=True, uri=False)
+    '/data'
+
+    """
+    u = urisplit(path)
+    scheme = u.scheme
+    path = u.path
+
+    authority = u.authority
+    if authority is None:
+        authority = ""
+
+    if scheme:
+        # Remote (or "file:")
+        if normalise and (scheme == "file" or path.startswith(os_sep)):
+            path = os_abspath(path)
+
+        if not isdir:
+            path = os_dirname(path)
+
+        if uri or uri is None:
+            path = uricompose(scheme=scheme, authority=authority, path=path)
+        elif scheme != "file":
+            raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
+
+    else:
+        # Local file
+        if not isdir:
+            path = os_dirname(path)
+
+        if normalise:
+            path = os_abspath(path)
+
+        if uri:
+            path = uricompose(scheme="file", authority=authority, path=path)
+
+    fragment = u.fragment
+    if fragment is not None:
+        # Append a URI fragment. Do this with a string-append, rather
+        # than via `uricompose` in case the fragment contains more
+        # than one # character.
+        path += f"#{fragment}"
+
+    if sep:
+        # Append the directory separator
+        path = join(path, "")
+
+    return path
 
 
 def unique_constructs(constructs, ignore_properties=None, copy=True):
@@ -982,9 +1316,6 @@ class Constant(metaclass=DocstringRewriteMeta):
         """Called by the `str` built-in function."""
         return str(self.value)
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def copy(self):
         """Return a deep copy.
 
@@ -1170,9 +1501,12 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
     # constant value
     _name = None
 
+    # Define the default value of the constant
+    _default = None
+
     def __new__(cls, *arg):
         """Return a `Constant` instance during class creation."""
-        old = cls._CONSTANTS[cls._name]
+        old = cls._CONSTANTS.get(cls._name, cls._default)
         if arg:
             arg = arg[0]
             try:
@@ -1279,6 +1613,7 @@ class atol(ConstantAccess):
     """
 
     _name = "ATOL"
+    _default = sys.float_info.epsilon
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1364,6 +1699,7 @@ class rtol(ConstantAccess):
     """
 
     _name = "RTOL"
+    _default = sys.float_info.epsilon
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1385,6 +1721,98 @@ class rtol(ConstantAccess):
 
         """
         return float(arg)
+
+
+class chunksize(ConstantAccess):
+    """Set the default chunksize used by `dask` arrays.
+
+    If called without any arguments then the existing chunksize is
+    returned.
+
+    .. note:: Setting the chunk size will also change the `dask`
+              global configuration value ``'array.chunk-size'``. If
+              `chunksize` is used in context manager then the `dask`
+              configuration value is only altered within that context.
+              Setting the chunk size directly from the `dask`
+              configuration API will affect subsequent data creation,
+              but will *not* change the value of `chunksize`.
+
+    .. versionaddedd:: (cfdm) 1.11.2.0
+
+    :Parameters:
+
+        arg: number or `str` or `Constant`, optional
+            The chunksize in bytes. Any size accepted by
+            `dask.utils.parse_bytes` is accepted, for instance
+            ``100``, ``'100'``, ``'1e6'``, ``'100 MB'``, ``'100M'``,
+            ``'5kB'``, ``'5.4 kB'``, ``'1kiB'``, ``'1e6 kB'``, and
+            ``'MB'`` are all valid sizes.
+
+            Note that if *arg* is a `float`, or a string that implies
+            a non-integral amount of bytes, then the integer part
+            (rounded down) will be used.
+
+            *Parameter example:*
+               A chunksize of 2 MiB may be specified as ``'2097152'``
+               or ``'2 MiB'``
+
+            *Parameter example:*
+               Chunksizes of ``'2678.9'`` and ``'2.6789 KB'`` are both
+               equivalent to ``2678``.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> print(cfdm.chunksize())
+    134217728
+    >>> old = cfdm.chunksize(1000000)
+    >>> print(cfdm.chunksize(old))
+    1000000
+    >>> print(cfdm.chunksize())
+    134217728
+    >>> with cfdm.chunksize(314159):
+    ...     print(cfdm.chunksize())
+    ...
+    314159
+    >>> print(cfdm.chunksize())
+    134217728
+
+    """
+
+    _name = "CHUNKSIZE"
+
+    # 134217728 = 128 MiB
+    _default = 134217728
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: (cfdm) 1.11.2.0
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
+
+        """
+        from dask import config
+        from dask.utils import parse_bytes
+        
+        config.set({"array.chunk-size": arg})
+        return parse_bytes(arg)
 
 
 class log_level(ConstantAccess):
@@ -1460,7 +1888,8 @@ class log_level(ConstantAccess):
     """
 
     _name = "LOG_LEVEL"
-
+    _default = logging.getLevelName(logging.getLogger().level)
+                                    
     # Define the valid log levels
     _ValidLogLevels = ValidLogLevels
 
@@ -1639,3 +2068,397 @@ def integer_dtype(n):
         dtype = np.dtype(int)
 
     return dtype
+
+
+def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
+    """Returns True if two broadcastable arrays have equal values to
+    within numerical tolerance, False otherwise.
+
+    The tolerance values are positive, typically very small numbers. The
+    relative difference (``rtol * abs(b)``) and the absolute difference
+    ``atol`` are added together to compare against the absolute difference
+    between ``a`` and ``b``.
+
+    .. versionadded:: (cfdm) 1.11.2.0
+
+    :Parameters:
+
+        a, b : array_like
+            Input arrays to compare.
+
+        atol : float, optional
+            The absolute tolerance for all numerical comparisons, By
+            default the value returned by the `atol` function is used.
+
+        rtol : float, optional
+            The relative tolerance for all numerical comparisons, By
+            default the value returned by the `rtol` function is used.
+
+    :Returns:
+
+        `bool`
+            Returns True if the arrays are equal, otherwise False.
+
+    **Examples**
+
+    >>> cfdm._numpy_allclose([1, 2], [1, 2])
+    True
+    >>> cfdm._numpy_allclose(numpy.array([1, 2]), numpy.array([1, 2]))
+    True
+    >>> cfdm._numpy_allclose([1, 2], [1, 2, 3])
+    False
+    >>> cfdm._numpy_allclose([1, 2], [1, 4])
+    False
+
+    >>> a = numpy.ma.array([1])
+    >>> b = numpy.ma.array([2])
+    >>> a[0] = numpy.ma.masked
+    >>> b[0] = numpy.ma.masked
+    >>> cfdm._numpy_allclose(a, b)
+    True
+
+    """
+    # TODO: we want to use @_manage_log_level_via_verbosity on this function
+    # but we cannot, since importing it to this module would lead to a
+    # circular import dependency with the decorators module. Tentative plan
+    # is to move the function elsewhere. For now, it is not 'loggified'.
+
+    # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
+
+    a_is_masked = np.ma.isMA(a)
+    b_is_masked = np.ma.isMA(b)
+
+    if not (a_is_masked or b_is_masked):
+        try:
+            return np.allclose(a, b, rtol=rtol, atol=atol)
+        except (IndexError, NotImplementedError, TypeError):
+            return np.all(a == b)
+    else:
+        if a_is_masked and b_is_masked:
+            if (a.mask != b.mask).any():
+                if verbose:
+                    print("Different masks (A)")
+
+                return False
+        else:
+            if np.ma.is_masked(a) or np.ma.is_masked(b):
+                if verbose:
+                    print("Different masks (B)")
+
+                return False
+
+        try:
+            return np.ma.allclose(a, b, rtol=rtol, atol=atol)
+        except (IndexError, NotImplementedError, TypeError):
+            # To prevent a bug causing some header/coord-only CDL reads or
+            # aggregations to error. See also TODO comment below.
+            if a.dtype == b.dtype:
+                out = np.ma.all(a == b)
+            else:
+                # TODO: is this most sensible? Or should we attempt dtype
+                # conversion and then compare? Probably we should avoid
+                # altogether by catching the different dtypes upstream?
+                out = False
+            if out is np.ma.masked:
+                return True
+            else:
+                return out
+
+
+def indices_shape(indices, full_shape, keepdims=True):
+    """Return the shape of the array subspace implied by indices.
+
+    **Performance**
+
+    Boolean `dask` arrays will be computed, and `dask` arrays with
+    unknown size will have their chunk sizes computed.
+
+    .. versionadded:: (cfdm) 1.11.2.0
+
+    .. seealso:: `cfdm.parse_indices`
+
+    :Parameters:
+
+        indices: `tuple`
+            The indices to be applied to an array with shape
+            *full_shape*.
+
+        full_shape: sequence of `ints`
+            The shape of the array to be subspaced.
+
+        keepdims: `bool`, optional
+            If True then an integral index is converted to a
+            slice. For instance, ``3`` would become ``slice(3, 4)``.
+
+    :Returns:
+
+        `list`
+            The shape of the subspace defined by the *indices*.
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> import dask.array as da
+
+    >>> cfdm.indices_shape((slice(2, 5), 4), (10, 20))
+    [3, 1]
+    >>> cfdm.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
+    [3, 5]
+
+    >>> index0 = [False] * 5
+    >>> index0[2:5] = [True] * 3
+    >>> cfdm.indices_shape((index0, da.arange(1, 6)), (10, 20))
+    [3, 5]
+
+    >>> index0 = da.full((5,), False, dtype=bool)
+    >>> index0[2:5] = True
+    >>> index1 = np.full((6,), False, dtype=bool)
+    >>> index1[1:6] = True
+    >>> cfdm.indices_shape((index0, index1), (10, 20))
+    [3, 5]
+
+    >>> index0 = da.arange(5)
+    >>> index0 = index0[index0 < 3]
+    >>> cfdm.indices_shape((index0, []), (10, 20))
+    [3, 0]
+
+    >>> cfdm.indices_shape((da.from_array(2), np.array(3)), (10, 20))
+    [1, 1]
+    >>> cfdm.indices_shape((da.from_array([]), np.array(())), (10, 20))
+    [0, 0]
+    >>> cfdm.indices_shape((slice(1, 5, 3), 3), (10, 20))
+    [2, 1]
+    >>> cfdm.indices_shape((slice(5, 1, -2), 3), (10, 20))
+    [2, 1]
+    >>> cfdm.indices_shape((slice(5, 1, 3), 3), (10, 20))
+    [0, 1]
+    >>> cfdm.indices_shape((slice(1, 5, -3), 3), (10, 20))
+    [0, 1]
+
+    >>> cfdm.indices_shape((slice(2, 5), 4), (10, 20), keepdims=False)
+    [3]
+    >>> cfdm.indices_shape((da.from_array(2), 3), (10, 20), keepdims=False)
+    []
+    >>> cfdm.indices_shape((2, np.array(3)), (10, 20), keepdims=False)
+    []
+
+    """
+    from dask.base import is_dask_collection
+    
+    shape = []
+    #    i = 0
+    for index, full_size in zip(indices, full_shape):
+        #    for index in indices:
+        if index is None:
+            shape.append(1)
+            continue
+
+        #        full_size = full_shape[i]
+        #        i += 1
+
+        if isinstance(index, slice):
+            start, stop, step = index.indices(full_size)
+            if (stop - start) * step < 0:
+                # E.g. 5:1:3 or 1:5:-3
+                size = 0
+            else:
+                size = abs((stop - start) / step)
+                int_size = round(size)
+                if size > int_size:
+                    size = int_size + 1
+                else:
+                    size = int_size
+        elif is_dask_collection(index) or isinstance(index, np.ndarray):
+            if index.dtype == bool:
+                # Size is the number of True values in the array
+                size = int(index.sum())
+            else:
+                size = index.size
+                if isnan(size):
+                    index.compute_chunk_sizes()
+                    size = index.size
+
+            if not keepdims and not index.ndim:
+                # Scalar array
+                continue
+        elif isinstance(index, list):
+            size = len(index)
+            if size:
+                i = index[0]
+                if isinstance(i, bool):
+                    # Size is the number of True values in the list
+                    size = sum(index)
+        else:
+            # Index is Integral
+            if not keepdims:
+                continue
+
+            size = 1
+
+        shape.append(size)
+
+    return shape
+
+
+def parse_indices(shape, indices, keepdims=True, newaxis=False):
+    """Parse indices for array access and assignment.
+
+    .. versionadded:: (cfdm) 1.11.2.0
+
+    :Parameters:
+
+        shape: sequence of `ints`
+            The shape of the array.
+
+        indices: `tuple`
+            The indices to be applied.
+
+        keepdims: `bool`, optional
+            If True then an integral index is converted to a
+            slice. For instance, ``3`` would become ``slice(3, 4)``.
+
+        newaxis: `bool`, optional
+            If True then allow *indices* to include one or more
+            `numpy.newaxis` elements. If False (the default) then
+            these elements are not allowed.
+
+    :Returns:
+
+        `list`
+            The parsed indices.
+
+    **Examples**
+
+    >>> cfdm.parse_indices((5, 8), ([1, 2, 4, 6],))
+    [array([1, 2, 4, 6]), slice(None, None, None)]
+    >>> cfdm.parse_indices((5, 8), (Ellipsis, [2, 4, 6]))
+    [slice(None, None, None), [2, 4, 6]]
+    >>> cfdm.parse_indices((5, 8), (Ellipsis, 4))
+    [slice(None, None, None), slice(4, 5, 1)]
+    >>> cfdm.parse_indices((5, 8), (Ellipsis, 4), keepdims=False)
+    [slice(None, None, None), 4]
+    >>> cfdm.parse_indices((5, 8), (slice(-2, 2)))
+    [slice(-2, 2, None), slice(None, None, None)]
+    >>> cfdm.parse_indices((5, 8), (cfdm.Data([1, 3]),))
+    [dask.array<array, shape=(2,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>, slice(None, None, None)]
+
+    """
+    parsed_indices = []
+
+    if not isinstance(indices, tuple):
+        indices = (indices,)
+
+    # Initialise the list of parsed indices as the input indices with
+    # any Ellipsis objects expanded
+    length = len(indices)
+    n = len(shape)
+    ndim = n
+    for i, index in enumerate(indices):
+        if index is Ellipsis:
+            m = n - length + 1
+            try:
+                if indices[i + 1] is np.newaxis:
+                    m += 1
+            except IndexError:
+                pass
+
+            parsed_indices.extend([slice(None)] * m)
+            n -= m
+        else:
+            parsed_indices.append(index)
+            if index is np.newaxis:
+                ndim += 1
+                length += 1
+            else:
+                n -= 1
+
+        length -= 1
+
+    len_parsed_indices = len(parsed_indices)
+    if ndim and len_parsed_indices > ndim:
+        raise IndexError(
+            f"Invalid indices {indices!r} for array with shape {shape}"
+        )
+
+    if len_parsed_indices < ndim:
+        parsed_indices.extend([slice(None)] * (ndim - len_parsed_indices))
+
+    if not ndim and parsed_indices:
+        raise IndexError(
+            "Scalar array can only be indexed with () or Ellipsis"
+        )
+
+    for i, (index, size) in enumerate(zip(parsed_indices, shape)):
+        if not newaxis and index is np.newaxis:
+            raise IndexError(
+                f"Invalid indices {indices!r} for array with shape {shape}: "
+                "New axis indices are not allowed"
+            )
+
+        if keepdims and isinstance(index, Integral):
+            # Convert an integral index to a slice
+            if index == -1:
+                index = slice(-1, None, None)
+            else:
+                index = slice(index, index + 1, 1)
+
+        elif hasattr(index, "to_dask_array"):
+            to_dask_array = index.to_dask_array
+            if callable(to_dask_array):
+                # Replace index with its Dask array
+                index = to_dask_array()
+
+        parsed_indices[i] = index
+
+    return parsed_indices
+
+
+def _DEPRECATION_ERROR_KWARGS(
+    instance,
+    method,
+    kwargs=None,
+    message="",
+    version=None,
+    removed_at=None,
+):
+    """Error handling for deprecated kwargs.
+
+    .. versionadded:: (cfdm) 1.12.0.0
+
+    """
+    if removed_at:
+        removed_at = f" and will be removed at cfdm version {removed_at}"
+
+    if not kwargs:
+        kwargs = {}
+
+    for key in kwargs:
+        raise DeprecationError(
+            f"Keyword {key!r} of method "
+            f"'{instance.__class__.__name__}.{method}' has been deprecated "
+            f"at cfdm version {version} and is no longer "
+            f"available{removed_at}. {message}"
+        )
+
+
+def _DEPRECATION_ERROR_METHOD(
+    instance, method, message="", version=None, removed_at=""
+):
+    """Error handling for deprecated kwargs methods.
+
+    .. versionadded:: (cfdm) 1.12.2.0
+
+    """
+    if version is None:
+        raise ValueError(
+            "Must set 'version' in call to _DEPRECATION_ERROR_METHOD"
+        )
+
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"{instance.__class__.__name__} method {method!r} has been deprecated "
+        f"at version {version} and is no longer available{removed_at}. "
+        f"{message}"
+    )

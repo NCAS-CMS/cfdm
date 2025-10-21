@@ -10,7 +10,7 @@ repos:
   # Use specific format-enforcing pre-commit hooks from the core library
   # with the default configuration (see pre-commit.com for documentation)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.6.0
     hooks:
       - id: check-ast
       - id: debug-statements
@@ -23,7 +23,7 @@ repos:
   # (see https://black.readthedocs.io/en/stable/ for documentation and see
   # the cfdm pyproject.toml file for our custom black configuration)
   - repo: https://github.com/ambv/black
-    rev: 23.1.0
+    rev: 24.4.2
     hooks:
       - id: black
         language_version: python3
@@ -33,8 +33,9 @@ repos:
   # https://google.github.io/styleguide/pyguide.html#381-docstrings) as much
   # as possible (see https://github.com/myint/docformatter for docs, with
   # configuration as below)
-  - repo: https://github.com/myint/docformatter
-    rev: v1.4
+#  - repo: https://github.com/myint/docformatter
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.7.6
     hooks:
       - id: docformatter
         # These arguments act as the configuration for docformatter. They:
@@ -48,7 +49,7 @@ repos:
   # be detected by the 'pydocstyle' checker
   # (see http://www.pydocstyle.org/en/stable/index.html for
   # docs and see the cfdm .pydocstyle.ini file for our custom configuration)
-  - repo: https://github.com/pycqa/pydocstyle
+  - repo: https://github.com/PyCQA/pydocstyle
     rev: 6.3.0
     hooks:
       - id: pydocstyle
@@ -59,7 +60,7 @@ repos:
   # (see https://flake8.pycqa.org/en/latest/ for documentation and see
   # the cfdm .flake8 file for our custom flake8 configuration)
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.1.0
+    rev: 7.1.0
     hooks:
       - id: flake8
 
@@ -67,8 +68,8 @@ repos:
   # (see https://pycqa.github.io/isort/ for documentation). It is fully
   # compatible with 'black' with the lines set to ensure so in the repo's
   # pyproject.toml. Other than that and the below, no extra config is required.
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
     hooks:
       - id: isort
         name: isort (python)

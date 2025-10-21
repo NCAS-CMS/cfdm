@@ -75,6 +75,7 @@ Data
    ~cfdm.CellMeasure.has_data
    ~cfdm.CellMeasure.set_data
    ~cfdm.CellMeasure.insert_dimension
+   ~cfdm.CellMeasure.persist
    ~cfdm.CellMeasure.squeeze
    ~cfdm.CellMeasure.transpose
 
@@ -93,6 +94,19 @@ Data
    ~cfdm.CellMeasure.shape
    ~cfdm.CellMeasure.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CellMeasure.get_quantization
+   ~cfdm.CellMeasure.get_quantize_on_write
+   
 Miscellaneous
 -------------
 
@@ -104,6 +118,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.CellMeasure.copy
+   ~cfdm.CellMeasure.concatenate
    ~cfdm.CellMeasure.creation_commands
    ~cfdm.CellMeasure.equals
    ~cfdm.CellMeasure.has_bounds
@@ -111,6 +126,19 @@ Miscellaneous
    ~cfdm.CellMeasure.get_filenames
    ~cfdm.CellMeasure.get_original_filenames
    ~cfdm.CellMeasure.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.CellMeasure.file_directories
+   ~cfdm.CellMeasure.replace_directory
 
 NetCDF
 ------
@@ -143,6 +171,20 @@ Groups
    ~cfdm.CellMeasure.nc_clear_variable_groups
    ~cfdm.CellMeasure.nc_set_variable_groups
 
+Dataset chunks
+^^^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CellMeasure.nc_dataset_chunksizes
+   ~cfdm.CellMeasure.nc_set_dataset_chunksizes
+   ~cfdm.CellMeasure.nc_clear_dataset_chunksizes
+
 Special
 -------
 
@@ -172,3 +214,17 @@ Docstring substitutions
    ~cfdm.CellMeasure._docstring_substitutions        
    ~cfdm.CellMeasure._docstring_package_depth        
    ~cfdm.CellMeasure._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CellMeasure.nc_clear_hdf5_chunksizes
+   ~cfdm.CellMeasure.nc_hdf5_chunksizes
+   ~cfdm.CellMeasure.nc_set_hdf5_chunksizes

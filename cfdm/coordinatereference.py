@@ -75,64 +75,6 @@ class CoordinateReference(
         instance._Datum = Datum
         return instance
 
-    def __init__(
-        self,
-        coordinates=None,
-        datum=None,
-        coordinate_conversion=None,
-        source=None,
-        copy=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            coordinates: sequence of `str`, optional
-                Identify the related dimension and auxiliary
-                coordinate constructs by their construct
-                identifiers.
-
-                The coordinates may also be set after initialisation
-                with the `set_coordinates` and `set_coordinate`
-                methods.
-
-                *Parameter example:*
-                  ``coordinates=['dimensioncoordinate2']``
-
-                *Parameter example:*
-                  ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1')``
-
-            datum: `Datum`, optional
-                Set the datum component of the coordinate reference
-                construct.
-
-                The datum may also be set after initialisation with
-                the `set_datum` method.
-
-            coordinate_conversion: `CoordinateConversion`, optional
-                Set the coordinate conversion component of the
-                coordinate reference construct.
-
-                The coordinate conversion may also be set after
-                initialisation with the `set_coordinate_conversion`
-                method.
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            coordinates=coordinates,
-            datum=datum,
-            coordinate_conversion=coordinate_conversion,
-            source=source,
-            copy=copy,
-        )
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
-
     def __str__(self):
         """Called by the `str` built-in function.
 
@@ -165,7 +107,14 @@ class CoordinateReference(
             yield f"ncvar%{ncvar}"
 
     def creation_commands(
-        self, namespace=None, indent=0, string=True, name="c", header=True
+        self,
+        namespace=None,
+        indent=0,
+        string=True,
+        name="c",
+        datum_name="d",
+        coordinate_conversion_name="f",
+        header=True,
     ):
         """Returns the commands to create the coordinate reference.
 
@@ -216,6 +165,13 @@ class CoordinateReference(
         c.coordinate_conversion.set_domain_ancillaries({'a': 'domainancillary0', 'b': 'domainancillary1', 'orog': 'domainancillary2'})
 
         """
+        if name in (datum_name, coordinate_conversion_name):
+            raise ValueError(
+                "The 'name' parameter can not have the same value as "
+                "either of the 'datum_name' or 'coordinate_conversion_name': "
+                f"parameters: {name!r}"
+            )
+
         namespace0 = namespace
         if namespace is None:
             namespace = self._package() + "."
@@ -241,40 +197,32 @@ class CoordinateReference(
         if coordinates:
             out.append(f"{name}.set_coordinates({coordinates})")
 
-        for term, value in self.datum.parameters().items():
-            if isinstance(value, self._Data):
-                value = value.creation_commands(
-                    name=None,
-                    namespace=namespace0,
-                    indent=0,
+        datum = self.datum
+        if datum:
+            out.extend(
+                datum.creation_commands(
                     string=False,
-                    header=header,
-                )
-            else:
-                value = repr(value)
-
-            out.append(f"{name}.datum.set_parameter({term!r}, {value})")
-
-        for term, value in self.coordinate_conversion.parameters().items():
-            if isinstance(value, self._Data):
-                value = value.creation_commands(
-                    name=None,
+                    indent=indent,
                     namespace=namespace0,
-                    indent=0,
-                    string=False,
-                    header=header,
+                    name=datum_name,
+                    header=False,
                 )
-            else:
-                value = repr(value)
-
-            out.append(
-                f"{name}.coordinate_conversion.set_parameter({term!r}, {value})"
             )
+            out.append(f"{name}.set_datum({datum_name})")
 
-        domain_ancillaries = self.coordinate_conversion.domain_ancillaries()
-        if domain_ancillaries:
+        coordinate_conversion = self.coordinate_conversion
+        if coordinate_conversion:
+            out.extend(
+                coordinate_conversion.creation_commands(
+                    string=False,
+                    indent=indent,
+                    namespace=namespace0,
+                    name=coordinate_conversion_name,
+                    header=False,
+                )
+            )
             out.append(
-                f"{name}.coordinate_conversion.set_domain_ancillaries({domain_ancillaries})"
+                f"{name}.set_coordinate_conversion({coordinate_conversion_name})"
             )
 
         if string:

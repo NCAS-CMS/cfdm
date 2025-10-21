@@ -1,34 +1,11 @@
+import numpy as np
+
 from ..cfdmimplementation import implementation
+from .abstract import ReadWrite
 from .netcdf import NetCDFWrite
 
-_implementation = implementation()
 
-
-def write(
-    fields,
-    filename,
-    fmt="NETCDF4",
-    mode="w",
-    overwrite=True,
-    global_attributes=None,
-    variable_attributes=None,
-    file_descriptors=None,
-    external=None,
-    Conventions=None,
-    datatype=None,
-    least_significant_digit=None,
-    endian="native",
-    compress=0,
-    fletcher32=False,
-    shuffle=True,
-    string=True,
-    verbose=None,
-    warn_valid=True,
-    group=True,
-    coordinates=False,
-    omit_data=None,
-    _implementation=_implementation,
-):
+class write(ReadWrite):
     """Write field and domain constructs to a netCDF file.
 
     **File format**
@@ -52,9 +29,9 @@ def write(
 
     The domain axis construct has the following methods to get, set
     and remove a netCDF dimension name:
-    `~cfdm.DomainAxis.nc_get_dimension`,
-    `~cfdm.DomainAxis.nc_set_dimension` and
-    `~cfdm.DomainAxis.nc_del_dimension`.
+    `~{{package}}.DomainAxis.nc_get_dimension`,
+    `~{{package}}.DomainAxis.nc_set_dimension` and
+    `~{{package}}.DomainAxis.nc_del_dimension`.
 
     **NetCDF attributes**
 
@@ -74,12 +51,11 @@ def write(
 
     Domain axis constructs that correspond to NetCDF unlimited
     dimensions may be accessed with the
-    `~cfdm.DomainAxis.nc_is_unlimited` and
-    `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
-    construct.
+    `~{{package}}.DomainAxis.nc_is_unlimited` and
+    `~{{package}}.DomainAxis.nc_set_unlimited` methods of a domain
+    axis construct.
 
-
-    **NetCDF hierarchical groups**
+    **NetCDF4 hierarchical groups**
 
     Hierarchical groups in CF provide a mechanism to structure
     variables within netCDF4 datasets with well defined rules for
@@ -88,17 +64,19 @@ def write(
     netCDF interface will, by default, be recreated in the output
     dataset. See the *group* parameter for details.
 
+    **NetCDF4 dataset chunks**
 
-    **NetCDF4 HDF chunksizes**
-
-    HDF5 chunksizes may be set on construct's data. See the
-    `~cfdm.Data.nc_hdf5_chunksizes`,
-    `~cfdm.Data.nc_clear_hdf5_chunksizes` and
-    `~cfdm.Data.nc_set_hdf5_chunksizes` methods of a `Data` instance.
+    Dataset chunking is configured by the *dataset_chunks* parameter,
+    which defines the chunking strategy for all output data, including
+    the option of no chunking. However, this will be overridden for
+    any data that defines its own chunking strategy. See
+    `{{package}}.Field.nc_set_dataset_chunksizes`,
+    `{{package}}.Data.nc_set_dataset_chunksizes`, and
+    `{{package}}.read`.
 
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `read`
+    .. seealso:: `{{package}}.read`
 
     :Parameters:
 
@@ -151,14 +129,15 @@ def write(
             2GB) except ``'NETCDF3_CLASSIC'``.
 
             ``'NETCDF3_64BIT_DATA'`` is a format that requires version
-            4.4.0 or newer of the C library (use `cfdm.environment` to
-            see which version if the netCDF-C library is in use). It
-            extends the ``'NETCDF3_64BIT_OFFSET'`` binary format to
-            allow for unsigned 64 bit integer data types and 64-bit
-            dimension sizes.
+            4.4.0 or newer of the C library (use
+            `{{package}}.environment` to see which version of the
+            netCDF-C library is in use). It extends the
+            ``'NETCDF3_64BIT_OFFSET'`` binary format to allow for
+            unsigned 64 bit integer data types and 64-bit dimension
+            sizes.
 
             ``'NETCDF4_CLASSIC'`` files use the version 4 disk format
-            (HDF5), but omits features not found in the version 3
+            (HDF5), but omit features not found in the version 3
             API. They can be read by HDF5 clients. They can also be
             read by netCDF3 clients only if they have been re-linked
             against the netCDF4 library.
@@ -233,19 +212,19 @@ def write(
              conventions is defined then this is used instead.
 
              *Parameter example:*
-               ``Conventions='UGRID-1.0'``
+               ``Conventions='ACDD-1.3'``
 
              *Parameter example:*
-               ``Conventions=['UGRID-1.0']``
+               ``Conventions=['CMIP-6.2']``
 
              *Parameter example:*
-               ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
+               ``Conventions=['CMIP-6.2', 'ACDD-1.3']``
 
              *Parameter example:*
-               ``Conventions='CF-1.7'``
+               ``Conventions='CF-1.12'``
 
              *Parameter example:*
-               ``Conventions=['CF-1.7', 'UGRID-1.0']``
+               ``Conventions=['CF-1.12', 'CMIP-6.2']``
 
              Note that if the ``Conventions`` property is set on a
              field construct then it is ignored.
@@ -260,7 +239,7 @@ def write(
              attribute, even if it has been specified by the
              *global_attributes* parameter, or has been flagged as
              global on any of the field constructs (see
-             `cfdm.Field.nc_global_attributes` for details).
+             `{{package}}.Field.nc_global_attributes` for details).
 
              Identification of the conventions being adhered to by the
              file are not specified as a file descriptor, but by the
@@ -287,7 +266,7 @@ def write(
 
              * properties flagged as global on any of the field
                constructs being written (see
-               `cfdm.Field.nc_global_attributes` for details).
+               `{{package}}.Field.nc_global_attributes` for details).
 
              Note that it is not possible to create a netCDF global
              attribute from a property that has different values for
@@ -370,18 +349,14 @@ def write(
               ``endian='big'``
 
         compress: `int`, optional
-            Regulate the speed and efficiency of compression. Must be
-            an integer between ``0`` and ``9``. ``0`` means no
-            compression; ``1`` is the fastest, but has the lowest
-            compression ratio; ``9`` is the slowest but best
-            compression ratio. The default value is ``0``. An error is
-            raised if compression is requested for a netCDF3 output
-            file format. See the `netCDF4 package
-            <http://unidata.github.io/netcdf4-python>`_ for more
-            details.
+            Regulate the speed and efficiency of zlib
+            compression. Must be an integer between ``0`` and
+            ``9``. ``0`` means no compression; ``1`` is the fastest,
+            but has the lowest compression ratio; ``9`` is the slowest
+            but best compression ratio. The default value is ``4``.
 
             *Parameter example:*
-              ``compress=4``
+              ``compress=0``
 
         least_significant_digit: `int`, optional
             Truncate the input field construct data arrays, but not
@@ -397,6 +372,31 @@ def write(
 
             *Parameter example:*
               ``least_significant_digit=3``
+
+        chunk_cache: `int` or `None`, optional
+            The amount of memory (in bytes) used in each variable's
+            chunk cache at the HDF5 level.
+
+            Ignored when not writing to a netCDF-4 format. By default,
+            or if `None`, the default netCDF-C chunk cache size of
+            16777216 bytes (i.e. 16 MiB) is used. Changing this has no
+            effect on the new netCDF-4 file on disk, but may be used
+            to prevent the available memory from filling up when a
+            very large number of netCDF-4 variables are being
+            created. Note the changing the size of the per-variable
+            chunk cache has the potential to seriously degrade
+            performance, although that may be preferable to the write
+            process failing due to lack of memory.
+
+            For instance, if 1024 netCDF-4 variables are being
+            created, then by default 17179869184 bytes (i.e. 16 GiB)
+            of memory will be needed for their chunk caches, and if
+            this is too much then the chunk cache should be reduced.
+
+            See the netCDF-C library documentation for
+            `nc_set_var_chunk_cache` for details.
+
+            .. versionadded:: (cfdm) 1.12.2.0
 
         fletcher32: `bool`, optional
             If True then the Fletcher-32 HDF5 checksum algorithm is
@@ -441,15 +441,17 @@ def write(
             * ``'DETAIL'`` (``3``)
             * ``'DEBUG'`` (``-1``)
 
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
+            set for the duration of the method call only as the
+            minimum cut-off for the verboseness level of displayed
+            output (log) messages, regardless of the
+            globally-configured `{{package}}.log_level`.  Note that
+            increasing numerical value corresponds to increasing
+            verbosity, with the exception of ``-1`` as a special case
+            of maximal and extreme verbosity.
 
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
+            Otherwise, if `None` (the default value), output messages
+            will be shown according to the value of the
+            `{{package}}.log_level` setting.
 
             Overall, the higher a non-negative integer or equivalent string
             that is set (up to a maximum of ``3``/``'DETAIL'``) for
@@ -502,7 +504,7 @@ def write(
             variables' attributes, but does not create data on disk
             for the requested variables. The resulting file will be
             smaller than it otherwise would have been, and when the
-            new file is read then the data of these variables will be
+            new file is read the data of these variables will be
             represented by an array of all missing data.
 
             The *omit_data* parameter may be one, or a sequence, of:
@@ -516,6 +518,8 @@ def write(
             ``'dimension_coordinate'``  Dimension coordinate constructs
             ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
             ``'cell_measure'``          Cell measure constructs
+            ``'domain_topology'``       Domain topology constructs
+            ``'cell_connectivity'``     Cell connectivity constructs
             ``'all'``                   All of the above constructs
             ==========================  ===============================
 
@@ -530,6 +534,208 @@ def write(
 
             .. versionadded:: (cfdm) 1.10.0.1
 
+        dataset_chunks: `str` or `int` or `float`, optional
+            The dataset chunking strategy for data arrays being written
+            to the file.
+
+            By default, *dataset_chunks* is ``'4 MiB'``, i.e. 4194304
+            bytes.
+
+            If any `Data` being written already stores its own dataset
+            chunking strategy (i.e. its `Data.nc_dataset_chunksizes`
+            method returns something other than `None`) then, for that
+            data array alone, it is used in preference to the strategy
+            defined by the *dataset_chunks* parameter.
+
+            Ignored for netCDF3 output formats, for which all data is
+            always written out contiguously.
+
+            .. note:: By default, a data array returned by
+                      `{{package}}.read` stores its dataset chunking
+                      strategy from the file being read. When this
+                      happens that same dataset chunking strategy will
+                      be used when the data is written to a new
+                      netCDF4 file, unless the strategy was modified
+                      or removed prior to writing. To prevent the
+                      dataset chunking strategy from the original file
+                      being stored, see the *store_dataset_chunks*
+                      parameter to `{{package}}.read`.
+
+            The *dataset_chunks* parameter may be one of:
+
+            * ``'contiguous'``
+
+              The data will written to the file contiguously, i.e. no
+              chunking.
+
+            * `int` or `float` or `str`
+
+              The size in bytes of the dataset chunks. A floating
+              point value is rounded down to the nearest integer, and
+              a string represents a quantity of byte
+              units. "Square-like" chunk shapes are preferred,
+              maximising the amount of chunks that are completely
+              filled with data values. For instance a chunksize of
+              1024 bytes may be specified with any of ``1024``,
+              ``1024.9``, ``'1024'``, ``'1024.9'``, ``'1024 B'``, ``'1
+              KiB'``, ``'0.001024 MB'``, etc. Recognised byte units
+              are (case insensitive): ``B``, ``KiB``, ``MiB``,
+              ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
+              ``TB``, and ``PB``. Spaces in strings are optional.
+
+            .. note:: When the dataset chunk size is defined by a
+                      number of bytes (taken either from the
+                      *dataset_chunks* parameter, or as stored by the
+                      data itself), "square-like" dataset chunk shapes
+                      are preferred that maximise the amount of chunks
+                      that are completely filled with data values. For
+                      example, with *dataset_chunks* of ``'4 MiB'``, a
+                      data array of 64-bit floats with shape (400,
+                      300, 60) will be written with 20 dataset chunks,
+                      each of which contains (93, 93, 60)
+                      elements. The first axis is split across 5
+                      chunks, the second axis across 4 chunks, and the
+                      third axis across 1 chunk containing 60
+                      elements. 12 of these chunks are completely
+                      filled with 93*93*60 data values (93*93*60*8 B =
+                      3.9592 MiB), whilst the remaining 8 chunks at
+                      the "edges" of the array contain only 93*21*60,
+                      28*93*60, or 28*21*60 data values. The shape of
+                      the dataset chunks is based on the shape of the
+                      data array and its data type, and is calculated
+                      internally with the
+                      `dask.array.core.normalize_chunks` function. The
+                      use of native compression (see the *compress*
+                      parameter) does not affect the dataset chunk
+                      size.
+
+            .. versionadded:: (cfdm) 1.12.0.0
+
+        cfa: `str` or `dict` or `None`, optional
+            Specify which netCDF variables, if any, should be written
+            as CF-netCDF aggregation variables.
+
+            By default, *cfa* is the string ``'auto'``, meaning that a
+            construct that was previously read from a CF-netCDF
+            aggregation variable will be written as an aggregation
+            variable, provided that its data have not been changed in
+            ways which prevent the encoding, in which case a normal
+            non-aggregation variable will be written. This default, as
+            well as other options, can be configured by setting *cfa*
+            to a dictionary.
+
+            .. note:: If the intention is to create aggregation
+                      variables from fields read from disk, then it is
+                      strongly recommended to use the *cfa_write*
+                      parameter to `{{package}}.read`, in order to set
+                      up the conditions in which a CF-netCDF
+                      aggregation encoding is possible.
+
+            If *cfa* is `None` or a (sequence of) `str` then it
+            defines which types of constructs are to be written as CF
+            aggregation variables:
+
+            ==========================  ===============================
+            *cfa*                       Constructs
+            ==========================  ===============================
+            ``'auto'``                  **This is the default**. Any
+                                        construct whose data is
+                                        unchanged from having been
+                                        previously read from a
+                                        CF-netCDF aggregation
+                                        variable.
+
+            `None`                      No aggregation variables will
+                                        be created.
+
+            ``'field'``                 Field constructs
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ``'domain_topology'``       Domain topology constructs
+            ``'cell_connectivity'``     Cell connectivity constructs
+            ``'all'``                   All constructs
+            ==========================  ===============================
+
+            If *cfa* is a dictionary then it is used to explicitly
+            configure the writing of aggregation variables. It may
+            have some or all of the following keys:
+
+            * ``'constructs'``: `None`, `dict` or (sequence of) `str`
+
+              The types of construct to be written as aggregation
+              variables.
+
+              If the value is `None` or a (sequence of) `str` then the
+              types are the same as if the *cfa* parameter itself was
+              set to that value (see the table above). If the
+              ``'constructs'`` key is missing then ``'auto'`` is
+              assumed.
+
+              If the value is a `dict` then each of its keys defines a
+              construct type (see the table above), with a value that
+              specifies the number of dimensions that a construct of
+              that type must also have if it is to be written as an
+              aggregation variable. A value of `None` means no
+              restriction on the number of dimensions.
+
+              *Example:*
+                Equivalent ways to only write cell measure constructs
+                as aggregation variables: ``{'constructs':
+                'cell_measure'}``, ``{'constructs': ['cell_measure']}``,
+                ``{'cell_measure': None}``.
+
+              *Example:*
+                Equivalent ways to only write field and auxiliary
+                coordinate constructs as aggregation variables:
+                ``{'constructs': ('field', 'auxiliary_coordinate')}``
+                and ``{'constructs': {'field': None,
+                'auxiliary_coordinate': None}}``.
+
+              *Example:*
+                To only write two-dimensional auxiliary coordinate
+                constructs as aggregation variables: ``{'constructs':
+                {'auxiliary_coordinate': 2}}``.
+
+              *Example:*
+                Write two-dimensional auxiliary coordinate constructs
+                as aggregation variables, and also all field
+                constructs: ``{'constructs': {'auxiliary_coordinate':
+                2, 'field': None}}``.
+
+              *Example:*
+                 Write any three-dimensional construct whose data is
+                 unchanged from having been previously read from a
+                 CF-netCDF aggregation variable: ``{'constructs':
+                 {'auto': 3}}``.
+
+            * ``'uri'``: `str`
+
+              Specify the URI format of the fragment file names.
+
+              If ``'default'`` (the default) then the fragment file
+              names will be written with the same URI formats that
+              they had when read from input files (for file names
+              originating from the reading of normal non-aggregation
+              variables, this will result in absolute URIs). If
+              ``'absolute'`` then all fragment file names will be
+              written as absolute URIs. If ``'relative'`` then all
+              fragment file names will be written as relative-path URI
+              references URIs, relative to the location of the
+              aggregation file.
+
+            * ``'strict'``: `bool`
+
+              If True (the default if this key is missing) then an
+              exception is raised if it is not possible to create an
+              aggregation variable from any construct identified by
+              the ``'constructs'`` option. If False then a normal,
+              non-aggregation variable will be written in this case.
+
+            .. versionadded:: (cfdm) 1.11.2.0
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
@@ -540,21 +746,83 @@ def write(
 
     **Examples**
 
-    >>> cfdm.write(f, 'file.nc')
+    >>> {{package}}.write(f, 'file.nc')
 
-    >>> cfdm.write(f, 'file.nc', fmt='NETCDF3_CLASSIC')
+    >>> {{package}}.write(f, 'file.nc', fmt='NETCDF3_CLASSIC')
 
-    >>> cfdm.write(f, 'file.nc', external='cell_measures.nc')
+    >>> {{package}}.write(f, 'file.nc', external='cell_measures.nc')
 
-    >>> cfdm.write(f, 'file.nc', Conventions='CMIP-6.2')
+    >>> {{package}}.write(f, 'file.nc', Conventions='CMIP6')
 
     """
-    # ----------------------------------------------------------------
-    # Initialise the netCDF write object
-    # ----------------------------------------------------------------
-    netcdf = NetCDFWrite(_implementation)
 
-    if fields:
+    implementation = implementation()
+
+    def __new__(
+        cls,
+        fields,
+        filename,
+        fmt="NETCDF4",
+        mode="w",
+        overwrite=True,
+        global_attributes=None,
+        variable_attributes=None,
+        file_descriptors=None,
+        external=None,
+        Conventions=None,
+        datatype=None,
+        single=False,
+        double=False,
+        least_significant_digit=None,
+        chunk_cache=None,
+        endian="native",
+        compress=4,
+        fletcher32=False,
+        shuffle=True,
+        reference_datetime=None,
+        string=True,
+        verbose=None,
+        warn_valid=True,
+        group=True,
+        coordinates=False,
+        omit_data=None,
+        dataset_chunks="4 MiB",
+        cfa="auto",
+        extra_write_vars=None,
+    ):
+        """Write field and domain constructs to a netCDF file."""
+        # Flatten the sequence of intput fields
+        fields = tuple(cls._flat(fields))
+        if not fields:
+            raise ValueError(
+                "Must provide at least one Field or Domain to be written "
+            )
+
+        # Parse double and single
+        if datatype and (single or double):
+            raise ValueError(
+                "Can't set 'datatype' at the same time as "
+                "'single' or 'double'"
+            )
+
+        if single:
+            if double:
+                raise ValueError(
+                    "Can't set both the 'single' and 'double' parameters"
+                )
+
+            datatype = {
+                np.dtype(float): np.dtype("float32"),
+                np.dtype(int): np.dtype("int32"),
+            }
+
+        if double:
+            datatype = {
+                np.dtype("float32"): np.dtype(float),
+                np.dtype("int32"): np.dtype(int),
+            }
+
+        netcdf = NetCDFWrite(cls.implementation)
         netcdf.write(
             fields,
             filename,
@@ -568,15 +836,19 @@ def write(
             Conventions=Conventions,
             datatype=datatype,
             least_significant_digit=least_significant_digit,
+            chunk_cache=chunk_cache,
             endian=endian,
             compress=compress,
             shuffle=shuffle,
+            reference_datetime=reference_datetime,
             fletcher32=fletcher32,
             string=string,
             verbose=verbose,
             warn_valid=warn_valid,
             group=group,
             coordinates=coordinates,
-            extra_write_vars=None,
+            extra_write_vars=extra_write_vars,
             omit_data=omit_data,
+            dataset_chunks=dataset_chunks,
+            cfa=cfa,
         )

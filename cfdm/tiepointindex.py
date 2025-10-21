@@ -24,6 +24,8 @@ class TiePointIndex(
 
     {{netCDF variable}}
 
+    {{netCDF dataset chunks}}
+
     The netCDF subsampled dimension name may be accessed with the
     `nc_set_subsampled_dimension`, `nc_get_subsampled_dimension`,
     `nc_del_subsampled_dimension` and `nc_has_subsampled_dimension`
@@ -53,39 +55,6 @@ class TiePointIndex(
     .. seealso:: `InterpolationParameter`
 
     """
-
-    def __init__(
-        self,
-        properties=None,
-        data=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                  ``properties={'long_name': 'uncompression indices'}``
-
-            {{init data: data_like, optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
 
     def dump(
         self,

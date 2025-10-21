@@ -40,13 +40,6 @@ class LinearSubarrayTest(unittest.TestCase):
         with self.assertRaises(AttributeError):
             x.get_filename()
 
-    def test_LinearSubarray_get_filenames(self):
-        """Test LinearSubarray.get_filenames."""
-        x = cfdm.LinearSubarray(
-            data=123, parameters={}, dependent_tie_points={}
-        )
-        self.assertEqual(x.get_filenames(), ())
-
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

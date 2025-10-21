@@ -1,10 +1,34 @@
+import atexit
 import datetime
 import faulthandler
+import os
+import tempfile
 import unittest
+
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
+
+n_tmpfiles = 1
+tmpfiles = [
+    tempfile.mkstemp("_test_Domain.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+(tmpfile,) = tmpfiles
+
+
+def _remove_tmpfiles():
+    """Remove temporary files created during tests."""
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+
+atexit.register(_remove_tmpfiles)
 
 
 class DomainTest(unittest.TestCase):
@@ -198,6 +222,40 @@ class DomainTest(unittest.TestCase):
                 )
             ),
         )
+
+    def test_Domain_persist(self):
+        """Test Domain.persist."""
+        f = cfdm.example_field(0)
+        cfdm.write(f, tmpfile)
+        f = cfdm.read(tmpfile, dask_chunks=3)[0][:2, :2].domain
+
+        on_disk = False
+        for k, v in f.coordinate("longitude").data.todict().items():
+            if isinstance(v, cfdm.data.abstract.FileArray):
+                on_disk = True
+                break
+
+        self.assertTrue(on_disk)
+
+        g = f.persist()
+        in_memory = False
+        for v in g.coordinate("longitude").data.todict().values():
+            if isinstance(v, np.ndarray):
+                in_memory = True
+                break
+
+        self.assertTrue(in_memory)
+
+        # In-place and metdata
+        f = cfdm.read(tmpfile)[0].domain
+        self.assertIsNone(f.persist(inplace=True))
+        in_memory = False
+        for v in f.coordinate("longitude").data.todict().values():
+            if isinstance(v, np.ndarray):
+                in_memory = True
+                break
+
+        self.assertTrue(in_memory)
 
 
 if __name__ == "__main__":

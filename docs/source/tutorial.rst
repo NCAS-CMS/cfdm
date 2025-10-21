@@ -61,7 +61,7 @@ the `cfdm.CF` function:
    :caption: *Retrieve the version of the CF conventions.*
       
    >>> cfdm.CF()
-   '1.11'
+   '1.12'
 
 This indicates which version of the CF conventions are represented by
 this release of the cfdm package, and therefore the version can not be
@@ -113,11 +113,11 @@ instance or `cfdm.Domain` instance respectively. Henceforth the phrase
 ----------------------------------------------------
 
 The `cfdm.read` function reads a `netCDF
-<https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
-from an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, and by
-default returns the contents as a Python list of zero or more field
-constructs. This list contains a field construct to represent each of
-the CF-netCDF data variables in the file.
+<https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, from
+an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, or from an S3
+object store, and by default returns the contents as a Python list of
+zero or more field constructs. This list contains a field construct to
+represent each of the CF-netCDF data variables in the file.
 
 Datasets of any version of CF up to and including CF-|version| can be
 read.
@@ -129,7 +129,7 @@ shell parameter expansions are applied to it.
 
 The following file types can be read:
 
-* All formats of netCDF3 and netCDF4 files can be read, containing
+* All formats of netCDF-3 and netCDF-4 files can be read, containing
   datasets for all versions of CF up to CF-|version|, including
   :ref:`UGRID <UGRID-mesh-topologies>` datasets.
 
@@ -151,6 +151,14 @@ datasets <Sample-datasets>`), which contains two field constructs:
    <type 'list'>
    >>> len(x)
    2
+
+..
+
+* Datasets in `Zarr v2 (xarray-style)
+  <https://docs.xarray.dev/en/latest/internals/zarr-encoding-spec.html>`_
+  and `Zarr v3
+  <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
+  formats.
 
 Descriptive properties are always read into memory, but `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
@@ -184,7 +192,10 @@ The `cfdm.read` function has optional parameters to
   attributes are present (see :ref:`data masking <Data-mask>`); and
 
 * display information and issue warnings about the mapping of the
-  netCDF file contents to CF data model constructs.
+  netCDF file contents to CF data model constructs; and
+
+* choose either `netCDF4` or `h5netcdf` backends for accessing netCDF
+  files.
 
 .. _CF-compliance:
 
@@ -537,8 +548,9 @@ properties may be removed with the `~Field.clear_properties` and
     'standard_name': 'air_temperature',
     'units': 'K'}
 
-All of the methods related to the properties are listed :ref:`here
-<Field-Properties>`.
+
+All of the methods related to the properties are listed
+:ref:`here <Field-Properties>`.
 
 ----
 
@@ -2853,19 +2865,20 @@ All the of above examples use arrays in memory to construct the data
 instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The
 `cfdm.read` function creates data in this manner. A pointer to an
-array in a netCDF file can be stored in a `~cfdm.NetCDFArray`
-instance, which is is used to initialise a `~cfdm.Data` instance.
+array in a netCDF file can be stored in a `~cfdm.NetCDF4Array` or
+`~cfdm.H5netcdfAarray` instance, which is used to initialise a
+`~cfdm.Data` instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package
-             and use it to create a NetCDFArray instance with which to
+             and use it to create a NetCDF4Array instance with which to
              initialise a Data instance.*
 		
    >>> import netCDF4
    >>> nc = netCDF4.Dataset('file.nc', 'r')
    >>> v = nc.variables['ta']
-   >>> netcdf_array = cfdm.NetCDFArray(filename='file.nc', address='ta',
-   ...	                               dtype=v.dtype, shape=v.shape)
+   >>> netcdf_array = cfdm.NetCDF4Array(filename='file.nc', address='ta',
+   ...	                                dtype=v.dtype, shape=v.shape)
    >>> data_disk = cfdm.Data(netcdf_array)
 
   
@@ -2881,7 +2894,7 @@ instance, which is is used to initialise a `~cfdm.Data` instance.
 
 Note that data type, number of dimensions, dimension sizes and number
 of elements of the array on disk that are used to initialise the
-`~cfdm.NetCDFArray` instance are those expected by the CF data model,
+`~cfdm.NetCDF4Array` instance are those expected by the CF data model,
 which may be different to those of the netCDF variable in the file
 (although they are the same in the above example). For example, a
 netCDF character array of shape ``(12, 9)`` is viewed in cfdm as a
@@ -4210,8 +4223,8 @@ One or more external files may also be included with :ref:`cfdump
 ---------------
 
 The CF conventions have support for saving space by identifying
-unwanted missing data.  Such compression techniques store the data
-more efficiently and result in no precision loss. The CF data model,
+unwanted missing data. Such compression techniques store the data more
+efficiently and result in no precision loss. The CF data model,
 however, views compressed arrays in their uncompressed form.
 
 Therefore, the field construct contains :term:`domain axis constructs`
@@ -4912,7 +4925,6 @@ coordinate's `Data` object:
    :caption: *Get subspaces based on indices of the uncompressed
              data.*
 
-
    >>> lon = f.construct('longitude')
    >>> d = lon.data.source()
    >>> d.get_tie_point_indices()
@@ -4923,7 +4935,55 @@ coordinate's `Data` object:
 
 It is not yet, as of version 1.10.0.0, possible to write to disk a
 field construct with compression by coordinate subsampling.
-   
+
+.. _Lossy-compression-via-quantization:
+
+Lossy compression via quantization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`Lossy compression via quantization`_ eliminates false precision,
+usually by rounding the least significant bits of floating-point
+mantissas to zeros, so that a subsequent compression on disk is more
+efficient. Quantization is described by the following parameters:
+
+* The ``algorithm`` parameter names a specific quantization algorithm.
+
+* The ``implementation`` parameter contains unstandardised text that
+  concisely conveys the algorithm provenance including the name of the
+  library or client that performed the quantization, the software
+  version, and any other information required to disambiguate the
+  source of the algorithm employed. The text must take the form
+  ``software-name version version-string [(optional-information)]``.
+
+* The retained precision of the algorithm is defined with either the
+  ``quantization_nsb`` or ``quantization_nsd`` parameter.
+
+If quantization has been applied to the data, then it may be described
+with in a `Quantization` object, accessed via the construct's
+`!get_quantization` method. To apply quantization at the time of
+writing the data to disk, use the construct's `!set_quantize_on_write`
+method:
+
+.. code-block:: python
+   :caption: *Lossy compression via quantization.*
+
+   >>> q, t = cfdm.read('file.nc')
+   >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
+   >>> cfdm.write(t, 'quantized.nc')
+   >>> quantized = cfdm.read('quantized.nc')[0]
+   >>> c = quantized.get_quantization()
+   >>> c
+   <Quantization: _QuantizeBitGroomNumberOfSignificantDigits=1, algorithm=bitgroom, implementation=libnetcdf version 4.9.4-development, quantization_nsd=1>
+   >>> c.parameters()
+   {'algorithm': 'bitgroom',
+    'implementation': 'libnetcdf version 4.9.4-development',
+    '_QuantizeBitGroomNumberOfSignificantDigits': np.int32(1),
+    'quantization_nsd': np.int64(1)}
+   >>> t[0, 0, 0].array
+   array([[[262.8]]])
+   >>> quantized[0, 0, 0].array
+   array([[[256.]]])
+
 ----
 
 .. _Controlling-output-messages:
@@ -5079,3 +5139,4 @@ if any, are filtered out.
 .. _domain topology construct:                   https://cfconventions.org/cf-conventions/cf-conventions.html#data-model-domain-topology
 .. _cell connectivity construct:                 https://cfconventions.org/cf-conventions/cf-conventions.html#data-model-cell-connectivity
 .. _UGRID:                                       https://cfconventions.org/cf-conventions/cf-conventions.html#ugrid-conventions
+.. _Lossy compression via quantization:          https://cfconventions.org/cf-conventions/cf-conventions.html#lossy-compression-via-quantization

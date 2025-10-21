@@ -57,9 +57,6 @@ class DocstringTest(unittest.TestCase):
                 set(
                     _get_all_abbrev_subclasses(cfdm.data.abstract.array.Array)
                 ),
-                [  # other key classes not in subclass heirarchy above
-                    cfdm.data.NumpyArray
-                ],
             )
         )
 
@@ -191,9 +188,10 @@ class DocstringTest(unittest.TestCase):
                         f.__doc__,
                         f"\n\nCLASS: {klass}\n"
                         f"METHOD NAME: {name}\n"
-                        f"METHOD: {f}\n__doc__: {f.__doc__}",
+                        f"METHOD: {f}",
                     )
 
+                    # if f.__doc__ is not None:
                     self.assertNotIn(
                         "{{",
                         f.__doc__,
@@ -203,7 +201,7 @@ class DocstringTest(unittest.TestCase):
                     )
 
     def test_docstring_package(self):
-        """Test the docstring substitution of the pacakage name."""
+        """Test the docstring substitution of the package name."""
         string = f">>> f = {self.package}."
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):

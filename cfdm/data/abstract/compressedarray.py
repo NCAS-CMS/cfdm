@@ -1,7 +1,14 @@
+import time
+s = time.time()
+print('0 compressedarray', time.time()-s)
 import numpy as np
+print('1 compressedarray', time.time()-s)
 
+from ..netcdfindexer import netcdf_indexer
+print('2 compressedarray', time.time()-s)
 from .array import Array
 
+print('3 compressedarray', time.time()-s)
 
 class DeprecationError(Exception):
     """Deprecation error."""
@@ -189,10 +196,15 @@ class CompressedArray(Array):
             )
             u[u_indices] = subarray[...]
 
-        if indices is Ellipsis:
-            return u
-
-        return self.get_subspace(u, indices, copy=True)
+        u = netcdf_indexer(
+            u,
+            mask=False,
+            unpack=False,
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=False,
+        )
+        return u[indices]
 
     def _first_or_last_element(self, indices):
         """Return the first or last element of the compressed array.
@@ -332,7 +344,10 @@ class CompressedArray(Array):
         if ca is None:
             raise ValueError("There is no underlying compressed array")
 
-        return ca.array
+        try:
+            return ca.array
+        except AttributeError:
+            return ca
 
     def get_compressed_axes(self):
         """Return axes that are compressed in the underlying array.
@@ -433,27 +448,45 @@ class CompressedArray(Array):
         """
         return {"data": self.source().copy()}
 
-    def get_filenames(self):
-        """Return the names of any files containing the compressed data.
+    def get_filename(self, normalise=False, default=AttributeError()):
+        """Return the name of the file containing the compressed data.
 
         .. versionadded:: (cfdm) 1.10.0.2
 
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) 1.12.0.0
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no file name.
+
+                {{default Exception}}
+
+                .. versionadded:: (cfdm) 1.12.0.0
+
         :Returns:
 
-            `set`
-                The file names in normalised, absolute form. If the
-                data are all in memory then an empty `set` is
-                returned.
+            `str`
+                The file name.
 
         """
         data = self._get_compressed_Array(None)
         if data is None:
             return set()
 
-        try:
-            return data.get_filenames()
-        except AttributeError:
-            return set()
+        filenames = data.get_filenames(normalise=normalise)
+        if len(filenames) != 1:
+            if default is None:
+                return
+
+            return self._default(
+                default, f"{self.__class__.__name__} has no unique file name"
+            )
+
+        return filenames[0]
 
     def get_Subarray(self):
         """Return the Subarray class.

@@ -1,17 +1,42 @@
+import time
+s = time.time()
+print('0 data/abstract/array')
+from copy import deepcopy
+
 import numpy as np
+
+#from cfunits import Units
+
+print('  9 data/mixin/arraymixin', time.time()-s); s = time.time()
 
 
 class ArrayMixin:
     """Mixin class for a container of an array.
 
-    .. versionadded:: (cfdm) 1.8.7.0
+    .. versionadded:: (cfdm) 1.11.2.0
 
     """
 
-    def __array__(self, *dtype):
+    # Functions handled by __array_function__ implementations (numpy
+    # NEP 18)
+    _HANDLED_FUNCTIONS = {}
+
+    def __array__(self, dtype=None, copy=None):
         """The numpy array interface.
 
         .. versionadded:: (cfdm) 1.8.7.0
+
+        :Parameters:
+
+            dtype: optional
+                Typecode or data-type to which the array is cast.
+
+            copy: `None` or `bool`
+                Included to match the v2 `numpy.ndarray.__array__`
+                API, but ignored. The return numpy array is always
+                independent.
+
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -28,10 +53,28 @@ class ArrayMixin:
 
         """
         array = self.array
-        if not dtype:
+        if dtype is None:
             return array
-        else:
-            return array.astype(dtype[0], copy=False)
+
+        return array.astype(dtype, copy=False)
+
+    def __array_function__(self, func, types, args, kwargs):
+        """Implement the `numpy` ``__array_function__`` protocol.
+
+        See numpy NEP 18 for details.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        """
+        if func not in self._HANDLED_FUNCTIONS:
+            return NotImplemented
+
+        # Note: This allows subclasses that don't override
+        #       __array_function__ to handle Array objects
+        if not all(issubclass(t, self.__class__) for t in types):
+            return NotImplemented
+
+        return self._HANDLED_FUNCTIONS[func](*args, **kwargs)
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed subarray.
@@ -76,30 +119,80 @@ class ArrayMixin:
         """
         return 0
 
-    def _set_units(self):
-        """The units and calendar properties.
+    @property
+    def _meta(self):
+        """Normalize the array to an appropriate Dask meta object.
 
-        These are the values set during initialisation, defaulting to
-        `None` if either was not set at that time.
+        The Dask meta can be thought of as a suggestion to Dask. Dask
+        uses this meta to generate the task graph until it can infer
+        the actual metadata from the values. It does not force the
+        output to have the structure or dtype of the specified meta.
 
-        .. versionadded:: (cfdm) 1.10.1.0
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        .. seealso:: `dask.utils.meta_from_array`
+
+        """
+        return np.array((), dtype=self.dtype)
+
+    @property
+    def Units(self):
+        """The `Units` object containing the units of the array.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        """
+        from cfunits import Units
+
+        return Units(self.get_units(None), self.get_calendar(None))
+
+    def astype(self, dtype, **kwargs):
+        """Cast the data to a specified type.
+
+        .. versionadded:: (cfdm) 1.12.1.0
+
+        :Parameters:
+
+            dtype: `str` or dtype
+                Typecode or data-type to which the array is cast.
+
+            kwargs: optional
+                Any other keywords accepted by `np.astype`.
 
         :Returns:
 
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
+            `np.ndarray`
+                The data with the new data type
 
         """
-        units = self.get_units(False)
-        if units is False:
-            self._set_component("units", None, copy=False)
+        kwargs["copy"] = False
+        return self.array.astype(dtype, **kwargs)
 
-        calendar = self.get_calendar(False)
-        if calendar is False:
-            self._set_component("calendar", None, copy=False)
+    def get_attributes(self, copy=True):
+        """The attributes of the array.
 
-        return units, calendar
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                attributes have not been set. If set to an `Exception`
+                instance then it will be raised instead.
+
+        :Returns:
+
+            `dict`
+                The attributes.
+
+        """
+        attributes = self._get_component("attributes", None)
+        if attributes is None:
+            attributes = {}
+        elif copy:
+            attributes = deepcopy(attributes)
+
+        return attributes
 
     def get_calendar(self, default=ValueError()):
         """The calendar of the array.
@@ -122,8 +215,8 @@ class ArrayMixin:
                 The calendar value.
 
         """
-        calendar = self._get_component("calendar", False)
-        if calendar is False:
+        attributes = self.get_attributes({})
+        if "calendar" not in attributes:
             if default is None:
                 return
 
@@ -132,7 +225,7 @@ class ArrayMixin:
                 f"{self.__class__.__name__} 'calendar' has not been set",
             )
 
-        return calendar
+        return attributes["calendar"]
 
     def get_compression_type(self):
         """Returns the array's compression type.
@@ -162,112 +255,6 @@ class ArrayMixin:
         """
         return self._get_component("compression_type", "")
 
-    @classmethod
-    def get_subspace(cls, array, indices, copy=True):
-        """Return a subspace, defined by indices, of a numpy array.
-
-        Only certain type of indices are allowed. See the *indices*
-        parameter for details.
-
-        Indexing is similar to numpy indexing. Given the restrictions on
-        the type of indices allowed - see the *indicies* parameter - the
-        only difference to numpy indexing is
-
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
-
-        .. versionadded:: (cfdm) 1.8.7.0
-
-        :Parameters:
-
-            array: `numpy.ndarray`
-                The array to be subspaced.
-
-            indices:
-                The indices that define the subspace.
-
-                Must be either `Ellipsis` or a sequence that contains an
-                index for each dimension. In the latter case, each
-                dimension's index must either be a `slice` object or a
-                sequence of two or more integers.
-
-                  *Parameter example:*
-                    indices=Ellipsis
-
-                  *Parameter example:*
-                    indices=[[5, 7, 8]]
-
-                  *Parameter example:*
-                    indices=[slice(4, 7)]
-
-                  *Parameter example:*
-                    indices=[slice(None), [5, 7, 8]]
-
-                  *Parameter example:*
-                    indices=[[2, 5, 6], slice(15, 4, -2), [8, 7, 5]]
-
-            copy: `bool`
-                If `False` then the returned subspace may (or may not) be
-                independent of the input *array*. By default the returned
-                subspace is independent of the input *array*.
-
-        :Returns:
-
-            `numpy.ndarray`
-
-        """
-        if indices is not Ellipsis:
-            if not isinstance(indices, tuple):
-                indices = (indices,)
-
-            axes_with_list_indices = [
-                i for i, x in enumerate(indices) if not isinstance(x, slice)
-            ]
-            n_axes_with_list_indices = len(axes_with_list_indices)
-
-            if n_axes_with_list_indices < 2:
-                # ----------------------------------------------------
-                # At most one axis has a list-of-integers index so we
-                # can do a normal numpy subspace
-                # ----------------------------------------------------
-                array = array[tuple(indices)]
-            else:
-                # ----------------------------------------------------
-                # At least two axes have list-of-integers indices so
-                # we can't do a normal numpy subspace
-                # ----------------------------------------------------
-                n_indices = len(indices)
-                if n_axes_with_list_indices < n_indices:
-                    # Apply subspace defined by slices
-                    slices = [
-                        i if isinstance(i, slice) else slice(None)
-                        for i in indices
-                    ]
-                    array = array[tuple(slices)]
-
-                if n_axes_with_list_indices:
-                    # Apply subspaces defined by lists (this
-                    # methodology works for both numpy arrays and
-                    # scipy sparse arrays).
-                    lists = [slice(None)] * n_indices
-                    for axis in axes_with_list_indices:
-                        lists[axis] = indices[axis]
-                        array = array[tuple(lists)]
-                        lists[axis] = slice(None)
-
-        if copy:
-            if np.ma.isMA(array) and not array.ndim:
-                # This is because numpy.ma.copy doesn't work for
-                # scalar arrays (at the moment, at least)
-                ma_array = np.ma.empty((), dtype=array.dtype)
-                ma_array[...] = array
-                array = ma_array
-            else:
-                array = array.copy()
-
-        return array
-
     def get_units(self, default=ValueError()):
         """The units of the array.
 
@@ -290,8 +277,8 @@ class ArrayMixin:
                 The units value.
 
         """
-        units = self._get_component("units", False)
-        if units is False:
+        attributes = self.get_attributes({})
+        if "units" not in attributes:
             if default is None:
                 return
 
@@ -300,4 +287,34 @@ class ArrayMixin:
                 f"{self.__class__.__name__} 'units' have not been set",
             )
 
-        return units
+        return attributes["units"]
+
+
+# --------------------------------------------------------------------
+# __array_function__ implementations (numpy NEP 18)
+# --------------------------------------------------------------------
+def array_implements(cls, numpy_function):
+    """Decorator for __array_function__ implementations.
+
+    .. versionadded:: (cfdm) 1.12.0.0
+
+    """
+
+    def decorator(func):
+        cls._HANDLED_FUNCTIONS[numpy_function] = func
+        return func
+
+    return decorator
+
+
+# Implementationing np.concatenate is necessary for some use cases of
+# `dask.array.slicing.take`
+@array_implements(ArrayMixin, np.concatenate)
+def concatenate(arrays, axis=0):
+    """Version of `np.concatenate` that works for `Array` objects.
+
+    .. versionadded:: (cfdm) 1.12.0.0
+
+    """
+    # Convert the inputs to numpy arrays, and concatenate those.
+    return np.ma.concatenate(tuple(map(np.asanyarray, arrays)), axis=axis)

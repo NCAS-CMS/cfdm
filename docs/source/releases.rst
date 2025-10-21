@@ -13,9 +13,18 @@ Documentation for all versions of cfdm.
    :local:
    :backlinks: entry
 
+**CF-1.12**
+-----------
+
+* `Version 1.12.3.0 <https://ncas-cms.github.io/cfdm-docs/1.12.2.0>`_ (2025-08-18)
+* `Version 1.12.2.0 <https://ncas-cms.github.io/cfdm-docs/1.12.2.0>`_ (2025-06-05)
+* `Version 1.12.1.0 <https://ncas-cms.github.io/cfdm-docs/1.12.1.0>`_ (2025-04-01)
+* `Version 1.12.0.0 <https://ncas-cms.github.io/cfdm-docs/1.12.0.0>`_ (2025-03-18)
+
 **CF-1.11**
 -----------
 
+* `Version 1.11.2.0 <https://ncas-cms.github.io/cfdm-docs/1.11.2.0>`_ (2025-01-28)
 * `Version 1.11.1.0 <https://ncas-cms.github.io/cfdm-docs/1.11.1.0>`_ (2024-03-01)
 * `Version 1.11.0.0 <https://ncas-cms.github.io/cfdm-docs/1.11.0.0>`_ (2023-12-06)
 

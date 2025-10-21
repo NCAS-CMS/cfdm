@@ -2,7 +2,7 @@ import inspect
 from re import compile
 
 base = compile("{{.*?}}")
-
+import time
 
 class DocstringRewriteMeta(type):
     """Modify docstrings at time of import.
@@ -27,17 +27,17 @@ class DocstringRewriteMeta(type):
 
     # Based on
     # http://www.jesshamrick.com/2013/04/17/rewriting-python-docstrings-with-a-metaclass/
-
     def __new__(cls, class_name, parents, attrs):
         """Combines docstring substitutions across the inheritance tree.
 
-        That is, combines docstring substitutions from all classes in the
-        inheritance tree.
+        That is, combines docstring substitutions from all classes in
+        the inheritance tree.
 
-        The value for a key that occurs in multiple classes will be taken
-        from the class closest to the child class.
+        The value for a key that occurs in multiple classes will be
+        taken from the class closest to the child class.
 
         """
+        return super().__new__(cls, class_name, parents, attrs)
         class_name_lower = class_name.lower()
 
         docstring_rewrite = {}
@@ -618,6 +618,8 @@ class DocstringRewriteMeta(type):
                 docstring.
 
         """
+        from .. import tt 
+        s = time.time()     
         if class_docstring is not None:
             doc = class_docstring
         else:
@@ -625,7 +627,6 @@ class DocstringRewriteMeta(type):
 
         if doc is None:
             return
-
         substitutions = base.findall(doc)
         if substitutions:
             # Special substitutions
@@ -657,5 +658,7 @@ class DocstringRewriteMeta(type):
             if class_docstring is None:
                 # Set the rewritten docstring on the method
                 f.__doc__ = doc
-
+  
+        tt[0] += time.time() - s
+        print (tt)
         return doc

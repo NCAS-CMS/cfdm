@@ -1,11 +1,12 @@
 from .abstract import MeshArray
+from .mixin import CompressedArrayMixin
 from .subarray import (
     PointTopologyFromEdgesSubarray,
     PointTopologyFromFacesSubarray,
 )
 
 
-class PointTopologyArray(MeshArray):
+class PointTopologyArray(CompressedArrayMixin, MeshArray):
     """A point cell domain topology array derived from a UGRID variable.
 
     A point cell domain topology array derived from an underlying
@@ -57,7 +58,7 @@ class PointTopologyArray(MeshArray):
 
             shape: `tuple`, optional
                 The shape of the point cell domain topology array. If
-                the shape is unknown (beacuse the connectivity array
+                the shape is unknown (because the connectivity array
                 has not been read yet) then set to `None`, which will
                 result in a shape of ``(nan, nan)``.
 

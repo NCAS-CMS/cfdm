@@ -5,3 +5,5 @@ include LICENSE
 include CONTRIBUTING.md
 include CODE_OF_CONDUCT.md
 include cfdm/test/create_test_files.npz
+include cfdm/test/example_field_0.nc
+recursive-include cfdm/test/example_field_0.zarr[23] *

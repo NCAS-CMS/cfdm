@@ -59,7 +59,7 @@ class PropertiesData(Properties):
         if _use_data and data is not None:
             self.set_data(data, copy=copy)
 
-    def __array__(self, *dtype):
+    def __array__(self, dtype=None, copy=None):
         """The numpy array interface.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -69,6 +69,13 @@ class PropertiesData(Properties):
             dtype: optional
                 Typecode or data-type to which the array is cast.
 
+            copy: `None` or `bool`
+                Included to match the v2 `numpy.ndarray.__array__`
+                API, but ignored. The returned numpy array is always
+                independent.
+
+                .. versionadded:: (cfdm) 1.12.0.0
+
         :Returns:
 
             `numpy.ndarray`
@@ -77,7 +84,7 @@ class PropertiesData(Properties):
         """
         data = self.get_data(None)
         if data is not None:
-            return data.__array__(*dtype)
+            return data.__array__(dtype, copy=copy)
 
         raise ValueError(f"{self.__class__.__name__} has no data")
 
@@ -108,12 +115,12 @@ class PropertiesData(Properties):
 
     @property
     def data(self):
-        """Return the data.
+        """The data.
 
-        ``f.data`` is equivalent to ``f.get_data()``
+        ``f.data`` is equivalent to ``f.get_data()``.
 
-        Note that a `Data` instance is returned. Use its `array`
-        attribute to return the data as a `numpy` array.
+        Note that a `Data` instance is returned. Use the `array`
+        attribute to get the data as a `numpy` array.
 
         The units, calendar and fill value properties are, if set,
         inserted into the data.
@@ -142,6 +149,17 @@ class PropertiesData(Properties):
 
         """
         return self.get_data()
+
+    @data.setter
+    def data(self, value):
+        raise AttributeError(
+            "Can't set attribute 'data'. Use the 'set_data' method, "
+            "or assignment by indexing."
+        )
+
+    @data.deleter
+    def data(self):
+        self.del_data()
 
     @property
     def dtype(self):

@@ -70,6 +70,7 @@ Data
    ~cfdm.FieldAncillary.has_data
    ~cfdm.FieldAncillary.set_data
    ~cfdm.FieldAncillary.insert_dimension
+   ~cfdm.FieldAncillary.persist
    ~cfdm.FieldAncillary.squeeze
    ~cfdm.FieldAncillary.transpose
 
@@ -88,6 +89,23 @@ Data
    ~cfdm.FieldAncillary.shape
    ~cfdm.FieldAncillary.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.FieldAncillary.get_quantization
+   ~cfdm.FieldAncillary._set_quantization
+   ~cfdm.FieldAncillary._del_quantization
+   ~cfdm.FieldAncillary.get_quantize_on_write
+   ~cfdm.FieldAncillary.set_quantize_on_write
+   ~cfdm.FieldAncillary.del_quantize_on_write
+
 Miscellaneous
 -------------
 
@@ -99,6 +117,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.FieldAncillary.copy
+   ~cfdm.FieldAncillary.concatenate
    ~cfdm.FieldAncillary.creation_commands
    ~cfdm.FieldAncillary.equals
    ~cfdm.FieldAncillary.has_bounds
@@ -106,6 +125,19 @@ Miscellaneous
    ~cfdm.FieldAncillary.get_filenames
    ~cfdm.FieldAncillary.get_original_filenames
    ~cfdm.FieldAncillary.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.FieldAncillary.file_directories
+   ~cfdm.FieldAncillary.replace_directory
 
 NetCDF
 ------
@@ -122,6 +154,20 @@ NetCDF
    ~cfdm.FieldAncillary.nc_has_variable
    ~cfdm.FieldAncillary.nc_set_variable
    
+Dataset chunks
+^^^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.FieldAncillary.nc_dataset_chunksizes
+   ~cfdm.FieldAncillary.nc_set_dataset_chunksizes
+   ~cfdm.FieldAncillary.nc_clear_dataset_chunksizes
+
 Groups
 ^^^^^^
 
@@ -165,3 +211,17 @@ Docstring substitutions
    ~cfdm.FieldAncillary._docstring_substitutions        
    ~cfdm.FieldAncillary._docstring_package_depth        
    ~cfdm.FieldAncillary._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.FieldAncillary.nc_clear_hdf5_chunksizes
+   ~cfdm.FieldAncillary.nc_hdf5_chunksizes
+   ~cfdm.FieldAncillary.nc_set_hdf5_chunksizes

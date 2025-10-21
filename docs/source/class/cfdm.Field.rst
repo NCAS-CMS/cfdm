@@ -80,8 +80,11 @@ Data
    ~cfdm.Field.has_data_axes
    ~cfdm.Field.set_data_axes
    ~cfdm.Field.insert_dimension
+   ~cfdm.Field.persist
+   ~cfdm.Field.persist_metadata
    ~cfdm.Field.squeeze
    ~cfdm.Field.transpose
+   ~cfdm.Field.unsqueeze
    
 .. rubric:: Attributes
    
@@ -98,7 +101,24 @@ Data
    ~cfdm.Field.shape
    ~cfdm.Field.size
    
-.. _Field-Metadata-constructs:   
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.get_quantization
+   ~cfdm.Field._set_quantization
+   ~cfdm.Field._del_quantization
+   ~cfdm.Field.get_quantize_on_write
+   ~cfdm.Field.set_quantize_on_write
+   ~cfdm.Field.del_quantize_on_write
+
+.. _Field-Metadata-constructs:
    
 Metadata constructs
 -------------------
@@ -189,6 +209,7 @@ Miscellaneous
 
    ~cfdm.Field.compress
    ~cfdm.Field.copy
+   ~cfdm.Field.concatenate
    ~cfdm.Field.creation_commands
    ~cfdm.Field.equals
    ~cfdm.Field.convert
@@ -199,6 +220,19 @@ Miscellaneous
    ~cfdm.Field.get_filenames
    ~cfdm.Field.get_original_filenames
    ~cfdm.Field.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.Field.file_directories
+   ~cfdm.Field.replace_directory
 
 .. _Field-NetCDF:
    
@@ -257,6 +291,20 @@ Geometries
    ~cfdm.Field.nc_set_geometry_variable_groups
    ~cfdm.Field.nc_clear_geometry_variable_groups
 
+Dataset chunks
+^^^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.nc_dataset_chunksizes
+   ~cfdm.Field.nc_set_dataset_chunksizes
+   ~cfdm.Field.nc_clear_dataset_chunksizes
+
 Components
 ^^^^^^^^^^
 
@@ -279,6 +327,24 @@ Components
    ~cfdm.Field.nc_set_component_sample_dimension   
    ~cfdm.Field.nc_set_component_sample_dimension_groups
    ~cfdm.Field.nc_clear_component_sample_dimension_groups
+
+
+UGRID
+^^^^^
+
+.. rubric:: Methods
+
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.del_mesh_id
+   ~cfdm.Field.get_mesh_id
+   ~cfdm.Field.has_mesh_id
+   ~cfdm.Field.set_mesh_id
+
 
 Dataset compliance
 ^^^^^^^^^^^^^^^^^^
@@ -324,3 +390,17 @@ Docstring substitutions
    ~cfdm.Field._docstring_substitutions
    ~cfdm.Field._docstring_package_depth
    ~cfdm.Field._docstring_method_exclusions
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.nc_clear_hdf5_chunksizes
+   ~cfdm.Field.nc_hdf5_chunksizes
+   ~cfdm.Field.nc_set_hdf5_chunksizes

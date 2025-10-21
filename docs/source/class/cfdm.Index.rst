@@ -59,6 +59,7 @@ Data
    ~cfdm.Index.has_data
    ~cfdm.Index.set_data
    ~cfdm.Index.insert_dimension
+   ~cfdm.Index.persist
    ~cfdm.Index.squeeze
    ~cfdm.Index.transpose
 
@@ -77,6 +78,19 @@ Data
    ~cfdm.Index.shape
    ~cfdm.Index.size
    
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Index.get_quantization
+   ~cfdm.Index.get_quantize_on_write
+
 Miscellaneous
 -------------
 
@@ -88,6 +102,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Index.copy
+   ~cfdm.Index.concatenate
    ~cfdm.Index.creation_commands
    ~cfdm.Index.equals
    ~cfdm.Index.get_filenames
@@ -95,6 +110,19 @@ Miscellaneous
    ~cfdm.Index.has_bounds
    ~cfdm.Index.uncompress
    ~cfdm.Index.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.Index.file_directories
+   ~cfdm.Index.replace_directory
 
 NetCDF
 ------
@@ -114,6 +142,9 @@ NetCDF
    ~cfdm.Index.nc_get_dimension
    ~cfdm.Index.nc_has_dimension
    ~cfdm.Index.nc_set_dimension
+   ~cfdm.Index.nc_clear_dataset_chunksizes
+   ~cfdm.Index.nc_dataset_chunksizes
+   ~cfdm.Index.nc_set_dataset_chunksizes
 
 Groups
 ^^^^^^   
@@ -179,3 +210,17 @@ Docstring substitutions
    ~cfdm.Index._docstring_substitutions        
    ~cfdm.Index._docstring_package_depth        
    ~cfdm.Index._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Index.nc_clear_hdf5_chunksizes
+   ~cfdm.Index.nc_hdf5_chunksizes
+   ~cfdm.Index.nc_set_hdf5_chunksizes

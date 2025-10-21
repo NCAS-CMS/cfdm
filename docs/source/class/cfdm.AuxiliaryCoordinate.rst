@@ -70,6 +70,7 @@ Data
    ~cfdm.AuxiliaryCoordinate.has_data
    ~cfdm.AuxiliaryCoordinate.set_data
    ~cfdm.AuxiliaryCoordinate.insert_dimension
+   ~cfdm.AuxiliaryCoordinate.persist
    ~cfdm.AuxiliaryCoordinate.squeeze
    ~cfdm.AuxiliaryCoordinate.transpose
 
@@ -87,6 +88,19 @@ Data
    ~cfdm.AuxiliaryCoordinate.ndim
    ~cfdm.AuxiliaryCoordinate.shape
    ~cfdm.AuxiliaryCoordinate.size
+
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.get_quantization
+   ~cfdm.AuxiliaryCoordinate.get_quantize_on_write
 
 Bounds
 ------
@@ -175,12 +189,26 @@ Miscellaneous
    :template: method.rst	     
 
    ~cfdm.AuxiliaryCoordinate.copy
+   ~cfdm.AuxiliaryCoordinate.concatenate
    ~cfdm.AuxiliaryCoordinate.creation_commands
    ~cfdm.AuxiliaryCoordinate.equals
    ~cfdm.AuxiliaryCoordinate.uncompress
    ~cfdm.AuxiliaryCoordinate.get_filenames
    ~cfdm.AuxiliaryCoordinate.get_original_filenames
    ~cfdm.AuxiliaryCoordinate.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.AuxiliaryCoordinate.file_directories
+   ~cfdm.AuxiliaryCoordinate.replace_directory
 
 NetCDF
 ------
@@ -218,6 +246,20 @@ Groups
    ~cfdm.AuxiliaryCoordinate.nc_node_coordinate_variable_groups
    ~cfdm.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups
 
+Dataset chunks
+^^^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.nc_dataset_chunksizes
+   ~cfdm.AuxiliaryCoordinate.nc_set_dataset_chunksizes
+   ~cfdm.AuxiliaryCoordinate.nc_clear_dataset_chunksizes
+
 Special
 -------
 
@@ -247,3 +289,17 @@ Docstring substitutions
    ~cfdm.AuxiliaryCoordinate._docstring_substitutions        
    ~cfdm.AuxiliaryCoordinate._docstring_package_depth        
    ~cfdm.AuxiliaryCoordinate._docstring_method_exclusions
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes
+   ~cfdm.AuxiliaryCoordinate.nc_hdf5_chunksizes
+   ~cfdm.AuxiliaryCoordinate.nc_set_hdf5_chunksizes

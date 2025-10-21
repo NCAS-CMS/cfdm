@@ -70,6 +70,7 @@ Data
    ~cfdm.DimensionCoordinate.has_data
    ~cfdm.DimensionCoordinate.set_data
    ~cfdm.DimensionCoordinate.insert_dimension
+   ~cfdm.DimensionCoordinate.persist 
    ~cfdm.DimensionCoordinate.squeeze
    ~cfdm.DimensionCoordinate.transpose
 
@@ -88,6 +89,19 @@ Data
    ~cfdm.DimensionCoordinate.shape
    ~cfdm.DimensionCoordinate.size
    
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DimensionCoordinate.get_quantization
+   ~cfdm.DimensionCoordinate.get_quantize_on_write
+
 Bounds
 ------
 
@@ -175,12 +189,26 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.copy
+   ~cfdm.DimensionCoordinate.concatenate
    ~cfdm.DimensionCoordinate.creation_commands
    ~cfdm.DimensionCoordinate.equals
    ~cfdm.DimensionCoordinate.uncompress
    ~cfdm.DimensionCoordinate.get_filenames
    ~cfdm.DimensionCoordinate.get_original_filenames
    ~cfdm.DimensionCoordinate.to_memory
+
+Aggregation
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cfdm.DimensionCoordinate.file_directories
+   ~cfdm.DimensionCoordinate.replace_directory
 
 NetCDF
 ------
@@ -211,6 +239,20 @@ Groups
    ~cfdm.DimensionCoordinate.nc_clear_variable_groups
    ~cfdm.DimensionCoordinate.nc_set_variable_groups
 
+Dataset chunks
+^^^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DimensionCoordinate.nc_dataset_chunksizes
+   ~cfdm.DimensionCoordinate.nc_set_dataset_chunksizes
+   ~cfdm.DimensionCoordinate.nc_clear_dataset_chunksizes
+
 Special
 -------
 
@@ -240,3 +282,17 @@ Docstring substitutions
    ~cfdm.DimensionCoordinate._docstring_substitutions        
    ~cfdm.DimensionCoordinate._docstring_package_depth        
    ~cfdm.DimensionCoordinate._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DimensionCoordinate.nc_clear_hdf5_chunksizes
+   ~cfdm.DimensionCoordinate.nc_hdf5_chunksizes
+   ~cfdm.DimensionCoordinate.nc_set_hdf5_chunksizes

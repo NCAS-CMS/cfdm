@@ -73,14 +73,21 @@ to add more sophisticated methods.
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
 
-The cfdm package can
+The `cfdm` package can
 
 * read :term:`field constructs <field construct>` and :term:`domain
-  constructs <domain construct>` from netCDF and CDL datasets,
+  constructs <domain construct>` from netCDF, CDL, and Zarr datasets
+  with a choice of netCDF backends,
+
+* read files from OPeNDAP servers and S3 object stores,
+ 
+* be fully flexible with respect to dataset chunking,
 
 * create new field and domain constructs in memory,
 
 * write field and domain constructs to netCDF datasets on disk,
+
+* read, write, and manipulate UGRID mesh topologies,
 
 * read, write, and create coordinates defined by geometry cells,
 
@@ -97,12 +104,15 @@ The cfdm package can
 
 * create subspaces of field and domain constructs,
 
-* incorporate, and create, metadata stored in external files, and
+* incorporate, and create, metadata stored in external files,
 
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays, or coordinate arrays compressed by
   subsampling), whilst presenting a view of the data in its
-  uncompressed form.
+  uncompressed form, and
+
+* read and write that data that are quantized to eliminate false
+  precision.
 
 Note that the cfdm package enables the representation and creation of
 CF field constructs, but it is largely :ref:`up to the user to use
@@ -126,13 +136,31 @@ outside of a Python environment:
 
 ----
 
+**Performance**
+---------------
+
+The `cfdm` package uses :ref:`Dask <Performance>` for all of its data
+manipulations, which provides lazy, parallelised, and out-of-core
+computations of array operations.
+
+----
+
+**Command line utilities**
+--------------------------
+
+During installation the ``cfdump`` command line utility is also
+installed, which generates text descriptions of field constructs
+contained in files.
+
+----
+
 **Related packages**
 --------------------
 
 The `cf-python <https://ncas-cms.github.io/cf-python>`_ package, which
 is built as an extension to cfdm, includes higher-level functionality,
 such as regridding, and statistical operations. In turn, the `cf-plot
-<http://ajheaps.github.io/cf-plot/>`_ package provides comprehensive
+<https://github.com/NCAS-CMS/cf-plot>`_ package provides comprehensive
 visualisation of field constructs created by cf-python.
 
 ----
@@ -144,9 +172,10 @@ If you use cfdm, either as a stand-alone application or to provide a
 CF data model implementation to another software library, please
 consider including the reference:
 
-Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference
-  implementation of the CF data model. Journal of Open Source
-  Software, 5(54), 2717, https://doi.org/10.21105/joss.02717
+Hassell, D., and Bartholomew, S. L. (2020).
+  cfdm: A Python reference implementation of the CF data
+  model. Journal of Open Source Software, 5(54), 2717,
+  https://doi.org/10.21105/joss.02717
 
 .. code-block:: bibtex
    
@@ -168,28 +197,29 @@ Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference
 **References**
 --------------
 
-Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S., Caron, J.,
-  Signell, R., et al. (2020). NetCDF Climate and Forecast (CF)
-  Metadata Conventions. CF Conventions Committee. Retrieved from
-  https://cfconventions.org/cf-conventions/cf-conventions.html
+Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S. et al.
+  NetCDF Climate and Forecast (CF) Metadata Conventions (latest
+  version). CF Community. https://doi.org/10.5281/zenodo.14274886.
 
-Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference
-  implementation of the CF data model. Journal of Open Source
-  Software, 5(54), 2717, https://doi.org/10.21105/joss.02717
+Hassell, D., and Bartholomew, S. L. (2020).
+  cfdm: A Python reference implementation of the CF data
+  model. Journal of Open Source Software, 5(54), 2717,
+  https://doi.org/10.21105/joss.02717
 
-Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
-  Taylor, K. E. (2017). A data model of the Climate and Forecast
-  metadata conventions (CF-1.6) with a software implementation
-  (cf-python v2.1), Geosci. Model Dev., 10, 4619-4646,
+Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and Taylor, K. E. (2017).
+  A data model of the Climate and Forecast metadata conventions
+  (CF-1.6) with a software implementation (cf-python v2.1),
+  Geosci. Model Dev., 10, 4619-4646,
   https://doi.org/10.5194/gmd-10-4619-2017
 
-Rew, R., and Davis, G. (1990). NetCDF: An Interface for Scientific
-  Data Access. IEEE Computer Graphics and Applications, 10(4),
+Rew, R., and Davis, G. (1990).
+  NetCDF: An Interface for Scientific Data Access. IEEE Computer
+  Graphics and Applications, 10(4),
   76–82. https://doi.org/10.1109/38.56302
 
-Rew, R., Hartnett, E., and Caron, J. (2006). NetCDF-4: Software
-  Implementing an Enhanced Data Model for the Geosciences. In 22nd
-  International Conference on Interactive Information Processing
-  Systems for Meteorology, Oceanography, and Hydrology. AMS. Retrieved
-  from
+Rew, R., Hartnett, E., and Caron, J. (2006).
+  NetCDF-4: Software Implementing an Enhanced Data Model for the
+  Geosciences. In 22nd International Conference on Interactive
+  Information Processing Systems for Meteorology, Oceanography, and
+  Hydrology. AMS. Retrieved from
   https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf

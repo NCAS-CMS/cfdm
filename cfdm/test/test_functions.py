@@ -88,25 +88,21 @@ class FunctionsTest(unittest.TestCase):
 
     def test_atol_rtol(self):
         """Test the atol and rtol functions."""
-        org = cfdm.RTOL()
-        self.assertEqual(cfdm.RTOL(1e-5), org)
-        self.assertEqual(cfdm.RTOL(), 1e-5)
-        self.assertEqual(cfdm.RTOL(org), 1e-5)
-        self.assertEqual(cfdm.RTOL(), org)
-
-        org = cfdm.ATOL()
-        self.assertEqual(cfdm.ATOL(1e-5), org)
-        self.assertEqual(cfdm.ATOL(), 1e-5)
-        self.assertEqual(cfdm.ATOL(org), 1e-5)
-        self.assertEqual(cfdm.ATOL(), org)
+        org = cfdm.rtol()
+        self.assertEqual(cfdm.rtol(1e-5), org)
+        self.assertEqual(cfdm.rtol(), 1e-5)
+        self.assertEqual(cfdm.rtol(org), 1e-5)
+        self.assertEqual(cfdm.rtol(), org)
 
         org = cfdm.atol()
-        self.assertTrue(org == cfdm.ATOL())  # check alias
+        self.assertEqual(cfdm.atol(1e-5), org)
+        self.assertEqual(cfdm.atol(), 1e-5)
+        self.assertEqual(cfdm.atol(org), 1e-5)
+        self.assertEqual(cfdm.atol(), org)
 
-        self.assertTrue(cfdm.atol(1e-5) == org)
-        self.assertTrue(cfdm.atol() == 1e-5)
-        self.assertTrue(cfdm.atol(org) == 1e-5)
-        self.assertTrue(cfdm.atol() == org)
+        # Check aliases
+        self.assertTrue(cfdm.atol() == cfdm.ATOL())
+        self.assertTrue(cfdm.rtol() == cfdm.RTOL())
 
     def test_log_level(self):
         """Test the `log_level` function."""
@@ -260,26 +256,73 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(len(cfdm.example_fields(0, 2, 0)), 3)
 
     def test_abspath(self):
-        """Test the abspath function."""
-        filename = "test_file.nc"
-        self.assertEqual(cfdm.abspath(filename), os.path.abspath(filename))
-        filename = "http://test_file.nc"
-        self.assertEqual(cfdm.abspath(filename), filename)
-        filename = "https://test_file.nc"
-        self.assertEqual(cfdm.abspath(filename), filename)
+        """Test cfdm.abspath."""
+        cwd = os.getcwd()
+        cwd_m1 = os.path.dirname(cwd)
+
+        self.assertEqual(cfdm.abspath(""), cwd)
+        self.assertEqual(cfdm.abspath("file.nc"), f"{cwd}/file.nc")
+        self.assertEqual(cfdm.abspath("../file.nc"), f"{cwd_m1}/file.nc")
+        self.assertEqual(cfdm.abspath("file:///file.nc"), "file:///file.nc")
+        self.assertEqual(
+            cfdm.abspath("file://file.nc"), f"file://file.nc{cwd}"
+        )
+        self.assertEqual(cfdm.abspath("file:/file.nc"), "file:/file.nc")
+        self.assertEqual(cfdm.abspath("http:///file.nc"), "http:///file.nc")
+        self.assertEqual(cfdm.abspath("http://file.nc"), "http://file.nc")
+        self.assertEqual(cfdm.abspath("http:/file.nc"), "http:/file.nc")
+
+        self.assertEqual(
+            cfdm.abspath("file.nc", uri=True), f"file:{cwd}/file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("../file.nc", uri=True), f"file:{cwd_m1}/file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("file:///file.nc", uri=True), "file:///file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("file://file.nc", uri=True), f"file://file.nc{cwd}"
+        )
+        self.assertEqual(
+            cfdm.abspath("file:/file.nc", uri=True), "file:/file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("http:///file.nc", uri=True), "http:///file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("http://file.nc", uri=True), "http://file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("http:/file.nc", uri=True), "http:/file.nc"
+        )
+
+        self.assertEqual(cfdm.abspath("file.nc", uri=False), f"{cwd}/file.nc")
+        self.assertEqual(
+            cfdm.abspath("../file.nc", uri=False), f"{cwd_m1}/file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("file:///file.nc", uri=False), "/file.nc"
+        )
+        self.assertEqual(cfdm.abspath("file://file.nc", uri=False), cwd)
+        self.assertEqual(cfdm.abspath("file:/file.nc", uri=False), "/file.nc")
+        with self.assertRaises(ValueError):
+            cfdm.abspath("http:///file.nc", uri=False)
 
     def test_configuration(self):
         """Test the configuration function."""
         # Test getting of all config. and store original values to test on:
         org = cfdm.configuration()
         self.assertIsInstance(org, dict)
-        self.assertEqual(len(org), 3)
+        self.assertEqual(len(org), 4)
         org_atol = org["atol"]
         self.assertIsInstance(org_atol, float)
         org_rtol = org["rtol"]
         self.assertIsInstance(org_rtol, float)
         org_ll = org["log_level"]  # will be 'DISABLE' as disable for test
         self.assertIsInstance(org_ll, str)
+        org_chunksize = org["chunksize"]
+        self.assertIsInstance(org_chunksize, int)
 
         # Store some sensible values to reset items to for testing,
         # ensure these are kept to be different to the defaults:
@@ -299,6 +342,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(post_set["atol"], org_atol)
         self.assertEqual(post_set["rtol"], atol_rtol_reset_value)
         self.assertEqual(post_set["log_level"], org_ll)
+        self.assertEqual(post_set["chunksize"], org_chunksize)
         # don't reset to org this time to test change persisting...
 
         # Note setting of previous items persist, e.g. atol above
@@ -370,6 +414,10 @@ class FunctionsTest(unittest.TestCase):
             raise RuntimeError(
                 "A ValueError should have been raised, but wasn't"
             )
+
+        # Reset configuration
+        cfdm.configuration(**org)
+        self.assertEqual(cfdm.configuration(), org)
 
     def test_unique_constructs(self):
         """Test the `unique_constructs` function."""
@@ -472,7 +520,11 @@ class FunctionsTest(unittest.TestCase):
 
         org = func(rtol=10, atol=20, log_level="DETAIL")
         old = func()
-        new = dict(rtol=10 * 2, atol=20 * 2, log_level="DEBUG")
+        new = dict(old)
+        new["rtol"] = 10 * 2
+        new["atol"] = 20 * 2
+        new["log_level"] = "DEBUG"
+
         with func(**new):
             self.assertEqual(func(), new)
 
@@ -481,7 +533,10 @@ class FunctionsTest(unittest.TestCase):
 
         org = func(rtol=cfdm.Constant(10), atol=20, log_level="DETAIL")
         old = func()
-        new = dict(rtol=cfdm.Constant(10 * 2), atol=20 * 2, log_level="DEBUG")
+        new["rtol"] = cfdm.Constant(10 * 2)
+        new["atol"] = 20 * 2
+        new["log_level"] = "DEBUG"
+
         with func(**new):
             self.assertEqual(func(), new)
 
@@ -582,6 +637,126 @@ class FunctionsTest(unittest.TestCase):
 
         self.assertIsInstance(repr(c), str)
         self.assertEqual(str(c), str(dict(**c)))
+
+    def test_dirname(self):
+        """Test cfdm.dirname."""
+        cwd = os.getcwd()
+        cwd_m1 = os.path.dirname(cwd)
+
+        self.assertEqual(cfdm.dirname("file.nc"), "")
+        self.assertEqual(cfdm.dirname("file.nc", normalise=True), cwd)
+        self.assertEqual(
+            cfdm.dirname("file.nc", normalise=True, uri=True), f"file://{cwd}"
+        )
+        self.assertEqual(
+            cfdm.dirname("file.nc", normalise=True, uri=False), cwd
+        )
+        self.assertEqual(
+            cfdm.dirname("file.nc", normalise=True, sep=True), f"{cwd}/"
+        )
+
+        self.assertEqual(cfdm.dirname("model/file.nc"), "model")
+        self.assertEqual(
+            cfdm.dirname("model/file.nc", normalise=True), f"{cwd}/model"
+        )
+        self.assertEqual(
+            cfdm.dirname("model/file.nc", normalise=True, uri=True),
+            f"file://{cwd}/model",
+        )
+        self.assertEqual(
+            cfdm.dirname("model/file.nc", normalise=True, uri=False),
+            f"{cwd}/model",
+        )
+
+        self.assertEqual(cfdm.dirname("../file.nc"), "..")
+        self.assertEqual(cfdm.dirname("../file.nc", normalise=True), cwd_m1)
+        self.assertEqual(
+            cfdm.dirname("../file.nc", normalise=True, uri=True),
+            f"file://{cwd_m1}",
+        )
+        self.assertEqual(
+            cfdm.dirname("../file.nc", normalise=True, uri=False), cwd_m1
+        )
+
+        self.assertEqual(cfdm.dirname("/model/file.nc"), "/model")
+        self.assertEqual(
+            cfdm.dirname("/model/file.nc", normalise=True), "/model"
+        )
+        self.assertEqual(
+            cfdm.dirname("/model/file.nc", normalise=True, uri=True),
+            "file:///model",
+        )
+        self.assertEqual(
+            cfdm.dirname("/model/file.nc", normalise=True, uri=False), "/model"
+        )
+
+        self.assertEqual(cfdm.dirname(""), "")
+        self.assertEqual(cfdm.dirname("", normalise=True), cwd)
+        self.assertEqual(
+            cfdm.dirname("", normalise=True, uri=True), f"file://{cwd}"
+        )
+        self.assertEqual(cfdm.dirname("", normalise=True, uri=False), cwd)
+
+        self.assertEqual(
+            cfdm.dirname("https:///data/archive/file.nc"),
+            "https:///data/archive",
+        )
+        self.assertEqual(
+            cfdm.dirname("https:///data/archive/file.nc", normalise=True),
+            "https:///data/archive",
+        )
+        self.assertEqual(
+            cfdm.dirname(
+                "https:///data/archive/file.nc", normalise=True, uri=True
+            ),
+            "https:///data/archive",
+        )
+        with self.assertRaises(ValueError):
+            cfdm.dirname(
+                "https:///data/archive/file.nc", normalise=True, uri=False
+            )
+
+        self.assertEqual(
+            cfdm.dirname("file:///data/archive/file.nc"),
+            "file:///data/archive",
+        )
+        self.assertEqual(
+            cfdm.dirname("file:///data/archive/file.nc", normalise=True),
+            "file:///data/archive",
+        )
+        self.assertEqual(
+            cfdm.dirname(
+                "file:///data/archive/file.nc", normalise=True, uri=True
+            ),
+            "file:///data/archive",
+        )
+        self.assertEqual(
+            cfdm.dirname(
+                "file:///data/archive/file.nc", normalise=True, uri=False
+            ),
+            "/data/archive",
+        )
+
+        self.assertEqual(
+            cfdm.dirname("file:///data/archive/../file.nc"),
+            "file:///data/archive/..",
+        )
+        self.assertEqual(
+            cfdm.dirname("file:///data/archive/../file.nc", normalise=True),
+            "file:///data",
+        )
+        self.assertEqual(
+            cfdm.dirname(
+                "file:///data/archive/../file.nc", normalise=True, uri=True
+            ),
+            "file:///data",
+        )
+        self.assertEqual(
+            cfdm.dirname(
+                "file:///data/archive/../file.nc", normalise=True, uri=False
+            ),
+            "/data",
+        )
 
 
 if __name__ == "__main__":

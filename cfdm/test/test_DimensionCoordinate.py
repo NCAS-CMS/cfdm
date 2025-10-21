@@ -45,6 +45,8 @@ class DimensionCoordinateTest(unittest.TestCase):
     bounds.set_data(cfdm.Data(b))
     dim.set_bounds(bounds)
 
+    f0 = cfdm.example_field(0)
+
     def setUp(self):
         """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
@@ -110,14 +112,14 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     def test_DimensiconCoordinate_array(self):
         """Test the `DimensionCoordinate.array` method."""
-        f = cfdm.example_field(0)
+        f = self.f0
         t = f.construct("time")
         self.assertEqual(t.array, 31)
         self.assertEqual(t.array, t.data.array)
 
     def test_DimensiconCoordinate_datetime_array(self):
         """Test the `DimensionCoordinate.datetime_array` method."""
-        f = cfdm.example_field(0)
+        f = self.f0
         t = f.construct("time")
         self.assertEqual(
             t.datetime_array,
@@ -133,6 +135,26 @@ class DimensionCoordinateTest(unittest.TestCase):
         # Indices result in a subspaced shape that has a size 0 axis
         with self.assertRaises(IndexError):
             dim[[False] * dim.size]
+
+    def test_DimensionCoordinate_dataset_chunksizes(self):
+        """Test the DimensionCoordinate dataset chunksizes methods."""
+        c = self.dim.copy()
+
+        self.assertIsNone(c.nc_set_dataset_chunksizes([4]))
+        self.assertEqual(c.nc_dataset_chunksizes(), (4,))
+        self.assertEqual(c.bounds.nc_dataset_chunksizes(), (4, 2))
+
+        c.nc_set_dataset_chunksizes(1024, bounds=False, interior_ring=False)
+        self.assertEqual(c.nc_dataset_chunksizes(), 1024)
+        self.assertEqual(c.bounds.nc_dataset_chunksizes(), (4, 2))
+
+        c.nc_clear_dataset_chunksizes(bounds=False, interior_ring=False)
+        self.assertIsNone(c.nc_dataset_chunksizes())
+        self.assertEqual(c.bounds.nc_dataset_chunksizes(), (4, 2))
+
+        c.nc_clear_dataset_chunksizes()
+        self.assertIsNone(c.nc_dataset_chunksizes())
+        self.assertIsNone(c.bounds.nc_dataset_chunksizes())
 
 
 if __name__ == "__main__":

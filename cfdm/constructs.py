@@ -1,15 +1,20 @@
+import time
+s = time.time()
 import logging
 from itertools import zip_longest
 from re import Pattern
 
-from . import core, mixin
+print('constructs', time.time()-s)
+from .mixin import Container
+print('3 constructs', time.time()-s)
+from .core import Constructs as core_Constructs
+print('4 constructs', time.time()-s)
 from .core.functions import deepcopy
 from .decorators import _manage_log_level_via_verbosity
 
 logger = logging.getLogger(__name__)
 
-
-class Constructs(mixin.Container, core.Constructs):
+class Constructs(Container, core_Constructs):
     """A container for metadata constructs.
 
     The container has similarities to a `dict` in that it presents the

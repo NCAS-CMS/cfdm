@@ -69,7 +69,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 # -- General configuration ----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = "2.3.1"
+needs_sphinx = "7.0.0"
 
 # rst_prolog = """
 # .. |CF| replace:: """+_get_cf_version()+"""
@@ -96,10 +96,16 @@ extensions = [
     "sphinxcontrib.spelling",
 ]
 
+
 # Boolean indicating whether to scan all found documents for
 # autosummary directives, and to generate stub pages for each
 # (http://sphinx-doc.org/latest/ext/autosummary.html)
-autosummary_generate = True
+
+# SLB, DH NOTE: we don't want to generate these stubs as they use templates
+# from _templates/autosummary which override our custom sub-section lists
+# in our class/*.rst reference files, which we want to use directly! So this
+# flag setting is crucial.
+autosummary_generate = False
 
 # Both the class’ and the __init__ method’s docstring are concatenated
 # and inserted.
@@ -116,8 +122,6 @@ autodoc_member_order = "groupwise"
 # This value is a list of autodoc directive flags that should be
 # automatically applied to all autodoc
 # directives. (http://sphinx-doc.org/latest/ext/autodoc.html)
-# autodoc_default_flags = [
-#     'members', 'inherited-members', 'show-inheritance']  # deprecated
 autodoc_default_options = {
     "members": True,
     "inherited-members": True,
@@ -131,6 +135,8 @@ intersphinx_mapping = {
     "numpy": ("https://numpy.org/doc/stable", None),
     # 'netCDF4': ('https://unidata.github.io/netcdf4-python/', None),
     "cftime": ("https://unidata.github.io/cftime", None),
+    "h5netcdf": ("https://h5netcdf.org", None),
+    "zarr": ("https://zarr.readthedocs.io/en/stable/", None),
 }
 
 # This extension is meant to help with the common pattern of having

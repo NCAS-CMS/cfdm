@@ -6,6 +6,8 @@ import numpy as np
 
 from ..core.utils import cached_property
 from .abstract import CompressedArray
+from .mixin import CompressedArrayMixin
+from .netcdfindexer import netcdf_indexer
 from .subarray import (
     BiLinearSubarray,
     BiQuadraticLatitudeLongitudeSubarray,
@@ -16,7 +18,7 @@ from .subarray import (
 )
 
 
-class SubsampledArray(CompressedArray):
+class SubsampledArray(CompressedArrayMixin, CompressedArray):
     """An underlying subsampled array.
 
     For some structured coordinate data (e.g. coordinates describing
@@ -143,7 +145,7 @@ class SubsampledArray(CompressedArray):
 
             tie_point_indices: `dict`
                 The tie point index variable for each subsampled
-                dimension. A key indentifies a subsampled dimension by
+                dimension. A key identifies a subsampled dimension by
                 its integer position in the compressed array, and its
                 value is a `TiePointIndex` variable.
 
@@ -402,10 +404,15 @@ class SubsampledArray(CompressedArray):
             )
             u[u_indices] = subarray[...]
 
-        if indices is Ellipsis:
-            return u
-
-        return self.get_subspace(u, indices, copy=True)
+        u = netcdf_indexer(
+            u,
+            mask=False,
+            unpack=False,
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=False,
+        )
+        return u[indices]
 
     def _conformed_dependent_tie_points(self):
         """Return the dependent tie points.
@@ -592,7 +599,7 @@ class SubsampledArray(CompressedArray):
         """Return the conformed tie points and any ancillary data.
 
         Returns the tie points and any ancillary data in the forms
-        required by the interpolation algorthm.
+        required by the interpolation algorithm.
 
         .. versionadded:: (cfdm) 1.10.0.0
 
@@ -1043,7 +1050,7 @@ class SubsampledArray(CompressedArray):
                   interpolation subarea dimensions.
 
                5. Flags which state, for each interpolated dimension,
-                  whether each interplation subarea is at the start of
+                  whether each interpolation subarea is at the start of
                   a continuous area.
 
                6. The location of each subarray on the uncompressed
@@ -1057,9 +1064,9 @@ class SubsampledArray(CompressedArray):
         compressed by subsampling with dimensions 0 and 2 being
         interpolated dimensions. Interpolated dimension 0 (size 20)
         has two equally-sized continuous areas, each with one
-        interpolation subarea of size 10; and interpolated dimenson 2
+        interpolation subarea of size 10; and interpolated dimension 2
         (size 15) has a single continuous area divided into has three
-        interpolation subareas of szes 5, 6, and 6.
+        interpolation subareas of sizes 5, 6, and 6.
 
         >>> (
         ...  u_indices,
@@ -1169,7 +1176,7 @@ class SubsampledArray(CompressedArray):
         interpolation_subarea_indices = c_indices[:]
 
         # The flags which state, for each dimension, whether (`True`)
-        # or not (`False`) an interplation subarea is at the start of
+        # or not (`False`) an interpolation subarea is at the start of
         # a continuous area. Non-interpolated dimensions are given the
         # falsey flag `None`.
         new_continuous_area = [(None,)] * tie_points.ndim
@@ -1244,6 +1251,138 @@ class SubsampledArray(CompressedArray):
             product(*new_continuous_area),
             product(*subarray_locations),
         )
+
+    def to_dask_array(self, chunks="auto"):
+        """Convert the data to a `dask` array.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        :Parameters:
+
+            chunks: `int`, `tuple`, `dict` or `str`, optional
+                Specify the chunking of the returned dask array.
+
+                Any value accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is allowed.
+
+                The chunk sizes implied by *chunks* for a dimension that
+                has been fragmented are ignored and replaced with values
+                that are implied by that dimensions fragment sizes.
+
+        :Returns:
+
+            `dask.array.Array`
+                The `dask` array representation.
+
+        """
+        import dask.array as da
+        from dask import config
+        from dask.array.core import getter, normalize_chunks
+        from dask.base import tokenize
+
+        name = (f"{self.__class__.__name__}-{tokenize(self)}",)
+
+        dtype = self.dtype
+
+        context = partial(config.set, scheduler="synchronous")
+
+        compressed_dimensions = self.compressed_dimensions()
+        conformed_data = self.conformed_data()
+        compressed_data = conformed_data["data"]
+        parameters = conformed_data["parameters"]
+        dependent_tie_points = conformed_data["dependent_tie_points"]
+
+        # If possible, convert the compressed data, parameters and
+        # dependent tie points to dask arrays that don't support
+        # concurrent reads. This prevents "compute called by compute"
+        # failures problems at compute time.
+        #
+        # TODO: This won't be necessary if this is refactored so that
+        #       arrays are part of the same dask graph as the
+        #       compressed subarrays.
+        compressed_data = self._lock_file_read(compressed_data)
+        parameters = {
+            k: self._lock_file_read(v) for k, v in parameters.items()
+        }
+        dependent_tie_points = {
+            k: self._lock_file_read(v) for k, v in dependent_tie_points.items()
+        }
+
+        # Get the (cfdm) subarray class
+        Subarray = self.get_Subarray()
+        subarray_name = Subarray().__class__.__name__
+
+        # Set the chunk sizes for the dask array
+        #
+        # Note: The chunks created here are incorrect for the
+        #       compressed dimensions, since these chunk sizes are a
+        #       function of the tie point indices which haven't yet
+        #       been accessed. Therefore, the chunks for the
+        #       compressed dimensions need to be redefined later.
+        chunks = normalize_chunks(
+            self.subarray_shapes(chunks),
+            shape=self.shape,
+            dtype=dtype,
+        )
+
+        # Re-initialise the chunks
+        u_dims = list(compressed_dimensions)
+        chunks = [[] if i in u_dims else c for i, c in enumerate(chunks)]
+
+        # For each dimension, initialise the index of the chunk
+        # previously created (prior to the chunk currently being
+        # created). The value -1 is an arbitrary negative value that is
+        # always less than any chunk index, which is always a natural
+        # number.
+        previous_chunk_location = [-1] * len(chunks)
+
+        dsk = {}
+        for (
+            u_indices,
+            u_shape,
+            c_indices,
+            subarea_indices,
+            first,
+            chunk_location,
+        ) in zip(*self.subarrays(shapes=chunks)):
+            subarray = Subarray(
+                data=compressed_data,
+                indices=c_indices,
+                shape=u_shape,
+                compressed_dimensions=compressed_dimensions,
+                first=first,
+                subarea_indices=subarea_indices,
+                parameters=parameters,
+                dependent_tie_points=dependent_tie_points,
+                context_manager=context,
+            )
+
+            key = f"{subarray_name}-{tokenize(subarray)}"
+            dsk[key] = subarray
+            dsk[name + chunk_location] = (
+                getter,
+                key,
+                Ellipsis,
+                False,
+                False,
+            )
+
+            # Add correct chunk sizes for compressed dimensions
+            for d in u_dims[:]:
+                previous = previous_chunk_location[d]
+                new = chunk_location[d]
+                if new > previous:
+                    chunks[d].append(u_shape[d])
+                    previous_chunk_location[d] = new
+                elif new < previous:
+                    # No more chunk sizes required for this compressed
+                    # dimension
+                    u_dims.remove(d)
+
+        chunks = [tuple(c) for c in chunks]
+
+        # Return the dask array
+        return da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
 
     def to_memory(self):
         """Bring data on disk into memory.

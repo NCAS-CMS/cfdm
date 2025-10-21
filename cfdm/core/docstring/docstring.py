@@ -14,6 +14,7 @@ A key and its corresponding value must both be `str`.
 .. versionaddedd:: (cfdm) 1.8.7.0
 
 """
+
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # General susbstitutions (not indent-dependent)

@@ -1,8 +1,9 @@
 from .abstract import MeshArray
+from .mixin import CompressedArrayMixin
 from .subarray import BoundsFromNodesSubarray
 
 
-class BoundsFromNodesArray(MeshArray):
+class BoundsFromNodesArray(CompressedArrayMixin, MeshArray):
     """An array of cell bounds defined by UGRID node coordinates.
 
     The UGRID node coordinates contain the locations of the nodes of
@@ -107,7 +108,7 @@ class BoundsFromNodesArray(MeshArray):
         """The conformed node connectivity and node coordinate data.
 
         The conformed data arrays are mutually consistent and are
-        suitable fo use in `Subarray` classes.
+        suitable for use in `Subarray` classes.
 
         .. versionadded:: (cfdm) 1.11.0.0
 

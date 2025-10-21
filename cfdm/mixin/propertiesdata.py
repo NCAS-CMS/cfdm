@@ -1,6 +1,11 @@
+import time
+s = time.time()
 import logging
 
+print('0 propertiesdata')
+
 from ..data import Data
+
 from ..decorators import (
     _display_or_return,
     _inplace_enabled,
@@ -8,9 +13,16 @@ from ..decorators import (
     _manage_log_level_via_verbosity,
     _test_decorator_args,
 )
+
+
+from ..functions import _DEPRECATION_ERROR_METHOD
 from . import Properties
 
+
+
 logger = logging.getLogger(__name__)
+
+print('  9 propertiesdata', time.time()-s)
 
 
 class PropertiesData(Properties):
@@ -71,13 +83,6 @@ class PropertiesData(Properties):
         if data is not None:
             new.set_data(data[indices], copy=False)
 
-        if 0 in new.shape:
-            raise IndexError(
-                f"Indices {indices!r} result in a subspaced shape of "
-                f"{new.shape}, but can't create a subspace of "
-                f"{self.__class__.__name__} that has a size 0 axis"
-            )
-
         return new
 
     def __str__(self):
@@ -100,7 +105,7 @@ class PropertiesData(Properties):
         if units is None:
             isreftime = bool(self.get_property("calendar", False))
         else:
-            isreftime = "since" in units
+            isreftime = "since" in str(units)
 
         if isreftime:
             units += " " + self.get_property("calendar", "")
@@ -350,6 +355,60 @@ class PropertiesData(Properties):
 
         return v
 
+    @classmethod
+    def concatenate(
+        cls,
+        variables,
+        axis=0,
+        cull_graph=False,
+        relaxed_units=False,
+        copy=True,
+    ):
+        """Join a together sequence of `{{class}}`.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `Data.concatenate`, `Data.cull_graph`
+
+        :Parameters:
+
+            variables: sequence of constructs.
+
+            axis: `int`, optional
+                Select the axis along which to concatenate, defined
+                by its position in the data array. By default
+                concatenation is along the axis in position 0.
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            {{concatenate copy: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}`
+                The concatenated construct.
+
+        """
+        out = variables[0]
+        if copy:
+            out = out.copy()
+
+        if len(variables) == 1:
+            return out
+
+        data = out.get_data(_fill_value=False, _units=False)
+        new_data = type(data).concatenate(
+            [v.get_data(_fill_value=False) for v in variables],
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
+        out.set_data(new_data, copy=False)
+        return out
+
     def creation_commands(
         self,
         representative_data=False,
@@ -358,6 +417,7 @@ class PropertiesData(Properties):
         string=True,
         name="c",
         data_name="data",
+        quantization_name="q",
         header=True,
     ):
         """Return the commands that would create the construct.
@@ -381,6 +441,12 @@ class PropertiesData(Properties):
 
             {{data_name: `str`, optional}}
 
+            quantization_name: `str`, optional
+                The name of the construct's `Quantization` instance
+                created by the returned commands.
+
+                .. versionadded:: (cfdm) 1.12.2.0
+
             {{header: `bool`, optional}}
 
         :Returns:
@@ -401,10 +467,17 @@ class PropertiesData(Properties):
         c.set_data(data)
 
         """
-        if name == data_name:
+        if name in (data_name, quantization_name):
             raise ValueError(
-                "The 'name' and 'data_name' parameters can "
-                f"not have the same value: {name!r}"
+                "The 'name' parameter can not have the same value as "
+                "either of the 'data_name' or 'quantization_name': "
+                f"keywords: {name!r}"
+            )
+
+        if data_name == quantization_name:
+            raise ValueError(
+                "The 'data_name' parameter can not have the same value as "
+                f"'quantization_name' keyword: {data_name!r}"
             )
 
         namespace0 = namespace
@@ -415,7 +488,7 @@ class PropertiesData(Properties):
 
         out = super().creation_commands(
             namespace=namespace,
-            indent=0,
+            indent=indent,
             string=False,
             name=name,
             header=header,
@@ -430,12 +503,26 @@ class PropertiesData(Properties):
                     data.creation_commands(
                         name=data_name,
                         namespace=namespace0,
-                        indent=0,
+                        indent=indent,
                         string=False,
                     )
                 )
 
             out.append(f"{name}.set_data({data_name})")
+
+        # Quantization
+        q = self.get_quantization(None)
+        if q is not None:
+            out.extend(
+                q.creation_commands(
+                    namespace=namespace0,
+                    indent=indent,
+                    string=False,
+                    name=quantization_name,
+                    header=False,
+                )
+            )
+            out.append(f"{name}._set_quantization({quantization_name})")
 
         if string:
             indent = " " * indent
@@ -472,9 +559,7 @@ class PropertiesData(Properties):
             {{returns dump}}
 
         """
-        # ------------------------------------------------------------
         # Properties
-        # ------------------------------------------------------------
         string = super().dump(
             display=False,
             _key=_key,
@@ -491,9 +576,7 @@ class PropertiesData(Properties):
 
         indent1 = "    " * (_level + 1)
 
-        # ------------------------------------------------------------
         # Data
-        # ------------------------------------------------------------
         data = self.get_data(None)
         if data is not None:
             if _axes and _axis_names:
@@ -508,6 +591,11 @@ class PropertiesData(Properties):
             shape = ", ".join(x)
 
             string.append(f"{indent1}{_prefix}Data({shape}) = {data}")
+
+        # Quantization
+        q = self.get_quantization(None)
+        if q is not None:
+            string.append(q.dump(display=False, _level=_level + 1))
 
         return "\n".join(string)
 
@@ -637,6 +725,17 @@ class PropertiesData(Properties):
             return False
 
         # ------------------------------------------------------------
+        # Check the quantization components
+        # ------------------------------------------------------------
+        q0 = self.get_quantization(None)
+        q1 = other.get_quantization(None)
+        if not (q0 is None and q1 is None) and not self._equals(q0, q1):
+            logger.info(
+                f"{self.__class__.__name__}: Different quantization metadata"
+            )
+            return False
+
+        # ------------------------------------------------------------
         # Check the data
         # ------------------------------------------------------------
         if self.has_data() != other.has_data():
@@ -661,8 +760,40 @@ class PropertiesData(Properties):
 
         return True
 
-    def get_filenames(self):
+    def file_directories(self):
+        """The directories of files containing parts of the data.
+
+        Returns the locations of any files referenced by the data.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `get_filenames`, `replace_directory`
+
+        :Returns:
+
+            `set`
+                The unique set of file directories as absolute paths.
+
+        **Examples**
+
+        >>> d.file_directories()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.file_directories()
+
+        return set()
+
+    def get_filenames(self, normalise=True):
         """Return the name of the file or files containing the data.
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -672,9 +803,86 @@ class PropertiesData(Properties):
         """
         data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
-            return data.get_filenames()
+            return data.get_filenames(normalise=normalise)
 
         return set()
+
+    def get_quantization(self, default=ValueError()):
+        """Get quantization metadata.
+
+        Quantization eliminates false precision, usually by rounding
+        the least significant bits of floating-point mantissas to
+        zeros, so that a subsequent compression on disk is more
+        efficient.
+
+        `{{class}}` data can not be quantized, so the default is
+        always returned.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `get_quantize_on_write`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* keyword, because
+                there is no quantization metadata.
+
+                {{default Exception}}
+
+        :Returns:
+
+                The default.
+
+                {{default Exception}}
+
+        """
+        if default is None:
+            return
+
+        return self._default(
+            default,
+            message=f"{self.__class__.__name__} has no quantization metadata",
+        )
+
+    def get_quantize_on_write(self, default=ValueError()):
+        """Get a quantize-on-write instruction.
+
+        Quantization eliminates false precision, usually by rounding
+        the least significant bits of floating-point mantissas to
+        zeros, so that a subsequent compression on disk is more
+        efficient.
+
+        `{{class}}` data can not be quantized, so the default is
+        always returned.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `get_quantization`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* keyword, because
+                there is no quantize-on-write instruction.
+
+                {{default Exception}}
+
+        :Returns:
+
+                The default.
+
+                {{default Exception}}
+
+        """
+        if default is None:
+            return
+
+        return self._default(
+            default,
+            message=f"{self.__class__.__name__} has no "
+            "quantize-on-write instruction",
+        )
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
@@ -725,6 +933,194 @@ class PropertiesData(Properties):
             data.insert_dimension(position, inplace=True)
 
         return v
+
+    def nc_clear_dataset_chunksizes(self):
+        """Clear the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_dataset_chunksizes`.
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.nc_clear_dataset_chunksizes()
+
+    def nc_clear_hdf5_chunksizes(self):
+        """Clear the HDF5 chunking strategy for the data.
+
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_clear_dataset_chunksizes` instead.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_clear_hdf5_chunksizes",
+            "Use `nc_clear_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_hdf5_chunksizes(self, todict=False):
+        """Get the HDF5 chunking strategy for the data.
+
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_dataset_chunksizes` instead.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_hdf5_chunksizes",
+            "Use `nc_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_dataset_chunksizes(self, todict=False):
+        """Get the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `nc_clear_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Parameters:
+
+            {{chunk todict: `bool`, optional}}
+
+        :Returns:
+
+            {{Returns nc_dataset_chunksizes}}
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.nc_dataset_chunksizes(todict=todict)
+
+    def nc_set_dataset_chunksizes(self, chunksizes):
+        """Set the dataset chunking strategy.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_clear_dataset_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        :Parameters:
+
+            {{chunk chunksizes}}
+
+                  Each dictionary key is an integer that specifies an
+                  axis by its position in the data array.
+
+        :Returns:
+
+            `None`
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            data.nc_set_dataset_chunksizes(chunksizes)
+
+    def nc_set_hdf5_chunksizes(self, chunksizes):
+        """Set the HDF5 chunking strategy.
+
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_set_dataset_chunksizes` instead.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_set_hdf5_chunksizes",
+            "Use `nc_set_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    @_inplace_enabled(default=False)
+    def persist(self, inplace=False):
+        """Persist data into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `array`, `datetime_array`,
+                     `{{package}}.Data.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with persisted data. If the operation
+                was in-place then `None` is returned.
+
+        """
+        v = _inplace_enabled_define_and_cleanup(self)
+
+        data = v.get_data(None)
+        if data is not None:
+            data.persist(inplace=True)
+
+        return v
+
+    def replace_directory(
+        self,
+        old=None,
+        new=None,
+        normalise=False,
+        common=False,
+    ):
+        """Replace a file directory in-place.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `file_directories`, `get_filenames`
+
+        :Parameters:
+
+            {{replace old: `str` or `None`, optional}}
+
+            {{replace new: `str` or `None`, optional}}
+
+            {{replace normalise: `bool`, optional}}
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
+
+        :Returns:
+
+            `None`
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.replace_directory(
+                old=old, new=new, normalise=normalise, common=common
+            )
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

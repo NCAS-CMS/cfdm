@@ -1,19 +1,7 @@
-import fnmatch
 import os
 import re
 
-from setuptools import setup
-
-# from setuptools import setup
-
-
-def find_package_data_files(directory):
-    """TODO."""
-    for root, dirs, files in os.walk(directory):
-        for basename in files:
-            if fnmatch.fnmatch(basename, "*"):
-                filename = os.path.join(root, basename)
-                yield filename.replace("cfdm/", "", 1)
+from setuptools import find_packages, setup
 
 
 def _read(fname):
@@ -67,7 +55,8 @@ inspecting it:
 
 The **cfdm** package can
 
-* read field and domain constructs from netCDF and CDL datasets,
+* read field and domain constructs from netCDF, CDL, and Zarr datasets with a choice of netCDF backends,
+* be fully flexible with respect to dataset storage chunking,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF datasets on disk,
 * read, write, and manipulate UGRID mesh topologies,
@@ -82,12 +71,20 @@ The **cfdm** package can
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays, or coordinate arrays compressed
   by subsampling), whilst presenting a view of the data in its
-  uncompressed form.
+  uncompressed form,
+* read and write that data that are quantized to eliminate false
+  precision.
 
 Documentation
 =============
 
 https://ncas-cms.github.io/cfdm
+
+Dask
+====
+
+From version 1.11.2.0 the `cfdm` package uses `Dask
+<https://docs.dask.org>`_ for all of its data manipulations.
 
 Tutorial
 ========
@@ -127,7 +124,7 @@ tests_require = (
 )
 extras_require = {
     "documentation": [
-        "sphinx==2.4.5",
+        "sphinx>=7.0.0",
         "sphinx-copybutton",
         "sphinx-toggleprompt",
         "sphinxcontrib-spelling",
@@ -172,36 +169,14 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
-    packages=[
-        "cfdm",
-        "cfdm.abstract",
-        "cfdm.core",
-        "cfdm.core.abstract",
-        "cfdm.core.data",
-        "cfdm.core.data.abstract",
-        "cfdm.core.docstring",
-        "cfdm.core.meta",
-        "cfdm.core.mixin",
-        "cfdm.docstring",
-        "cfdm.data",
-        "cfdm.data.abstract",
-        "cfdm.data.mixin",
-        "cfdm.data.subarray",
-        "cfdm.data.subarray.abstract",
-        "cfdm.data.subarray.mixin",
-        "cfdm.mixin",
-        "cfdm.read_write",
-        "cfdm.read_write.abstract",
-        "cfdm.read_write.netcdf",
-        "cfdm.test",
-    ],
+    packages=find_packages(),
     scripts=["scripts/cfdump"],
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,

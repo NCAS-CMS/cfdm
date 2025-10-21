@@ -10,6 +10,7 @@ from . import (
     DomainAxis,
     Index,
     List,
+    Quantization,
     core,
     mixin,
 )
@@ -26,11 +27,13 @@ from .decorators import (
     _manage_log_level_via_verbosity,
     _test_decorator_args,
 )
+from .functions import _DEPRECATION_ERROR_METHOD, parse_indices
 
 logger = logging.getLogger(__name__)
 
 
 class Field(
+    mixin.QuantizationMixin,
     mixin.NetCDFVariable,
     mixin.NetCDFGeometry,
     mixin.NetCDFGlobalAttributes,
@@ -77,6 +80,8 @@ class Field(
 
     {{netCDF geometry group}}
 
+    {{netCDF dataset chunks}}
+
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
@@ -107,6 +112,7 @@ class Field(
         instance._Constructs = Constructs
         instance._Domain = Domain
         instance._DomainAxis = DomainAxis
+        instance._Quantization = Quantization
         instance._RaggedContiguousArray = RaggedContiguousArray
         instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray
@@ -115,46 +121,6 @@ class Field(
         instance._Index = Index
         instance._List = List
         return instance
-
-    def __init__(
-        self, properties=None, source=None, copy=True, _use_data=True
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                  ``properties={'standard_name': 'air_temperature'}``
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        # Initialise the new field with attributes and CF properties
-        core.Field.__init__(
-            self,
-            properties=properties,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        if source is not None:
-            try:
-                mesh_id = source.get_mesh_id(None)
-            except AttributeError:
-                pass
-            else:
-                if mesh_id is not None:
-                    self.set_mesh_id(mesh_id)
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
-
-        self._set_dataset_compliance(self.dataset_compliance(), copy=True)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -312,7 +278,7 @@ class Field(
 
         data = self.get_data(_fill_value=False)
 
-        indices = data._parse_indices(indices)
+        indices = parse_indices(data.shape, indices)
         indices = tuple(indices)
 
         data_axes = self.get_data_axes()
@@ -321,13 +287,6 @@ class Field(
         # Subspace the field's data
         # ------------------------------------------------------------
         new_data = data[tuple(indices)]
-
-        if 0 in new_data.shape:
-            raise IndexError(
-                f"Indices {indices!r} result in a subspaced shape of "
-                f"{new_data.shape}, but can't create a subspace of "
-                f"{self.__class__.__name__} that has a size 0 axis"
-            )
 
         # Replace domain axes
         domain_axes = new.domain_axes(todict=True)
@@ -541,10 +500,6 @@ class Field(
         {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
          'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
 
-        >>> f.cell_methods.ordered()
-        OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                     ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
-
         """
         return self._filter_interface(
             ("field_ancillary",),
@@ -662,6 +617,18 @@ class Field(
 
         **Examples**
 
+        >>> f = {{package}}.example_field(1)
+        >>> print(f.cell_methods())
+        Constructs:
+        {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+         'cellmethod1': <CellMethod: domainaxis3: maximum>}
+        >>> print(f.cell_methods('time'))
+        Constructs:
+        {'cellmethod1': <CellMethod: domainaxis3: maximum>}
+        >>> print(f.cell_methods('bad identifier'))
+        Constructs:
+        {}
+
         """
         cached = filter_kwargs.get("cached")
         if cached is not None:
@@ -702,6 +669,13 @@ class Field(
                         keys.add(cm_key)
 
             identities = ()
+            if not keys:
+                # Specify a key of None to ensure that no cell methods
+                # are selected. (If keys is an empty set then all cell
+                # methods are selected, which is not what we want,
+                # here.)
+                keys = (None,)
+
             filter_kwargs = {
                 "filter_by_key": keys,
                 "todict": filter_kwargs.pop("todict", False),
@@ -1406,6 +1380,136 @@ class Field(
 
         return f
 
+    @classmethod
+    def concatenate(
+        cls, fields, axis, cull_graph=False, relaxed_units=False, copy=True
+    ):
+        """Join together a sequence of Field constructs.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `Data.concatenate`, `Data.cull_graph`
+
+        :Parameters:
+
+            fields: sequence of `{{class}}`
+                The fields to concatenate.
+
+            axis:
+                Select the domain axis to along which to concatenate,
+                defined by that which would be selected by passing
+                *axis* to a call of the field construct's
+                `domain_axis` method. For example, for a value of
+                'time', the domain axis construct returned by
+                ``f.domain_axis('time')`` is selected.
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            {{concatenate copy: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}`
+                The concatenated construct.
+
+        """
+        if isinstance(fields, cls):
+            raise ValueError("Must provide a sequence of Field constructs")
+
+        fields = tuple(fields)
+        field0 = fields[0]
+        data_axes = field0.get_data_axes()
+        axis_key = field0.domain_axis(
+            axis,
+            key=True,
+            default=ValueError(
+                f"Can't identify a unique concatenation axis from {axis!r}"
+            ),
+        )
+        try:
+            axis = data_axes.index(axis_key)
+        except ValueError:
+            raise ValueError(
+                "The field's data must span the concatenation axis"
+            )
+
+        out = field0
+        if copy:
+            out = out.copy()
+
+        if len(fields) == 1:
+            return out
+
+        new_data = out._Data.concatenate(
+            [f.get_data(_fill_value=False) for f in fields],
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
+
+        # Change the domain axis size
+        out.set_construct(
+            out._DomainAxis(size=new_data.shape[axis]), key=axis_key
+        )
+
+        # Insert the concatenated data
+        out.set_data(new_data, axes=data_axes, copy=False)
+
+        # ------------------------------------------------------------
+        # Concatenate constructs with data
+        # ------------------------------------------------------------
+        for key, construct in field0.constructs.filter_by_data(
+            todict=True
+        ).items():
+            construct_axes = field0.get_data_axes(key)
+
+            if axis_key not in construct_axes:
+                # This construct does not span the concatenating axis
+                # in the first field
+                continue
+
+            constructs = [construct]
+            for f in fields[1:]:
+                c = f.constructs.get(key)
+                if c is None:
+                    # This field does not have this construct
+                    constructs = None
+                    break
+
+                constructs.append(c)
+
+            if not constructs:
+                # Not every field has this construct, so remove it
+                # from the output field.
+                out.del_construct(key)
+                continue
+
+            # Still here? Then try concatenating the constructs from
+            # each field.
+            try:
+                construct = construct.concatenate(
+                    constructs,
+                    axis=construct_axes.index(axis_key),
+                    cull_graph=cull_graph,
+                    relaxed_units=relaxed_units,
+                    copy=copy,
+                )
+            except ValueError:
+                # Couldn't concatenate this construct, so remove it from
+                # the output field.
+                out.del_construct(key)
+            else:
+                # Successfully concatenated this construct, so insert
+                # it into the output field.
+                out.set_construct(
+                    construct, key=key, axes=construct_axes, copy=False
+                )
+
+        return out
+
     def creation_commands(
         self,
         representative_data=False,
@@ -1470,7 +1574,7 @@ class Field(
         #
         # field: specific_humidity
         field = {{package}}.Field()
-        field.set_properties({'Conventions': 'CF-1.10', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+        field.set_properties({'Conventions': 'CF-1.12', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
         field.nc_set_variable('q')
         data = {{package}}.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
         field.set_data(data)
@@ -1534,10 +1638,11 @@ class Field(
         #
         # field data axes
         field.set_data_axes(('domainaxis0', 'domainaxis1'))
+
         >>> print(q.creation_commands(representative_data=True, namespace='',
         ...                           indent=4, header=False))
             field = Field()
-            field.set_properties({'Conventions': 'CF-1.10', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+            field.set_properties({'Conventions': 'CF-1.12', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
             field.nc_set_variable('q')
             data = <Data(5, 8): [[0.007, ..., 0.013]] 1>  # Representative data
             field.set_data(data)
@@ -1587,15 +1692,9 @@ class Field(
             field.set_data_axes(('domainaxis0', 'domainaxis1'))
 
         """
-        if name in ("b", "c", "mask", "i"):
+        if name in ("b", "c", "d", "f", "i", "q", "mask"):
             raise ValueError(
                 f"The 'name' parameter can not have the value {name!r}"
-            )
-
-        if name == data_name:
-            raise ValueError(
-                "The 'name' parameter can not have the same value as "
-                f"the 'data_name' parameter: {name!r}"
             )
 
         namespace0 = namespace
@@ -1606,7 +1705,7 @@ class Field(
 
         out = super().creation_commands(
             representative_data=representative_data,
-            indent=0,
+            indent=indent,
             namespace=namespace,
             string=False,
             name=name,
@@ -1631,7 +1730,7 @@ class Field(
             self.domain.creation_commands(
                 representative_data=representative_data,
                 string=False,
-                indent=0,
+                indent=indent,
                 namespace=namespace0,
                 name=name,
                 data_name=data_name,
@@ -1646,7 +1745,7 @@ class Field(
                 c.creation_commands(
                     representative_data=representative_data,
                     string=False,
-                    indent=0,
+                    indent=indent,
                     namespace=namespace0,
                     name="c",
                     data_name=data_name,
@@ -1663,10 +1762,10 @@ class Field(
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
-                    indent=0,
+                    indent=indent,
                     string=False,
-                    name="c",
                     header=header,
+                    name="c",
                 )
             )
             out.append(f"{name}.set_construct(c)")
@@ -1688,7 +1787,7 @@ class Field(
         return out
 
     @_display_or_return
-    def dump(self, display=True, _level=0, _title=None):
+    def dump(self, data=True, display=True, _level=0, _title=None):
         """A full description of the field construct.
 
         Returns a description of all properties, including those of
@@ -1698,6 +1797,22 @@ class Field(
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
+
+            data: `bool`, optional
+                If True (the default) then display the first and last
+                Field data values. This can take a long time if the
+                data needs an expensive computation (possibly
+                including a slow read from local or remote disk), in
+                which case setting *data* to False will not display
+                these values, thereby avoiding the computational
+                cost. This only applies to the Field's data - the
+                first and last values of data arrays stored in
+                metadata constructs are always displayed.
+
+                Note that when the first and last values are
+                displayed, they are cached for fast future retrieval.
+
+                .. versionadded:: (cfdm) 1.12.3.0
 
             display: `bool`, optional
                 If False then return the description as a string. By
@@ -1740,12 +1855,33 @@ class Field(
             string.append(self._dump_properties(_level=_level))
 
         # Data
-        data = self.get_data(None)
-        if data is not None:
+        d = self.get_data(None)
+        if d is not None:
             x = [axis_to_name[axis] for axis in self.get_data_axes(default=())]
+            x = f"{indent0}Data({', '.join(x)})"
+            if data:
+                # Show selected data values
+                x += f" = {d}"
+            else:
+                # Don't show any data values
+                units = d.Units
+                if units.isreftime:
+                    calendar = getattr(units, "calendar", None)
+                    if calendar is not None:
+                        x += f" {calendar}"
+                else:
+                    units = getattr(units, "units", None)
+                    if units is not None:
+                        x += f" {units}"
 
             string.append("")
-            string.append(f"{indent0}Data({', '.join(x)}) = {data}")
+            string.append(x)
+            string.append("")
+
+        # Quantization
+        q = self.get_quantization(None)
+        if q is not None:
+            string.append(q.dump(display=False, _level=_level))
             string.append("")
 
         # Cell methods
@@ -1782,6 +1918,40 @@ class Field(
         )
 
         return "\n".join(string)
+
+    def file_directories(self, constructs=True):
+        """The directories of files containing parts of the data.
+
+        Returns the locations of any files referenced by the data.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `replace_directory`
+
+        :Parameters:
+
+            constructs: `bool`, optional
+                If True (the default) then add also the directory to
+                the data of metadata constructs. If False then don't
+                do this.
+
+        :Returns:
+
+            `set`
+                The unique set of file directories as absolute paths.
+
+        **Examples**
+
+        >>> d.file_directories()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        directories = super().file_directories()
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                directories.update(c.file_directories())
+
+        return directories
 
     def get_data_axes(self, *identity, default=ValueError(), **filter_kwargs):
         """Gets the keys of the axes spanned by the construct data.
@@ -1897,11 +2067,17 @@ class Field(
 
         return domain
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=True):
         """Return the names of the files containing the data.
 
         The names of the files containing the data of the field
         constructs and of any metadata constructs are returned.
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -1919,10 +2095,10 @@ class Field(
         {'temp_file.nc'}
 
         """
-        out = super().get_filenames()
+        out = super().get_filenames(normalise=normalise)
 
         for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.get_filenames())
+            out.update(c.get_filenames(normalise=normalise))
 
         return out
 
@@ -1965,7 +2141,7 @@ class Field(
 
         **Examples**
 
-        >>> f = cfdm.example_field(0)
+        >>> f = {{package}}.example_field(0)
         >>> print(f)
         Field: specific_humidity (ncvar%q)
         ----------------------------------
@@ -2120,36 +2296,27 @@ class Field(
     ):
         """Expand the shape of the data array.
 
-        Inserts a new size 1 axis, corresponding to an existing domain
-        axis construct, into the data array.
-
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `squeeze`, `transpose`
+        .. seealso:: `squeeze`, `transpose`, `unsqueeze`
 
         :Parameters:
 
-            axis: `str`
-                The identifier of the domain axis construct
-                corresponding to the inserted axis.
+            axis:
+                Select the domain axis to insert, generally defined by that
+                which would be selected by passing the given axis description
+                to a call of the field construct's `domain_axis` method. For
+                example, for a value of ``'time'``, the domain axis construct
+                returned by ``f.domain_axis('time')`` is selected.
 
                 If *axis* is `None` then a new domain axis construct
                 will be created for the inserted dimension.
-
-                *Parameter example:*
-                  ``axis='domainaxis2'``
 
             position: `int`, optional
                 Specify the position that the new axis will have in
                 the data array. By default the new axis has position
                 0, the slowest varying position. Negative integers
                 counting from the last position are allowed.
-
-                *Parameter example:*
-                  ``position=2``
-
-                *Parameter example:*
-                  ``position=-1``
 
             constructs: `bool`
                 If True then also insert the new axis into all
@@ -2162,24 +2329,43 @@ class Field(
 
         :Returns:
 
-            `Field` or `None`
-                The new field construct with expanded data axes. If
-                the operation was in-place then `None` is returned.
+            `{{class}}` or `None`
+                The field construct with expanded data, or `None` if the
+                operation was in-place.
 
         **Examples**
 
-        >>> f.data.shape
-        (19, 73, 96)
-        >>> f.insert_dimension('domainaxis3').data.shape
-        (1, 96, 73, 19)
-        >>> f.insert_dimension('domainaxis3', position=3).data.shape
-        (19, 73, 96, 1)
-        >>> f.insert_dimension('domainaxis3', position=-1, inplace=True)
-        (19, 73, 1, 96)
-        >>> f.data.shape
-        (19, 73, 1, 96)
-        >>> f.insert_dimension(None, 1).data.shape
-        (19, 1, 73, 1, 96)
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> g = f.insert_dimension('time', 0)
+        >>> print(g)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(time(1), latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        A previously non-existent size 1 axis must be created prior to
+        insertion:
+
+        >>> f.insert_dimension(None, 1, inplace=True)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(time(1), key%domainaxis3(1), latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
@@ -2198,6 +2384,9 @@ class Field(
                     f"Can only insert axis of size 1. Axis {axis!r} has size "
                     f"{domain_axis.get_size()}"
                 )
+
+        if position < 0:
+            position = position + f.ndim + 1
 
         data_axes = f.get_data_axes(default=None)
         if data_axes is not None:
@@ -2442,60 +2631,565 @@ class Field(
         return f
 
     @_inplace_enabled(default=False)
-    def squeeze(self, axes=None, inplace=False):
-        """Remove size one axes from the data.
+    def persist(self, metadata=False, inplace=False):
+        """Persist the data into memory.
 
-        By default all size one axes are removed, but particular size
-        one axes may be selected for removal.
+        This turns the underlying lazy dask array into an equivalent
+        chunked dask array, but now with the results fully computed
+        and in memory. This can avoid the expense of re-reading the
+        data from disk, or re-computing it, when the data is accessed
+        on multiple occasions.
 
-        .. versionadded:: (cfdm) 1.7.0
+        **Performance**
 
-        .. seealso:: `insert_dimension`, `transpose`
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `persist_metadata`, `array`, `datetime_array`,
+                     `{{package}}.Data.persist`
 
         :Parameters:
 
-            axes: (sequence of) `int`, optional
-                The positions of the size one axes to be removed. By
-                default all size one axes are removed.
-
-                {{axes int examples}}
+            metadata: `bool`
+                If True then also persist the metadata constructs. By
+                default, metadata constructs are not changed.
 
             {{inplace: `bool`, optional}}
 
         :Returns:
 
             `Field` or `None`
-                The field construct with removed data axes. If the
+                The field construct with persisted data. If the
                 operation was in-place then `None` is returned.
-
-        **Examples**
-
-        >>> f.data.shape
-        (1, 73, 1, 96)
-        >>> f.squeeze().data.shape
-        (73, 96)
-        >>> f.squeeze(0).data.shape
-        (73, 1, 96)
-        >>> f.squeeze([-3, 2], inplace=True)
-        >>> f.data.shape
-        (73, 96)
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        if axes is None:
-            iaxes = [i for i, n in enumerate(f.data.shape) if n == 1]
+        super(Field, f).persist(inplace=True)
+        if metadata:
+            f.persist_metadata(inplace=True)
+
+        return f
+
+    @_inplace_enabled(default=False)
+    def persist_metadata(self, inplace=False):
+        """Persist the data of metadata constructs into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist_metadata` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `persist`, `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Field` or `None`
+                The field construct with persisted metadata. If the
+                operation was in-place then `None` is returned.
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        for c in f.constructs.filter_by_data(todict=True).values():
+            c.persist(inplace=True)
+
+        return f
+
+    def replace_directory(
+        self,
+        old=None,
+        new=None,
+        normalise=False,
+        common=False,
+        constructs=True,
+    ):
+        """Replace a file directory in-place.
+
+        Every file in *old_directory* that is referenced by the data
+        is redefined to be in *new*.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `file_directories`, `get_filenames`
+
+        :Parameters:
+
+            {{replace old: `str` or `None`, optional}}
+
+            {{replace new: `str` or `None`, optional}}
+
+            {{replace normalise: `bool`, optional}}
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
+
+            constructs: `bool`, optional
+                If True (the default) then add also the directory to
+                the data of metadata constructs. If False then don't
+                do this.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> d.replace_directory('/data', '/new/data/path/')
+        '/new/data/path'
+        >>> d.get_filenames()
+        {'/new/data/path/file1.nc', '/home/file2.nc'}
+
+        """
+        super().replace_directory(
+            old=old, new=new, normalise=normalise, common=common
+        )
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.replace_directory(
+                    old=old, new=new, normalise=normalise, common=common
+                )
+
+    def nc_hdf5_chunksizes(self, todict=False):
+        """Get the HDF5 chunking strategy for the data.
+
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_dataset_chunksizes` instead.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_hdf5_chunksizes",
+            "Use `nc_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_dataset_chunksizes(self, todict=False):
+        """Get the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `nc_clear_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Parameters:
+
+            {{chunk todict: `bool`, optional}}
+
+        :Returns:
+
+            {{Returns nc_dataset_chunksizes}}
+
+        """
+        chunksizes = super().nc_dataset_chunksizes()
+
+        if todict:
+            if not isinstance(chunksizes, tuple):
+                raise ValueError(
+                    "Can only set todict=True when the HDF chunking strategy "
+                    "comprises the maximum number of array elements in a "
+                    f"chunk along each data axis. Got: {chunksizes!r}"
+                )
+
+            # Convert a tuple to a dict
+            data_axes = self.get_data_axes()
+            domain_axis_identity = self.constructs.domain_axis_identity
+            c = {
+                domain_axis_identity(axis): 1
+                for axis in self.domain_axes(todict=True)
+                if axis not in data_axes
+            }
+
+            for axis, value in zip(data_axes, chunksizes):
+                c[domain_axis_identity(axis)] = value
+
+            chunksizes = c
+
+        return chunksizes
+
+    def nc_clear_hdf5_chunksizes(self, constructs=False):
+        """Clear the HDF5 chunking strategy.
+
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_clear_dataset_chunksizes` instead.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_clear_hdf5_chunksizes",
+            "Use `nc_clear_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_clear_dataset_chunksizes(self, constructs=False):
+        """Clear the dataset chunking strategy.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_set_hdataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Parameters:
+
+            constructs: `dict` or `bool`, optional
+                Also clear the dataset chunking strategy from selected
+                metadata constructs. The chunking strategies of
+                unselected metadata constructs are unchanged.
+
+                If *constructs* is a `dict` then the selected metadata
+                constructs are those that would be returned by
+                ``f.constructs.filter(**constructs,
+                filter_by_data=True)``. Note that an empty dictionary
+                will therefore select all metadata constructs that
+                have data. See `~Constructs.filter` for details.
+
+                For *constructs* being anything other than a
+                dictionary, if it evaluates to True then all metadata
+                constructs that have data are selected, and if it
+                evaluates to False (the default) then no metadata
+                are constructs selected.
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_dataset_chunksizes`.
+
+        """
+        # Clear dataset chunksizes from the metadata
+        if isinstance(constructs, dict):
+            constructs = constructs.copy()
+        elif constructs:
+            constructs = {}
         else:
-            try:
-                iaxes = f.data._parse_axes(axes)
-            except ValueError as error:
-                raise ValueError(f"Can't squeeze data: {error}")
+            constructs = None
+
+        if constructs is not None:
+            constructs["filter_by_data"] = True
+            constructs["todict"] = True
+            for key, construct in self.constructs.filter(**constructs).items():
+                construct.nc_clear_dataset_chunksizes()
+
+        return super().nc_clear_dataset_chunksizes()
+
+    def nc_set_hdf5_chunksizes(
+        self,
+        chunksizes,
+        ignore=False,
+        constructs=False,
+        **filter_kwargs,
+    ):
+        """Set the HDF5 chunking strategy.
+
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_set_dataset_chunksizes` instead.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_set_hdf5_chunksizes",
+            "Use `nc_set_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_set_dataset_chunksizes(
+        self,
+        chunksizes,
+        ignore=False,
+        constructs=False,
+        **filter_kwargs,
+    ):
+        """Set the dataset chunking strategy.
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_clear_dataset_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        :Parameters:
+
+            {{chunk chunksizes}}
+
+                  Each dictionary key, ``k``, specifies the unique
+                  axis that would be identified by ``f.domain_axis(k,
+                  **filter_kwargs)``, and it is allowed to specify a
+                  domain axis that is not spanned by the data
+                  array. See `domain_axis` for details.
+
+            constructs: `dict` or `bool`, optional
+                Also apply the dataset chunking strategy of the field
+                construct data to the applicable axes of selected
+                metadata constructs. The chunking strategies of
+                unselected metadata constructs are unchanged.
+
+                If *constructs* is a `dict` then the selected metadata
+                constructs are those that would be returned by
+                ``f.constructs.filter(**constructs,
+                filter_by_data=True)``. Note that an empty dictionary
+                will therefore select all metadata constructs that
+                have data. See `~Constructs.filter` for details.
+
+                For *constructs* being anything other than a
+                dictionary, if it evaluates to True then all metadata
+                constructs that have data are selected, and if it
+                evaluates to False (the default) then no metadata
+                constructs selected.
+
+            ignore: `bool`, optional
+                If True and *chunksizes* is a `dict` then ignore any
+                dictionary keys that do not identify a unique axis of
+                the field construct's data. If False, the default,
+                then an exception will be raised when such keys are
+                encountered.
+
+            filter_kwargs: optional
+                When *chunksizes* is a `dict`, provide additional
+                keyword arguments to `domain_axis` to customise axis
+                selection criteria.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f.shape
+        (5, 8)
+        >>> print(f.nc_dataset_chunksizes())
+        None
+        >>> f.nc_set_dataset_chunksizes({'latitude': 1})
+        >>> f.nc_dataset_chunksizes()
+        (1, 8)
+        >>> f.nc_set_dataset_chunksizes({'longitude': 7})
+        >>> f.nc_dataset_chunksizes()
+        (1, 7)
+        >>> f.nc_set_dataset_chunksizes({'latitude': 4, 'longitude': 2})
+        >>> f.nc_dataset_chunksizes()
+        (4, 2)
+        >>> f.nc_set_dataset_chunksizes([1, 7])
+        >>> f.nc_dataset_chunksizes()
+        (1, 7)
+        >>> f.nc_set_dataset_chunksizes(64)
+        >>> f.nc_dataset_chunksizes()
+        64
+        >>> f.nc_set_dataset_chunksizes('128 B')
+        >>> f.nc_dataset_chunksizes()
+        128
+        >>> f.nc_set_dataset_chunksizes('contiguous')
+        >>> f.nc_dataset_chunksizes()
+        'contiguous'
+        >>> f.nc_set_dataset_chunksizes(None)
+        >>> print(f.nc_dataset_chunksizes())
+        None
+
+        >>> f.nc_set_dataset_chunksizes([-1, None])
+        >>> f.nc_dataset_chunksizes()
+        (5, 8)
+        >>> f.nc_set_dataset_chunksizes({'latitude': 999})
+        >>> f.nc_dataset_chunksizes()
+        (5, 8)
+
+        >>> f.nc_set_dataset_chunksizes({'latitude': 4, 'time': 1})
+        >>> f.nc_dataset_chunksizes()
+        (4, 8)
+        >>> print(f.dimension_coordinate('time').nc_dataset_chunksizes())
+        None
+        >>> print(f.dimension_coordinate('latitude').nc_dataset_chunksizes())
+        None
+        >>> print(f.dimension_coordinate('longitude').nc_dataset_chunksizes())
+        None
+
+        >>> f.nc_set_dataset_chunksizes({'latitude': 4, 'time': 1}, constructs=True)
+        >>> f.dimension_coordinate('time').nc_dataset_chunksizes()
+        (1,)
+        >>> f.dimension_coordinate('latitude').nc_dataset_chunksizes()
+        (4,)
+        >>> f.dimension_coordinate('longitude').nc_dataset_chunksizes()
+        (8,)
+        >>> f.nc_set_dataset_chunksizes('contiguous', constructs={'filter_by_axis': ('longitude',)})
+        >>> f.nc_dataset_chunksizes()
+        'contiguous'
+         >>> f.dimension_coordinate('time').nc_dataset_chunksizes()
+        (1,)
+        >>> f.dimension_coordinate('latitude').nc_dataset_chunksizes()
+        (4,)
+        >>> f.dimension_coordinate('longitude').nc_dataset_chunksizes()
+        'contiguous'
+
+        >>> f.nc_set_dataset_chunksizes({'height': 19, 'latitude': 3})
+        Traceback
+            ...
+        ValueError: Can't find unique 'height' axis. Consider setting ignore=True
+        >>> f.nc_set_dataset_chunksizes({'height': 19, 'latitude': 3}, ignore=True)
+        >>> f.nc_dataset_chunksizes(todict=True)
+        {'time': 1, 'latitude': 3, 'longitude': 8}
+
+        """
+        data_axes = self.get_data_axes()
+
+        chunksizes_keys = {}
+        if isinstance(chunksizes, dict):
+            # 'chunksizes' is a dictionary: Create a dictionary keyed
+            # by integer axis positions, and one keyed by domain axis
+            # identifiers.
+            chunksizes_positions = {}
+            for identity, value in chunksizes.items():
+                axis = self.domain_axis(identity, key=True, default=None)
+                if axis is None:
+                    if ignore:
+                        continue
+
+                    raise ValueError(
+                        f"Can't find unique {identity!r} axis. "
+                        "Consider setting ignore=True"
+                    )
+
+                chunksizes_keys[axis] = value
+                try:
+                    chunksizes_positions[data_axes.index(axis)] = value
+                except ValueError:
+                    pass
+
+            chunksizes = chunksizes_positions
+        elif constructs and not (
+            chunksizes is None or isinstance(chunksizes, (int, str))
+        ):
+            # 'chunksizes' is not None, not an integer, nor a string;
+            # so it must be a sequence => Create a dictionary keyed by
+            # domain axis identifiers for use with the metadata
+            # constructs.
+            chunksizes_keys = {
+                data_axes[n]: value for n, value in enumerate(chunksizes)
+            }
+
+        super().nc_set_dataset_chunksizes(chunksizes)
+
+        # Set dataset chunksizes on the metadata
+        if isinstance(constructs, dict):
+            constructs = constructs.copy()
+        elif constructs:
+            constructs = {}
+        else:
+            constructs = None
+
+        if constructs is not None:
+            constructs["filter_by_data"] = True
+            constructs["todict"] = True
+            for key, construct in self.constructs.filter(**constructs).items():
+                if chunksizes_keys:
+                    construct_axes = self.get_data_axes(key)
+                    c = {
+                        n: chunksizes_keys[axis]
+                        for n, axis in enumerate(construct_axes)
+                        if axis in chunksizes_keys
+                    }
+                else:
+                    c = chunksizes
+
+                construct.nc_set_dataset_chunksizes(c)
+
+    @_inplace_enabled(default=False)
+    def squeeze(self, axes=None, inplace=False):
+        """Remove size 1 axes from the data.
+
+        By default all size one axes are removed, but particular size
+        one axes may be selected for removal.
+
+        Squeezed domain axis constructs are not removed from the metadata
+        constructs, nor from the domain of the field construct.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `insert_dimension`, `transpose`, `unsqueeze`
+
+        :Parameters:
+
+            axes:
+                Select the domain axes to squeeze, defined by the
+                domain axes that would be selected by passing each
+                given axis description to a call of the field
+                construct's `domain_axis` method. For example, for a
+                value of ``'time'``, the domain axis construct
+                returned by ``f.domain_axis('time')`` is selected.
+
+                If *axes* is `None` (the default) then all size 1 axes
+                are removed.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The field construct with squeezed data, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> g = f.squeeze()
+        >>> g = f.squeeze('time')
+        >>> g = f.squeeze(1)
+        >>> g = f.squeeze(['time', 1, 'dim2'])
+        >>> f.squeeze(['dim2'], inplace=True)
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
 
         data_axes = f.get_data_axes(default=None)
-        if data_axes is not None:
-            new_data_axes = [
-                data_axes[i] for i in range(f.data.ndim) if i not in iaxes
+        if data_axes is None:
+            return f
+
+        if axes is None:
+            domain_axes = f.domain_axes(todict=True)
+            axes = [
+                axis
+                for axis in data_axes
+                if domain_axes[axis].get_size(None) == 1
             ]
+        else:
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+
+            axes = [f.domain_axis(x, key=True) for x in axes]
+            axes = set(axes).intersection(data_axes)
+
+        iaxes = [data_axes.index(axis) for axis in axes]
+
+        new_data_axes = [
+            data_axes[i] for i in range(f.data.ndim) if i not in iaxes
+        ]
 
         # Squeeze the field's data array
         super(Field, f).squeeze(iaxes, inplace=True)
@@ -2511,14 +3205,21 @@ class Field(
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `insert_dimension`, `squeeze`
+        .. seealso:: `insert_dimension`, `squeeze`, `unsqueeze`
 
         :Parameters:
 
-            axes: (sequence of) `int`, optional
-                The new axis order. By default the order is reversed.
+            axes: sequence or `None`
+                Select the domain axis order, defined by the domain
+                axes that would be selected by passing each given axis
+                description to a call of the field construct's
+                `domain_axis` method. For example, for a value of
+                ``'time'``, the domain axis construct returned by
+                ``f.domain_axis('time')`` is selected.
 
-                {{axes int examples}}
+                Each dimension of the field construct's data must be
+                provided, or if *axes* is `None` (the default) then
+                the axis order is reversed.
 
             constructs: `bool`
                 If True then transpose the metadata constructs to have
@@ -2549,13 +3250,22 @@ class Field(
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        try:
-            iaxes = f.data._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError(f"Can't transpose data: {error}")
-
-        if iaxes is None:
+        if axes is None:
             iaxes = tuple(range(f.data.ndim - 1, -1, -1))
+        else:
+            data_axes = self.get_data_axes(default=())
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+
+            axes2 = [f.domain_axis(axis, key=True) for axis in axes]
+
+            if sorted(axes2) != sorted(data_axes):
+                raise ValueError(
+                    f"Can't transpose {self.__class__.__name__}: "
+                    f"Bad axis specification: {axes!r}"
+                )
+
+            iaxes = [data_axes.index(axis) for axis in axes2]
 
         data_axes = f.get_data_axes(default=None)
 
@@ -2673,5 +3383,58 @@ class Field(
             "field_ancillary", todict=True
         ).values():
             c.uncompress(inplace=True)
+
+        return f
+
+    @_inplace_enabled(default=False)
+    def unsqueeze(self, inplace=None):
+        """Insert size 1 axes into the data array.
+
+        All size 1 domain axes which are not spanned by the field
+        construct's data are inserted.
+
+        The axes are inserted into the slowest varying data array positions.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `insert_dimension`, `squeeze`, `transpose`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Field` or `None`
+                The field construct with size-1 axes inserted in its
+                data, or `None` if the operation was in-place.
+
+        **Examples**
+
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> g = f.unsqueeze()
+        >>> print(g)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(time(1), latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        size_1_axes = self.domain_axes(filter_by_size=(1,), todict=True)
+        for axis in set(size_1_axes).difference(self.get_data_axes()):
+            f.insert_dimension(axis, position=0, inplace=True)
 
         return f

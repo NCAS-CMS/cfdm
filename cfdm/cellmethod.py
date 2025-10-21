@@ -171,7 +171,7 @@ class CellMethod(mixin.Container, core.CellMethod):
                         value[i] = data.creation_commands(
                             name=None,
                             namespace=namespace0,
-                            indent=0,
+                            indent=indent,
                             string=True,
                         )
                     else:

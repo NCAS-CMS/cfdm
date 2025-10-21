@@ -6,6 +6,7 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
+from ..functions import _DEPRECATION_ERROR_METHOD, parse_indices
 from . import PropertiesData
 
 logger = logging.getLogger(__name__)
@@ -180,7 +181,7 @@ class PropertiesDataBounds(PropertiesData):
             data = self_bounds.get_data(None, _units=False, _fill_value=False)
             if data is not None:
                 # There is a bounds array
-                bounds_indices = list(data._parse_indices(indices))
+                bounds_indices = list(parse_indices(data.shape, indices))
 
                 if data.ndim <= 2:
                     index = bounds_indices[0]
@@ -383,6 +384,81 @@ class PropertiesDataBounds(PropertiesData):
 
         return c
 
+    @classmethod
+    def concatenate(
+        cls,
+        variables,
+        axis=0,
+        cull_graph=False,
+        relaxed_units=False,
+        copy=True,
+    ):
+        """Join a together sequence of `{{class}}`.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `Data.concatenate`, `Data.cull_graph`
+
+        :Parameters:
+
+            variables: sequence of constructs
+
+            axis: `int`, optional
+                Select the axis to along which to concatenate, defined
+                by its position in the data array. By default
+                concatenation is along the axis in position 0.
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            {{concatenate copy: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}`
+                The concatenated construct.
+
+        """
+        variable0 = variables[0]
+        if copy:
+            variable0 = variable0.copy()
+
+        if len(variables) == 1:
+            return variable0
+
+        out = super().concatenate(
+            variables,
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
+
+        bounds = variable0.get_bounds(None)
+        if bounds is not None:
+            bounds = bounds.concatenate(
+                [v.get_bounds() for v in variables],
+                axis=axis,
+                cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
+            )
+            out.set_bounds(bounds, copy=False)
+
+        interior_ring = variable0.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring = interior_ring.concatenate(
+                [v.get_interior_ring() for v in variables],
+                axis=axis,
+                cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
+            )
+            out.set_interior_ring(interior_ring, copy=False)
+
+        return out
+
     def creation_commands(
         self,
         representative_data=False,
@@ -421,15 +497,9 @@ class PropertiesDataBounds(PropertiesData):
                 The name of the construct's `Bounds` instance created
                 by the returned commands.
 
-                *Parameter example:*
-                  ``name='bounds1'``
-
             interior_ring_name: `str`, optional
                 The name of the construct's `InteriorRing` instance
                 created by the returned commands.
-
-                *Parameter example:*
-                  ``name='ir1'``
 
             {{header: `bool`, optional}}
 
@@ -458,18 +528,18 @@ class PropertiesDataBounds(PropertiesData):
         c.set_bounds(b)
 
         """
-        if name in (data_name, bounds_name, interior_ring_name):
+        if name in (bounds_name, interior_ring_name):
             raise ValueError(
                 "The 'name' parameter can not have the same value as "
-                "any of the 'data_name', 'bounds_name', or "
-                f"'interior_ring_name' parameters: {name!r}"
+                "either of the 'bounds_name' or 'interior_ring_name' "
+                f"parameters: {name!r}"
             )
 
-        if data_name in (name, bounds_name, interior_ring_name):
+        if data_name in (bounds_name, interior_ring_name):
             raise ValueError(
                 "The 'data_name' parameter can not have "
-                "the same value as any of the 'name', 'bounds_name', "
-                f"or 'interior_ring_name' parameters: {data_name!r}"
+                "same value as either of the 'bounds_name' or "
+                f"'interior_ring_name' parameters: {data_name!r}"
             )
 
         namespace0 = namespace
@@ -480,7 +550,7 @@ class PropertiesDataBounds(PropertiesData):
 
         out = super().creation_commands(
             representative_data=representative_data,
-            indent=0,
+            indent=indent,
             namespace=namespace,
             string=False,
             name=name,
@@ -502,7 +572,7 @@ class PropertiesDataBounds(PropertiesData):
             out.extend(
                 bounds.creation_commands(
                     representative_data=representative_data,
-                    indent=0,
+                    indent=indent,
                     namespace=namespace0,
                     string=False,
                     name=bounds_name,
@@ -517,7 +587,7 @@ class PropertiesDataBounds(PropertiesData):
             out.extend(
                 interior_ring.creation_commands(
                     representative_data=representative_data,
-                    indent=0,
+                    indent=indent,
                     namespace=namespace0,
                     string=False,
                     name=interior_ring_name,
@@ -921,6 +991,36 @@ class PropertiesDataBounds(PropertiesData):
                 default,
                 f"{self.__class__.__name__} has no node count variable",
             )
+
+        return out
+
+    def file_directories(self):
+        """The directories of files containing parts of the data.
+
+        Returns the locations of any files referenced by the data.
+
+        .. seealso:: `get_filenames`, `replace_directory`
+
+        :Returns:
+
+            `set`
+                The unique set of file directories as absolute paths.
+
+        **Examples**
+
+        >>> d.file_directories()
+        {'https:///data/1', 'file:///data2'}
+
+        """
+        out = super().file_directories()
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.update(bounds.file_directories())
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.update(interior_ring.file_directories())
 
         return out
 
@@ -1363,6 +1463,233 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.insert_dimension(position, inplace=True)
 
         return c
+
+    @_inplace_enabled(default=False)
+    def persist(self, bounds=True, inplace=False):
+        """Persist data into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `array`, `datetime_array`,
+                     `{{package}}.Data.persist`
+
+        :Parameters:
+
+            bounds: `bool`, optional
+                If True, the default, then also persist any bounds
+                data.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with persisted data. If the operation
+                was in-place then `None` is returned.
+
+        """
+        c = _inplace_enabled_define_and_cleanup(self)
+
+        super(PropertiesDataBounds, c).persist(inplace=True)
+
+        # Bounds
+        bounds = c.get_bounds(None)
+        if bounds is not None:
+            bounds.persist(inplace=True)
+
+        # Interior_ring
+        interior_ring = c.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.persist(inplace=True)
+
+        return c
+
+    def replace_directory(
+        self,
+        old=None,
+        new=None,
+        normalise=False,
+        common=False,
+    ):
+        """Replace file directories in-place.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        .. seealso:: `file_directories`, `get_filenames`
+
+        :Parameters:
+
+            {{replace old: `str` or `None`, optional}}
+
+            {{replace new: `str` or `None`, optional}}
+
+            {{replace normalise: `bool`, optional}}
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
+
+        :Returns:
+
+            `None`
+
+        """
+        directory = super().replace_directory(
+            old=old, new=new, normalise=normalise, common=common
+        )
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.replace_directory(
+                old=old, new=new, normalise=normalise, common=common
+            )
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.replace_directory(
+                old=old, new=new, normalise=normalise, common=common
+            )
+
+        return directory
+
+    def nc_clear_hdf5_chunksizes(self, bounds=True, interior_ring=True):
+        """Clear the HDF5 chunking strategy for the data.
+
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_clear_dataset_chunksizes` instead.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_clear_hdf5_chunksizes",
+            "Use `nc_clear_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_clear_dataset_chunksizes(self, bounds=True, interior_ring=True):
+        """Clear the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Parameters:
+
+            bounds: `bool`, optional
+                If True, the default, then clear the dataset chunking
+                strategy from any bounds. If False then leave the
+                bounds chunking strategy unchanged.
+
+            interior_ring: `bool`
+                If True, the default, then clear the dataset chunking
+                strategy from a geometry interior ring variable. If
+                False then leave the geometry interior ring variable
+                chunking strategy unchanged.
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_dataset_chunksizes`.
+
+        """
+        super().nc_clear_dataset_chunksizes()
+
+        # Clear the bounds dataset chunks
+        if bounds:
+            bounds = self.get_bounds(None)
+            if bounds is not None:
+                bounds.nc_clear_dataset_chunksizes()
+
+        # Clear the  interior_ring dataset chunks
+        if interior_ring:
+            interior_ring = self.get_interior_ring(None)
+            if interior_ring is not None:
+                interior_ring.nc_clear_dataset_chunksizes()
+
+    def nc_set_hdf5_chunksizes(
+        self, chunksizes, bounds=True, interior_ring=True
+    ):
+        """Set the HDF5 chunking strategy.
+
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_set_dataset_chunksizes` instead.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_set_hdf5_chunksizes",
+            "Use `nc_set_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_set_dataset_chunksizes(
+        self, chunksizes, bounds=True, interior_ring=True
+    ):
+        """Set the dataset chunking strategy.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_clear_dataset_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        :Parameters:
+
+            {{chunk chunksizes}}
+
+                  Each dictionary key is an integer that specifies an
+                  axis by its position in the data array.
+
+            bounds: `bool`, optional
+                If True, the default, then apply the dataset chunking
+                strategy to the corresponding axes of any bounds. If
+                False then leave the bounds chunking strategy
+                unchanged.
+
+            interior_ring: `bool`
+                If True, the default, then apply the dataset chunking
+                strategy to the corresponding axis of a geometry
+                interior ring variable. If False then leave the
+                geometry interior ring variable chunking strategy
+                unchanged.
+
+        :Returns:
+
+            `None`
+
+        """
+        super().nc_set_dataset_chunksizes(chunksizes)
+
+        c = self.nc_dataset_chunksizes()
+        if isinstance(c, tuple):
+            c = {n: value for n, value in enumerate(c)}
+
+        # Set the bounds dataset chunks
+        if bounds:
+            bounds = self.get_bounds(None)
+            if bounds is not None:
+                bounds.nc_set_dataset_chunksizes(c)
+
+        # Set the  interior_ring dataset chunks
+        if interior_ring:
+            interior_ring = self.get_interior_ring(None)
+            if interior_ring is not None:
+                interior_ring.nc_set_dataset_chunksizes(c)
 
     def set_node_count(self, node_count, copy=True):
         """Set the node count variable for geometry bounds.

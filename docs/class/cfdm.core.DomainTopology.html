@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>cfdm.core.DomainTopology &#8212; Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
+    <script src="../_static/documentation_options.js?v=7e90eb75"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.core.DomainTopology.construct_type" href="../attribute/cfdm.core.DomainTopology.construct_type.html" />
+    <link rel="prev" title="cfdm.core.DomainAxis._docstring_method_exclusions" href="../method/cfdm.core.DomainAxis._docstring_method_exclusions.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cfdm 1.12.3.1</a></h1>
+
+
+
+<p class="blurb">A Python reference implementation of the CF data model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cfdm&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
+      <li>Previous: <a href="../method/cfdm.core.DomainAxis._docstring_method_exclusions.html" title="previous chapter">cfdm.core.DomainAxis._docstring_method_exclusions</a></li>
+      <li>Next: <a href="../attribute/cfdm.core.DomainTopology.construct_type.html" title="next chapter">cfdm.core.DomainTopology.construct_type</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="cfdm-core-domaintopology">
+<span id="id1"></span><h1>cfdm.core.DomainTopology<a class="headerlink" href="#cfdm-core-domaintopology" title="Link to this heading">¶</a></h1>
+<hr class="docutils" />
+<dl class="py class">
+<dt class="sig sig-object py" id="cfdm.core.DomainTopology">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.core.</span></span><span class="sig-name descname"><span class="pre">DomainTopology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.1/cfdm/core/domaintopology.py#L4-L302"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.core.DomainTopology" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Topology</span></code></p>
+<p>A domain topology construct of the CF data model.</p>
+<p>A domain topology construct defines the geospatial topology of
+cells arranged in two or three dimensions in real space but
+indexed by a single (discrete) domain axis construct, and at most
+one domain topology construct may be associated with any such
+domain axis. The topology describes topological relationships
+between the cells - spatial relationships which do not depend on
+the cell locations - and is represented by an undirected graph,
+i.e. a mesh in which pairs of nodes are connected by links. Each
+node has a unique arbitrary identity that is independent of its
+spatial location, and different nodes may be spatially co-located.</p>
+<p>The topology may only describe cells that have a common spatial
+dimensionality, one of:</p>
+<ul class="simple">
+<li><p>Point: A point is zero-dimensional and has no boundary vertices.</p></li>
+<li><dl class="simple">
+<dt>Edge: An edge is one-dimensional and corresponds to a line</dt><dd><p>connecting two boundary vertices.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Face: A face is two-dimensional and corresponds to a surface</dt><dd><p>enclosed by a set of edges.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Each type of cell implies a restricted topology for which only
+some kinds of mesh are allowed. For point cells, every node
+corresponds to exactly one cell; and two cells have a topological
+relationship if and only if their nodes are connected by a mesh
+link. For edge and face cells, every node corresponds to a
+boundary vertex of a cell; the same node can represent vertices in
+multiple cells; every link in the mesh connects two cell boundary
+vertices; and two cells have a topological relationship if and
+only if they share at least one node.</p>
+<p>A domain topology construct contains an array defining the mesh,
+and properties to describe it. There must be a property indicating
+the spatial dimensionality of the cells. The array values comprise
+the node identities, and all array elements that refer to the same
+node must contain the same value, which must differ from any other
+value in the array. The array spans the domain axis construct and
+also has a ragged dimension, whose function depends on the spatial
+dimensionality of the cells.</p>
+<p>For each point cell, the first element along the ragged dimension
+contains the node identity of the cell, and the following elements
+contain in arbitrary order the identities of all the cells to
+which it is connected by a mesh link.</p>
+<p>For each edge or face cell, the elements along the ragged
+dimension contain the node identities of the boundary vertices of
+the cell, in the same order that the boundary vertices are stored
+by the auxiliary coordinate constructs. Each boundary vertex
+except the last is connected by a mesh link to the next vertex
+along the ragged dimension, and the last vertex is connected to
+the first.</p>
+<p>When a domain topology construct is present it is considered to be
+definitive and must be used in preference to the topology implied
+by inspection of any other constructs, which is not guaranteed to
+be the same.</p>
+<p>See CF Appendix I “The CF Data Model”.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>cell: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The cell type that indicates the spatial dimensionality
+of the cells, one of <code class="docutils literal notranslate"><span class="pre">'point'</span></code> (a 0-d point with no
+boundary vertices), <code class="docutils literal notranslate"><span class="pre">'edge'</span></code> (a 1-d line connecting
+two boundary vertices), or <code class="docutils literal notranslate"><span class="pre">'face'</span></code> (a 2-d surface
+enclosed by a set of edges).</p>
+</dd>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+property names, with corresponding values.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.core.DomainTopology.set_properties.html#cfdm.core.DomainTopology.set_properties" title="cfdm.core.DomainTopology.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.DomainTopology.set_property.html#cfdm.core.DomainTopology.set_property" title="cfdm.core.DomainTopology.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'face</span> <span class="pre">to</span> <span class="pre">node</span> <span class="pre">mapping'}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>data: data_like, optional</dt><dd><p>Set the data.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm.core instances that contain
+<a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
+<p>The data also may be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.core.DomainTopology.set_data.html#cfdm.core.DomainTopology.set_data" title="cfdm.core.DomainTopology.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+</dd>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cfdm.core.DomainTopology" title="cfdm.core.DomainTopology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainTopology</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cfdm.core.DomainTopology" title="cfdm.core.DomainTopology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainTopology</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cfdm.core.DomainTopology" title="cfdm.core.DomainTopology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainTopology</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cfdm.core.DomainTopology(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+parameters prior to initialisation. By default the
+parameters are not deep copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.DomainTopology.construct_type.html#cfdm.core.DomainTopology.construct_type" title="cfdm.core.DomainTopology.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<td><p>Return a description of the construct type.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.del_property.html#cfdm.core.DomainTopology.del_property" title="cfdm.core.DomainTopology.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<td><p>Remove a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.get_property.html#cfdm.core.DomainTopology.get_property" title="cfdm.core.DomainTopology.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<td><p>Return a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.has_property.html#cfdm.core.DomainTopology.has_property" title="cfdm.core.DomainTopology.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<td><p>Whether a property has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.set_property.html#cfdm.core.DomainTopology.set_property" title="cfdm.core.DomainTopology.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<td><p>Set a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.properties.html#cfdm.core.DomainTopology.properties" title="cfdm.core.DomainTopology.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<td><p>Return all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.clear_properties.html#cfdm.core.DomainTopology.clear_properties" title="cfdm.core.DomainTopology.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<td><p>Remove all properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.del_properties.html#cfdm.core.DomainTopology.del_properties" title="cfdm.core.DomainTopology.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></a></p></td>
+<td><p>Remove properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.set_properties.html#cfdm.core.DomainTopology.set_properties" title="cfdm.core.DomainTopology.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<td><p>Set properties.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="topology">
+<h2>Topology<a class="headerlink" href="#topology" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.del_cell.html#cfdm.core.DomainTopology.del_cell" title="cfdm.core.DomainTopology.del_cell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_cell</span></code></a></p></td>
+<td><p>Remove the cell type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.get_cell.html#cfdm.core.DomainTopology.get_cell" title="cfdm.core.DomainTopology.get_cell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cell</span></code></a></p></td>
+<td><p>Return the cell type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.has_cell.html#cfdm.core.DomainTopology.has_cell" title="cfdm.core.DomainTopology.has_cell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_cell</span></code></a></p></td>
+<td><p>Whether the cell type has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.set_cell.html#cfdm.core.DomainTopology.set_cell" title="cfdm.core.DomainTopology.set_cell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell</span></code></a></p></td>
+<td><p>Set the cell type.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data">
+<h2>Data<a class="headerlink" href="#data" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.del_data.html#cfdm.core.DomainTopology.del_data" title="cfdm.core.DomainTopology.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<td><p>Remove the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.get_data.html#cfdm.core.DomainTopology.get_data" title="cfdm.core.DomainTopology.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<td><p>Return the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.has_data.html#cfdm.core.DomainTopology.has_data" title="cfdm.core.DomainTopology.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<td><p>Whether or not the construct has data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.set_data.html#cfdm.core.DomainTopology.set_data" title="cfdm.core.DomainTopology.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<td><p>Set the data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.DomainTopology.data.html#cfdm.core.DomainTopology.data" title="cfdm.core.DomainTopology.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<td><p>The data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.core.DomainTopology.dtype.html#cfdm.core.DomainTopology.dtype" title="cfdm.core.DomainTopology.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>Data-type of the data elements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.DomainTopology.ndim.html#cfdm.core.DomainTopology.ndim" title="cfdm.core.DomainTopology.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<td><p>The number of data dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.core.DomainTopology.shape.html#cfdm.core.DomainTopology.shape" title="cfdm.core.DomainTopology.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>A tuple of the data array's dimension sizes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.DomainTopology.size.html#cfdm.core.DomainTopology.size" title="cfdm.core.DomainTopology.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>The number elements in the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="bounds">
+<h2>Bounds<a class="headerlink" href="#bounds" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.has_bounds.html#cfdm.core.DomainTopology.has_bounds" title="cfdm.core.DomainTopology.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<td><p>Whether or not there are cell bounds.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.copy.html#cfdm.core.DomainTopology.copy" title="cfdm.core.DomainTopology.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="special">
+<h2>Special<a class="headerlink" href="#special" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.__deepcopy__.html#cfdm.core.DomainTopology.__deepcopy__" title="cfdm.core.DomainTopology.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.__repr__.html#cfdm.core.DomainTopology.__repr__" title="cfdm.core.DomainTopology.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Return repr(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology.__str__.html#cfdm.core.DomainTopology.__str__" title="cfdm.core.DomainTopology.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Return str(self).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology._docstring_special_substitutions.html#cfdm.core.DomainTopology._docstring_special_substitutions" title="cfdm.core.DomainTopology._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring substitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology._docstring_substitutions.html#cfdm.core.DomainTopology._docstring_substitutions" title="cfdm.core.DomainTopology._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology._docstring_package_depth.html#cfdm.core.DomainTopology._docstring_package_depth" title="cfdm.core.DomainTopology._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.DomainTopology._docstring_method_exclusions.html#cfdm.core.DomainTopology._docstring_method_exclusions" title="cfdm.core.DomainTopology._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &#169;2025, NCAS | Page built on 2025-10-15.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

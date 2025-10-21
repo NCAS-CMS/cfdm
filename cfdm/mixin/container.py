@@ -1,6 +1,11 @@
+
+import time
+s = time.time()
 import logging
 
 import numpy as np
+
+import time
 
 from ..decorators import _manage_log_level_via_verbosity
 from ..docstring import _docstring_substitution_definitions
@@ -8,6 +13,7 @@ from ..functions import atol, rtol
 
 logger = logging.getLogger(__name__)
 
+print('mixin container', time.time()-s)
 
 class Container:
     """Mixin class for storing object components.

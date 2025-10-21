@@ -506,7 +506,7 @@ class SubsampledSubarray(Subarray):
 
         For each subsampled dimension, removes the first point of the
         interpolation subarea when it is not the first (in
-        index-space) of a continuous area. This is beacuse this value
+        index-space) of a continuous area. This is because this value
         in the uncompressed data has already been calculated from the
         previous (in index space) interpolation subarea.
 
@@ -603,33 +603,60 @@ class SubsampledSubarray(Subarray):
         """
         return self._get_component("subarea_indices")
 
-    def get_filenames(self):
-        """Return the names of any files containing the data.
-
-        Includes the names of files that contain any parameters and
-        dependent tie points.
+    def get_filename(self, normalise=True, default=AttributeError()):
+        """Return the name of the file containing the data.
 
         .. versionadded:: (cfdm) 1.10.0.2
 
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) 1.12.0.0
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no file name.
+
+                {{default Exception}}
+
+                .. versionadded:: (cfdm) 1.12.0.0
+
         :Returns:
 
-            `tuple`
-                The file names in normalised, absolute form. If the
-                data are all in memory then an empty `set` is
-                returned.
+            `str`
+                The file name.
 
         """
-        filenames = super().get_filenames()
+        filename = super().get_filename(normalise=normalise, default=None)
+        if filename is None:
+            if default is None:
+                return
 
+            return self._default(
+                default, f"{self.__class__.__name__} has no unique file name"
+            )
+
+        filenames = [filename]
         for x in tuple(self.parameters.values()) + tuple(
             self.dependent_tie_points.values()
         ):
             try:
-                filenames += x.get_filenames()
+                filenames2 = x.get_filenames(normalise=normalise)
             except AttributeError:
                 pass
+            else:
+                filenames.extend(filenames2)
 
-        return tuple(set(filenames))
+        if len(set(filenames)) != 1:
+            if default is None:
+                return
+
+            return self._default(
+                default, f"{self.__class__.__name__} has no unique file name"
+            )
+
+        return filenames[0]
 
     def get_interpolation_description(self, default=ValueError()):
         """Get a non-standardised interpolation method description.

@@ -13,6 +13,39 @@ class FieldDomain:
 
     """
 
+    def __initialise_from_source(self, source, copy=True):
+        """Initialise mesh_id information from a source.
+
+        This method is called by
+        `_Container__parent_initialise_from_source`, which in turn is
+        called by `cfdm.core.Container.__init__`.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        :Parameters:
+
+            source:
+                The object from which to extract the initialisation
+                information. Typically, but not necessarily, a
+                `{{class}}` object.
+
+            copy: `bool`, optional
+                If True (the default) then deep copy the
+                initialisation information.
+
+        :Returns:
+
+            `None`
+
+        """
+        try:
+            mesh_id = source.get_mesh_id(None)
+        except AttributeError:
+            pass
+        else:
+            if mesh_id is not None:
+                self.set_mesh_id(mesh_id)
+
     def _apply_masking_constructs(self):
         """Apply masking to metadata constructs in-place.
 
@@ -88,7 +121,15 @@ class FieldDomain:
         c = getattr(self, _constructs_method)(*identities, **filter_kwargs)
 
         # Return construct, or key, or both, or default
-        return self._filter_return_construct(c, key, item, default, _method)
+        return self._filter_return_construct(
+            c,
+            key,
+            item,
+            default,
+            _method,
+            identities=identities,
+            filter_kwargs=filter_kwargs,
+        )
 
     def _get_data_compression_variables(self, component):
         """TODO."""
@@ -157,7 +198,16 @@ class FieldDomain:
 
         return out
 
-    def _filter_return_construct(self, c, key, item, default, _method):
+    def _filter_return_construct(
+        self,
+        c,
+        key,
+        item,
+        default,
+        _method,
+        identities=None,
+        filter_kwargs=None,
+    ):
         """Return construct, or key, or both, or default.
 
         :Parameters:
@@ -177,6 +227,20 @@ class FieldDomain:
 
             _method: `str`
                 The name of the ultimate calling method.
+
+            identities: `None` or sequence, optional
+                The *identity* positional argument passed in by the
+                calling function (i.e. by the user). Used for
+                informative error messages.
+
+                .. versionadded:: (cfdm) 1.12.0.0
+
+            filter_kwargs: `None` or `dict`, optional
+                The filter_kwargs that were passed in by the calling
+                function (i.e. by the user). Used for informative
+                error messages.
+
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -198,10 +262,26 @@ class FieldDomain:
         if default is None:
             return default
 
+        # Create a nice error message
+        if identities is None:
+            identities = []
+        else:
+            identities = [f"{i!r}" for i in identities]
+
+        if filter_kwargs is None:
+            filter_kwargs = []
+        else:
+            filter_kwargs.pop("todict", None)
+            filter_kwargs = [
+                f"{key}={value!r}" for key, value in filter_kwargs.items()
+            ]
+
+        args = ", ".join(identities + filter_kwargs)
+        construct_type = _method.replace("_", " ")
+
         return self._default(
             default,
-            f"{self.__class__.__name__}.{_method}() can't return {n} "
-            "constructs",
+            f"No {construct_type} constructs found with identity {args}",
         )
 
     def _filter_interface(
@@ -286,7 +366,11 @@ class FieldDomain:
 
                 # Return construct, or key, or both, or default
                 return self._filter_return_construct(
-                    c, key, item, default, _method
+                    c,
+                    key,
+                    item,
+                    default,
+                    _method,
                 )
 
             kwargs = {"filter_by_type": _ctypes}
@@ -329,7 +413,15 @@ class FieldDomain:
             return c
 
         # Return construct, or key, or both, or default
-        return self._filter_return_construct(c, key, item, default, _method)
+        return self._filter_return_construct(
+            c,
+            key,
+            item,
+            default,
+            _method,
+            identities=identities,
+            filter_kwargs=filter_kwargs,
+        )
 
     def _original_filenames(self, define=None, update=None, clear=False):
         """The names of files containing the original data and metadata.

@@ -1,30 +1,48 @@
-* Decide the version name to set for the new release, by
+- [ ] Decide the version name to set for the new release, by
   heeding the Versioning Strategy (see
   https://ncas-cms.github.io/cfdm/releases.html#versioning-strategy).
 
-* Change the version and date in `cfdm/core/__init__.py`
-  (`__version__` and `__date__` variables).
-  
-* Change the version and date in `codemeta.json`
+- [ ] Set the NEXTVERSION version marker across the codebase (added in PRs
+  to mark the next version where the exact number/name is not yet
+  decided) by recursively finding all occurences within the `cfdm`
+  directory and replacing them with the upcoming version name `<VN>`
+  (replacing `<VN>` appropriately for the value of the now correct
+  `cfdm.__version__`, e.g. `1.12.0.0`), via running this command in
+  `cfdm` repository root directory (don't run it repository-wide or it
+  will e.g. edit this script!):
 
-* Ensure that the requirements on dependencies and their versions are
+  ```console
+  $ find cfdm/ -type f | xargs sed -i 's/NEXTVERSION/<VN>/g'
+  ```
+
+- [ ] Edit the name of the `NEXTVERSION` milestone in GitHub to be the
+      upcoming version `<VN>` (replacing `<VN>` appropriately,
+      e.g. `1.12.0.0`). Then close the new `<VN>` milestone, and create
+      a new `NEXTVERSION` milestone.
+
+- [ ] Change the "version" and "dateModified" in `codemeta.json`.
+
+- [ ] Ensure that the requirements on dependencies and their versions are
   up-to-date and consistent in both the `requirements.txt` file and in
   `docs/source/installation.rst`; and in the `_requires` list and
-  `LooseVersion` checks in `cfdm/core/__init__.py` and
+  `Version` checks in both `cfdm/core/__init__.py` and
   `cfdm/__init__.py`.
 
-* If required, change the CF conventions version in
+- [ ] Change the version and date in `cfdm/core/__init__.py` (`__version__` and
+  `__date__` variables).
+
+- [ ] If required, change the CF conventions version in
   `cfdm/core/__init__.py` (`__cf_version__` variable), `setup.py`, and
   `README.md`.
 
-* Make sure that `README.md` is up to date.
+- [ ] Make sure that `README.md` is up to date.
 
-* Make sure that the `long_description` in `setup.py` is up to date.
+- [ ] Make sure that the `long_description` in `setup.py` is up to date.
 
-* Make sure that `Changelog.rst` is up to date (version, date, and
+- [ ] Make sure that `Changelog.rst` is up to date (version, date, and
   changes).
 
-* Make sure that the package to be released is first in the PYTHONPATH
+- [ ] Make sure that the package to be released is first in the PYTHONPATH
   environment variable. This is necessary for the subsequent items to
   work correctly.
 
@@ -32,59 +50,51 @@
   export PYTHONPATH=$PWD:$PYTHONPATH
   ```
   
-* Check that the documentation API coverage is complete:
+- [ ] Check that the documentation API coverage is complete:
 
   ```bash
   ./check_docs_api_coverage
   ```
 
-  * If it is not complete, add any undocumented attributes, methods,
+  - [ ] If it is not complete, add any undocumented attributes, methods,
     functions and keyword arguments (e.g. as listed in the change log)
     to the `.rst` files in `docs/source/class/`.
 
-* Check external links to the CF conventions are up to date in
+- [ ] Check external links to the CF conventions are up to date in
   `docs/source/tutorial.rst`
 
-* If and only if the CF conventions version has changed:
+- [ ] If and only if the CF conventions version has changed:
 
-  * Update the Conventions attribute of the tutorial sample files:
+  - [ ] Update the Conventions attribute of the tutorial sample files:
   
      ```bash
      cd docs/source
      ./update_sample_file_Conventions CF-<vn>  # E.g. ./update_sample_file_Conventions CF-1.10
      cd -
      ```
-  * Change any printed Conventions values in `docs/source/tutorial.rst`
+  - [ ] Change any printed Conventions values in `docs/source/tutorial.rst`
   
-* Create a link to the new documentation in `docs/source/releases.rst`
+- [ ] Create a link to the new documentation in `docs/source/releases.rst`
 
-* Ensure you have an environment with the right version of
-  Sphinx and some extensions for the build output we want.
-
-  The following version installation conditions should establish
-  this (note it will likely be useful to create a dedicated
-  environment and/or make use of `pip install --no-deps <lib>`
-  in order to handle the quite old Sphinx version):
-  ```bash
-  sphinx==2.4.5
-  sphinx-copybutton==0.5.1
-  sphinx-toggleprompt==0.2.0
-  sphinxcontrib-spelling==4.3.0
-  jinja2==3.0.3
-  ```
+- [ ] Ensure you have an environment with the right version of
+  Sphinx and some extensions for the build output we want. We
+  need Sphinx 7.0.0 at least, but otherwise use the latest
+  versions of any documentation related library unless
+  you notice anything undesired in the development build - check the
+  API reference in particular for any possible issues.
 
   where the last requirement is to avoid a deprecation issue
   relating to Jinja2 usage by the Sphinx libraries and
   extensions. Note that the `enchant-2` library will probably
   be required to provide the Enchant C library for these, also.
 
-* Test tutorial code:
+- [ ] Test tutorial code:
 
   ```bash
   ./test_tutorial_code
   ```
 
-* Build a development copy of the documentation using to check API
+- [ ] Build a development copy of the documentation using to check API
   pages for any new methods are present & correct, & that the overall
   formatting has not been adversely affected for comprehension by any
   updates in the latest Sphinx or theme etc. (Do not manually commit
@@ -94,10 +104,10 @@
   ./release_docs dev-scrub
   ```
 
-* Check that no typos or spelling mistakes have been introduced to the
+- [ ] Check that no typos or spelling mistakes have been introduced to the
   documentation:
 
-  * Run a dummy build of the documentation to detect invalid words:
+  - [ ] Run a dummy build of the documentation to detect invalid words:
 
      ```console
      $ cd docs
@@ -105,7 +115,7 @@
      $ make spelling build
      ```
 
-  * If there are words raised with 'Spell check' warnings for the dummy
+  - [ ] If there are words raised with 'Spell check' warnings for the dummy
     build, such as:
 
     ```bash
@@ -119,13 +129,13 @@
     `/attribute` or `/function` which will be fixed along with the origin
     docstrings after a 'latest' build) as follows:
 
-    * If there are words that are in fact valid, add the valid words to
+    - [ ] If there are words that are in fact valid, add the valid words to
       the list of false positives for the spelling checker extension,
       `docs/source/spelling_false_positives.txt`.
-    * Correct any words that are not valid in the codebase under `cfdm` or
+    - [ ] Correct any words that are not valid in the codebase under `cfdm` or
       in the `docs/source` content files.
 
-  * Note that, in the case there are many words raised as warnings, it
+  - [ ] Note that, in the case there are many words raised as warnings, it
     helps to automate the above steps. The following commands are a means
     to do this processing:
 
@@ -151,44 +161,47 @@
     6. Remove duplicate words and sort alphabetically via:
        `sort -u -o docs/source/spelling_false_positives.txt docs/source/spelling_false_positives.txt`
 
-* Create an archived copy of the documentation (note it will not get committed to this repo. here, but we will move and commit it to https://github.com/NCAS-CMS/cfdm-docs post-release, as a last step):
+- [ ] For major or epoch releases *only* (i.e. not minor, see the versioning strategy at
+  https://ncas-cms.github.io/cfdm/releases.html#versioning-strategy) create an archived copy
+  of the documentation (note it will not get committed to this repo. here, but we will move and
+  commit it to https://github.com/NCAS-CMS/cfdm-docs post-release, as a last step):
 
   ```bash
   ./release_docs archive
   ```
 
-* Update the latest documentation:
+- [ ] Update the latest documentation:
 
   ```bash
   ./release_docs latest
   ```
 
-* Create a source tarball:
+- [ ] Create a source tarball:
 
   ```bash
   python setup.py sdist
   ```
 
-* Test the tarball release using
+- [ ] Test the tarball release using
 
   ```bash
   ./test_release <vn> # E.g. ./test_release 1.10.0.0
   ```
 
-* Push recent commits using
+- [ ] Push recent commits using
 
   ```bash
   git push origin main
   ```
   
-* Tag the release (optional - if you don't do it here then you must do
+- [ ] Tag the release (optional - if you don't do it here then you must do
   it via https://github.com/NCAS-CMS/cfdm/releases):
 
   ```bash
   ./tag <vn> # E.g. ./tag 1.10.0.0
   ```
   
-* Upload the source tarball to PyPi. Note this requires the `twine`
+- [ ] Upload the source tarball to PyPi. Note this requires the `twine`
   library (which can be installed via `pip`) and relevant project
   privileges on PyPi.
 
@@ -196,12 +209,14 @@
   ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 1.10.0.0
   ```
 
-* Update the GitHub releases page for the new version:
+- [ ] Update the GitHub releases page for the new version:
   https://github.com/NCAS-CMS/cfdm/releases
 
-* Upload the new release to Zenodo: https://zenodo.org/record/5521505
+- [ ] Upload the new release to Zenodo: https://zenodo.org/record/5521505
 
-* Finally, move and commit the previously-generated archived copy of the documentation to https://github.com/NCAS-CMS/cfdm-docs (fork or clone that repo first):
+- [ ] Finally, for major or epoch releases *only*, move the archive docs generated earlier to
+  https://github.com/NCAS-CMS/cfdm-docs and commit them (you may have to fork or clone
+  that repo first):
 
   ```bash
   mv docs/<vn>/ ~/cfdm-docs/

@@ -4,4 +4,4 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-.. autofunction:: {{ fullname }}
+.. autofunction:: {{ objname }}

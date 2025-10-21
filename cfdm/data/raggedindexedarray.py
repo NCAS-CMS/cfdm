@@ -3,9 +3,10 @@ from itertools import accumulate, product
 import numpy as np
 
 from .abstract import RaggedArray
+from .mixin import CompressedArrayMixin
 
 
-class RaggedIndexedArray(RaggedArray):
+class RaggedIndexedArray(CompressedArrayMixin, RaggedArray):
     """An underlying indexed ragged array.
 
     A collection of features stored using an indexed ragged array

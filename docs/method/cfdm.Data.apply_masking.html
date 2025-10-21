@@ -1,44 +1,42 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" data-content_root="../">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cfdm.Data.apply_masking &#8212; Documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
+    <script src="../_static/documentation_options.js?v=7e90eb75"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Data.filled" href="cfdm.Data.filled.html" />
-    <link rel="prev" title="cfdm.Data.equals" href="cfdm.Data.equals.html" />
+    <link rel="next" title="cfdm.Data.masked_where" href="cfdm.Data.masked_where.html" />
+    <link rel="prev" title="cfdm.Data.soften_mask" href="cfdm.Data.soften_mask.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.12.3.1</a></h1>
 
 
 
@@ -57,16 +55,16 @@
 
 
 
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -87,8 +85,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Data.html">cfdm.Data</a><ul>
-      <li>Previous: <a href="cfdm.Data.equals.html" title="previous chapter">cfdm.Data.equals</a></li>
-      <li>Next: <a href="cfdm.Data.filled.html" title="next chapter">cfdm.Data.filled</a></li>
+      <li>Previous: <a href="cfdm.Data.soften_mask.html" title="previous chapter">cfdm.Data.soften_mask</a></li>
+      <li>Next: <a href="cfdm.Data.masked_where.html" title="next chapter">cfdm.Data.masked_where</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -124,29 +122,30 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
 
   <section id="cfdm-data-apply-masking">
-<h1>cfdm.Data.apply_masking<a class="headerlink" href="#cfdm-data-apply-masking" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
-<dt id="cfdm.Data.apply_masking">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">fill_values=None</em>, <em class="sig-param">valid_min=None</em>, <em class="sig-param">valid_max=None</em>, <em class="sig-param">valid_range=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/data/data.py#L1364-L1567"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.apply_masking" title="Permalink to this definition">¶</a></dt>
+<h1>cfdm.Data.apply_masking<a class="headerlink" href="#cfdm-data-apply-masking" title="Link to this heading">¶</a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.Data.apply_masking">
+<span class="sig-prename descclassname"><span class="pre">Data.</span></span><span class="sig-name descname"><span class="pre">apply_masking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fill_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.1/cfdm/data/data.py#L3452-L3658"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Data.apply_masking" title="Link to this definition">¶</a></dt>
 <dd><p>Apply masking.</p>
 <p>Masking is applied according to the values of the keyword
 parameters.</p>
 <p>Elements that are already masked remain so.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version (cfdm): </span>1.8.2</p>
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.2</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cfdm.Data.get_fill_value.html#cfdm.Data.get_fill_value" title="cfdm.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a>, <a class="reference internal" href="../attribute/cfdm.Data.mask.html#cfdm.Data.mask" title="cfdm.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p>
+<p><a class="reference internal" href="cfdm.Data.get_fill_value.html#cfdm.Data.get_fill_value" title="cfdm.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a>, <a class="reference internal" href="../attribute/cfdm.Data.hardmask.html#cfdm.Data.hardmask" title="cfdm.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="../attribute/cfdm.Data.mask.html#cfdm.Data.mask" title="cfdm.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p>
 </div>
 <dl class="field-list">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>fill_values: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or sequence of scalars, optional</dt><dd><p>Specify values that will be set to missing data. Data
+<dt>fill_values: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or sequence of scalars, optional</dt><dd><p>Specify values that will be set to missing data. Data
 elements exactly equal to any of the values are set to
 missing data.</p>
-<p>If True then the value returned by the <a class="reference internal" href="cfdm.Data.get_fill_value.html#cfdm.Data.get_fill_value" title="cfdm.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a>
-method, if such a value exists, is used.</p>
+<p>If True then the value returned by the
+<a class="reference internal" href="cfdm.Data.get_fill_value.html#cfdm.Data.get_fill_value" title="cfdm.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a> method, if such a value exists, is
+used.</p>
 <p>Zero or more values may be provided in a sequence of
 scalars.</p>
 <dl class="simple">
@@ -163,50 +162,50 @@ scalars.</p>
 </dd>
 </dl>
 </dd>
-<dt>valid_min: number, optional</dt><dd><p>A scalar specifying the minimum valid value. Data elements
-strictly less than this number will be set to missing
-data.</p>
+<dt>valid_min: number, optional</dt><dd><p>A scalar specifying the minimum valid value. Data
+elements strictly less than this number will be set to
+missing data.</p>
 </dd>
-<dt>valid_max: number, optional</dt><dd><p>A scalar specifying the maximum valid value. Data elements
-strictly greater than this number will be set to missing
-data.</p>
+<dt>valid_max: number, optional</dt><dd><p>A scalar specifying the maximum valid value. Data
+elements strictly greater than this number will be set
+to missing data.</p>
 </dd>
-<dt>valid_range: (number, number), optional</dt><dd><p>A vector of two numbers specifying the minimum and maximum
-valid values, equivalent to specifying values for both
-<em>valid_min</em> and <em>valid_max</em> parameters. The <em>valid_range</em>
-parameter must not be set if either <em>valid_min</em> or
-<em>valid_max</em> is defined.</p>
+<dt>valid_range: (number, number), optional</dt><dd><p>A vector of two numbers specifying the minimum and
+maximum valid values, equivalent to specifying values
+for both <em>valid_min</em> and <em>valid_max</em> parameters. The
+<em>valid_range</em> parameter must not be set if either
+<em>valid_min</em> or <em>valid_max</em> is defined.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">valid_range=[-999,</span> <span class="pre">10000]</span></code> is equivalent to setting
 <code class="docutils literal notranslate"><span class="pre">valid_min=-999,</span> <span class="pre">valid_max=10000</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The data with masked values. If the operation was in-place
-then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<dt><a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The data with masked values. If the operation was in-place
+then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;m&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">masked</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[0  1  2  3]</span>
-<span class="go"> [4 --  6  7]</span>
-<span class="go"> [8  9 10 11]]</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[0  1  2  3]</span>
-<span class="go"> [4 --  6  7]</span>
-<span class="go"> [8  9 10 11]]</span>
+<span class="go">[[0 1 2 3]</span>
+<span class="go"> [4 -- 6 7]</span>
+<span class="go"> [8 9 10 11]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0 1 2 3]</span>
+<span class="go"> [4 -- 6 7]</span>
+<span class="go"> [8 9 10 11]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">fill_values</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[-- 1 2 3]</span>
 <span class="go"> [4 -- 6 7]</span>
@@ -215,9 +214,7 @@ then <a class="reference external" href="https://docs.python.org/3/library/const
 <span class="go">[[-- 1 2 3]</span>
 <span class="go"> [4 -- 6 7]</span>
 <span class="go"> [8 9 10 --]]</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">valid_min</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">valid_min</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[-- -- -- 3]</span>
 <span class="go"> [4 -- 6 7]</span>
 <span class="go"> [8 9 10 11]]</span>
@@ -229,13 +226,11 @@ then <a class="reference external" href="https://docs.python.org/3/library/const
 <span class="go">[[-- -- 2 3]</span>
 <span class="go"> [4 -- 6 7]</span>
 <span class="go"> [8 -- -- --]]</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">fill_values</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[0  1  2  3]</span>
-<span class="go"> [4 --  6 --]</span>
-<span class="go"> [8  9 10 11]]</span>
+<span class="go">[[0 1 2 3]</span>
+<span class="go"> [4 -- 6 --]</span>
+<span class="go"> [8 9 10 11]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">fill_values</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="gp">... </span>                      <span class="n">valid_range</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[-- -- 2 3]</span>
@@ -256,11 +251,11 @@ then <a class="reference external" href="https://docs.python.org/3/library/const
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2024, NCAS | Page built on 2024-03-01.
+      &#169;2025, NCAS | Page built on 2025-10-15.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 

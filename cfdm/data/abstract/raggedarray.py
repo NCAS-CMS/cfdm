@@ -1,9 +1,13 @@
+import time
+s = time.time()
+print('0 data/abstract/raggedarray')
 from itertools import accumulate
 from numbers import Number
 
 from ..subarray import RaggedSubarray
 from .compressedarray import CompressedArray
 
+print('  9 data/abstract/raggedarray', time.time()-s)
 
 class RaggedArray(CompressedArray):
     """An underlying ragged array.

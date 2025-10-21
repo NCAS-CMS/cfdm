@@ -3,15 +3,40 @@ import logging
 import os
 import re
 
+#import dask.array as da
 import netCDF4
 import numpy as np
+from dask import config as dask_config
+#from dask.array.core import normalize_chunks
+#from dask.utils import parse_bytes
 from packaging.version import Version
+from uritools import uricompose, urisplit
 
+from ...data.dask_utils import cfdm_to_memory
 from ...decorators import _manage_log_level_via_verbosity
+from ...functions import abspath, dirname, integer_dtype
 from .. import IOWrite
+from .constants import (
+    CF_QUANTIZATION_PARAMETER_LIMITS,
+    CF_QUANTIZATION_PARAMETERS,
+    NETCDF3_FMTS,
+    NETCDF4_FMTS,
+    NETCDF_QUANTIZATION_PARAMETERS,
+    NETCDF_QUANTIZE_MODES,
+)
 from .netcdfread import NetCDFRead
 
 logger = logging.getLogger(__name__)
+
+
+class AggregationError(Exception):
+    """An error relating to CF-netCDF aggregation.
+
+    .. versionadded:: (cfdm) 1.12.0.0
+
+    """
+
+    pass
 
 
 class NetCDFWrite(IOWrite):
@@ -338,8 +363,8 @@ class NetCDFWrite(IOWrite):
         For example, if variable.dtype is 'float32', then 'f4' will be
         returned.
 
-        For a NETCDF4 or CFA4 format file, numpy string data types will
-        either return `str` regardless of the numpy string length (and a
+        For a NETCDF4 format file, numpy string data types will either
+        return `str` regardless of the numpy string length (and a
         netCDF4 string type variable will be created) or, if
         `self.write_vars['string']`` is `False`, ``'S1'`` (see below).
 
@@ -587,26 +612,28 @@ class NetCDFWrite(IOWrite):
                 except RuntimeError as error:
                     message = (
                         "Can't create unlimited dimension "
-                        f"in {g['netcdf'].file_format} file ({error})."
+                        f"in {g['netcdf'].data_model} file ({error})."
                     )
 
                     error = str(error)
                     if error == "NetCDF: NC_UNLIMITED size already in use":
                         raise RuntimeError(
                             message
-                            + f" In a {g['netcdf'].file_format} file only one "
+                            + f" In a {g['netcdf'].data_model} file only one "
                             "unlimited dimension is allowed. Consider using "
                             "a netCDF4 format."
                         )
 
                     raise RuntimeError(message)
+                else:
+                    g["unlimited_dimensions"].add(ncdim)
             else:
                 try:
                     parent_group.createDimension(ncdim, size)
                 except RuntimeError as error:
                     raise RuntimeError(
                         f"Can't create size {size} dimension {ncdim!r} in "
-                        f"{g['netcdf'].file_format} file ({error})"
+                        f"{g['netcdf'].data_model} file ({error})"
                     )
 
         g["dimensions"].add(ncdim)
@@ -629,7 +656,7 @@ class NetCDFWrite(IOWrite):
                 The name of the netCDF dimension for this dimension
                 coordinate construct, including any groups structure. Note
                 that the group structure may be different to the
-                corodinate variable, and the basename.
+                coordinate variable, and the basename.
 
             coordinates: `list`
                This list may get updated in-place.
@@ -647,6 +674,8 @@ class NetCDFWrite(IOWrite):
 
         data_axes = self.implementation.get_construct_data_axes(f, key)
         axis = data_axes[0]
+
+        coord = self._change_reference_datetime(coord)
 
         already_in_file = self._already_in_file(coord)
 
@@ -957,16 +986,14 @@ class NetCDFWrite(IOWrite):
             # Grid mapping
             grid_mappings = [
                 g["seen"][id(cr)]["ncvar"]
-                # TODO replace field.coordinate_references with
-                # self.implemenetation call
-                for cr in field.coordinate_references().values()
-                if (
-                    cr.coordinate_conversion.get_parameter(
-                        "grid_mapping_name", None
-                    )
-                    is not None
-                    and key in cr.coordinates()
-                )
+                for cr in self.implementation.get_coordinate_references(
+                    field
+                ).values()
+                if self.implementation.get_coordinate_conversion_parameters(
+                    cr
+                ).get("grid_mapping_name")
+                is not None
+                and key in cr.coordinates()
             ]
             gc[geometry_id].setdefault("grid_mapping", []).extend(
                 grid_mappings
@@ -1466,8 +1493,7 @@ class NetCDFWrite(IOWrite):
             if ncdim not in ncdim_to_size:
                 size = self.implementation.get_data_size(nodes)
                 logger.info(
-                    f"    Writing size {size} netCDF node dimension: "
-                    f"{ncdim}"
+                    f"    Writing size {size} netCDF node dimension: {ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
@@ -2055,6 +2081,8 @@ class NetCDFWrite(IOWrite):
 
         g = self.write_vars
 
+        coord_1d = self._change_reference_datetime(coord_1d)
+
         scalar_coord = self.implementation.squeeze(coord_1d, axes=0)
 
         if not self._already_in_file(scalar_coord, ()):
@@ -2120,6 +2148,8 @@ class NetCDFWrite(IOWrite):
 
         # The netCDF dimensions for the auxiliary coordinate variable
         ncdimensions = self._netcdf_dimensions(f, key, coord)
+
+        coord = self._change_reference_datetime(coord)
 
         already_in_file = self._already_in_file(coord, ncdimensions)
 
@@ -2467,9 +2497,7 @@ class NetCDFWrite(IOWrite):
 
         """
         g = self.write_vars
-
         ncvar = kwargs["varname"]
-
         g["nc"][ncvar] = g["netcdf"].createVariable(**kwargs)
 
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
@@ -2539,9 +2567,9 @@ class NetCDFWrite(IOWrite):
                     continue
 
                 if np.size(value) == 1:
-                    value = np.array(value, copy=False).item()
+                    value = np.array(value).item()
                 else:
-                    value = np.array(value, copy=False).tolist()
+                    value = np.array(value).tolist()
 
                 parameters[term] = value
 
@@ -2583,6 +2611,7 @@ class NetCDFWrite(IOWrite):
         data_variable=False,
         domain_variable=False,
         construct_type=None,
+        chunking=None,
     ):
         """Creates a new netCDF variable for a construct.
 
@@ -2625,6 +2654,14 @@ class NetCDFWrite(IOWrite):
                 construct.
 
                 .. versionadded:: (cfdm) 1.10.1.0
+
+            chunking: sequence of `int`, optional
+                Set `netCDF4.createVariable` 'contiguous' and
+                `chunksizes` parameters (in that order). If not set
+                (the default), then these parameters are inferred from
+                the data.
+
+                .. versionadded:: (cfdm) 1.12.0.0
 
         :Returns:
 
@@ -2673,7 +2710,7 @@ class NetCDFWrite(IOWrite):
             datatype = self._datatype(cfvar)
             data, ncdimensions = self._transform_strings(
                 data,
-                ncdimensions
+                ncdimensions,
                 #                cfvar, data, ncdimensions
             )
 
@@ -2699,15 +2736,18 @@ class NetCDFWrite(IOWrite):
         else:
             lsd = None
 
-        # Set HDF chunksizes
-        chunksizes = None
-        if data is not None:
-            chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
+        # Set the dataset chunk strategy
+        if chunking:
+            contiguous, chunksizes = chunking
+        else:
+            contiguous, chunksizes = self._chunking_parameters(
+                data, ncdimensions
+            )
 
-        if chunksizes is not None:
-            logger.detail(
-                f"      HDF5 chunksizes: {chunksizes}"
-            )  # pragma: no cover
+        logger.debug(
+            f"      chunksizes: {chunksizes}\n"
+            f"      contiguous: {contiguous}"
+        )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Check that each dimension of the netCDF variable is in the
@@ -2740,18 +2780,171 @@ class NetCDFWrite(IOWrite):
             "datatype": datatype,
             "dimensions": ncdimensions_basename,
             "endian": g["endian"],
+            "contiguous": contiguous,
             "chunksizes": chunksizes,
             "least_significant_digit": lsd,
             "fill_value": fill_value,
+            "chunk_cache": g["chunk_cache"],
         }
 
-        # Add compression parameters (but not for vlen strings).
-        if kwargs["datatype"] != str:
+        # ------------------------------------------------------------
+        # Create a quantization container variable, add any extra
+        # quantization attributes, and if required instruct
+        # `_createVariable`to perform the quantization.
+        # ------------------------------------------------------------
+        q = self.implementation.get_quantize_on_write(cfvar, None)
+        if q is not None:
+            quantize_on_write = True
+        else:
+            q = self.implementation.get_quantization(cfvar, None)
+            quantize_on_write = False
+
+        if q is not None:
+            # There are some quantization metadata - either
+
+            # CF quantization algorithm name (e.g. 'bitgroom')
+            algorithm = self.implementation.get_parameter(q, "algorithm", None)
+
+            # Get the CF quantization parameter name and value
+            # (e.g. 'quantization_nsd' and 6)
+            cf_parameter = CF_QUANTIZATION_PARAMETERS.get(algorithm)
+            cf_ns = self.implementation.del_parameter(q, cf_parameter, None)
+
+            # Remove the NetCDF-C library quantization attribute
+            # (e.g. '_QuantizeBitRoundNumberOfSignificantBits')
+            netcdf_parameter = NETCDF_QUANTIZATION_PARAMETERS.get(algorithm)
+            netcdf_ns = self.implementation.del_parameter(
+                q, netcdf_parameter, None
+            )
+
+            # Create a quantization container variable in the file, if
+            # it doesn't already exist (and after having removed any
+            # per-variable quantization parameters, such as
+            # "quantization_nsd").
+            if quantize_on_write:
+                # Set "implemention" to this version of the netCDF-C
+                # library
+                self.implementation.set_parameter(
+                    q,
+                    "implementation",
+                    f"libnetcdf version {netCDF4.__netcdf4libversion__}",
+                    copy=False,
+                )
+
+            q_ncvar = self._write_quantization_container(q)
+
+            # Update the variable's extra attributes
+            extra = extra.copy()
+            extra["quantization"] = q_ncvar
+            if cf_ns is not None:
+                extra[cf_parameter] = cf_ns
+
+            if not quantize_on_write:
+                # We're not performing any quantization, so also set
+                # the netCDF-C-defined attribute.
+                if netcdf_ns is not None:
+                    extra[netcdf_parameter] = netcdf_ns
+            else:
+                # ----------------------------------------------------
+                # We are going to perform quantization
+                # ----------------------------------------------------
+                quantize_mode = NETCDF_QUANTIZE_MODES.get(algorithm)
+
+                if algorithm == "digitround":
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with algorithm "
+                        f"{algorithm!r}, because it is not yet available "
+                        "from the netCDF-C library"
+                    )
+
+                if quantize_mode is None:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with non-standardised "
+                        f"algorithm {algorithm!r}. Valid algorithms are "
+                        f"{tuple(NETCDF_QUANTIZE_MODES)}"
+                    )
+
+                if g["fmt"] not in NETCDF4_FMTS:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} into a {g['fmt']} "
+                        "format file. Quantization is only possible when "
+                        f"writing to one of the {NETCDF4_FMTS} formats."
+                    )
+
+                if not datatype.startswith("f"):
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with data type "
+                        f"{datatype!r}. Only floating point data can be "
+                        "quantized."
+                    )
+
+                if cf_ns is None:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} because the "
+                        f"{cf_parameter!r} parameter has not been defined"
+                    )
+
+                u = CF_QUANTIZATION_PARAMETER_LIMITS[cf_parameter][datatype]
+                if not 1 <= cf_ns <= u:
+                    raise ValueError(
+                        f"Can't quantize {cfvar!r} with a {cf_parameter!r} "
+                        f"parameter value of {cf_ns}. {cf_parameter!r} must "
+                        f"lie in the range [1, {u}]"
+                    )
+
+                # Update the kwargs for `_createVariable` to perform
+                # the quantization during the write process
+                kwargs["quantize_mode"] = quantize_mode
+                kwargs["significant_digits"] = cf_ns
+
+        # ------------------------------------------------------------
+        # For aggregation variables, create a dictionary containing
+        # the fragment array variables' data.
+        #
+        # E.g. {'map': <Data(2, 1): [[5, 8]]>,
+        #       'location': <Data(1, 1): [[data/file.nc.nc]]>,
+        #       'variable': <Data(1, 1): [[q]]>}
+        # ------------------------------------------------------------
+        cfa = None
+        if self._cfa_write_status(ncvar, cfvar, construct_type, domain_axes):
+            try:
+                cfa = self._cfa_fragment_array_variables(data, cfvar)
+            except AggregationError:
+                if g["cfa"].get("strict", True):
+                    # Raise the exception in 'strict' mode
+                    if g["mode"] == "w":
+                        os.remove(g["filename"])
+
+                    raise
+
+                # In 'non-strict' mode, write the data to a normal
+                # non-aggregation variable.
+                g["cfa_write_status"][ncvar] = False
+            else:
+                # We're going to create a scalar aggregation variable,
+                # so override dimensions and dataset chunking strategy
+                # keyword arguments. This is necessary because the
+                # dimensions and dataset chunking strategy will
+                # otherwise reflect the aggregated data in memory,
+                # rather than the scalar variable in the file.
+                kwargs["dimensions"] = ()
+                kwargs["contiguous"] = True
+                kwargs["chunksizes"] = None
+
+        # Add compression parameters (but not for scalars or vlen
+        # strings).
+        #
+        # From the NUG:
+        #
+        #   Compression is permitted but may not be effective for VLEN
+        #   data, because the compression is applied to structures
+        #   containing lengths and pointers to the data, rather than
+        #   the actual data.
+        if kwargs["dimensions"] and kwargs["datatype"] != str:
             kwargs.update(g["netcdf_compression"])
 
         # Note: this is a trivial assignment in standalone cfdm, but
-        # required for non-trivial customisation applied by subclasses
-        # e.g. in cf-python
+        # allows for non-trivial customisation applied by subclasses.
         kwargs = self._customise_createVariable(
             cfvar, construct_type, domain_axes, kwargs
         )
@@ -2760,26 +2953,49 @@ class NetCDFWrite(IOWrite):
             f"        to netCDF variable: {ncvar}({', '.join(ncdimensions)})"
         )  # pragma: no cover
 
+        # Adjust createVariable arguments for contiguous variables
+        if kwargs["contiguous"]:
+            if g["netcdf"].data_model.startswith("NETCDF4"):
+                # NETCDF4 contiguous variables can't span unlimited
+                # dimensions
+                unlimited_dimensions = g["unlimited_dimensions"].intersection(
+                    kwargs["dimensions"]
+                )
+                if unlimited_dimensions:
+                    data_model = g["netcdf"].data_model
+                    raise ValueError(
+                        f"Can't create variable {ncvar!r} in {data_model} "
+                        f"file from {cfvar!r}: In {data_model} it is not "
+                        "allowed to write contiguous (as opposed to chunked) "
+                        "data that spans one or more unlimited dimensions: "
+                        f"{unlimited_dimensions}"
+                    )
+
+                # NETCDF4 contiguous variables can't be compressed
+                kwargs["compression"] = None
+                kwargs["complevel"] = 0
+
         try:
             self._createVariable(**kwargs)
         except RuntimeError as error:
             error = str(error)
             message = (
-                f"Can't create variable in {g['netcdf'].file_format} file "
-                f"from {cfvar!r} ({error})"
+                f"Can't create variable in {g['netcdf'].data_model} file "
+                f"from {cfvar!r}: {error}. "
+                f"netCDF4.createVariable arguments: {kwargs}"
             )
             if error == (
                 "NetCDF: Not a valid data type or _FillValue type mismatch"
             ):
                 raise ValueError(
                     f"Can't write {cfvar.data.dtype.name} data from {cfvar!r} "
-                    f"to a {g['netcdf'].file_format} file. "
+                    f"to a {g['netcdf'].data_model} file. "
                     "Consider using a netCDF4 format, or use the 'datatype' "
                     "parameter, or change the datatype before writing."
                 )
             elif error == "NetCDF: NC_UNLIMITED in the wrong index":
                 raise RuntimeError(
-                    f"{message}. In a {g['netcdf'].file_format} file the "
+                    f"{message}. In a {g['netcdf'].data_model} file the "
                     "unlimited dimension must be the first (leftmost) "
                     "dimension of the variable. "
                     "Consider using a netCDF4 format."
@@ -2819,10 +3035,6 @@ class NetCDFWrite(IOWrite):
                 if value is not None
             ]
 
-            compressed = bool(
-                set(ncdimensions).intersection(g["sample_ncdim"].values())
-            )
-
             self._write_data(
                 data,
                 cfvar,
@@ -2830,9 +3042,10 @@ class NetCDFWrite(IOWrite):
                 ncdimensions,
                 domain_axes,
                 unset_values=unset_values,
-                compressed=compressed,
+                compressed=self._compressed_data(ncdimensions),
                 attributes=attributes,
                 construct_type=construct_type,
+                cfa=cfa,
             )
 
     def _customise_createVariable(
@@ -2869,9 +3082,10 @@ class NetCDFWrite(IOWrite):
                 `netCDF4.Dataset.createVariable`.
 
         """
-        # This method is trivial but the intention is that subclasses will
-        # override it to perform any desired customisation. Notably see
-        # the equivalent method in cf-python which is non-trivial.
+        # This method is trivial but the intention is that subclasses
+        # will override it to perform any desired
+        # customisation. Notably see the equivalent method in
+        # cf-python which is non-trivial.
         return kwargs
 
     def _transform_strings(self, data, ncdimensions):
@@ -2900,10 +3114,6 @@ class NetCDFWrite(IOWrite):
             # is str, so this conversion does not happen.
             # --------------------------------------------------------
             array = self.implementation.get_array(data)
-            #            if np.ma.is_masked(array):
-            #                array = array.compressed()
-            #            else:
-            #                array = array.flatten()
             array = self._numpy_compressed(array)
 
             strlen = len(max(array, key=len))
@@ -2926,6 +3136,7 @@ class NetCDFWrite(IOWrite):
         compressed=False,
         attributes=None,
         construct_type=None,
+        cfa=None,
     ):
         """Write a data array to the netCDF file.
 
@@ -2956,62 +3167,70 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.10.1.0
 
+            cfa: `dict`, optional
+                For aggregation variables, a dictionary containing the
+                fragment array variables' data.
+
+                .. versionadded:: (cfdm) 1.12.0.0
+
         :Returns:
 
             `None`
 
         """
-        # To avoid mutable default argument (an anti-pattern) of attributes={}
-        if attributes is None:
-            attributes = {}
-
         g = self.write_vars
 
+        if cfa:
+            # --------------------------------------------------------
+            # Write the data as an aggregation variable
+            # --------------------------------------------------------
+            self._cfa_create_data(cfa, ncvar, ncdimensions, data, cfvar)
+            return
+
+        # ------------------------------------------------------------
+        # Still here? The write a normal (non-aggregation) variable
+        # ------------------------------------------------------------
+        import dask.array as da
+        
         if compressed:
-            # if set(ncdimensions).intersection(g['sample_ncdim'].values()):
-            # Get the data as a compressed numpy array
-            array = self.implementation.get_compressed_array(data)
-        else:
-            # Get the data as an uncompressed numpy array
-            array = self.implementation.get_array(data)
+            # Write data in its compressed form
+            data = data.source().source()
 
-        # Convert data type
-        new_dtype = g["datatype"].get(array.dtype)
+        # Get the dask array
+        dx = da.asanyarray(data)
+
+        # Convert the data type
+        new_dtype = g["datatype"].get(dx.dtype)
         if new_dtype is not None:
-            array = array.astype(new_dtype)
+            dx = dx.astype(new_dtype)
 
-        # Check that the array doesn't contain any elements
-        # which are equal to any of the missing data values
-        if unset_values:
-            # if np.ma.is_masked(array):
-            #     temp_array = array.compressed()
-            # else:
-            #     temp_array = array
-            if np.intersect1d(
-                unset_values, self._numpy_compressed(array)
-            ).size:
-                raise ValueError(
-                    "ERROR: Can't write data that has _FillValue or "
-                    f"missing_value at unmasked point: {ncvar!r}"
-                )
+        # VLEN variables can not be assigned to by masked arrays
+        # (https://github.com/Unidata/netcdf4-python/pull/465), so
+        # fill missing data in string (as opposed to char) data types.
+        if g["fmt"] == "NETCDF4" and dx.dtype.kind in "SU":
+            dx = dx.map_blocks(
+                self._filled_string_array,
+                fill_value="",
+                meta=np.array((), dx.dtype),
+            )
 
-        if (
-            g["fmt"] == "NETCDF4"
-            and array.dtype.kind in "SU"
-            and np.ma.isMA(array)
-        ):
-            # VLEN variables can not be assigned to by masked arrays
-            # https://github.com/Unidata/netcdf4-python/pull/465
-            array = array.filled("")
-
+        # Check for out-of-range values
         if g["warn_valid"]:
-            # Check for out-of-range values
-            self._check_valid(cfvar, array, attributes)
+            if construct_type:
+                var = cfvar
+            else:
+                var = None
 
-        # Copy the array into the netCDF variable
-        g["nc"][ncvar][...] = array
+            dx = dx.map_blocks(
+                self._check_valid,
+                cfvar=var,
+                attributes=attributes,
+                meta=np.array((), dx.dtype),
+            )
 
-    def _check_valid(self, cfvar, array, attributes):
+        da.store(dx, g["nc"][ncvar], compute=True, return_stored=False)
+
+    def _check_valid(self, array, cfvar=None, attributes=None):
         """Checks for array values outside of the valid range.
 
         Specifically, checks array for out-of-range values, as
@@ -3021,16 +3240,19 @@ class NetCDFWrite(IOWrite):
 
         :Parameters:
 
-            cfvar: Construct
+            array: `numpy.ndarray`
+                The array to be checked.
 
-            array: `np.ndarray`
+            cfvar: construct
+                The CF construct containing the array.
 
             attributes: `dict`
+                The variable's CF properties.
 
         :Returns:
 
-            `bool`
-                Whether or not a warning was issued.
+            `numpy.ndarray`
+                The input array, unchanged.
 
         """
         out = 0
@@ -3098,7 +3320,7 @@ class NetCDFWrite(IOWrite):
             )
             out += 1
 
-        return bool(out)
+        return array
 
     def _convert_to_char(self, data):
         """Convert string data into character data.
@@ -3323,7 +3545,7 @@ class NetCDFWrite(IOWrite):
                 coord, "computed_standard_name", None
             )
             if x is None:
-                self.implementation.set_property(
+                self.implementation.set_properties(
                     field_coordinates[key],
                     {"computed_standard_name": csn},
                     copy=False,
@@ -3949,7 +4171,7 @@ class NetCDFWrite(IOWrite):
         # Ancillary variables
         if field and ancillary_variables:
             ancillary_variables = " ".join(ancillary_variables)
-            ancillary_variables = re.sub("\s+", " ", ancillary_variables)
+            ancillary_variables = re.sub(r"\s+", " ", ancillary_variables)
             logger.info(
                 "    Writing ancillary_variables attribute to "
                 f"netCDF variable {ncvar}: {ancillary_variables!r}"
@@ -4480,8 +4702,9 @@ class NetCDFWrite(IOWrite):
         Conventions=None,
         datatype=None,
         least_significant_digit=None,
+        chunk_cache=None,
         endian="native",
-        compress=0,
+        compress=4,
         fletcher32=False,
         shuffle=True,
         scalar=True,
@@ -4492,6 +4715,9 @@ class NetCDFWrite(IOWrite):
         group=True,
         coordinates=False,
         omit_data=None,
+        dataset_chunks="4MiB",
+        cfa="auto",
+        reference_datetime=None,
     ):
         """Write field and domain constructs to a netCDF file.
 
@@ -4642,6 +4868,14 @@ class NetCDFWrite(IOWrite):
 
                 See `cfdm.write` for details.
 
+            chunk_cache: `int` or `None`, optional
+                The amount of memory (in bytes) used in each
+                variable's chunk cache at the HDF5 level.
+
+                See `cfdm.write` for details.
+
+                .. versionadded:: (cfdm) 1.12.2.0
+
             fletcher32: `bool`, optional
                 If True then the Fletcher-32 HDF5 checksum algorithm is
                 activated to detect compression errors. Ignored if
@@ -4718,6 +4952,16 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
+            dataset_chunks: `str`, `int`, or `float`, optional
+                The dataset chunking strategy. The default value is
+                "4MiB". See `cfdm.write` for details.
+
+            cfa: `dict` or `None`, optional
+                Configure the creation of aggregation variables. See
+                `cfdm.write` for details.
+
+                .. versionadded:: (cfdm) 1.11.2.0
+
         :Returns:
 
             `None`
@@ -4731,8 +4975,9 @@ class NetCDFWrite(IOWrite):
 
         # Expand file name
         filename = os.path.expanduser(os.path.expandvars(filename))
+        filename = abspath(filename)
 
-        # Parse the omit_data parameter
+        # Parse the 'omit_data' parameter
         if omit_data is None:
             omit_data = ()
         elif isinstance(omit_data, str):
@@ -4775,6 +5020,7 @@ class NetCDFWrite(IOWrite):
             "netcdf_compression": {},
             "endian": "native",
             "least_significant_digit": None,
+            "chunk_cache": None,
             # CF properties which need not be set on bounds if they're set
             # on the parent coordinate
             "omit_bounds_properties": (
@@ -4804,13 +5050,14 @@ class NetCDFWrite(IOWrite):
             "geometry_dimensions": set(),
             "dimensions_with_role": {},
             "dimensions": set(),
+            "unlimited_dimensions": set(),
             "latest_version": Version(self.implementation.get_cf_version()),
             "version": {},
             # Warn for the presence of out-of-range data with of
             # valid_[min|max|range] attributes?
             "warn_valid": bool(warn_valid),
             "valid_properties": set(("valid_min", "valid_max", "valid_range")),
-            # Whether or not to name dimension corodinates in the
+            # Whether or not to name dimension coordinates in the
             # 'coordinates' attribute
             "coordinates": bool(coordinates),
             # Dictionary of netCDF variable names and netCDF
@@ -4829,6 +5076,27 @@ class NetCDFWrite(IOWrite):
             "post_dry_run": False,
             # Do not write the data of the named construct types.
             "omit_data": omit_data,
+            # Change the units of a reference date-time.
+            "reference_datetime": reference_datetime,
+            # --------------------------------------------------------
+            # CF Aggregation variables
+            # --------------------------------------------------------
+            # Configuration options for writing aggregation variables
+            "cfa": None,
+            # The directory of the aggregation file
+            "aggregation_file_directory": None,
+            # Cache the CF aggregation variable write status for each
+            # netCDF variable
+            "cfa_write_status": {},
+            # --------------------------------------------------------
+            # Dataset chunking stategy
+            # --------------------------------------------------------
+            "dataset_chunks": dataset_chunks,
+            # --------------------------------------------------------
+            # Quantization: Store unique Quantization objects, keyed
+            #               by their output netCDF variable names.
+            # --------------------------------------------------------
+            "quantization": {},
         }
 
         if mode not in ("w", "a", "r+"):
@@ -4841,13 +5109,70 @@ class NetCDFWrite(IOWrite):
 
         self.write_vars["mode"] = mode
 
+        # Parse the 'dataset_chunks' parameter
+        if dataset_chunks != "contiguous":
+            from dask.utils import parse_bytes
+            
+            try:
+                self.write_vars["dataset_chunks"] = parse_bytes(dataset_chunks)
+            except (ValueError, AttributeError):
+                raise ValueError(
+                    "Invalid value for the 'dataset_chunks' keyword: "
+                    f"{dataset_chunks!r}."
+                )
+
+        # ------------------------------------------------------------
+        # Parse the 'cfa' keyword
+        # ------------------------------------------------------------
+        if cfa is None:
+            cfa = {"constructs": None}
+        elif isinstance(cfa, str):
+            cfa = {"constructs": cfa}
+        elif isinstance(cfa, dict):
+            keys = ("constructs", "uri", "strict")
+            if not set(cfa).issubset(keys):
+                raise ValueError(
+                    f"Invalid dictionary key to the 'cfa' keyword: {cfa!r}. "
+                    f"Valid keys are {keys}"
+                )
+
+            valid_uri = ("default", "absolute", "relative")
+            if cfa.get("uri", "default") not in valid_uri:
+                raise ValueError(
+                    "Invalid value for the 'uri' keyword of the 'cfa' "
+                    f"parameter: {cfa!r}. Expected one of {valid_uri}"
+                )
+
+            cfa = cfa.copy()
+        else:
+            raise ValueError(
+                f"Invalid value for the 'cfa' keyword: {cfa!r}. "
+                "Should be a string, a dictionary, or None"
+            )
+
+        cfa.setdefault("constructs", "auto")
+        cfa.setdefault("uri", "default")
+        cfa.setdefault("strict", True)
+
+        constructs = cfa["constructs"]
+        if isinstance(constructs, dict):
+            cfa["constructs"] = constructs.copy()
+        elif constructs is not None:
+            # Convert a (sequence of) `str` to a `dict`
+            if isinstance(constructs, str):
+                constructs = (constructs,)
+
+            cfa["constructs"] = {c: None for c in constructs}
+
+        self.write_vars["cfa"] = cfa
+
         effective_mode = mode  # actual mode to use for the first IO iteration
         effective_fields = fields
 
         if mode == "a":
             # First read in the fields from the existing file:
             effective_fields = self._NetCDFRead(self.implementation).read(
-                filename
+                filename, netcdf_backend="netCDF4"
             )
 
             # Read rather than append for the first iteration to ensure nothing
@@ -4921,6 +5246,7 @@ class NetCDFWrite(IOWrite):
             Conventions=Conventions,
             datatype=datatype,
             least_significant_digit=least_significant_digit,
+            chunk_cache=chunk_cache,
             endian=endian,
             compress=compress,
             fletcher32=fletcher32,
@@ -4953,6 +5279,7 @@ class NetCDFWrite(IOWrite):
                 Conventions=Conventions,
                 datatype=datatype,
                 least_significant_digit=least_significant_digit,
+                chunk_cache=chunk_cache,
                 endian=endian,
                 compress=compress,
                 fletcher32=fletcher32,
@@ -4978,6 +5305,7 @@ class NetCDFWrite(IOWrite):
         Conventions,
         datatype,
         least_significant_digit,
+        chunk_cache,
         endian,
         compress,
         fletcher32,
@@ -5005,7 +5333,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Set possible versions
         # ------------------------------------------------------------
-        for version in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11"):
+        for version in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11", "1.12"):
             g["CF-" + version] = Version(version)
 
         if extra_write_vars:
@@ -5015,23 +5343,24 @@ class NetCDFWrite(IOWrite):
         self._customise_write_vars()
 
         compress = int(compress)
-        zlib = bool(compress)
+        if compress:
+            compression = "zlib"
+        else:
+            compression = None
 
-        netcdf3_fmts = (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        )
-        netcdf4_fmts = ("NETCDF4", "NETCDF4_CLASSIC")
-        if fmt not in netcdf3_fmts + netcdf4_fmts:
-            raise ValueError(f"Unknown output file format: {fmt}")
-        elif fmt in netcdf3_fmts:
-            if compress in netcdf3_fmts:
-                raise ValueError(f"Can't compress {fmt} format file")
-            if group in netcdf3_fmts:
-                # Can't write groups to a netCDF3 file
+        if fmt in NETCDF3_FMTS:
+            if compress:
+                # Can't compress a netCDF-3 format file
+                compress = 0
+
+            if group:
+                # Can't write groups to a netCDF-3 file
                 g["group"] = False
+        elif fmt not in NETCDF4_FMTS:
+            raise ValueError(
+                f"Unknown output file format: {fmt!r}. "
+                f"Valid formats are {NETCDF4_FMTS + NETCDF3_FMTS}"
+            )
 
         # ------------------------------------------------------------
         # Set up global/non-global attributes
@@ -5086,7 +5415,7 @@ class NetCDFWrite(IOWrite):
         # -------------------------------------------------------
         g["netcdf_compression"].update(
             {
-                "zlib": zlib,
+                "compression": compression,
                 "complevel": compress,
                 "fletcher32": bool(fletcher32),
                 "shuffle": bool(shuffle),
@@ -5289,3 +5618,825 @@ class NetCDFWrite(IOWrite):
 
         """
         pass
+
+    def _chunking_parameters(self, data, ncdimensions):
+        """Set chunking parameters for `netCDF4.createVariable`.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        :Parameters:
+
+            data: `Data` or `None`
+                The data being written.
+
+            ncdimensions: `tuple`
+                The data netCDF dimensions.
+
+        :Returns:
+
+            2-tuple
+                The *contiguous* and *chunksizes* parameters for
+                `netCDF4.createVariable`.
+
+        """
+        if data is None:
+            return False, None
+
+        g = self.write_vars
+
+        # ------------------------------------------------------------
+        # Dataset chunk strategy: Either use that provided on the
+        # data, or else work it out.
+        # ------------------------------------------------------------
+        # Get the chunking strategy defined by the data itself
+        chunksizes = self.implementation.nc_get_dataset_chunksizes(data)
+        if chunksizes == "contiguous":
+            # Contiguous as defined by 'data'
+            return True, None
+
+        # Still here?
+        dataset_chunks = g["dataset_chunks"]
+        if isinstance(chunksizes, int):
+            # Reset dataset chunks to the integer given by 'data'
+            dataset_chunks = chunksizes
+        elif chunksizes is not None:
+            # Chunked as defined by the tuple of int given by 'data'
+            return False, chunksizes
+
+        # Still here? Then work out the chunking strategy from the
+        # dataset_chunks
+        if dataset_chunks == "contiguous":
+            # Contiguous as defined by 'dataset_chunks'
+            return True, None
+
+        # Still here? Then work out the chunks from both the
+        # size-in-bytes given by dataset_chunks (e.g. 1024, or '1
+        # KiB'), and the data shape (e.g. (12, 73, 96)).
+        if self._compressed_data(ncdimensions):
+            # Base the dataset chunks on the compressed data that is
+            # going into the file
+            d = self.implementation.get_compressed_array(data)
+        else:
+            d = data
+
+        d_dtype = d.dtype
+        dtype = g["datatype"].get(d_dtype, d_dtype)
+
+        from dask.array.core import normalize_chunks
+        
+        with dask_config.set({"array.chunk-size": dataset_chunks}):
+            chunksizes = normalize_chunks("auto", shape=d.shape, dtype=dtype)
+
+        if chunksizes:
+            # 'chunksizes' looks something like ((96, 96, 96, 50),
+            # (250, 250, 4)). However, we only want one number per
+            # dimension, so we choose the largest: [96, 250].
+            chunksizes = [max(c) for c in chunksizes]
+            return False, chunksizes
+        else:
+            # The data is scalar, so 'chunksizes' is () => write the
+            # data contiguously.
+            return True, None
+
+    def _compressed_data(self, ncdimensions):
+        """Whether or not the data is being written in compressed form.
+
+        .. versionadded:: (cfdm) 1.11.2.0
+
+        :Parameters:
+
+            ncdimensions: `sequence` of `str`
+                The ordered netCDF dimension names of the data. These
+                are the dimensions going into the file, and if the
+                data is compressed will differ from the dimensions
+                implied by the data in memory.
+
+        :Returns:
+
+            `bool`
+                `True` if the data is being written in a compressed
+                form, otherwise `False`.
+
+        """
+        return bool(
+            set(ncdimensions).intersection(
+                self.write_vars["sample_ncdim"].values()
+            )
+        )
+
+    def _change_reference_datetime(self, coord):
+        """Change the units of a reference date-time.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        :Parameters:
+
+            coord: `Coordinate`
+                The time coordinates.
+
+        :Returns:
+
+                A new coordinate construct with changed units.
+
+        """
+        reference_datetime = self.write_vars["reference_datetime"]
+        if not reference_datetime or not coord.Units.isreftime:
+            return coord
+
+        if not hasattr(coord, "reference_datetime"):
+            raise ValueError(
+                "Can't override time coordinate reference date-time "
+                f"for {coord.__class__} objects."
+            )
+
+        coord = coord.copy()
+        try:
+            coord.reference_datetime = reference_datetime
+        except ValueError:
+            raise ValueError(
+                "Can't override time coordinate reference date-time "
+                f"{coord.reference_datetime!r} with {reference_datetime!r}"
+            )
+        else:
+            return coord
+
+    def _cfa_write_status(self, ncvar, cfvar, construct_type, domain_axes):
+        """The aggregation write status of the data.
+
+        A necessary and sufficient condition for writing the data as
+        aggregated data is that this method returns `True` and
+        `_cfa_aggregation_instructions` returns a `dict`.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        :Parameters:
+
+            cfvar:
+                Construct (e.g. `DimensionCoordinate`), or construct
+                component e.g. (`Bounds`) that contains the data.
+
+            construct_type: `str`
+                The construct type of the *cfvar*, or of its parent if
+                *cfvar* is a construct component.
+
+            domain_axes: `None`, or `tuple` of `str`
+                The domain axis construct identifiers for *cfvar*.
+
+        :Returns:
+
+            `bool`
+                True if the variable is to be written as an
+                aggregation variable.
+
+        """
+        g = self.write_vars
+
+        cfa_write_status = g["cfa_write_status"].get(ncvar)
+        if cfa_write_status is not None:
+            return cfa_write_status
+
+        if construct_type is None:
+            # This prevents recursion whilst writing fragment array
+            # variables.
+            g["cfa_write_status"][ncvar] = False
+            return False
+
+        data = self.implementation.get_data(cfvar, None)
+        if data is None:
+            # Can't write as an aggregation variable when there is no
+            # data
+            g["cfa_write_status"][ncvar] = False
+            return False
+
+        constructs = g["cfa"].get("constructs")
+        if constructs is None:
+            # Nothing gets written as an aggregation variable when
+            # 'constructs' is set to None
+            g["cfa_write_status"][ncvar] = False
+            return False
+
+        for c in (construct_type, "all"):
+            if c in constructs:
+                ndim = constructs[c]
+                if ndim is None or ndim == len(domain_axes):
+                    g["cfa_write_status"][ncvar] = True
+                    return True
+
+                g["cfa_write_status"][ncvar] = False
+                return False
+
+        if "auto" in constructs:
+            if not data.nc_get_aggregated_data():
+                g["cfa_write_status"][ncvar] = False
+                return False
+
+            ndim = constructs["auto"]
+            if ndim is None or ndim == len(domain_axes):
+                g["cfa_write_status"][ncvar] = True
+                return True
+
+        g["cfa_write_status"][ncvar] = False
+        return False
+
+    def _cfa_create_data(self, cfa, ncvar, ncdimensions, data, cfvar):
+        """Write an aggregation variable to the netCDF file.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        :Parameters:
+
+            cfa: `dict`
+                A dictionary containing the fragment array variables'
+                data.
+
+            ncvar: `str`
+                The netCDF name for the variable.
+
+            ncdimensions: sequence of `str`
+
+            netcdf_attrs: `dict`
+
+            data: `Data`
+
+        :Returns:
+
+            `True`
+
+        """
+        g = self.write_vars
+
+        # ------------------------------------------------------------
+        # Write the fragment array variables to the netCDF file
+        # ------------------------------------------------------------
+        aggregated_data = data.nc_get_aggregated_data()
+        aggregated_data_attr = []
+
+        all_dimensions = g["dimensions"]
+        all_unlimited_dimensions = g["unlimited_dimensions"]
+
+        # ------------------------------------------------------------
+        # Map
+        # ------------------------------------------------------------
+        feature = "map"
+        f_map = cfa[feature]
+
+        chunking = None
+
+        # Get the shape netCDF dimensions from the 'map' fragment
+        # array variable.
+        map_ncdimensions = []
+        dim = "j"
+        for size in f_map.shape:
+            cfa_ncdim = f"a_map_{dim}{size}"
+            if dim == "i" and all_unlimited_dimensions.intersection(
+                ncdimensions
+            ):
+                unlimited = True
+                # Append a "u" to the dimension name to allow there to
+                # fixed and unlimited dimensions with the same size
+                cfa_ncdim += "u"
+            else:
+                unlimited = False
+
+            if cfa_ncdim not in all_dimensions:
+                # Create a new location dimension
+                self._write_dimension(
+                    cfa_ncdim, None, unlimited=unlimited, size=size
+                )
+
+            map_ncdimensions.append(cfa_ncdim)
+            dim = "i"
+
+        map_ncdimensions = tuple(map_ncdimensions)
+
+        #        # Write the fragment array variable to the netCDF dataset
+        #        if ncdimensions[0].startswith('time'):
+        #            chunking=(False, (f_map.shape[0], f_map.shape[1] * 85*12))
+
+        feature_ncvar = self._cfa_write_fragment_array_variable(
+            f_map,
+            aggregated_data.get(feature, f"fragment_{feature}"),
+            map_ncdimensions,
+            chunking=chunking,
+        )
+        aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
+
+        if "uris" in cfa:
+            # --------------------------------------------------------
+            # URIs
+            # --------------------------------------------------------
+            feature = "uris"
+            f_uris = cfa[feature]
+
+            chunking = None
+
+            # Get the fragment array netCDF dimensions from the
+            # 'location' fragment array variable.
+            location_ncdimensions = []
+            for ncdim, size in zip(ncdimensions, f_uris.shape):
+                cfa_ncdim = f"a_{ncdim}"
+                if cfa_ncdim not in all_dimensions:
+                    # Create a new fragment array dimension
+                    unlimited = ncdim in all_unlimited_dimensions
+                    # unlimited = ncdim in g[
+                    #    "unlimited_dimensions"
+                    # ] and ncdim.startswith("time")
+                    self._write_dimension(
+                        cfa_ncdim, None, unlimited=unlimited, size=size
+                    )
+
+                location_ncdimensions.append(cfa_ncdim)
+
+            location_ncdimensions = tuple(location_ncdimensions)
+
+            #            # Write the fragment array variable to the netCDF dataset
+            #            if ncdimensions[0].startswith('time'):
+            #                chunking = (False, ((85*12,) + f_uris.shape[1:]))
+            #            else:
+            chunking = None
+            feature_ncvar = self._cfa_write_fragment_array_variable(
+                f_uris,
+                aggregated_data.get(feature, f"fragment_{feature}"),
+                location_ncdimensions,
+                chunking=chunking,
+            )
+            aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
+
+            # --------------------------------------------------------
+            # Identifiers
+            # --------------------------------------------------------
+            feature = "identifiers"
+
+            # Attempt to reduce variable names to a common scalar
+            # value
+            u = cfa[feature].unique().compressed().persist()
+            if u.size == 1:
+                cfa[feature] = u.squeeze()
+                variable_ncdimensions = ()
+            else:
+                variable_ncdimensions = location_ncdimensions
+
+            f_identifiers = cfa[feature]
+
+            # Write the fragment array variable to the netCDF dataset
+            feature_ncvar = self._cfa_write_fragment_array_variable(
+                f_identifiers,
+                aggregated_data.get(feature, f"fragment_{feature}"),
+                variable_ncdimensions,
+            )
+            aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
+        else:
+            # --------------------------------------------------------
+            # Unique values
+            # --------------------------------------------------------
+            feature = "unique_values"
+            f_unique_value = cfa[feature]
+
+            # Get the fragment array netCDF dimensions from the
+            # 'value' fragment array variable.
+            unique_value_ncdimensions = []
+            for ncdim, size in zip(ncdimensions, f_unique_value.shape):
+                cfa_ncdim = f"a_{ncdim}"
+                if cfa_ncdim not in g["dimensions"]:
+                    # Create a new fragment array dimension
+                    self._write_dimension(cfa_ncdim, None, size=size)
+
+                unique_value_ncdimensions.append(cfa_ncdim)
+
+            unique_value_ncdimensions = tuple(unique_value_ncdimensions)
+
+            # Write the fragment array variable to the netCDF dataset
+            feature_ncvar = self._cfa_write_fragment_array_variable(
+                f_unique_value,
+                aggregated_data.get(feature, f"fragment_{feature}"),
+                unique_value_ncdimensions,
+            )
+            aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
+
+        # ------------------------------------------------------------
+        # Add the aggregation variable attributes
+        # ------------------------------------------------------------
+        self._write_attributes(
+            None,
+            ncvar,
+            extra={
+                "aggregated_dimensions": " ".join(ncdimensions),
+                "aggregated_data": " ".join(sorted(aggregated_data_attr)),
+            },
+        )
+
+        g["cfa_write_status"][ncvar] = True
+        return True
+
+    def _filled_string_array(self, array, fill_value=""):
+        """Fill a string array.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        :Parameters:
+
+            array: `numpy.ndarray`
+                The `numpy` array with string (byte or unicode) data
+                type.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The string array with any missing data replaced
+                by the fill value.
+
+        """
+        if np.ma.isMA(array):
+            return array.filled(fill_value)
+
+        return array
+
+    def _cfa_write_fragment_array_variable(
+        self, data, ncvar, ncdimensions, attributes=None, chunking=None
+    ):
+        """Write an aggregation fragment array variable.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        :Parameters:
+
+            data `Data`
+                The data to write.
+
+            ncvar: `str`
+                The netCDF variable name.
+
+            ncdimensions: `tuple` of `str`
+                The fragment array variable's netCDF dimensions.
+
+            attributes: `dict`, optional
+                Any attributes to attach to the variable.
+
+            chunking: sequence, optional
+                Set `netCDF4.createVariable` 'contiguous' and
+                `chunksizes` parameters (in that order) for the
+                fragment array variable. If not set (the default),
+                then these parameters are inferred from the data.
+
+        :Returns:
+
+            `str`
+                The netCDF variable name of the fragment array
+                variable.
+
+        """
+        create = not self._already_in_file(data, ncdimensions)
+
+        if create:
+            # Create a new fragment array variable in the file, with
+            # 'contiguous' chunking
+            ncvar = self._netcdf_name(ncvar)
+            self._write_netcdf_variable(
+                ncvar,
+                ncdimensions,
+                data,
+                None,
+                extra=attributes,
+                chunking=chunking,
+            )
+        else:
+            # This fragment array variable has already been written to
+            # the file
+            ncvar = self.write_vars["seen"][id(data)]["ncvar"]
+
+        return ncvar
+
+    @classmethod
+    def _cfa_unique_value(cls, a, strict=True):
+        """Return the unique value of an array.
+
+        If there are multiple unique values then missing data is
+        returned.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        :Parameters:
+
+             a: `numpy.ndarray`
+                The array.
+
+             strict: `bool`, optional
+                 If True then raise an exception if there is more than
+                 one unique value. If False then a unique value of
+                 missing data will be returned in this case.
+
+        :Returns:
+
+            `numpy.ndarray`
+                A size 1 array containing the unique value, or missing
+                data if there is not a unique value.
+
+        """
+        a = cfdm_to_memory(a)
+
+        out_shape = (1,) * a.ndim
+        a = np.unique(a)
+        if a.size == 1:
+            return a.reshape(out_shape)
+
+        if strict:
+            raise AggregationError(str(a))
+
+        return np.ma.masked_all(out_shape, dtype=a.dtype)
+
+    def _cfa_fragment_array_variables(self, data, cfvar):
+        """Convert data to aggregated_data terms.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        :Parameters:
+
+            data: `Data`
+                The data to be converted.
+
+            cfvar: construct
+                The construct that contains the *data*.
+
+        :Returns:
+
+            `dict`
+                A dictionary whose keys are the standardised
+                aggregation_data terms, with values of `Data`
+                instances containing the corresponding variables.
+
+        **Examples**
+
+        >>> n._cfa_fragment_array_variables(data, cfvar)
+        {'shape': <Data(2, 1): [[5, 8]]>,
+         'location': <Data(1, 1): [[file:///home/file.nc]]>,
+         'variable': <Data(1, 1): [[q]]>}
+
+        """
+        from os.path import relpath
+
+        g = self.write_vars
+
+        if not data.nc_get_aggregation_write_status():
+            raise AggregationError(
+                f"Can't write {cfvar!r} as a CF-netCDF aggregation variable. "
+                "This is probably because some fragment values have been "
+                "changed relative to those in the fragment files, or a "
+                "rechunking has occured."
+            )
+
+        # ------------------------------------------------------------
+        # Create the 'map' array
+        # ------------------------------------------------------------
+        a_shape = data.numblocks
+        if a_shape:
+            ndim = data.ndim
+            aggregation_shape = np.ma.masked_all(
+                (ndim, max(a_shape)), dtype=integer_dtype(max(data.chunksize))
+            )
+            for i, chunks in enumerate(data.chunks):
+                aggregation_shape[i, : len(chunks)] = chunks
+        else:
+            # Scalar 'shape' fragment array variable
+            aggregation_shape = np.ones((), dtype=np.dtype("int32"))
+
+        out = {"map": type(data)(aggregation_shape)}
+
+        if data.nc_get_aggregation_fragment_type() == "uri":
+            # --------------------------------------------------------
+            # Create 'uris' and 'idenftifiers' arrays
+            # --------------------------------------------------------
+            uri_default = g["cfa"].get("uri", "default") == "default"
+            uri_relative = (
+                not uri_default
+                and g["cfa"].get("uri", "relative") == "relative"
+            )
+            normalise = not uri_default
+
+            if uri_relative:
+                # Get the aggregation file directory as an absolute
+                # URI
+                aggregation_file_directory = g["aggregation_file_directory"]
+                if aggregation_file_directory is None:
+                    uri = urisplit(dirname(g["filename"]))
+                    if uri.isuri():
+                        aggregation_file_scheme = uri.scheme
+                        aggregation_file_directory = uri.geturi()
+                    else:
+                        aggregation_file_scheme = "file"
+                        aggregation_file_directory = uricompose(
+                            scheme=aggregation_file_scheme,
+                            authority="",
+                            path=uri.path,
+                        )
+                        fragment = uri.fragment
+                        if fragment is not None:
+                            # Append a URI fragment. Do this with a
+                            # string-append, rather than via
+                            # `uricompose` in case the fragment
+                            # contains more than one # character.
+                            aggregation_file_directory += f"#{fragment}"
+
+                    g["aggregation_file_directory"] = (
+                        aggregation_file_directory
+                    )
+                    g["aggregation_file_scheme"] = aggregation_file_scheme
+
+                aggregation_file_scheme = g["aggregation_file_scheme"]
+
+            aggregation_uris = []
+            aggregation_identifiers = []
+            for index, position in zip(
+                data.chunk_indices(), data.chunk_positions()
+            ):
+                # Try to get this Dask chunk's data as a reference to
+                # fragment file
+                fragment = data[index].compute(_force_to_memory=False)
+                try:
+                    filename, address, is_subspace, f_index = (
+                        fragment.get_filename(normalise=normalise),
+                        fragment.get_address(),
+                        fragment.is_subspace(),
+                        fragment.index(),
+                    )
+                except (AttributeError, TypeError):
+                    # This Dask chunk's data is not a reference to
+                    # fragment file
+                    raise AggregationError(
+                        f"Can't write {cfvar!r} as a CF-netCDF "
+                        "aggregation variable: "
+                        f"The Dask chunk in position {position} "
+                        f"(defined by data index {index!r}) does not "
+                        "reference a unique fragment file. This is could be "
+                        "because some fragment values have been changed "
+                        "relative to those in the fragment files, or a "
+                        "Dask rechunking has occured, etc."
+                    )
+
+                if is_subspace:
+                    # This Dask chunk's data is a reference to
+                    # fragment file, but only to a subspace of it.
+                    raise AggregationError(
+                        f"Can't write {cfvar!r} as a CF-netCDF "
+                        "aggregation variable: "
+                        f"The Dask chunk in position {position} "
+                        f"(defined by data index {index!r}) references "
+                        f"a subspace ({f_index!r}) of the fragment file "
+                        f"{fragment!r}. This might be fixable by setting "
+                        "the 'cfa_write' parameter to the 'read' function."
+                    )
+
+                uri = urisplit(filename)
+                if uri_relative and uri.isrelpath():
+                    filename = abspath(filename)
+
+                if uri.isabspath():
+                    # File name is an absolute-path URI reference
+                    filename = uricompose(
+                        scheme="file",
+                        authority="",
+                        path=uri.path,
+                    )
+                    fragment = uri.fragment
+                    if fragment is not None:
+                        # Append a URI fragment. Do this with a
+                        # string-append, rather than via `uricompose`
+                        # in case the fragment contains more than one
+                        # # character.
+                        filename += f"#{fragment}"
+
+                if uri_relative:
+                    scheme = uri.scheme
+                    if not scheme:
+                        scheme = "file"
+
+                    if scheme != aggregation_file_scheme:
+                        raise AggregationError(
+                            f"Can't write {cfvar!r} as a CF-netCDF "
+                            "aggregation variable: "
+                            "Attempting to create a relative-path URI "
+                            f"reference for the fragment file {fragment}, "
+                            "referenced by the Dask chunk in position "
+                            f"{position} (defined by data index {index!r}), "
+                            "but the aggregation file URI scheme "
+                            f"({aggregation_file_scheme}:) is incompatible."
+                        )
+
+                    filename = relpath(
+                        filename, start=aggregation_file_directory
+                    )
+
+                aggregation_uris.append(filename)
+                aggregation_identifiers.append(address)
+
+            # Reshape the 1-d aggregation instruction arrays to span
+            # the data dimensions, plus the extra trailing dimension
+            # if there is one.
+            aggregation_uris = np.array(aggregation_uris).reshape(a_shape)
+            aggregation_identifiers = np.array(
+                aggregation_identifiers
+            ).reshape(a_shape)
+
+            out["uris"] = type(data)(aggregation_uris)
+            out["identifiers"] = type(data)(aggregation_identifiers)
+        else:
+            # ------------------------------------------------------------
+            # Create a 'unique_values' array
+            # ------------------------------------------------------------
+            # Transform the data so that it spans the fragment
+            # dimensions with one value per fragment. If a chunk has
+            # more than one unique value then the fragment's value is
+            # missing data.
+            import dask.array as da
+
+            dx = data.to_dask_array(
+                _force_mask_hardness=False, _force_to_memory=False
+            )
+            dx_ind = tuple(range(dx.ndim))
+            out_ind = dx_ind
+            dx = da.blockwise(
+                self._cfa_unique_value,
+                out_ind,
+                dx,
+                dx_ind,
+                adjust_chunks={i: 1 for i in out_ind},
+                meta=np.array((), dx.dtype),
+                strict=g["cfa"]["strict"],
+            )
+            d = type(data)(dx)
+
+            try:
+                d.persist(inplace=True)
+            except AggregationError as error:
+                raise AggregationError(
+                    f"Can't write {cfvar!r} as a CF-netCDF aggregation "
+                    "variable. "
+                    "At least one Dask chunk has more than one unique value: "
+                    f"{error}. "
+                    "Set the 'strict' keyword of the 'cfa' parameter to True "
+                    "to use a unique value of missing data in this case."
+                )
+
+            out["unique_values"] = d
+
+        # Return the dictionary of Data objects
+        return out
+
+    def _write_quantization_container(self, quantization):
+        """Write a CF-netCDF quantization container variable.
+
+        .. note:: It is assumed, but not checked, that the
+                  per-variable parameters (such as "quantization_nsd"
+                  or "_QuantizeBitRoundNumberOfSignificantBits") have
+                  been already been removed from *quantization*.
+
+         .. versionadded:: (cfdm) 1.12.2.0
+
+        :Parameters:
+
+            quantization: `Quantization`
+                The Quantization metadata to be written.
+
+        :Returns:
+
+            `str`
+                The netCDF variable name for the quantization
+                container.
+
+        """
+        g = self.write_vars
+
+        for ncvar, q in g["quantization"].items():
+            if self.implementation.equal_components(quantization, q):
+                # Use this existing quantization container
+                return ncvar
+
+        # Create a new quantization container variable
+        ncvar = self._create_netcdf_variable_name(
+            quantization, default="quantization"
+        )
+
+        logger.info(
+            f"    Writing {quantization!r} to netCDF variable: {ncvar}"
+        )  # pragma: no cover
+
+        kwargs = {
+            "varname": ncvar,
+            "datatype": "S1",
+            "dimensions": (),
+            "endian": g["endian"],
+        }
+        kwargs.update(g["netcdf_compression"])
+
+        if not g["dry_run"]:
+            # Create the variable
+            self._createVariable(**kwargs)
+
+            # Set the attributes
+            g["nc"][ncvar].setncatts(
+                self.implementation.parameters(quantization)
+            )
+
+        # Update the quantization dictionary
+        g["quantization"][ncvar] = quantization
+
+        return ncvar

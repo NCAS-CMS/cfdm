@@ -37,12 +37,14 @@ Metadata construct classes
    :toctree: class/
 
    cfdm.AuxiliaryCoordinate
+   cfdm.CellConnectivity
    cfdm.CellMeasure
    cfdm.CellMethod
    cfdm.CoordinateReference
    cfdm.DimensionCoordinate
    cfdm.DomainAncillary
    cfdm.DomainAxis
+   cfdm.DomainTopology
    cfdm.FieldAncillary
   
 Constructs class
@@ -74,8 +76,9 @@ Data classes
    :toctree: class/
 
    cfdm.Data
-   cfdm.NetCDFArray
-   cfdm.NumpyArray
+   cfdm.NetCDF4Array
+   cfdm.H5netcdfArray
+   cfdm.ZarrArray
    cfdm.Array
 
 Data compression classes
@@ -95,7 +98,7 @@ Classes that support the creation and storage of compressed arrays.
    cfdm.RaggedIndexedArray
    cfdm.RaggedIndexedContiguousArray
    cfdm.CompressedArray
-
+   cfdm.Quantization
 
 Miscellaneous classes
 ---------------------

@@ -1,10 +1,160 @@
 Version NEXTVERSION
 -------------------
 
-**2024-??-??**
+**2025-12-??**
 
 * Speed up time taken for import
   (https://github.com/NCAS-CMS/cfdm/issues/???)
+
+----
+  
+Version 1.12.3.1
+----------------
+
+**2025-10-15**
+
+* Python 3.9 support removed
+  (https://github.com/NCAS-CMS/cfdm/issues/353)
+* When changing array data type, retain cached data elements cast to
+  the new type (https://github.com/NCAS-CMS/cfdm/issues/358)
+* Fix bug that prevented `cfdm.read` from reading a file with ``#``
+  characters in its file name
+  (https://github.com/NCAS-CMS/cfdm/issues/356)
+* Changed dependency: ``Python>=3.10.0``
+
+----
+
+Version 1.12.3.0
+----------------
+
+**2025-08-18**
+
+
+* Fix `cfdm.Data.reshape` when the underlying data originate on disk
+  (https://github.com/NCAS-CMS/cfdm/issues/348)
+* New keyword parameter to `cfdm.Field.dump`: ``data``
+  (https://github.com/NCAS-CMS/cfdm/issues/345)
+* New dependency: ``distributed>=2025.5.1``
+
+----
+
+Version 1.12.2.0
+----------------
+
+**2025-06-05**
+
+* Implement lossy compression via quantization
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
+* New quantization classes: `cfdm.Quantization`,
+  `cfdm.mixin.QuantizationMixin`
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
+* New quantization methods: `cfdm.Field.get_quantization`,
+  `cfdm.Field.get_quantize_on_write`,
+  `cfdm.Field.set_quantize_on_write`,
+  `cfdm.Field.del_quantize_on_write`
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
+* Improve performance in `cfdm.read` by caching any array values
+  retrieved from disk (https://github.com/NCAS-CMS/cfdm/issues/313)
+* New keyword parameter to `cfdm.write`: ``chunk_cache``
+  (https://github.com/NCAS-CMS/cfdm/issues/328)
+* Read Zarr datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/335)
+* Read multiple datasets simultaneously with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/336)
+* New keyword parameters to `cfdm.read`: ``recursive``,
+  ``followlinks`` (https://github.com/NCAS-CMS/cfdm/issues/336)
+* New keyword parameters to `cfdm.read`: ``cdl_string``
+  (https://github.com/NCAS-CMS/cfdm/issues/337)
+* Update CF aggregation keywords
+  (https://github.com/NCAS-CMS/cfdm/issues/341)
+* Set new minimum version of `dask`: ``2025.5.1``
+  (https://github.com/NCAS-CMS/cfdm/issues/339)
+* New dependency: ``zarr>=3.0.8``
+* Changed dependency: ``dask>=2025.5.1``
+
+----
+
+Version 1.12.1.0
+----------------
+
+**2025-04-01**
+
+* Set new method `cfdm.Array.astype`
+  (https://github.com/NCAS-CMS/cfdm/issues/331)
+* Set new maximum version of `dask`: ``2025.3.0``
+  (https://github.com/NCAS-CMS/cfdm/issues/332)
+* Changed dependency: ``dask>=2025.2.0,<=2025.3.0``
+
+----
+
+Version 1.12.0.0
+----------------
+
+**2025-03-18**
+
+* Set new minimum version of `dask`: ``2025.2.0``
+  (https://github.com/NCAS-CMS/cfdm/issues/321)
+* Set new minimum version of `numpy`: ``2.0.0``
+  (https://github.com/NCAS-CMS/cfdm/issues/318)
+* Introduction of reading and writing of aggregation datasets (for
+  CF-1.13) (https://github.com/NCAS-CMS/cfdm/issues/319)
+* Changed dependency: ``Python>=3.9.0``
+* Changed dependency: ``numpy>=2.0.0``
+* Changed dependency: ``netCDF4>=1.7.2``
+* Changed dependency: ``cftime>=1.6.4``
+* Changed dependency: ``dask>=2025.2.0``
+
+----
+
+Version 1.11.2.1
+----------------
+
+**2025-02-26**
+
+* Re-introduction of `cfdm.Data.datetime_as_string`
+  (https://github.com/NCAS-CMS/cfdm/pull/324)
+
+----
+  
+Version 1.11.2.0
+----------------
+
+**2025-01-28**
+
+* Introduction of `dask` for all data manipulations
+  (https://github.com/NCAS-CMS/cfdm/issues/317)
+* Fix bug that returned incorrect results when an invalid identifier
+  is provided to `cf.Field.cell_methods`
+  (https://github.com/NCAS-CMS/cfdm/issues/299)
+* Upgrades to allow cfdm to work with Python 3.12
+  (https://github.com/NCAS-CMS/cfdm/issues/302)
+* Extension to the HDF5 chunks API
+  (https://github.com/NCAS-CMS/cfdm/issues/309)
+* New function `cfdm.netcdf_flattener` that replaces the import of
+  `netcdf_flattener` (https://github.com/NCAS-CMS/cfdm/issues/286)
+* New function `cfdm.netcdf_indexer` that applies netCDF masking and
+  unpacking to arbitrary arrays
+  (https://github.com/NCAS-CMS/cfdm/issues/285)
+* Allow access to netCDF-4 files in S3 object stores
+  (https://github.com/NCAS-CMS/cfdm/issues/285)
+* Allow a choice of netCDF engines
+  (https://github.com/NCAS-CMS/cfdm/issues/285)
+* Fix bug that caused `cfdm.write` to fail when a parametric Z
+  dimension coordinate did not have a ``computed_standard_name``
+  attribute (https://github.com/NCAS-CMS/cfdm/issues/303)
+* Fix bug that caused `cfdm.read` to fail to read at all
+  datasets including variables with badly-encoded UGRID meshes
+  (https://github.com/NCAS-CMS/cfdm/issues/315)
+* New class `cfdm.H5netcdfArray`
+* New class `cfdm.NetCDF4Array`
+* New dependency: ``h5netcdf>=1.3.0``
+* New dependency: ``h5py>=3.12.1``
+* New dependency: ``s3fs>=2024.6.0``
+* New dependency: ``dask>=2024.6.0,<=2024.7.1``
+* New dependency: ``uritools>=4.0.3``
+* New dependency: ``cfunits>=3.3.7``
+* New dependency: ``udunits2>=2.2.28``
+* Removed dependency(now incorporated into `cfdm`): ``netcdf_flattener``
 
 ----
 

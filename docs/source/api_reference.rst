@@ -11,17 +11,19 @@ Version |release| for version |version| of the CF conventions.
 
 * **Construct classes**
   
-  * :ref:`cfdm.Field <cfdm-Field>`
-  * :ref:`cfdm.Domain <cfdm-Domain>`
-  * :ref:`cfdm.AuxiliaryCoordinate <cfdm-AuxiliaryCoordinate>`
-  * :ref:`cfdm.CellMeasure <cfdm-CellMeasure>`
-  * :ref:`cfdm.CellMethod <cfdm-CellMethod>`
-  * :ref:`cfdm.Coordinatereference <cfdm-Coordinatereference>`
-  * :ref:`cfdm.DimensionCoordinate <cfdm-DimensionCoordinate>`
-  * :ref:`cfdm.DomainAncillary <cfdm-DomainAncillary>`
-  * :ref:`cfdm.DomainAxis <cfdm-DomainAxis>`
-  * :ref:`cfdm.FieldAncillary <cfdm-FieldAncillary>`
-    
+  * :py:class:`cfdm.Field`
+  * :py:class:`cfdm.Domain`
+  * :py:class:`cfdm.AuxiliaryCoordinate`
+  * :py:class:`cfdm.CellConnectivity`
+  * :py:class:`cfdm.CellMeasure`
+  * :py:class:`cfdm.CellMethod`
+  * :py:class:`cfdm.CoordinateReference`
+  * :py:class:`cfdm.DimensionCoordinate`
+  * :py:class:`cfdm.DomainAncillary`
+  * :py:class:`cfdm.DomainAxis`
+  * :py:class:`cfdm.DomainTopology`
+  * :py:class:`cfdm.FieldAncillary`
+
 .. toctree::
    :maxdepth: 2
 

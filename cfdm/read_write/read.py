@@ -1,57 +1,42 @@
-import os
+from functools import partial
+from glob import iglob
+from logging import getLogger
+from os import walk
+from os.path import expanduser, expandvars, isdir, join
 
-from numpy.ma.core import MaskError
+from uritools import urisplit
 
-from ..cfdmimplementation import implementation
+from ..decorators import _manage_log_level_via_verbosity
+from ..functions import abspath, is_log_level_info
+from .abstract import ReadWrite
+from .exceptions import DatasetTypeError
 from .netcdf import NetCDFRead
 
-_implementation = implementation()
+logger = getLogger(__name__)
 
 
-def read(
-    filename,
-    external=None,
-    extra=None,
-    verbose=None,
-    warnings=False,
-    warn_valid=False,
-    mask=True,
-    domain=False,
-    _implementation=_implementation,
-):
+class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
-    The dataset may be a netCDF file on disk or on an OPeNDAP server,
-    or a CDL file on disk (see below).
+    The following file formats are supported: netCDF, CDL, and Zarr.
+
+    NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
+    server, or in an S3 object store.
+
+    CDL files must be on local disk.
+
+    Any amount of files of any combination of file types may be read.
 
     The returned constructs are sorted by the netCDF variable names of
     their corresponding data or domain variables.
-
-
-    **CDL files**
-
-    A file is considered to be a CDL representation of a netCDF
-    dataset if it is a text file whose first non-comment line starts
-    with the seven characters "netcdf " (six letters followed by a
-    space). A comment line is identified as one which starts with any
-    amount white space (including none) followed by "//" (two
-    slashes). It is converted to a temporary netCDF4 file using the
-    external ``ncgen`` command, and the temporary file persists until
-    the end of the Python session, at which time it is automatically
-    deleted. The CDL file may omit data array values (as would be the
-    case, for example, if the file was created with the ``-h`` or
-    ``-c`` option to ``ncdump``), in which case the the relevant
-    constructs in memory will be created with data with all missing
-    values.
 
     **NetCDF unlimited dimensions**
 
     Domain axis constructs that correspond to NetCDF unlimited
     dimensions may be accessed with the
-    `~cfdm.DomainAxis.nc_is_unlimited` and
-    `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
-    construct.
-
+    `~{{package}}.DomainAxis.nc_is_unlimited` and
+    `~{{package}}.DomainAxis.nc_set_unlimited` methods of a domain
+    axis construct.
 
     **NetCDF hierarchical groups**
 
@@ -65,7 +50,6 @@ def read(
     compliance to earlier versions of the CF conventions, the groups
     will be interpreted as per the latest release of the CF
     conventions.
-
 
     **CF-compliance**
 
@@ -83,188 +67,131 @@ def read(
     variable. Other types of non-compliance are not checked, such
     whether or not controlled vocabularies have been adhered to. The
     structural compliance of the dataset may be checked with the
-    `~cfdm.Field.dataset_compliance` method of the returned
+    `~{{package}}.Field.dataset_compliance` method of the returned
     constructs, as well as optionally displayed when the dataset is
     read by setting the *warnings* parameter.
 
+    **CDL files**
+
+    A file is considered to be a CDL representation of a netCDF
+    dataset if it is a text file whose first non-comment line starts
+    with the seven characters "netcdf " (six letters followed by a
+    space). A comment line is identified as one which starts with any
+    amount white space (including none) followed by "//" (two
+    slashes). It is converted to a temporary netCDF4 file using the
+    external ``ncgen`` command, and the temporary file persists until
+    the end of the Python session, at which time it is automatically
+    deleted. The CDL file may omit data array values (as would be the
+    case, for example, if the file was created with the ``-h`` or
+    ``-c`` option to ``ncdump``), in which case the the relevant
+    constructs in memory will be created with data with all missing
+    values.
 
     **Performance**
 
     Descriptive properties are always read into memory, but lazy
-    loading is employed for all data arrays, which means that no data
-    is read into memory until the data is required for inspection or
-    to modify the array contents. This maximises the number of field
-    constructs that may be read within a session, and makes the read
-    operation fast.
+    loading is employed for all data arrays, unless the *to_memory*
+    parameter has been set.
 
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `cfdm.write`, `cfdm.Field`, `cfdm.Domain`,
-                 `cfdm.unique_constructs`
+    .. seealso:: `{{package}}.write`, `{{package}}.Field`,
+                 `{{package}}.Domain`, `{{package}}.unique_constructs`
 
     :Parameters:
 
-        filename: `str`
-            The file name or OPenDAP URL of the dataset.
+        {{read datasets: (arbitrarily nested sequence of) `str`}}
 
-            Relative paths are allowed, and standard tilde and shell
-            parameter expansions are applied to the string.
+        {{read recursive: `bool`, optional}}
 
-            *Parameter example:*
-              The file ``file.nc`` in the user's home directory could
-              be described by any of the following:
-              ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
-              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
+            .. versionadded:: (cfdm) 1.12.2.0
 
-        external: (sequence of) `str`, optional
-            Read external variables (i.e. variables which are named by
-            attributes, but are not present, in the parent file given
-            by the *filename* parameter) from the given external
-            files. Ignored if the parent file does not contain a
-            global ``external_variables`` attribute. Multiple external
-            files may be provided, which are searched in random order
-            for the required external variables.
+        {{read followlinks: `bool`, optional}}
 
-            If an external variable is not found in any external
-            files, or is found in multiple external files, then the
-            relevant metadata construct is still created, but without
-            any metadata or data. In this case the construct's
-            `!is_external` method will return `True`.
+            .. versionadded:: (cfdm) 1.12.2.0
 
-            *Parameter example:*
-              ``external='cell_measure.nc'``
+        {{read cdl_string: `bool`, optional}}
 
-            *Parameter example:*
-              ``external=['cell_measure.nc']``
+        {{read dataset_type: `None` or (sequence of) `str`, optional}}
 
-            *Parameter example:*
-              ``external=('cell_measure_A.nc', 'cell_measure_O.nc')``
+            Valid file types are:
 
-        extra: (sequence of) `str`, optional
-            Create extra, independent fields from netCDF variables
-            that correspond to particular types metadata constructs.
-            Ignored if *domain* is True.
+            ==============  ==========================================
+            *dataset_type*  Description
+            ==============  ==========================================
+            ``'netCDF'``    A netCDF-3 or netCDF-4 dataset
+            ``'CDL'``       A text CDL file of a netCDF dataset
+            ``'Zarr'``      A Zarr v2 (xarray) or Zarr v3 dataset
+            ==============  ==========================================
 
-            The *extra* parameter may be one, or a sequence, of:
+            .. versionadded:: (cfdm) 1.12.2.0
 
-            ==========================  ===============================
-            *extra*                     Metadata constructs
-            ==========================  ===============================
-            ``'field_ancillary'``       Field ancillary constructs
-            ``'domain_ancillary'``      Domain ancillary constructs
-            ``'dimension_coordinate'``  Dimension coordinate constructs
-            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-            ``'cell_measure'``          Cell measure constructs
-            ==========================  ===============================
+        {{read external: (sequence of) `str`, optional}}
 
-            *Parameter example:*
-              To create fields from auxiliary coordinate constructs:
-              ``extra='auxiliary_coordinate'`` or
-              ``extra=['auxiliary_coordinate']``.
+        {{read extra: (sequence of) `str`, optional}}
 
-            *Parameter example:*
-              To create fields from domain ancillary and cell measure
-              constructs: ``extra=['domain_ancillary',
-              'cell_measure']``.
+        {{read verbose: `int` or `str` or `None`, optional}}
 
-            An extra field construct created via the *extra* parameter
-            will have a domain limited to that which can be inferred
-            from the corresponding netCDF variable, but without the
-            connections that are defined by the parent netCDF data
-            variable. It is possible to create independent fields from
-            metadata constructs that do incorporate as much of the
-            parent field construct's domain as possible by using the
-            `~cfdm.Field.convert` method of a returned field
-            construct, instead of setting the *extra* parameter.
+        {{read warnings: `bool`, optional}}
 
-        verbose: `int` or `str` or `None`, optional
-            If an integer from ``-1`` to ``3``, or an equivalent string
-            equal ignoring case to one of:
-
-            * ``'DISABLE'`` (``0``)
-            * ``'WARNING'`` (``1``)
-            * ``'INFO'`` (``2``)
-            * ``'DETAIL'`` (``3``)
-            * ``'DEBUG'`` (``-1``)
-
-            set for the duration of the method call only as the minimum
-            cut-off for the verboseness level of displayed output (log)
-            messages, regardless of the globally-configured `cfdm.log_level`.
-            Note that increasing numerical value corresponds to increasing
-            verbosity, with the exception of ``-1`` as a special case of
-            maximal and extreme verbosity.
-
-            Otherwise, if `None` (the default value), output messages will
-            be shown according to the value of the `cfdm.log_level` setting.
-
-            Overall, the higher a non-negative integer or equivalent string
-            that is set (up to a maximum of ``3``/``'DETAIL'``) for
-            increasing verbosity, the more description that is printed to
-            convey how the contents of the netCDF file were parsed and
-            mapped to CF data model constructs.
-
-        warnings: `bool`, optional
-            If True then print warnings when an output field construct
-            is incomplete due to structural non-compliance of the
-            dataset. By default such warnings are not displayed.
-
-        warn_valid: `bool`, optional
-            If True then print a warning for the presence of
-            ``valid_min``, ``valid_max`` or ``valid_range`` properties
-            on field constructs and metadata constructs that have
-            data. By default no such warning is issued.
-
-            "Out-of-range" data values in the file, as defined by any
-            of these properties, are automatically masked by default,
-            which may not be as intended. See the *mask* parameter for
-            turning off all automatic masking.
-
-            See
-            https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
-            for details.
+        {{read warn_valid: `bool`, optional}}
 
             .. versionadded:: (cfdm) 1.8.3
 
-        mask: `bool`, optional
-            If True (the default) then mask by convention the data of
-            field and metadata constructs.
-
-            The masking by convention of a netCDF array depends on the
-            values of any of the netCDF variable attributes
-            ``_FillValue``, ``missing_value``, ``valid_min``,
-            ``valid_max`` and ``valid_range``.
-
-            See
-            https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
-            for details.
+        {{read mask: `bool`, optional}}
 
             .. versionadded:: (cfdm) 1.8.2
 
-        domain: `bool`, optional
-            If True then return only the domain constructs that are
-            explicitly defined by CF-netCDF domain variables, ignoring
-            all CF-netCDF data variables. By default only the field
-            constructs defined by CF-netCDF data variables are
-            returned.
+        {{read unpack: `bool`}}
 
-            CF-netCDF domain variables are only defined from CF-1.9,
-            so older datasets automatically contain no CF-netCDF
-            domain variables.
+            .. versionadded:: (cfdm) 1.11.2.0
 
-            The unique domain constructs of the dataset are easily
-            found with the `cfdm.unique_constructs` function. For
-            example::
-
-               >>> d = cfdm.read('file.nc', domain=True)
-               >>> ud = cfdm.unique_constructs(d)
-               >>> f = cfdm.read('file.nc')
-               >>> ufd = cfdm.unique_constructs(x.domain for x in f)
+        {{read domain: `bool`, optional}}
 
             .. versionadded:: (cfdm) 1.9.0.0
 
-        _implementation: (subclass of) `CFDMImplementation`, optional
-            Define the CF data model implementation that provides the
-            returned field constructs.
+        {{read netcdf_backend: `None` or (sequence of) `str`, optional}}
+
+            .. versionadded:: (cfdm) 1.11.2.0
+
+        {{read storage_options: `dict` or `None`, optional}}
+
+            .. versionadded:: (cfdm) 1.11.2.0
+
+        {{read cache: `bool`, optional}}
+
+            .. versionadded:: (cfdm) 1.11.2.0
+
+        {{read dask_chunks: `str`, `int`, `None`, or `dict`, optional}}
+
+              .. versionadded:: (cfdm) 1.11.2.0
+
+        {{read store_dataset_chunks: `bool`, optional}}
+
+            .. versionadded:: (cfdm) 1.11.2.0
+
+        {{read cfa: `dict`, optional}}
+
+            .. versionadded:: (cfdm) 1.12.0.0
+
+        {{read cfa_write: (sequence of) `str`, optional}}
+
+            .. versionadded:: (cfdm) 1.12.0.0
+
+        {{read to_memory: (sequence of) `str`, optional}}
+
+            .. versionadded:: (cfdm) 1.12.0.0
+
+        {{read squeeze: `bool`, optional}}
+
+            .. versionadded:: (cfdm) 1.12.0.0
+
+        {{read unsqueeze: `bool`, optional}}
+
+            .. versionadded:: (cfdm) 1.12.0.0
+
+        ignore_unknown_type: Deprecated at version 1.12.2.0
+            Use *dataset_type* instead.
 
     :Returns:
 
@@ -293,72 +220,375 @@ def read(
     >>> j = cfdm.read('parent.nc', external=['external1.nc', 'external2.nc'])
 
     """
-    # Initialise a netCDF read object
-    netcdf = NetCDFRead(_implementation)
 
-    # Parse the field parameter
-    if extra is None:
-        extra = ()
-    elif isinstance(extra, str):
-        extra = (extra,)
+    @_manage_log_level_via_verbosity
+    def __new__(
+        cls,
+        datasets,
+        external=None,
+        extra=None,
+        verbose=None,
+        warnings=False,
+        warn_valid=False,
+        mask=True,
+        unpack=True,
+        domain=False,
+        netcdf_backend=None,
+        storage_options=None,
+        cache=True,
+        dask_chunks="storage-aligned",
+        store_dataset_chunks=True,
+        cfa=None,
+        cfa_write=None,
+        to_memory=False,
+        squeeze=False,
+        unsqueeze=False,
+        dataset_type=None,
+        recursive=False,
+        followlinks=False,
+        cdl_string=False,
+        extra_read_vars=None,
+        **kwargs,
+    ):
+        """Read field or domain constructs from datasets.
 
-    filename = os.path.expanduser(os.path.expandvars(filename))
+        .. versionadded:: (cfdm) 1.12.2.0
 
-    if netcdf.is_dir(filename):
-        raise IOError(f"Can't read directory {filename}")
+        """
+        kwargs = locals()
+        kwargs.update(kwargs.pop("kwargs"))
 
-    if not netcdf.is_file(filename):
-        raise IOError(f"Can't read non-existent file {filename}")
+        self = super().__new__(cls)
 
-    # ----------------------------------------------------------------
-    # Read the file into field/domain contructs
-    # ----------------------------------------------------------------
-    cdl = False
-    if netcdf.is_cdl_file(filename):
-        # Create a temporary netCDF file from input CDL
-        cdl = True
-        cdl_filename = filename
-        filename = netcdf.cdl_to_netcdf(filename)
+        # Store the keyword arguments
+        self.kwargs = kwargs
 
-    if netcdf.is_netcdf_file(filename):
-        # See https://github.com/NCAS-CMS/cfdm/issues/128 for context on the
-        # try/except here, which acts as a temporary fix pending decisions on
-        # the best way to handle CDL with only header or coordinate info.
-        try:
-            fields = netcdf.read(
-                filename,
-                external=external,
-                extra=extra,
-                verbose=verbose,
-                warnings=warnings,
-                warn_valid=warn_valid,
-                mask=mask,
-                domain=domain,
-                extra_read_vars=None,
+        # Actions to be taken before any datasets are been read (which
+        # include initialising 'self.constructs' attribute to an empty
+        # list).
+        self._initialise()
+
+        dataset_type = self.dataset_type
+        if not (
+            dataset_type is None
+            or self.dataset_type.issubset(self.allowed_dataset_types)
+        ):
+            raise ValueError(
+                "'dataset_type' keyword must be None, or a subset of "
+                f"{self.allowed_dataset_types}"
             )
-        except MaskError:
-            # Some data required for field interpretation is missing,
-            # manifesting downstream as a NumPy MaskError.
-            if cdl:
-                raise ValueError(
-                    "Unable to convert CDL without data to field construct(s) "
-                    "because there is insufficient information provided by "
-                    "the header and/or coordinates alone in this case."
-                )
-            else:
-                raise ValueError(
-                    "Unable to convert netCDF to field construct(s) because "
-                    "there is missing data."
-                )
-    elif cdl:
-        raise IOError(
-            f"Can't determine format of file {filename} "
-            f"generated from CDL file {cdl_filename}"
-        )
-    else:
-        raise IOError(f"Can't determine format of file {filename}")
 
-    # ----------------------------------------------------------------
-    # Return the field or domain constructs
-    # ----------------------------------------------------------------
-    return fields
+        # Loop round the input datasets
+        for dataset in self._datasets():
+            # Read the dataset
+            self._pre_read(dataset)
+            self._read(dataset)
+            self._post_read(dataset)
+
+            # Add the dataset contents to the output list
+            self.n_datasets += 1
+            self.constructs.extend(self.dataset_contents)
+
+        # Actions to be taken after all datasets have been read
+        self._finalise()
+
+        if is_log_level_info(logger):
+            n = len(self.constructs)
+            n_datasets = self.n_datasets
+            logger.info(
+                f"Read {n} {self.construct}{'s' if n != 1 else ''} "
+                f"from {n_datasets} dataset{'s' if n_datasets != 1 else ''}"
+            )  # pragma: no cover
+
+        # Return the field or domain constructs
+        return self.constructs
+
+    def _datasets(self):
+        """Find all of the datasets.
+
+        The datset pathnames are defined by
+        ``self.kwargs['datasets']``.
+
+        Each pathname has its tilde and environment variables
+        expanded, and is then replaced by all of the pathnames
+        matching glob patterns used by the Unix shell.
+
+        A directory is replaced the pathnames of the datasets it
+        contains. Subdirectories are recursively searched through only
+        if ``self.kwargs['recursive']`` is True. Subdirectories
+        pointed to by symlinks are included only if
+        ``self.kwargs['followlinks']`` is True.
+
+        Called by `__new__`.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        :Returns:
+
+            generator
+                An iterator over the dataset pathnames.
+
+        """
+        kwargs = self.kwargs
+        recursive = kwargs.get("recursive", False)
+        followlinks = kwargs.get("followlinks", False)
+
+        datasets = self._flat(kwargs["datasets"])
+        if kwargs["cdl_string"]:
+            # Return CDL strings as they are
+            for dataset1 in datasets:
+                # This is a CDL string
+                yield dataset1
+
+            return
+
+        if followlinks and not recursive:
+            raise ValueError(
+                f"Can only set followlinks={followlinks!r} when "
+                f"recursive={True}. Got recursive={recursive!r}"
+            )
+
+        is_zarr = NetCDFRead.is_zarr
+
+        for datasets1 in datasets:
+            # Apply tilde and environment variable expansions
+            datasets1 = expanduser(expandvars(datasets1))
+
+            u = urisplit(datasets1)
+            if u.scheme not in (None, "file"):
+                # Do not glob a remote URI, and assume that it defines
+                # a single dataset.
+                yield datasets1
+                continue
+
+            # Glob files/directories on disk
+            datasets1 = abspath(datasets1, uri=False)
+
+            n_datasets = 0
+            for x in iglob(datasets1):
+                if isdir(x):
+                    if is_zarr(x):
+                        # This directory is a Zarr dataset, so don't
+                        # look in any subdirectories.
+                        n_datasets += 1
+                        yield x
+                        continue
+
+                    # Walk through directories, possibly recursively
+                    for path, _, filenames in walk(x, followlinks=followlinks):
+                        if NetCDFRead.is_zarr(path):
+                            # This directory is a Zarr dataset, so
+                            # don't look in any subdirectories.
+                            n_datasets += 1
+                            yield path
+                            break
+
+                        for f in filenames:
+                            # This file is a (non-Zarr) dataset
+                            n_datasets += 1
+                            yield join(path, f)
+
+                        if not recursive:
+                            # Don't look in any subdirectories
+                            break
+                else:
+                    # This file is a (non-Zarr) dataset
+                    n_datasets += 1
+                    yield x
+
+            if not n_datasets:
+                raise FileNotFoundError(
+                    f"No datasets found from datasets={kwargs['datasets']!r}"
+                )
+
+    def _finalise(self):
+        """Actions to take after all datasets have been read.
+
+        Called by `__new__`.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        :Returns:
+
+            `None`
+
+        """
+        # Sort the output contructs in-place by their netCDF variable
+        # names
+        constructs = self.constructs
+        if len(constructs) > 1:
+            constructs.sort(key=lambda f: f.nc_get_variable(""))
+
+    def _initialise(self):
+        """Actions to take before any datasets have been read.
+
+        Called by `__new__`.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        :Returns:
+
+            `None`
+
+        """
+        kwargs = self.kwargs
+
+        # Parse the 'dataset_type' keyword parameter
+        dataset_type = kwargs.get("dataset_type")
+        if dataset_type is not None:
+            if isinstance(dataset_type, str):
+                dataset_type = (dataset_type,)
+
+            dataset_type = set(dataset_type)
+
+        self.dataset_type = dataset_type
+
+        # Recognised netCDF dataset formats
+        self.netCDF_dataset_types = set(("netCDF", "CDL", "Zarr"))
+
+        # Allowed dataset formats
+        self.allowed_dataset_types = self.netCDF_dataset_types.copy()
+
+        # The output construct type
+        self.domain = bool(kwargs["domain"])
+        self.field = not self.domain
+        self.construct = "domain" if self.domain else "field"
+
+        # Initialise the number of successfully read of datasets
+        self.n_datasets = 0
+
+        # Initialise the list of output constructs
+        self.constructs = []
+
+        # Initialise the set of different dataset categories.
+        self.unique_dataset_categories = set()
+
+    def _post_read(self, dataset):
+        """Actions to take immediately after reading a dataset.
+
+        Called by `__new__`.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        :Parameters:
+
+            dataset: `str`
+                The pathname of the dataset that has just been read.
+
+        :Returns:
+
+            `None`
+
+        """
+        if self.dataset_contents is None:
+            # Raise any "unknown format" errors
+            if self.dataset_format_errors:
+                error = "\n".join(map(str, self.dataset_format_errors))
+                raise DatasetTypeError(f"\n{error}")
+
+            self.dataset_contents = []
+
+    def _pre_read(self, dataset):
+        """Actions to take immediately before reading a dataset.
+
+        Called by `__new__`.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        :Parameters:
+
+            dataset: `str`
+                The pathname of the dataset to be read.
+
+        :Returns:
+
+            `None`
+
+        """
+        # Initialise the contents of the dataset. If the dataset is
+        # valid then this will get replaced by a (possibly empty) list
+        # of the contents.
+        self.dataset_contents = None
+
+        # Initialise the list of unknown-format errors arising from
+        # trying to read the read dataset. If, after reading, there
+        # are any unknown-format errors then they will get raised, but
+        # only if `dataset_contents` is still None. Note that when
+        # unknown-format errors arise prior to a successful
+        # interpretation of the dataset, the errors are not raised
+        # because `dataset_contents` will no longer be None.
+        self.dataset_format_errors = []
+
+    def _read(self, dataset):
+        """Read a given dataset into field or domain constructs.
+
+        The constructs are stored in the `dataset_contents` attribute.
+
+        Called by `__new__`.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        :Parameters:
+
+            dataset: `str`
+                The pathname of the dataset to be read.
+
+        :Returns:
+
+            `None`
+
+        """
+        dataset_type = self.dataset_type
+        if dataset_type is None or dataset_type.intersection(
+            self.netCDF_dataset_types
+        ):
+            # --------------------------------------------------------
+            # Try to read as a netCDF dataset
+            # --------------------------------------------------------
+            if not hasattr(self, "netcdf_read"):
+                # Initialise the netCDF read function
+                kwargs = self.kwargs
+                netcdf_kwargs = {
+                    key: kwargs[key]
+                    for key in (
+                        "external",
+                        "extra",
+                        "verbose",
+                        "warnings",
+                        "warn_valid",
+                        "mask",
+                        "unpack",
+                        "domain",
+                        "storage_options",
+                        "netcdf_backend",
+                        "cache",
+                        "dask_chunks",
+                        "store_dataset_chunks",
+                        "cfa",
+                        "cfa_write",
+                        "to_memory",
+                        "squeeze",
+                        "unsqueeze",
+                        "dataset_type",
+                        "cdl_string",
+                        "extra_read_vars",
+                    )
+                }
+
+                self.netcdf_read = partial(
+                    NetCDFRead(self.implementation).read, **netcdf_kwargs
+                )
+
+            try:
+                # Try to read the dataset
+                self.dataset_contents = self.netcdf_read(dataset)
+            except DatasetTypeError as error:
+                if dataset_type is None:
+                    self.dataset_format_errors.append(error)
+            else:
+                # Successfully read the dataset
+                self.unique_dataset_categories.add("netCDF")
+
+        if self.dataset_contents is not None:
+            # Successfully read the dataset
+            return

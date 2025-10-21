@@ -22,6 +22,8 @@ class InterpolationParameter(
 
     {{netCDF variable}}
 
+    {{netCDF HDF5 chunks}}
+
     The netCDF subsampled dimension name and the netCDF interpolation
     subarea dimension name, if required, are set on the on the
     corresponding tie point index variable.
@@ -31,41 +33,6 @@ class InterpolationParameter(
     .. seealso:: `TiePointIndex`
 
     """
-
-    def __init__(
-        self,
-        properties=None,
-        data=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                  ``properties={'long_name': 'interpolation parameter'}``
-
-            {{init data: data_like, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
 
     def dump(
         self,
