@@ -417,6 +417,7 @@ class FileArray(Array):
         ):
             if parsed_filename is None:
                 from urllib.parse import urlparse
+
                 if filename is None:
 
                     try:

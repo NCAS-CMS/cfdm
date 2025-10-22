@@ -636,6 +636,9 @@ class DocstringRewriteMeta(type):
         if substitutions:
             _docstring_substitutions[1] += 1
 
+            # Remove duplicates
+            substitutions = set(substitutions)
+
             # Special substitutions
             if "{{package}}" in substitutions:
                 # Insert the name of the package

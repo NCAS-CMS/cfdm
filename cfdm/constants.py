@@ -2,15 +2,6 @@ from enum import Enum
 
 import numpy as np
 
-# --------------------------------------------------------------------
-# A dictionary of useful constants.
-#
-# Whilst the dictionary may be modified directly, it is safer to
-# retrieve and set the values with the dedicated get-and-set
-# functions.
-# --------------------------------------------------------------------
-CONSTANTS = {}
-
 
 # --------------------------------------------------------------------
 # logging
