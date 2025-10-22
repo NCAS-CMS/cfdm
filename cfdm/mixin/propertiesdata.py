@@ -1,11 +1,6 @@
-import time
-s = time.time()
 import logging
 
-print('0 propertiesdata')
-
 from ..data import Data
-
 from ..decorators import (
     _display_or_return,
     _inplace_enabled,
@@ -13,16 +8,10 @@ from ..decorators import (
     _manage_log_level_via_verbosity,
     _test_decorator_args,
 )
-
-
 from ..functions import _DEPRECATION_ERROR_METHOD
 from . import Properties
 
-
-
 logger = logging.getLogger(__name__)
-
-print('  9 propertiesdata', time.time()-s)
 
 
 class PropertiesData(Properties):

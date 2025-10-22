@@ -1,20 +1,7 @@
-import time
-s = time.time()
-print('0 units')
-#from ctypes.util import find_library
-
 from cfunits import Units as cfUnits
 
 from .core.meta import DocstringRewriteMeta
 
-#_libpath = find_library("udunits2")
-#if _libpath is None:
-#    raise FileNotFoundError(
-#        "cfdm UNIDATA UDUNITS-2. Can't find the 'udunits2' library."
-#    )
-
-
-print('  9 units', time.time()-s); s = time.time()
 
 class Units(metaclass=DocstringRewriteMeta):
     """Store, combine, compare, and convert physical units.

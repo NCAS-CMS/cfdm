@@ -1,9 +1,6 @@
 from copy import deepcopy
-from urllib.parse import urlparse
 
-#from s3fs import S3FileSystem
-
-from ...functions import abspath
+from cfdm.functions import abspath
 
 
 class DeprecationError(Exception):
@@ -284,6 +281,8 @@ class FileArrayMixin:
             and "endpoint_url" not in client_kwargs
         ):
             if parsed_filename is None:
+                from urllib.parse import urlparse
+
                 if filename is None:
                     try:
                         filename = self.get_filename()
@@ -328,6 +327,8 @@ class FileArrayMixin:
         """
         # Loop round the files, returning as soon as we find one that
         # works.
+        from urllib.parse import urlparse
+
         filenames = self.get_filenames()
         for filename, address in zip(filenames, self.get_addresses()):
             url = urlparse(filename)

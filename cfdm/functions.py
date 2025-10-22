@@ -11,9 +11,6 @@ from os.path import dirname as os_dirname
 from os.path import join
 
 import numpy as np
-#from dask import config as _config
-#from dask.base import is_dask_collection
-#from dask.utils import parse_bytes
 from uritools import uricompose, urisplit
 
 from . import __cf_version__, __file__, __version__, core
@@ -1810,7 +1807,7 @@ class chunksize(ConstantAccess):
         """
         from dask import config
         from dask.utils import parse_bytes
-        
+
         config.set({"array.chunk-size": arg})
         return parse_bytes(arg)
 
@@ -1889,7 +1886,7 @@ class log_level(ConstantAccess):
 
     _name = "LOG_LEVEL"
     _default = logging.getLevelName(logging.getLogger().level)
-                                    
+
     # Define the valid log levels
     _ValidLogLevels = ValidLogLevels
 
@@ -2244,7 +2241,7 @@ def indices_shape(indices, full_shape, keepdims=True):
 
     """
     from dask.base import is_dask_collection
-    
+
     shape = []
     #    i = 0
     for index, full_size in zip(indices, full_shape):

@@ -3,18 +3,13 @@ import logging
 import os
 import re
 
-#import dask.array as da
 import netCDF4
 import numpy as np
-from dask import config as dask_config
-#from dask.array.core import normalize_chunks
-#from dask.utils import parse_bytes
-from packaging.version import Version
-from uritools import uricompose, urisplit
 
-from ...data.dask_utils import cfdm_to_memory
-from ...decorators import _manage_log_level_via_verbosity
-from ...functions import abspath, dirname, integer_dtype
+from cfdm.data.dask_utils import cfdm_to_memory
+from cfdm.decorators import _manage_log_level_via_verbosity
+from cfdm.functions import abspath, dirname, integer_dtype
+
 from .. import IOWrite
 from .constants import (
     CF_QUANTIZATION_PARAMETER_LIMITS,
@@ -3191,7 +3186,7 @@ class NetCDFWrite(IOWrite):
         # Still here? The write a normal (non-aggregation) variable
         # ------------------------------------------------------------
         import dask.array as da
-        
+
         if compressed:
             # Write data in its compressed form
             data = data.source().source()
@@ -4971,6 +4966,8 @@ class NetCDFWrite(IOWrite):
         See `cfdm.write` for examples.
 
         """
+        from packaging.version import Version
+
         logger.info(f"Writing to {fmt}")  # pragma: no cover
 
         # Expand file name
@@ -5112,7 +5109,7 @@ class NetCDFWrite(IOWrite):
         # Parse the 'dataset_chunks' parameter
         if dataset_chunks != "contiguous":
             from dask.utils import parse_bytes
-            
+
             try:
                 self.write_vars["dataset_chunks"] = parse_bytes(dataset_chunks)
             except (ValueError, AttributeError):
@@ -5317,6 +5314,8 @@ class NetCDFWrite(IOWrite):
         group,
     ):
         """Perform a file-writing iteration with the given settings."""
+        from packaging.version import Version
+
         # ------------------------------------------------------------
         # Initiate file IO with given write variables
         # ------------------------------------------------------------
@@ -5682,8 +5681,9 @@ class NetCDFWrite(IOWrite):
         d_dtype = d.dtype
         dtype = g["datatype"].get(d_dtype, d_dtype)
 
+        from dask import config as dask_config
         from dask.array.core import normalize_chunks
-        
+
         with dask_config.set({"array.chunk-size": dataset_chunks}):
             chunksizes = normalize_chunks("auto", shape=d.shape, dtype=dtype)
 
@@ -6202,6 +6202,8 @@ class NetCDFWrite(IOWrite):
         out = {"map": type(data)(aggregation_shape)}
 
         if data.nc_get_aggregation_fragment_type() == "uri":
+            from uritools import uricompose, urisplit
+
             # --------------------------------------------------------
             # Create 'uris' and 'idenftifiers' arrays
             # --------------------------------------------------------

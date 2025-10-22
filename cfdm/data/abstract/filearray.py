@@ -1,12 +1,9 @@
 from copy import deepcopy
 from os import sep
 from os.path import join
-from urllib.parse import urlparse
 
-#from s3fs import S3FileSystem
-from uritools import isuri, urisplit
+from cfdm.functions import abspath, dirname
 
-from ...functions import abspath, dirname
 from . import Array
 
 
@@ -419,7 +416,9 @@ class FileArray(Array):
             and "endpoint_url" not in client_kwargs
         ):
             if parsed_filename is None:
+                from urllib.parse import urlparse
                 if filename is None:
+
                     try:
                         filename = self.get_filename(normalise=False)
                     except AttributeError:
@@ -461,6 +460,8 @@ class FileArray(Array):
                 the data within the file.
 
         """
+        from urllib.parse import urlparse
+
         filename = self.get_filename(normalise=True)
         url = urlparse(filename)
         if url.scheme == "file":
@@ -469,7 +470,7 @@ class FileArray(Array):
         elif url.scheme == "s3":
             # Create an openable S3 file object
             from s3fs import S3FileSystem
-            
+
             storage_options = self.get_storage_options(
                 create_endpoint_url=True, parsed_filename=url
             )
@@ -534,6 +535,8 @@ class FileArray(Array):
         filename = a.get_filename(normalise=normalise)
         if old or new:
             if normalise:
+                from uritools import isuri, urisplit
+
                 if not old:
                     raise ValueError(
                         "When 'normalise' is True and 'new' is a non-empty "

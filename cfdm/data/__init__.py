@@ -1,20 +1,7 @@
-import time
-s = time.time()
-print('0 data/__init__')
-
-#from .abstract import Array, CompressedArray, MeshArray, RaggedArray
-
 from .abstract import Array
-
-
 from .abstract import CompressedArray
-
-
 from .abstract import MeshArray
-
-
 from .abstract import RaggedArray
-
 
 from .subarray import (
     BiLinearSubarray,
@@ -51,5 +38,3 @@ from .subsampledarray import SubsampledArray
 from .zarrarray import ZarrArray
 
 from .data import Data
-
-print('  9 data/__init__', time.time()-s)

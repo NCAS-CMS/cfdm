@@ -1,13 +1,8 @@
-import time
-s = time.time()
-print('0 data/abstract/array')
 from copy import deepcopy
 
 import numpy as np
 
-#from cfunits import Units
-
-print('  9 data/mixin/arraymixin', time.time()-s); s = time.time()
+from cfdm.units import Units
 
 
 class ArrayMixin:
@@ -142,8 +137,6 @@ class ArrayMixin:
         .. versionadded:: (cfdm) 1.11.2.0
 
         """
-        from cfunits import Units
-
         return Units(self.get_units(None), self.get_calendar(None))
 
     def astype(self, dtype, **kwargs):

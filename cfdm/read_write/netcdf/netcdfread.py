@@ -16,15 +16,11 @@ from uuid import uuid4
 
 import netCDF4
 import numpy as np
-#from dask.array.core import normalize_chunks
-#from dask.base import tokenize
-from packaging.version import Version
-#from s3fs import S3FileSystem
-from uritools import urisplit
 
-from ...data.netcdfindexer import netcdf_indexer
-from ...decorators import _manage_log_level_via_verbosity
-from ...functions import abspath, is_log_level_debug, is_log_level_detail
+from cfdm.data.netcdfindexer import netcdf_indexer
+from cfdm.decorators import _manage_log_level_via_verbosity
+from cfdm.functions import abspath, is_log_level_debug, is_log_level_detail
+
 from .. import IORead
 from ..exceptions import DatasetTypeError, ReadError
 from .constants import (
@@ -516,6 +512,8 @@ class NetCDFRead(IORead):
         >>> r.file_open('file.nc')
 
         """
+        from uritools import urisplit
+
         g = self.read_vars
 
         netcdf_backend = g["netcdf_backend"]
@@ -549,7 +547,7 @@ class NetCDFRead(IORead):
                 # An S3 file system with these options does not exist,
                 # so create one.
                 from s3fs import S3FileSystem
-                
+
                 file_system = S3FileSystem(**storage_options)
                 file_systems[fs_key] = file_system
 
@@ -828,6 +826,8 @@ class NetCDFRead(IORead):
                 * `None` for anything else.
 
         """
+        from uritools import urisplit
+
         # Assume that non-local URIs are netCDF or zarr
         u = urisplit(dataset)
         if u.scheme not in (None, "file"):
@@ -1077,6 +1077,8 @@ class NetCDFRead(IORead):
                 The field or domain constructs in the file.
 
         """
+        from packaging.version import Version
+
         debug = is_log_level_debug(logger)
 
         # ------------------------------------------------------------
@@ -11365,7 +11367,7 @@ class NetCDFRead(IORead):
             #       original Dask:   (5,   15, 150,  5, 160)   9000000
             #       storage-aligned: (50, 100, 150, 20,   5)  75000000
             # --------------------------------------------------------
-            # 1) Initialise the Dask chunk shape        
+            # 1) Initialise the Dask chunk shape
             from dask.array.core import normalize_chunks
 
             dask_chunks = normalize_chunks(

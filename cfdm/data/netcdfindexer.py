@@ -25,7 +25,6 @@ from math import prod
 from numbers import Integral
 
 import numpy as np
-#from dask.array.slicing import normalize_index
 from netCDF4 import chartostring, default_fillvals
 from netCDF4.utils import _safecast
 

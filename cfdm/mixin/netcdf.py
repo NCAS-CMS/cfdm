@@ -1,15 +1,9 @@
-import time
-s = time.time()
-print('0 netcdf')
 from numbers import Integral
 from re import split
-
-#from dask.utils import parse_bytes
 
 from ..core.functions import deepcopy
 from ..functions import _DEPRECATION_ERROR_METHOD
 
-print('  9 netcdf', time.time()-s)
 
 class DeprecationError(Exception):
     """An error indicating a method is no longer available."""
@@ -2734,7 +2728,7 @@ class NetCDFChunks(NetCDFMixin):
 
         if chunksizes != "contiguous":
             from dask.utils import parse_bytes
-            
+
             try:
                 chunksizes = parse_bytes(chunksizes)
             except ValueError:

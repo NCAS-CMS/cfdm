@@ -1,14 +1,8 @@
-import time
-s = time.time()
-print('0 compressedarray', time.time()-s)
 import numpy as np
-print('1 compressedarray', time.time()-s)
 
 from ..netcdfindexer import netcdf_indexer
-print('2 compressedarray', time.time()-s)
 from .array import Array
 
-print('3 compressedarray', time.time()-s)
 
 class DeprecationError(Exception):
     """Deprecation error."""

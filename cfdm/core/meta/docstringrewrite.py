@@ -1,8 +1,13 @@
 import inspect
 from re import compile
 
+# Count the number of docstrings (first element of
+# '_docstring_substitutions'), and the number which have docstring
+# substitutions applied to them (second element).
+from .. import _docstring_substitutions
+
 base = compile("{{.*?}}")
-import time
+
 
 class DocstringRewriteMeta(type):
     """Modify docstrings at time of import.
@@ -37,7 +42,6 @@ class DocstringRewriteMeta(type):
         taken from the class closest to the child class.
 
         """
-        return super().__new__(cls, class_name, parents, attrs)
         class_name_lower = class_name.lower()
 
         docstring_rewrite = {}
@@ -618,8 +622,8 @@ class DocstringRewriteMeta(type):
                 docstring.
 
         """
-        from .. import tt 
-        s = time.time()     
+        _docstring_substitutions[0] += 1
+
         if class_docstring is not None:
             doc = class_docstring
         else:
@@ -627,8 +631,11 @@ class DocstringRewriteMeta(type):
 
         if doc is None:
             return
+
         substitutions = base.findall(doc)
         if substitutions:
+            _docstring_substitutions[1] += 1
+
             # Special substitutions
             if "{{package}}" in substitutions:
                 # Insert the name of the package
@@ -658,7 +665,5 @@ class DocstringRewriteMeta(type):
             if class_docstring is None:
                 # Set the rewritten docstring on the method
                 f.__doc__ = doc
-  
-        tt[0] += time.time() - s
-        print (tt)
+
         return doc

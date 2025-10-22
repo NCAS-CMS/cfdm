@@ -1,10 +1,8 @@
 from numbers import Integral
 
 import numpy as np
-#from dask.array.slicing import normalize_index
-#from dask.base import is_dask_collection
 
-from ...functions import indices_shape, parse_indices
+from cfdm.functions import indices_shape, parse_indices
 
 
 class IndexMixin:
@@ -103,7 +101,6 @@ class IndexMixin:
                 The subspaced data.
 
         """
-        from dask.array.slicing import normalize_index
         from dask.base import is_dask_collection
 
         shape0 = self.shape
@@ -378,6 +375,8 @@ class IndexMixin:
         # 2) Converting, where possible, sequences of integers to
         #    slices. This helps when the parent class can't cope with
         #    indices that are sequences of integers.
+        from dask.array.slicing import normalize_index
+
         ind = list(ind)
         for n, (i, size) in enumerate(zip(ind[:], self.original_shape)):
             if isinstance(i, slice):

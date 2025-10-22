@@ -2,13 +2,14 @@ from copy import deepcopy
 from itertools import accumulate, product
 
 import numpy as np
-from uritools import isuri, uricompose
 
 from ..functions import dirname
 from . import abstract
 from .fragment import FragmentFileArray, FragmentUniqueValueArray
 from .netcdfindexer import netcdf_indexer
 from .utils import chunk_locations, chunk_positions
+
+# from uritools import isuri, uricompose
 
 
 class AggregatedArray(abstract.FileArray):
@@ -704,6 +705,7 @@ class AggregatedArray(abstract.FileArray):
         import dask.array as da
         from dask.array.core import getter
         from dask.base import tokenize
+        from uritools import isuri, uricompose
 
         name = (f"{self.__class__.__name__}-{tokenize(self)}",)
 

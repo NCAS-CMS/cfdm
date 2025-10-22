@@ -4,11 +4,9 @@ from functools import lru_cache, partial
 from itertools import product
 
 import cftime
-#import dask.array as da
 import numpy as np
-from dask.core import flatten
 
-from ..units import Units
+from cfdm.units import Units
 
 _default_calendar = "standard"
 
@@ -66,6 +64,8 @@ def allclose(x, y, masked_equal=True, rtol=None, atol=None):
     # Dask's internal algorithms require these to be set as parameters.
     def allclose(a_blocks, b_blocks, rtol=rtol, atol=atol):
         """Run `ma.allclose` across multiple blocks over two arrays."""
+        from dask.core import flatten
+
         result = True
         # Handle scalars, including 0-d arrays, for which a_blocks and
         # b_blocks will have the corresponding type and hence not be iterable.
