@@ -14,7 +14,6 @@ from os.path import isdir, isfile, join
 from typing import Any
 from uuid import uuid4
 
-import netCDF4
 import numpy as np
 
 from cfdm.data.netcdfindexer import netcdf_indexer
@@ -599,6 +598,8 @@ class NetCDFRead(IORead):
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
         if flatten and self._dataset_has_groups(nc):
+            import netCDF4
+
             # Create a diskless, non-persistent container for the
             # flattened file
             flat_file = tempfile.NamedTemporaryFile(
@@ -649,6 +650,8 @@ class NetCDFRead(IORead):
             `netCDF4.Dataset`
 
         """
+        import netCDF4
+
         nc = netCDF4.Dataset(filename, "r")
         self.read_vars["file_opened_with"] = "netCDF4"
         return nc
@@ -912,6 +915,8 @@ class NetCDFRead(IORead):
         9.969209968386869e+36
 
         """
+        import netCDF4
+
         data_type = self.read_vars["variables"][ncvar].dtype.str[-2:]
         return netCDF4.default_fillvals[data_type]
 
@@ -11739,6 +11744,8 @@ class NetCDFRead(IORead):
                 # collapse (by concatenation) the outermost (fastest
                 # varying) dimension. E.g. [['a','b','c']] becomes
                 # ['abc']
+                import netCDF4
+
                 if dtype.kind == "U":
                     value = value.astype("S")
 

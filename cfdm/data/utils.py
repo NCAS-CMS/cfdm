@@ -3,7 +3,6 @@
 from functools import lru_cache, partial
 from itertools import product
 
-import cftime
 import numpy as np
 
 from cfdm.units import Units
@@ -338,6 +337,8 @@ def convert_to_reftime(a, units=None, first_value=None):
         if first_value is not None:
             x = first_value
         else:
+            import cftime
+
             x = cftime.DatetimeGregorian(1970, 1, 1)
 
         x_since = "days since " + "-".join(map(str, (x.year, x.month, x.day)))
@@ -793,6 +794,8 @@ def dt2rt(array, units_out):
     [-- 685.5]
 
     """
+    import cftime
+
     isscalar = not np.ndim(array)
 
     array = cftime.date2num(
@@ -846,6 +849,8 @@ def rt2dt(array, units_in):
         # mask
         return np.ma.masked_all((), dtype=object)
 
+    import cftime
+
     units = units_in.units
     calendar = getattr(units_in, "calendar", "standard")
 
@@ -890,6 +895,8 @@ def st2datetime(date_string, calendar=None):
         `cftime.datetime`
 
     """
+    import cftime
+
     if date_string.count("-") != 2:
         raise ValueError(
             "Input date-time string must contain at least a year, a month "

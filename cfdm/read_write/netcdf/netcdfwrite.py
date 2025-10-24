@@ -3,7 +3,6 @@ import logging
 import os
 import re
 
-import netCDF4
 import numpy as np
 
 from cfdm.data.dask_utils import cfdm_to_memory
@@ -2819,6 +2818,8 @@ class NetCDFWrite(IOWrite):
             if quantize_on_write:
                 # Set "implemention" to this version of the netCDF-C
                 # library
+                import netCDF4
+
                 self.implementation.set_parameter(
                     q,
                     "implementation",
@@ -4660,6 +4661,8 @@ class NetCDFWrite(IOWrite):
                 A `netCDF4.Dataset` object for the file.
 
         """
+        import netCDF4
+
         if fields and mode == "w":
             filename = os.path.abspath(filename)
             for f in fields:
