@@ -11,7 +11,6 @@ from os.path import dirname as os_dirname
 from os.path import join
 
 import numpy as np
-from uritools import uricompose, urisplit
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import ValidLogLevels
@@ -584,6 +583,8 @@ def abspath(path, uri=None):
     ValueError: Can't set uri=False for path='http:///file.nc'
 
     """
+    from uritools import uricompose, urisplit
+
     u = urisplit(path)
     scheme = u.scheme
     path = u.path
@@ -730,6 +731,8 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
     '/data'
 
     """
+    from uritools import uricompose, urisplit
+
     u = urisplit(path)
     scheme = u.scheme
     path = u.path

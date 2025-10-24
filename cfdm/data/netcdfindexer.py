@@ -3,20 +3,20 @@
 Portions of this code were adapted from the `netCDF4` Python library,
 which carries the following MIT License:
 
-Copyright 2008 Jeffrey Whitaker
+    Copyright 2008 Jeffrey Whitaker
 
-https://opensource.org/license/mit
+    https://opensource.org/license/mit
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+    Permission is hereby granted, free of charge, to any person
+    obtaining a copy of this software and associated documentation
+    files (the "Software"), to deal in the Software without
+    restriction, including without limitation the rights to use, copy,
+    modify, merge, publish, distribute, sublicense, and/or sell copies
+    of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
 
 """
 
@@ -25,8 +25,6 @@ from math import prod
 from numbers import Integral
 
 import numpy as np
-from netCDF4 import chartostring, default_fillvals
-from netCDF4.utils import _safecast
 
 logger = logging.getLogger(__name__)
 
@@ -274,6 +272,8 @@ class netcdf_indexer:
         elif data.dtype.kind in "OSU":
             kind = data.dtype.kind
             if kind == "S":
+                from netCDF4 import chartostring  # , default_fillvals
+
                 data = chartostring(data)
 
             # Assume that object arrays are arrays of strings
@@ -364,6 +364,8 @@ class netcdf_indexer:
         except ValueError:
             safe = False
         else:
+            from netCDF4.utils import _safecast
+
             safe = _safecast(att, atta)
 
         if not safe:
@@ -391,6 +393,8 @@ class netcdf_indexer:
                 The default ``_FillValue``.
 
         """
+        from netCDF4 import default_fillvals
+
         if dtype.kind in "OS":
             return default_fillvals["S1"]
 
