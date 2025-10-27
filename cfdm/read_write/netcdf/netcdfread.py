@@ -11804,7 +11804,6 @@ class NetCDFRead(IORead):
                 v = variable[...]
             else:
                 v = variable
-
             index = (slice(0, 1),) * ndim1 + (slice(0, 2),)
             values = v[index].squeeze().tolist()
             if data.size == 2:
@@ -11814,7 +11813,6 @@ class NetCDFRead(IORead):
                 values += v[index].squeeze().tolist()
 
             del v
-
         elif size == 1:
             indices = (0, -1)
             value = variable[...]
@@ -11835,7 +11833,13 @@ class NetCDFRead(IORead):
                 ]
 
         # Create a dictionary of the element values
-        elements = {index: value for index, value in zip(indices, values)}
+        #
+        # Note: some backends might give `None` for uninitialised
+        #       data, when we want `np.ma.masked` in this case.
+        elements = {
+            index: (value if value is not None else np.ma.masked)
+            for index, value in zip(indices, values)
+        }
 
         # Cache the cached data elements for this variable
         g["cached_data_elements"][ncvar] = elements
