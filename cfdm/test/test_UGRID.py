@@ -283,8 +283,9 @@ class UGRIDTest(unittest.TestCase):
                 self.assertTrue(i.equals(j))
 
         # Note: Other combintations of domain read/write are tricky,
-        #       because the mesh variable *and* the domain variable
-        #       both defined domains. Let's worry about that now!
+        #       because the mesh variable *and* the domain variable in
+        #       the dataset *both* define domains. Let's not worry
+        #       about that now!
 
 
 if __name__ == "__main__":

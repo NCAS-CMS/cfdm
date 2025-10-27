@@ -12,7 +12,7 @@ class NetCDFWriteUgrid:
 
     """
 
-    def _write_domain_topology(self, parent, key, domain_topology):
+    def _ugrid_write_domain_topology(self, parent, key, domain_topology):
         """Write a domain topology to a *_node_connectivity variable.
 
         If an equal domain topology has already been written to the
@@ -22,15 +22,17 @@ class NetCDFWriteUgrid:
 
         :Parameters:
 
-            parent : `Field` or `Domain` or `None`
+            parent: `Field` or `Domain` or `None`
                 The parent Field or Domain. Set to `None` if there is
-                no parent.
+                no parent (as could occur when for an "edge"
+                `domain_topology` that is derived from point-cell
+                domain topology).
 
-            key : `str` or `None`
+            key: `str` or `None`
                 The internal identifier of the domain topology
                 construct. Set to `None` if *parent* is `None`.
 
-            domain_topology : `DomainTopology`
+            domain_topology: `DomainTopology`
                 The Domain Topology construct to be written.
 
         :Returns:
@@ -41,7 +43,7 @@ class NetCDFWriteUgrid:
 
         **Examples**
 
-        >>> ncvar = _write_domain_topology(f, 'domaintopology0', dt)
+        >>> ncvar = n._ugrid_write_domain_topology(f, 'domaintopology0', dt)
 
         """
         from cfdm.functions import integer_dtype
@@ -49,6 +51,7 @@ class NetCDFWriteUgrid:
         g = self.write_vars
 
         # Normalise the array, so that its N node ids are 0, ..., N-1
+
         domain_topology.normalise(inplace=True)
         if key is not None:
             g["normalised_domain_topologies"][key] = domain_topology
@@ -63,7 +66,7 @@ class NetCDFWriteUgrid:
             # Placeholder exception to remind us to do some work,
             # should volume cells ever make it into CF.
             raise NotImplementedError(
-                "Can't write a UGRID mesh of volume cells for {parent!r}"
+                f"Can't write a UGRID mesh of volume cells for {parent!r}"
             )
 
         if cell not in ("face", "edge"):
@@ -139,7 +142,7 @@ class NetCDFWriteUgrid:
 
         return ncvar
 
-    def _write_cell_connectivity(self, f, key, cell_connectivity):
+    def _ugrid_write_cell_connectivity(self, f, key, cell_connectivity):
         """Write a cell connectivity to a *_*_connectivity variable.
 
         If an equal cell connectivity has already been written to the
@@ -149,14 +152,14 @@ class NetCDFWriteUgrid:
 
         :Parameters:
 
-            f : `Field` or `Domain`
+            f: `Field` or `Domain`
                 The parent Field or Domain.
 
-            key : `str`
+            key: `str`
                 The internal identifier of the cell connectivity
                 construct.
 
-            cell_connectivity : `CellConnectivity`
+            cell_connectivity: `CellConnectivity`
                 The Cell Connectivity construct to be written.
 
         :Returns:
@@ -167,7 +170,7 @@ class NetCDFWriteUgrid:
 
         **Examples**
 
-        >>> ncvar = _write_cell_connectivity(f, 'cellconnectivity0', cc)
+        >>> ncvar = n._ugrid_write_cell_connectivity(f, 'cellconn0', cc)
 
         """
         from cfdm.functions import integer_dtype
@@ -283,7 +286,7 @@ class NetCDFWriteUgrid:
         :Parameters:
 
             parent: `Field` or `Domain`
-                 The prent Field or Domain from which to get the mesh
+                 The parent Field or Domain from which to get the mesh
                  description.
 
         :Returns:
@@ -313,7 +316,7 @@ class NetCDFWriteUgrid:
                 # to the current parent; but in case B), we first
                 # update the other parent's mesh to include the new
                 # location. In case A), `_ugrid_update_mesh` makes no
-                # change to the other paren't mesh.
+                # change to the other parent's mesh.
                 self._ugrid_update_mesh(mesh, mesh_new)
                 return ncvar
 
@@ -325,14 +328,18 @@ class NetCDFWriteUgrid:
         return ncvar_new
 
     def _ugrid_create_mesh(self, parent):
-        """Create a mesh description from a parent Field or Daomin.
+        """Create a mesh description from a parent Field or Domain.
 
-        The mesh description is a dictionary with some subset of the
-        following keys::
+        The mesh description is a dictionary that always has the
+        keys::
 
            'attributes'
            'topology_dimension'
            'node_coordinates'
+           'sorted_edges'
+
+        as well as some subset of the keys::
+
            'edge_coordinates'
            'face_coordinates'
            'volume_coordinates'
@@ -343,59 +350,47 @@ class NetCDFWriteUgrid:
            'face_face_connectivity'
            'volume_volume_connectivity'
 
-        of which 'attributes', 'topology_dimension', and
-        'node_coordinates' will always be present.
-
         E.g. the mesh description for the UGRID mesh topology of face
              cells taken from ``cfdm.example_field(8)``::
 
-           {'attributes':
-                {'face_coordinates': ['Mesh2_face_x', 'Mesh2_face_y'],
-                 'face_face_connectivity': ['Mesh2_face_links'],
-                 'face_node_connectivity': ['Mesh2_face_nodes']},
-            'topology_dimension':
-                2,
-            'node_coordinates':
-                [<AuxiliaryCoordinate: longitude(7) degrees_east>,
-                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
-            'face_coordinates':
-                [<AuxiliaryCoordinate: longitude(3) degrees_east>,
-                 <AuxiliaryCoordinate: latitude(3) degrees_north>],
-            'face_node_connectivity':
-                [<DomainTopology: cell:face(3, 4)>]}
-            'face_face_connectivity':
-                [<CellConnectivity: connectivity:edge(3, 5)>]}
+           {'attributes': {'face_coordinates': ['Mesh2_face_x', 'Mesh2_face_y'],
+                           'face_face_connectivity': ['Mesh2_face_links'],
+                           'face_node_connectivity': ['Mesh2_face_nodes']},
+            'face_coordinates': [<AuxiliaryCoordinate: longitude(3) degrees_east>,
+                                 <AuxiliaryCoordinate: latitude(3) degrees_north>],
+            'face_face_connectivity': [<CellConnectivity: connectivity:edge(3, 5) >],
+            'face_node_connectivity': [<DomainTopology: cell:face(3, 4) >],
+            'node_coordinates': [<AuxiliaryCoordinate: longitude(7) degrees_east>,
+                                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
+            'sorted_edges': {},
+            'topology_dimension': 2}
 
         E.g. the mesh description for the UGRID mesh topology of edge
              cells taken from ``cfdm.example_field(9)``::
 
-           {'attributes':
-                {'edge_coordinates': ['Mesh2_edge_x', 'Mesh2_edge_y'],
-                 'edge_node_connectivity': ['Mesh2_edge_nodes']},
-            'topology_dimension':
-                1,
-            'node_coordinates':
-                [<AuxiliaryCoordinate: longitude(7) degrees_east>,
-                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
-            'edge_coordinates':
-                [<AuxiliaryCoordinate: longitude(9) degrees_east>,
-                 <AuxiliaryCoordinate: latitude(9) degrees_north>],
-            'edge_node_connectivity':
-                [<DomainTopology: cell:point(9, 6)>]}
+           {'attributes': {'edge_coordinates': ['Mesh2_edge_x', 'Mesh2_edge_y'],
+                           'edge_edge_connectivity': ['Mesh2_edge_links'],
+                           'edge_node_connectivity': ['Mesh2_edge_nodes']},
+            'edge_coordinates': [<AuxiliaryCoordinate: longitude(9) degrees_east>,
+                                 <AuxiliaryCoordinate: latitude(9) degrees_north>],
+            'edge_edge_connectivity': [<CellConnectivity: connectivity:node(9, 6) >],
+            'edge_node_connectivity': [<DomainTopology: cell:edge(9, 2) >],
+            'node_coordinates': [<AuxiliaryCoordinate: longitude(7) degrees_east>,
+                                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
+            'sorted_edges': {},
+            'topology_dimension': 1}
 
         E.g. the mesh description for the UGRID mesh topology of point
              cells taken from ``cfdm.example_field(10)``::
 
-           {'attributes':
-                {'node_coordinates': ['Mesh2_node_x', 'Mesh2_node_y'],
-                 'edge_node_connectivity': ['Mesh2_edge_nodes']},
-            'topology_dimension':
-                0,
-            'node_coordinates':
-                [<AuxiliaryCoordinate: longitude(7) degrees_east>,
-                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
-            'edge_node_connectivity':
-                [<DomainTopology: cell:point(7, 5)>]}
+           {'attributes': {'edge_node_connectivity': [],
+                           'node_coordinates': ['Mesh2_node_x', 'Mesh2_node_y'],
+                           'node_node_connectivity': []},
+            'node_coordinates': [<AuxiliaryCoordinate: longitude(7) degrees_east>,
+                                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
+            'node_node_connectivity': [<DomainTopology: cell:point(7, 5) >],
+            'sorted_edges': {},
+            'topology_dimension': 0}
 
         Later on, more keys might get added by `_ugrid_update_mesh`.
 
@@ -404,8 +399,8 @@ class NetCDFWriteUgrid:
         :Parameters:
 
             parent: `Field` or `Domain`
-                 The prent Field or Domain for which to create the
-                 mesh description.
+                The parent Field or Domain from which to create the
+                mesh description.
 
         :Returns:
 
@@ -424,7 +419,7 @@ class NetCDFWriteUgrid:
             # Not UGRID
             return None, None
 
-        # Initialise the output mesh description.
+        # Initialise the mesh description.
         #
         # This always includes the sub-dictionary 'attributes', which
         # contains the netCDF names of mesh-related variables; and the
@@ -450,7 +445,7 @@ class NetCDFWriteUgrid:
         if ncvar_cell_node_connectivity != []:
             ncvar_cell_node_connectivity = [ncvar_cell_node_connectivity]
 
-        # Get the 1-d auxiliary coordinates that span the UGID axis,
+        # Get the 1-d auxiliary coordinates that span the UGRID axis,
         # and their dataset variable names
         cell_coordinates = self.implementation.get_auxiliary_coordinates(
             parent, axes=(ugrid_axis,), exact=True
@@ -476,7 +471,7 @@ class NetCDFWriteUgrid:
                     "node_coordinates": ncvar_cell_coordinates,
                     "edge_node_connectivity": ncvar_cell_node_connectivity,
                     # Need to add an empty "node_node_connectivity"
-                    # key to match the same key in 'mesh', but it will
+                    # key to match the same key in 'mesh' It will
                     # never get populated, and so will not end up in
                     # the output dataset.
                     "node_node_connectivity": [],
@@ -530,15 +525,17 @@ class NetCDFWriteUgrid:
                 # Create, from the cell bounds, an Auxiliary
                 # Coordinate that contains the unique node
                 # coordinates.
-                #
-                # Persist the node coordinates into memory because
-                # it's likely that we'll need to compare them with the
-                # node coordinates of other mesh descriptions (in
-                # `_ugrid_linked_meshes`).
                 coords = self.implementation.initialise_AuxiliaryCoordinate(
                     data=bounds.data.flatten()[index],
                     properties=c.properties(),
                 )
+
+                # Persist the node coordinates into memory, because
+                # it's possible that we'll need to compare them more
+                # than once with the node coordinates of other mesh
+                # descriptions (in `_ugrid_linked_meshes`), in
+                # addition to writing the coordinate themselves to
+                # disk.
                 coords.persist(inplace=True)
 
                 node_coordinates.append(coords)
@@ -607,7 +604,7 @@ class NetCDFWriteUgrid:
 
         """
         # Find the relevant keys that are common to both meshes
-        keys = [
+        keys = (
             "node_coordinates",
             "edge_coordinates",
             "face_coordinates",
@@ -619,14 +616,17 @@ class NetCDFWriteUgrid:
             "edge_edge_connectivity",
             "face_face_connectivity",
             "volume_volume_connectivity",
-        ]
+        )
         common_keys = [k for k in keys if k in mesh and k in mesh1]
 
         # Check the common keys for equality
+        #
+        # A necessary condition for meshes being linked is that these
+        # common keys have identical values.
         for key in common_keys:
             if len(mesh[key]) != len(mesh1[key]):
-                # Different numbers of constructs, so the meshes are
-                # not linked
+                # Different numbers of constructs for the same key =>
+                # the meshes are not linked
                 return False
 
             mesh1_key = mesh1[key][:]
@@ -640,14 +640,15 @@ class NetCDFWriteUgrid:
                         break
 
                 if not found_match:
-                    # No constructs match, so the meshes are not
-                    # linked
+                    # A 'mesh1' construct is different to all those in
+                    # 'mesh' => the meshes are not linked
                     return False
 
         # Still here? Then all of the keys common to both meshes have
         # equal values.
 
         # Now check the non-common connectivity keys for consistency
+        # (as opposed to equality)
         locations = ("edge", "node", "face", "volume")
         location_mesh = {}
         for location in locations:
@@ -673,7 +674,7 @@ class NetCDFWriteUgrid:
             # each key represents a domain topology that is not
             # present in the other mesh.
             #
-            # Each pair of domain topology cell types needs secial
+            # Each pair of domain topology cell types needs special
             # treatment.
             if set(location_mesh) == set(("edge", "face")):
                 if not self._ugrid_check_edge_face(**location_mesh):
@@ -694,7 +695,7 @@ class NetCDFWriteUgrid:
                     "Can't write a UGRID mesh of volume cells"
                 )
 
-        # Still here? Then 'mesh' and 'mesh1' are part of the same
+        # Still here? Then 'mesh' and 'mesh1' are parts of the same
         # uber-mesh.
         return True
 
@@ -836,20 +837,24 @@ class NetCDFWriteUgrid:
         return bool((face_edges.data == node_edges.data).all())
 
     def _ugrid_update_mesh(self, mesh, mesh1):
-        """Update an original mesh with another linked mesh.
+        """Update an original mesh with a linked mesh.
 
-        Elements unique to the other linked mesh are copied to the
-        original mesh.
+        Elements of the linked mesh which are not in the original mesh
+        are copied to the original mesh.
+
+        The `_ugrid_linked_meshes` method is used to ascertain if two
+        meshes are linked.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
             mesh: `dict`
-                The original mesh dictionary to be updated.
+                The original mesh to be updated in-place. If `mesh`
+                and `mesh1` are identical then `mesh` is unchanged.
 
             mesh1: `dict`
-                The linked mesh dictionary to update from.
+                The linked mesh to update from.
 
         :Returns:
 
@@ -863,17 +868,21 @@ class NetCDFWriteUgrid:
 
         for key, value in mesh1.items():
             if key not in mesh:
-                # This key is not in 'mesh', so copy it from
-                # 'mesh1'. Note: any such key will have a `list`
-                # value.
+                # This 'mesh1' key is not in 'mesh', so copy it from
+                # 'mesh1'.
+                #
+                # Note: any such key will always have a `list` value.
                 mesh[key] = value.copy()
                 mesh["attributes"][key] = mesh1["attributes"][key].copy()
 
         for key, value in mesh1["sorted_edges"].items():
             if key not in mesh["sorted_edges"]:
-                # This key is not in mesh["sorted_edges"], so copy it
-                # from mesh1["sorted_edges"]. Note: any such key will
-                # have a `DomainTopology` value.
+                # This mesh1["sorted_edges"] key is not in
+                # mesh["sorted_edges"], so copy it from
+                # mesh1["sorted_edges"].
+                #
+                # Note: any such key will always have a
+                # `DomainTopology` value.
                 mesh["sorted_edges"][key] = value.copy()
 
         # If applicable, make sure that the node coordinates and their
@@ -886,14 +895,14 @@ class NetCDFWriteUgrid:
             mesh["attributes"][key] = mesh1["attributes"][key].copy()
 
     def _ugrid_write_mesh_variables(self):
-        """Write any mesh variables to the dataset.
+        """Write mesh variables to the dataset.
 
         This is done after all Fields and Domains have been written to
         the dataset.
 
-        All CF data and domain variables in the dataset already have
-        the correct mesh varibale name stored in their 'mesh'
-        attributes.
+        All UGRID CF-netCDF data and domain variables in the dataset
+        will already have the correct mesh variable name stored in
+        their 'mesh' attributes.
 
         The mesh variables are defined by `self.write_vars['meshes']`.
 
@@ -910,7 +919,7 @@ class NetCDFWriteUgrid:
             # --------------------------------------------------------
             # Create the mesh variable attributes.
             #
-            # E.g. internal mesh dictionary
+            # E.g. the `mesh` dictionary
             #
             # {'attributes':
             #      {'face_coordinates': ['Mesh2_face_x', 'Mesh2_face_y'],
@@ -925,10 +934,9 @@ class NetCDFWriteUgrid:
             #      [<DomainTopology: cell:face(3, 4) >],
             #  'node_coordinates':
             #      [<AuxiliaryCoordinate: longitude(7) degrees_east>,
-            #       <AuxiliaryCoordinate: latitude(7) degrees_north>]
-            #  }
+            #       <AuxiliaryCoordinate: latitude(7) degrees_north>]}
             #
-            # could give dataset variable attributes:
+            # could give mesh variable attributes:
             #
             # {'topology_dimension': 2,
             #  'node_coordinates': 'longitude latitude',
@@ -940,8 +948,8 @@ class NetCDFWriteUgrid:
                 "topology_dimension": mesh["topology_dimension"],
             }
 
-            # Convert non-empty lists of constructs to space-separated
-            # variable names
+            # Convert non-empty lists of constructs to a
+            # space-separated dataset variable name string
             #
             # E.g. [<construct>] -> 'Mesh2_face_links'
             # E.g. [<construct>, <construct>] -> 'x y'
@@ -949,11 +957,12 @@ class NetCDFWriteUgrid:
                 if value:
                     attributes[key] = " ".join(value)
 
-            # If the dataset variable names for node coordinates have
-            # not been defined, then it's because the node coordinates
-            # have not yet been written to the dataset (which in turn
-            # is because there were no node-location field or domain
-            # constructs being written). So let's write them now, and
+            # If the dataset variable names for the node coordinates
+            # (which have to exist for all meshes) have not been
+            # defined, then it's because the node coordinates have not
+            # yet been written to the dataset (which in turn is
+            # because there were no node-location field or domain
+            # constructs being written). So, let's write them now, and
             # get their variable names.
             if "node_coordinates" not in attributes:
                 # Create a new node dimension in the same group as the
@@ -975,27 +984,22 @@ class NetCDFWriteUgrid:
                 ]
                 attributes["node_coordinates"] = " ".join(ncvars)
 
-            # For a "point" cell domain mesh, we have an "edge" domain
-            # topology, we so should write it to the datset as an
-            # edge_node_connectivity variable.
+            # For a point-cell domain topology
+            # (i.e. 'topology_dimension' is 0), write the implied
+            # edge_node_connectivity variable to the dataset.
             if not mesh["topology_dimension"]:
-                # Write the edge_node_connectivity variable to the
-                # dataset.
-                #
-                # Note that there is no parent Field or Domain for the
-                # "edge" DomainTopology.
                 edges = mesh["sorted_edges"].get("node_node_connectivity")
                 if edges is None:
                     edges = mesh["node_node_connectivity"][0].to_edge(
                         sort=True
                     )
 
-                ncvar = self._write_domain_topology(None, None, edges)
+                ncvar = self._ugrid_write_domain_topology(None, None, edges)
                 if ncvar is not None:
                     attributes["edge_node_connectivity"] = ncvar
 
                     # Set topology dimension to 1, now that we've
-                    # included edge_node_connectivity.
+                    # included an edge_node_connectivity.
                     attributes["topology_dimension"] = 1
 
             # --------------------------------------------------------

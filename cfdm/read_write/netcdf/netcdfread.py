@@ -10199,6 +10199,12 @@ class NetCDFRead(IORead):
             # Apply a location index set
             domain_topology = domain_topology[index_set]
 
+        # Store the netCDF connectivity dimension name
+        connectivity_ncdim = self._ncdim_abspath(
+            self.read_vars["variable_dimensions"][connectivity_ncvar][-1]
+        )
+        domain_topology.nc_set_connectivity_dimension(connectivity_ncdim)
+
         return domain_topology
 
     def _ugrid_create_cell_connectivities(

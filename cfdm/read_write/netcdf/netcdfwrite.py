@@ -4394,13 +4394,13 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         # Domain topology variables (CF>=1.11)
         # ------------------------------------------------------------
         for key, dt in self.implementation.get_domain_topologies(f).items():
-            self._write_domain_topology(f, key, dt)
+            self._ugrid_write_domain_topology(f, key, dt)
 
         # ------------------------------------------------------------
         # Cell connectivity variables (CF>=1.11)
         # ------------------------------------------------------------
         for key, cc in self.implementation.get_cell_connectivities(f).items():
-            self._write_cell_connectivity(f, key, cc)
+            self._ugrid_write_cell_connectivity(f, key, cc)
 
         # ------------------------------------------------------------
         # Create the data/domain dataset variable
