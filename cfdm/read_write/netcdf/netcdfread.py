@@ -1,6 +1,5 @@
 import logging
 import operator
-import re
 import struct
 import subprocess
 import tempfile
@@ -829,6 +828,8 @@ class NetCDFRead(IORead):
                 * `None` for anything else.
 
         """
+        import re
+
         from uritools import urisplit
 
         # Assume that non-local URIs are netCDF or zarr
@@ -1082,6 +1083,8 @@ class NetCDFRead(IORead):
                 The field or domain constructs in the file.
 
         """
+        import re
+
         from packaging.version import Version
 
         debug = is_log_level_debug(logger)
@@ -7241,6 +7244,8 @@ class NetCDFRead(IORead):
         ...                        't: mean over ENSO years)')
 
         """
+        import re
+
         if field_ncvar:
             attribute = {field_ncvar + ":cell_methods": cell_methods_string}
 
@@ -9485,6 +9490,7 @@ class NetCDFRead(IORead):
         # ============================================================
         # Thanks to Alan Iwi for creating these regular expressions
         # ============================================================
+        import re
 
         def subst(s):
             """Substitutes WORD and SEP tokens for regular expressions.
@@ -11946,7 +11952,7 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `None`ppp
+            `None`
 
         """
         g = self.read_vars

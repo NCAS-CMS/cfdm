@@ -42,11 +42,11 @@ def environment(display=True, paths=True):
 
     """
     import os
-    import packaging
     import platform
     import sys
 
     import numpy as np
+    import packaging
 
     from . import __file__, __version__
 

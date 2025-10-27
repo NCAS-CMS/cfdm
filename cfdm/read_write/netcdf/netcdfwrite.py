@@ -1,7 +1,6 @@
 import copy
 import logging
 import os
-import re
 
 import numpy as np
 
@@ -3366,6 +3365,8 @@ class NetCDFWrite(IOWrite):
             `None`
 
         """
+        import re
+
         g = self.write_vars
         ncdim_size_to_spanning_constructs = []
         seen = g["seen"]
@@ -4467,6 +4468,8 @@ class NetCDFWrite(IOWrite):
             `None`
 
         """
+        import re
+
         g = self.write_vars
 
         # ------------------------------------------------------------
