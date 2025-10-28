@@ -351,48 +351,76 @@ class NetCDFWriteUgrid:
            'volume_volume_connectivity'
 
         E.g. the mesh description for the UGRID mesh topology of face
-             cells taken from ``cfdm.example_field(8)``::
+             cells taken from ``cfdm.example_field(8)``. In this case
+             the 'node_coordinates' Auxiliary Coordinates are derived
+             from the face cell bounds::
 
-           {'attributes': {'face_coordinates': ['Mesh2_face_x', 'Mesh2_face_y'],
-                           'face_face_connectivity': ['Mesh2_face_links'],
-                           'face_node_connectivity': ['Mesh2_face_nodes']},
-            'face_coordinates': [<AuxiliaryCoordinate: longitude(3) degrees_east>,
-                                 <AuxiliaryCoordinate: latitude(3) degrees_north>],
-            'face_face_connectivity': [<CellConnectivity: connectivity:edge(3, 5) >],
-            'face_node_connectivity': [<DomainTopology: cell:face(3, 4) >],
-            'node_coordinates': [<AuxiliaryCoordinate: longitude(7) degrees_east>,
-                                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
-            'sorted_edges': {},
-            'topology_dimension': 2}
+           {'attributes':
+                {'face_coordinates': ['Mesh2_face_x', 'Mesh2_face_y'],
+                 'face_face_connectivity': ['Mesh2_face_links'],
+                 'face_node_connectivity': ['Mesh2_face_nodes']},
+            'face_coordinates':
+                [<AuxiliaryCoordinate: longitude(3) degrees_east>,
+                 <AuxiliaryCoordinate: latitude(3) degrees_north>],
+            'face_face_connectivity':
+                [<CellConnectivity: connectivity:edge(3, 5) >],
+            'face_node_connectivity':
+                [<DomainTopology: cell:face(3, 4) >],
+            'node_coordinates':
+                [<AuxiliaryCoordinate: longitude(7) degrees_east>,
+                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
+            'sorted_edges':
+                {},
+            'topology_dimension':
+                2
+           }
 
         E.g. the mesh description for the UGRID mesh topology of edge
-             cells taken from ``cfdm.example_field(9)``::
+             cells taken from ``cfdm.example_field(9)``. In this case
+             the 'node_coordinates' Auxiliary Coordinates are derived
+             from the edge cell bounds::
 
-           {'attributes': {'edge_coordinates': ['Mesh2_edge_x', 'Mesh2_edge_y'],
-                           'edge_edge_connectivity': ['Mesh2_edge_links'],
-                           'edge_node_connectivity': ['Mesh2_edge_nodes']},
-            'edge_coordinates': [<AuxiliaryCoordinate: longitude(9) degrees_east>,
-                                 <AuxiliaryCoordinate: latitude(9) degrees_north>],
-            'edge_edge_connectivity': [<CellConnectivity: connectivity:node(9, 6) >],
-            'edge_node_connectivity': [<DomainTopology: cell:edge(9, 2) >],
-            'node_coordinates': [<AuxiliaryCoordinate: longitude(7) degrees_east>,
-                                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
-            'sorted_edges': {},
-            'topology_dimension': 1}
+           {'attributes':
+                {'edge_coordinates': ['Mesh2_edge_x', 'Mesh2_edge_y'],
+                 'edge_edge_connectivity': ['Mesh2_edge_links'],
+                 'edge_node_connectivity': ['Mesh2_edge_nodes']},
+            'edge_coordinates':
+                [<AuxiliaryCoordinate: longitude(9) degrees_east>,
+                 <AuxiliaryCoordinate: latitude(9) degrees_north>],
+            'edge_edge_connectivity':
+                [<CellConnectivity: connectivity:node(9, 6) >],
+            'edge_node_connectivity':
+                [<DomainTopology: cell:edge(9, 2) >],
+            'node_coordinates':
+                [<AuxiliaryCoordinate: longitude(7) degrees_east>,
+                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
+            'sorted_edges':
+                {},
+            'topology_dimension':
+                1
+           }
 
         E.g. the mesh description for the UGRID mesh topology of point
-             cells taken from ``cfdm.example_field(10)``::
+             cells taken from ``cfdm.example_field(10)``. In this case
+             the 'node_coordinates' Auxiliary Coordinates are
+             explicitly defined by the point cell locations::
 
-           {'attributes': {'edge_node_connectivity': [],
-                           'node_coordinates': ['Mesh2_node_x', 'Mesh2_node_y'],
-                           'node_node_connectivity': []},
-            'node_coordinates': [<AuxiliaryCoordinate: longitude(7) degrees_east>,
-                                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
-            'node_node_connectivity': [<DomainTopology: cell:point(7, 5) >],
-            'sorted_edges': {},
-            'topology_dimension': 0}
+           {'attributes':
+                {'edge_node_connectivity': [],
+                 'node_coordinates': ['Mesh2_node_x', 'Mesh2_node_y'],
+                 'node_node_connectivity': []},
+            'node_coordinates':
+                [<AuxiliaryCoordinate: longitude(7) degrees_east>,
+                 <AuxiliaryCoordinate: latitude(7) degrees_north>],
+            'node_node_connectivity':
+                [<DomainTopology: cell:point(7, 5) >],
+            'sorted_edges':
+                {},
+            'topology_dimension':
+                0
+           }
 
-        Later on, more keys might get added by `_ugrid_update_mesh`.
+        More keys might get added later on by `_ugrid_update_mesh`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -470,10 +498,6 @@ class NetCDFWriteUgrid:
                 {
                     "node_coordinates": ncvar_cell_coordinates,
                     "edge_node_connectivity": ncvar_cell_node_connectivity,
-                    # Need to add an empty "node_node_connectivity"
-                    # key to match the same key in 'mesh' It will
-                    # never get populated, and so will not end up in
-                    # the output dataset.
                     "node_node_connectivity": [],
                 }
             )
@@ -919,7 +943,7 @@ class NetCDFWriteUgrid:
             # --------------------------------------------------------
             # Create the mesh variable attributes.
             #
-            # E.g. the `mesh` dictionary
+            # E.g. the 'mesh' dictionary
             #
             # {'attributes':
             #      {'face_coordinates': ['Mesh2_face_x', 'Mesh2_face_y'],
@@ -985,8 +1009,8 @@ class NetCDFWriteUgrid:
                 attributes["node_coordinates"] = " ".join(ncvars)
 
             # For a point-cell domain topology
-            # (i.e. 'topology_dimension' is 0), write the implied
-            # edge_node_connectivity variable to the dataset.
+            # (i.e. 'topology_dimension' is currently 0), write the
+            # implied edge_node_connectivity variable to the dataset.
             if not mesh["topology_dimension"]:
                 edges = mesh["sorted_edges"].get("node_node_connectivity")
                 if edges is None:
