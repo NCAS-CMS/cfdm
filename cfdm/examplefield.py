@@ -60,16 +60,16 @@ def example_field(n, _implementation=_implementation):
             ``11``  Discrete sampling geometry (DSG) "trajectory"
                     features.
 
-            ``12``  A global HEALPix grid with "nested" indices at
-                    refinement level 1. The field's area-weighted
-                    global latitude-longitude means are equal to those
-                    of example field ``13``.
+            ``12``  A global HEALPix grid with "nested" indexing
+                    scheme at refinement level 1. The field's
+                    area-weighted global latitude-longitude means are
+                    equal to those of example field ``13``.
 
             ``13``  A global HEALPix Multi-Order Coverage grid with
-                    "nested_unique" indices representing refinement
-                    levels 1 and 2. The field's area-weighted global
-                    latitude-longitude means are equal to those of
-                    example field ``12``.
+                    "nested_unique" indexing scheme representing
+                    refinement levels 1 and 2. The field's
+                    area-weighted global latitude-longitude means are
+                    equal to those of example field ``12``.
 
             ======  ==================================================
 
@@ -6046,12 +6046,12 @@ def example_domain(n, _func=example_field):
             ``11``  Discrete sampling geometry (DSG) "trajectory"
                     features.
 
-            ``12``  A global HEALPix grid with "nested" indices at
-                    refinement level 1.
+            ``12``  A global HEALPix grid with "nested" indexing
+                    scheme at refinement level 1.
 
             ``13``  A global HEALPix Multi-Order Coverage grid with
-                    "nested_unique" indices representing refinement
-                    levels 1 and 2.
+                    "nested_unique" indexing scheme representing
+                    refinement levels 1 and 2. 
             ======  ==================================================
 
             See the examples for details.
