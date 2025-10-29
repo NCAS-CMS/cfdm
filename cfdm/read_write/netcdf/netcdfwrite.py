@@ -2268,7 +2268,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 )
             else:
                 ncvar = self._create_variable_name(coord, default="auxiliary")
-
                 # TODO: move setting of bounds ncvar to here - why?
 
                 # If this auxiliary coordinate has bounds then create
@@ -2286,11 +2285,16 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                         self.implementation.get_data_axes(f, key),
                         extra=extra,
                     )
+                else:
+                    # There is no data (although there might be
+                    # bounds, though), so there can't be an auxiliary
+                    # coordinate variable.
+                    ncvar = None
 
-        g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
 
         if ncvar is not None:
+            g["key_to_ncvar"][key] = ncvar
             coordinates.append(ncvar)
 
         return coordinates
@@ -2946,7 +2950,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         logger.debug(
             f"      chunksizes: {chunksizes!r}\n"
-            f"      contiguous: {contiguous!r}"
+            f"      contiguous: {contiguous!r}\n"
             f"      shards    : {shards!r}"
         )  # pragma: no cover
 

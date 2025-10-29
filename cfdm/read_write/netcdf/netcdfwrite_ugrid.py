@@ -63,8 +63,6 @@ class NetCDFWriteUgrid:
             return None
 
         if cell == "volume":
-            # Placeholder exception to remind us to do some work,
-            # should volume cells ever make it into CF.
             raise NotImplementedError(
                 f"Can't write a UGRID mesh of volume cells for {parent!r}"
             )
@@ -338,7 +336,7 @@ class NetCDFWriteUgrid:
            'node_coordinates'
            'sorted_edges'
 
-        as well as some subset of the keys::
+        as well as a subset of the optional keys::
 
            'edge_coordinates'
            'face_coordinates'
@@ -349,6 +347,11 @@ class NetCDFWriteUgrid:
            'edge_edge_connectivity'
            'face_face_connectivity'
            'volume_volume_connectivity'
+
+        More optional keys might get added later on by
+        `_ugrid_update_mesh`. The 'attributes' dictionary might get
+        updated by `_ugrid_update_mesh`. The 'sorted_edges' dictionary
+        might get updated by various methods.
 
         E.g. the mesh description for the UGRID mesh topology of face
              cells taken from ``cfdm.example_field(8)``. In this case
@@ -420,8 +423,6 @@ class NetCDFWriteUgrid:
                 0
            }
 
-        More keys might get added later on by `_ugrid_update_mesh`.
-
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
@@ -479,7 +480,9 @@ class NetCDFWriteUgrid:
             parent, axes=(ugrid_axis,), exact=True
         )
         ncvar_cell_coordinates = [
-            g["key_to_ncvar"][key] for key in cell_coordinates
+            g["key_to_ncvar"][key]
+            for key in cell_coordinates
+            if key in g["key_to_ncvar"]
         ]
 
         # ------------------------------------------------------------
@@ -509,8 +512,6 @@ class NetCDFWriteUgrid:
                     topology_dimension = 1
                 case "volume":
                     topology_dimension = 3
-                    # Placeholder exception to remind us to do some
-                    # work, should volume cells ever make it into CF.
                     raise NotImplementedError(
                         "Can't write a UGRID mesh of volume cells for "
                         f"{parent!r}"
@@ -527,7 +528,7 @@ class NetCDFWriteUgrid:
                 bounds = c.get_bounds(None)
                 if bounds is None or bounds.get_data(None) is None:
                     raise ValueError(
-                        f"Can't write a UGRID mesh of {cell} cells for "
+                        f"Can't write a UGRID mesh of {cell!r} cells for "
                         f"{parent!r} when {c!r} has no coordinate bounds data"
                     )
 
@@ -570,16 +571,17 @@ class NetCDFWriteUgrid:
                 {
                     "topology_dimension": topology_dimension,
                     "node_coordinates": node_coordinates,
-                    f"{cell}_coordinates": list(cell_coordinates.values()),
                     f"{cell}_node_connectivity": [domain_topology],
                 }
             )
-            mesh["attributes"].update(
-                {
-                    f"{cell}_coordinates": ncvar_cell_coordinates,
-                    f"{cell}_node_connectivity": ncvar_cell_node_connectivity,
-                }
-            )
+            mesh["attributes"][
+                f"{cell}_node_connectivity"
+            ] = ncvar_cell_node_connectivity
+
+            if ncvar_cell_coordinates:
+                key = f"{cell}_coordinates"
+                mesh[key] = cell_coordinates
+                mesh["attributes"][key] = ncvar_cell_coordinates
 
         # Add mesh description keys for normalised cell connectivities
         for cc_key, cell_connectivity in g[
@@ -713,8 +715,6 @@ class NetCDFWriteUgrid:
                     return False
 
             elif "volume" in location_mesh:
-                # Placeholder exception to remind us to do some work,
-                # should volume cells ever make it into CF.
                 raise NotImplementedError(
                     "Can't write a UGRID mesh of volume cells"
                 )

@@ -354,6 +354,7 @@ class NetCDFRead(IORead):
 
         """
         return (
+            "cf_role",
             "topology_dimension",
             "node_coordinates",
             "edge_coordinates",
@@ -366,6 +367,7 @@ class NetCDFRead(IORead):
             "face_face_connectivity",
             "face_edge_connectivity",
             "edge_node_connectivity",
+            "edge_edge_connectivity",
             "edge_face_connectivity",
             "volume_node_connectivity",
             "volume_edge_connectivity",
@@ -2228,9 +2230,9 @@ class NetCDFRead(IORead):
                     continue
 
                 for location in locations:
-                    # If any existing field/domain used this
-                    # mesh/location combinnation, then we don't need
-                    # to create a another new domain for it.
+                    # If any existing field or domain used this
+                    # mesh/location combination, then we don't need to
+                    # create a another new domain for it.
                     create_domain = True
                     for ncvar in all_fields_or_domains:
                         attributes = g["variable_attributes"].get(ncvar)
