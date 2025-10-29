@@ -1582,7 +1582,7 @@ class NetCDFWrite(IOWrite):
             if ncdim not in ncdim_to_size:
                 size = self.implementation.get_data_size(nodes)
                 logger.info(
-                    f"    Writing size {size} node dimension: {ncdim}"
+                    f"    Writing size {size} geometry node dimension: {ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
@@ -2008,7 +2008,8 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 logger.info(
-                    f"    Writing size {size} part " f"dimension{ncdim}"
+                    f"    Writing size {size} geometry part "
+                    f"dimension: {ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
@@ -2097,7 +2098,8 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 logger.info(
-                    f"    Writing size {size} part " f"dimension{ncdim}"
+                    f"    Writing size {size} geometry part "
+                    f"dimension: {ncdim}"
                 )  # pragma: no cover
                 ncdim_to_size[ncdim] = size
 
@@ -2890,7 +2892,9 @@ class NetCDFWrite(IOWrite):
         if g["dry_run"]:
             return
 
-        logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
+        logger.info(
+            f"    Writing {cfvar!r} to variable: {ncvar}"
+        )  # pragma: no cover
 
         # Set 'construct_type'
         if not construct_type:
@@ -2945,9 +2949,9 @@ class NetCDFWrite(IOWrite):
             )
 
         logger.debug(
-            f"      chunksizes: {chunksizes!r}\n"
-            f"      contiguous: {contiguous!r}"
-            f"      shards    : {shards!r}"
+            f"      chunksizes: {chunksizes!r}, "
+            f"contiguous: {contiguous!r}, "
+            f"shards: {shards!r}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -3178,7 +3182,7 @@ class NetCDFWrite(IOWrite):
         )
 
         logger.info(
-            f"        to variable: {ncvar}({', '.join(ncdimensions)})"
+            f"      dimensions: ({', '.join(ncdimensions)})"
         )  # pragma: no cover
 
         try:
@@ -4408,7 +4412,7 @@ class NetCDFWrite(IOWrite):
         # Cell measures
         if cell_measures:
             cell_measures = " ".join(cell_measures)
-            logger.info(
+            logger.debug(
                 "    Writing cell_measures attribute to "
                 f"variable {ncvar}: {cell_measures!r}"
             )  # pragma: no cover
