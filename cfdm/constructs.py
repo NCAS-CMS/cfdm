@@ -552,7 +552,8 @@ class Constructs(mixin.Container, core.Constructs):
         return True
 
     def _set_climatology(self, cell_methods=None, coordinates=None):
-        """Set the climatology flag on appropriate coordinate constructs.
+        """Set the climatology flag on appropriate coordinate
+        constructs.
 
         The setting is based on the cell method constructs.
 

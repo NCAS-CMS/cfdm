@@ -6051,7 +6051,7 @@ def example_domain(n, _func=example_field):
 
             ``13``  A global HEALPix Multi-Order Coverage grid with
                     "nested_unique" indexing scheme representing
-                    refinement levels 1 and 2. 
+                    refinement levels 1 and 2.
             ======  ==================================================
 
             See the examples for details.
