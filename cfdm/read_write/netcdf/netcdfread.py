@@ -5562,16 +5562,22 @@ class NetCDFRead(IORead):
         )
 
         g["dataset_compliance"][top_ancestor_ncvar]["non-compliance"].setdefault(
-           ncvar, []
+            ncvar, []
         ).append(d)
 
         # Only add a component report if there is need i.e. if the direct
         # parent ncvar is defined so not the same as the top ancestor ncvar
         if direct_parent_ncvar:
+            # Dicts are optimised for key-value lookup, but this requires
+            # value-key lookup -  is there a better way?
+            varattrs = g["variable_attributes"][top_ancestor_ncvar]
+            reverse_varattrs = {v: k for k, v in varattrs.items()}
+            store_attr = reverse_varattrs[ncvar]
+
             e = g["component_report"].setdefault(direct_parent_ncvar, {})
-            # print("cr is before:", g["component_report"])
-            e.setdefault(ncvar, []).append(d)
-            # print("cr is after:", g["component_report"])
+            # Intermediate key in dict is the attr of relevance
+            e2 = e.setdefault(store_attr, {})
+            e2.setdefault(ncvar, []).append(d)
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
