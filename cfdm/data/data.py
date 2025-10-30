@@ -436,10 +436,16 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         else:
             in_memory = getattr(array, "__in_memory__", None)
 
+        # Get the number of dimensions
         try:
             ndim = array.ndim
         except AttributeError:
-            ndim = np.ndim(array)
+            if isinstance(array, (list, tuple)):
+                # Convert list/tuple to np.ndarray
+                array = np.asanyarray(array)
+                ndim = array.ndim
+            else:
+                ndim = np.ndim(array)
 
         # Create the _axes attribute: an ordered sequence of unique
         # names (within this instance) for each array axis.
@@ -486,6 +492,25 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
+        # Get array elements for the cache
+        cached_elements = {}
+        if isinstance(array, np.ndarray):
+            # numpy array
+            cached_elements[0] = array[(slice(0, 1, 1),) * ndim]
+            cached_elements[-1] = array[(slice(-1, None, 1),) * ndim]
+            shape = array.shape
+            if ndim == 2 and shape[-1] == 2:
+                cached_elements[1] = array[np.unravel_index(1, shape)]
+                cached_elements[-2] = array[
+                    np.unravel_index(array.size - 2, shape)
+                ]
+            elif array.size == 3:
+                cached_elements[1] = array[np.unravel_index(1, shape)]
+        elif isinstance(array, (int, float, bool, str)):
+            # Selected Python scalars
+            cached_elements[0] = array
+            cached_elements[-1] = array
+
         dx = to_dask(array, chunks, **kwargs)
 
         # Find out if we have an array of date-time objects
@@ -500,12 +525,18 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             if first_value is not None:
                 dt = hasattr(first_value, "timetuple")
 
+            cached_elements = None
+
         # Convert string or object date-times to floating point
         # reference times
         if dt and dx.dtype.kind in "USO":
             dx, units = convert_to_reftime(dx, units, first_value)
             # Reset the units
             self._Units = units
+            cached_elements = None
+
+        # Set any cached elements
+        self._set_cached_elements(cached_elements)
 
         # Store the dask array
         self._set_dask(dx, clear=self._NONE, in_memory=in_memory)

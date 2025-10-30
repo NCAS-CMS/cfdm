@@ -175,52 +175,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue(str(d) == "[--, 2000-01-21 00:00:00]")
         self.assertTrue(repr(d) == "<Data(2): [--, 2000-01-21 00:00:00]>")
 
-        # Cached elements
-        elements0 = (0, -1, 1)
-        for array in ([1], [1, 2], [1, 2, 3]):
-            elements = elements0[: len(array)]
-
-            d = cfdm.Data(array)
-            cache = d._get_cached_elements()
-            for element in elements:
-                self.assertNotIn(element, cache)
-
-            self.assertEqual(str(d), str(array))
-            cache = d._get_cached_elements()
-            for element in elements:
-                self.assertIn(element, cache)
-
-            d[0] = 1
-            cache = d._get_cached_elements()
-            for element in elements:
-                self.assertNotIn(element, cache)
-
-            self.assertEqual(str(d), str(array))
-            cache = d._get_cached_elements()
-            for element in elements:
-                self.assertIn(element, cache)
-
-            self.assertEqual(str(d), str(array))
-            cache = d._get_cached_elements()
-            for element in elements:
-                self.assertIn(element, cache)
-
-        # Test when size > 3, i.e. second element is not there.
-        d = cfdm.Data([1, 2, 3, 4])
-        cache = d._get_cached_elements()
-        for element in elements0:
-            self.assertNotIn(element, cache)
-
-        self.assertEqual(str(d), "[1, ..., 4]")
-        cache = d._get_cached_elements()
-        self.assertNotIn(1, cache)
-        for element in elements0[:2]:
-            self.assertIn(element, cache)
-
-        d[0] = 1
-        for element in elements0:
-            self.assertNotIn(element, d._get_cached_elements())
-
     def test_Data__setitem__(self):
         """Test Data.__setitem__"""
         for hardmask in (False, True):
@@ -2876,6 +2830,51 @@ class DataTest(unittest.TestCase):
         for a in cache1.values():
             if a is not np.ma.masked:
                 self.assertEqual(a.dtype, d.dtype)
+
+    def test_Data_cached_elements(self):
+        """Test setting of cached elements."""
+        for array in (
+            1,
+            1.0,
+            True,
+            "string",
+            np.array(1),
+            np.array([1]),
+            [1],
+            (1,),
+        ):
+            d = cfdm.Data(array)
+            self.assertEqual(set(d._get_cached_elements()), {0, -1})
+
+        for array in (
+            np.array([1, 2]),
+            np.array([1, 2, 3, 4]),
+            [1, 2],
+            (1, 2, 3, 4),
+        ):
+            d = cfdm.Data(array)
+            self.assertEqual(set(d._get_cached_elements()), {0, -1})
+
+        for array in (
+            np.array([1, 2, 3]),
+            (1, 2, 3),
+        ):
+            d = cfdm.Data(array)
+            self.assertEqual(set(d._get_cached_elements()), {0, 1, -1})
+
+        for array in (
+            np.array([[1, 2], [3, 4]]),
+            ([1, 2], [3, 4]),
+        ):
+            d = cfdm.Data(array)
+            self.assertEqual(set(d._get_cached_elements()), {0, 1, -2, -1})
+
+        # Check that __str__ sets missing cached elements
+        d = cfdm.Data([[1, 2, 3]])
+        d._del_cached_elements()
+        self.assertFalse(d._get_cached_elements())
+        str(d)
+        self.assertEqual(set(d._get_cached_elements()), {0, 1, -1})
 
 
 if __name__ == "__main__":

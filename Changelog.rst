@@ -1,3 +1,13 @@
+Version NEXTVERSION
+----------------
+
+**2025-??-??**
+
+* Set cached elements during `cfdm.Data.__init__`
+  (https://github.com/NCAS-CMS/cfdm/issues/363)
+
+----
+
 Version 1.12.3.1
 ----------------
 
