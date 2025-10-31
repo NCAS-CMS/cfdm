@@ -5614,9 +5614,15 @@ class NetCDFRead(IORead):
 
         """
         g = self.read_vars
+
         component_report = g["component_report"].get(ncvar)
         if component_report:
-            g["dataset_compliance"][parent_ncvar]["non-compliance"].setdefault(
+            set_on = g["dataset_compliance"][parent_ncvar]["non-compliance"]
+            if g["mesh"]:
+                set_on = set_on.setdefault(
+                    "mesh", {}
+                )
+            set_on.setdefault(
                 ncvar, []
             ).append(component_report)
 
