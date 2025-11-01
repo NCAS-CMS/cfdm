@@ -2836,45 +2836,79 @@ class DataTest(unittest.TestCase):
         for array in (
             1,
             1.0,
-            True,
-            "string",
             np.array(1),
             np.array([1]),
             [1],
             (1,),
         ):
             d = cfdm.Data(array)
-            self.assertEqual(set(d._get_cached_elements()), {0, -1})
+            for i in range(2):
+                self.assertEqual(d._get_cached_elements(), {0: 1, -1: 1})
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
 
-        for array in (
-            np.array([1, 2]),
-            np.array([1, 2, 3, 4]),
-            [1, 2],
-            (1, 2, 3, 4),
-        ):
-            d = cfdm.Data(array)
-            self.assertEqual(set(d._get_cached_elements()), {0, -1})
+        d = cfdm.Data(True)
+        for i in range(2):
+            self.assertEqual(d._get_cached_elements(), {0: True, -1: True})
+            # Check that getting the array doesn't change the cached
+            # elements
+            if i:
+                d.array
 
-        for array in (
-            np.array([1, 2, 3]),
-            (1, 2, 3),
-        ):
-            d = cfdm.Data(array)
-            self.assertEqual(set(d._get_cached_elements()), {0, 1, -1})
+        d = cfdm.Data("x")
+        for i in range(2):
+            self.assertEqual(d._get_cached_elements(), {0: "x", -1: "x"})
+            # Check that getting the array doesn't change the cached
+            # elements
+            if i:
+                d.array
 
-        for array in (
-            np.array([[1, 2], [3, 4]]),
-            ([1, 2], [3, 4]),
-        ):
+        for array in (np.array([1, 2]), [1, 2]):
             d = cfdm.Data(array)
-            self.assertEqual(set(d._get_cached_elements()), {0, 1, -2, -1})
+            for i in range(2):
+                self.assertEqual(d._get_cached_elements(), {0: 1, -1: 2})
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
+        for array in (np.array([1, 2, 3]), (1, 2, 3)):
+            d = cfdm.Data(array)
+            for i in range(2):
+                self.assertEqual(d._get_cached_elements(), {0: 1, 1: 2, -1: 3})
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
+        for array in (np.array([1, 2, 3, 4]), (1, 2, 3, 4)):
+            d = cfdm.Data(array)
+            for i in range(2):
+                self.assertEqual(d._get_cached_elements(), {0: 1, -1: 4})
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
+        for array in (np.array([[1, 2], [3, 4]]), ([1, 2], [3, 4])):
+            d = cfdm.Data(array)
+            for i in range(2):
+                self.assertEqual(
+                    d._get_cached_elements(), {0: 1, 1: 2, -2: 3, -1: 4}
+                )
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
 
         # Check that __str__ sets missing cached elements
         d = cfdm.Data([[1, 2, 3]])
         d._del_cached_elements()
         self.assertFalse(d._get_cached_elements())
         str(d)
-        self.assertEqual(set(d._get_cached_elements()), {0, 1, -1})
+        self.assertEqual(d._get_cached_elements(), {0: 1, 1: 2, -1: 3})
 
 
 if __name__ == "__main__":

@@ -500,10 +500,9 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             cached_elements[-1] = array[(slice(-1, None, 1),) * ndim]
             shape = array.shape
             if ndim == 2 and shape[-1] == 2:
-                cached_elements[1] = array[np.unravel_index(1, shape)]
-                cached_elements[-2] = array[
-                    np.unravel_index(array.size - 2, shape)
-                ]
+                j, i = np.unravel_index((1, array.size - 2), array.shape)
+                cached_elements[1] = array[j[0], i[0]]
+                cached_elements[-2] = array[j[1], i[1]]
             elif array.size == 3:
                 cached_elements[1] = array[np.unravel_index(1, shape)]
         elif isinstance(array, (int, float, bool, str)):
@@ -525,14 +524,13 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             if first_value is not None:
                 dt = hasattr(first_value, "timetuple")
 
-            cached_elements = None
-
         # Convert string or object date-times to floating point
         # reference times
         if dt and dx.dtype.kind in "USO":
             dx, units = convert_to_reftime(dx, units, first_value)
             # Reset the units
             self._Units = units
+            # Clear the cache, because we've changed the values.
             cached_elements = None
 
         # Set any cached elements
@@ -2655,28 +2653,39 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         elif not isinstance(a, np.ndarray):
             a = np.asanyarray(a)
 
-        ndim = a.ndim
-        shape = a.shape
         size = a.size
         if not size:
             return a
 
-        ndim = a.ndim
-        shape = a.shape
-
         # Set cached elements
-        items = [0, -1]
-        indices = [(slice(0, 1, 1),) * ndim, (slice(-1, None, 1),) * ndim]
-        if ndim == 2 and shape[-1] == 2:
-            items.extend((1, -2))
-            indices.extend(
-                (np.unravel_index(1, shape), np.unravel_index(size - 2, shape))
-            )
-        elif size == 3:
-            items.append(1)
-            indices.append(np.unravel_index(1, a.shape))
+        if size == 1:
+            cache = {0: a, -1: a}
+        else:
+            ndim = a.ndim
 
-        cache = {i: a[index] for i, index in zip(items, indices)}
+            items = [0, -1]
+            if ndim == 1:
+                indices = [0, -1]
+                if size == 3:
+                    items.append(1)
+                    indices.append(1)
+            else:
+                indices = [
+                    (slice(0, 1, 1),) * ndim,
+                    (slice(-1, None, 1),) * ndim,
+                ]
+                if ndim == 2:
+                    shape = a.shape
+                    if shape[-1] == 2:
+                        items.extend((1, -2))
+                        j, i = np.unravel_index((1, size - 2), shape)
+                        indices.extend(((j[0], i[0]), (j[1], i[1])))
+                elif size == 3:
+                    items.append(1)
+                    indices.append(np.unravel_index(1, a.shape))
+
+            cache = {i: a[index] for i, index in zip(items, indices)}
+
         self._set_cached_elements(cache)
 
         return a
