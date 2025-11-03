@@ -5593,14 +5593,10 @@ class NetCDFRead(IORead):
                 conformance,
             )
             parent_ncdims = self._ncdimensions(top_ancestor_ncvar)
-            print("NDIMS ARE", parent_ncdims)
-            #u = _ugrid_check_connectivity_variable()
-            #print("CONN VAR IS", u)
 
             e = g["component_report"].setdefault(direct_parent_ncvar, {})
-            # Intermediate key in dict is the attr of relevance
-            e2 = e.setdefault(store_attr, {})
-            e2.setdefault(attribute_name, []).append(d)  # var_name:d here dupes
+            e2 = e.setdefault(store_attr, noncompliance_dict)
+            e2["non-compliance"] = {attribute_name: d}
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
@@ -5640,22 +5636,23 @@ class NetCDFRead(IORead):
 
         component_report = g["component_report"].get(ncvar)
 
-        # SLB need these to be passed through somehow!
+        # SLB need these to be passed through somehow! Code irrelevant, though
         code = 0
-        attribute_value = None
+        attribute_value = "DUMMY"
         # SLB rename this 'd' from _add_message to something better
-        mesh_d = d = {
-            "code": code, "value": attribute_value, "reason": None
+        value_d = {
+            "code": code, "value": attribute_value, "reason": {}
         }
-        ### print("++++++++++++++COMP REPORT", component_report)
+        noncompliance_dict = {
+            "CF version": self.implementation.get_cf_version(),
+            "non-compliance": {},
+        }
         if component_report:
             set_on = g["dataset_compliance"][parent_ncvar]["non-compliance"]
             if g["mesh"]:
-                set_on = set_on.setdefault(
-                    "mesh", mesh_d
-                )
-                ###print("SET ON IS", set_on)
-                set_on["reason"] = {ncvar: component_report}
+                s1 = set_on.setdefault("mesh", value_d)
+                s2 = s1["reason"].setdefault(ncvar, noncompliance_dict)
+                s2["non-compliance"] = component_report
             else:
                 set_on.setdefault(
                     ncvar, []
