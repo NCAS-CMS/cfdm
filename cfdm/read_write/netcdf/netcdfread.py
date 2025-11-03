@@ -5594,9 +5594,10 @@ class NetCDFRead(IORead):
             )
             parent_ncdims = self._ncdimensions(top_ancestor_ncvar)
 
-            e = g["component_report"].setdefault(direct_parent_ncvar, {})
-            e2 = e.setdefault(store_attr, noncompliance_dict)
-            e2["non-compliance"] = {attribute_name: d}
+            e = g["component_report"].setdefault(
+                direct_parent_ncvar, noncompliance_dict)
+            e2 = e.setdefault(store_attr, d)
+            e2["reason"] = {ncvar: d.copy()}
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
