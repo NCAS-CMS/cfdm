@@ -5639,15 +5639,27 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         component_report = g["component_report"].get(ncvar)
+
+        # SLB need these to be passed through somehow!
+        code = 0
+        attribute_value = None
+        # SLB rename this 'd' from _add_message to something better
+        mesh_d = d = {
+            "code": code, "value": attribute_value, "reason": None
+        }
+        ### print("++++++++++++++COMP REPORT", component_report)
         if component_report:
             set_on = g["dataset_compliance"][parent_ncvar]["non-compliance"]
             if g["mesh"]:
                 set_on = set_on.setdefault(
-                    "mesh", {}
+                    "mesh", mesh_d
                 )
-            set_on.setdefault(
-                ncvar, []
-            ).append(component_report)
+                ###print("SET ON IS", set_on)
+                set_on["reason"] = {ncvar: component_report}
+            else:
+                set_on.setdefault(
+                    ncvar, []
+                ).append(component_report)
 
     def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Find a domain axis identifier for the variable's dimensions.
