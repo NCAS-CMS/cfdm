@@ -5548,22 +5548,29 @@ class NetCDFRead(IORead):
         else:
             code = None
 
-        d = {"code": code, "attribute": attribute, "reason": message}
+        # SLB DEV
+        # Temporary processing whilst get dataset_compliance data structure
+        # updated - after this we will change attribute argument inputs
+        # so arguments are made separately
+        attribute_key = next(iter(attribute))
+        var_name, attribute_name = attribute_key.split(":")
+        attribute_value = attribute[attribute_key]
+        d = {"code": code, "value": attribute_value, "reason": message}
 
         if dimensions is not None:
             d["dimensions"] = dimensions
 
-        g["dataset_compliance"].setdefault(
-            top_ancestor_ncvar,
-            {
+        noncompliance_dict = {
                 "CF version": self.implementation.get_cf_version(),
                 "non-compliance": {},
-            },
+        }
+        g["dataset_compliance"].setdefault(
+            top_ancestor_ncvar, noncompliance_dict
         )
 
         g["dataset_compliance"][top_ancestor_ncvar]["non-compliance"].setdefault(
-            ncvar, []
-        ).append(d)
+            attribute_name, []  ### ncvar, []
+        ).append(d)  ###{attribute_name: d})
 
         # Only add a component report if there is need i.e. if the direct
         # parent ncvar is defined so not the same as the top ancestor ncvar
@@ -5574,10 +5581,26 @@ class NetCDFRead(IORead):
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
 
+            # SADIE
+            print(
+                "ARGS ARE",
+                top_ancestor_ncvar,
+                ncvar,
+                direct_parent_ncvar,
+                message,
+                attribute,
+                dimensions,
+                conformance,
+            )
+            parent_ncdims = self._ncdimensions(top_ancestor_ncvar)
+            print("NDIMS ARE", parent_ncdims)
+            #u = _ugrid_check_connectivity_variable()
+            #print("CONN VAR IS", u)
+
             e = g["component_report"].setdefault(direct_parent_ncvar, {})
             # Intermediate key in dict is the attr of relevance
             e2 = e.setdefault(store_attr, {})
-            e2.setdefault(ncvar, []).append(d)
+            e2.setdefault(attribute_name, []).append(d)  # var_name:d here dupes
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
