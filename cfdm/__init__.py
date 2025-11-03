@@ -222,6 +222,7 @@ from .functions import (
     chunksize,
     configuration,
     dirname,
+    display_data,
     environment,
     integer_dtype,
     log_level,

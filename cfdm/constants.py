@@ -36,6 +36,7 @@ CONSTANTS = {
     "RTOL": sys.float_info.epsilon,
     "LOG_LEVEL": logging.getLevelName(logging.getLogger().level),
     "CHUNKSIZE": parse_bytes(_CHUNKSIZE),
+    "display_data": True,
 }
 
 

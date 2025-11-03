@@ -39,10 +39,7 @@ class DeprecationError(Exception):
 
 
 def configuration(
-    atol=None,
-    rtol=None,
-    log_level=None,
-    chunksize=None,
+    atol=None, rtol=None, log_level=None, chunksize=None, display_data=None
 ):
     """Views and sets constants in the project-wide configuration.
 
@@ -53,6 +50,7 @@ def configuration(
     * `rtol`
     * `log_level`
     * `chunksize`
+    * `display_data`
 
     These are all constants that apply throughout `cfdm`, except for
     in specific functions only if overridden by the corresponding
@@ -69,7 +67,8 @@ def configuration(
 
     .. versionadded:: (cfdm) 1.8.6
 
-    .. seealso:: `atol`, `rtol`, `log_level`, `chunksize`
+    .. seealso:: `atol`, `rtol`, `log_level`, `chunksize`,
+                 `display_data`
 
     :Parameters:
 
@@ -99,6 +98,12 @@ def configuration(
 
             .. versionadded:: (cfdm) 1.11.2.0
 
+        display_data `bool` or `Constant`, optional
+            The new display data option. The default is to not change
+            the current behaviour.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
     :Returns:
 
         `Configuration`
@@ -114,12 +119,14 @@ def configuration(
     <{{repr}}Configuration: {'atol': 2.220446049250313e-16,
                      'rtol': 2.220446049250313e-16,
                      'log_level': 'WARNING',
-                     'chunksize': 134217728}>
+                     'chunksize': 134217728,
+                     'display_data': True}>
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
 
     Make a change to one constant and see that it is reflected in the
     configuration:
@@ -130,7 +137,8 @@ def configuration(
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
 
     Access specific values by key querying, noting the equivalency to
     using its bespoke function:
@@ -146,12 +154,14 @@ def configuration(
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
     >>> print(cfdm.configuration())
     {'atol': 5e-14,
      'rtol': 2.220446049250313e-16,
      'log_level': 'INFO',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
 
     Set a single constant without using its bespoke function:
 
@@ -159,12 +169,14 @@ def configuration(
     {'atol': 5e-14,
      'rtol': 2.220446049250313e-16,
      'log_level': 'INFO',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
     >>> cfdm.configuration()
     {'atol': 5e-14,
      'rtol': 1e-17,
      'log_level': 'INFO',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
 
     Use as a context manager:
 
@@ -172,7 +184,8 @@ def configuration(
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
     >>> with cfdm.configuration(atol=9, rtol=10):
     ...     print(cfdm.configuration())
     ...
@@ -181,7 +194,8 @@ def configuration(
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
 
     """
     return _configuration(
@@ -190,6 +204,7 @@ def configuration(
         new_rtol=rtol,
         new_log_level=log_level,
         new_chunksize=chunksize,
+        new_display_data=display_data,
     )
 
 
@@ -235,6 +250,7 @@ def _configuration(_Configuration, **kwargs):
         "new_rtol": rtol,
         "new_log_level": log_level,
         "new_chunksize": chunksize,
+        "new_display_data": display_data,
     }
 
     old_values = {}
@@ -1937,6 +1953,97 @@ class log_level(ConstantAccess):
         cls._reset_log_emergence_level(arg)
 
         return arg
+
+
+class display_data(ConstantAccess):
+    """Control the display of data elements.
+
+    If True then display the first and last data values (and possibly
+    others, depending on the data shape) when displaying data and
+    constructs with their `!dump` methods, or with `repr` and
+    `str`. This can take a long time if the data needs an expensive
+    computation, possibly including a slow read from local or remote
+    disk, to find the display values.
+
+    If False then do not display first and last data values (and
+    possibly others, depending on the data shape), *unless data values
+    have been previously cached*, thereby avoiding the
+    computational cost.
+
+    Note that whenever the first and last values are displayed, they
+    are cached for fast future retrieval.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    .. seealso:: `configuration`
+
+    :Parameters:
+
+        arg: `bool` or `Constant`, optional
+            The new data display option. The default is to not change
+            the current value.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: True>
+    >>> print({{package}}.{{class}}())
+    True
+    >>> str({{package}}.{{class}}())
+    'True'
+    >>> {{package}}.{{class}}().value
+    True
+
+    >>> old = {{package}}.{{class}}(False)
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: False>
+    >>> {{package}}.{{class}}(old)
+    <{{repr}}Constant: True>
+    >>> {{package}}.{{class}}()
+    <{{repr}}Constant: True>
+
+    Use as a context manager:
+
+    >>> print({{package}}.{{class}}())
+    True
+    >>> with {{package}}.{{class}}(False):
+    ...     print({{package}}.{{class}}())
+    ...
+    False
+    >>> print({{package}}.{{class}}())
+    True
+
+    """
+
+    _default = True
+    _name = "display_data"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+        """
+        return bool(arg)
 
 
 def ATOL(*new_atol):
