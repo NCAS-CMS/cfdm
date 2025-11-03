@@ -5610,7 +5610,8 @@ class NetCDFRead(IORead):
 
         return d
 
-    def _include_component_report(self, parent_ncvar, ncvar):
+    def _include_component_report(
+            self, parent_ncvar, ncvar, attribute, dimensions=None):
         """Include a component in the dataset compliance report.
 
         .. versionadded:: (cfdm) 1.11.0.0
@@ -5627,6 +5628,18 @@ class NetCDFRead(IORead):
                 The netCDF variable name of the variable with
                 the component that has the problem.
 
+            attribute: `dict`
+                The name and value of the netCDF attribute that has a problem.
+
+                *Parameter example:*
+                  ``attribute={'tas:cell_measures': 'area: areacella'}``
+
+            dimensions: sequence of `str`, optional
+                The netCDF dimensions of the variable that has a problem.
+
+                *Parameter example:*
+                  ``dimensions=('lat', 'lon')``
+
         :Returns:
 
             `None`
@@ -5636,21 +5649,22 @@ class NetCDFRead(IORead):
 
         component_report = g["component_report"].get(ncvar)
 
-        # SLB need these to be passed through somehow! Code irrelevant, though
-        code = 0
-        attribute_value = "DUMMY"
         # SLB rename this 'd' from _add_message to something better
-        value_d = {
-            "code": code, "value": attribute_value, "reason": {}
-        }
+        # SLB Note: have dropped 'code' because it doesn't make sense to
+        # register a code except at the lowest level...
+        d = {"value": attribute, "reason": {}}
+        if dimensions is not None:
+            d["dimensions"] = dimensions
+
         noncompliance_dict = {
             "CF version": self.implementation.get_cf_version(),
             "non-compliance": {},
         }
+
         if component_report:
             set_on = g["dataset_compliance"][parent_ncvar]["non-compliance"]
             if g["mesh"]:
-                s1 = set_on.setdefault("mesh", value_d)
+                s1 = set_on.setdefault("mesh", d)
                 s2 = s1["reason"].setdefault(ncvar, noncompliance_dict)
                 s2["non-compliance"] = component_report
             else:
@@ -11196,7 +11210,12 @@ class NetCDFRead(IORead):
             )
             ok = False
 
-        self._include_component_report(parent_ncvar, location_index_set_ncvar)
+        # SLB check attribute in question is always "location_index_set" here
+        # an verify whether dimensions should be registered here
+        self._include_component_report(
+            parent_ncvar, location_index_set_ncvar, "location_index_set",
+            dimensions=g["variable_dimensions"][location_index_set_ncvar]
+        )
         return ok
 
     # Y
@@ -11284,7 +11303,11 @@ class NetCDFRead(IORead):
             )
             ok = False
 
-        self._include_component_report(parent_ncvar, mesh_ncvar)
+        # SLB check attribute in question is always "mesh" here ->
+        # looks like it could be "location" in some cases? No dims it seems?
+        self._include_component_report(
+            parent_ncvar, mesh_ncvar, "mesh"
+        )
         return ok
 
     # Y
