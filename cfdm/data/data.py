@@ -4133,7 +4133,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 ):
                     # 3) The status must be False when any two input
                     #    Data objects have different fragment types,
-                    #    onew of which is 'location'.
+                    #    one of which is 'location'.
                     data0._nc_del_aggregation_fragment_type()
                     CFA = cls._NONE
                     break
