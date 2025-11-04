@@ -1498,7 +1498,7 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
     # Define the dictionary that stores all constant values.
     #
     # Sublasses must re-define this as an empty dictionary (unless
-    # it's OK for the child modify the parent's disctionary).
+    # it's OK for the child to modify the parent's dictionary).
     _constants = {}
 
     # Define the `Constant` class that contains a constant value
