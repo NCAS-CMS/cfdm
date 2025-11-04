@@ -75,8 +75,6 @@ class CompressedArrayMixin:
 
         import dask.array as da
         from dask import config
-
-        #        from dask.array.core import getter
         from dask.base import tokenize
 
         getter = da.core.getter
