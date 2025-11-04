@@ -1561,7 +1561,7 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
 
     @classmethod
     def constants(cls, copy=True):
-        """TODO."""
+        """See docstring to `ConstantAccess`."""
         out = cls._constants
         if copy:
             out = out.copy()
