@@ -1,8 +1,6 @@
 """Functions used during the creation of `Data` objects."""
 
-import dask.array as da
 import numpy as np
-from dask.base import is_dask_collection
 
 
 def to_dask(array, chunks, **from_array_options):
@@ -51,6 +49,8 @@ def to_dask(array, chunks, **from_array_options):
     dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
 
     """
+    from dask.base import is_dask_collection
+
     if is_dask_collection(array):
         return array
 
@@ -64,6 +64,8 @@ def to_dask(array, chunks, **from_array_options):
                 )
             except TypeError:
                 return array.to_dask_array()
+
+    import dask.array as da
 
     if type(array).__module__.split(".")[0] == "xarray":
         data = getattr(array, "data", None)

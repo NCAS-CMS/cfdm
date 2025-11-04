@@ -4,10 +4,9 @@ from logging import getLogger
 from os import walk
 from os.path import expanduser, expandvars, isdir, join
 
-from uritools import urisplit
+from cfdm.decorators import _manage_log_level_via_verbosity
+from cfdm.functions import abspath, is_log_level_info
 
-from ..decorators import _manage_log_level_via_verbosity
-from ..functions import abspath, is_log_level_info
 from .abstract import ReadWrite
 from .exceptions import DatasetTypeError
 from .netcdf import NetCDFRead
@@ -341,6 +340,8 @@ class read(ReadWrite):
                 yield dataset1
 
             return
+
+        from uritools import urisplit
 
         if followlinks and not recursive:
             raise ValueError(

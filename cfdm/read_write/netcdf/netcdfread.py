@@ -1,6 +1,5 @@
 import logging
 import operator
-import re
 import struct
 import subprocess
 import tempfile
@@ -14,17 +13,12 @@ from os.path import isdir, isfile, join
 from typing import Any
 from uuid import uuid4
 
-import netCDF4
 import numpy as np
-from dask.array.core import normalize_chunks
-from dask.base import tokenize
-from packaging.version import Version
-from s3fs import S3FileSystem
-from uritools import urisplit
 
-from ...data.netcdfindexer import netcdf_indexer
-from ...decorators import _manage_log_level_via_verbosity
-from ...functions import abspath, is_log_level_debug, is_log_level_detail
+from cfdm.data.netcdfindexer import netcdf_indexer
+from cfdm.decorators import _manage_log_level_via_verbosity
+from cfdm.functions import abspath, is_log_level_debug, is_log_level_detail
+
 from .. import IORead
 from ..exceptions import DatasetTypeError, ReadError
 from .constants import (
@@ -516,6 +510,8 @@ class NetCDFRead(IORead):
         >>> r.file_open('file.nc')
 
         """
+        from uritools import urisplit
+
         g = self.read_vars
 
         netcdf_backend = g["netcdf_backend"]
@@ -539,6 +535,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # A file in an S3 object store
             # --------------------------------------------------------
+            from dask.base import tokenize
 
             # Create an openable S3 file object
             fs_key = tokenize(("s3", storage_options))
@@ -547,6 +544,8 @@ class NetCDFRead(IORead):
             if file_system is None:
                 # An S3 file system with these options does not exist,
                 # so create one.
+                from s3fs import S3FileSystem
+
                 file_system = S3FileSystem(**storage_options)
                 file_systems[fs_key] = file_system
 
@@ -598,6 +597,8 @@ class NetCDFRead(IORead):
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
         if flatten and self._dataset_has_groups(nc):
+            import netCDF4
+
             # Create a diskless, non-persistent container for the
             # flattened file
             flat_file = tempfile.NamedTemporaryFile(
@@ -648,6 +649,8 @@ class NetCDFRead(IORead):
             `netCDF4.Dataset`
 
         """
+        import netCDF4
+
         nc = netCDF4.Dataset(filename, "r")
         self.read_vars["file_opened_with"] = "netCDF4"
         return nc
@@ -825,6 +828,10 @@ class NetCDFRead(IORead):
                 * `None` for anything else.
 
         """
+        import re
+
+        from uritools import urisplit
+
         # Assume that non-local URIs are netCDF or zarr
         u = urisplit(dataset)
         if u.scheme not in (None, "file"):
@@ -909,6 +916,8 @@ class NetCDFRead(IORead):
         9.969209968386869e+36
 
         """
+        import netCDF4
+
         data_type = self.read_vars["variables"][ncvar].dtype.str[-2:]
         return netCDF4.default_fillvals[data_type]
 
@@ -1074,6 +1083,10 @@ class NetCDFRead(IORead):
                 The field or domain constructs in the file.
 
         """
+        import re
+
+        from packaging.version import Version
+
         debug = is_log_level_debug(logger)
 
         # ------------------------------------------------------------
@@ -7231,6 +7244,8 @@ class NetCDFRead(IORead):
         ...                        't: mean over ENSO years)')
 
         """
+        import re
+
         if field_ncvar:
             attribute = {field_ncvar + ":cell_methods": cell_methods_string}
 
@@ -9475,6 +9490,7 @@ class NetCDFRead(IORead):
         # ============================================================
         # Thanks to Alan Iwi for creating these regular expressions
         # ============================================================
+        import re
 
         def subst(s):
             """Substitutes WORD and SEP tokens for regular expressions.
@@ -11363,6 +11379,8 @@ class NetCDFRead(IORead):
             #       storage-aligned: (50, 100, 150, 20,   5)  75000000
             # --------------------------------------------------------
             # 1) Initialise the Dask chunk shape
+            from dask.array.core import normalize_chunks
+
             dask_chunks = normalize_chunks(
                 "auto", shape=array.shape, dtype=array.dtype
             )
@@ -11732,6 +11750,8 @@ class NetCDFRead(IORead):
                 # collapse (by concatenation) the outermost (fastest
                 # varying) dimension. E.g. [['a','b','c']] becomes
                 # ['abc']
+                import netCDF4
+
                 if dtype.kind == "U":
                     value = value.astype("S")
 
@@ -11932,7 +11952,7 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `None`ppp
+            `None`
 
         """
         g = self.read_vars

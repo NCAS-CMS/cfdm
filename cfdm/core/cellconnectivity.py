@@ -105,7 +105,7 @@ class CellConnectivity(abstract.Topology):
     def del_connectivity(self, default=ValueError()):
         """Remove the connectivity.
 
-        {{{cell connectivity type}}
+        {{cell connectivity type}}
 
         .. versionadded:: (cfdm) 1.11.0.0
 
@@ -149,7 +149,7 @@ class CellConnectivity(abstract.Topology):
     def has_connectivity(self):
         """Whether the connectivity type has been set.
 
-        {{{cell connectivity type}}
+        {{cell connectivity type}}
 
         .. versionadded:: (cfdm) 1.11.0.0
 
@@ -233,7 +233,7 @@ class CellConnectivity(abstract.Topology):
     def set_connectivity(self, connectivity):
         """Set the connectivity type.
 
-        {{{cell connectivity type}}
+        {{cell connectivity type}}
 
         .. versionadded:: (cfdm) 1.11.0.0
 

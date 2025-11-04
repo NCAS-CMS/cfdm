@@ -1,8 +1,8 @@
 from collections.abc import Iterable
 
-from ...cfdmimplementation import implementation
-from ...core import DocstringRewriteMeta
-from ...docstring import _docstring_substitution_definitions
+from cfdm.cfdmimplementation import implementation
+from cfdm.core import DocstringRewriteMeta
+from cfdm.docstring import _docstring_substitution_definitions
 
 
 class ReadWrite(metaclass=DocstringRewriteMeta):
