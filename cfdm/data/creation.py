@@ -1,6 +1,5 @@
 """Functions used during the creation of `Data` objects."""
 
-# import dask.array as da
 import numpy as np
 
 # from dask.base import is_dask_collection
