@@ -494,7 +494,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
-        # Whether or not to get array elements for the cache
+        # Whether or not to get selected array elements for the cache
         cache_elements = isinstance(array, (np.ndarray, int, float, bool, str))
 
         dx = to_dask(array, chunks, **kwargs)
@@ -517,8 +517,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             dx, units = convert_to_reftime(dx, units, first_value)
             # Reset the units
             self._Units = units
-            # Don't get array elements for the cache, because we've
-            # just changed the values.
+            # Don't get elements of 'array' for the cache, because
+            # we've just changed the values!
             cache_elements = False
 
         # Store the dask array
@@ -526,7 +526,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         # Set cached elements
         if cache_elements:
-            self.set_cached_elements(array=array)
+            self.cache_elements(_array=array)
 
         # Override the data type
         if dtype is not None:
@@ -2032,6 +2032,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         It is assumed, but not checked, that the given index selects
         exactly one element.
 
+        .. seealso:: `_items`
+
         :Parameters:
 
             index:
@@ -2060,7 +2062,9 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
     def _items(self, index, array=None):
         """Return elements of the data.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `_item`
 
         :Parameters:
 
@@ -2069,9 +2073,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
             array: `numpy.ndarray` or `None`, optional
                 If `None` (the default) then the elements are derived
-                from the data stored in the Dask array. Otherwise
-                they are derived from *array*, which is assumed to be
-                entirely equivalent to the Dask array.
+                from the data stored in the Dask array. Otherwise they
+                are derived from *array*.
 
         :Returns:
 
@@ -2243,6 +2246,9 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         # Parse the new elements
         elements = elements.copy()
         for i, x in elements.items():
+            if x is np.ma.masked:
+                continue
+
             if np.ma.is_masked(x):
                 x = np.ma.masked
             else:
@@ -2709,8 +2715,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         elif not isinstance(a, np.ndarray):
             a = np.asanyarray(a)
 
-        # Set cached elements
-        self.set_cached_elements(array=a)
+        self.cache_elements(_array=a)
         return a
 
     @property
@@ -3790,6 +3795,100 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         return data
 
+    def cache_elements(self, _array=None):
+        """Create the cache of selected array elements.
+
+        Any existing cached elements are removed prior to the
+        createion of the new cached elements.
+
+        **Performance**
+
+        Deriving the cached values from the Dask array (the default)
+        when the underlying data are stored in datasets on disk can be
+        slow, especially when the datasets are being accessed
+        remotely.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_cached_elements`
+
+        :Parameters:
+
+            _array: `None` or `numpy.ndarray` or  `numpy.ma.masked` or `int` or `float` or `bool` or `str`, optional
+                If `None` (the default) then the cached elements are
+                derived from the data stored in the Dask array.
+                Otherwise they are derived from *_array*, which is
+                assumed (but never checked) to be equivalent to the
+                Dask array. (*_array* must be equivalent to the array
+                returned by `array`).
+
+        :Returns:
+
+            `dict`
+                The newly created cached elements.
+
+        """
+        self._del_cached_elements()
+
+        size = self.size
+        if not size:
+            # No elements
+            return {}
+
+        if _array is not None and isinstance(
+            _array, (int, float, bool, str, np.ma.core.MaskedConstant)
+        ):
+            # Selected Python scalars, and np.ma.masked
+            cache = {i: _array for i in (0, -1)}
+        else:
+            ndim = self.ndim
+            if not ndim:
+                # 0-d
+                element = self._items(Ellipsis, array=_array)
+                cache = {i: element for i in (0, -1)}
+            elif ndim == 1:
+                # 1-d
+                if size == 1:
+                    element = self._items(Ellipsis, array=_array)
+                    cache = {i: element for i in (0, -1)}
+                elif size <= 3:
+                    elements = self._items(Ellipsis, array=_array)
+                    cache = {i: elements[i] for i in (0, -1)}
+                    if size == 3:
+                        cache[1] = elements[1]
+                else:
+                    elements = self._items(
+                        slice(0, size, size - 1), array=_array
+                    )
+                    cache = {i: elements[i] for i in (0, -1)}
+            elif ndim == 2 and self.shape[-1] == 2:
+                # 2-d with second dimension size 2 (like bounds for
+                # 1-d coordinates)
+                size0 = size // 2
+                if size0 == 1:
+                    step = 1
+                else:
+                    step = size0 - 1
+
+                elements = self._items(slice(0, size0, step), array=_array)
+                elements = elements.flatten()
+                cache = {i: elements[i] for i in (0, 1, -2, -1)}
+            elif size == 3:
+                # N-d with size 3
+                elements = self._items(Ellipsis, array=_array)
+                elements = elements.flatten()
+                cache = {i: elements[i] for i in (0, 1, -1)}
+            else:
+                # All other N-d cases
+                cache = {}
+                cache[0] = self._items((slice(0, 1, 1),) * ndim, array=_array)
+                cache[-1] = self._items(
+                    (slice(-1, None, 1),) * ndim, array=_array
+                )
+
+        self._set_cached_elements(cache)
+        return self._get_cached_elements().copy()
+
     def chunk_indices(self):
         """Return indices of the data that define each dask chunk.
 
@@ -3991,6 +4090,9 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 a.soften_mask()
 
             a.set_fill_value(self.get_fill_value(None))
+
+        if isinstance(a, (np.ndarray, int, float, bool, str)):
+            self.cache_elements(_array=a)
 
         return a
 
@@ -5377,17 +5479,19 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
     def get_cached_elements(self):
         """Get the cache of selected array elements.
 
-        If the cache is empty, then `set_cached_elements` may used to
+        If the cache is empty, then `cache_elements` may used to
         populated it.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `set_cached_elements`
+        .. seealso:: `cache_elements`
 
         :Returns:
 
             `dict`
-                The existing cached elements.
+                The existing cached elements. The cache can not be
+                modified by adding or removing keys to this
+                dictionary.
 
         **Examples**
 
@@ -5397,93 +5501,6 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         """
         return self._get_cached_elements().copy()
-
-    def set_cached_elements(self, array=None):
-        """Create the cache of selected array elements.
-
-        Any existing cached elements are overwritten.
-
-        **Performance**
-
-        Deriving the cached values from the Dask array (the default)
-        when the underlying data are stored in datasets on disk can be
-        slow, especially when the datasets are being accessed
-        remotely.
-
-        .. versionadded:: NEXTVERSION
-
-        .. seealso:: `get_cached_elements`
-
-        :Parameters:
-
-            array: `None` or `numpy.ndarray or `int` or `float` or `bool` or `str`, optional
-                If `None` (the default) then the cached elements are
-                derived from the data stored in the Dask array.
-                Otherwise they are derived from *array*, which is
-                assumed to be entirely equivalent to the Dask array.
-
-        :Returns:
-
-            `dict`
-                The newly cached elements.
-
-        """
-        size = self.size
-        if not size:
-            # No elements
-            return {}
-
-        if array is not None and isinstance(array, (int, float, bool, str)):
-            # Selected Python scalars
-            cache = {i: array for i in (0, -1)}
-        else:
-            ndim = self.ndim
-            if not ndim:
-                # 0-d
-                element = self._items(Ellipsis, array=array)
-                cache = {i: element for i in (0, -1)}
-            elif ndim == 1:
-                # 1-d
-                if size == 1:
-                    element = self._items(Ellipsis, array=array)
-                    cache = {i: element for i in (0, -1)}
-                elif size <= 3:
-                    elements = self._items(Ellipsis, array=array)
-                    cache = {i: elements[i] for i in (0, -1)}
-                    if size == 3:
-                        cache[1] = elements[1]
-                else:
-                    elements = self._items(
-                        slice(0, size, size - 1), array=array
-                    )
-                    cache = {i: elements[i] for i in (0, -1)}
-            elif ndim == 2 and self.shape[-1] == 2:
-                # 2-d with second dimension size 2 (like bounds for
-                # 1-d coordinates)
-                size0 = size // 2
-                if size0 == 1:
-                    step = 1
-                else:
-                    step = size0 - 1
-
-                elements = self._items(slice(0, size0, step), array=array)
-                elements = elements.flatten()
-                cache = {i: elements[i] for i in (0, 1, -2, -1)}
-            elif size == 3:
-                # N-d with size 3
-                elements = self._items(Ellipsis, array=array)
-                elements = elements.flatten()
-                cache = {i: elements[i] for i in (0, 1, -1)}
-            else:
-                # All other N-d cases
-                cache = {}
-                cache[0] = self._items((slice(0, 1, 1),) * ndim, array=array)
-                cache[-1] = self._items(
-                    (slice(-1, None, 1),) * ndim, array=array
-                )
-
-        self._set_cached_elements(cache)
-        return cache
 
     def get_filenames(self, normalise=False, per_chunk=False):
         """The names of files containing parts of the data array.

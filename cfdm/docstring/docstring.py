@@ -1321,22 +1321,21 @@ _docstring_substitution_definitions = {
                 normalisation is done.""",
     # data
     "{{data: `bool` or `None`, optional}}": """data: `bool` or `None`, optional
-                If True (the default) then display the first and last
-                data values. This can take a long time if the data
-                needs an expensive computation, possibly including a
-                slow read from local or remote disk, to find the
-                display values.
+                If True then display the first and last data values.
+                This can take a long time if the data needs an
+                expensive computation, possibly including a slow read
+                from local or remote disk, to find the display values.
 
                 If False then do not display first and last data
-                values (and possibly others, depending on the data
-                shape), *unless data values have been previously
-                cached*, thereby avoiding the computational cost.
+                values (nor any others, depending on the data shape),
+                *unless those data values have been previously
+                cached*.
 
                 If `None` (the default) then the value of *data* will
                 taken from the `{{package}}.display_data` function.
 
-                Note that whenever the first and last values are
-                displayed, they are cached for fast future retrieval.""",
+                Note that whenever data values are displayed, they are
+                cached for fast future retrieval.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
