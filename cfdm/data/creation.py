@@ -2,8 +2,6 @@
 
 import numpy as np
 
-# from dask.base import is_dask_collection
-
 
 def to_dask(array, chunks, **from_array_options):
     """Create a `dask` array.
