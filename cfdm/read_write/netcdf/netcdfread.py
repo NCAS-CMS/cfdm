@@ -5555,6 +5555,7 @@ class NetCDFRead(IORead):
         attribute_key = next(iter(attribute))
         var_name, attribute_name = attribute_key.split(":")
         attribute_value = attribute[attribute_key]
+        pre_d = {"code": code, "value": attribute_value, "reason": {}}
         d = {"code": code, "value": attribute_value, "reason": message}
 
         if dimensions is not None:
@@ -5567,37 +5568,48 @@ class NetCDFRead(IORead):
         g["dataset_compliance"].setdefault(
             top_ancestor_ncvar, noncompliance_dict
         )
-
-        g["dataset_compliance"][top_ancestor_ncvar]["non-compliance"].setdefault(
-            attribute_name, []  ### ncvar, []
-        ).append(d)  ###{attribute_name: d})
-
+        ###print("READ VARS ARE", g)
         # Only add a component report if there is need i.e. if the direct
         # parent ncvar is defined so not the same as the top ancestor ncvar
         if direct_parent_ncvar:
+            g["dataset_compliance"][top_ancestor_ncvar]["non-compliance"].setdefault(
+                attribute_name, []
+            ).append(d)
+
             # Dicts are optimised for key-value lookup, but this requires
             # value-key lookup -  is there a better way?
             varattrs = g["variable_attributes"][top_ancestor_ncvar]
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
 
-            # SADIE
-            print(
-                "ARGS ARE",
-                top_ancestor_ncvar,
-                ncvar,
-                direct_parent_ncvar,
-                message,
-                attribute,
-                dimensions,
-                conformance,
-            )
+            # SLB DEV ARGS
+            # print(
+            #     "ARGS ARE",
+            #     top_ancestor_ncvar,
+            #     ncvar,
+            #     direct_parent_ncvar,
+            #     message,
+            #     attribute,
+            #     dimensions,
+            #     conformance,
+            # )
             parent_ncdims = self._ncdimensions(top_ancestor_ncvar)
 
             e = g["component_report"].setdefault(
                 direct_parent_ncvar, noncompliance_dict)
-            e2 = e.setdefault(store_attr, d)
-            e2["reason"] = {ncvar: d.copy()}
+            e2 = e.setdefault(store_attr, pre_d)
+            e2["reason"][ncvar] = d
+        else:
+            ### print("NON DIRECT PARENT CASE:", ncvar, top_ancestor_ncvar, d)
+            g1 = g["dataset_compliance"][top_ancestor_ncvar]["non-compliance"].setdefault(
+                ncvar, pre_d
+            )
+            g1["reason"].setdefault(attribute_name, []).append(d)
+            # SLB NEW: this shows there are missing parts from the dict!
+            # Some things aren't being added to the component report when
+            # should be...
+            # e = g["component_report"].setdefault(
+            #    top_ancestor_ncvar, noncompliance_dict)
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
@@ -5653,6 +5665,7 @@ class NetCDFRead(IORead):
         # SLB rename this 'd' from _add_message to something better
         # SLB Note: have dropped 'code' because it doesn't make sense to
         # register a code except at the lowest level...
+        # SLB NOTE reason is a dict, not a list!
         d = {"value": attribute, "reason": {}}
         if dimensions is not None:
             d["dimensions"] = dimensions
@@ -5669,6 +5682,7 @@ class NetCDFRead(IORead):
                 s2 = s1["reason"].setdefault(ncvar, noncompliance_dict)
                 s2["non-compliance"] = component_report
             else:
+                # Never used? Chage up method to be mesh specific, then?
                 set_on.setdefault(
                     ncvar, []
                 ).append(component_report)
