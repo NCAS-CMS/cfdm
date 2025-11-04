@@ -9,8 +9,6 @@ from .fragment import FragmentFileArray, FragmentUniqueValueArray
 from .netcdfindexer import netcdf_indexer
 from .utils import chunk_locations, chunk_positions
 
-# from uritools import isuri, uricompose
-
 
 class AggregatedArray(abstract.FileArray):
     """An array stored in a CF aggregation variable.
