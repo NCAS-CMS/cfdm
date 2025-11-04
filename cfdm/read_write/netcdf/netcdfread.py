@@ -1328,7 +1328,7 @@ class NetCDFRead(IORead):
             "verbose": verbose,
             # Warnings?
             "warnings": warnings,
-            "dataset_compliance": {None: {"non-compliance": {}}},
+            "dataset_compliance": {None: {"attributes": {}}},
             "component_report": {},
             "auxiliary_coordinate": {},
             "cell_measure": {},
@@ -3895,7 +3895,7 @@ class NetCDFRead(IORead):
             "CF version"
         ] = self.implementation.get_cf_version()
         g["dataset_compliance"][field_ncvar]["dimensions"] = dimensions
-        g["dataset_compliance"][field_ncvar].setdefault("non-compliance", {})
+        g["dataset_compliance"][field_ncvar].setdefault("attributes", {})
 
         logger.info(
             "    Converting netCDF variable "
@@ -5150,7 +5150,7 @@ class NetCDFRead(IORead):
         # -------------------------------------------------------------
         # Add the structural read report to the field/domain
         dataset_compliance = g["dataset_compliance"][field_ncvar]
-        components = dataset_compliance["non-compliance"]
+        components = dataset_compliance["attributes"]
         if components:
             dataset_compliance = {field_ncvar: dataset_compliance}
         else:
@@ -5563,7 +5563,7 @@ class NetCDFRead(IORead):
 
         noncompliance_dict = {
                 "CF version": self.implementation.get_cf_version(),
-                "non-compliance": {},
+                "attributes": {},
         }
         g["dataset_compliance"].setdefault(
             top_ancestor_ncvar, noncompliance_dict
@@ -5572,7 +5572,7 @@ class NetCDFRead(IORead):
         # Only add a component report if there is need i.e. if the direct
         # parent ncvar is defined so not the same as the top ancestor ncvar
         if direct_parent_ncvar:
-            g["dataset_compliance"][top_ancestor_ncvar]["non-compliance"].setdefault(
+            g["dataset_compliance"][top_ancestor_ncvar]["attributes"].setdefault(
                 attribute_name, []
             ).append(d)
 
@@ -5601,7 +5601,7 @@ class NetCDFRead(IORead):
             e2["reason"][ncvar] = d
         else:
             ### print("NON DIRECT PARENT CASE:", ncvar, top_ancestor_ncvar, d)
-            g1 = g["dataset_compliance"][top_ancestor_ncvar]["non-compliance"].setdefault(
+            g1 = g["dataset_compliance"][top_ancestor_ncvar]["attributes"].setdefault(
                 ncvar, pre_d
             )
             g1["reason"].setdefault(attribute_name, []).append(d)
@@ -5672,15 +5672,15 @@ class NetCDFRead(IORead):
 
         noncompliance_dict = {
             "CF version": self.implementation.get_cf_version(),
-            "non-compliance": {},
+            "attributes": {},
         }
 
         if component_report:
-            set_on = g["dataset_compliance"][parent_ncvar]["non-compliance"]
+            set_on = g["dataset_compliance"][parent_ncvar]["attributes"]
             if g["mesh"]:
                 s1 = set_on.setdefault("mesh", d)
                 s2 = s1["reason"].setdefault(ncvar, noncompliance_dict)
-                s2["non-compliance"] = component_report
+                s2["attributes"] = component_report
             else:
                 # Never used? Chage up method to be mesh specific, then?
                 set_on.setdefault(
@@ -8373,7 +8373,7 @@ class NetCDFRead(IORead):
         if component_report is not None:
             for var, report in component_report.items():
                 g["dataset_compliance"][parent_ncvar][
-                    "non-compliance"
+                    "attributes"
                 ].setdefault(var, []).extend(report)
 
         return self.implementation.copy_construct(g[construct_type][ncvar])

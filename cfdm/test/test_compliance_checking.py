@@ -296,8 +296,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         pprint(dc_output)
 
         # 'ta' is the field variable we test on
-        self.assertIn("non-compliance", dc_output["ta"])
-        noncompliance = dc_output["ta"]["non-compliance"]
+        self.assertIn("attributes", dc_output["ta"])
+        noncompliance = dc_output["ta"]["attributes"]
 
         expected_keys = [
             # itself? "ta",
@@ -392,8 +392,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         pprint(dc_output_1)
 
         # 'pa' is the field variable we test on
-        self.assertIn("non-compliance", dc_output_1["pa"])
-        noncompliance = dc_output_1["pa"]["non-compliance"]
+        self.assertIn("attributes", dc_output_1["pa"])
+        noncompliance = dc_output_1["pa"]["attributes"]
 
         expected_keys = [
             # itself? "pa",
@@ -449,8 +449,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         pprint(dc_output_2)
 
         # 'ta' is the field variable we test on
-        self.assertIn("non-compliance", dc_output_2["ta"])
-        noncompliance = dc_output_2["ta"]["non-compliance"]
+        self.assertIn("attributes", dc_output_2["ta"])
+        noncompliance = dc_output_2["ta"]["attributes"]
 
         expected_keys = [
             # itself? "ta",
@@ -506,8 +506,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         pprint(dc_output_3)
 
         # 'v' is the field variable we test on
-        self.assertIn("non-compliance", dc_output_3["v"])
-        noncompliance = dc_output_3["v"]["non-compliance"]
+        self.assertIn("attributes", dc_output_3["v"])
+        noncompliance = dc_output_3["v"]["attributes"]
 
         expected_keys = [
             # itself? "v",
