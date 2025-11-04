@@ -272,7 +272,7 @@ class netcdf_indexer:
         elif data.dtype.kind in "OSU":
             kind = data.dtype.kind
             if kind == "S":
-                from netCDF4 import chartostring  # , default_fillvals
+                from netCDF4 import chartostring
 
                 data = chartostring(data)
 
