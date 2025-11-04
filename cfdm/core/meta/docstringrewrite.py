@@ -612,7 +612,7 @@ class DocstringRewriteMeta(type):
                 substitutions.
 
             class_docstring, `str` or `None`
-                If docstring of a class, or `None` of a method
+                If docstring of a class, or `None` if a method
                 docstring is being updated.
 
         :Returns:
