@@ -1,7 +1,5 @@
 import logging
 
-import h5netcdf
-
 from . import abstract
 from .locks import netcdf_lock
 from .mixin import IndexMixin
@@ -211,6 +209,6 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
                 within the file.
 
         """
-        return super().open(
-            h5netcdf.File, mode="r", decode_vlen_strings=True, **kwargs
-        )
+        from h5netcdf import File
+
+        return super().open(File, mode="r", decode_vlen_strings=True, **kwargs)

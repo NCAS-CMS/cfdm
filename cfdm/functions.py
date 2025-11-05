@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from copy import deepcopy
 from functools import total_ordering
 from math import isnan
@@ -10,13 +11,9 @@ from os.path import dirname as os_dirname
 from os.path import join
 
 import numpy as np
-from dask import config as _config
-from dask.base import is_dask_collection
-from dask.utils import parse_bytes
-from uritools import uricompose, urisplit
 
 from . import __cf_version__, __file__, __version__, core
-from .constants import CONSTANTS, ValidLogLevels
+from .constants import ValidLogLevels
 from .core import DocstringRewriteMeta
 from .core.docstring import (
     _docstring_substitution_definitions as _core_docstring_substitution_definitions,
@@ -222,13 +219,6 @@ def _configuration(_Configuration, **kwargs):
             values are specified.
 
     """
-    old = {name.lower(): val for name, val in CONSTANTS.items()}
-
-    # Filter out 'None' kwargs from configuration() defaults. Note that this
-    # does not filter out '0' or 'True' values, which is important as the user
-    # might be trying to set those, as opposed to None emerging as default.
-    kwargs = {name: val for name, val in kwargs.items() if val is not None}
-
     # Note values are the functions not the keyword arguments of same name:
     reset_mapping = {
         "new_atol": atol,
@@ -236,6 +226,17 @@ def _configuration(_Configuration, **kwargs):
         "new_log_level": log_level,
         "new_chunksize": chunksize,
     }
+
+    # Make sure that the constants dictionary is fully populated
+    for func in reset_mapping.values():
+        func()
+
+    old = ConstantAccess.constants(copy=True)
+
+    # Filter out 'None' kwargs from configuration() defaults. Note that this
+    # does not filter out '0' or 'True' values, which is important as the user
+    # might be trying to set those, as opposed to None emerging as default.
+    kwargs = {name: val for name, val in kwargs.items() if val is not None}
 
     old_values = {}
 
@@ -582,6 +583,8 @@ def abspath(path, uri=None):
     ValueError: Can't set uri=False for path='http:///file.nc'
 
     """
+    from uritools import uricompose, urisplit
+
     u = urisplit(path)
     scheme = u.scheme
     path = u.path
@@ -728,6 +731,8 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
     '/data'
 
     """
+    from uritools import uricompose, urisplit
+
     u = urisplit(path)
     scheme = u.scheme
     path = u.path
@@ -1465,44 +1470,52 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
 
 
 class ConstantAccess(metaclass=DocstringRewriteMeta):
-    '''Base class to act as a function accessing package-wide constants.
+    """Base class to act as a function accessing package-wide constants.
 
     Subclasses must implement or inherit a method called `_parse` as
-    follows:
+    follows::
 
        def _parse(cls, arg):
-          """Parse a new constant value.
+          '''Parse a new constant value.
 
-       :Parameter:
+          :Parameter:
 
-            cls:
-                This class.
+               cls:
+                   This class.
 
-            arg:
-                The given new constant value.
+               arg:
+                   The given new constant value.
 
-       :Returns:
+          :Returns:
 
-                A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                   A version of the new constant value suitable for
+                   insertion into the `_constants` dictionary.
 
-           """
+           '''
 
-    '''
+    """
 
-    # Define the dictionary that stores the constant values
-    _CONSTANTS = CONSTANTS
+    # Define the dictionary that stores all constant values.
+    #
+    # Sublasses must re-define this as an empty dictionary (unless
+    # it's OK for the child to modify the parent's dictionary).
+    _constants = {}
 
-    # Define the `Constant` object that contains a constant value
+    # Define the `Constant` class that contains a constant value
     _Constant = Constant
 
-    # Define the key of the _CONSTANTS dictionary that contains the
+    # Define the key of the `_constants` dictionary that contains the
     # constant value
     _name = None
 
+    # Define the default value of the constant
+    _default = None
+
     def __new__(cls, *arg):
         """Return a `Constant` instance during class creation."""
-        old = cls._CONSTANTS[cls._name]
+        name = cls._name
+        constants = cls.constants(copy=False)
+        old = constants.setdefault(name, cls._default)
         if arg:
             arg = arg[0]
             try:
@@ -1511,7 +1524,7 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
             except AttributeError:
                 pass
 
-            cls._CONSTANTS[cls._name] = cls._parse(cls, arg)
+            constants[name] = cls._parse(cls, arg)
 
         return cls._Constant(old, _func=cls)
 
@@ -1545,6 +1558,15 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
 
         """
         return 0
+
+    @classmethod
+    def constants(cls, copy=True):
+        """See docstring to `ConstantAccess`."""
+        out = cls._constants
+        if copy:
+            out = out.copy()
+
+        return out
 
 
 class atol(ConstantAccess):
@@ -1608,7 +1630,8 @@ class atol(ConstantAccess):
 
     """
 
-    _name = "ATOL"
+    _name = "atol"
+    _default = sys.float_info.epsilon
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1626,7 +1649,7 @@ class atol(ConstantAccess):
         :Returns:
 
                 A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                insertion into the `_constants` dictionary.
 
         """
         return float(arg)
@@ -1693,7 +1716,8 @@ class rtol(ConstantAccess):
 
     """
 
-    _name = "RTOL"
+    _name = "rtol"
+    _default = sys.float_info.epsilon
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1710,8 +1734,8 @@ class rtol(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         return float(arg)
@@ -1778,7 +1802,8 @@ class chunksize(ConstantAccess):
 
     """
 
-    _name = "CHUNKSIZE"
+    _name = "chunksize"
+    _default = 134217728  # 134217728 = 128 MiB
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1795,12 +1820,16 @@ class chunksize(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
-        _config.set({"array.chunk-size": arg})
-        return parse_bytes(arg)
+        from dask import config
+        from dask.utils import parse_bytes
+
+        arg = parse_bytes(arg)
+        config.set({"array.chunk-size": arg})
+        return arg
 
 
 class log_level(ConstantAccess):
@@ -1875,7 +1904,8 @@ class log_level(ConstantAccess):
 
     """
 
-    _name = "LOG_LEVEL"
+    _name = "log_level"
+    _default = logging.getLevelName(logging.getLogger().level)
 
     # Define the valid log levels
     _ValidLogLevels = ValidLogLevels
@@ -1906,8 +1936,8 @@ class log_level(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         # Ensuring it is a valid level specifier to set & use, either
@@ -2230,6 +2260,8 @@ def indices_shape(indices, full_shape, keepdims=True):
     []
 
     """
+    from dask.base import is_dask_collection
+
     shape = []
     #    i = 0
     for index, full_size in zip(indices, full_shape):
