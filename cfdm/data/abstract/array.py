@@ -1,5 +1,6 @@
-from ... import core
-from ...mixin import Container
+from cfdm import core
+from cfdm.mixin import Container
+
 from .. import mixin
 
 

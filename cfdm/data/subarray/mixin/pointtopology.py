@@ -1,7 +1,5 @@
 import numpy as np
 
-from ....functions import integer_dtype
-
 
 class PointTopology:
     """Mixin class for point topology array compressed by UGRID.
@@ -23,6 +21,8 @@ class PointTopology:
         from math import isnan
 
         from scipy.sparse import csr_array
+
+        from cfdm.functions import integer_dtype
 
         start_index = self.start_index
         node_connectivity = self._select_data(check_mask=False)

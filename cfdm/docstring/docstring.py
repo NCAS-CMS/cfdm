@@ -9,13 +9,7 @@ replacement text, and will be substituted as usual.
 
 Replacement text may not contain other non-special substitutions.
 
-Keys must be a `str` or `re.Pattern` object:
-
-* If a key is a `str` then the corresponding value must be a string.
-
-* If a key is a `re.Pattern` object then the corresponding value must
-  be a string or a callable, as accepted by the `re.Pattern.sub`
-  method.
+A key and its corresponding value must both be `str`.
 
 .. versionaddedd:: (cfdm) 1.8.7.0
 
@@ -1044,7 +1038,7 @@ _docstring_substitution_definitions = {
                 parts are not set. Can't be used with the *update*
                 parameter.""",
     # update
-    "{{update: (sequence of) `str`, optional}": """update: (sequence of) `str`, optional
+    "{{update: (sequence of) `str`, optional}}": """update: (sequence of) `str`, optional
                 Add these original file names to those already
                 stored. The original file names of any constituent
                 parts are not updated. Can't be used with the *define*
