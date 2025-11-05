@@ -555,6 +555,12 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
         self.assertEqual(d.array, 2.5)
 
+        # Cached values
+        d = cfdm.Data([1, 2])
+        d._del_cached_elements()
+        d.array
+        self.assertEqual(d.get_cached_elements(), {0: 1, -1: 2})
+
     def test_Data_flatten(self):
         """Test Data.flatten."""
         ma = np.ma.arange(24).reshape(1, 2, 3, 4)
@@ -1632,6 +1638,12 @@ class DataTest(unittest.TestCase):
         # Date-time array
         d = cfdm.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
         self.assertEqual(d.compute(), 2.5)
+
+        # Cached values
+        d = cfdm.Data([1, 2])
+        d._del_cached_elements()
+        d.compute()
+        self.assertEqual(d.get_cached_elements(), {0: 1, -1: 2})
 
     def test_Data_chunks(self):
         """Test Data.chunks."""
@@ -2831,8 +2843,14 @@ class DataTest(unittest.TestCase):
             if a is not np.ma.masked:
                 self.assertEqual(a.dtype, d.dtype)
 
-    def test_Data_cached_elements(self):
+    def test_Data_cache_elements(self):
         """Test setting of cached elements."""
+        d = cfdm.Data(1)
+        self.assertEqual(d.get_cached_elements(), {0: 1, -1: 1})
+        self.assertIsNone(d._del_cached_elements())
+        self.assertFalse(d.get_cached_elements())
+
+        # Test via __init__, which calls `cache_elements`
         for array in (
             1,
             1.0,
@@ -2923,14 +2941,12 @@ class DataTest(unittest.TestCase):
         for array in ([1, 2, 3], [[1, 2, 3]]):
             d = cfdm.Data(array)
             d._del_cached_elements()
-            self.assertFalse(d.get_cached_elements())
-            d.set_cached_elements()
+            d.cache_elements()
             self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 3})
 
         # Check that __str__ sets missing cached elements
         d = cfdm.Data([[1, 2, 3]])
         d._del_cached_elements()
-        self.assertFalse(d.get_cached_elements())
         str(d)
         self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 3})
 
