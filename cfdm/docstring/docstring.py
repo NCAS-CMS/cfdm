@@ -9,13 +9,7 @@ replacement text, and will be substituted as usual.
 
 Replacement text may not contain other non-special substitutions.
 
-Keys must be a `str` or `re.Pattern` object:
-
-* If a key is a `str` then the corresponding value must be a string.
-
-* If a key is a `re.Pattern` object then the corresponding value must
-  be a string or a callable, as accepted by the `re.Pattern.sub`
-  method.
+A key and its corresponding value must both be `str`.
 
 .. versionaddedd:: (cfdm) 1.8.7.0
 
@@ -974,7 +968,7 @@ _docstring_substitution_definitions = {
                 parts are not set. Can't be used with the *update*
                 parameter.""",
     # update
-    "{{update: (sequence of) `str`, optional}": """update: (sequence of) `str`, optional
+    "{{update: (sequence of) `str`, optional}}": """update: (sequence of) `str`, optional
                 Add these original file names to those already
                 stored. The original file names of any constituent
                 parts are not updated. Can't be used with the *define*
@@ -1321,22 +1315,23 @@ _docstring_substitution_definitions = {
                 normalisation is done.""",
     # data
     "{{data: `bool` or `None`, optional}}": """data: `bool` or `None`, optional
-                If True (the default) then display the first and last
-                data values. This can take a long time if the data
-                needs an expensive computation, possibly including a
-                slow read from local or remote disk, to find the
-                display values.
+                If True then show the first and last data elements
+                (and possibly others, depending on the data shape)
+                when displaying data and constructs with their `!dump`
+                methods, or via `repr` and `str`. This can take a long
+                time if the data needs an expensive computation,
+                possibly including a slow read from local or remote
+                disk, to find the display values.
 
-                If False then do not display first and last data
-                values (and possibly others, depending on the data
-                shape), *unless data values have been previously
-                cached*, thereby avoiding the computational cost.
+                If False then do not show such data elements, *unless
+                data elements have been previously cached*, thereby
+                avoiding a potential computational cost.
 
                 If `None` (the default) then the value of *data* will
-                taken from the `{{package}}.display_data` function.
+                taken from the `{{package}}.data_elements` function.
 
-                Note that whenever the first and last values are
-                displayed, they are cached for fast future retrieval.""",
+                Note that whenever data elements are displayed, they
+                are cached for fast future retrieval.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

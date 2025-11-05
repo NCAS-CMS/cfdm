@@ -1,10 +1,12 @@
 Version NEXTVERSION
 ----------------
 
-**2025-??-??**
+**2026-01-??**
 
 * Set cached elements during `cfdm.Data.__init__`
   (https://github.com/NCAS-CMS/cfdm/issues/363)
+* Reduce the time taken to import `cfdm`
+  (https://github.com/NCAS-CMS/cfdm/issues/361)
 
 ----
 

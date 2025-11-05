@@ -1,8 +1,6 @@
 from numbers import Integral
 from re import split
 
-from dask.utils import parse_bytes
-
 from ..core.functions import deepcopy
 from ..functions import _DEPRECATION_ERROR_METHOD
 
@@ -2729,6 +2727,8 @@ class NetCDFChunks(NetCDFMixin):
             ]
 
         if chunksizes != "contiguous":
+            from dask.utils import parse_bytes
+
             try:
                 chunksizes = parse_bytes(chunksizes)
             except ValueError:

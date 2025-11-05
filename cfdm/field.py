@@ -1807,21 +1807,6 @@ class Field(
 
             {{data: `bool` or `None`, optional}}
 
-            data: `bool` or `None`, optional
-                If True (the default) then display the first and last
-                Field data values. This can take a long time if the
-                data needs an expensive computation (possibly
-                including a slow read from local or remote disk), in
-                which case setting *data* to False will not display
-                these values, *unless they have been previously
-                cached*, thereby avoiding the computational cost.
-
-                If `None` (the default) then the value of *data* will
-                taken from the `{{package}}.cached_data` function.
-
-                Note that whenever the first and last values are
-                displayed, they are cached for fast future retrieval.
-
                 .. versionadded:: (cfdm) 1.12.3.0
 
             display: `bool`, optional

@@ -6,12 +6,7 @@ from math import prod
 from numbers import Integral
 from os.path import commonprefix
 
-import dask.array as da
 import numpy as np
-from dask.base import collections_to_expr, is_dask_collection, tokenize
-from dask.optimization import cull
-from netCDF4 import default_fillvals
-from scipy.sparse import issparse
 
 from .. import core
 from ..constants import masked
@@ -22,8 +17,9 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
     _numpy_allclose,
-    display_data,
+    data_elements,
     is_log_level_info,
     parse_indices,
 )
@@ -139,7 +135,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         """Store component classes."""
         instance = super().__new__(cls)
         instance._Units_class = Units
-        instance._display_data = display_data
+        instance._data_elements = data_elements
         return instance
 
     def __init__(
@@ -430,6 +426,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             return
 
         # Is the array a sparse array?
+        from scipy.sparse import issparse
+
         sparse_array = issparse(array)
 
         # Is the array data in memory?
@@ -448,6 +446,9 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 ndim = array.ndim
             else:
                 ndim = np.ndim(array)
+        else:
+            if array is np.ma.masked:
+                array = np.ma.array(array)
 
         # Create the _axes attribute: an ordered sequence of unique
         # names (within this instance) for each array axis.
@@ -478,6 +479,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 pass
 
         # Deterministic name
+        from dask.base import is_dask_collection
+
         self._custom["has_deterministic_name"] = not is_dask_collection(array)
 
         if self._is_abstract_Array_subclass(array):
@@ -494,7 +497,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
-        # Whether or not to get array elements for the cache
+        # Whether or not to get selected array elements for the cache
         cache_elements = isinstance(array, (np.ndarray, int, float, bool, str))
 
         dx = to_dask(array, chunks, **kwargs)
@@ -729,6 +732,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 # can't do a normal dask subspace
 
                 # Subspace axes which have list/1-d array indices
+                import dask.array as da
+
                 for axis in axes_with_list_indices:
                     dx = da.take(dx, indices[axis], axis=axis)
 
@@ -1039,7 +1044,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         close_brackets = "]" * ndim
 
         if data is None:
-            data = self._display_data()
+            data = self._data_elements()
 
         if not data and not self._get_cached_elements():
             out = f"{open_brackets}...{close_brackets}"
@@ -1985,6 +1990,40 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         self._clear_after_dask_update(clear)
         return out
 
+    def _elements(self, index, array=None):
+        """Return the selected elements of the data.
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            index:
+                The index that define the elements.
+
+            array: `numpy.ndarray` or `None`, optional
+                If `None` (the default) then the elements are derived
+                from the data stored in the Dask array. Otherwise
+                they are derived from *array*, which is assumed to be
+                entirely equivalent to the Dask array.
+
+        :Returns:
+
+                The selected elements of the data.
+
+        **Examples**
+
+        >>> d = {{package}}.Data([[1, 2, 3]])
+        >>> d._elements(...)
+        array([[1, 2, 3]])
+        >>> d._elements((0, 2))
+        array([[3]])
+
+        """
+        if array is None:
+            return self[index].array
+        else:
+            return array[index]
+
     def _get_cached_elements(self):
         """Return the cache of selected element values.
 
@@ -2029,6 +2068,9 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
     def _item(self, index):
         """Return an element of the data as a scalar.
 
+        Deprecated at version NEXTVERSION. Use the `_elements` method
+        instead.
+
         It is assumed, but not checked, that the given index selects
         exactly one element.
 
@@ -2051,45 +2093,13 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         masked
 
         """
-        array = self[index].array.squeeze()
-        if np.ma.is_masked(array):
-            array = np.ma.masked
-
-        return array
-
-    def _items(self, index, array=None):
-        """Return elements of the data.
-
-        .. versionadded:: NEXTVERSION
-
-        :Parameters:
-
-            index:
-                The index that define the elements.
-
-            array: `numpy.ndarray` or `None`, optional
-                If `None` (the default) then the elements are derived
-                from the data stored in the Dask array. Otherwise
-                they are derived from *array*, which is assumed to be
-                entirely equivalent to the Dask array.
-
-        :Returns:
-
-                The selected elements of the data.
-
-        **Examples**
-
-        >>> d = {{package}}.Data([[1, 2, 3]])
-        >>> d._items(...)
-        array([[1, 2, 3]])
-        >>> d._items((0, 2))
-        array([[3]])
-
-        """
-        if array is None:
-            return self[index].array
-        else:
-            return array[index]
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "_item",
+            "Use the '_elements' method instead.",
+            version="NEXTVERSION",
+            removed_at="1.14.0.0",
+        )  # pragma: no cover
 
     def _modify_dask_graph(
         self, method, args=(), kwargs=None, exceptions=(AttributeError,)
@@ -2152,6 +2162,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 updated = True
 
         if updated:
+            import dask.array as da
+
             # The Dask graph was modified, so recast the dictionary
             # representation as a Dask array.
             dx = self.to_dask_array(
@@ -2654,6 +2666,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                     "has_deterministic_name", False
                 )
             except AttributeError:
+                from dask.base import is_dask_collection
+
                 custom["has_deterministic_name"] = not is_dask_collection(
                     other
                 )
@@ -2703,6 +2717,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         2000-12-01 00:00:00
 
         """
+        from scipy.sparse import issparse
+
         a = self.compute().copy()
         if issparse(a):
             a = a.toarray()
@@ -3097,6 +3113,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         (12, 73, 96)
 
         """
+        import dask.array as da
+
         mask_data_obj = self.copy(array=False)
 
         dx = self.to_dask_array(
@@ -3341,6 +3359,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         True
 
         """
+        from scipy.sparse import issparse
+
         array = self.compute()
         if issparse(array):
             return array.copy()
@@ -3437,6 +3457,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         False
 
         """
+        import dask.array as da
+
         d = self.copy(array=False)
         dx = self.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=True
@@ -3502,6 +3524,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         False
 
         """
+        import dask.array as da
+
         d = self.copy(array=False)
         dx = self.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=True
@@ -3711,6 +3735,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 mask |= dx > valid_max
 
         if mask is not None:
+            import dask.array as da
+
             dx = da.ma.masked_where(mask, dx)
             CFA = self._CFA
         else:
@@ -3898,6 +3924,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         [9]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array(_force_mask_hardness=True, _force_to_memory=True)
@@ -4089,6 +4117,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         if n_data == 1:
             return data0
+
+        import dask.array as da
 
         conformed_data = [data0]
         for data1 in data[1:]:
@@ -4370,6 +4400,9 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
           0): <Task ('cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c', 0) cfdm_harden_mask(...)>}
 
         """
+        import dask.array as da
+        from dask.optimization import cull
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array(
@@ -4527,6 +4560,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         [ False  True]                                 #uninitialised
 
         """
+        import dask.array as da
+
         dx = da.empty(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
@@ -4608,6 +4643,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 f"{self.get_fill_value(None)} != {other.get_fill_value(None)}"
             )  # pragma: no cover
             return False
+
+        import dask.array as da
 
         self_dx = self.to_dask_array(_force_mask_hardness=False)
         other_dx = other.to_dask_array(_force_mask_hardness=False)
@@ -4806,6 +4843,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         if fill_value is None:
             fill_value = d.get_fill_value(None)
             if fill_value is None:  # still...
+                from netCDF4 import default_fillvals
+
                 fill_value = default_fillvals.get(d.dtype.str[1:])
                 if fill_value is None and d.dtype.kind in ("SU"):
                     fill_value = default_fillvals.get("S1", None)
@@ -4866,7 +4905,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         try:
             return self._get_cached_elements()[0]
         except KeyError:
-            item = self._item((slice(0, 1, 1),) * self.ndim)
+            item = self._elements((slice(0, 1, 1),) * self.ndim)
             self._set_cached_elements({0: item})
             return self._get_cached_elements()[0]
 
@@ -5073,6 +5112,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         [False False]
 
         """
+        import dask.array as da
+
         if dtype is None:
             # Need to explicitly set the default because dtype is not
             # a named keyword of da.full
@@ -5361,6 +5402,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         True
 
         """
+        from dask.base import tokenize
+
         if not self.has_deterministic_name():
             raise ValueError()
 
@@ -5440,20 +5483,20 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             ndim = self.ndim
             if not ndim:
                 # 0-d
-                element = self._items(Ellipsis, array=array)
+                element = self._elements(Ellipsis, array=array)
                 cache = {i: element for i in (0, -1)}
             elif ndim == 1:
                 # 1-d
                 if size == 1:
-                    element = self._items(Ellipsis, array=array)
+                    element = self._elements(Ellipsis, array=array)
                     cache = {i: element for i in (0, -1)}
                 elif size <= 3:
-                    elements = self._items(Ellipsis, array=array)
+                    elements = self._elements(Ellipsis, array=array)
                     cache = {i: elements[i] for i in (0, -1)}
                     if size == 3:
                         cache[1] = elements[1]
                 else:
-                    elements = self._items(
+                    elements = self._elements(
                         slice(0, size, size - 1), array=array
                     )
                     cache = {i: elements[i] for i in (0, -1)}
@@ -5466,19 +5509,21 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 else:
                     step = size0 - 1
 
-                elements = self._items(slice(0, size0, step), array=array)
+                elements = self._elements(slice(0, size0, step), array=array)
                 elements = elements.flatten()
                 cache = {i: elements[i] for i in (0, 1, -2, -1)}
             elif size == 3:
                 # N-d with size 3
-                elements = self._items(Ellipsis, array=array)
+                elements = self._elements(Ellipsis, array=array)
                 elements = elements.flatten()
                 cache = {i: elements[i] for i in (0, 1, -1)}
             else:
                 # All other N-d cases
                 cache = {}
-                cache[0] = self._items((slice(0, 1, 1),) * ndim, array=array)
-                cache[-1] = self._items(
+                cache[0] = self._elements(
+                    (slice(0, 1, 1),) * ndim, array=array
+                )
+                cache[-1] = self._elements(
                     (slice(-1, None, 1),) * ndim, array=array
                 )
 
@@ -6020,7 +6065,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         try:
             return self._get_cached_elements()[-1]
         except KeyError:
-            item = self._item((slice(-1, None, 1),) * self.ndim)
+            item = self._elements((slice(-1, None, 1),) * self.ndim)
             self._set_cached_elements({-1: item})
             return self._get_cached_elements()[-1]
 
@@ -6061,6 +6106,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         [1.0 -- 2.0 -- 3.0]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if rtol is None:
@@ -6118,6 +6165,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         [1 -- 3 -- 5]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         array = cfdm_where(d.array, condition, masked, None, d.hardmask)
@@ -6184,6 +6233,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         <{{repr}}Data(1, 1): [[11]] K>
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         d = collapse(
             da.max,
@@ -6240,6 +6291,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         <{{repr}}Data(1, 1): [[0]] K>
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         d = collapse(
             da.min,
@@ -6292,6 +6345,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         [ True  True]
 
         """
+        import dask.array as da
+
         dx = da.ones(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
@@ -6347,6 +6402,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
          [3 4 5 -- --]]
 
         """
+        import dask.array as da
+
         if not 0 <= axis < self.ndim:
             raise ValueError(
                 f"'axis' must be a valid dimension position. Got {axis}"
@@ -6619,6 +6676,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             `None`
 
         """
+        import dask.array as da
+
         filenames = np.ma.filled(filenames, "")
         if self.numblocks != filenames.shape:
             raise ValueError(
@@ -6801,7 +6860,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         try:
             return self._get_cached_elements()[1]
         except KeyError:
-            item = self._item(np.unravel_index(1, self.shape))
+            item = self._elements(np.unravel_index(1, self.shape))
             self._set_cached_elements({1: item})
             return self._get_cached_elements()[1]
 
@@ -7053,6 +7112,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         <{{repr}}Data(1, 1): [[97.0]] K>
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         d = collapse(
             da.sum,
@@ -7199,6 +7260,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         # change in the future, in which case this method could break
         # and need refactoring (e.g.
         # https://github.com/dask/dask/pull/11736#discussion_r1954752842).
+        from dask.base import collections_to_expr
 
         if optimize_graph is not None:
             _DEPRECATION_ERROR_KWARGS(
@@ -7298,6 +7360,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         (19, 73, 96)
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         ndim = d.ndim
@@ -7409,6 +7473,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         [1 2 3 --]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         original_shape = self.shape
@@ -7475,6 +7541,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         [False False]
 
         """
+        import dask.array as da
+
         dx = da.zeros(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 

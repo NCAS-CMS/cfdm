@@ -13,9 +13,7 @@ of the License at http://www.apache.org/licenses/LICENSE-2.0.
 
 """
 
-import hashlib
 import logging
-import re
 import warnings
 
 from .config import (
@@ -147,6 +145,7 @@ def parse_attribute(name, attribute):
             The parsed string.
 
     """
+    import re
 
     def subst(s):
         """Substitute tokens for WORD and SEP."""
@@ -1616,6 +1615,8 @@ class _Flattener:
                 The new valid name of the dimension or variable.
 
         """
+        import hashlib
+
         # If element is at root: no change
         if self.parent(input_group) is None:
             new_name = orig_name
