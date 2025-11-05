@@ -1,5 +1,4 @@
 import logging
-import re
 
 from ..decorators import _manage_log_level_via_verbosity
 from ..functions import _DEPRECATION_ERROR_METHOD
@@ -448,6 +447,8 @@ class FieldDomain:
          'domainaxis2': 'key%domainaxis2'}
 
         """
+        import re
+
         key_to_name = {}
         ignore = self.constructs._ignore
 
@@ -485,6 +486,8 @@ class FieldDomain:
          'domainaxis2': 'time(1)'}
 
         """
+        import re
+
         key_to_name = {}
         name_to_keys = {}
 

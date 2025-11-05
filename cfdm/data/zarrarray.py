@@ -1,6 +1,5 @@
 from . import abstract
 from .mixin import IndexMixin
-from .netcdfindexer import netcdf_indexer
 
 
 class ZarrArray(IndexMixin, abstract.FileArray):
@@ -27,6 +26,8 @@ class ZarrArray(IndexMixin, abstract.FileArray):
                 The subspace.
 
         """
+        from .netcdfindexer import netcdf_indexer
+
         if index is None:
             index = self.index()
 

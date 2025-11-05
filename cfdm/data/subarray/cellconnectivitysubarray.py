@@ -1,6 +1,5 @@
 import numpy as np
 
-from ...functions import integer_dtype
 from .abstract import MeshSubarray
 
 
@@ -30,6 +29,8 @@ class CellConnectivitySubarray(MeshSubarray):
         .. versionadded:: (cfdm) 1.11.0.0
 
         """
+        from cfdm.functions import integer_dtype
+
         start_index = self.start_index
         shape = self.shape
         start = 0

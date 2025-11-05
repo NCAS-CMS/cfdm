@@ -1,4 +1,4 @@
-from ...quantization import Quantization
+from cfdm.quantization import Quantization
 
 CODE0 = {
     # Physically meaningful and corresponding to constructs

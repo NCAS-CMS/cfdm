@@ -1,22 +1,15 @@
 import copy
 import logging
 import os
-import re
 from math import prod
 from numbers import Integral
 
-import dask.array as da
-import netCDF4
 import numpy as np
-from dask import config as dask_config
-from dask.array.core import normalize_chunks
-from dask.utils import parse_bytes
-from packaging.version import Version
-from uritools import uricompose, urisplit
 
-from ...data.dask_utils import cfdm_to_memory
-from ...decorators import _manage_log_level_via_verbosity
-from ...functions import abspath, dirname, integer_dtype
+from cfdm.data.dask_utils import cfdm_to_memory
+from cfdm.decorators import _manage_log_level_via_verbosity
+from cfdm.functions import abspath, dirname, integer_dtype
+
 from .. import IOWrite
 from .constants import (
     CF_QUANTIZATION_PARAMETER_LIMITS,
@@ -1582,7 +1575,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             if ncdim not in ncdim_to_size:
                 size = self.implementation.get_data_size(nodes)
                 logger.info(
-                    f"    Writing size {size} node dimension: {ncdim}"
+                    f"    Writing size {size} geometry node dimension: {ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
@@ -2008,7 +2001,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 logger.info(
-                    f"    Writing size {size} part " f"dimension{ncdim}"
+                    f"    Writing size {size} geometry part "
+                    f"dimension: {ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
@@ -2097,7 +2091,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 logger.info(
-                    f"    Writing size {size} part " f"dimension{ncdim}"
+                    f"    Writing size {size} geometry part "
+                    f"dimension: {ncdim}"
                 )  # pragma: no cover
                 ncdim_to_size[ncdim] = size
 
@@ -2894,7 +2889,9 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         if g["dry_run"]:
             return
 
-        logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
+        logger.info(
+            f"    Writing {cfvar!r} to variable: {ncvar}"
+        )  # pragma: no cover
 
         # Set 'construct_type'
         if not construct_type:
@@ -2949,9 +2946,9 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             )
 
         logger.debug(
-            f"      chunksizes: {chunksizes!r}\n"
-            f"      contiguous: {contiguous!r}\n"
-            f"      shards    : {shards!r}"
+            f"      chunksizes: {chunksizes!r}, "
+            f"contiguous: {contiguous!r}, "
+            f"shards: {shards!r}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -3054,6 +3051,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
                 # Set "implemention" to this version of the netCDF-C
                 # library
+                import netCDF4
+
                 self.implementation.set_parameter(
                     q,
                     "implementation",
@@ -3182,7 +3181,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         )
 
         logger.info(
-            f"        to variable: {ncvar}({', '.join(ncdimensions)})"
+            f"      dimensions: ({', '.join(ncdimensions)})"
         )  # pragma: no cover
 
         try:
@@ -3399,6 +3398,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         # ------------------------------------------------------------
         # Still here? The write a normal (non-aggregation) variable
         # ------------------------------------------------------------
+        import dask.array as da
+
         zarr = g["backend"] == "zarr"
 
         if compressed:
@@ -3637,6 +3638,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             `None`
 
         """
+        import re
+
         g = self.write_vars
 
         ncdim_size_to_spanning_constructs = []
@@ -4423,7 +4426,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         # Cell measures
         if cell_measures:
             cell_measures = " ".join(cell_measures)
-            logger.info(
+            logger.debug(
                 "    Writing cell_measures attribute to "
                 f"variable {field_ncvar}: {cell_measures!r}"
             )  # pragma: no cover
@@ -4787,6 +4790,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             `None`
 
         """
+        import re
+
         g = self.write_vars
 
         # ------------------------------------------------------------
@@ -5025,6 +5030,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             `netCDF.Dataset` or `zarr.Group`
 
         """
+        import netCDF4
+
         if fields and mode == "w":
             dataset_name = os.path.abspath(dataset_name)
             for f in fields:
@@ -5365,6 +5372,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         See `cfdm.write` for examples.
 
         """
+        from packaging.version import Version
+
         logger.info(f"Writing to {fmt}")  # pragma: no cover
 
         # Expand dataset name
@@ -5515,6 +5524,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         # Parse the 'dataset_chunks' parameter
         if dataset_chunks != "contiguous":
+            from dask.utils import parse_bytes
+
             try:
                 self.write_vars["dataset_chunks"] = parse_bytes(dataset_chunks)
             except (ValueError, AttributeError):
@@ -5729,6 +5740,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         group,
     ):
         """Perform a dataset-writing iteration."""
+        from packaging.version import Version
+
         # ------------------------------------------------------------
         # Initiate dataset IO with given write variables
         # ------------------------------------------------------------
@@ -6113,6 +6126,9 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         d_dtype = d.dtype
         dtype = g["datatype"].get(d_dtype, d_dtype)
+
+        from dask import config as dask_config
+        from dask.array.core import normalize_chunks
 
         with dask_config.set({"array.chunk-size": dataset_chunks}):
             chunksizes = normalize_chunks("auto", shape=d.shape, dtype=dtype)
@@ -6632,6 +6648,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         out = {"map": type(data)(aggregation_shape)}
 
         if data.nc_get_aggregation_fragment_type() == "uri":
+            from uritools import uricompose, urisplit
+
             # --------------------------------------------------------
             # Create 'uris' and 'idenftifiers' arrays
             # --------------------------------------------------------
@@ -6776,6 +6794,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             # dimensions with one value per fragment. If a chunk has
             # more than one unique value then the fragment's value is
             # missing data.
+            import dask.array as da
+
             dx = data.to_dask_array(
                 _force_mask_hardness=False, _force_to_memory=False
             )
@@ -6902,6 +6922,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         if mv is None:
             # Try to get the netCDF default fill value
+            import netCDF4
+
             mv = netCDF4.default_fillvals.get(datatype)
             if mv is None and datatype is str:
                 mv = ""
