@@ -186,6 +186,11 @@ class PyfiveArray(IndexMixin, FileArray):
     def open(self, **kwargs):
         """Return a dataset file object and address.
 
+        :Parameters:
+
+            kwargs: optional
+                Extra keyword arguments to `h5netcdf.File`.
+
         :Returns:
 
             (`h5netcdf.File`, `str`)
@@ -194,7 +199,7 @@ class PyfiveArray(IndexMixin, FileArray):
 
         """
         import h5netcdf
-        
+
         return super().open(
             h5netcdf.File,
             mode="r",
