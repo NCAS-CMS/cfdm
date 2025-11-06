@@ -1,8 +1,8 @@
 from functools import reduce
 from operator import mul
 
-from ...abstract import Container
-from ...utils import cached_property
+from cfdm.core.abstract import Container
+from cfdm.core.utils import cached_property
 
 
 class Array(Container):

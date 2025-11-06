@@ -3,12 +3,9 @@
 from functools import lru_cache, partial
 from itertools import product
 
-import cftime
-import dask.array as da
 import numpy as np
-from dask.core import flatten
 
-from ..units import Units
+from cfdm.units import Units
 
 _default_calendar = "standard"
 
@@ -54,6 +51,8 @@ def allclose(x, y, masked_equal=True, rtol=None, atol=None):
             *atol* tolerance.
 
     """
+    import dask.array as da
+
     if rtol is None or atol is None:
         raise ValueError(
             "Must provide numeric values for the rtol and atol keywords"
@@ -64,6 +63,8 @@ def allclose(x, y, masked_equal=True, rtol=None, atol=None):
     # Dask's internal algorithms require these to be set as parameters.
     def allclose(a_blocks, b_blocks, rtol=rtol, atol=atol):
         """Run `ma.allclose` across multiple blocks over two arrays."""
+        from dask.core import flatten
+
         result = True
         # Handle scalars, including 0-d arrays, for which a_blocks and
         # b_blocks will have the corresponding type and hence not be iterable.
@@ -163,8 +164,8 @@ def collapse(
     if iaxes and not keepdims:
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
 
-    # Update the HDF5 chunking strategy
-    chunksizes = d.nc_hdf5_chunksizes()
+    # Update the dataset chunking strategy
+    chunksizes = d.nc_dataset_chunksizes()
     if (
         chunksizes
         and isinstance(chunksizes, tuple)
@@ -175,7 +176,7 @@ def collapse(
                 size for i, size in enumerate(chunksizes) if i not in iaxes
             ]
 
-        d.nc_set_hdf5_chunksizes(chunksizes)
+        d.nc_set_dataset_chunksizes(chunksizes)
 
     return d
 
@@ -336,6 +337,8 @@ def convert_to_reftime(a, units=None, first_value=None):
         if first_value is not None:
             x = first_value
         else:
+            import cftime
+
             x = cftime.DatetimeGregorian(1970, 1, 1)
 
         x_since = "days since " + "-".join(map(str, (x.year, x.month, x.day)))
@@ -453,6 +456,8 @@ def first_non_missing_value(a, cached=None, method="index"):
         return
 
     if method == "mask":
+        import dask.array as da
+
         mask = da.ma.getmaskarray(a)
         if not a.ndim:
             # Scalar data
@@ -789,6 +794,8 @@ def dt2rt(array, units_out):
     [-- 685.5]
 
     """
+    import cftime
+
     isscalar = not np.ndim(array)
 
     array = cftime.date2num(
@@ -842,6 +849,8 @@ def rt2dt(array, units_in):
         # mask
         return np.ma.masked_all((), dtype=object)
 
+    import cftime
+
     units = units_in.units
     calendar = getattr(units_in, "calendar", "standard")
 
@@ -886,6 +895,8 @@ def st2datetime(date_string, calendar=None):
         `cftime.datetime`
 
     """
+    import cftime
+
     if date_string.count("-") != 2:
         raise ValueError(
             "Input date-time string must contain at least a year, a month "

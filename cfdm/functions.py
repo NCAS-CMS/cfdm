@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from copy import deepcopy
 from functools import total_ordering
 from math import isnan
@@ -10,13 +11,9 @@ from os.path import dirname as os_dirname
 from os.path import join
 
 import numpy as np
-from dask import config as _config
-from dask.base import is_dask_collection
-from dask.utils import parse_bytes
-from uritools import uricompose, urisplit
 
 from . import __cf_version__, __file__, __version__, core
-from .constants import CONSTANTS, ValidLogLevels
+from .constants import ValidLogLevels
 from .core import DocstringRewriteMeta
 from .core.docstring import (
     _docstring_substitution_definitions as _core_docstring_substitution_definitions,
@@ -222,13 +219,6 @@ def _configuration(_Configuration, **kwargs):
             values are specified.
 
     """
-    old = {name.lower(): val for name, val in CONSTANTS.items()}
-
-    # Filter out 'None' kwargs from configuration() defaults. Note that this
-    # does not filter out '0' or 'True' values, which is important as the user
-    # might be trying to set those, as opposed to None emerging as default.
-    kwargs = {name: val for name, val in kwargs.items() if val is not None}
-
     # Note values are the functions not the keyword arguments of same name:
     reset_mapping = {
         "new_atol": atol,
@@ -236,6 +226,17 @@ def _configuration(_Configuration, **kwargs):
         "new_log_level": log_level,
         "new_chunksize": chunksize,
     }
+
+    # Make sure that the constants dictionary is fully populated
+    for func in reset_mapping.values():
+        func()
+
+    old = ConstantAccess.constants(copy=True)
+
+    # Filter out 'None' kwargs from configuration() defaults. Note that this
+    # does not filter out '0' or 'True' values, which is important as the user
+    # might be trying to set those, as opposed to None emerging as default.
+    kwargs = {name: val for name, val in kwargs.items() if val is not None}
 
     old_values = {}
 
@@ -335,6 +336,40 @@ def _disable_logging(at_level=None):
         logging.disable()
 
 
+def _get_module_info(module, alternative_name=False, try_except=False):
+    """Helper function for processing modules for `environment`.
+
+    .. versionadded:: (cfdm) 1.12.2.0
+
+    """
+    import importlib
+
+    if try_except:
+        module_name = None
+        try:
+            importlib.import_module(module)
+            module_name = module
+        except ImportError:
+            if (
+                alternative_name
+            ):  # where a module has a different (e.g. old) name
+                try:
+                    importlib.import_module(alternative_name)
+                    module_name = alternative_name
+                except ImportError:
+                    pass
+
+        if not module_name:
+            return ("not available", "")
+    else:
+        module_name = module
+
+    return (
+        importlib.import_module(module_name).__version__,
+        importlib.util.find_spec(module_name).origin,
+    )
+
+
 def environment(display=True, paths=True):
     """Return the names, versions and paths of all dependencies.
 
@@ -359,66 +394,76 @@ def environment(display=True, paths=True):
 
     **Examples**
 
-    >>> cfdm.environment(paths=False)
-    Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
-    Python: 3.11.4
-    packaging: 23.0
-    numpy: 1.25.2
-    cfdm.core: 1.11.2.0
-    HDF5 library: 1.14.2
-    netcdf library: 4.9.2
-    netCDF4: 1.6.4
-    h5netcdf: 1.3.0
-    h5py: 3.10.0
-    s3fs: 2024.6.0
-    dask: 2025.2.0
-    scipy: 1.11.3
-    cftime: 1.6.2
-    cfdm: 1.11.2.0
-
     >>> cfdm.environment()
-    Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
-    Python: 3.11.4 /home/miniconda3/bin/python
-    packaging: 23.0 /home/miniconda3/lib/python3.11/site-packages/packaging/__init__.py
-    numpy: 1.25.2 /home/miniconda3/lib/python3.11/site-packages/numpy/__init__.py
-    cfdm.core: 1.11.2.0 /home/cfdm/cfdm/core/__init__.py
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8 /home/miniconda3/bin/python
+    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
+    numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
+    cfdm.core: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
+    udunits2 library: libudunits2.so.0
     HDF5 library: 1.14.2
-    netcdf library: 4.9.2
-    netCDF4: 1.6.4 /home/miniconda3/lib/python3.11/site-packages/netCDF4/__init__.py
-    h5netcdf: 1.3.0 /home/miniconda3/lib/python3.11/site-packages/h5netcdf/__init__.py
-    h5py: 3.10.0 /home/miniconda3/lib/python3.11/site-packages/h5py/__init__.py
-    s3fs: 2024.6.0 /home/miniconda3/lib/python3.11/site-packages/s3fs/__init__.py
-    scipy: 1.11.3 /home/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
-    dask: 2025.2.0 /home/miniconda3/lib/python3.11/site-packages/dask/__init__.py
-    cftime: 1.6.2 /home/miniconda3/lib/python3.11/site-packages/cftime/__init__.py
-    cfdm: 1.11.2.0 /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
+    netcdf library: 4.9.4-development
+    netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
+    h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
+    h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
+    zarr: 3.0.8 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
+    s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
+    scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
+    dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
+    cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py
+    cfunits: 3.3.7 /home/miniconda3/lib/python3.12/site-packages/cfunits/__init__.py
+    cfdm: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/__init__.py
+
+    >>> cfdm.environment(paths=False)
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8
+    packaging: 24.2
+    numpy: 2.2.6
+    cfdm.core: 1.12.2.0
+    udunits2 library: libudunits2.so.0
+    HDF5 library: 1.14.2
+    netcdf library: 4.9.4-development
+    netCDF4: 1.7.2
+    h5netcdf: 1.3.0
+    h5py: 3.12.1
+    zarr: 3.0.8
+    s3fs: 2024.12.0
+    scipy: 1.15.1
+    dask: 2025.5.1
+    distributed: 2025.5.1
+    cftime: 1.6.4.post1
+    cfunits: 3.3.7
+    cfdm: 1.12.2.0
 
     """
-    import cftime
-    import dask
-    import h5netcdf
-    import h5py
-    import netCDF4
-    import s3fs
-    import scipy
+    import ctypes
 
-    out = core.environment(display=False, paths=paths)  # get all core env
+    import netCDF4
+
+    # Get cfdm.core env
+    out = core.environment(display=False, paths=paths)
 
     dependency_version_paths_mapping = {
+        "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
         "HDF5 library": (netCDF4.__hdf5libversion__, ""),
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
-        "netCDF4": (netCDF4.__version__, os.path.abspath(netCDF4.__file__)),
-        "h5netcdf": (h5netcdf.__version__, os.path.abspath(h5netcdf.__file__)),
-        "h5py": (h5py.__version__, os.path.abspath(h5py.__file__)),
-        "s3fs": (s3fs.__version__, os.path.abspath(s3fs.__file__)),
-        "scipy": (scipy.__version__, os.path.abspath(scipy.__file__)),
-        "dask": (dask.__version__, os.path.abspath(dask.__file__)),
-        "cftime": (cftime.__version__, os.path.abspath(cftime.__file__)),
+        "netCDF4": _get_module_info("netCDF4"),
+        "h5netcdf": _get_module_info("h5netcdf"),
+        "h5py": _get_module_info("h5py"),
+        "zarr": _get_module_info("zarr"),
+        "s3fs": _get_module_info("s3fs"),
+        "scipy": _get_module_info("scipy"),
+        "dask": _get_module_info("dask"),
+        "distributed": _get_module_info("distributed"),
+        "cftime": _get_module_info("cftime"),
+        "cfunits": _get_module_info("cfunits"),
         "cfdm": (__version__, os.path.abspath(__file__)),
     }
     string = "{0}: {1!s}"
-    if paths:  # include path information, else exclude, when unpacking tuple
+    if paths:
+        # Include path information, else exclude, when unpacking tuple.
         string += " {2!s}"
+
     out.extend(
         [
             string.format(dep, *info)
@@ -488,75 +533,84 @@ def abspath(path, uri=None):
     >>> os.getcwd()
     '/data/archive'
 
-    >>> cfdm.abspath('file.nc')
-    '/data/archive/file.nc'
-    >>> cfdm.abspath('../file.nc')
-    '/data/file.nc'
-    >>> cfdm.abspath('file:///file.nc')
-    'file:///file.nc'
-    >>> cfdm.abspath('file://file.nc')
-    'file:///data/archive'
-    >>> cfdm.abspath('file:/file.nc')
-    'file:///file.nc'
-
-    >>> cfdm.abspath('http:///file.nc')
-    'http:///file.nc'
-    >>> cfdm.abspath('http://file.nc')
-    'http://'
-    >>> cfdm.abspath('http:/file.nc')
-    'http:///file.nc'
-
-    >>> cfdm.abspath('file.nc', uri=True)
-    'file:///data/archive/file.nc'
-    >>> cfdm.abspath('../file.nc', uri=True)
-    'file:///data/file.nc'
-    >>> cfdm.abspath('file:///file.nc', uri=True)
-    'file:///file.nc'
-    >>> cfdm.abspath('file://file.nc', uri=True)
-    'file:///data/archive'
-    >>> cfdm.abspath('file:/file.nc', uri=True)
-    'file:///file.nc'
-
-    >>> cfdm.abspath('http:///file.nc', uri=True)
-    'http:///file.nc'
-    >>> cfdm.abspath('http://file.nc', uri=True)
-    'http://'
-    >>> cfdm.abspath('http:/file.nc', uri=True)
-    'http:///file.nc'
-
-    >>> cfdm.abspath('file.nc', uri=False)
-    '/data/archive/file.nc'
-
-    >>> cfdm.abspath('../file.nc', uri=False)
-    '/data/file.nc'
-    >>> cfdm.abspath('file:///file.nc', uri=False)
-    '/file.nc'
-    >>> cfdm.abspath('file://file.nc', uri=False)
+    >>> cfdm.abspath("")
     '/data/archive'
-    >>> cfdm.abspath('file:/file.nc', uri=False)
-    '/file.nc'
+    >>> cfdm.abspath("file.nc")
+    '/data/archive/file.nc'
+    >>> cfdm.abspath("../file.nc")
+    '/data/file.nc'
+    >>> cfdm.abspath("file:///file.nc")
+    'file:///file.nc'
+    >>> cfdm.abspath("file://file.nc")
+    'file://file.nc/data/archive'
+    >>> cfdm.abspath("file:/file.nc")
+    'file:/file.nc'
+    >>> cfdm.abspath("http:///file.nc")
+    'http:///file.nc'
+    >>> cfdm.abspath("http://file.nc")
+    'http://file.nc'
+    >>> cfdm.abspath("http:/file.nc")
+    'http:/file.nc'
 
-    >>> cfdm.abspath('')
-    '/data/archive"
+    >>> cfdm.abspath("file.nc", uri=True)
+    'file:/data/archive/file.nc'
+    >>> cfdm.abspath("../file.nc", uri=True)
+    'file:/data/file.nc'
+    >>> cfdm.abspath("file:///file.nc", uri=True)
+    'file:///file.nc'
+    >>> cfdm.abspath("file://file.nc", uri=True)
+    'file://file.nc/data/archive'
+    >>> cfdm.abspath("file:/file.nc", uri=True)
+    'file:/file.nc'
+    >>> cfdm.abspath("http:///file.nc", uri=True)
+    'http:///file.nc'
+    >>> cfdm.abspath("http://file.nc", uri=True)
+    'http://file.nc'
+    >>> cfdm.abspath("http:/file.nc", uri=True)
+    'http:/file.nc'
+
+    >>> cfdm.abspath("file.nc", uri=False)
+    '/data/archive/file.nc'
+    >>> cfdm.abspath("../file.nc", uri=False)
+    '/data/file.nc'
+    >>> cfdm.abspath("file:///file.nc", uri=False)
+    '/file.nc'
+    >>> cfdm.abspath("file://file.nc", uri=False)
+    '/data/archive'
+    >>> cfdm.abspath("file:/file.nc", uri=False)
+    '/file.nc'
+     >>> cfdm.abspath("http:///file.nc", uri=False)
+    ValueError: Can't set uri=False for path='http:///file.nc'
 
     """
+    from uritools import uricompose, urisplit
+
     u = urisplit(path)
     scheme = u.scheme
     path = u.path
+
     if scheme:
+        # Remote or "file"
         if scheme == "file" or path.startswith(os_sep):
             path = os_abspath(path)
 
         if uri or uri is None:
-            path = uricompose(scheme=scheme, authority="", path=path)
+            path = uricompose(scheme=scheme, authority=u.authority, path=path)
         elif scheme != "file":
             raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
-        return path
+    else:
+        # Local
+        path = os_abspath(path)
+        if uri:
+            path = uricompose(scheme="file", authority=u.authority, path=path)
 
-    path = os_abspath(path)
-    if uri:
-        path = uricompose(scheme="file", authority="", path=path)
+    fragment = u.fragment
+    if fragment is not None:
+        # Append a URI fragment. Do this with a string-append, rather
+        # than via `uricompose` in case the fragment contains more
+        # than one # character.
+        path += f"#{fragment}"
 
     return path
 
@@ -604,84 +658,89 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
     >>> os.getcwd()
     '/data/archive'
 
-    >>> cfdm.dirname('file.nc')
+    >>> cfdm.dirname("file.nc")
+    ''
+    >>> cfdm.dirname("file.nc", normalise=True)
     '/data/archive'
-    >>> cfdm.dirname('file.nc', normalise=True)
+    >>> cfdm.dirname("file.nc", normalise=True, uri=True)
+    'file:///data/archive
+    >>> cfdm.dirname("file.nc", normalise=True, uri=False)
     '/data/archive'
-    >>> cfdm.dirname('file.nc', normalise=True, uri=True)
-    'file:///data/archive'
-    >>> cfdm.dirname('file.nc', normalise=True, uri=False)
-    '/data/archive'
-    >>> cfdm.dirname('file.nc', normalise=True, sep=True)
+    >>> cfdm.dirname("file.nc", normalise=True, sep=True)
     '/data/archive/'
 
-    >>> cfdm.dirname('model/file.nc')
-    'model'
-    >>> cfdm.dirname('model/file.nc', normalise=True)
-    /data/archive/model'
-    >>> cfdm.dirname('model/file.nc', normalise=True, uri=True)
+    >>> cfdm.dirname("model/file.nc"), "model")
+    >>> cfdm.dirname("model/file.nc", normalise=True)
+    '/data/archive/model'
+    >>> cfdm.dirname("model/file.nc", normalise=True, uri=True)
     'file:///data/archive/model'
-    >>> cfdm.dirname('model/file.nc', normalise=True, uri=False)
-    /data/archive/model'
+    >>> cfdm.dirname("model/file.nc", normalise=True, uri=False)
+    '/data/archive/model'
 
-    >>> cfdm.dirname('../file.nc')
+    >>> cfdm.dirname("../file.nc")
     '..'
-    >>> cfdm.dirname('../file.nc', normalise=True)
+    >>> cfdm.dirname("../file.nc", normalise=True)
     '/data'
-    >>> cfdm.dirname('../file.nc', normalise=True, uri=True)
-    'file:///data'
-    >>> cfdm.dirname('../file.nc', normalise=True, uri=False)
+    >>> cfdm.dirname("../file.nc", normalise=True, uri=True),
+    'file://{/data}'
+    >>> cfdm.dirname("../file.nc", normalise=True, uri=False)
     '/data'
 
-    >>> cfdm.dirname('/model/file.nc')
+    >>> cfdm.dirname("/model/file.nc")
     '/model'
-    >>> cfdm.dirname('/model/file.nc', normalise=True)
+    >>> cfdm.dirname("/model/file.nc", normalise=True)
     '/model'
-    >>> cfdm.dirname('/model/file.nc', normalise=True, uri=True)
+    >>> cfdm.dirname("/model/file.nc", normalise=True, uri=True)
     'file:///model'
-    >>> cfdm.dirname('/model/file.nc', normalise=True, uri=False)
+    >>> cfdm.dirname("/model/file.nc", normalise=True, uri=False)
     '/model'
 
-    >>> cfdm.dirname('')
+    >>> cfdm.dirname("")
     ''
-    >>> cfdm.dirname('', normalise=True)
+    >>> cfdm.dirname("", normalise=True)
     '/data/archive'
-    >>> cfdm.dirname('', normalise=True, uri=True)
+    >>> cfdm.dirname("", normalise=True, uri=True)
     'file:///data/archive'
-    >>> cfdm.dirname('', normalise=True, uri=False)
+    >>> cfdm.dirname("", normalise=True, uri=False)
     '/data/archive'
-
-    >>> cfdm.dirname('https:///data/archive/file.nc')
+    >>> cfdm.dirname("https:///data/archive/file.nc")
     'https:///data/archive'
-    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True)
+    >>> cfdm.dirname("https:///data/archive/file.nc", normalise=True)
     'https:///data/archive'
-    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=True)
+    >>> cfdm.dirname("https:///data/archive/file.nc", normalise=True, uri=True)
     'https:///data/archive'
-    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=False)
+    >>> cfdm.dirname("https:///data/archive/file.nc", normalise=True, uri=False)
     ValueError: Can't set uri=False for path='https:///data/archive/file.nc'
 
-    >>> cfdm.dirname('file:///data/archive/file.nc')
+    >>> cfdm.dirname("file:///data/archive/file.nc")
     'file:///data/archive'
-    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True)
+    >>> cfdm.dirname("file:///data/archive/file.nc", normalise=True)
     'file:///data/archive'
-    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=True)
+    >>> cfdm.dirname("file:///data/archive/file.nc", normalise=True, uri=True)
     'file:///data/archive'
-    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=False)
+    >>> cfdm.dirname("file:///data/archive/file.nc", normalise=True, uri=False)
     '/data/archive'
 
-    >>> cfdm.dirname('file:///data/archive/../file.nc')
+    >>> cfdm.dirname("file:///data/archive/../file.nc")
     'file:///data/archive/..'
-    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True)
-    'file::///data'
-    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=True)
-    'file::///data'
-    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=False)
+    >>> cfdm.dirname("file:///data/archive/../file.nc", normalise=True)
+    'file:///data'
+    >>> cfdm.dirname("file:///data/archive/../file.nc", normalise=True, uri=True)
+    'file:///data'
+    >>> cfdm.dirname("file:///data/archive/../file.nc", normalise=True, uri=False)
     '/data'
 
     """
+    from uritools import uricompose, urisplit
+
     u = urisplit(path)
     scheme = u.scheme
     path = u.path
+
+    authority = u.authority
+    if authority is None:
+        authority = ""
+
     if scheme:
         # Remote (or "file:")
         if normalise and (scheme == "file" or path.startswith(os_sep)):
@@ -690,27 +749,31 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
         if not isdir:
             path = os_dirname(path)
 
-        if sep:
-            path = join(path, "")
-
         if uri or uri is None:
-            path = uricompose(scheme=scheme, authority="", path=path)
+            path = uricompose(scheme=scheme, authority=authority, path=path)
         elif scheme != "file":
             raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
-        return path
+    else:
+        # Local file
+        if not isdir:
+            path = os_dirname(path)
 
-    # Local file
-    if not isdir:
-        path = os_dirname(path)
+        if normalise:
+            path = os_abspath(path)
 
-    if normalise:
-        path = os_abspath(path)
+        if uri:
+            path = uricompose(scheme="file", authority=authority, path=path)
 
-    if uri:
-        path = uricompose(scheme="file", authority="", path=path)
+    fragment = u.fragment
+    if fragment is not None:
+        # Append a URI fragment. Do this with a string-append, rather
+        # than via `uricompose` in case the fragment contains more
+        # than one # character.
+        path += f"#{fragment}"
 
     if sep:
+        # Append the directory separator
         path = join(path, "")
 
     return path
@@ -1407,44 +1470,52 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
 
 
 class ConstantAccess(metaclass=DocstringRewriteMeta):
-    '''Base class to act as a function accessing package-wide constants.
+    """Base class to act as a function accessing package-wide constants.
 
     Subclasses must implement or inherit a method called `_parse` as
-    follows:
+    follows::
 
        def _parse(cls, arg):
-          """Parse a new constant value.
+          '''Parse a new constant value.
 
-       :Parameter:
+          :Parameter:
 
-            cls:
-                This class.
+               cls:
+                   This class.
 
-            arg:
-                The given new constant value.
+               arg:
+                   The given new constant value.
 
-       :Returns:
+          :Returns:
 
-                A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                   A version of the new constant value suitable for
+                   insertion into the `_constants` dictionary.
 
-           """
+           '''
 
-    '''
+    """
 
-    # Define the dictionary that stores the constant values
-    _CONSTANTS = CONSTANTS
+    # Define the dictionary that stores all constant values.
+    #
+    # Sublasses must re-define this as an empty dictionary (unless
+    # it's OK for the child to modify the parent's dictionary).
+    _constants = {}
 
-    # Define the `Constant` object that contains a constant value
+    # Define the `Constant` class that contains a constant value
     _Constant = Constant
 
-    # Define the key of the _CONSTANTS dictionary that contains the
+    # Define the key of the `_constants` dictionary that contains the
     # constant value
     _name = None
 
+    # Define the default value of the constant
+    _default = None
+
     def __new__(cls, *arg):
         """Return a `Constant` instance during class creation."""
-        old = cls._CONSTANTS[cls._name]
+        name = cls._name
+        constants = cls.constants(copy=False)
+        old = constants.setdefault(name, cls._default)
         if arg:
             arg = arg[0]
             try:
@@ -1453,7 +1524,7 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
             except AttributeError:
                 pass
 
-            cls._CONSTANTS[cls._name] = cls._parse(cls, arg)
+            constants[name] = cls._parse(cls, arg)
 
         return cls._Constant(old, _func=cls)
 
@@ -1487,6 +1558,15 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
 
         """
         return 0
+
+    @classmethod
+    def constants(cls, copy=True):
+        """See docstring to `ConstantAccess`."""
+        out = cls._constants
+        if copy:
+            out = out.copy()
+
+        return out
 
 
 class atol(ConstantAccess):
@@ -1550,7 +1630,8 @@ class atol(ConstantAccess):
 
     """
 
-    _name = "ATOL"
+    _name = "atol"
+    _default = sys.float_info.epsilon
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1568,7 +1649,7 @@ class atol(ConstantAccess):
         :Returns:
 
                 A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                insertion into the `_constants` dictionary.
 
         """
         return float(arg)
@@ -1635,7 +1716,8 @@ class rtol(ConstantAccess):
 
     """
 
-    _name = "RTOL"
+    _name = "rtol"
+    _default = sys.float_info.epsilon
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1652,8 +1734,8 @@ class rtol(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         return float(arg)
@@ -1720,7 +1802,8 @@ class chunksize(ConstantAccess):
 
     """
 
-    _name = "CHUNKSIZE"
+    _name = "chunksize"
+    _default = 134217728  # 134217728 = 128 MiB
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1737,12 +1820,16 @@ class chunksize(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
-        _config.set({"array.chunk-size": arg})
-        return parse_bytes(arg)
+        from dask import config
+        from dask.utils import parse_bytes
+
+        arg = parse_bytes(arg)
+        config.set({"array.chunk-size": arg})
+        return arg
 
 
 class log_level(ConstantAccess):
@@ -1817,7 +1904,8 @@ class log_level(ConstantAccess):
 
     """
 
-    _name = "LOG_LEVEL"
+    _name = "log_level"
+    _default = logging.getLevelName(logging.getLogger().level)
 
     # Define the valid log levels
     _ValidLogLevels = ValidLogLevels
@@ -1848,8 +1936,8 @@ class log_level(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         # Ensuring it is a valid level specifier to set & use, either
@@ -2172,6 +2260,8 @@ def indices_shape(indices, full_shape, keepdims=True):
     []
 
     """
+    from dask.base import is_dask_collection
+
     shape = []
     #    i = 0
     for index, full_size in zip(indices, full_shape):
@@ -2366,3 +2456,26 @@ def _DEPRECATION_ERROR_KWARGS(
             f"at cfdm version {version} and is no longer "
             f"available{removed_at}. {message}"
         )
+
+
+def _DEPRECATION_ERROR_METHOD(
+    instance, method, message="", version=None, removed_at=""
+):
+    """Error handling for deprecated kwargs methods.
+
+    .. versionadded:: (cfdm) 1.12.2.0
+
+    """
+    if version is None:
+        raise ValueError(
+            "Must set 'version' in call to _DEPRECATION_ERROR_METHOD"
+        )
+
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"{instance.__class__.__name__} method {method!r} has been deprecated "
+        f"at version {version} and is no longer available{removed_at}. "
+        f"{message}"
+    )

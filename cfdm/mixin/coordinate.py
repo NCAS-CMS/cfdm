@@ -45,15 +45,9 @@ class Coordinate(PropertiesDataBounds):
                 The name of the construct's `Bounds` instance created
                 by the returned commands.
 
-                *Parameter example:*
-                  ``name='bounds1'``
-
             interior_ring_name: `str`, optional
                 The name of the construct's `InteriorRing` instance
                 created by the returned commands.
-
-                *Parameter example:*
-                  ``name='ir1'``
 
             {{header: `bool`, optional}}
 
@@ -85,12 +79,12 @@ class Coordinate(PropertiesDataBounds):
         out = super().creation_commands(
             representative_data=representative_data,
             namespace=namespace,
-            indent=0,
+            indent=indent,
             string=False,
-            name="c",
-            data_name="data",
-            bounds_name="b",
-            interior_ring_name="i",
+            name=name,
+            data_name=data_name,
+            bounds_name=bounds_name,
+            interior_ring_name=interior_ring_name,
             header=header,
             _coordinate=True,
         )

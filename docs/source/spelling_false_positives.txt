@@ -5,6 +5,7 @@ Allyn
 arg
 args
 asdata
+astype
 atol
 ATOL
 AuxiliaryCoordinate
@@ -19,6 +20,7 @@ Booleans
 bool
 broadcastable
 Caron
+cdl
 CellConnectivity
 CellMeasure
 CellMethod
@@ -80,6 +82,7 @@ FieldAncillary
 FillValue
 fletcher
 fmt
+followlinks
 fortran
 fromconstructs
 fromkeys
@@ -88,7 +91,10 @@ GatheredArray
 Geosci
 geosciences
 geospatial
+getinitargs
 getitem
+getstate
+GiB
 Hankin
 hardmask
 Hartnett
@@ -97,6 +103,7 @@ Hassell
 hdf
 indexable
 init
+Initialize
 initio
 inplace
 instantiation
@@ -112,6 +119,7 @@ kB
 kwargs
 lat
 len
+libnetcdf
 lossy
 mercator
 MiB
@@ -139,6 +147,8 @@ NetCDFIndexer
 Nino
 nonzero
 npartitions
+nsb
+nsd
 numblocks
 numpy
 NumpyArray
@@ -154,6 +164,10 @@ prepended
 PropertiesData
 PropertiesDataBounds
 py
+Quantization
+quantization
+quantize
+quantized
 RaggedContiguousArray
 RaggedIndexedArray
 RaggedIndexedContiguousArray
@@ -175,6 +189,7 @@ seealso
 sep
 setdefault
 setitem
+setstate
 Signell
 situ
 spatiotemporal
@@ -199,6 +214,7 @@ timeSeriesProfile
 todict
 tolist
 topologies
+traceback
 trajectoryProfile
 Treshansky
 Typecode
@@ -215,7 +231,11 @@ uri
 url
 unselected
 unsqueeze
+unstandardised
 varid
 verboseness
 versionadded
 vlen
+xarray
+Zarr
+ZarrArray

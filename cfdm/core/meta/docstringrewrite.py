@@ -1,8 +1,12 @@
 import inspect
+from re import compile
 
-from ..functions import CF
+# Count the number of docstrings (first element of
+# '_docstring_substitutions'), and the number which have docstring
+# substitutions applied to them (second element).
+from .. import _docstring_substitutions
 
-_VN = CF()
+base = compile("{{.*?}}")
 
 
 class DocstringRewriteMeta(type):
@@ -28,15 +32,14 @@ class DocstringRewriteMeta(type):
 
     # Based on
     # http://www.jesshamrick.com/2013/04/17/rewriting-python-docstrings-with-a-metaclass/
-
     def __new__(cls, class_name, parents, attrs):
         """Combines docstring substitutions across the inheritance tree.
 
-        That is, combines docstring substitutions from all classes in the
-        inheritance tree.
+        That is, combines docstring substitutions from all classes in
+        the inheritance tree.
 
-        The value for a key that occurs in multiple classes will be taken
-        from the class closest to the child class.
+        The value for a key that occurs in multiple classes will be
+        taken from the class closest to the child class.
 
         """
         class_name_lower = class_name.lower()
@@ -61,14 +64,6 @@ class DocstringRewriteMeta(type):
         )
         if class_docstring_rewrite is not None:
             docstring_rewrite.update(class_docstring_rewrite(None))
-
-        special = DocstringRewriteMeta._docstring_special_substitutions()
-        for key in special:
-            if key in docstring_rewrite:
-                raise ValueError(
-                    f"Can't use {key!r} as a user-defined "
-                    "docstring substitution."
-                )
 
         # ------------------------------------------------------------
         # Find the package depth
@@ -380,9 +375,6 @@ class DocstringRewriteMeta(type):
         # ------------------------------------------------------------
         return super().__new__(cls, class_name, parents, attrs)
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     @classmethod
     def _docstring_special_substitutions(cls):
         """Return the special docstring substitutions.
@@ -412,7 +404,7 @@ class DocstringRewriteMeta(type):
                 The special docstring substitution identifiers.
 
         """
-        return ("{{class}}", "{{class_lower}}", "{{package}}", "{{VN}}")
+        return ("{{class}}", "{{class_lower}}", "{{package}}")
 
     @staticmethod
     def _docstring_substitutions(cls):
@@ -434,13 +426,7 @@ class DocstringRewriteMeta(type):
                   then the latter will *not* be replaced. This restriction
                   is to prevent the possibility of infinite recursion.
 
-        A key must be either a `str` or a `re.Pattern` object.
-
-        If a key is a `str` then the corresponding value must be a string.
-
-        If a key is a `re.Pattern` object then the corresponding value
-        must be a string or a callable, as accepted by the
-        `re.Pattern.sub` method.
+        A key and its corresponding value must both be `str`.
 
         .. versionadded:: (cfdm) 1.8.7.0
 
@@ -594,61 +580,93 @@ class DocstringRewriteMeta(type):
         config,
         class_docstring=None,
     ):
-        """Performs docstring substitutions on a method at import time.
+        """Perform docstring substitutions.
+
+        Docstring substitutions are applied to a class or method at
+        import time.
 
         .. versionadded:: (cfdm) 1.8.7.0
 
         :Parameters:
 
             package_name: `str`
+                The name of the package containing the class or
+                method.
 
             class_name: `str`
+                The name of the class.
 
-            f: class method
+            class_name_lower: `str`
+                The lower case name of the class.
 
-            method_name: `str`
+            f: class method or `None`
+                The method, or `None` if a class docstring is being
+                updated.
+
+            method_name: `str` or `None`
+                The method name, or `None` if a class docstring is
+                being updated.
 
             config: `dict`
+                A dictionary containing the general docstring
+                substitutions.
+
+            class_docstring, `str` or `None`
+                If docstring of a class, or `None` if a method
+                docstring is being updated.
+
+        :Returns:
+
+            `str` or `None`
+                The updated docstring, or `None` if there is no
+                docstring.
 
         """
+        _docstring_substitutions[0] += 1
+
         if class_docstring is not None:
             doc = class_docstring
         else:
             doc = f.__doc__
-            if doc is None or "{{" not in doc:
-                return doc
 
-        # ------------------------------------------------------------
-        # Do general substitutions first
-        # ------------------------------------------------------------
-        for key, value in config.items():
-            # Substitute the key for the value
-            try:
-                # Compiled regular expression substitution
-                doc = key.sub(value, doc)
-            except AttributeError:
-                # String substitution
+        if doc is None:
+            return
+
+        substitutions = base.findall(doc)
+        if substitutions:
+            _docstring_substitutions[1] += 1
+
+            # Remove duplicates
+            substitutions = set(substitutions)
+
+            # Special substitutions
+            if "{{package}}" in substitutions:
+                # Insert the name of the package
+                doc = doc.replace("{{package}}", package_name)
+
+            if "{{class}}" in substitutions:
+                # Insert the name of the class
+                doc = doc.replace("{{class}}", class_name)
+
+            if "{{class_lower}}" in substitutions:
+                # Insert the lower case name of the class
+                doc = doc.replace("{{class_lower}}", class_name_lower)
+
+            # General substitutions
+            for key in substitutions:
+                value = config.get(key)
+                if value is None:
+                    continue
+
+                # Do special substitutions on the value
+                value = value.replace("{{package}}", package_name)
+                value = value.replace("{{class}}", class_name)
+                value = value.replace("{{class_lower}}", class_name_lower)
+
                 doc = doc.replace(key, value)
 
-        # ------------------------------------------------------------
-        # Now do special substitutions
-        # ------------------------------------------------------------
-        # Insert the name of the package
-        doc = doc.replace("{{package}}", package_name)
-
-        # Insert the name of the class containing this method
-        doc = doc.replace("{{class}}", class_name)
-
-        # Insert the lower case name of the class containing this method
-        doc = doc.replace("{{class_lower}}", class_name_lower)
-
-        # Insert the CF version
-        doc = doc.replace("{{VN}}", _VN)
-
-        # ----------------------------------------------------------------
-        # Set the rewritten docstring on the method
-        # ----------------------------------------------------------------
-        if class_docstring is None:
-            f.__doc__ = doc
+            if class_docstring is None:
+                # Set the rewritten docstring on the method
+                f.__doc__ = doc
 
         return doc

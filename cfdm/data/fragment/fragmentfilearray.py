@@ -1,8 +1,7 @@
 from os.path import join
 
-from uritools import urisplit
+from cfdm.functions import abspath
 
-from ...functions import abspath
 from ..abstract import FileArray
 from ..mixin import IndexMixin
 from .mixin import FragmentArrayMixin
@@ -231,6 +230,8 @@ class FragmentFileArray(
             )
 
         if normalise:
+            from uritools import urisplit
+
             uri = urisplit(filename)
 
             # Convert the file name to an absolute URI

@@ -70,8 +70,9 @@ class write(ReadWrite):
     which defines the chunking strategy for all output data, including
     the option of no chunking. However, this will be overridden for
     any data that defines its own chunking strategy. See
-    `{{package}}.Field.nc_set_hdf5_chunksizes`,
-    `{{package}}.Data.nc_set_hdf5_chunksizes`, and `{{package}}.read`.
+    `{{package}}.Field.nc_set_dataset_chunksizes`,
+    `{{package}}.Data.nc_set_dataset_chunksizes`, and
+    `{{package}}.read`.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -211,19 +212,19 @@ class write(ReadWrite):
              conventions is defined then this is used instead.
 
              *Parameter example:*
-               ``Conventions='UGRID-1.0'``
+               ``Conventions='ACDD-1.3'``
 
              *Parameter example:*
-               ``Conventions=['UGRID-1.0']``
+               ``Conventions=['CMIP-6.2']``
 
              *Parameter example:*
-               ``Conventions=['CMIP-6.2', 'UGRID-1.0']``
+               ``Conventions=['CMIP-6.2', 'ACDD-1.3']``
 
              *Parameter example:*
-               ``Conventions='CF-1.7'``
+               ``Conventions='CF-1.12'``
 
              *Parameter example:*
-               ``Conventions=['CF-1.7', 'UGRID-1.0']``
+               ``Conventions=['CF-1.12', 'CMIP-6.2']``
 
              Note that if the ``Conventions`` property is set on a
              field construct then it is ignored.
@@ -372,6 +373,31 @@ class write(ReadWrite):
             *Parameter example:*
               ``least_significant_digit=3``
 
+        chunk_cache: `int` or `None`, optional
+            The amount of memory (in bytes) used in each variable's
+            chunk cache at the HDF5 level.
+
+            Ignored when not writing to a netCDF-4 format. By default,
+            or if `None`, the default netCDF-C chunk cache size of
+            16777216 bytes (i.e. 16 MiB) is used. Changing this has no
+            effect on the new netCDF-4 file on disk, but may be used
+            to prevent the available memory from filling up when a
+            very large number of netCDF-4 variables are being
+            created. Note the changing the size of the per-variable
+            chunk cache has the potential to seriously degrade
+            performance, although that may be preferable to the write
+            process failing due to lack of memory.
+
+            For instance, if 1024 netCDF-4 variables are being
+            created, then by default 17179869184 bytes (i.e. 16 GiB)
+            of memory will be needed for their chunk caches, and if
+            this is too much then the chunk cache should be reduced.
+
+            See the netCDF-C library documentation for
+            `nc_set_var_chunk_cache` for details.
+
+            .. versionadded:: (cfdm) 1.12.2.0
+
         fletcher32: `bool`, optional
             If True then the Fletcher-32 HDF5 checksum algorithm is
             activated to detect compression errors. Ignored if
@@ -516,7 +542,7 @@ class write(ReadWrite):
             bytes.
 
             If any `Data` being written already stores its own dataset
-            chunking strategy (i.e. its `Data.nc_hdf5_chunksizes`
+            chunking strategy (i.e. its `Data.nc_dataset_chunksizes`
             method returns something other than `None`) then, for that
             data array alone, it is used in preference to the strategy
             defined by the *dataset_chunks* parameter.
@@ -748,6 +774,7 @@ class write(ReadWrite):
         single=False,
         double=False,
         least_significant_digit=None,
+        chunk_cache=None,
         endian="native",
         compress=4,
         fletcher32=False,
@@ -809,6 +836,7 @@ class write(ReadWrite):
             Conventions=Conventions,
             datatype=datatype,
             least_significant_digit=least_significant_digit,
+            chunk_cache=chunk_cache,
             endian=endian,
             compress=compress,
             shuffle=shuffle,

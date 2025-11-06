@@ -13,7 +13,7 @@ import numpy as np
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-from cfdm.read_write.exceptions import DatasetTypeError
+from cfdm.read_write.exceptions import DatasetTypeError, ReadError
 
 warnings = False
 
@@ -23,6 +23,8 @@ tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
+tmpfiles.append(tempfile.mkstemp("#test_read_write.nc", dir=os.getcwd())[1])
+
 [
     tmpfile,
     tmpfileh,
@@ -33,6 +35,7 @@ tmpfiles = [
     tmpfilec3,
     tmpfile0,
     tmpfile1,
+    tmpfile_hash,
 ] = tmpfiles
 
 
@@ -47,12 +50,39 @@ def _remove_tmpfiles():
 
 atexit.register(_remove_tmpfiles)
 
+filename = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+)
+
 
 class read_writeTest(unittest.TestCase):
     """Test the reading and writing of field constructs from/to disk."""
 
+    filename = filename
+
+    zarr2 = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr2"
+    )
+
+    zarr3 = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr3"
+    )
+
     f0 = cfdm.example_field(0)
     f1 = cfdm.example_field(1)
+
+    string_filename = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "string_char.nc"
+    )
+
+    netcdf3_fmts = [
+        "NETCDF3_CLASSIC",
+        "NETCDF3_64BIT",
+        "NETCDF3_64BIT_OFFSET",
+        "NETCDF3_64BIT_DATA",
+    ]
+    netcdf4_fmts = ["NETCDF4", "NETCDF4_CLASSIC"]
+    netcdf_fmts = netcdf3_fmts + netcdf4_fmts
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -65,22 +95,6 @@ class read_writeTest(unittest.TestCase):
         #
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-        )
-
-        self.string_filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "string_char.nc"
-        )
-
-        self.netcdf3_fmts = [
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        ]
-        self.netcdf4_fmts = ["NETCDF4", "NETCDF4_CLASSIC"]
-        self.netcdf_fmts = self.netcdf3_fmts + self.netcdf4_fmts
 
     def test_write_filename(self):
         """Test the writing of a named netCDF file."""
@@ -97,7 +111,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_extra(self):
         """Test the cfdm.read 'extra' keyword."""
-        # Test field keyword of cfdm.read
+        # Test 'extra' keyword of cfdm.read
         filename = self.filename
 
         f = cfdm.read(filename)
@@ -175,14 +189,12 @@ class read_writeTest(unittest.TestCase):
             g = cfdm.read(tmpfile)
             self.assertEqual(len(g), 1)
             g = g[0]
-            self.assertTrue(
-                f.equals(g, verbose=3), f"Bad read/write of format: {fmt}"
-            )
+            self.assertTrue(f.equals(g, verbose=3))
 
     @unittest.skipIf(True, "Not testing append mode")
     def test_write_netcdf_mode(self):
         """Test the `mode` parameter to `write`, notably append mode."""
-        g = cfdm.read(self.filename)  # note 'g' has one field
+        g = cfdm.read(self.filename)[0]
 
         # Test special case #1: attempt to append fields with groups
         # (other than 'root') which should be forbidden. Using fmt="NETCDF4"
@@ -190,16 +202,16 @@ class read_writeTest(unittest.TestCase):
         #
         # Note: this is not the most natural test to do first, but putting
         # it before the rest reduces spurious seg faults for me, so...
-        g[0].nc_set_variable_groups(["forecast", "model"])
+        g.nc_set_variable_groups(["forecast", "model"])
         cfdm.write(g, tmpfile, fmt="NETCDF4", mode="w")  # 1. overwrite to wipe
         f = cfdm.read(tmpfile)
         with self.assertRaises(ValueError):
-            cfdm.write(g[0], tmpfile, fmt="NETCDF4", mode="a")
+            cfdm.write(g, tmpfile, fmt="NETCDF4", mode="a")
 
         # Test special case #2: attempt to append fields with contradictory
         # featureType to the original file:
-        g[0].nc_clear_variable_groups()
-        g[0].nc_set_global_attribute("featureType", "profile")
+        g.nc_clear_variable_groups()
+        g.nc_set_global_attribute("featureType", "profile")
         cfdm.write(
             g,
             tmpfile,
@@ -212,20 +224,22 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             cfdm.write(h, tmpfile, fmt="NETCDF4", mode="a")
         # Now remove featureType attribute for subsquent tests:
-        g_attrs = g[0].nc_clear_global_attributes()
+        g_attrs = g.nc_clear_global_attributes()
         del g_attrs["featureType"]
-        g[0].nc_set_global_attributes(g_attrs)
+        g.nc_set_global_attributes(g_attrs)
 
         # Set a non-trivial (i.e. not only 'Conventions') global attribute to
         # make the global attribute testing more robust:
         add_global_attr = ["remark", "A global comment."]
-        original_global_attrs = g[0].nc_global_attributes()
+        original_global_attrs = g.nc_global_attributes()
         original_global_attrs[add_global_attr[0]] = None  # -> None on fields
-        g[0].nc_set_global_attribute(*add_global_attr)
+        g.nc_set_global_attribute(*add_global_attr)
 
         # First test a bad mode value:
         with self.assertRaises(ValueError):
-            cfdm.write(g[0], tmpfile, mode="g")
+            cfdm.write(g, tmpfile, mode="g")
+
+        g_copy = g.copy()
 
         for fmt in self.netcdf_fmts:  # test over all netCDF 3 and 4 formats
             # Other tests cover write as default mode (i.e. test with no mode
@@ -242,7 +256,7 @@ class read_writeTest(unittest.TestCase):
             new_length = 1  # since 1 == len(g)
             self.assertEqual(len(f), new_length)
             # Ignore as 'remark' should be 'None' on the field as tested below
-            self.assertTrue(f[0].equals(g[0], ignore_properties=["remark"]))
+            self.assertTrue(f[0].equals(g, ignore_properties=["remark"]))
             self.assertEqual(
                 f[0].nc_global_attributes(), original_global_attrs
             )
@@ -419,7 +433,7 @@ class read_writeTest(unittest.TestCase):
 
             # Check behaviour when append identical fields, as an edge case
             #   1. Set up the fields and file to use to conduct this test
-            g_new = cfdm.read(self.filename)[0]  # note 'g' has one field
+            g_new = cfdm.read(self.filename)[0]
             # There is an unresolved netcdf4-python issue when reading
             # VLEN arrays (see github.com/Unidata/netcdf4-python/issues/261)
             # so, until fixed, for NETCDF4 only we must delete the VLEN array
@@ -429,13 +443,14 @@ class read_writeTest(unittest.TestCase):
                     long_name="greek_letters"
                 )
                 g_new.del_construct(aux.key())
+
             g_copy = g_new.copy()
             cfdm.write(g_new, tmpfile, fmt=fmt, mode="w")  # overwrite to wipe
 
             #   2. Conduct the test by appending the identical field g_copy
             cfdm.write(g_copy, tmpfile, fmt=fmt, mode="a")
             f = cfdm.read(tmpfile)
-            self.assertEqual(len(f), 2)  # i.e. len(f) == 2*len(g_new) == 2*1
+            self.assertEqual(len(f), 2)
             self.assertTrue(
                 any(
                     [
@@ -451,7 +466,7 @@ class read_writeTest(unittest.TestCase):
     def test_read_write_compress_shuffle(self):
         """Test the `compress` and `shuffle` parameters to `write`."""
         f = self.f0.copy()
-        f.data.nc_set_hdf5_chunksizes("contiguous")
+        f.data.nc_set_dataset_chunksizes("contiguous")
         y = f.domain_axis("latitude")
         y.nc_set_unlimited(True)
 
@@ -475,9 +490,7 @@ class read_writeTest(unittest.TestCase):
         for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)[0]
-            self.assertTrue(
-                f.equals(g, verbose=3), f"Bad read/write of format: {fmt}"
-            )
+            self.assertTrue(f.equals(g, verbose=3))
 
     def test_read_mask(self):
         """Test reading and writing of netCDF with masked data."""
@@ -558,8 +571,8 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_unlimited(self):
         """Test reading and writing with an unlimited dimension."""
+        f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf_fmts:
-            f = cfdm.read(self.filename)[0]
             domain_axes = f.domain_axes()
 
             domain_axes["domainaxis0"].nc_set_unlimited(True)
@@ -575,8 +588,6 @@ class read_writeTest(unittest.TestCase):
             f = cfdm.read(tmpfile, netcdf_backend=backend)[0]
             domain_axes = f.domain_axes()
             self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited(), fmt)
-
-        f = cfdm.read(self.filename)[0]
 
         domain_axes = f.domain_axes()
 
@@ -636,10 +647,10 @@ class read_writeTest(unittest.TestCase):
         c = cfdm.read(tmpfilec)[0]
 
         # Case (2) as above, so the right error should be raised on read
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ReadError):
             cfdm.read(tmpfileh2)[0]
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ReadError):
             cfdm.read(tmpfilec2)[0]
 
         self.assertTrue(f0.equals(f, verbose=3))
@@ -753,7 +764,6 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 " ".join([version, other]),
-                f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
         for Conventions in (version, "", " ", ",", ", "):
@@ -763,7 +773,6 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 version,
-                f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
         for Conventions in ([version], [version, other]):
@@ -772,7 +781,6 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 " ".join(Conventions),
-                f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
         for Conventions in ([other, version],):
@@ -781,7 +789,6 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 " ".join([version, other]),
-                f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
     def test_read_write_multiple_geometries(self):
@@ -816,7 +823,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_domain(self):
         """Test the reading and writing of domain constucts."""
-        f = self.f1
+        f = cfdm.read(self.filename)[0]
         d = f.domain.copy()
 
         # 1 domain
@@ -1033,11 +1040,9 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0]))
 
     def test_read_url(self):
-        """Test reading urls."""
-        return  # skip flaky test until it is made robust
+        """Test reading remote url."""
         for scheme in ("http", "https"):
-            remote = f"{scheme}://psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
-            # Check that cfdm can access it
+            remote = f"{scheme}:///psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
             f = cfdm.read(remote)
             self.assertEqual(len(f), 1)
 
@@ -1080,14 +1085,14 @@ class read_writeTest(unittest.TestCase):
 
         # Check that user-set chunks are not overridden
         for chunking in ([5, 4, 3], "contiguous"):
-            f.nc_set_hdf5_chunksizes(chunking)
+            f.nc_set_dataset_chunksizes(chunking)
             for dataset_chunks in ("4MiB", "contiguous"):
                 cfdm.write(f, tmpfile, dataset_chunks=dataset_chunks)
                 nc = netCDF4.Dataset(tmpfile, "r")
                 self.assertEqual(nc.variables["data"].chunking(), chunking)
                 nc.close()
 
-        f.nc_set_hdf5_chunksizes("120 B")
+        f.nc_set_dataset_chunksizes("120 B")
         for dataset_chunks in ("contiguous", "4MiB"):
             cfdm.write(f, tmpfile, dataset_chunks=dataset_chunks)
             nc = netCDF4.Dataset(tmpfile, "r")
@@ -1096,10 +1101,10 @@ class read_writeTest(unittest.TestCase):
 
         # store_dataset_chunks
         f = cfdm.read(tmpfile)[0]
-        self.assertEqual(f.nc_hdf5_chunksizes(), (2, 2, 2))
+        self.assertEqual(f.nc_dataset_chunksizes(), (2, 2, 2))
 
         f = cfdm.read(tmpfile, store_dataset_chunks=False)[0]
-        self.assertIsNone(f.nc_hdf5_chunksizes())
+        self.assertIsNone(f.nc_dataset_chunksizes())
 
         # Scalar data is written contiguously
         f = self.f0
@@ -1150,21 +1155,21 @@ class read_writeTest(unittest.TestCase):
 
         # storage-exact
         f = cfdm.example_field(2)
-        f.data.nc_set_hdf5_chunksizes([7, 5, 4])
+        f.data.nc_set_dataset_chunksizes([7, 5, 4])
         cfdm.write(f, tmpfile)
         g = cfdm.read(tmpfile, dask_chunks="storage-exact")[0]
         self.assertEqual(g.data.chunks, ((7, 7, 7, 7, 7, 1), (5,), (4, 4)))
 
         # storage-aligned (the default)
         g = cfdm.read(tmpfile, dask_chunks="storage-aligned")[0]
-        self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
+        self.assertEqual(g.data.chunks, ((36,), (5,), (8,)))
 
         g = cfdm.read(tmpfile)[0]
-        self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
+        self.assertEqual(g.data.chunks, ((36,), (5,), (8,)))
 
         with cfdm.chunksize(50000000):
             g = cfdm.read(tmpfile)[0]
-            self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
+            self.assertEqual(g.data.chunks, ((36,), (5,), (8,)))
 
         with cfdm.chunksize(5000):
             g = cfdm.read(tmpfile)[0]
@@ -1221,21 +1226,20 @@ class read_writeTest(unittest.TestCase):
                     # Field
                     self.assertFalse(in_memory)
 
-    def test_read_file_type(self):
-        """Test the cfdm.read 'file_type' keyword."""
-        # netCDF file
-        for file_type in (
+    def test_read_dataset_type(self):
+        """Test the cfdm.read 'dataset_type' keyword."""
+        # netCDF dataset
+        for dataset_type in (
             None,
             "netCDF",
             ("netCDF",),
             ("netCDF", "CDL"),
-            ("netCDF", "CDL", "bad value"),
         ):
-            f = cfdm.read(self.filename, file_type=file_type)
+            f = cfdm.read(self.filename, dataset_type=dataset_type)
             self.assertEqual(len(f), 1)
 
-        for file_type in ("CDL", "bad value"):
-            f = cfdm.read(self.filename, file_type=file_type)
+        for dataset_type in ("CDL", ("CDL", "Zarr"), ()):
+            f = cfdm.read(self.filename, dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
 
         # CDL file
@@ -1244,27 +1248,126 @@ class read_writeTest(unittest.TestCase):
             shell=True,
             check=True,
         )
-        for file_type in (
+        for dataset_type in (
             None,
             "CDL",
-            ("CDL",),
-            ("netCDF", "CDL"),
-            ("netCDF", "CDL", "bad value"),
+            ("CDL", "netCDF"),
         ):
-            f = cfdm.read(tmpfile, file_type=file_type)
+            f = cfdm.read(tmpfile, dataset_type=dataset_type)
             self.assertEqual(len(f), 1)
 
-        for file_type in ("netCDF", "bad value"):
-            f = cfdm.read(tmpfile, file_type=file_type)
+        for dataset_type in ("netCDF", ()):
+            f = cfdm.read(tmpfile, dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
 
         # Not a netCDF or CDL file
         with self.assertRaises(DatasetTypeError):
             f = cfdm.read("test_read_write.py")
 
-        for file_type in ("netCDF", "CDL", "bad value"):
-            f = cfdm.read("test_read_write.py", file_type=file_type)
+        for dataset_type in ("netCDF", ()):
+            f = cfdm.read("test_read_write.py", dataset_type=dataset_type)
             self.assertEqual(len(f), 0)
+
+        # Bad values
+        for dataset_type in ("bad value", ("bad value", "netCDF")):
+            with self.assertRaises(ValueError):
+                cfdm.read(self.filename, dataset_type=dataset_type)
+
+    def test_read_zarr(self):
+        """Test the cfdm.read of a zarr dataset."""
+        n = cfdm.read("example_field_0.nc")[0]
+        for zarr_dataset in (self.zarr2, self.zarr3):
+            z = cfdm.read(zarr_dataset, dask_chunks=3)
+            self.assertEqual(len(z), 1)
+            z = z[0]
+            self.assertTrue(z.equals(n))
+
+            cfdm.write(z, tmpfile)
+            n2 = cfdm.read(tmpfile)[0]
+            self.assertTrue(n2.equals(n))
+
+            z = cfdm.read(zarr_dataset, dataset_type="netCDF")
+            self.assertEqual(len(z), 0)
+
+            z = cfdm.read(zarr_dataset, dataset_type="Zarr")
+            self.assertEqual(len(z), 1)
+
+        nz = cfdm.read(["example_field_0.nc", self.zarr3])
+        self.assertEqual(len(nz), 2)
+        self.assertTrue(nz[0].equals(nz[1]))
+
+    def test_read_cdl_string(self):
+        """Test the cfdm.read 'cdl_string' keyword."""
+        f = cfdm.read("example_field_0.nc")[0]
+
+        # Test CDL in full, header-only and coordinate-only type:
+        tempfile_to_option_mapping = {
+            tmpfile: None,
+            tmpfileh: "-h",
+            tmpfilec: "-c",
+        }
+
+        for tempf, option in tempfile_to_option_mapping.items():
+            # Set up the CDL string to test...
+            command_to_run = ["ncdump", "example_field_0.nc", ">", tempf]
+            if option:
+                command_to_run.insert(1, option)
+
+            subprocess.run(" ".join(command_to_run), shell=True, check=True)
+            with open(tempf, "rt") as fh:
+                cdl_string_1 = fh.read()
+
+            for cdl_input in (cdl_string_1, (cdl_string_1,)):
+                f_from_str = cfdm.read(cdl_input, cdl_string=True)
+                self.assertEqual(len(f_from_str), 1)
+                if not option:
+                    self.assertTrue(f_from_str[0].equals(f))
+
+        # Check compatibility with the 'dataset_type' kwarg.
+        f_from_str = cfdm.read(
+            cdl_string_1, cdl_string=True, dataset_type="CDL"
+        )
+        self.assertEqual(len(f_from_str), 1)
+
+        with self.assertRaises(ValueError):
+            cfdm.read(cdl_string_1, cdl_string=True, dataset_type="netCDF")
+
+        # If the user forgets the cdl_string=True argument they will
+        # accidentally attempt to create a file with a very long name
+        # of the CDL string, which will in most, if not all, cases
+        # result in an "OSError: [Errno 36] File name too long" error:
+        with self.assertRaises(OSError):
+            cfdm.read(cdl_string_1)
+
+    def test_read_multiple_files(self):
+        """Test cfdm.read with multiple files."""
+        f = cfdm.read(["example_field_0.nc"])
+        self.assertEqual(len(f), 1)
+
+        f = cfdm.read("ugrid_[12].nc")
+        self.assertEqual(len(f), 6)
+
+    def test_write_chunk_cache(self):
+        """Test the cfdm.write 'chunk_cache' keyword."""
+        f = self.f0
+        for fmt in ("NETCDF3_CLASSIC", "NETCDF4"):
+            for chunk_cache in (None, 4194304):
+                cfdm.write(f, tmpfile, fmt=fmt, chunk_cache=chunk_cache)
+
+    def test_read_write_file_name(self):
+        """Test the cfdm.read with particular file name types."""
+        # File name with a # in it
+        f = self.f0
+        # Check that the file is empty before writing
+        self.assertEqual(os.path.getsize(tmpfile_hash), 0)
+
+        cfdm.write(f, tmpfile_hash)
+
+        # Check that the written file is not empty
+        self.assertGreater(os.path.getsize(tmpfile_hash), 0)
+
+        g = cfdm.read(tmpfile_hash)[0]
+        self.assertTrue(g.equals(f))
 
 
 if __name__ == "__main__":

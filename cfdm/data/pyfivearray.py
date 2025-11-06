@@ -1,5 +1,3 @@
-import h5netcdf
-
 from .abstract import FileArray
 from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
@@ -195,6 +193,8 @@ class PyfiveArray(IndexMixin, FileArray):
                 within the file.
 
         """
+        import h5netcdf
+        
         return super().open(
             h5netcdf.File,
             mode="r",

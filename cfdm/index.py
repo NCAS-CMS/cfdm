@@ -24,7 +24,7 @@ class Index(
 
     {{netCDF variable}}
 
-    {{netCDF HDF5 chunks}}
+    {{netCDF dataset chunks}}
 
     The name of the netCDF dimension spanned by the index variable's
     data (which does not correspond to a domain axis construct) may be
@@ -50,41 +50,6 @@ class Index(
     .. versionadded:: (cfdm) 1.7.0
 
     """
-
-    def __init__(
-        self,
-        properties=None,
-        data=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                  ``properties={'long_name': 'which station this obs is for'}``
-
-            {{init data: data_like, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
 
     def dump(
         self,

@@ -1,6 +1,7 @@
 import numpy as np
 
-from .. import abstract
+from cfdm.core import abstract
+
 from .abstract import Array
 from .numpyarray import NumpyArray
 
@@ -130,7 +131,7 @@ class Data(abstract.Container):
 
         :Returns:
 
-            `{{class}}`
+        `{{class}}`
 
         """
         return self

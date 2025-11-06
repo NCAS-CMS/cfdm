@@ -1,3 +1,79 @@
+Version NEXTVERSION
+-------------------
+
+**2025-12-??**
+
+* Reduce the time taken to import `cfdm`
+  (https://github.com/NCAS-CMS/cfdm/issues/361)
+
+----
+
+Version 1.12.3.1
+----------------
+
+**2025-10-15**
+
+* Python 3.9 support removed
+  (https://github.com/NCAS-CMS/cfdm/issues/353)
+* When changing array data type, retain cached data elements cast to
+  the new type (https://github.com/NCAS-CMS/cfdm/issues/358)
+* Fix bug that prevented `cfdm.read` from reading a file with ``#``
+  characters in its file name
+  (https://github.com/NCAS-CMS/cfdm/issues/356)
+* Changed dependency: ``Python>=3.10.0``
+
+----
+
+Version 1.12.3.0
+----------------
+
+**2025-08-18**
+
+
+* Fix `cfdm.Data.reshape` when the underlying data originate on disk
+  (https://github.com/NCAS-CMS/cfdm/issues/348)
+* New keyword parameter to `cfdm.Field.dump`: ``data``
+  (https://github.com/NCAS-CMS/cfdm/issues/345)
+* New dependency: ``distributed>=2025.5.1``
+
+----
+
+Version 1.12.2.0
+----------------
+
+**2025-06-05**
+
+* Implement lossy compression via quantization
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
+* New quantization classes: `cfdm.Quantization`,
+  `cfdm.mixin.QuantizationMixin`
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
+* New quantization methods: `cfdm.Field.get_quantization`,
+  `cfdm.Field.get_quantize_on_write`,
+  `cfdm.Field.set_quantize_on_write`,
+  `cfdm.Field.del_quantize_on_write`
+  (https://github.com/NCAS-CMS/cfdm/issues/330)
+* Improve performance in `cfdm.read` by caching any array values
+  retrieved from disk (https://github.com/NCAS-CMS/cfdm/issues/313)
+* New keyword parameter to `cfdm.write`: ``chunk_cache``
+  (https://github.com/NCAS-CMS/cfdm/issues/328)
+* Read Zarr datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/335)
+* Read multiple datasets simultaneously with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/336)
+* New keyword parameters to `cfdm.read`: ``recursive``,
+  ``followlinks`` (https://github.com/NCAS-CMS/cfdm/issues/336)
+* New keyword parameters to `cfdm.read`: ``cdl_string``
+  (https://github.com/NCAS-CMS/cfdm/issues/337)
+* Update CF aggregation keywords
+  (https://github.com/NCAS-CMS/cfdm/issues/341)
+* Set new minimum version of `dask`: ``2025.5.1``
+  (https://github.com/NCAS-CMS/cfdm/issues/339)
+* New dependency: ``zarr>=3.0.8``
+* Changed dependency: ``dask>=2025.5.1``
+
+----
+
 Version 1.12.1.0
 ----------------
 

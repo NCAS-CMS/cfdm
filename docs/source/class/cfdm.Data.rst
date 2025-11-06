@@ -174,16 +174,6 @@ Joining data
    :template: method.rst
 
    ~cfdm.Data.concatenate
-   
-Adding and removing elements
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.Data.unique
 
 Expanding the data
 ^^^^^^^^^^^^^^^^^^
@@ -307,16 +297,6 @@ Order statistics
    ~cfdm.Data.max
    ~cfdm.Data.min
 
-Sums
-^^^^
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.Data.sum
-
 Compression by convention
 -------------------------
    
@@ -358,7 +338,6 @@ Miscellaneous
    ~cfdm.Data.get_filenames
    ~cfdm.Data.get_original_filenames
    ~cfdm.Data.source
-   ~cfdm.Data.chunk_indices
 
 .. rubric:: Attributes
 	    
@@ -378,9 +357,9 @@ Performance
    :toctree: ../method/
    :template: method.rst
 	      
-   ~cfdm.Data.nc_clear_hdf5_chunksizes
-   ~cfdm.Data.nc_hdf5_chunksizes
-   ~cfdm.Data.nc_set_hdf5_chunksizes
+   ~cfdm.Data.nc_clear_dataset_chunksizes
+   ~cfdm.Data.nc_dataset_chunksizes
+   ~cfdm.Data.nc_set_dataset_chunksizes
    ~cfdm.Data.to_memory
 
 Aggregation
@@ -434,3 +413,17 @@ Docstring substitutions
    ~cfdm.Data._docstring_substitutions        
    ~cfdm.Data._docstring_package_depth        
    ~cfdm.Data._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.nc_clear_hdf5_chunksizes
+   ~cfdm.Data.nc_hdf5_chunksizes
+   ~cfdm.Data.nc_set_hdf5_chunksizes

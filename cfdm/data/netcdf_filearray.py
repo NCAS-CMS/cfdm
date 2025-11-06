@@ -1,5 +1,3 @@
-from scipy.io import netcdf_file
-
 from .abstract import FileArray
 from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
@@ -110,7 +108,7 @@ class Netcdf_fileArray(IndexMixin, FileArray):
         if self._get_component("close"):
             dataset.close()
 
-    def open(self):
+    def open(self, **kwargs):
         """Return a dataset file object and address.
 
         :Returns:
@@ -120,4 +118,6 @@ class Netcdf_fileArray(IndexMixin, FileArray):
                 address of the data within the file.
 
         """
-        return super().open(netcdf_file, mode="r", mmap=True)
+        from scipy.io import netcdf_file
+
+        return super().open(netcdf_file, mode="r", mmap=True, **kwargs)

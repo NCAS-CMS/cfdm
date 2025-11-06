@@ -6,12 +6,7 @@ from math import prod
 from numbers import Integral
 from os.path import commonprefix
 
-import dask.array as da
 import numpy as np
-from dask.base import collections_to_dsk, is_dask_collection, tokenize
-from dask.optimization import cull
-from netCDF4 import default_fillvals
-from scipy.sparse import issparse
 
 from .. import core
 from ..constants import masked
@@ -28,7 +23,7 @@ from ..functions import (
 )
 from ..mixin.container import Container
 from ..mixin.files import Files
-from ..mixin.netcdf import NetCDFAggregation, NetCDFHDF5
+from ..mixin.netcdf import NetCDFAggregation, NetCDFChunks
 from ..units import Units
 from .abstract import Array
 from .creation import to_dask
@@ -55,7 +50,7 @@ from .utils import (
 logger = logging.getLogger(__name__)
 
 
-class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
+class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -408,10 +403,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             self._custom["has_deterministic_name"] = bool(deterministic)
 
-            # File components
-            self._initialise_netcdf(source)
-            self._initialise_original_filenames(source)
-
             return
 
         super().__init__(
@@ -419,10 +410,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             fill_value=fill_value,
             _use_array=False,
         )
-
-        # Initialise file components
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
 
         # Set the units
         units = self._Units_class(units, calendar=calendar)
@@ -436,6 +423,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             return
 
         # Is the array a sparse array?
+        from scipy.sparse import issparse
+
         sparse_array = issparse(array)
 
         # Is the array data in memory?
@@ -478,6 +467,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 pass
 
         # Deterministic name
+        from dask.base import is_dask_collection
+
         self._custom["has_deterministic_name"] = not is_dask_collection(array)
 
         if self._is_abstract_Array_subclass(array):
@@ -719,6 +710,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 # can't do a normal dask subspace
 
                 # Subspace axes which have list/1-d array indices
+                import dask.array as da
+
                 for axis in axes_with_list_indices:
                     dx = da.take(dx, indices[axis], axis=axis)
 
@@ -759,17 +752,17 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             ]
             new._axes = new_axes
 
-        # Update the HDF5 chunking strategy
-        chunksizes = new.nc_hdf5_chunksizes()
+        # Update the dataset chunking strategy
+        chunksizes = new.nc_dataset_chunksizes()
         if (
             chunksizes
             and isinstance(chunksizes, tuple)
             and new.shape != original_shape
         ):
             if keepdims:
-                new.nc_set_hdf5_chunksizes(chunksizes)
+                new.nc_set_dataset_chunksizes(chunksizes)
             else:
-                new.nc_clear_hdf5_chunksizes()
+                new.nc_clear_dataset_chunksizes()
 
         return new
 
@@ -1663,12 +1656,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if axes is not None:
             d._axes = axes
 
-        # Update the HDF5 chunking strategy
+        # Update the dataset chunking strategy
         if (
-            isinstance(data.nc_hdf5_chunksizes(), tuple)
+            isinstance(data.nc_dataset_chunksizes(), tuple)
             and d.shape != original_shape
         ):
-            d.nc_clear_hdf5_chunksizes()
+            d.nc_clear_dataset_chunksizes()
 
         # Update the deterministic status
         d._update_deterministic(other)
@@ -2075,6 +2068,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 updated = True
 
         if updated:
+            import dask.array as da
+
             # The Dask graph was modified, so recast the dictionary
             # representation as a Dask array.
             dx = self.to_dask_array(
@@ -2580,6 +2575,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     "has_deterministic_name", False
                 )
             except AttributeError:
+                from dask.base import is_dask_collection
+
                 custom["has_deterministic_name"] = not is_dask_collection(
                     other
                 )
@@ -2629,6 +2626,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         2000-12-01 00:00:00
 
         """
+        from scipy.sparse import issparse
+
         a = self.compute().copy()
         if issparse(a):
             a = a.toarray()
@@ -2918,8 +2917,21 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             _force_mask_hardness=False, _force_to_memory=True
         )
         if dx.dtype != value:
+            cache = self._get_cached_elements().copy()
+
             dx = dx.astype(value)
             self._set_dask(dx, in_memory=True)
+
+            if cache:
+                # Re-instate cached elements, cast to the new dtype.
+                cache1 = {}
+                for i, a in cache.items():
+                    if a is not np.ma.masked:
+                        a = np.asanyarray(a, dtype=value)
+
+                    cache1[i] = a
+
+                self._set_cached_elements(cache1)
 
     @property
     def fill_value(self):
@@ -3032,6 +3044,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         (12, 73, 96)
 
         """
+        import dask.array as da
+
         mask_data_obj = self.copy(array=False)
 
         dx = self.to_dask_array(
@@ -3276,6 +3290,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         True
 
         """
+        from scipy.sparse import issparse
+
         array = self.compute()
         if issparse(array):
             return array.copy()
@@ -3372,6 +3388,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         False
 
         """
+        import dask.array as da
+
         d = self.copy(array=False)
         dx = self.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=True
@@ -3437,6 +3455,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         False
 
         """
+        import dask.array as da
+
         d = self.copy(array=False)
         dx = self.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=True
@@ -3646,6 +3666,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 mask |= dx > valid_max
 
         if mask is not None:
+            import dask.array as da
+
             dx = da.ma.masked_where(mask, dx)
             CFA = self._CFA
         else:
@@ -3833,6 +3855,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [9]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array(_force_mask_hardness=True, _force_to_memory=True)
@@ -4024,6 +4048,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         if n_data == 1:
             return data0
+
+        import dask.array as da
 
         conformed_data = [data0]
         for data1 in data[1:]:
@@ -4235,7 +4261,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         if masked:
             mask = mask.creation_commands(
-                name="mask", namespace=namespace0, indent=0, string=True
+                name="mask", namespace=namespace0, indent=indent, string=True
             )
             mask = mask.replace("mask = ", "mask=", 1)
             mask = f", {mask}"
@@ -4305,6 +4331,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
           0): <Task ('cfdm_harden_mask-d28b364730f9d5b38cfbd835b29a403c', 0) cfdm_harden_mask(...)>}
 
         """
+        import dask.array as da
+        from dask.optimization import cull
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array(
@@ -4462,6 +4491,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [ False  True]                                 #uninitialised
 
         """
+        import dask.array as da
+
         dx = da.empty(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
@@ -4543,6 +4574,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 f"{self.get_fill_value(None)} != {other.get_fill_value(None)}"
             )  # pragma: no cover
             return False
+
+        import dask.array as da
 
         self_dx = self.to_dask_array(_force_mask_hardness=False)
         other_dx = other.to_dask_array(_force_mask_hardness=False)
@@ -4753,6 +4786,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if fill_value is None:
             fill_value = d.get_fill_value(None)
             if fill_value is None:  # still...
+                from netCDF4 import default_fillvals
+
                 fill_value = default_fillvals.get(d.dtype.str[1:])
                 if fill_value is None and d.dtype.kind in ("SU"):
                     fill_value = default_fillvals.get("S1", None)
@@ -4953,12 +4988,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         data_axes.insert(axes[0], new_axis_identifier(data_axes0))
         d._axes = data_axes
 
-        # Update the HDF5 chunking strategy
+        # Update the dataset chunking strategy
         if (
-            isinstance(d.nc_hdf5_chunksizes(), tuple)
+            isinstance(d.nc_dataset_chunksizes(), tuple)
             and d.shape != original_shape
         ):
-            d.nc_clear_hdf5_chunksizes()
+            d.nc_clear_dataset_chunksizes()
 
         return d
 
@@ -5020,6 +5055,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [False False]
 
         """
+        import dask.array as da
+
         if dtype is None:
             # Need to explicitly set the default because dtype is not
             # a named keyword of da.full
@@ -5308,6 +5345,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         True
 
         """
+        from dask.base import tokenize
+
         if not self.has_deterministic_name():
             raise ValueError()
 
@@ -5805,12 +5844,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         data_axes.insert(position, axis)
         d._axes = data_axes
 
-        # Update the HDF5 chunking strategy
-        chunksizes = d.nc_hdf5_chunksizes()
+        # Update the dataset chunking strategy
+        chunksizes = d.nc_dataset_chunksizes()
         if chunksizes and isinstance(chunksizes, tuple):
             chunksizes = list(chunksizes)
             chunksizes.insert(position, 1)
-            d.nc_set_hdf5_chunksizes(chunksizes)
+            d.nc_set_dataset_chunksizes(chunksizes)
 
         return d
 
@@ -5897,6 +5936,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [1.0 -- 2.0 -- 3.0]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         if rtol is None:
@@ -5954,6 +5995,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [1 -- 3 -- 5]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         array = cfdm_where(d.array, condition, masked, None, d.hardmask)
@@ -5986,7 +6029,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) 1.8.0
 
-         ..seealso:: `min`, `sum`
+        .. seealso:: `min`, `sum`
 
         :Parameters:
 
@@ -6020,6 +6063,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         <{{repr}}Data(1, 1): [[11]] K>
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         d = collapse(
             da.max,
@@ -6042,7 +6087,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) 1.8.0
 
-         ..seealso:: `max`, `sum`
+        .. seealso:: `max`, `sum`
 
         :Parameters:
 
@@ -6076,6 +6121,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         <{{repr}}Data(1, 1): [[0]] K>
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         d = collapse(
             da.min,
@@ -6128,6 +6175,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [ True  True]
 
         """
+        import dask.array as da
+
         dx = da.ones(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
@@ -6183,6 +6232,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
          [3 4 5 -- --]]
 
         """
+        import dask.array as da
+
         if not 0 <= axis < self.ndim:
             raise ValueError(
                 f"'axis' must be a valid dimension position. Got {axis}"
@@ -6455,6 +6506,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             `None`
 
         """
+        import dask.array as da
+
         filenames = np.ma.filled(filenames, "")
         if self.numblocks != filenames.shape:
             raise ValueError(
@@ -6583,22 +6636,20 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         original_shape = self.shape
         original_ndim = len(original_shape)
 
-        dx = d.to_dask_array(
-            _force_mask_hardness=False, _force_to_memory=False
-        )
+        dx = d.to_dask_array(_force_mask_hardness=False)
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
-        d._set_dask(dx, in_memory=None)
+        d._set_dask(dx, in_memory=True)
 
         # Set axis names for the reshaped data
         if dx.ndim != original_ndim:
             d._axes = generate_axis_identifiers(dx.ndim)
 
-        # Update the HDF5 chunking strategy
+        # Update the dataset chunking strategy
         if (
-            isinstance(d.nc_hdf5_chunksizes(), tuple)
+            isinstance(d.nc_dataset_chunksizes(), tuple)
             and d.shape != original_shape
         ):
-            d.nc_clear_hdf5_chunksizes()
+            d.nc_clear_dataset_chunksizes()
 
         return d
 
@@ -6831,13 +6882,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # Remove the squeezed axis names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
 
-        # Update the HDF5 chunking strategy
-        chunksizes = d.nc_hdf5_chunksizes()
+        # Update the dataset chunking strategy
+        chunksizes = d.nc_dataset_chunksizes()
         if chunksizes and isinstance(chunksizes, tuple):
             chunksizes = [
                 size for i, size in enumerate(chunksizes) if i not in iaxes
             ]
-            d.nc_set_hdf5_chunksizes(chunksizes)
+            d.nc_set_dataset_chunksizes(chunksizes)
 
         return d
 
@@ -6851,7 +6902,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `max`, `min`
+        .. seealso:: `max`, `min`
 
         :Parameters:
 
@@ -6891,6 +6942,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         <{{repr}}Data(1, 1): [[97.0]] K>
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
         d = collapse(
             da.sum,
@@ -7037,6 +7090,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # change in the future, in which case this method could break
         # and need refactoring (e.g.
         # https://github.com/dask/dask/pull/11736#discussion_r1954752842).
+        from dask.base import collections_to_expr
 
         if optimize_graph is not None:
             _DEPRECATION_ERROR_KWARGS(
@@ -7056,10 +7110,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             _force_to_memory=_force_to_memory,
         )
 
-        if graph == "optimise":
-            return collections_to_dsk((dx,), optimize_graph=True)
-
-        return dict(collections_to_dsk((dx,), optimize_graph=False))
+        optimise_graph = graph == "optimise"
+        e = collections_to_expr((dx,), optimize_graph=optimise_graph)
+        return e.dask
 
     def tolist(self):
         """Return the data as a scalar or (nested) list.
@@ -7137,6 +7190,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         (19, 73, 96)
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         ndim = d.ndim
@@ -7163,11 +7218,11 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         d._set_dask(dx, in_memory=True)
 
-        # Update the HDF5 chunking strategy
-        chunksizes = d.nc_hdf5_chunksizes()
+        # Update the dataset chunking strategy
+        chunksizes = d.nc_dataset_chunksizes()
         if chunksizes and isinstance(chunksizes, tuple):
             chunksizes = [chunksizes[i] for i in iaxes]
-            d.nc_set_hdf5_chunksizes(chunksizes)
+            d.nc_set_dataset_chunksizes(chunksizes)
 
         return d
 
@@ -7248,6 +7303,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [1 2 3 --]
 
         """
+        import dask.array as da
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         original_shape = self.shape
@@ -7261,12 +7318,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # Update the axis names
         d._axes = generate_axis_identifiers(dx.ndim)
 
-        # Update the HDF5 chunking strategy
+        # Update the dataset chunking strategy
         if (
-            isinstance(d.nc_hdf5_chunksizes(), tuple)
+            isinstance(d.nc_dataset_chunksizes(), tuple)
             and d.shape != original_shape
         ):
-            d.nc_clear_hdf5_chunksizes()
+            d.nc_clear_dataset_chunksizes()
 
         return d
 
@@ -7314,6 +7371,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [False False]
 
         """
+        import dask.array as da
+
         dx = da.zeros(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 

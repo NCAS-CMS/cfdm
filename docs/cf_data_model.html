@@ -1,25 +1,22 @@
-
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" data-content_root="./">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>CF data model &#8212; Documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
-    <script src="_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a5d0ad34" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=056948bf" />
+    <script src="_static/documentation_options.js?v=7e90eb75"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=b578dfe4"></script>
+    <script src="_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installation" href="installation.html" />
@@ -27,18 +24,19 @@
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.12.1.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.12.3.1</a></h1>
 
 
 
@@ -57,16 +55,16 @@
 
 
 
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>CF data model</strong></a></li>
@@ -118,9 +116,9 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 
 
   <style> .small {font-size:small} </style><section id="cf-data-model">
-<span id="id1"></span><h1><strong>CF data model</strong><a class="headerlink" href="#cf-data-model" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1><strong>CF data model</strong><a class="headerlink" href="#cf-data-model" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.12.1.0 for version 1.12 of the CF conventions.</p>
+<p>Version 1.12.3.1 for version 1.12 of the CF conventions.</p>
 <p>The CF (Climate and Forecast) metadata conventions
 (<a class="reference external" href="http://cfconventions.org">http://cfconventions.org</a>) provide a description of the physical
 meaning of data and of their spatial and temporal properties and are
@@ -134,7 +132,7 @@ the netCDF encoding.</p>
 <p>The CF data model defines a <strong>field construct</strong> for storing data with
 all of its metadata. It is defined as follows:</p>
 <dl class="glossary">
-<dt id="term-field-construct">field construct</dt><dd><p>corresponds to a CF-netCDF data variable with all of its
+<dt id="term-field-construct">field construct<a class="headerlink" href="#term-field-construct" title="Link to this term">¶</a></dt><dd><p>corresponds to a CF-netCDF data variable with all of its
 metadata. It consists of</p>
 <ul>
 <li><p>descriptive properties that apply to field construct as a whole
@@ -144,44 +142,44 @@ metadata. It consists of</p>
 of the data array (i.e. the “domain”),</p></li>
 <li><p><strong>metadata constructs</strong> that describe the physical nature of the
 data array, defined by</p>
-<dl class="glossary simple">
-<dt id="term-field-ancillary-constructs">field ancillary constructs</dt><dd><p>corresponding to CF-netCDF ancillary variables</p>
+<dl class="simple glossary">
+<dt id="term-field-ancillary-constructs">field ancillary constructs<a class="headerlink" href="#term-field-ancillary-constructs" title="Link to this term">¶</a></dt><dd><p>corresponding to CF-netCDF ancillary variables</p>
 </dd>
-<dt id="term-cell-method-constructs">cell method constructs</dt><dd><p>corresponding to a CF-netCDF cell_methods attribute of data
+<dt id="term-cell-method-constructs">cell method constructs<a class="headerlink" href="#term-cell-method-constructs" title="Link to this term">¶</a></dt><dd><p>corresponding to a CF-netCDF cell_methods attribute of data
 variable</p>
 </dd>
 </dl>
 </li>
 </ul>
 </dd>
-<dt id="term-domain-construct">domain construct</dt><dd><p>that describes the locations of each cell of the domain. It may
+<dt id="term-domain-construct">domain construct<a class="headerlink" href="#term-domain-construct" title="Link to this term">¶</a></dt><dd><p>that describes the locations of each cell of the domain. It may
 exist independently of a <strong>field construct</strong> and consists of</p>
 <ul class="simple">
 <li><p>descriptive properties that apply to domain construct as a whole,</p></li>
 <li><p><strong>metadata constructs</strong> that describe the locations of each cell
 of the domain, defined by</p></li>
 </ul>
-<dl class="glossary simple">
-<dt id="term-domain-axis-constructs">domain axis constructs</dt><dd><p>corresponding to CF-netCDF dimensions or scalar coordinate
+<dl class="simple glossary">
+<dt id="term-domain-axis-constructs">domain axis constructs<a class="headerlink" href="#term-domain-axis-constructs" title="Link to this term">¶</a></dt><dd><p>corresponding to CF-netCDF dimensions or scalar coordinate
 variables</p>
 </dd>
-<dt id="term-dimension-coordinate-constructs">dimension coordinate constructs</dt><dd><p>corresponding to CF-netCDF coordinate variables or numeric
+<dt id="term-dimension-coordinate-constructs">dimension coordinate constructs<a class="headerlink" href="#term-dimension-coordinate-constructs" title="Link to this term">¶</a></dt><dd><p>corresponding to CF-netCDF coordinate variables or numeric
 scalar coordinate variables</p>
 </dd>
-<dt id="term-auxiliary-coordinate-constructs">auxiliary coordinate constructs</dt><dd><p>corresponding to CF-netCDF auxiliary coordinate variables and
+<dt id="term-auxiliary-coordinate-constructs">auxiliary coordinate constructs<a class="headerlink" href="#term-auxiliary-coordinate-constructs" title="Link to this term">¶</a></dt><dd><p>corresponding to CF-netCDF auxiliary coordinate variables and
 non-numeric scalar coordinate variables</p>
 </dd>
-<dt id="term-coordinate-reference-constructs">coordinate reference constructs</dt><dd><p>corresponding to CF-netCDF grid mapping variables or the
+<dt id="term-coordinate-reference-constructs">coordinate reference constructs<a class="headerlink" href="#term-coordinate-reference-constructs" title="Link to this term">¶</a></dt><dd><p>corresponding to CF-netCDF grid mapping variables or the
 formula_terms attribute of a coordinate variable</p>
 </dd>
-<dt id="term-domain-ancillary-constructs">domain ancillary constructs</dt><dd><p>corresponding to CF-netCDF variables named by the
+<dt id="term-domain-ancillary-constructs">domain ancillary constructs<a class="headerlink" href="#term-domain-ancillary-constructs" title="Link to this term">¶</a></dt><dd><p>corresponding to CF-netCDF variables named by the
 formula_terms attribute of a coordinate variable</p>
 </dd>
-<dt id="term-cell-measure-constructs">cell measure constructs</dt><dd><p>corresponding to CF-netCDF cell measure variables</p>
+<dt id="term-cell-measure-constructs">cell measure constructs<a class="headerlink" href="#term-cell-measure-constructs" title="Link to this term">¶</a></dt><dd><p>corresponding to CF-netCDF cell measure variables</p>
 </dd>
-<dt id="term-domain-topology-constructs">domain topology constructs</dt><dd><p>corresponding to CF-netCDF UGRID mesh topology variables</p>
+<dt id="term-domain-topology-constructs">domain topology constructs<a class="headerlink" href="#term-domain-topology-constructs" title="Link to this term">¶</a></dt><dd><p>corresponding to CF-netCDF UGRID mesh topology variables</p>
 </dd>
-<dt id="term-cell-connectivity-constructs">cell connectivity constructs</dt><dd><p>corresponding to CF-netCDF UGRID connectivity variables</p>
+<dt id="term-cell-connectivity-constructs">cell connectivity constructs<a class="headerlink" href="#term-cell-connectivity-constructs" title="Link to this term">¶</a></dt><dd><p>corresponding to CF-netCDF UGRID connectivity variables</p>
 </dd>
 </dl>
 </dd>
@@ -191,8 +189,9 @@ formula_terms attribute of a coordinate variable</p>
 <div class="line"><br /></div>
 </div>
 <figure class="align-default" id="id2">
-<img alt="_images/cfdm_field.svg" src="_images/cfdm_field.svg" /><figcaption>
-<p><span class="caption-text"><em>The constructs of the CF data model described using UML. The field construct corresponds to a CF-netCDF data variable. The domain construct provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.</em></span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<img alt="_images/cfdm_field.svg" src="_images/cfdm_field.svg" />
+<figcaption>
+<p><span class="caption-text"><em>The constructs of the CF data model described using UML. The field construct corresponds to a CF-netCDF data variable. The domain construct provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.</em></span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <hr class="docutils" />
@@ -207,11 +206,11 @@ formula_terms attribute of a coordinate variable</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-04-01.
+      &#169;2025, NCAS | Page built on 2025-10-15.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 

@@ -89,6 +89,19 @@ Data
    ~cfdm.DomainAncillary.shape
    ~cfdm.DomainAncillary.size
 
+Quantization
+^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.get_quantization
+   ~cfdm.DomainAncillary.get_quantize_on_write
+
 Bounds
 ------
 
@@ -211,8 +224,8 @@ Groups
    ~cfdm.DomainAncillary.nc_clear_variable_groups
    ~cfdm.DomainAncillary.nc_set_variable_groups
 
-HDF5 chunks
-^^^^^^^^^^^
+Dataset chunks
+^^^^^^^^^^^^^^
 
 .. rubric:: Methods
 
@@ -221,9 +234,9 @@ HDF5 chunks
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.DomainAncillary.nc_hdf5_chunksizes
-   ~cfdm.DomainAncillary.nc_set_hdf5_chunksizes
-   ~cfdm.DomainAncillary.nc_clear_hdf5_chunksizes
+   ~cfdm.DomainAncillary.nc_dataset_chunksizes
+   ~cfdm.DomainAncillary.nc_set_dataset_chunksizes
+   ~cfdm.DomainAncillary.nc_clear_dataset_chunksizes
 
 Special
 -------
@@ -254,3 +267,17 @@ Docstring substitutions
    ~cfdm.DomainAncillary._docstring_substitutions        
    ~cfdm.DomainAncillary._docstring_package_depth        
    ~cfdm.DomainAncillary._docstring_method_exclusions    
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.nc_clear_hdf5_chunksizes
+   ~cfdm.DomainAncillary.nc_hdf5_chunksizes
+   ~cfdm.DomainAncillary.nc_set_hdf5_chunksizes

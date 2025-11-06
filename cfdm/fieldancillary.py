@@ -1,7 +1,8 @@
-from . import core, mixin
+from . import Quantization, core, mixin
 
 
 class FieldAncillary(
+    mixin.QuantizationMixin,
     mixin.NetCDFVariable,
     mixin.PropertiesData,
     mixin.Files,
@@ -32,46 +33,17 @@ class FieldAncillary(
 
     {{netCDF variable}}
 
-    {{netCDF HDF5 chunks}}
+    {{netCDF dataset chunks}}
 
     .. versionadded:: (cfdm) 1.7.0
 
     """
 
-    def __init__(
-        self,
-        properties=None,
-        data=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-               *Parameter example:*
-                  ``properties={'standard_name': 'altitude'}``
-
-            {{init data: data_like, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
+    def __new__(cls, *args, **kwargs):
+        """Store component classes."""
+        instance = super().__new__(cls)
+        instance._Quantization = Quantization
+        return instance
 
     def dump(
         self,

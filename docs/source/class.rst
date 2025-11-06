@@ -78,7 +78,7 @@ Data classes
    cfdm.Data
    cfdm.NetCDF4Array
    cfdm.H5netcdfArray
-   cfdm.NumpyArray
+   cfdm.ZarrArray
    cfdm.Array
 
 Data compression classes
@@ -98,7 +98,7 @@ Classes that support the creation and storage of compressed arrays.
    cfdm.RaggedIndexedArray
    cfdm.RaggedIndexedContiguousArray
    cfdm.CompressedArray
-
+   cfdm.Quantization
 
 Miscellaneous classes
 ---------------------

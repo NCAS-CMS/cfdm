@@ -2,7 +2,6 @@ from copy import deepcopy
 from itertools import accumulate, product
 
 import numpy as np
-from uritools import isuri, uricompose
 
 from ..functions import dirname
 from . import abstract
@@ -26,7 +25,7 @@ class AggregatedArray(abstract.FileArray):
         """
         instance = super().__new__(cls)
         instance._FragmentArray = {
-            "location": FragmentFileArray,
+            "uri": FragmentFileArray,
             "unique_value": FragmentUniqueValueArray,
         }
         return instance
@@ -66,16 +65,16 @@ class AggregatedArray(abstract.FileArray):
 
             fragment_array: `dict`
                 A dictionary representation of the fragment array, in
-                "location" form::
+                either "uri" form::
 
-                   {'map': <'map' fragment array variable data>,
-                    'location': <'location' fragment array variable data>,
-                    'variable': <'variable' fragment array variable data>,}
+                   {'map': <'map' fragment variable data>,
+                    'uris': <'uris' fragment variable data>,
+                    'identifiers': <'identifiers' fragment variable data>}
 
-                or "unique_value" form:
+                or else in "unique_value" form::
 
-                   {'map': <'map' fragment array variable data>,
-                    'unique_value': <'unique_value' fragment array data>}
+                   {'map': <'map' fragment variable data>,
+                    'unique_values': <'unique_values' fragment variable data>}
 
             storage_options: `dict` or `None`, optional
                 Key/value pairs to be passed on to the creation of
@@ -208,24 +207,24 @@ class AggregatedArray(abstract.FileArray):
 
             fragment_array: `dict`
                A dictionary representation of the fragment array, in
-               "location" form::
+               either "uri" form::
 
-                  {'map': <'map' fragment array variable data>,
-                   'location': <'location' fragment array variable data>,
-                   'variable': <'variable' fragment array variable data>}
+                  {'map': <'map' fragment variable data>,
+                   'uris': <'uris' fragment variable data>,
+                   'identifiers': <'identifiers' fragment variable data>}
 
-               or "unique_value" form::
+               or else "unique_value" form::
 
-                  {'map': <'map' fragment array variable data>,
-                   'unique_value': <'unique_value' fragment array data>}
+                  {'map': <'map' fragment variable data>,
+                   'unique_values': <'unique_values' fragment variable data>}
 
         :Returns:
 
             4-`tuple`
                 1. The shape of the aggregated data.
                 2. The shape of the array of fragments.
-                3. The type of the fragments (either
-                   ``'unique_value'`` or ``'location'``).
+                3. The type of the fragments (either ``'uri'`` or
+                   ``'unique_value'``).
                 4. The parsed aggregation instructions.
 
         """
@@ -243,32 +242,30 @@ class AggregatedArray(abstract.FileArray):
         fragment_array_indices = chunk_positions(chunks)
         fragment_shapes = chunk_locations(chunks)
 
-        if "location" in fragment_array:
+        if "uris" in fragment_array:
             # --------------------------------------------------------
-            # Each fragment is in a file, rather than given by a
-            # unique value.
+            # Each fragment is in an external dataset, rather than
+            # given by a unique value.
             # --------------------------------------------------------
-            fragment_type = "location"
-            fa_variable = fragment_array["variable"]
-            fa_location = fragment_array["location"]
-            fragment_array_shape = fa_location.shape
+            fragment_type = "uri"
+            fa_identifiers = fragment_array["identifiers"]
+            fa_uris = fragment_array["uris"]
+            fragment_array_shape = fa_uris.shape
 
-            if not fa_variable.ndim:
-                fa_variable = fa_variable.item()
+            if not fa_identifiers.ndim:
+                identifier = fa_identifiers.item()
                 scalar = True
             else:
                 scalar = False
 
             for index, shape in zip(fragment_array_indices, fragment_shapes):
-                if scalar:
-                    variable = fa_variable
-                else:
-                    variable = fa_variable[index].item()
+                if not scalar:
+                    identifier = fa_identifiers[index].item()
 
                 parsed_fragment_array[index] = {
                     "map": shape,
-                    "location": fa_location[index].item(),
-                    "variable": variable,
+                    "uri": fa_uris[index].item(),
+                    "identifier": identifier,
                 }
         else:
             # --------------------------------------------------------
@@ -276,12 +273,12 @@ class AggregatedArray(abstract.FileArray):
             # being in a file.
             # --------------------------------------------------------
             fragment_type = "unique_value"
-            fa_unique_value = fragment_array["unique_value"]
-            fragment_array_shape = fa_unique_value.shape
+            fa_unique_values = fragment_array["unique_values"]
+            fragment_array_shape = fa_unique_values.shape
             parsed_fragment_array = {
                 index: {
                     "map": shape,
-                    "unique_value": fa_unique_value[index].item(),
+                    "unique_value": fa_unique_values[index].item(),
                 }
                 for index, shape in zip(
                     fragment_array_indices, fragment_shapes
@@ -334,15 +331,13 @@ class AggregatedArray(abstract.FileArray):
         (2, 1, 1, 1)
         >>> a.get_fragment_array()
         {(0, 0, 0, 0): {
-          'file': ('January-June.nc',),
-          'variable': ('temp',),
-          'format': 'nc',
-          'location': [(0, 6), (0, 1), (0, 73), (0, 144)]},
+            'uri': 'January-March.nc',
+            'identifier': 'temp',
+            'map': [3, 1, 73, 144]}
          (1, 0, 0, 0): {
-          'file': ('July-December.nc',),
-          'variable': ('temp',),
-          'format': 'nc',
-          'location': [(6, 12), (0, 1), (0, 73), (0, 144)]}}
+            'uri': 'April-December.nc',
+            'identifier': 'temp',
+            'map': [9, 1, 72, 144]}}
 
         """
         fragment_array = self._get_component("fragment_array")
@@ -374,9 +369,9 @@ class AggregatedArray(abstract.FileArray):
     def get_fragment_type(self):
         """The type of fragments in the fragment array.
 
-        Either ``'location'`` to indicate that the fragments are
-        files, or else ``'unique_value'`` to indicate that they
-        are represented by their unique data values.
+        Either ``'uri'`` to indicate that the fragments are files, or
+        else ``'unique_value'`` to indicate that they are represented
+        by their unique data values.
 
         .. versionadded:: (cfdm) 1.12.0.0
 
@@ -708,6 +703,7 @@ class AggregatedArray(abstract.FileArray):
         import dask.array as da
         from dask.array.core import getter
         from dask.base import tokenize
+        from uritools import isuri, uricompose
 
         name = (f"{self.__class__.__name__}-{tokenize(self)}",)
 
@@ -718,7 +714,7 @@ class AggregatedArray(abstract.FileArray):
         aggregated_attributes = self.get_attributes()
         unpack = self.get_unpack()
 
-        if fragment_type == "location":
+        if fragment_type == "uri":
             # Get the directory of the aggregation file as an absolute
             # URI
             aggregation_file_directory = dirname(self.get_filename())
@@ -752,9 +748,9 @@ class AggregatedArray(abstract.FileArray):
             kwargs = fragment_array[fragment_index].copy()
             kwargs.pop("map", None)
 
-            if fragment_type == "location":
-                kwargs["filename"] = kwargs.pop("location")
-                kwargs["address"] = kwargs.pop("variable")
+            if fragment_type == "uri":
+                kwargs["filename"] = kwargs.pop("uri")
+                kwargs["address"] = kwargs.pop("identifier")
                 kwargs["storage_options"] = storage_options
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory

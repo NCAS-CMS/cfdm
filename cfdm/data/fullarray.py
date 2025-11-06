@@ -1,6 +1,7 @@
 import numpy as np
 
-from ..functions import indices_shape, parse_indices
+from cfdm.functions import indices_shape, parse_indices
+
 from .abstract import Array
 from .mixin import IndexMixin
 from .mixin.arraymixin import array_implements

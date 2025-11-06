@@ -3,20 +3,20 @@
 Portions of this code were adapted from the `netCDF4` Python library,
 which carries the following MIT License:
 
-Copyright 2008 Jeffrey Whitaker
+    Copyright 2008 Jeffrey Whitaker
 
-https://opensource.org/license/mit
+    https://opensource.org/license/mit
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+    Permission is hereby granted, free of charge, to any person
+    obtaining a copy of this software and associated documentation
+    files (the "Software"), to deal in the Software without
+    restriction, including without limitation the rights to use, copy,
+    modify, merge, publish, distribute, sublicense, and/or sell copies
+    of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
 
 """
 
@@ -25,15 +25,15 @@ from math import prod
 from numbers import Integral
 
 import numpy as np
-from dask.array.slicing import normalize_index
-from netCDF4 import chartostring, default_fillvals
-from netCDF4.utils import _safecast
 
 logger = logging.getLogger(__name__)
 
 
 class netcdf_indexer:
     """A data indexer that also applies netCDF masking and unpacking.
+
+    Here "netCDF4" refers to the API of the netCDF data model, rather
+    than any particular dataset encoding or software library API.
 
     Indexing may be orthogonal or non-orthogonal. Orthogonal indexing
     means that the index for each dimension is applied independently,
@@ -124,11 +124,12 @@ class netcdf_indexer:
                 The variable to be indexed. May be any variable that
                 has one of the `numpy.ndarray`, `netCDF4.Variable`,
                 `h5py.Variable` (which includes `h5netcdf.Variable`),
-                or `scipy.io.netcdf_variable` APIs. Any masking and
-                unpacking that could be applied by *variable* itself
-                (e.g. by a `netCDF4.Variable` instance) is disabled,
-                ensuring that any masking and unpacking is always done
-                by the `netcdf_indexer` instance.
+                `scipy.io.netcdf_variable`, or `zarr.Array`. APIs. Any
+                masking and unpacking that could be applied by
+                *variable* itself (e.g. by a `netCDF4.Variable`
+                instance) is disabled, ensuring that any masking and
+                unpacking is always done by the `netcdf_indexer`
+                instance.
 
             mask: `bool`, optional
                 If True, the default, then an array returned by
@@ -235,8 +236,8 @@ class netcdf_indexer:
             # Assume we are here because we have one or more
             # np.newaxis values in 'index', and the variable doesn't
             # support that type of indexing. It is known that
-            # `netCDF4` raises an IndexError and h5netcdf raises an
-            # AttributeError.
+            # `netCDF4` and `zarr` raise an IndexError and `h5netcdf`
+            # raises an AttributeError.
 
             # Subspace the variable with the np.newaxis elements
             # removed
@@ -276,6 +277,8 @@ class netcdf_indexer:
         elif data.dtype.kind in "OSU":
             kind = data.dtype.kind
             if kind == "S":
+                from netCDF4 import chartostring
+
                 data = chartostring(data)
 
             # Assume that object arrays are arrays of strings
@@ -366,6 +369,8 @@ class netcdf_indexer:
         except ValueError:
             safe = False
         else:
+            from netCDF4.utils import _safecast
+
             safe = _safecast(att, atta)
 
         if not safe:
@@ -393,6 +398,8 @@ class netcdf_indexer:
                 The default ``_FillValue``.
 
         """
+        from netCDF4 import default_fillvals
+
         if dtype.kind in "OS":
             return default_fillvals["S1"]
 
@@ -426,6 +433,8 @@ class netcdf_indexer:
 
         if index is Ellipsis:
             return data[...]
+
+        from dask.array.slicing import normalize_index
 
         index = normalize_index(index, data.shape)
 
@@ -466,6 +475,11 @@ class netcdf_indexer:
         if data_orthogonal_indexing or len(axes_with_list_indices) <= 1:
             # There is at most one list/1-d array index, and/or the
             # variable natively supports orthogonal indexing.
+            #
+            # Note: `netCDF4.Variable` natively supports orthogonal
+            #       indexing; but `h5netcdf.File`, `h5py.File`,
+            #       `zarr.Array`, `scipy.io.netcdf_file`, and
+            #       `numpy.ndarray` do not.
             data = data[tuple(index0)]
         else:
             # There are two or more list/1-d array indices, and the
@@ -886,7 +900,7 @@ class netcdf_indexer:
 
         variable = self.variable
         try:
-            # h5py
+            # h5py, zarr API
             attrs = dict(variable.attrs)
         except AttributeError:
             try:

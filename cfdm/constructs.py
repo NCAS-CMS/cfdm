@@ -3,13 +3,15 @@ from copy import deepcopy
 from itertools import zip_longest
 from re import Pattern
 
-from . import core, mixin
+from .core import Constructs as core_Constructs
+from .core.functions import deepcopy
 from .decorators import _manage_log_level_via_verbosity
+from .mixin import Container
 
 logger = logging.getLogger(__name__)
 
 
-class Constructs(mixin.Container, core.Constructs):
+class Constructs(Container, core_Constructs):
     """A container for metadata constructs.
 
     The container has similarities to a `dict` in that it presents the

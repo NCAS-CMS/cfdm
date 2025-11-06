@@ -108,7 +108,7 @@ class BoundsFromNodesArray(CompressedArrayMixin, MeshArray):
         """The conformed node connectivity and node coordinate data.
 
         The conformed data arrays are mutually consistent and are
-        suitable of use in `Subarray` classes.
+        suitable for use in `Subarray` classes.
 
         .. versionadded:: (cfdm) 1.11.0.0
 

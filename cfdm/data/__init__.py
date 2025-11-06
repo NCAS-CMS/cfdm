@@ -1,4 +1,7 @@
-from .abstract import Array, CompressedArray, MeshArray, RaggedArray
+from .abstract import Array
+from .abstract import CompressedArray
+from .abstract import MeshArray
+from .abstract import RaggedArray
 
 from .subarray import (
     BiLinearSubarray,
@@ -12,6 +15,7 @@ from .subarray import (
     QuadraticSubarray,
     RaggedSubarray,
 )
+
 
 from .subarray.abstract import MeshSubarray, Subarray, SubsampledSubarray
 
@@ -33,5 +37,6 @@ from .raggedindexedarray import RaggedIndexedArray
 from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray
 from .sparsearray import SparseArray
 from .subsampledarray import SubsampledArray
+from .zarrarray import ZarrArray
 
 from .data import Data

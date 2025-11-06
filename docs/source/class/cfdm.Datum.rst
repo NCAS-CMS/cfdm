@@ -10,6 +10,18 @@ cfdm.Datum
    :no-members:
    :no-inherited-members:
 
+Inspection
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Datum.dump
+
 Parameter terms
 ---------------
 
@@ -41,6 +53,7 @@ Miscellaneous
    ~cfdm.Datum.copy
    ~cfdm.Datum.equals
    ~cfdm.Datum.get_original_filenames
+   ~cfdm.Datum.creation_commands
 
 NetCDF
 ------

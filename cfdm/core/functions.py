@@ -1,9 +1,4 @@
-import os
-import platform
-import sys
-from pickle import dumps, loads
-
-from . import __cf_version__, __file__, __version__
+from . import __cf_version__
 
 
 def environment(display=True, paths=True):
@@ -31,16 +26,29 @@ def environment(display=True, paths=True):
 
     **Examples**
 
+    >>> cfdm.core.environment()
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8 /home/miniconda3/bin/python
+    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
+    numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
+    cfdm.core: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
+
     >>> cfdm.core.environment(paths=False)
-    Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
-    Python: 3.11.4
-    packaging: 23.0
-    numpy: 1.25.2
-    cfdm.core: 1.11.2.0
+    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
+    Python: 3.12.8
+    packaging: 24.2
+    numpy: 2.2.6
+    cfdm.core: 1.12.2.0
 
     """
+    import os
+    import platform
+    import sys
+
     import numpy as np
     import packaging
+
+    from . import __file__, __version__
 
     dependency_version_paths_mapping = {
         "Platform": (platform.platform(), ""),
@@ -97,4 +105,6 @@ def deepcopy(x):
     b) be "not slower, sometimes much faster" than `copy.deepcopy`.
 
     """
+    from pickle import dumps, loads
+
     return loads(dumps(x))

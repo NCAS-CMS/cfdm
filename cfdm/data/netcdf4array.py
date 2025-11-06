@@ -1,5 +1,3 @@
-import netCDF4
-
 from . import abstract
 from .locks import netcdf_lock
 from .mixin import IndexMixin
@@ -247,4 +245,6 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
                 address of the data within the file.
 
         """
+        import netCDF4
+
         return super().open(netCDF4.Dataset, mode="r")

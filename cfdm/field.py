@@ -10,6 +10,7 @@ from . import (
     DomainAxis,
     Index,
     List,
+    Quantization,
     core,
     mixin,
 )
@@ -26,12 +27,13 @@ from .decorators import (
     _manage_log_level_via_verbosity,
     _test_decorator_args,
 )
-from .functions import parse_indices
+from .functions import _DEPRECATION_ERROR_METHOD, parse_indices
 
 logger = logging.getLogger(__name__)
 
 
 class Field(
+    mixin.QuantizationMixin,
     mixin.NetCDFVariable,
     mixin.NetCDFGeometry,
     mixin.NetCDFGlobalAttributes,
@@ -78,7 +80,7 @@ class Field(
 
     {{netCDF geometry group}}
 
-    {{netCDF HDF5 chunks}}
+    {{netCDF dataset chunks}}
 
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
@@ -110,6 +112,7 @@ class Field(
         instance._Constructs = Constructs
         instance._Domain = Domain
         instance._DomainAxis = DomainAxis
+        instance._Quantization = Quantization
         instance._RaggedContiguousArray = RaggedContiguousArray
         instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray
@@ -118,46 +121,6 @@ class Field(
         instance._Index = Index
         instance._List = List
         return instance
-
-    def __init__(
-        self, properties=None, source=None, copy=True, _use_data=True
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                  ``properties={'standard_name': 'air_temperature'}``
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        # Initialise the new field with attributes and CF properties
-        core.Field.__init__(
-            self,
-            properties=properties,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        if source is not None:
-            try:
-                mesh_id = source.get_mesh_id(None)
-            except AttributeError:
-                pass
-            else:
-                if mesh_id is not None:
-                    self.set_mesh_id(mesh_id)
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
-
-        self._set_dataset_compliance(self.dataset_compliance(), copy=True)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -536,10 +499,6 @@ class Field(
         Constructs:
         {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
          'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
-
-        >>> f.cell_methods.ordered()
-        OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                     ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         """
         return self._filter_interface(
@@ -1615,7 +1574,7 @@ class Field(
         #
         # field: specific_humidity
         field = {{package}}.Field()
-        field.set_properties({'Conventions': 'CF-1.10', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+        field.set_properties({'Conventions': 'CF-1.12', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
         field.nc_set_variable('q')
         data = {{package}}.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
         field.set_data(data)
@@ -1679,10 +1638,11 @@ class Field(
         #
         # field data axes
         field.set_data_axes(('domainaxis0', 'domainaxis1'))
+
         >>> print(q.creation_commands(representative_data=True, namespace='',
         ...                           indent=4, header=False))
             field = Field()
-            field.set_properties({'Conventions': 'CF-1.10', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+            field.set_properties({'Conventions': 'CF-1.12', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
             field.nc_set_variable('q')
             data = <Data(5, 8): [[0.007, ..., 0.013]] 1>  # Representative data
             field.set_data(data)
@@ -1732,15 +1692,9 @@ class Field(
             field.set_data_axes(('domainaxis0', 'domainaxis1'))
 
         """
-        if name in ("b", "c", "mask", "i"):
+        if name in ("b", "c", "d", "f", "i", "q", "mask"):
             raise ValueError(
                 f"The 'name' parameter can not have the value {name!r}"
-            )
-
-        if name == data_name:
-            raise ValueError(
-                "The 'name' parameter can not have the same value as "
-                f"the 'data_name' parameter: {name!r}"
             )
 
         namespace0 = namespace
@@ -1751,7 +1705,7 @@ class Field(
 
         out = super().creation_commands(
             representative_data=representative_data,
-            indent=0,
+            indent=indent,
             namespace=namespace,
             string=False,
             name=name,
@@ -1776,7 +1730,7 @@ class Field(
             self.domain.creation_commands(
                 representative_data=representative_data,
                 string=False,
-                indent=0,
+                indent=indent,
                 namespace=namespace0,
                 name=name,
                 data_name=data_name,
@@ -1791,7 +1745,7 @@ class Field(
                 c.creation_commands(
                     representative_data=representative_data,
                     string=False,
-                    indent=0,
+                    indent=indent,
                     namespace=namespace0,
                     name="c",
                     data_name=data_name,
@@ -1808,10 +1762,10 @@ class Field(
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
-                    indent=0,
+                    indent=indent,
                     string=False,
-                    name="c",
                     header=header,
+                    name="c",
                 )
             )
             out.append(f"{name}.set_construct(c)")
@@ -1833,7 +1787,7 @@ class Field(
         return out
 
     @_display_or_return
-    def dump(self, display=True, _level=0, _title=None):
+    def dump(self, data=True, display=True, _level=0, _title=None):
         """A full description of the field construct.
 
         Returns a description of all properties, including those of
@@ -1843,6 +1797,22 @@ class Field(
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
+
+            data: `bool`, optional
+                If True (the default) then display the first and last
+                Field data values. This can take a long time if the
+                data needs an expensive computation (possibly
+                including a slow read from local or remote disk), in
+                which case setting *data* to False will not display
+                these values, thereby avoiding the computational
+                cost. This only applies to the Field's data - the
+                first and last values of data arrays stored in
+                metadata constructs are always displayed.
+
+                Note that when the first and last values are
+                displayed, they are cached for fast future retrieval.
+
+                .. versionadded:: (cfdm) 1.12.3.0
 
             display: `bool`, optional
                 If False then return the description as a string. By
@@ -1885,12 +1855,33 @@ class Field(
             string.append(self._dump_properties(_level=_level))
 
         # Data
-        data = self.get_data(None)
-        if data is not None:
+        d = self.get_data(None)
+        if d is not None:
             x = [axis_to_name[axis] for axis in self.get_data_axes(default=())]
+            x = f"{indent0}Data({', '.join(x)})"
+            if data:
+                # Show selected data values
+                x += f" = {d}"
+            else:
+                # Don't show any data values
+                units = d.Units
+                if units.isreftime:
+                    calendar = getattr(units, "calendar", None)
+                    if calendar is not None:
+                        x += f" {calendar}"
+                else:
+                    units = getattr(units, "units", None)
+                    if units is not None:
+                        x += f" {units}"
 
             string.append("")
-            string.append(f"{indent0}Data({', '.join(x)}) = {data}")
+            string.append(x)
+            string.append("")
+
+        # Quantization
+        q = self.get_quantization(None)
+        if q is not None:
+            string.append(q.dump(display=False, _level=_level))
             string.append("")
 
         # Cell methods
@@ -2150,7 +2141,7 @@ class Field(
 
         **Examples**
 
-        >>> f = cfdm.example_field(0)
+        >>> f = {{package}}.example_field(0)
         >>> print(f)
         Field: specific_humidity (ncvar%q)
         ----------------------------------
@@ -2774,29 +2765,39 @@ class Field(
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_dataset_chunksizes` instead.
+
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `nc_clear_hdf5_chunksizes`,
-                     `nc_set_hdf5_chunksizes`, `{{package}}.read`,
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_hdf5_chunksizes",
+            "Use `nc_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_dataset_chunksizes(self, todict=False):
+        """Get the dataset chunking strategy for the data.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `nc_clear_dataset_chunksizes`,
+                     `nc_set_dataset_chunksizes`, `{{package}}.read`,
                      `{{package}}.write`
 
         :Parameters:
 
-            todict: `bool`, optional
-                If True then the HDF5 chunking strategy must comprise
-                the maximum number of array elements in a chunk along
-                each data axis, and these HDF chunk sizes are returned
-                in a `dict` keyed by domain axis identities. If False
-                (the default) then the HDF chunking strategy is
-                returned with any of the return options other than a
-                `dict`, as described below.
+            {{chunk todict: `bool`, optional}}
 
         :Returns:
 
-            {{Returns nc_hdf5_chunksizes}}
+            {{Returns nc_dataset_chunksizes}}
 
         """
-        chunksizes = super().nc_hdf5_chunksizes()
+        chunksizes = super().nc_dataset_chunksizes()
 
         if todict:
             if not isinstance(chunksizes, tuple):
@@ -2825,15 +2826,33 @@ class Field(
     def nc_clear_hdf5_chunksizes(self, constructs=False):
         """Clear the HDF5 chunking strategy.
 
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_clear_dataset_chunksizes` instead.
+
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_clear_hdf5_chunksizes",
+            "Use `nc_clear_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_clear_dataset_chunksizes(self, constructs=False):
+        """Clear the dataset chunking strategy.
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_set_hdataset_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
 
         :Parameters:
 
             constructs: `dict` or `bool`, optional
-                Also clear the HDF5 chunking strategy from selected
+                Also clear the dataset chunking strategy from selected
                 metadata constructs. The chunking strategies of
                 unselected metadata constructs are unchanged.
 
@@ -2854,10 +2873,10 @@ class Field(
 
             `None` or `str` or `int` or `tuple` of `int`
                 The chunking strategy prior to being cleared, as would
-                be returned by `nc_hdf5_chunksizes`.
+                be returned by `nc_dataset_chunksizes`.
 
         """
-        # Clear HDF5 chunksizes from the metadata
+        # Clear dataset chunksizes from the metadata
         if isinstance(constructs, dict):
             constructs = constructs.copy()
         elif constructs:
@@ -2869,9 +2888,9 @@ class Field(
             constructs["filter_by_data"] = True
             constructs["todict"] = True
             for key, construct in self.constructs.filter(**constructs).items():
-                construct.nc_clear_hdf5_chunksizes()
+                construct.nc_clear_dataset_chunksizes()
 
-        return super().nc_clear_hdf5_chunksizes()
+        return super().nc_clear_dataset_chunksizes()
 
     def nc_set_hdf5_chunksizes(
         self,
@@ -2882,22 +2901,47 @@ class Field(
     ):
         """Set the HDF5 chunking strategy.
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
+        Deprecated at version 1.12.2.0 and is no longer
+        available. Use `nc_set_dataset_chunksizes` instead.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "nc_set_hdf5_chunksizes",
+            "Use `nc_set_dataset_chunksizes` instead.",
+            version="1.12.2.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def nc_set_dataset_chunksizes(
+        self,
+        chunksizes,
+        ignore=False,
+        constructs=False,
+        **filter_kwargs,
+    ):
+        """Set the dataset chunking strategy.
+
+        .. seealso:: `nc_dataset_chunksizes`,
+                     `nc_clear_dataset_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        .. versionadded:: (cfdm) 1.12.2.0
+
         :Parameters:
 
-            {{hdf5 chunksizes}}
-                  Each dictionary key (``k``) specifies the unique
+            {{chunk chunksizes}}
+
+                  Each dictionary key, ``k``, specifies the unique
                   axis that would be identified by ``f.domain_axis(k,
                   **filter_kwargs)``, and it is allowed to specify a
                   domain axis that is not spanned by the data
                   array. See `domain_axis` for details.
 
             constructs: `dict` or `bool`, optional
-                Also apply the HDF5 chunking strategy of the field
+                Also apply the dataset chunking strategy of the field
                 construct data to the applicable axes of selected
                 metadata constructs. The chunking strategies of
                 unselected metadata constructs are unchanged.
@@ -2944,73 +2988,73 @@ class Field(
                         : time(1) = [2019-01-01 00:00:00]
         >>> f.shape
         (5, 8)
-        >>> print(f.nc_hdf5_chunksizes())
+        >>> print(f.nc_dataset_chunksizes())
         None
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 1})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'latitude': 1})
+        >>> f.nc_dataset_chunksizes()
         (1, 8)
-        >>> f.nc_set_hdf5_chunksizes({'longitude': 7})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'longitude': 7})
+        >>> f.nc_dataset_chunksizes()
         (1, 7)
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'longitude': 2})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'latitude': 4, 'longitude': 2})
+        >>> f.nc_dataset_chunksizes()
         (4, 2)
-        >>> f.nc_set_hdf5_chunksizes([1, 7])
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes([1, 7])
+        >>> f.nc_dataset_chunksizes()
         (1, 7)
-        >>> f.nc_set_hdf5_chunksizes(64)
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes(64)
+        >>> f.nc_dataset_chunksizes()
         64
-        >>> f.nc_set_hdf5_chunksizes('128 B')
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes('128 B')
+        >>> f.nc_dataset_chunksizes()
         128
-        >>> f.nc_set_hdf5_chunksizes('contiguous')
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes('contiguous')
+        >>> f.nc_dataset_chunksizes()
         'contiguous'
-        >>> f.nc_set_hdf5_chunksizes(None)
-        >>> print(f.nc_hdf5_chunksizes())
+        >>> f.nc_set_dataset_chunksizes(None)
+        >>> print(f.nc_dataset_chunksizes())
         None
 
-        >>> f.nc_set_hdf5_chunksizes([-1, None])
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes([-1, None])
+        >>> f.nc_dataset_chunksizes()
         (5, 8)
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 999})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'latitude': 999})
+        >>> f.nc_dataset_chunksizes()
         (5, 8)
 
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'time': 1})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'latitude': 4, 'time': 1})
+        >>> f.nc_dataset_chunksizes()
         (4, 8)
-        >>> print(f.dimension_coordinate('time').nc_hdf5_chunksizes())
+        >>> print(f.dimension_coordinate('time').nc_dataset_chunksizes())
         None
-        >>> print(f.dimension_coordinate('latitude').nc_hdf5_chunksizes())
+        >>> print(f.dimension_coordinate('latitude').nc_dataset_chunksizes())
         None
-        >>> print(f.dimension_coordinate('longitude').nc_hdf5_chunksizes())
+        >>> print(f.dimension_coordinate('longitude').nc_dataset_chunksizes())
         None
 
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'time': 1}, constructs=True)
-        >>> f.dimension_coordinate('time').nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes({'latitude': 4, 'time': 1}, constructs=True)
+        >>> f.dimension_coordinate('time').nc_dataset_chunksizes()
         (1,)
-        >>> f.dimension_coordinate('latitude').nc_hdf5_chunksizes()
+        >>> f.dimension_coordinate('latitude').nc_dataset_chunksizes()
         (4,)
-        >>> f.dimension_coordinate('longitude').nc_hdf5_chunksizes()
+        >>> f.dimension_coordinate('longitude').nc_dataset_chunksizes()
         (8,)
-        >>> f.nc_set_hdf5_chunksizes('contiguous', constructs={'filter_by_axis': ('longitude',)})
-        >>> f.nc_hdf5_chunksizes()
+        >>> f.nc_set_dataset_chunksizes('contiguous', constructs={'filter_by_axis': ('longitude',)})
+        >>> f.nc_dataset_chunksizes()
         'contiguous'
-         >>> f.dimension_coordinate('time').nc_hdf5_chunksizes()
+         >>> f.dimension_coordinate('time').nc_dataset_chunksizes()
         (1,)
-        >>> f.dimension_coordinate('latitude').nc_hdf5_chunksizes()
+        >>> f.dimension_coordinate('latitude').nc_dataset_chunksizes()
         (4,)
-        >>> f.dimension_coordinate('longitude').nc_hdf5_chunksizes()
+        >>> f.dimension_coordinate('longitude').nc_dataset_chunksizes()
         'contiguous'
 
-        >>> f.nc_set_hdf5_chunksizes({'height': 19, 'latitude': 3})
+        >>> f.nc_set_dataset_chunksizes({'height': 19, 'latitude': 3})
         Traceback
             ...
         ValueError: Can't find unique 'height' axis. Consider setting ignore=True
-        >>> f.nc_set_hdf5_chunksizes({'height': 19, 'latitude': 3}, ignore=True)
-        >>> f.nc_hdf5_chunksizes(todict=True)
+        >>> f.nc_set_dataset_chunksizes({'height': 19, 'latitude': 3}, ignore=True)
+        >>> f.nc_dataset_chunksizes(todict=True)
         {'time': 1, 'latitude': 3, 'longitude': 8}
 
         """
@@ -3051,9 +3095,9 @@ class Field(
                 data_axes[n]: value for n, value in enumerate(chunksizes)
             }
 
-        super().nc_set_hdf5_chunksizes(chunksizes)
+        super().nc_set_dataset_chunksizes(chunksizes)
 
-        # Set HDF5 chunksizes on the metadata
+        # Set dataset chunksizes on the metadata
         if isinstance(constructs, dict):
             constructs = constructs.copy()
         elif constructs:
@@ -3075,7 +3119,7 @@ class Field(
                 else:
                     c = chunksizes
 
-                construct.nc_set_hdf5_chunksizes(c)
+                construct.nc_set_dataset_chunksizes(c)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

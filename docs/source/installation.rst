@@ -29,7 +29,7 @@ cfdm works for Linux, Mac and Windows operating systems.
 **Python versions**
 -------------------
 
-cfdm works for Python versions 3.9 or newer.
+cfdm works for Python versions 3.10 or newer.
 
 ----
 
@@ -90,9 +90,9 @@ properly, although the defaults are usually sufficient.
 **conda**
 ---------
 
-The cfdm package is in the :ref:`conda-forge
-<https://anaconda.org/conda-forge/cfdm>` conda channel. To install
-cfdm with all of its :ref:`dependencies <Dependencies>` run
+The cfdm package is in the
+`conda-forge <https://anaconda.org/conda-forge/cfdm>`_  conda channel.
+To install cfdm with all of its :ref:`dependencies <Dependencies>` run:
 
 .. code-block:: console
    :caption: *Install with conda.*
@@ -180,7 +180,7 @@ Tests are run from within the ``cfdm/test`` directory:
 
 The cfdm package requires:
 
-* `Python <https://www.python.org>`_, version 3.9 or newer.
+* `Python <https://www.python.org>`_, version 3.10 or newer.
 
 * `numpy <http://www.numpy.org>`_, version 2.0.0 or newer.
 
@@ -195,10 +195,14 @@ The cfdm package requires:
 
 * `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.
 
+* `zarr <https://pypi.org/project/zarr>`_, version 3.0.8 or newer.
+    
 * `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 
-* `dask <https://pypi.org/project/dask>`_, versions 2025.2.0 or
-  2025.3.0.
+* `dask <https://pypi.org/project/dask>`_, version 2025.5.1 or newer.
+
+* `distributed <https://pypi.org/project/distributed>`_, version 2025.5.1
+  or newer.
 
 * `packaging <https://pypi.org/project/packaging>`_, version 20.0 or
   newer.

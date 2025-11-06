@@ -5168,7 +5168,7 @@ def example_field(n, _implementation=_implementation):
         f = Field()
         f.set_properties(
             {
-                "Conventions": "CF-1.11",
+                "Conventions": f"CF-{CF()}",
                 "featureType": "trajectory",
                 "standard_name": "mole_fraction_of_ozone_in_air",
                 "units": "ppb",

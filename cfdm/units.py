@@ -1,14 +1,6 @@
-from ctypes.util import find_library
-
 from cfunits import Units as cfUnits
 
 from .core.meta import DocstringRewriteMeta
-
-_libpath = find_library("udunits2")
-if _libpath is None:
-    raise FileNotFoundError(
-        "cfdm UNIDATA UDUNITS-2. Can't find the 'udunits2' library."
-    )
 
 
 class Units(metaclass=DocstringRewriteMeta):

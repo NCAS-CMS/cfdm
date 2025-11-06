@@ -111,50 +111,11 @@ class DomainTopology(
     be accessed with the `nc_set_variable`, `nc_get_variable`,
     `nc_del_variable`, and `nc_has_variable` methods.
 
-    {{netCDF HDF5 chunks}}
+    {{netCDF dataset chunks}}
 
     .. versionadded:: (cfdm) 1.11.0.0
 
     """
-
-    def __init__(
-        self,
-        cell=None,
-        properties=None,
-        data=None,
-        source=None,
-        copy=True,
-        _use_data=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            {{init cell: `str`, optional}}
-
-            {{init properties: `dict`, optional}}
-
-                *Parameter example:*
-                  ``properties={'long_name': 'face to node mapping'}``
-
-            {{init data: data_like, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(
-            cell=cell,
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data,
-        )
-
-        self._initialise_netcdf(source)
-        self._initialise_original_filenames(source)
 
     def creation_commands(
         self,
@@ -196,7 +157,7 @@ class DomainTopology(
         """
         out = super().creation_commands(
             representative_data=representative_data,
-            indent=0,
+            indent=indent,
             namespace=namespace,
             string=False,
             name=name,
