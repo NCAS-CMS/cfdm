@@ -585,8 +585,8 @@ class read_writeTest(unittest.TestCase):
             else:
                 backend = None
 
-            f = cfdm.read(tmpfile, netcdf_backend=backend)[0]
-            domain_axes = f.domain_axes()
+            g = cfdm.read(tmpfile, netcdf_backend=backend)[0]
+            domain_axes = g.domain_axes()
             self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited(), fmt)
 
         domain_axes = f.domain_axes()

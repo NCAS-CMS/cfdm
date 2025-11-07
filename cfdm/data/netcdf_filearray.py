@@ -77,10 +77,9 @@ class Netcdf_fileArray(IndexMixin, FileArray):
         #
         # Before 'dataset' can be closed we must:
         #
-        # * Replace 'array' (which is currently a memory map view of
-        #   the data on disk) with a copy of itself.
-        #
-        # * Delete references to 'variable'.
+        # 1. Replace 'array' (which is currently a memory map view of
+        #    the data on disk) with a copy of itself.
+        # 2. Delete references to 'variable'.
         #
         # These actions are necessary to allow the file to be closed.
         # See the docs for `scipy.io.netcdf_file` for details.
