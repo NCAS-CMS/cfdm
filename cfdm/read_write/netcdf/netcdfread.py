@@ -1328,7 +1328,7 @@ class NetCDFRead(IORead):
             "verbose": verbose,
             # Warnings?
             "warnings": warnings,
-            "dataset_compliance": {None: {"attributes": {}}},
+            "dataset_compliance": {None: {"attributes": []}},
             "component_report": {},
             "auxiliary_coordinate": {},
             "cell_measure": {},
@@ -3895,7 +3895,7 @@ class NetCDFRead(IORead):
             "CF version"
         ] = self.implementation.get_cf_version()
         g["dataset_compliance"][field_ncvar]["dimensions"] = dimensions
-        g["dataset_compliance"][field_ncvar].setdefault("attributes", {})
+        g["dataset_compliance"][field_ncvar].setdefault("attributes", [])
 
         logger.info(
             "    Converting netCDF variable "
@@ -5563,7 +5563,7 @@ class NetCDFRead(IORead):
 
         noncompliance_dict = {
                 "CF version": self.implementation.get_cf_version(),
-                "attributes": {},
+                "attributes": [],
         }
         g["dataset_compliance"].setdefault(
             top_ancestor_ncvar, noncompliance_dict
@@ -5572,9 +5572,9 @@ class NetCDFRead(IORead):
         # Only add a component report if there is need i.e. if the direct
         # parent ncvar is defined so not the same as the top ancestor ncvar
         if direct_parent_ncvar:
-            g["dataset_compliance"][top_ancestor_ncvar]["attributes"].setdefault(
-                attribute_name, []
-            ).append(d)
+            g_next = g["dataset_compliance"][top_ancestor_ncvar][
+                "attributes"]
+            g_next.append(d)
 
             # Dicts are optimised for key-value lookup, but this requires
             # value-key lookup -  is there a better way?
@@ -5582,17 +5582,6 @@ class NetCDFRead(IORead):
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
 
-            # SLB DEV ARGS
-            # print(
-            #     "ARGS ARE",
-            #     top_ancestor_ncvar,
-            #     ncvar,
-            #     direct_parent_ncvar,
-            #     message,
-            #     attribute,
-            #     dimensions,
-            #     conformance,
-            # )
             parent_ncdims = self._ncdimensions(top_ancestor_ncvar)
 
             e = g["component_report"].setdefault(
@@ -5601,10 +5590,24 @@ class NetCDFRead(IORead):
             e2["reason"][ncvar] = d
         else:
             ### print("NON DIRECT PARENT CASE:", ncvar, top_ancestor_ncvar, d)
-            g1 = g["dataset_compliance"][top_ancestor_ncvar]["attributes"].setdefault(
-                ncvar, pre_d
-            )
-            g1["reason"].setdefault(attribute_name, []).append(d)
+            g1 = g["dataset_compliance"][top_ancestor_ncvar]["attributes"]
+            # SLB TODO inefficient for querying though? Simple example:
+            # a = [{1:2}, {3:4}, {5:6}, {7:8}]
+            # [d[1] for d in a if 1 in d]
+            # -> to find value for key 1! Need to do something like:
+            # next((d for d in a if 1 in d), None)[1] = <update value>
+            ###print("Have now g1 of:", g1)
+            g_next = next((d for d in g1 if ncvar in d), None)
+            if g_next:
+                ###print("This time:", g_next[ncvar])
+                g_next[ncvar]["reason"].setdefault(
+                    attribute_name, []).append(d)
+            else:
+                g1.append({ncvar: pre_d})
+                index_next = len(g1) - 1
+                g1[index_next][ncvar]["reason"].setdefault(
+                    attribute_name, []).append(d)  # correct - comp to above?
+
             # SLB NEW: this shows there are missing parts from the dict!
             # Some things aren't being added to the component report when
             # should be...
@@ -5672,20 +5675,32 @@ class NetCDFRead(IORead):
 
         noncompliance_dict = {
             "CF version": self.implementation.get_cf_version(),
-            "attributes": {},
+            "attributes": [],
         }
 
         if component_report:
-            set_on = g["dataset_compliance"][parent_ncvar]["attributes"]
-            if g["mesh"]:
-                s1 = set_on.setdefault("mesh", d)
-                s2 = s1["reason"].setdefault(ncvar, noncompliance_dict)
-                s2["attributes"] = component_report
+            g1 = g["dataset_compliance"][parent_ncvar]["attributes"]
+            g_next = next((d for d in g1 if ncvar in d), None)
+            if g_next:
+                if g["mesh"]:
+                    s1 = g_next.setdefault("mesh", d)
+                    s2 = s1["reason"].setdefault(ncvar, noncompliance_dict)
+                    s2["attributes"].append(component_report)
+                else:
+                    print("Should we get here?")  # SLB DEV
+                    # Never used? Chage up method to be mesh specific, then?
+                    #g1.setdefault(
+                    #    ncvar, []
+                    #).append(component_report)
             else:
-                # Never used? Chage up method to be mesh specific, then?
-                set_on.setdefault(
-                    ncvar, []
-                ).append(component_report)
+                if g["mesh"]:
+                    g1.append({"mesh": d})
+                    index_next = len(g1) - 1
+                    s2 = g1[index_next][ncvar]["reason"].setdefault(
+                        ncvar, noncompliance_dict)
+                    s2["attributes"].append(component_report)
+                else:
+                    print("Should we get here?")  # SLB DEV, see same above
 
     def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Find a domain axis identifier for the variable's dimensions.
