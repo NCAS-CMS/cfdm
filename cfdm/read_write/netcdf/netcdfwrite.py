@@ -2630,10 +2630,10 @@ class NetCDFWrite(IOWrite):
                     chunks = shape
 
                 if shards is not None:
-                    # create the shard shape in the format expected by
-                    # `zarr.create_array`, 'shards' is curerntly
+                    # Create the shard shape in the format expected by
+                    # `zarr.create_array`. 'shards' is currently
                     # defined by how many *chunks* along each
-                    # dimension are in each shard, but `zarr requires
+                    # dimension are in each shard, but `zarr` requires
                     # shards defined by how many *array elements*
                     # along each dimension are in each shard.
                     if chunks == shape:
@@ -2658,8 +2658,8 @@ class NetCDFWrite(IOWrite):
                         if prod(shards) > 1:
                             # More than one chunk per shard.
                             #
-                            # E.g. shards=(10, 11, 12), chunks=(10, 20,
-                            #      30) => shards=(100, 220, 360)
+                            # E.g. shards=(10, 11, 12) and chunks=(10,
+                            #      20, 30) => shards=(100, 220, 360)
                             shards = [c * n for c, n in zip(chunks, shards)]
                         else:
                             # One chunk per shard.

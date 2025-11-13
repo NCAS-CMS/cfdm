@@ -137,7 +137,7 @@ extras_require = {
         "pydocstyle",
     ],
     "zarr": [
-        "zarr>=3.1.2",
+        "zarr>=3.1.3",
     ],
 }
 

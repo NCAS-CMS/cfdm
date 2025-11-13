@@ -249,7 +249,7 @@ environments for which these features are not required.
 
 .. rubric:: Zarr
 
-* `zarr <https://pypi.org/project/zarr>`_, version 3.1.2 or newer.
+* `zarr <https://pypi.org/project/zarr>`_, version 3.1.3 or newer.
 
   For reading and writing Zarr datasets.
 
