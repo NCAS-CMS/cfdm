@@ -1,6 +1,8 @@
 import copy
 import logging
 import os
+from math import prod
+from numbers import Integral
 
 import numpy as np
 
@@ -16,6 +18,7 @@ from .constants import (
     NETCDF4_FMTS,
     NETCDF_QUANTIZATION_PARAMETERS,
     NETCDF_QUANTIZE_MODES,
+    ZARR_FMTS,
 )
 from .netcdfread import NetCDFRead
 
@@ -23,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 class AggregationError(Exception):
-    """An error relating to CF-netCDF aggregation.
+    """An error relating to CF aggregation.
 
     .. versionadded:: (cfdm) 1.12.0.0
 
@@ -33,7 +36,11 @@ class AggregationError(Exception):
 
 
 class NetCDFWrite(IOWrite):
-    """A container for writing Fields to a netCDF dataset."""
+    """A container for writing Fields to a netCDF dataset.
+
+    NetCDF3, netCDF4 and Zarr output formats are supported.
+
+    """
 
     def __new__(cls, *args, **kwargs):
         """Store the NetCDFRead class."""
@@ -66,28 +73,40 @@ class NetCDFWrite(IOWrite):
         """Cell method qualifiers."""
         return set(("within", "where", "over", "interval", "comment"))
 
-    def _create_netcdf_group(self, nc, group_name):
-        """Creates a new netCDF4 group object.
+    def _createGroup(self, parent, group_name):
+        """Creates a new dataset group object.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
         :Parameters:
 
-            nc: `netCDF4._netCDF4.Group` or `netCDF4.Dataset`
+            parent: `netCDF4.Dateset` or `netCDF4.Group` or `Zarr.Group`
+                The group in which to create the new group.
 
             group_name: `str`
                 The name of the group.
 
         :Returns:
 
-            `netCDF4._netCDF4.Group`
+            `netCDF4.Group` or `Zarr.Group`
                 The new group object.
 
         """
-        return nc.createGroup(group_name)
+        g = self.write_vars
+        match g["backend"]:
+            case "netCDF4":
+                return parent.createGroup(group_name)
 
-    def _create_netcdf_variable_name(self, parent, default):
-        """Create an appropriate name for a netCDF variable.
+            case "zarr":
+                if group_name in parent:
+                    return parent[group_name]
+
+                return parent.create_group(
+                    group_name, overwrite=g["overwrite"]
+                )
+
+    def _create_variable_name(self, parent, default):
+        """Create an appropriate name for a dataset variable.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -100,7 +119,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `str`
-                The netCDF variable name.
+                The dataset variable name.
 
         """
         ncvar = self.implementation.nc_get_variable(parent, None)
@@ -113,14 +132,14 @@ class NetCDFWrite(IOWrite):
             except AttributeError:
                 ncvar = default
         elif not self.write_vars["group"]:
-            # A flat file has been requested, so strip off any group
-            # structure from the name.
+            # A flat dataset has been requested, so strip off any
+            # group structure from the name.
             ncvar = self._remove_group_structure(ncvar)
 
-        return self._netcdf_name(ncvar)
+        return self._name(ncvar)
 
-    def _netcdf_name(self, base, dimsize=None, role=None):
-        """Return a new netCDF variable or dimension name.
+    def _name(self, base, dimsize=None, role=None):
+        """Return a new variable or dimension name for the dataset.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -135,7 +154,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `str`
-                NetCDF dimension name or netCDF variable name.
+                The name of the new dimension or variable.
 
         """
         if base is None:
@@ -154,7 +173,7 @@ class NetCDFWrite(IOWrite):
 
             for ncdim in g["dimensions_with_role"].get(role, ()):
                 if g["ncdim_to_size"][ncdim] == dimsize:
-                    # Return the name of an existing netCDF dimension
+                    # Return the name of an existing dataset dimension
                     # with this name, this size, and matching the
                     # given role.
                     return ncdim
@@ -208,8 +227,8 @@ class NetCDFWrite(IOWrite):
 
         return array.flatten()
 
-    def _write_attributes(self, parent, ncvar, extra=None, omit=()):
-        """Write netCDF attributes to the netCDF file.
+    def _write_variable_attributes(self, parent, ncvar, extra=None, omit=()):
+        """Write variable attributes to the dataset.
 
         :Parameters:
 
@@ -279,7 +298,7 @@ class NetCDFWrite(IOWrite):
                 del netcdf_attrs["_FillValue"]
 
         if not g["dry_run"]:
-            g["nc"][ncvar].setncatts(netcdf_attrs)
+            self._set_attributes(netcdf_attrs, ncvar)
 
         if skip_set_fill_value:
             # Re-add as known attribute since this FV is already set
@@ -288,6 +307,51 @@ class NetCDFWrite(IOWrite):
             ).get_fill_value()
 
         return netcdf_attrs
+
+    def _set_attributes(self, attributes, ncvar=None, group=None):
+        """Set dataset attributes on a variable or group.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            attributes: `dict`
+                The attributes.
+
+            ncvar: `str`, optional
+                The variable on which to set the attributes. Must be
+                set if *group* is `None`.
+
+            group: `str`, optional
+                The group on which to set the attributes. Must be set
+                if *ncvar* is `None`.
+
+        :Returns:
+
+            `None`
+
+        """
+        g = self.write_vars
+        if ncvar is not None:
+            # Set variable attributes
+            x = g["nc"][ncvar]
+        elif group is not None:
+            # Set group-level attributes
+            x = group
+        else:
+            raise ValueError("Must set ncvar or group")
+
+        match g["backend"]:
+            case "netCDF4":
+                x.setncatts(attributes)
+            case "zarr":
+                # `zarr` can't encode numpy arrays in the zarr.json
+                # file
+                for attr, value in attributes.items():
+                    if isinstance(value, np.ndarray):
+                        attributes[attr] = value.tolist()
+
+                x.update_attributes(attributes)
 
     def _character_array(self, array):
         """Converts a numpy array of strings to character data type.
@@ -356,9 +420,9 @@ class NetCDFWrite(IOWrite):
         For example, if variable.dtype is 'float32', then 'f4' will be
         returned.
 
-        For a NETCDF4 format file, numpy string data types will either
-        return `str` regardless of the numpy string length (and a
-        netCDF4 string type variable will be created) or, if
+        For a NETCDF4 format dataset, numpy string data types will
+        either return `str` regardless of the numpy string length (and
+        a netCDF4 string type variable will be created) or, if
         `self.write_vars['string']`` is `False`, ``'S1'`` (see below).
 
         For all other output netCDF formats (such NETCDF4_CLASSIC,
@@ -369,8 +433,8 @@ class NetCDFWrite(IOWrite):
         dimension) is expected to be done elsewhere (currently in the
         _write_netcdf_variable method).
 
-        If the input variable has no `!dtype` attribute (or it is None)
-        then 'S1' is returned, or `str` for NETCDF files.
+        If the input variable has no `!dtype` attribute (or it is
+        None) then 'S1' is returned, or `str` for NETCDF datasets.
 
         :Parameters:
 
@@ -380,7 +444,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
            `str` or str
-               The `netCDF4.createVariable` data type corresponding to the
+               The `_createVariable` data type corresponding to the
                datatype of the array of the input variable.
 
         """
@@ -389,13 +453,20 @@ class NetCDFWrite(IOWrite):
         if not isinstance(variable, np.ndarray):
             data = self.implementation.get_data(variable, None)
             if data is None:
+                if g["fmt"] == "ZARR3":
+                    return str
+
                 return "S1"
         else:
             data = variable
 
         dtype = getattr(data, "dtype", None)
         if dtype is None or dtype.kind in "SU":
-            if g["fmt"] == "NETCDF4" and g["string"]:
+            fmt = g["fmt"]
+            if fmt == "NETCDF4" and g["string"]:
+                return str
+
+            if fmt == "ZARR3":
                 return str
 
             return "S1"
@@ -407,7 +478,9 @@ class NetCDFWrite(IOWrite):
         return f"{dtype.kind}{dtype.itemsize}"
 
     def _string_length_dimension(self, size):
-        """Creates a netCDF dimension for string variables if necessary.
+        """Return a dataset dimension for string variables.
+
+        The dataset dimension will be created, if required.
 
         :Parameters:
 
@@ -416,7 +489,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `str`
-                The netCDF dimension name.
+                The dataset dimension name.
 
         """
         g = self.write_vars
@@ -424,28 +497,54 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Create a new dimension for the maximum string length
         # ------------------------------------------------------------
-        ncdim = self._netcdf_name(
-            f"strlen{size}", dimsize=size, role="string_length"
-        )
+        ncdim = self._name(f"strlen{size}", dimsize=size, role="string_length")
 
         if ncdim not in g["ncdim_to_size"]:
             # This string length dimension needs creating
             g["ncdim_to_size"][ncdim] = size
 
             # Define (and create if necessary) the group in which to
-            # place this netCDF dimension.
+            # place this dataset dimension.
             parent_group = self._parent_group(ncdim)
 
             if not g["dry_run"]:
                 try:
-                    parent_group.createDimension(ncdim, size)
+                    self._createDimension(parent_group, ncdim, size)
                 except RuntimeError:
                     pass  # TODO convert to 'raise' via fixes upstream
 
         return ncdim
 
-    def _netcdf_dimensions(self, field, key, construct):
-        """Returns the netCDF dimension names for the construct axes.
+    def _createDimension(self, group, ncdim, size):
+        """Create a dataset dimension in group.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            group: `netCDF.Dataset` or `netCDF.Group` or `zarr.Group`
+                The group in which to create the dimension.
+
+            ncdim: `str`
+                The name of the dimension in the group.
+
+            size: `int`
+                The size of the dimension.
+
+        :Returns:
+
+            `None`
+
+        """
+        match self.write_vars["backend"]:
+            case "netCDF4":
+                group.createDimension(ncdim, size)
+            case "zarr":
+                # Dimensions are not created in Zarr datasets
+                pass
+
+    def _dataset_dimensions(self, field, key, construct):
+        """Returns the dataset dimension names for the construct.
 
         The names are returned in a tuple. If the metadata construct
         has no data, then `None` is returned.
@@ -463,7 +562,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `tuple` or `None`
-                The netCDF dimension names, or `None` if there are no
+                The dataset dimension names, or `None` if there are no
                 data.
 
         """
@@ -498,8 +597,8 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 if sample_ncdim is None:
                     # The list variable has not yet been written to
-                    # the file, so write it and also get the netCDF
-                    # name of the sample dimension.
+                    # the dataset, so write it and also get the
+                    # dataset name of the sample dimension.
                     list_variable = self.implementation.get_list(construct)
                     sample_ncdim = self._write_list_variable(
                         field,
@@ -514,10 +613,10 @@ class NetCDFWrite(IOWrite):
                 # Compression by contiguous ragged array
                 #
                 # No need to do anything because i) the count variable
-                # has already been written to the file, ii) we already
-                # have the position of the sample dimension in the
-                # compressed array, and iii) we already have the
-                # netCDF name of the sample dimension.
+                # has already been written to the dataset, ii) we
+                # already have the position of the sample dimension in
+                # the compressed array, and iii) we already have the
+                # dataset name of the sample dimension.
                 # ----------------------------------------------------
                 pass
 
@@ -526,10 +625,10 @@ class NetCDFWrite(IOWrite):
                 # Compression by indexed ragged array
                 #
                 # No need to do anything because i) the index variable
-                # has already been written to the file, ii) we already
-                # have the position of the sample dimension in the
-                # compressed array, and iii) we already have the
-                # netCDF name of the sample dimension.
+                # has already been written to the dataset, ii) we
+                # already have the position of the sample dimension in
+                # the compressed array, and iii) we already have the
+                # dataset name of the sample dimension.
                 # ----------------------------------------------------
                 pass
             elif compression_type == "ragged indexed contiguous":
@@ -550,12 +649,12 @@ class NetCDFWrite(IOWrite):
     def _write_dimension(
         self, ncdim, f, axis=None, unlimited=False, size=None
     ):
-        """Write a netCDF dimension to the file.
+        """Write a dimension to the dataset.
 
         :Parameters:
 
             ncdim: `str`
-                The netCDF dimension name.
+                The dataset dimension name.
 
             f: `Field` or `Domain`
 
@@ -579,7 +678,7 @@ class NetCDFWrite(IOWrite):
         if axis is not None:
             domain_axis = self.implementation.get_domain_axes(f)[axis]
             logger.info(
-                f"    Writing {domain_axis!r} to netCDF dimension: {ncdim}"
+                f"    Writing {domain_axis!r} to dimension: {ncdim}"
             )  # pragma: no cover
 
             size = self.implementation.get_domain_axis_size(f, axis)
@@ -588,15 +687,16 @@ class NetCDFWrite(IOWrite):
         g["ncdim_to_size"][ncdim] = size
 
         # Define (and create if necessary) the group in which to place
-        # this netCDF dimension.
+        # this dataset dimension.
         parent_group = self._parent_group(ncdim)
 
-        if g["group"] and "/" in ncdim:
+        if g["group"] and "/" in ncdim and g["backend"] != "zarr":
             # This dimension needs to go into a sub-group so replace
             # its name with its basename (CF>=1.8)
             ncdim = self._remove_group_structure(ncdim)
 
-        if not g["dry_run"]:
+        # Dimensions are not created in Zarr datasets
+        if not g["dry_run"] and g["backend"] != "zarr":
             if unlimited:
                 # Create an unlimited dimension
                 size = None
@@ -605,16 +705,16 @@ class NetCDFWrite(IOWrite):
                 except RuntimeError as error:
                     message = (
                         "Can't create unlimited dimension "
-                        f"in {g['netcdf'].data_model} file ({error})."
+                        f"in {g['netcdf'].data_model} dataset ({error})."
                     )
 
                     error = str(error)
                     if error == "NetCDF: NC_UNLIMITED size already in use":
                         raise RuntimeError(
                             message
-                            + f" In a {g['netcdf'].data_model} file only one "
-                            "unlimited dimension is allowed. Consider using "
-                            "a netCDF4 format."
+                            + f" In a {g['netcdf'].data_model} dataset only "
+                            "one unlimited dimension is allowed. Consider "
+                            "using a netCDF4 format."
                         )
 
                     raise RuntimeError(message)
@@ -626,16 +726,16 @@ class NetCDFWrite(IOWrite):
                 except RuntimeError as error:
                     raise RuntimeError(
                         f"Can't create size {size} dimension {ncdim!r} in "
-                        f"{g['netcdf'].data_model} file ({error})"
+                        f"{g['netcdf'].data_model} dataset ({error})"
                     )
 
         g["dimensions"].add(ncdim)
 
     def _write_dimension_coordinate(self, f, key, coord, ncdim, coordinates):
-        """Writes a coordinate variable and its bounds variable to file.
+        """Write a coordinate and bounds variables to the dataset.
 
-        This also writes a new netCDF dimension to the file and, if
-        required, a new netCDF dimension for the bounds.
+        For netCDF datasets, this also writes a new dimension to the
+        dataset and, if required, a new dimension for the bounds.
 
         :Parameters:
 
@@ -646,10 +746,11 @@ class NetCDFWrite(IOWrite):
             coord: Dimension coordinate construct
 
             ncdim: `str` or `None`
-                The name of the netCDF dimension for this dimension
-                coordinate construct, including any groups structure. Note
-                that the group structure may be different to the
-                coordinate variable, and the basename.
+                The name of the dataset dimension for this dimension
+                coordinate construct, including any groups
+                structure. Note that the group structure may be
+                different to the coordinate variable, and the
+                basename.
 
             coordinates: `list`
                This list may get updated in-place.
@@ -659,7 +760,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `str`
-                The netCDF name of the dimension coordinate.
+                The dataset name of the dimension coordinate.
 
         """
         g = self.write_vars
@@ -682,12 +783,12 @@ class NetCDFWrite(IOWrite):
                 # coordinate.
                 create = True
 
-        # If the dimension coordinate is already in the file but not
-        # in an approriate group then we have to create a new netCDF
-        # variable. This is to prevent a downstream error ocurring
-        # when the parent data variable tries to reference one of its
-        # netCDF dimensions that is not in the same group nor a parent
-        # group.
+        # If the dimension coordinate is already in the dataset but
+        # not in an approriate group then we have to create a new
+        # dataset variable. This is to prevent a downstream error
+        # ocurring when the parent data variable tries to reference
+        # one of its dataset dimensions that is not in the same group
+        # nor a parent group.
         if already_in_file and not create:
             ncvar = coord.nc_get_variable("")
             groups = self._groups(seen[id(coord)]["ncvar"])
@@ -695,35 +796,33 @@ class NetCDFWrite(IOWrite):
                 create = True
 
         if create:
-            ncvar = self._create_netcdf_variable_name(coord, default=None)
+            ncvar = self._create_variable_name(coord, default=None)
             if ncvar is None:
-                # No netCDF variable name has been set, so use the
-                # corresponding netCDF dimension name
+                # No dataset variable name has been set, so use the
+                # corresponding dataset dimension name
                 ncvar = ncdim
 
             if ncvar is None:
-                # No netCDF variable name not correponding to a netCDF
-                # dimension name has been set, so create a default
-                # netCDF variable name.
-                ncvar = self._create_netcdf_variable_name(
-                    coord, default="coordinate"
-                )
+                # No dataset variable name not correponding to a
+                # dataset dimension name has been set, so create a
+                # default dataset variable name.
+                ncvar = self._create_variable_name(coord, default="coordinate")
 
             ncdim = ncvar
 
-            # Create a new dimension
+            # Create a new dataset dimension
             unlimited = self._unlimited(f, axis)
             self._write_dimension(ncdim, f, axis, unlimited=unlimited)
 
-            ncdimensions = self._netcdf_dimensions(f, key, coord)
+            ncdimensions = self._dataset_dimensions(f, key, coord)
 
             # If this dimension coordinate has bounds then write the
-            # bounds to the netCDF file and add the 'bounds' or
+            # bounds to the dataset and add the 'bounds' or
             # 'climatology' attribute (as appropriate) to a dictionary
             # of extra attributes
             extra = self._write_bounds(f, coord, key, ncdimensions, ncvar)
 
-            # Create a new dimension coordinate variable
+            # Create a new dimension coordinate dataset variable
             self._write_netcdf_variable(
                 ncvar,
                 ncdimensions,
@@ -740,8 +839,8 @@ class NetCDFWrite(IOWrite):
         g["axis_to_ncdim"][axis] = seen[id(coord)]["ncdims"][0]
 
         if g["coordinates"] and ncvar is not None:
-            # Add the dimension coordinate netCDF variable name to the
-            # 'coordinates' attribute
+            # Add the dimension coordinate dataset variable name to
+            # the 'coordinates' attribute
             coordinates.append(ncvar)
 
         return ncvar
@@ -749,16 +848,14 @@ class NetCDFWrite(IOWrite):
     def _write_count_variable(
         self, f, count_variable, ncdim=None, create_ncdim=True
     ):
-        """Write a count variable to the netCDF file."""
+        """Write a count variable to the dataset."""
         g = self.write_vars
 
         if not self._already_in_file(count_variable):
-            ncvar = self._create_netcdf_variable_name(
-                count_variable, default="count"
-            )
+            ncvar = self._create_variable_name(count_variable, default="count")
 
             if create_ncdim:
-                ncdim = self._netcdf_name(ncdim)
+                ncdim = self._name(ncdim)
                 self._write_dimension(
                     ncdim,
                     f,
@@ -769,10 +866,10 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             # Create the sample dimension
             # --------------------------------------------------------
-            _ = self.implementation.nc_get_sample_dimension(
+            sample_ncdim = self.implementation.nc_get_sample_dimension(
                 count_variable, "element"
             )
-            sample_ncdim = self._netcdf_name(_)
+            sample_ncdim = self._name(sample_ncdim)
             self._write_dimension(
                 sample_ncdim,
                 f,
@@ -803,7 +900,7 @@ class NetCDFWrite(IOWrite):
         create_ncdim=True,
         instance_dimension=None,
     ):
-        """Write an index variable to the netCDF file.
+        """Write an index variable to the dataset.
 
         :Parameters:
 
@@ -812,30 +909,28 @@ class NetCDFWrite(IOWrite):
             index_variable: Index variable
 
             sample_dimension: `str`
-                The name of the netCDF sample dimension.
+                The name of the dataset sample dimension.
 
             ncdim: `str`, optional
 
             create_ncdim: bool, optional
 
             instance_dimension: `str`, optional
-                The name of the netCDF instance dimension.
+                The name of the dataset instance dimension.
 
         :Returns:
 
             `str`
-                The name of the netCDF sample dimension.
+                The name of the dataset sample dimension.
 
         """
         g = self.write_vars
 
         if not self._already_in_file(index_variable):
-            ncvar = self._create_netcdf_variable_name(
-                index_variable, default="index"
-            )
+            ncvar = self._create_variable_name(index_variable, default="index")
 
             if create_ncdim:
-                ncdim = self._netcdf_name(ncdim)
+                ncdim = self._name(ncdim)
                 self._write_dimension(
                     ncdim,
                     f,
@@ -856,15 +951,13 @@ class NetCDFWrite(IOWrite):
         return sample_dimension
 
     def _write_list_variable(self, f, list_variable, compress):
-        """Write a list variable to the netCDF file."""
+        """Write a list variable to the dataset."""
         g = self.write_vars
 
         create = not self._already_in_file(list_variable)
 
         if create:
-            ncvar = self._create_netcdf_variable_name(
-                list_variable, default="list"
-            )
+            ncvar = self._create_variable_name(list_variable, default="list")
 
             # Create a new dimension
             self._write_dimension(
@@ -885,10 +978,10 @@ class NetCDFWrite(IOWrite):
         return ncvar
 
     def _write_scalar_data(self, f, value, ncvar):
-        """Write a dimension coordinate and bounds to the netCDF file.
+        """Write a dimension coordinate and bounds to the dataset.
 
-        This also writes a new netCDF dimension to the file and, if
-        required, a new netCDF bounds dimension.
+        For netCDF datasets, this also writes a new dimension to the
+        dataset and, if required, a new bounds dimension.
 
         .. note:: This function updates ``g['seen']``.
 
@@ -901,7 +994,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `str`
-                The netCDF name of the scalar data variable
+                The dataset name of the scalar data variable
 
         """
         g = self.write_vars
@@ -911,7 +1004,7 @@ class NetCDFWrite(IOWrite):
         create = not self._already_in_file(value, ncdims=())
 
         if create:
-            ncvar = self._netcdf_name(ncvar)  # DCH ?
+            ncvar = self._name(ncvar)  # DCH ?
 
             # Create a new dimension coordinate variable
             self._write_netcdf_variable(ncvar, (), value, None)
@@ -921,7 +1014,7 @@ class NetCDFWrite(IOWrite):
         return ncvar
 
     def _create_geometry_container(self, field):
-        """Create a geometry container variable in the netCDF file.
+        """Create a geometry container variable in the dataset.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -932,7 +1025,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `dict`
-                A representation off the CF-netCDF geometry container
+                A representation off the CF geometry container
                 variable for field construct. If there is no geometry
                 container then the dictionary is empty.
 
@@ -969,7 +1062,7 @@ class NetCDFWrite(IOWrite):
             try:
                 coord_ncvar = g["seen"][id(coord)]["ncvar"]
             except KeyError:
-                # There is no netCDF auxiliary coordinate variable
+                # There is no auxiliary coordinate dataset variable
                 pass
             else:
                 gc[geometry_id].setdefault("coordinates", []).append(
@@ -1090,13 +1183,13 @@ class NetCDFWrite(IOWrite):
         Specifically, returns True if a variable is logically equal any
         variable in the g['seen'] dictionary.
 
-        If this is the case then the variable has already been written to
-        the output netCDF file and so we don't need to do it again.
+        If this is the case then the variable has already been written
+        to the output dataset and so we don't need to do it again.
 
-        If 'ncdims' is set then a extra condition for equality is applied,
-        namely that of 'ncdims' being equal to the netCDF dimensions
-        (names and order) to that of a variable in the g['seen']
-        dictionary.
+        If 'ncdims' is set then a extra condition for equality is
+        applied, namely that of 'ncdims' being equal to the dataset
+        dimensions (names and order) to that of a variable in the
+        g['seen'] dictionary.
 
         When `True` is returned, the input variable is added to the
         g['seen'] dictionary.
@@ -1122,7 +1215,7 @@ class NetCDFWrite(IOWrite):
 
             `bool`
                 `True` if the variable has already been written to the
-                file, `False` otherwise.
+                dataset, `False` otherwise.
 
         """
         g = self.write_vars
@@ -1131,9 +1224,9 @@ class NetCDFWrite(IOWrite):
 
         for value in seen.values():
             if ncdims is not None and ncdims != value["ncdims"]:
-                # The netCDF dimensions (names and order) of the input
-                # variable are different to those of this variable in
-                # the 'seen' dictionary
+                # The dataset dimensions (names and order) of the
+                # input variable are different to those of this
+                # variable in the 'seen' dictionary
                 continue
 
             # Still here?
@@ -1150,14 +1243,14 @@ class NetCDFWrite(IOWrite):
         return False
 
     def _write_geometry_container(self, field, geometry_container):
-        """Write a netCDF geometry container variable.
+        """Write a geometry container variable to the dataset.
 
         .. versionadded:: (cfdm) 1.8.0
 
         :Returns:
 
             `str`
-                The netCDF variable name for the geometry container.
+                The dataset variable name for the geometry container.
 
         """
         g = self.write_vars
@@ -1167,11 +1260,12 @@ class NetCDFWrite(IOWrite):
                 # Use this existing geometry container
                 return ncvar
 
-        # Still here? Then write the geometry container to the file
+        # Still here? Then write the geometry container to the
+        # dataset.
         ncvar = self.implementation.nc_get_geometry_variable(
             field, default="geometry_container"
         )
-        ncvar = self._netcdf_name(ncvar)
+        ncvar = self._name(ncvar)
 
         logger.info(
             f"    Writing geometry container variable: {ncvar}"
@@ -1181,15 +1275,13 @@ class NetCDFWrite(IOWrite):
         kwargs = {
             "varname": ncvar,
             "datatype": "S1",
-            "dimensions": (),
             "endian": g["endian"],
         }
         kwargs.update(g["netcdf_compression"])
 
         if not g["dry_run"]:
             self._createVariable(**kwargs)
-
-            g["nc"][ncvar].setncatts(geometry_container)
+            self._set_attributes(geometry_container, ncvar)
 
         # Update the 'geometry_containers' dictionary
         g["geometry_containers"][ncvar] = geometry_container
@@ -1199,11 +1291,10 @@ class NetCDFWrite(IOWrite):
     def _write_bounds(
         self, f, coord, coord_key, coord_ncdimensions, coord_ncvar=None
     ):
-        """Creates a bounds netCDF variable and returns its name.
+        """Creates a bounds dataset variable.
 
-        Specifically, creates a bounds netCDF variable, creating a new
-        bounds netCDF dimension if required. Returns the bounds
-        variable's netCDF variable name.
+        For netCDF datasets, also creates a new bounds dimension if
+        required.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -1217,11 +1308,12 @@ class NetCDFWrite(IOWrite):
                 The coordinate construct key.
 
             coord_ncdimensions: `tuple` of `str`
-                The ordered netCDF dimension names of the coordinate's
-                dimensions (which do not include the bounds dimension).
+                The ordered dataset dimension names of the
+                coordinate's dimensions (which do not include the
+                bounds dimension).
 
             coord_ncvar: `str`
-                The netCDF variable name of the parent variable
+                The datset variable name of the parent variable
 
         :Returns:
 
@@ -1267,20 +1359,15 @@ class NetCDFWrite(IOWrite):
 
         size = data.shape[-1]
 
-        #        bounds_ncdim = self._netcdf_name('bounds{0}'.format(size),
-        #                                  dimsize=size, role='bounds')
-
         bounds_ncdim = self.implementation.nc_get_dimension(
             bounds, f"bounds{size}"
         )
         if not g["group"]:
-            # A flat file has been requested, so strip off any group
-            # structure from the name.
+            # A flat dataset has been requested, so strip off any
+            # group structure from the name.
             bounds_ncdim = self._remove_group_structure(bounds_ncdim)
 
-        bounds_ncdim = self._netcdf_name(
-            bounds_ncdim, dimsize=size, role="bounds"
-        )
+        bounds_ncdim = self._name(bounds_ncdim, dimsize=size, role="bounds")
 
         # Check if this bounds variable has not been previously
         # created.
@@ -1295,14 +1382,14 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g["ncdim_to_size"]
             if bounds_ncdim not in ncdim_to_size:
                 logger.info(
-                    f"    Writing size {size} netCDF dimension for "
+                    f"    Writing size {size} dimension for "
                     f"bounds: {bounds_ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[bounds_ncdim] = size
 
                 # Define (and create if necessary) the group in which
-                # to place this netCDF dimension.
+                # to place this dataset dimension.
                 parent_group = self._parent_group(bounds_ncdim)
 
                 if g["group"] and "/" in bounds_ncdim:
@@ -1316,11 +1403,13 @@ class NetCDFWrite(IOWrite):
 
                 if not g["dry_run"]:
                     try:
-                        parent_group.createDimension(base_bounds_ncdim, size)
+                        self._createDimension(
+                            parent_group, base_bounds_ncdim, size
+                        )
                     except RuntimeError:
                         raise
 
-                # Set the netCDF bounds variable name
+                # Set the bounds dataset variable name
                 default = coord_ncvar + "_bounds"
             else:
                 default = "bounds"
@@ -1330,11 +1419,11 @@ class NetCDFWrite(IOWrite):
             )
 
             if not self.write_vars["group"]:
-                # A flat file has been requested, so strip off any
+                # A flat dataset has been requested, so strip off any
                 # group structure from the name (for now).
                 ncvar = self._remove_group_structure(ncvar)
 
-            ncvar = self._netcdf_name(ncvar)
+            ncvar = self._name(ncvar)
 
             # If no groups have been set on the bounds, then put the
             # bounds variable in the same group as its parent
@@ -1353,7 +1442,7 @@ class NetCDFWrite(IOWrite):
                 if self.implementation.has_property(coord, prop):
                     omit.append(prop)
 
-            # Create the bounds netCDF variable
+            # Create the bounds dataset variable
             self._write_netcdf_variable(
                 ncvar,
                 ncdimensions,
@@ -1381,14 +1470,14 @@ class NetCDFWrite(IOWrite):
     def _write_node_coordinates(
         self, f, coord, coord_ncvar, coord_ncdimensions
     ):
-        """Create a netCDF node coordinates variable.
+        """Create a node coordinates dataset variable.
 
         This will create:
 
-        * A netCDF node dimension, if required.
-        * A netCDF node count variable, if required.
-        * A netCDF part node count variable, if required.
-        * A netCDF interior ring variable, if required.
+        * A dataset node dimension, if required.
+        * A dataset node count variable, if required.
+        * A dataset part node count variable, if required.
+        * A dataset interior ring variable, if required.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -1443,10 +1532,10 @@ class NetCDFWrite(IOWrite):
             nodes, inherited_properties
         )
 
-        # Find the base of the netCDF part dimension name
+        # Find the base of the 'part' dataset dimension name
         size = self.implementation.get_data_size(nodes)
         ncdim = self._get_node_ncdimension(nodes, default="node")
-        ncdim = self._netcdf_name(ncdim, dimsize=size, role="node")
+        ncdim = self._name(ncdim, dimsize=size, role="node")
 
         create = True
         if self._already_in_file(nodes, (ncdim,)):
@@ -1465,7 +1554,7 @@ class NetCDFWrite(IOWrite):
                 create = False
 
                 # We need to log the original Bounds variable as being
-                # in the file, too. This is so that the geometry
+                # in the dataset, too. This is so that the geometry
                 # container variable can be created later on.
                 g["seen"][id(bounds)] = {
                     "ncvar": ncvar,
@@ -1486,13 +1575,13 @@ class NetCDFWrite(IOWrite):
             if ncdim not in ncdim_to_size:
                 size = self.implementation.get_data_size(nodes)
                 logger.info(
-                    f"    Writing size {size} netCDF node dimension: {ncdim}"
+                    f"    Writing size {size} geometry node dimension: {ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
 
                 # Define (and create if necessary) the group in which
-                # to place this netCDF dimension.
+                # to place this dataset dimension.
                 parent_group = self._parent_group(ncdim)
 
                 if g["group"] and "/" in ncdim:
@@ -1501,9 +1590,10 @@ class NetCDFWrite(IOWrite):
                     ncdim = self._remove_group_structure(ncdim)
 
                 if not g["dry_run"]:
-                    parent_group.createDimension(ncdim, size)
+                    # parent_group.createDimension(ncdim, size)
+                    self._createDimension(parent_group, ncdim, size)
 
-            # Set an appropriate default netCDF node coordinates
+            # Set an appropriate default node coordinates dataset
             # variable name
             axis = self.implementation.get_property(bounds, "axis")
             if axis is not None:
@@ -1515,13 +1605,13 @@ class NetCDFWrite(IOWrite):
                 bounds, default=default
             )
             if not self.write_vars["group"]:
-                # A flat file has been requested, so strip off any
+                # A flat dataset has been requested, so strip off any
                 # group structure from the name.
                 ncvar = self._remove_group_structure(ncvar)
 
-            ncvar = self._netcdf_name(ncvar)
+            ncvar = self._name(ncvar)
 
-            # Create the netCDF node coordinates variable
+            # Create the node coordinates dataset variable
             self._write_netcdf_variable(
                 ncvar,
                 (ncdim,),
@@ -1550,7 +1640,7 @@ class NetCDFWrite(IOWrite):
             g["geometry_encoding"][ncvar] = encodings
 
             # We need to log the original Bounds variable as being in
-            # the file, too. This is so that the geometry container
+            # the dataset, too. This is so that the geometry container
             # variable can be created later on.
             g["seen"][id(bounds)] = {
                 "ncvar": ncvar,
@@ -1566,7 +1656,7 @@ class NetCDFWrite(IOWrite):
     def _write_node_count(
         self, f, coord, bounds, coord_ncdimensions, encodings
     ):
-        """Create a netCDF node count variable.
+        """Create a node count dataset variable.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -1577,7 +1667,7 @@ class NetCDFWrite(IOWrite):
             bounds:
 
             coord_ncdimensions: sequence of `str`
-                The netCDF instance dimension
+                The dataset instance dimension
 
             encodings: `dict`
                 Ignored.
@@ -1609,7 +1699,7 @@ class NetCDFWrite(IOWrite):
         count = self.implementation.initialise_Count()
         self.implementation.set_data(count, data, copy=False)
 
-        # Find the base of the netCDF node count variable name
+        # Find the base of the node count dataset variable name
         nc = self.implementation.get_node_count(coord)
 
         if nc is not None:
@@ -1618,7 +1708,7 @@ class NetCDFWrite(IOWrite):
             )
 
             if not self.write_vars["group"]:
-                # A flat file has been requested, so strip off any
+                # A flat dataset has been requested, so strip off any
                 # group structure from the name.
                 ncvar = self._remove_group_structure(ncvar)
 
@@ -1640,12 +1730,12 @@ class NetCDFWrite(IOWrite):
             # created, so create it now.
             if geometry_dimension not in g["ncdim_to_size"]:
                 raise ValueError(
-                    "The netCDF geometry dimension should already exist ..."
+                    "The dataset geometry dimension should already exist ..."
                 )
 
-            ncvar = self._netcdf_name(ncvar)
+            ncvar = self._name(ncvar)
 
-            # Create the netCDF node count variable
+            # Create the node count dataset variable
             self._write_netcdf_variable(
                 ncvar, (geometry_dimension,), count, None
             )
@@ -1656,27 +1746,27 @@ class NetCDFWrite(IOWrite):
     def _get_part_ncdimension(self, coord, default=None):
         """Gets dimension name for part node counts or interior rings.
 
-        Specifically, gets the base of the netCDF dimension for part
+        Specifically, gets the base of the dataset dimension for part
         node count and interior ring variables.
 
         .. versionadded:: (cfdm) 1.8.0
 
         :Returns:
 
-            The netCDF dimension name, or else the value of the *default*
-            parameter.
+            The dataset dimension name, or else the value of the
+            *default* parameter.
 
         """
         ncdim = None
 
         pnc = self.implementation.get_part_node_count(coord)
         if pnc is not None:
-            # Try to get the netCDF dimension from a part node count
+            # Try to get the dataset dimension from a part node count
             # variable
             ncdim = self.implementation.nc_get_dimension(pnc, default=None)
 
         if ncdim is None:
-            # Try to get the netCDF dimension from an interior ring
+            # Try to get the dataset dimension from an interior ring
             # variable
             interior_ring = self.implementation.get_interior_ring(coord)
             if interior_ring is not None:
@@ -1685,9 +1775,9 @@ class NetCDFWrite(IOWrite):
                 )
 
         if ncdim is not None:
-            # Found a netCDF dimension
+            # Found a dataset dimension
             if not self.write_vars["group"]:
-                # A flat file has been requested, so strip off any
+                # A flat dataset has been requested, so strip off any
                 # group structure from the name.
                 ncdim = self._remove_group_structure(ncdim)
 
@@ -1707,27 +1797,27 @@ class NetCDFWrite(IOWrite):
         :Parameters:
 
             name: `str`
-                The name of the netCDF dimension or variable.
+                The name of the dataset dimension or variable.
 
         :Returns:
 
-            `netCDF.Dataset` or `netCDF._netCDF4.Group`
+            `netCDF.Dataset` or `netCDF.Group` or `zarr.Group`
 
         """
         g = self.write_vars
 
-        parent_group = g["netcdf"]
+        parent_group = g["dataset"]
 
         if not g["group"] or "/" not in name:
             return parent_group
 
         if not name.startswith("/"):
             raise ValueError(
-                f"Invalid netCDF name {name!r}: missing a leading '/'"
+                f"Invalid dataset name {name!r}: missing a leading '/'"
             )
 
         for group_name in name.split("/")[1:-1]:
-            parent_group = self._write_group(parent_group, group_name)
+            parent_group = self._createGroup(parent_group, group_name)
 
         return parent_group
 
@@ -1802,7 +1892,7 @@ class NetCDFWrite(IOWrite):
         return groups
 
     def _get_node_ncdimension(self, bounds, default=None):
-        """Get the netCDF dimension from a node count variable.
+        """Get the dataset dimension from a node count variable.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -1814,15 +1904,15 @@ class NetCDFWrite(IOWrite):
 
         :Returns:
 
-            The netCDF dimension name, or else the value of the *default*
+            The dimension name, or else the value of the *default*
             parameter.
 
         """
         ncdim = self.implementation.nc_get_dimension(bounds, default=None)
         if ncdim is not None:
-            # Found a netCDF dimension
+            # Found a dimension
             if not self.write_vars["group"]:
-                # A flat file has been requested, so strip off any
+                # A flat dataset has been requested, so strip off any
                 # group structure from the name.
                 ncdim = self._remove_group_structure(ncdim)
 
@@ -1832,20 +1922,13 @@ class NetCDFWrite(IOWrite):
         return default
 
     def _write_part_node_count(self, f, coord, bounds, encodings):
-        """Creates a bounds netCDF variable and returns its name.
-
-        Create a bounds netCDF variable, creating a new bounds netCDF
-        dimension if required. Return the bounds variable's netCDF
-        variable name.
+        """Creates a part node count variable and returns its name.
 
         .. versionadded:: (cfdm) 1.8.0
 
         :Parameters:
 
             coord:
-
-            coord_ncvar: `str`
-                The netCDF variable name of the parent variable
 
         :Returns:
 
@@ -1882,14 +1965,14 @@ class NetCDFWrite(IOWrite):
         count = self.implementation.initialise_Count()
         self.implementation.set_data(count, data, copy=False)
 
-        # Find the base of the netCDF part_node_count variable name
+        # Find the base of the dataset part_node_count variable name
         pnc = self.implementation.get_part_node_count(coord)
         if pnc is not None:
             ncvar = self.implementation.nc_get_variable(
                 pnc, default="part_node_count"
             )
             if not self.write_vars["group"]:
-                # A flat file has been requested, so strip off any
+                # A flat dataset has been requested, so strip off any
                 # group structure from the name.
                 ncvar = self._remove_group_structure(ncvar)
 
@@ -1900,7 +1983,7 @@ class NetCDFWrite(IOWrite):
         else:
             ncvar = "part_node_count"
 
-        # Find the base of the netCDF part dimension name
+        # Find the base of the dataset part dimension name
         size = self.implementation.get_data_size(count)
         if g["part_ncdim"] is not None:
             ncdim = g["part_ncdim"]
@@ -1908,7 +1991,7 @@ class NetCDFWrite(IOWrite):
             ncdim = encodings["part_ncdim"]
         else:
             ncdim = self._get_part_ncdimension(coord, default="part")
-            ncdim = self._netcdf_name(ncdim, dimsize=size, role="part")
+            ncdim = self._name(ncdim, dimsize=size, role="part")
 
         if self._already_in_file(count, (ncdim,)):
             # This part node count variable has been previously
@@ -1918,13 +2001,14 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 logger.info(
-                    f"    Writing size {size} netCDF part " f"dimension{ncdim}"
+                    f"    Writing size {size} geometry part "
+                    f"dimension: {ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
 
                 # Define (and create if necessary) the group in which
-                # to place this netCDF dimension.
+                # to place this dataset dimension.
                 parent_group = self._parent_group(ncdim)
 
                 if g["group"] and "/" in ncdim:
@@ -1933,11 +2017,12 @@ class NetCDFWrite(IOWrite):
                     ncdim = self._remove_group_structure(ncdim)
 
                 if not g["dry_run"]:
-                    parent_group.createDimension(ncdim, size)
+                    # parent_group.createDimension(ncdim, size)
+                    self._createDimension(parent_group, ncdim, size)
 
-            ncvar = self._netcdf_name(ncvar)
+            ncvar = self._name(ncvar)
 
-            # Create the netCDF part_node_count variable
+            # Create the dataset part_node_count variable
             self._write_netcdf_variable(ncvar, (ncdim,), count, None)
 
         g["part_ncdim"] = ncdim
@@ -1946,7 +2031,7 @@ class NetCDFWrite(IOWrite):
         return {"part_node_count": ncvar, "part_ncdim": ncdim}
 
     def _write_interior_ring(self, f, coord, bounds, encodings):
-        """Write an interior ring variable to the netCDF file.
+        """Write an interior ring variable to the dataset.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -1955,7 +2040,7 @@ class NetCDFWrite(IOWrite):
             coord:
 
             coord_ncvar: `str`
-                The netCDF variable name of the parent variable
+                The dataset variable name of the parent variable
 
             encodings:
 
@@ -1985,8 +2070,8 @@ class NetCDFWrite(IOWrite):
         )
 
         if not self.write_vars["group"]:
-            # A flat file has been requested, so strip off any group
-            # structure from the name.
+            # A flat dataset has been requested, so strip off any
+            # group structure from the name.
             ncvar = self._remove_group_structure(ncvar)
 
         size = self.implementation.get_data_size(interior_ring)
@@ -1996,7 +2081,7 @@ class NetCDFWrite(IOWrite):
             ncdim = encodings["part_ncdim"]
         else:
             ncdim = self._get_part_ncdimension(coord, default="part")
-            ncdim = self._netcdf_name(ncdim, dimsize=size, role="part")
+            ncdim = self._name(ncdim, dimsize=size, role="part")
 
         if self._already_in_file(interior_ring, (ncdim,)):
             # This interior ring variable has been previously created,
@@ -2006,12 +2091,13 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 logger.info(
-                    f"    Writing size {size} netCDF part " f"dimension{ncdim}"
+                    f"    Writing size {size} geometry part "
+                    f"dimension: {ncdim}"
                 )  # pragma: no cover
                 ncdim_to_size[ncdim] = size
 
                 # Define (and create if necessary) the group in which
-                # to place this netCDF dimension.
+                # to place this dataset dimension.
                 parent_group = self._parent_group(ncdim)
 
                 if g["group"] and "/" in ncdim:
@@ -2020,11 +2106,12 @@ class NetCDFWrite(IOWrite):
                     ncdim = self._remove_group_structure(ncdim)
 
                 if not g["dry_run"]:
-                    parent_group.createDimension(ncdim, size)
+                    # parent_group.createDimension(ncdim, size)
+                    self._createDimension(parent_group, ncdim, size)
 
-            ncvar = self._netcdf_name(ncvar)
+            ncvar = self._name(ncvar)
 
-            # Create the netCDF interior ring variable
+            # Create the dataset interior ring variable
             self._write_netcdf_variable(
                 ncvar,
                 (ncdim,),
@@ -2041,13 +2128,13 @@ class NetCDFWrite(IOWrite):
     def _write_scalar_coordinate(
         self, f, key, coord_1d, axis, coordinates, extra=None
     ):
-        """Write a scalar coordinate and its bounds to the netCDF file.
+        """Write a scalar coordinate and its bounds to the dataset.
 
-        It is assumed that the input coordinate is has size 1, but this is not
-        checked.
+        It is assumed that the input coordinate has size 1, but this
+        is not checked.
 
-        If an equal scalar coordinate has already been written to the file
-        then the input coordinate is not written.
+        If an equal scalar coordinate has already been written to the
+        dataset then the input coordinate is not written.
 
         :Parameters:
 
@@ -2065,7 +2152,8 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             coordinates: `list`
-                The updated list of netCDF auxiliary coordinate names.
+                The updated list of auxiliary coordinate dataset
+                variable names.
 
         """
         # To avoid mutable default argument (an anti-pattern) of extra={}
@@ -2079,11 +2167,9 @@ class NetCDFWrite(IOWrite):
         scalar_coord = self.implementation.squeeze(coord_1d, axes=0)
 
         if not self._already_in_file(scalar_coord, ()):
-            ncvar = self._create_netcdf_variable_name(
-                scalar_coord, default="scalar"
-            )
+            ncvar = self._create_variable_name(scalar_coord, default="scalar")
             # If this scalar coordinate has bounds then create the
-            # bounds netCDF variable and add the 'bounds' or
+            # bounds dataset variable and add the 'bounds' or
             # 'climatology' (as appropriate) attribute to the
             # dictionary of extra attributes
             bounds_extra = self._write_bounds(f, scalar_coord, key, (), ncvar)
@@ -2099,7 +2185,7 @@ class NetCDFWrite(IOWrite):
 
         else:
             # This scalar coordinate has already been written to the
-            # file
+            # dataset
             ncvar = g["seen"][id(scalar_coord)]["ncvar"]
 
         g["axis_to_ncscalar"][axis] = ncvar
@@ -2111,10 +2197,10 @@ class NetCDFWrite(IOWrite):
         return coordinates
 
     def _write_auxiliary_coordinate(self, f, key, coord, coordinates):
-        """Write auxiliary coordinates and bounds to the netCDF file.
+        """Write auxiliary coordinates and bounds to the dataset.
 
-        If an equal auxiliary coordinate has already been written to the file
-        then the input coordinate is not written.
+        If an equal auxiliary coordinate has already been written to
+        the dataset then the input coordinate is not written.
 
         :Parameters:
 
@@ -2131,16 +2217,16 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `list`
-                The list of netCDF auxiliary coordinate names updated in
-                place.
+                The list of auxiliary coordinate dataset variable
+                names updated in place.
 
         """
         g = self.write_vars
 
         ncvar = None
 
-        # The netCDF dimensions for the auxiliary coordinate variable
-        ncdimensions = self._netcdf_dimensions(f, key, coord)
+        # The dataset dimensions for the auxiliary coordinate variable
+        ncdimensions = self._dataset_dimensions(f, key, coord)
 
         coord = self._change_reference_datetime(coord)
 
@@ -2176,14 +2262,12 @@ class NetCDFWrite(IOWrite):
                     f, coord, key, ncdimensions, coord_ncvar=None
                 )
             else:
-                ncvar = self._create_netcdf_variable_name(
-                    coord, default="auxiliary"
-                )
+                ncvar = self._create_variable_name(coord, default="auxiliary")
 
                 # TODO: move setting of bounds ncvar to here - why?
 
                 # If this auxiliary coordinate has bounds then create
-                # the bounds netCDF variable and add the 'bounds',
+                # the bounds dataset variable and add the 'bounds',
                 # 'climatology' or 'nodes' attribute (as appropriate)
                 # to the dictionary of extra attributes.
                 extra = self._write_bounds(f, coord, key, ncdimensions, ncvar)
@@ -2207,10 +2291,10 @@ class NetCDFWrite(IOWrite):
         return coordinates
 
     def _write_domain_ancillary(self, f, key, anc):
-        """Write a domain ancillary and its bounds to the netCDF file.
+        """Write a domain ancillary and its bounds to the dataset.
 
-        If an equal domain ancillary has already been written to the file
-        athen it is not re-written.
+        If an equal domain ancillary has already been written to the
+        dataset then it is not re-written.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -2226,7 +2310,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `str`
-                The netCDF variable name of the domain ancillary variable.
+                The dataset name of the domain ancillary variable.
 
         """
         g = self.write_vars
@@ -2234,19 +2318,19 @@ class NetCDFWrite(IOWrite):
         if g["post_dry_run"]:
             logger.warning(
                 "At present domain ancillary constructs of appended fields "
-                "may not be handled correctly by netCDF write append mode "
+                "may not be handled correctly by write append mode "
                 "and can appear as extra fields. Set them on fields using "
                 "`set_domain_ancillary` and similar methods if required."
             )
 
-        ncdimensions = self._netcdf_dimensions(f, key, anc)
+        ncdimensions = self._dataset_dimensions(f, key, anc)
 
         create = not self._already_in_file(anc, ncdimensions, ignore_type=True)
 
         if not create:
             ncvar = g["seen"][id(anc)]["ncvar"]
         else:
-            # See if we can set the default netCDF variable name to
+            # See if we can set the default dataset variable name to
             # its formula_terms term
             default = None
             for ref in self.implementation.get_coordinate_references(
@@ -2268,10 +2352,10 @@ class NetCDFWrite(IOWrite):
             if default is None:
                 default = "domain_ancillary"
 
-            ncvar = self._create_netcdf_variable_name(anc, default=default)
+            ncvar = self._create_variable_name(anc, default=default)
 
-            # If this domain ancillary has bounds then create the bounds
-            # netCDF variable
+            # If this domain ancillary has bounds then create the
+            # bounds dataset variable
             self._write_bounds(f, anc, key, ncdimensions, ncvar)
 
             # Create a new domain ancillary variable
@@ -2293,10 +2377,10 @@ class NetCDFWrite(IOWrite):
         key,
         anc,
     ):
-        """Write a field ancillary to the netCDF file.
+        """Write a field ancillary to the dataset.
 
-        If an equal field ancillary has already been written to the file
-        then it is not re-written.
+        If an equal field ancillary has already been written to the
+        dataset then it is not re-written.
 
         :Parameters:
 
@@ -2309,7 +2393,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `str`
-                The netCDF variable name of the field ancillary
+                The dataset variable name of the field ancillary
                 object. If no ancillary variable was written then an
                 empty string is returned.
 
@@ -2320,16 +2404,14 @@ class NetCDFWrite(IOWrite):
         """
         g = self.write_vars
 
-        ncdimensions = self._netcdf_dimensions(f, key, anc)
+        ncdimensions = self._dataset_dimensions(f, key, anc)
 
         create = not self._already_in_file(anc, ncdimensions)
 
         if not create:
             ncvar = g["seen"][id(anc)]["ncvar"]
         else:
-            ncvar = self._create_netcdf_variable_name(
-                anc, default="ancillary_data"
-            )
+            ncvar = self._create_variable_name(anc, default="ancillary_data")
 
             # Create a new field ancillary variable
             self._write_netcdf_variable(
@@ -2345,10 +2427,10 @@ class NetCDFWrite(IOWrite):
         return ncvar
 
     def _write_cell_measure(self, f, key, cell_measure):
-        """Write a cell measure construct to the netCDF file.
+        """Write a cell measure construct to the dataset.
 
-        If an identical construct has already in the file then the cell
-        measure will not be written.
+        If an identical construct has already in the dataset then the
+        cell measure will not be written.
 
         :Parameters:
 
@@ -2372,11 +2454,11 @@ class NetCDFWrite(IOWrite):
         measure = self.implementation.get_measure(cell_measure)
         if measure is None:
             raise ValueError(
-                "Can't create a CF-netCDF cell measure variable "
+                "Can't create a CF cell measure variable "
                 "without a 'measure' property"
             )
 
-        ncdimensions = self._netcdf_dimensions(f, key, cell_measure)
+        ncdimensions = self._dataset_dimensions(f, key, cell_measure)
 
         if self._already_in_file(cell_measure, ncdimensions):
             # Use existing cell measure variable
@@ -2388,19 +2470,20 @@ class NetCDFWrite(IOWrite):
             )
             if ncvar is None:
                 raise ValueError(
-                    "Can't create an external CF-netCDF cell measure "
-                    "variable without a netCDF variable name"
+                    "Can't create an external CF cell measure "
+                    "variable without a dataset variable name"
                 )
 
             # Add ncvar to the global external_variables attribute
             self._set_external_variables(ncvar)
 
             if (
-                g["external_file"] is not None
+                g["external_dataset"] is not None
                 and self.implementation.get_data(cell_measure, None)
                 is not None
             ):
-                # Create a new field to write out to the external file
+                # Create a new field to write out to the external
+                # dataset
                 self._create_external(
                     field=f,
                     construct_id=key,
@@ -2408,7 +2491,7 @@ class NetCDFWrite(IOWrite):
                     ncdimensions=ncdimensions,
                 )
         else:
-            ncvar = self._create_netcdf_variable_name(
+            ncvar = self._create_variable_name(
                 cell_measure, default="cell_measure"
             )
 
@@ -2438,14 +2521,19 @@ class NetCDFWrite(IOWrite):
         if ncvar not in external_variables:
             external_variables.add(ncvar)
             if not g["dry_run"] and not g["post_dry_run"]:
-                g["netcdf"].setncattr(
-                    "external_variables", " ".join(sorted(external_variables))
+                self._set_attributes(
+                    {
+                        "external_variables": " ".join(
+                            sorted(external_variables)
+                        )
+                    },
+                    group=g["dataset"],
                 )
 
     def _create_external(
         self, field=None, construct_id=None, ncvar=None, ncdimensions=None
     ):
-        """Creates a new field to flag to write to an external file.
+        """Creates a new field to flag to write to an external dataset.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -2460,7 +2548,7 @@ class NetCDFWrite(IOWrite):
             field=field, construct_id=construct_id
         )
 
-        # Set the correct netCDF variable and dimension names
+        # Set the correct dataset variable and dimension names
         self.implementation.nc_set_variable(external, ncvar)
 
         external_domain_axes = self.implementation.get_domain_axes(external)
@@ -2484,26 +2572,133 @@ class NetCDFWrite(IOWrite):
         return external
 
     def _createVariable(self, **kwargs):
-        """Create a variable in the netCDF file.
+        """Create a variable in the dataset.
 
         .. versionadded:: (cfdm) 1.7.0
 
         """
         g = self.write_vars
+
         ncvar = kwargs["varname"]
-        g["nc"][ncvar] = g["netcdf"].createVariable(**kwargs)
+
+        match g["backend"]:
+            case "netCDF4":
+                netcdf4_kwargs = kwargs
+                if "dimensions" not in kwargs:
+                    netcdf4_kwargs["dimensions"] = ()
+
+                contiguous = kwargs.get("contiguous")
+
+                NETCDF4 = g["dataset"].data_model.startswith("NETCDF4")
+                if NETCDF4 and contiguous:
+                    # NETCDF4 contiguous variables can't be compressed
+                    kwargs["compression"] = None
+                    kwargs["complevel"] = 0
+
+                    # NETCDF4 contiguous variables can't span unlimited
+                    # dimensions
+                    unlimited_dimensions = g[
+                        "unlimited_dimensions"
+                    ].intersection(kwargs.get("dimensions", ()))
+                    if unlimited_dimensions:
+                        data_model = g["dataset"].data_model
+                        raise ValueError(
+                            f"Can't create variable {ncvar!r} in "
+                            f"{data_model} dataset: "
+                            f"In {data_model} it is not allowed to write "
+                            "contiguous (as opposed to chunked) data "
+                            "that spans one or more unlimited dimensions: "
+                            f"{unlimited_dimensions}"
+                        )
+
+                if contiguous:
+                    netcdf4_kwargs.pop("fletcher32", None)
+
+                # Remove Zarr-specific kwargs
+                netcdf4_kwargs.pop("shape", None)
+                netcdf4_kwargs.pop("shards", None)
+
+                variable = g["dataset"].createVariable(**netcdf4_kwargs)
+
+            case "zarr":
+                shape = kwargs.get("shape", ())
+                chunks = kwargs.get("chunksizes", shape)
+                shards = kwargs.get("shards")
+
+                if chunks is None:
+                    # One chunk for the entire array
+                    chunks = shape
+
+                if shards is not None:
+                    # Create the shard shape in the format expected by
+                    # `zarr.create_array`. 'shards' is currently
+                    # defined by how many *chunks* along each
+                    # dimension are in each shard, but `zarr` requires
+                    # shards defined by how many *array elements*
+                    # along each dimension are in each shard.
+                    if chunks == shape:
+                        # One chunk
+                        #
+                        # It doesn't matter what 'shards' is, because
+                        # the data only has one chunk.
+                        shards = None
+                    else:
+                        ndim = len(chunks)
+                        if isinstance(shards, Integral):
+                            # Make a conservative estimate of how many
+                            # whole chunks along each dimension are in
+                            # a shard. This may result in fewer than
+                            # 'shards' chunks in each shard, but is
+                            # guaranteed to give us a shard shape of
+                            # less than the data shape, which is a
+                            # `zarr` requirement.
+                            n = int(shards ** (1 / ndim))
+                            shards = (n,) * ndim
+
+                        if prod(shards) > 1:
+                            # More than one chunk per shard.
+                            #
+                            # E.g. shards=(10, 11, 12) and chunks=(10,
+                            #      20, 30) => shards=(100, 220, 360)
+                            shards = [c * n for c, n in zip(chunks, shards)]
+                        else:
+                            # One chunk per shard.
+                            #
+                            # E.g. shards=(1, 1, 1) => shards=None
+                            shards = None
+
+                dtype = kwargs["datatype"]
+                if dtype == "S1":
+                    dtype = str
+
+                zarr_kwargs = {
+                    "name": ncvar,
+                    "shape": shape,
+                    "dtype": dtype,
+                    "chunks": chunks,
+                    "shards": shards,
+                    "fill_value": kwargs.get("fill_value"),
+                    "dimension_names": kwargs.get("dimensions", ()),
+                    "storage_options": g.get("storage_options"),
+                    "overwrite": g["overwrite"],
+                }
+
+                variable = g["dataset"].create_array(**zarr_kwargs)
+
+        g["nc"][ncvar] = variable
 
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
-        """Write a grid mapping georeference to the netCDF file.
+        """Write a grid mapping georeference to the dataset.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
-            f: Field construct
+            f: `Field` or `Domain`
 
-            ref: Coordinate reference construct
-                The grid mapping coordinate reference to write to the file.
+            ref: `CoordinateReference`
+                The grid mapping coordinate reference to write to the
+                dataset.
 
             multiple_grid_mappings: `bool`
 
@@ -2524,16 +2719,15 @@ class NetCDFWrite(IOWrite):
                 self.implementation.get_coordinate_conversion_parameters(ref)
             )
             default = cc_parameters.get("grid_mapping_name", "grid_mapping")
-            ncvar = self._create_netcdf_variable_name(ref, default=default)
+            ncvar = self._create_variable_name(ref, default=default)
 
             logger.info(
-                f"    Writing {ref!r} to netCDF variable: {ncvar}"
+                f"    Writing {ref!r} to variable: {ncvar}"
             )  # pragma: no cover
 
             kwargs = {
                 "varname": ncvar,
                 "datatype": "S1",
-                "dimensions": (),
                 "endian": g["endian"],
             }
             kwargs.update(g["netcdf_compression"])
@@ -2547,7 +2741,7 @@ class NetCDFWrite(IOWrite):
             common = set(parameters).intersection(cc_parameters)
             if common:
                 raise ValueError(
-                    "Can't create CF-netCDF grid mapping variable: "
+                    "Can't create CF grid mapping variable: "
                     f"{common.pop()!r} is defined as both a coordinate "
                     "conversion and a datum parameter."
                 )
@@ -2567,13 +2761,13 @@ class NetCDFWrite(IOWrite):
                 parameters[term] = value
 
             if not g["dry_run"]:
-                g["nc"][ncvar].setncatts(parameters)
+                self._set_attributes(parameters, ncvar)
 
             # Update the 'seen' dictionary
             g["seen"][id(ref)] = {
                 "variable": ref,
                 "ncvar": ncvar,
-                # Grid mappings have no netCDF dimensions
+                # Grid mappings variables are scalar
                 "ncdims": (),
             }
 
@@ -2626,7 +2820,7 @@ class NetCDFWrite(IOWrite):
                 The netCDF dimension names of the variable
 
             cfvar: `Variable` or `Data`
-                The construct to write to the netCDF file.
+                The construct to write to the dataset.
 
             domain_axes: `None`, or `tuple` of `str`
                 The domain axis construct identifiers for *cfvar*.
@@ -2648,11 +2842,11 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.10.1.0
 
-            chunking: sequence of `int`, optional
-                Set `netCDF4.createVariable` 'contiguous' and
-                `chunksizes` parameters (in that order). If not set
-                (the default), then these parameters are inferred from
-                the data.
+            chunking: sequence, optional
+                Set `_createVariable` 'contiguous', 'chunksizes', and
+                'shards' parameters (in that order). If `None` (the
+                default), then these parameters are inferred from the
+                data.
 
                 .. versionadded:: (cfdm) 1.12.0.0
 
@@ -2691,7 +2885,9 @@ class NetCDFWrite(IOWrite):
         if g["dry_run"]:
             return
 
-        logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
+        logger.info(
+            f"    Writing {cfvar!r} to variable: {ncvar}"
+        )  # pragma: no cover
 
         # Set 'construct_type'
         if not construct_type:
@@ -2699,12 +2895,12 @@ class NetCDFWrite(IOWrite):
 
         # Do this after the dry_run return else may attempt to transform
         # the arrays with string dtype on an append-mode read iteration (bad).
+        datatype = None
         if not domain_variable:
             datatype = self._datatype(cfvar)
             data, ncdimensions = self._transform_strings(
                 data,
                 ncdimensions,
-                #                cfvar, data, ncdimensions
             )
 
         # Whether or not to write the data
@@ -2715,14 +2911,22 @@ class NetCDFWrite(IOWrite):
         # filled before any data is written. if the fill value is
         # False then the variable is not pre-filled.
         # ------------------------------------------------------------
-        if (
-            omit_data or fill or g["post_dry_run"]
-        ):  # or append mode's appending iteration
-            fill_value = self.implementation.get_property(
-                cfvar, "_FillValue", None
-            )
-        else:
-            fill_value = None
+        match g["backend"]:
+            case "netCDF4":
+                if (
+                    omit_data or fill or g["post_dry_run"]
+                ):  # or append mode's appending iteration
+                    fill_value = self.implementation.get_property(
+                        cfvar, "_FillValue", None
+                    )
+                else:
+                    fill_value = None
+
+            case "zarr":
+                # Set the `zarr` fill_value to the missing value of
+                # 'cfvar', defaulting to the netCDF default fill value
+                # if no missing value is available
+                fill_value = self._missing_value(cfvar, datatype)
 
         if data_variable:
             lsd = g["least_significant_digit"]
@@ -2731,19 +2935,20 @@ class NetCDFWrite(IOWrite):
 
         # Set the dataset chunk strategy
         if chunking:
-            contiguous, chunksizes = chunking
+            contiguous, chunksizes, shards = chunking
         else:
-            contiguous, chunksizes = self._chunking_parameters(
+            contiguous, chunksizes, shards = self._chunking_parameters(
                 data, ncdimensions
             )
 
         logger.debug(
-            f"      chunksizes: {chunksizes}\n"
-            f"      contiguous: {contiguous}"
+            f"      chunksizes: {chunksizes!r}, "
+            f"contiguous: {contiguous!r}, "
+            f"shards: {shards!r}"
         )  # pragma: no cover
 
         # ------------------------------------------------------------
-        # Check that each dimension of the netCDF variable is in the
+        # Check that each dimension of the dataset variable is in the
         # same group or a parent group (CF>=1.8)
         # ------------------------------------------------------------
         if g["group"]:
@@ -2752,33 +2957,52 @@ class NetCDFWrite(IOWrite):
                 ncdim_groups = self._groups(ncdim)
                 if not groups.startswith(ncdim_groups):
                     raise ValueError(
-                        f"Can't create netCDF variable {ncvar!r} from "
-                        f"{cfvar!r} with netCDF dimension {ncdim!r} that is "
+                        f"Can't create variable {ncvar!r} from "
+                        f"{cfvar!r} with dimension {ncdim!r} that is "
                         "not in the same group nor in a parent group."
                     )
 
         # ------------------------------------------------------------
-        # Replace netCDF dimension names with their basenames
-        # (CF>=1.8)
-        # ------------------------------------------------------------
-        ncdimensions_basename = [
-            self._remove_group_structure(ncdim) for ncdim in ncdimensions
-        ]
-
-        # ------------------------------------------------------------
-        # Create a new netCDF variable
+        # Create a new dataset variable
         # ------------------------------------------------------------
         kwargs = {
             "varname": ncvar,
             "datatype": datatype,
-            "dimensions": ncdimensions_basename,
             "endian": g["endian"],
             "contiguous": contiguous,
             "chunksizes": chunksizes,
+            "shards": shards,
             "least_significant_digit": lsd,
             "fill_value": fill_value,
             "chunk_cache": g["chunk_cache"],
         }
+
+        # ------------------------------------------------------------
+        # Replace dataset dimension names with their basenames
+        # (CF>=1.8)
+        # ------------------------------------------------------------
+        if g["backend"] == "zarr":
+            # ... but not for Zarr. This is because the Zarr data
+            # model doesn't have the concept of dimensions belonging
+            # to a group (unlike netCDF), so by keeping the group
+            # structure in the dimension names we can know which group
+            # they belong to.
+            kwargs["dimensions"] = ncdimensions
+        else:
+            ncdimensions_basename = [
+                self._remove_group_structure(ncdim) for ncdim in ncdimensions
+            ]
+            kwargs["dimensions"] = ncdimensions_basename
+
+        if data is not None:
+            compressed = self._compressed_data(ncdimensions)
+            if compressed:
+                # Write data in its compressed form
+                shape = data.source().source().shape
+            else:
+                shape = data.shape
+
+            kwargs["shape"] = shape
 
         # ------------------------------------------------------------
         # Create a quantization container variable, add any extra
@@ -2810,11 +3034,17 @@ class NetCDFWrite(IOWrite):
                 q, netcdf_parameter, None
             )
 
-            # Create a quantization container variable in the file, if
-            # it doesn't already exist (and after having removed any
-            # per-variable quantization parameters, such as
+            # Create a quantization container variable in the dataset,
+            # if it doesn't already exist (and after having removed
+            # any per-variable quantization parameters, such as
             # "quantization_nsd").
             if quantize_on_write:
+                if g["backend"] == "zarr":
+                    raise NotImplementedError(
+                        f"Can't yet quantize-on-write {cfvar!r} to a Zarr "
+                        "dataset"
+                    )
+
                 # Set "implemention" to this version of the netCDF-C
                 # library
                 import netCDF4
@@ -2862,7 +3092,7 @@ class NetCDFWrite(IOWrite):
                 if g["fmt"] not in NETCDF4_FMTS:
                     raise ValueError(
                         f"Can't quantize {cfvar!r} into a {g['fmt']} "
-                        "format file. Quantization is only possible when "
+                        "format dataset. Quantization is only possible when "
                         f"writing to one of the {NETCDF4_FMTS} formats."
                     )
 
@@ -2908,7 +3138,7 @@ class NetCDFWrite(IOWrite):
                 if g["cfa"].get("strict", True):
                     # Raise the exception in 'strict' mode
                     if g["mode"] == "w":
-                        os.remove(g["filename"])
+                        self.dataset_remove()
 
                     raise
 
@@ -2921,10 +3151,12 @@ class NetCDFWrite(IOWrite):
                 # keyword arguments. This is necessary because the
                 # dimensions and dataset chunking strategy will
                 # otherwise reflect the aggregated data in memory,
-                # rather than the scalar variable in the file.
-                kwargs["dimensions"] = ()
+                # rather than the scalar variable in the dataset.
                 kwargs["contiguous"] = True
                 kwargs["chunksizes"] = None
+                kwargs["dimensions"] = ()
+                kwargs["shape"] = ()
+                kwargs["shards"] = None
 
         # Add compression parameters (but not for scalars or vlen
         # strings).
@@ -2945,52 +3177,30 @@ class NetCDFWrite(IOWrite):
         )
 
         logger.info(
-            f"        to netCDF variable: {ncvar}({', '.join(ncdimensions)})"
+            f"      dimensions: ({', '.join(ncdimensions)})"
         )  # pragma: no cover
-
-        # Adjust createVariable arguments for contiguous variables
-        if kwargs["contiguous"]:
-            if g["netcdf"].data_model.startswith("NETCDF4"):
-                # NETCDF4 contiguous variables can't span unlimited
-                # dimensions
-                unlimited_dimensions = g["unlimited_dimensions"].intersection(
-                    kwargs["dimensions"]
-                )
-                if unlimited_dimensions:
-                    data_model = g["netcdf"].data_model
-                    raise ValueError(
-                        f"Can't create variable {ncvar!r} in {data_model} "
-                        f"file from {cfvar!r}: In {data_model} it is not "
-                        "allowed to write contiguous (as opposed to chunked) "
-                        "data that spans one or more unlimited dimensions: "
-                        f"{unlimited_dimensions}"
-                    )
-
-                # NETCDF4 contiguous variables can't be compressed
-                kwargs["compression"] = None
-                kwargs["complevel"] = 0
 
         try:
             self._createVariable(**kwargs)
         except RuntimeError as error:
             error = str(error)
             message = (
-                f"Can't create variable in {g['netcdf'].data_model} file "
+                f"Can't create variable in {g['netcdf'].data_model} dataset "
                 f"from {cfvar!r}: {error}. "
-                f"netCDF4.createVariable arguments: {kwargs}"
+                f"_createVariable arguments: {kwargs}"
             )
             if error == (
                 "NetCDF: Not a valid data type or _FillValue type mismatch"
             ):
                 raise ValueError(
                     f"Can't write {cfvar.data.dtype.name} data from {cfvar!r} "
-                    f"to a {g['netcdf'].data_model} file. "
+                    f"to a {g['netcdf'].data_model} dataset. "
                     "Consider using a netCDF4 format, or use the 'datatype' "
                     "parameter, or change the datatype before writing."
                 )
             elif error == "NetCDF: NC_UNLIMITED in the wrong index":
                 raise RuntimeError(
-                    f"{message}. In a {g['netcdf'].data_model} file the "
+                    f"{message}. In a {g['netcdf'].data_model} dataset the "
                     "unlimited dimension must be the first (leftmost) "
                     "dimension of the variable. "
                     "Consider using a netCDF4 format."
@@ -2999,14 +3209,14 @@ class NetCDFWrite(IOWrite):
                 raise RuntimeError(message)
 
         # ------------------------------------------------------------
-        # Write attributes to the netCDF variable
+        # Write attributes to the dataset variable
         # ------------------------------------------------------------
-        attributes = self._write_attributes(
+        attributes = self._write_variable_attributes(
             cfvar, ncvar, extra=extra, omit=omit
         )
 
         # ------------------------------------------------------------
-        # Write data to the netCDF variable
+        # Write data to the dataset variable
         #
         # Note that we don't need to worry about scale_factor and
         # add_offset, since if a data array is *not* a numpy array,
@@ -3046,7 +3256,7 @@ class NetCDFWrite(IOWrite):
     def _customise_createVariable(
         self, cfvar, construct_type, domain_axes, kwargs
     ):
-        """Customises `netCDF4.Dataset.createVariable` keywords.
+        """Customises `_createVariable` keywords.
 
         The keyword arguments may be changed in subclasses which
         override this method.
@@ -3074,13 +3284,11 @@ class NetCDFWrite(IOWrite):
 
             `dict`
                 Dictionary of keyword arguments to be passed to
-                `netCDF4.Dataset.createVariable`.
+                `_createVariable`.
 
         """
         # This method is trivial but the intention is that subclasses
-        # will override it to perform any desired
-        # customisation. Notably see the equivalent method in
-        # cf-python which is non-trivial.
+        # may override it to perform any desired customisation.
         return kwargs
 
     def _transform_strings(self, data, ncdimensions):
@@ -3112,6 +3320,7 @@ class NetCDFWrite(IOWrite):
             array = self._numpy_compressed(array)
 
             strlen = len(max(array, key=len))
+            del array
 
             data = self._convert_to_char(data)
             ncdim = self._string_length_dimension(strlen)
@@ -3133,11 +3342,11 @@ class NetCDFWrite(IOWrite):
         construct_type=None,
         cfa=None,
     ):
-        """Write a data array to the netCDF file.
+        """Write a data array to the dataset.
 
         :Parameters:
 
-            data: Data instance
+            data: `Data` instance
 
             cfvar: cfdm instance
 
@@ -3153,8 +3362,8 @@ class NetCDFWrite(IOWrite):
             unset_values: sequence of numbers
 
             attributes: `dict`, optional
-                The netCDF attributes for the constructs that have been
-                written to the file.
+                The dataset attributes for the constructs that have
+                been written to the dataset.
 
             construct_type: `str`
                 The construct type of the *cfvar*, or its parent if
@@ -3187,6 +3396,8 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         import dask.array as da
 
+        zarr = g["backend"] == "zarr"
+
         if compressed:
             # Write data in its compressed form
             data = data.source().source()
@@ -3209,6 +3420,24 @@ class NetCDFWrite(IOWrite):
                 meta=np.array((), dx.dtype),
             )
 
+        # Initialise the dataset lock for the data writing from Dask
+        lock = None
+
+        # Rechunk the Dask array to shards, if applicable.
+        if zarr:
+            # When a Zarr variable is sharded, the Dask array must be
+            # rechunked to the shards because "when writing data, a
+            # full shard must be written in one go for optimal
+            # performance and to avoid concurrency issues."
+            # https://zarr.readthedocs.io/en/stable/user-guide/arrays.html#sharding
+            shards = g["nc"][ncvar].shards
+            if shards is not None:
+                dx = dx.rechunk(shards)
+                # This rechunking has aligned Dask chunk boundaries
+                # with Zarr chunk boundaries, so we don't need to lock
+                # the write.
+                lock = False
+
         # Check for out-of-range values
         if g["warn_valid"]:
             if construct_type:
@@ -3223,7 +3452,47 @@ class NetCDFWrite(IOWrite):
                 meta=np.array((), dx.dtype),
             )
 
-        da.store(dx, g["nc"][ncvar], compute=True, return_stored=False)
+        if zarr:
+            # `zarr` can't write a masked array to a variable, so we
+            # have to manually replace missing data with the fill
+            # value.
+            dx = dx.map_blocks(
+                self._filled_array,
+                meta=np.array((), dx.dtype),
+                fill_value=g["nc"][ncvar].fill_value,
+            )
+
+        if lock is None:
+            # We need to define the dataset lock for data writing from
+            # Dask
+            from cfdm.data.locks import netcdf_lock as lock
+
+        da.store(
+            dx, g["nc"][ncvar], compute=True, return_stored=False, lock=lock
+        )
+
+    def _filled_array(self, array, fill_value):
+        """Replace masked values with a fill value.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            array: `numpy.ndarray`
+                The arry to be filled.
+
+            fill_value:
+                The fill value.
+
+        :Returns:
+
+            `numpy.ndarray`
+
+        """
+        if np.ma.isMA(array):
+            return array.filled(fill_value)
+
+        return array
 
     def _check_valid(self, array, cfvar=None, attributes=None):
         """Checks for array values outside of the valid range.
@@ -3283,7 +3552,7 @@ class NetCDFWrite(IOWrite):
             print(
                 message.format(
                     cfvar,
-                    self.write_vars["filename"],
+                    self.write_vars["dataset_name"],
                     "less",
                     "minimum",
                     prop,
@@ -3306,7 +3575,7 @@ class NetCDFWrite(IOWrite):
             print(
                 message.format(
                     cfvar,
-                    self.write_vars["filename"],
+                    self.write_vars["dataset_name"],
                     "greater",
                     "maximum",
                     prop,
@@ -3346,7 +3615,7 @@ class NetCDFWrite(IOWrite):
     def _write_field_or_domain(
         self, f, add_to_seen=False, allow_data_insert_dimension=True
     ):
-        """Write a field or domain construct to the file.
+        """Write a field or domain construct to the dataset.
 
         All of the metadata constructs are also written.
 
@@ -3368,6 +3637,7 @@ class NetCDFWrite(IOWrite):
         import re
 
         g = self.write_vars
+
         ncdim_size_to_spanning_constructs = []
         seen = g["seen"]
 
@@ -3402,30 +3672,30 @@ class NetCDFWrite(IOWrite):
             # axes that define the domain. CF-1.9
             data_axes = list(self.implementation.get_domain_axes(f))
 
-        # Mapping of domain axis identifiers to netCDF dimension
+        # Mapping of domain axis identifiers to dataset dimension
         # names. This gets reset for each new field/domain that is
-        # written to the file.
+        # written to the dataset.
         #
         # For example: {'domainaxis1': 'lon'}
         g["axis_to_ncdim"] = {}
 
-        # Mapping of domain axis identifiers to netCDF scalar
+        # Mapping of domain axis identifiers to dataset scalar
         # coordinate variable names. This gets reset for each new
-        # field/domain that is written to the file.
+        # field/domain that is written to the dataset.
         #
         # For example: {'domainaxis0': 'time'}
         g["axis_to_ncscalar"] = {}
 
-        # Mapping of construct internal identifiers to netCDF variable
-        # names. This gets reset for each new field/domain that is
-        # written to the file.
+        # Mapping of construct internal identifiers to dataset
+        # variable names. This gets reset for each new field/domain
+        # that is written to the dataset.
         #
         # For example: {'dimensioncoordinate1': 'longitude'}
         g["key_to_ncvar"] = {}
 
-        # Mapping of construct internal identifiers to their netCDF
+        # Mapping of construct internal identifiers to their dataset
         # dimensions. This gets reset for each new field/domain that
-        # is written to the file.
+        # is written to the dataset.
         #
         # For example: {'dimensioncoordinate1': ['longitude']}
         g["key_to_ncdims"] = {}
@@ -3481,7 +3751,7 @@ class NetCDFWrite(IOWrite):
         ugrid = self.implementation.has_domain_topology(f)
         if ugrid:
             raise NotImplementedError(
-                "Can't yet create UGRID cf-netCDF files. "
+                "Can't yet write UGRID datasets. "
                 "This feature is coming soon ..."
             )
 
@@ -3575,7 +3845,7 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 if axis in data_axes:
                     # The data array spans this domain axis, so write
-                    # the dimension coordinate to the file as a
+                    # the dimension coordinate to the dataset as a
                     # coordinate variable.
                     ncvar = self._write_dimension_coordinate(
                         f, key, dim_coord, ncdim=ncdim, coordinates=coordinates
@@ -3596,7 +3866,7 @@ class NetCDFWrite(IOWrite):
                         # auxiliary coordinates, cell measures, domain
                         # ancillaries or field ancillaries which span
                         # this domain axis. Therefore write the
-                        # dimension coordinate to the file as a
+                        # dimension coordinate to the dataset as a
                         # coordinate variable.
                         ncvar = self._write_dimension_coordinate(
                             f,
@@ -3618,8 +3888,8 @@ class NetCDFWrite(IOWrite):
                         # coordinates, cell measures, domain
                         # ancillaries or field ancillaries which span
                         # this domain axis. Therefore write the
-                        # dimension coordinate to the file as a scalar
-                        # coordinate variable.
+                        # dimension coordinate to the dataset as a
+                        # scalar coordinate variable.
                         coordinates = self._write_scalar_coordinate(
                             f, key, dim_coord, axis, coordinates
                         )
@@ -3660,7 +3930,7 @@ class NetCDFWrite(IOWrite):
                         data_axes.append(axis)
 
                 # If the data array (now) spans this domain axis then
-                # create a netCDF dimension for it
+                # create a dataset dimension for it
                 if axis in data_axes:
                     axis_size0 = self.implementation.get_domain_axis_size(
                         f, axis
@@ -3727,7 +3997,7 @@ class NetCDFWrite(IOWrite):
                         and len(data_axes) == 2
                         and axis == data_axes[1]
                     ):
-                        # Do not create a netCDF dimension for the
+                        # Do not create a dataset dimension for the
                         # element dimension
                         g["axis_to_ncdim"][axis] = "ragged_contiguous_element"
                     elif (
@@ -3735,7 +4005,7 @@ class NetCDFWrite(IOWrite):
                         and len(data_axes) == 2
                         and axis == data_axes[1]
                     ):
-                        # Do not create a netCDF dimension for the
+                        # Do not create a dataset dimension for the
                         # element dimension
                         g["axis_to_ncdim"][axis] = "ragged_indexed_element"
                     elif (
@@ -3743,7 +4013,7 @@ class NetCDFWrite(IOWrite):
                         and len(data_axes) == 3
                         and axis == data_axes[1]
                     ):
-                        # Do not create a netCDF dimension for the
+                        # Do not create a dataset dimension for the
                         # element dimension
                         g["axis_to_ncdim"][
                             axis
@@ -3753,7 +4023,7 @@ class NetCDFWrite(IOWrite):
                         and len(data_axes) == 3
                         and axis == data_axes[2]
                     ):
-                        # Do not create a netCDF dimension for the
+                        # Do not create a dataset dimension for the
                         # element dimension
                         g["axis_to_ncdim"][
                             axis
@@ -3767,11 +4037,12 @@ class NetCDFWrite(IOWrite):
                         )
 
                         if not g["group"]:
-                            # A flat file has been requested, so strip
-                            # off any group structure from the name.
+                            # A flat dataset has been requested, so
+                            # strip off any group structure from the
+                            # name.
                             ncdim = self._remove_group_structure(ncdim)
 
-                        ncdim = self._netcdf_name(ncdim)
+                        ncdim = self._name(ncdim)
 
                         unlimited = self._unlimited(f, axis)
                         self._write_dimension(
@@ -3808,8 +4079,8 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 # Compression by gathering
                 #
-                # Write the list variable to the file, making a note
-                # of the netCDF sample dimension.
+                # Write the list variable to the dataset, making a
+                # note of the dataset sample dimension.
                 # ----------------------------------------------------
                 list_variable = self.implementation.get_list(f)
                 compress = " ".join(compressed_ncdims)
@@ -3821,8 +4092,8 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 # Compression by contiguous ragged array
                 #
-                # Write the count variable to the file, making a note
-                # of the netCDF sample dimension.
+                # Write the count variable to the dataset, making a
+                # note of the dataset sample dimension.
                 # ----------------------------------------------------
                 count = self.implementation.get_count(f)
                 sample_ncdim = self._write_count_variable(
@@ -3833,16 +4104,16 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 # Compression by indexed ragged array
                 #
-                # Write the index variable to the file, making a note
-                # of the netCDF sample dimension.
+                # Write the index variable to the dataset, making a
+                # note of the dataset sample dimension.
                 # ----------------------------------------------------
                 index = self.implementation.get_index(f)
                 index_ncdim = self.implementation.nc_get_dimension(
                     index, default="sample"
                 )
                 if not g["group"]:
-                    # A flat file has been requested, so strip off any
-                    # group structure from the name.
+                    # A flat dataset has been requested, so strip off
+                    # any group structure from the name.
                     index_ncdim = self._remove_group_structure(index_ncdim)
 
                 sample_ncdim = self._write_index_variable(
@@ -3858,8 +4129,8 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 # Compression by indexed contigous ragged array
                 #
-                # Write the index variable to the file, making a note
-                # of the netCDF sample dimension.
+                # Write the index variable to the dataset, making a
+                # note of the dataset sample dimension.
                 # ----------------------------------------------------
                 count = self.implementation.get_count(f)
                 count_ncdim = self.implementation.nc_get_dimension(
@@ -3867,8 +4138,8 @@ class NetCDFWrite(IOWrite):
                 )
 
                 if not g["group"]:
-                    # A flat file has been requested, so strip off any
-                    # group structure from the name.
+                    # A flat dataset has been requested, so strip off
+                    # any group structure from the name.
                     count_ncdim = self._remove_group_structure(count_ncdim)
 
                 sample_ncdim = self._write_count_variable(
@@ -3876,7 +4147,7 @@ class NetCDFWrite(IOWrite):
                 )
 
                 if not g["group"]:
-                    # A flat file has been requested, so strip off any
+                    # A flat dataset has been requested, so strip off any
                     # group structure from the name.
                     sample_ncdim = self._remove_group_structure(sample_ncdim)
 
@@ -3946,7 +4217,7 @@ class NetCDFWrite(IOWrite):
                 )
 
         # ------------------------------------------------------------
-        # Create netCDF variables from domain ancillaries
+        # Create dataset variables from domain ancillaries
         # ------------------------------------------------------------
         for key, anc in sorted(
             self.implementation.get_domain_ancillaries(f).items()
@@ -3954,7 +4225,7 @@ class NetCDFWrite(IOWrite):
             self._write_domain_ancillary(f, key, anc)
 
         # ------------------------------------------------------------
-        # Create netCDF variables from cell measures
+        # Create dataset variables from cell measures
         # ------------------------------------------------------------
         # Set the list of 'cell_measures' attribute values (each of
         # the form 'measure: name')
@@ -3966,7 +4237,7 @@ class NetCDFWrite(IOWrite):
         ]
 
         # ------------------------------------------------------------
-        # Create netCDF formula_terms attributes from vertical
+        # Create formula_terms dataset attributes from vertical
         # coordinate references
         # ------------------------------------------------------------
         for ref in g["formula_terms_refs"]:
@@ -4040,8 +4311,9 @@ class NetCDFWrite(IOWrite):
                     if id(domain_anc) not in seen:
                         continue
 
-                    # Get the netCDF variable name for the domain
-                    # ancillary and add it to the formula_terms attribute
+                    # Get the dataset variable name for the domain
+                    # ancillary and add it to the formula_terms
+                    # attribute
                     ncvar = seen[id(domain_anc)]["ncvar"]
                     formula_terms.append(f"{term}: {ncvar}")
 
@@ -4064,15 +4336,15 @@ class NetCDFWrite(IOWrite):
                 formula_terms = " ".join(formula_terms)
                 if not g["dry_run"] and not g["post_dry_run"]:
                     try:
-                        g["nc"][ncvar].setncattr(
-                            "formula_terms", formula_terms
+                        self._set_attributes(
+                            {"formula_terms": formula_terms}, ncvar
                         )
                     except KeyError:
                         pass  # TODO convert to 'raise' via fixes upstream
 
                 logger.info(
-                    "    Writing formula_terms attribute to "
-                    f"netCDF variable {ncvar}: {formula_terms!r}"
+                    "    Writing formula_terms attribute to variable "
+                    f"{ncvar}: {formula_terms!r}"
                 )  # pragma: no cover
 
                 # Add the formula_terms attribute to the parent
@@ -4082,14 +4354,15 @@ class NetCDFWrite(IOWrite):
                     bounds_formula_terms = " ".join(bounds_formula_terms)
                     if not g["dry_run"] and not g["post_dry_run"]:
                         try:
-                            g["nc"][bounds_ncvar].setncattr(
-                                "formula_terms", bounds_formula_terms
+                            self._set_attributes(
+                                {"formula_terms": bounds_formula_terms},
+                                bounds_ncvar,
                             )
                         except KeyError:
                             pass  # TODO convert to 'raise' via fixes upstream
 
                     logger.info(
-                        "    Writing formula_terms to netCDF bounds variable "
+                        "    Writing formula_terms to bounds variable "
                         f"{bounds_ncvar}: {bounds_formula_terms!r}"
                     )  # pragma: no cover
 
@@ -4098,7 +4371,7 @@ class NetCDFWrite(IOWrite):
                 self._create_vertical_datum(ref, owning_coord_key)
 
         # ------------------------------------------------------------
-        # Create netCDF variables grid mappings
+        # Create dataset grid mapping variables
         # ------------------------------------------------------------
         multiple_grid_mappings = len(g["grid_mapping_refs"]) > 1
 
@@ -4110,8 +4383,8 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Field ancillary variables
         #
-        # Create the 'ancillary_variables' CF-netCDF attribute and
-        # create the referenced CF-netCDF ancillary variables
+        # Create the 'ancillary_variables' CF attribute and create the
+        # referenced dataset ancillary variables
         # ------------------------------------------------------------
         if field:
             ancillary_variables = [
@@ -4122,14 +4395,14 @@ class NetCDFWrite(IOWrite):
             ]
 
         # ------------------------------------------------------------
-        # Create the CF-netCDF data/domain variable
+        # Create the data/domain dataset variable
         # ------------------------------------------------------------
         if field:
             default = "data"
         else:
             default = "domain"
 
-        ncvar = self._create_netcdf_variable_name(f, default=default)
+        ncvar = self._create_variable_name(f, default=default)
 
         ncdimensions = data_ncdimensions
 
@@ -4138,9 +4411,9 @@ class NetCDFWrite(IOWrite):
         # Cell measures
         if cell_measures:
             cell_measures = " ".join(cell_measures)
-            logger.info(
+            logger.debug(
                 "    Writing cell_measures attribute to "
-                f"netCDF variable {ncvar}: {cell_measures!r}"
+                f"variable {ncvar}: {cell_measures!r}"
             )  # pragma: no cover
 
             extra["cell_measures"] = cell_measures
@@ -4150,7 +4423,7 @@ class NetCDFWrite(IOWrite):
             coordinates = " ".join(coordinates)
             logger.info(
                 "    Writing coordinates attribute to "
-                f"netCDF variable {ncvar}: {coordinates!r}"
+                f"variable {ncvar}: {coordinates!r}"
             )  # pragma: no cover
 
             extra["coordinates"] = coordinates
@@ -4160,7 +4433,7 @@ class NetCDFWrite(IOWrite):
             grid_mapping = " ".join(grid_mapping)
             logger.info(
                 "    Writing grid_mapping attribute to "
-                f"netCDF variable {ncvar}: {grid_mapping!r}"
+                f"variable {ncvar}: {grid_mapping!r}"
             )  # pragma: no cover
 
             extra["grid_mapping"] = grid_mapping
@@ -4171,7 +4444,7 @@ class NetCDFWrite(IOWrite):
             ancillary_variables = re.sub(r"\s+", " ", ancillary_variables)
             logger.info(
                 "    Writing ancillary_variables attribute to "
-                f"netCDF variable {ncvar}: {ancillary_variables!r}"
+                f"variable {ncvar}: {ancillary_variables!r}"
             )  # pragma: no cover
 
             extra["ancillary_variables"] = ancillary_variables
@@ -4208,7 +4481,7 @@ class NetCDFWrite(IOWrite):
                 cell_methods = " ".join(cell_methods_strings)
                 logger.info(
                     "    Writing cell_methods attribute to "
-                    f"netCDF variable {ncvar}: {cell_methods}"
+                    f"variable {ncvar}: {cell_methods}"
                 )  # pragma: no cover
 
                 extra["cell_methods"] = cell_methods
@@ -4225,7 +4498,7 @@ class NetCDFWrite(IOWrite):
                 extra["geometry"] = gc_ncvar
 
         # ------------------------------------------------------------
-        # Create a new CF-netCDF data/domain variable
+        # Create a new data/domain dataset variable
         # ------------------------------------------------------------
         # Omit any global attributes from the variable
         omit = g["global_attributes"]
@@ -4332,8 +4605,8 @@ class NetCDFWrite(IOWrite):
             ncvar = self.implementation.nc_get_variable(datum)
             if ncvar is not None:
                 if not self.write_vars["group"]:
-                    # A flat file has been requested, so strip off any
-                    # group structure from the name.
+                    # A flat dataset has been requested, so strip off
+                    # any group structure from the name.
                     ncvar = self._remove_group_structure(ncvar)
 
                 self.implementation.nc_set_variable(new_grid_mapping, ncvar)
@@ -4360,26 +4633,8 @@ class NetCDFWrite(IOWrite):
         """
         return self.implementation.nc_is_unlimited_axis(field, axis)
 
-    def _write_group(self, parent_group, group_name):
-        """Creates a new netCDF4 parent group object.
-
-        .. versionadded:: (cfdm) 1.8.6.0
-
-        :Parameters:
-
-            parent_group: `netCDF4.Dateset` or `netCDF4._netCDF4.Group`
-
-            group_name: `str`
-
-        :Returns:
-
-            `netCDF4._netCDF4.Group`
-
-        """
-        return parent_group.createGroup(group_name)
-
     def _write_group_attributes(self, fields):
-        """Writes the netCDF group-level attributes to the file.
+        """Writes the group-level attributes to the dataset.
 
         :Parameters:
 
@@ -4428,7 +4683,7 @@ class NetCDFWrite(IOWrite):
                             break
 
             # --------------------------------------------------------
-            # Write the group-level attributes to the file
+            # Write the group-level attributes to the dataset
             # --------------------------------------------------------
             # Replace None values with actual values
             for attr, value in this_group_attributes.items():
@@ -4439,25 +4694,59 @@ class NetCDFWrite(IOWrite):
                     f0, attr
                 )
 
-            nc = g["netcdf"]
-            for group in groups:
-                if group in nc.groups:
-                    nc = nc.groups[group]
-                else:
-                    nc = self._create_netcdf_group(nc, group)
+            nc = self._get_group(g["dataset"], groups)
 
             if not g["dry_run"]:
-                nc.setncatts(this_group_attributes)
+                self._set_attributes(this_group_attributes, group=nc)
 
             group_attributes[groups] = tuple(this_group_attributes)
 
         g["group_attributes"] = group_attributes
 
-    def _write_global_attributes(self, fields):
-        """Writes all netCDF global properties to the netCDF4 dataset.
+    def _get_group(self, parent, groups):
+        """Get the group of *parent* defined by *groups*.
 
-        Specifically, finds the netCDF global properties from all of
-        the input fields and writes them to the `netCDF4.Dataset`.
+        The group will be created if it doesn't already exist.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent: `netCDF4.Dateset` or `netCDF4.Group` or `Zarr.Group`
+                The group in which to find or create new group.
+
+            groups: sequence of `str`
+                The group defined by the sequence of its subgroups
+                relative to *parent*, e.g. ``('forecast', 'model')``.
+
+        :Returns:
+
+            `netCDF4.Group` or `Zarr.Group`
+                The group.
+
+        """
+        match self.write_vars["backend"]:
+            case "netCDF4":
+                for group in groups:
+                    if group in parent.groups:
+                        parent = parent.groups[group]
+                    else:
+                        parent = self._createGroup(parent, group)
+
+            case "zarr":
+                group = "/".join(groups)
+                if group in parent:
+                    parent = parent[group]
+                else:
+                    parent = self._createGroup(parent, group)
+
+        return parent
+
+    def _write_global_attributes(self, fields):
+        """Writes all global properties to the dataset.
+
+        Specifically, finds the global properties from all of the
+        input fields and writes them to the root group of the dataset.
 
         :Parameters:
 
@@ -4555,7 +4844,7 @@ class NetCDFWrite(IOWrite):
                         break
 
         # -----------------------------------------------------------
-        # Write the Conventions global attribute to the file
+        # Write the Conventions global attribute to the dataset
         # ------------------------------------------------------------
         delimiter = " "
         set_Conventions = force_global.pop("Conventions", None)
@@ -4594,34 +4883,78 @@ class NetCDFWrite(IOWrite):
             delimiter = ","
 
         if not g["dry_run"] and not g["post_dry_run"]:
-            g["netcdf"].setncattr(
-                "Conventions", delimiter.join(g["Conventions"])
+            attrs = {"Conventions": delimiter.join(g["Conventions"])}
+
+            # ------------------------------------------------------------
+            # Write the file descriptors to the dataset
+            # ------------------------------------------------------------
+            attrs.update(g["file_descriptors"])
+
+            # ------------------------------------------------------------
+            # Write other global attributes to the dataset
+            # ------------------------------------------------------------
+            attrs.update(
+                {
+                    attr: self.implementation.get_property(f0, attr)
+                    for attr in global_attributes - set(("Conventions",))
+                }
             )
 
             # ------------------------------------------------------------
-            # Write the file descriptors to the file
+            # Write "forced" global attributes to the dataset
             # ------------------------------------------------------------
-            for attr, value in g["file_descriptors"].items():
-                g["netcdf"].setncattr(attr, value)
+            attrs.update(force_global)
 
-            # ------------------------------------------------------------
-            # Write other global attributes to the file
-            # ------------------------------------------------------------
-            for attr in global_attributes - set(("Conventions",)):
-                g["netcdf"].setncattr(
-                    attr, self.implementation.get_property(f0, attr)
-                )
-
-            # ------------------------------------------------------------
-            # Write "forced" global attributes to the file
-            # ------------------------------------------------------------
-            for attr, v in force_global.items():
-                g["netcdf"].setncattr(attr, v)
+            self._set_attributes(attrs, group=g["dataset"])
 
         g["global_attributes"] = global_attributes
 
-    def file_close(self, filename):
-        """Close the netCDF file that has been written.
+    def dataset_exists(self, dataset):
+        """Whether or not a dataset exists on disk.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset: `str`
+                The name of the dataset.
+
+        :Returns:
+
+            `bool`
+                Whether or not the dataset exists on disk.
+
+        """
+        match self.write_vars["dataset_type"]:
+            case "file":
+                return os.path.isfile(dataset)
+
+            case "directory":
+                return os.path.isdir(dataset)
+
+    def dataset_remove(self):
+        """Remove the dataset that is being created.
+
+        .. note:: If the dataset is a directory, then it is silently
+                  not removed. To do so could be very dangerous (what
+                  if it were your home space?).
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `None`
+
+        """
+        g = self.write_vars
+        match g["dataset_type"]:
+            case "file":
+                os.remove(g["dataset_name"])
+            case "directory":
+                pass
+
+    def dataset_close(self):
+        """Close the dataset that has been written.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -4630,61 +4963,86 @@ class NetCDFWrite(IOWrite):
             `None`
 
         """
-        self.write_vars["netcdf"].close()
+        g = self.write_vars
+        if g["backend"] == "netCDF4":
+            g["dataset"].close()
 
-    def file_open(self, filename, mode, fmt, fields):
-        """Open the netCDF file for writing.
+    def dataset_open(self, dataset_name, mode, fmt, fields):
+        """Open the dataset for writing.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
-            filename: `str`
-                As for the *filename* parameter for initialising a
-                `netCDF.Dataset` instance.
+            dataset_name: `str`
+                The dataset to open.
 
             mode: `str`
                 As for the *mode* parameter for initialising a
-                `netCDF.Dataset` instance.
+                `netCDF4.Dataset` instance.
 
             fmt: `str`
                 As for the *format* parameter for initialising a
-                `netCDF.Dataset` instance.
+                `netCDF4.Dataset` instance. Ignored for Zarr datasets.
 
             fields: sequence of `Field` or `Domain`
-                The constructs to be written to the netCDF file. Note
-                that these constructs are only used to ascertain if
-                any data to be written is in *filename*. If this is
+                The constructs to be written to the dataset. Note that
+                these constructs are only used to ascertain if any
+                data to be written is in *dataset_name*. If this is
                 the case and mode is "w" then an exception is raised
-                to prevent *filename* from being deleted.
+                to prevent *dataset_name* from being deleted.
 
         :Returns:
 
-            `netCDF.Dataset`
-                A `netCDF4.Dataset` object for the file.
+            `netCDF.Dataset` or `zarr.Group`
 
         """
         import netCDF4
 
         if fields and mode == "w":
-            filename = os.path.abspath(filename)
+            dataset_name = os.path.abspath(dataset_name)
             for f in fields:
-                if filename in self.implementation.get_original_filenames(f):
+                if dataset_name in self.implementation.get_original_filenames(
+                    f
+                ):
                     raise ValueError(
-                        "Can't write with mode 'w' to a file that contains "
-                        f"data that needs to be read: {f!r} uses {filename}"
+                        "Can't write with mode 'w' to a dataset that contains "
+                        f"data which needs to be read: {f!r} uses "
+                        f"{dataset_name}"
                     )
 
-        # mode == 'w' is safer than != 'a' in case of a typo (the letters
-        # are neighbours on a QWERTY keyboard) since 'w' is destructive.
-        # Note that for append ('a') mode the original file is never wiped.
-        if mode == "w" and self.write_vars["overwrite"]:
-            os.remove(filename)
+        g = self.write_vars
 
-        try:
-            nc = netCDF4.Dataset(filename, mode, format=fmt)
-        except RuntimeError as error:
-            raise RuntimeError(f"{error}: {filename}")
+        # mode == 'w' is safer than != 'a' in case of a typo (the
+        # letters are neighbours on a QWERTY keyboard) since 'w' is
+        # destructive. Note that for append ('a') mode the original
+        # dataset is never wiped.
+        if mode == "w" and g["overwrite"]:
+            self.dataset_remove()
+
+        match g["backend"]:
+            case "netCDF4":
+                try:
+                    nc = netCDF4.Dataset(dataset_name, mode, format=fmt)
+                except RuntimeError as error:
+                    raise RuntimeError(f"{error}: {dataset_name}")
+
+            case "zarr":
+                try:
+                    import zarr
+                except ModuleNotFoundError as error:
+                    error.msg += (
+                        ". Install the 'zarr' package "
+                        "(https://pypi.org/project/zarr) to read Zarr datasets"
+                    )
+                    raise
+
+                nc = zarr.create_group(
+                    dataset_name,
+                    overwrite=g["overwrite"],
+                    zarr_format=3,
+                    storage_options=g.get("storage_options"),
+                )
 
         return nc
 
@@ -4692,7 +5050,7 @@ class NetCDFWrite(IOWrite):
     def write(
         self,
         fields,
-        filename,
+        dataset_name,
         fmt="NETCDF4",
         mode="w",
         overwrite=True,
@@ -4717,53 +5075,51 @@ class NetCDFWrite(IOWrite):
         coordinates=False,
         omit_data=None,
         dataset_chunks="4MiB",
+        dataset_shards=None,
         cfa="auto",
         reference_datetime=None,
     ):
-        """Write field and domain constructs to a netCDF file.
+        """Write field and domain constructs to a dataset.
 
-        NetCDF dimension and variable names will be taken from
-        variables' `ncvar` attributes and the field attribute
-        `!ncdimensions` if present, otherwise they are inferred from
-        standard names or set to defaults. NetCDF names may be
-        automatically given a numerical suffix to avoid duplication.
+        Output global properties are those which occur in the set of
+        CF global properties and non-standard data variable properties
+        and which have equal values across all input fields.
 
-        Output netCDF file global properties are those which occur in the set
-        of CF global properties and non-standard data variable properties and
-        which have equal values across all input fields.
-
-        Logically identical field components are only written to the file
-        once, apart from when they need to fulfil both dimension coordinate
-        and auxiliary coordinate roles for different data variables.
+        Logically identical field components are only written to the
+        datset once, apart from when they need to fulfil both
+        dimension coordinate and auxiliary coordinate roles for
+        different data variables.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
             fields : (sequence of) `cfdm.Field`
-                The field or fields to write to the file.
+                The field or fields to write to the dataset.
 
                 See `cfdm.write` for details.
 
-            filename: str
-                The output CF-netCDF file.
+            dataset_name: str
+                The output dataset.
 
                 See `cfdm.write` for details.
 
             mode: `str`, optional
-                Specify the mode of write access for the output file. One of:
+                Specify the mode of write access for the output
+                dataset. One of:
 
                 ========  =================================================
                 *mode*    Description
                 ========  =================================================
-                ``'w'``   Open a new file for writing to. If it exists and
-                          *overwrite* is True then the file is deleted
-                          prior to being recreated.
 
-                ``'a'``   Open an existing file for appending new
+                ``'w'``   Open a new dataset for writing to. If it
+                          exists and *overwrite* is True then the
+                          dataset is deleted prior to being recreated.
+
+                ``'a'``   Open an existing dataset for appending new
                           information to. The new information will be
                           incorporated whilst the original contents of the
-                          file will be preserved.
+                          dataset will be preserved.
 
                           In practice this means that new fields will be
                           created, whilst the original fields will not be
@@ -4772,7 +5128,7 @@ class NetCDFWrite(IOWrite):
 
                           For append mode, note the following:
 
-                          * Global attributes on the file
+                          * Global attributes on the dataset
                             will remain the same as they were originally,
                             so will become inaccurate where appended fields
                             have incompatible attributes. To rectify this,
@@ -4782,7 +5138,7 @@ class NetCDFWrite(IOWrite):
                             `nc_set_global_attribute`.
 
                           * Fields with incompatible ``featureType`` to
-                            the original file cannot be appended.
+                            the original dataset cannot be appended.
 
                           * At present fields with groups cannot be
                             appended, but this will be possible in a future
@@ -4802,13 +5158,13 @@ class NetCDFWrite(IOWrite):
 
                 ========  =================================================
 
-                By default the file is opened with write access mode
-                ``'w'``.
+                By default the dataset is opened with write access
+                mode ``'w'``.
 
             overwrite: bool, optional
-                If False then raise an exception if the output file
-                pre-exists. By default a pre-existing output file is
-                over written.
+                If False then raise an exception if the output dataset
+                pre-exists. By default a pre-existing output dataset
+                is over written.
 
                 See `cfdm.write` for details.
 
@@ -4816,8 +5172,9 @@ class NetCDFWrite(IOWrite):
                 See `cfdm.write` for details.
 
             file_descriptors: `dict`, optional
-                Create description of file contents netCDF global
-                attributes from the specified attributes and their values.
+                Create description of dataset contents netCDF global
+                attributes from the specified attributes and their
+                values.
 
                 See `cfdm.write` for details.
 
@@ -4835,9 +5192,9 @@ class NetCDFWrite(IOWrite):
                 See `cfdm.write` for details.
 
             external: `str`, optional
-                Write metadata constructs that have data and are marked as
-                external to the named external file. Ignored if there are
-                no such constructs.
+                Write metadata constructs that have data and are
+                marked as external to the named external
+                dataset. Ignored if there are no such constructs.
 
                 See `cfdm.write` for details.
 
@@ -4854,7 +5211,8 @@ class NetCDFWrite(IOWrite):
                 See `cfdm.write` for details.
 
             endian: `str`, optional
-                The endian-ness of the output file.
+                The endian-ness of the output dataset. Ignored for
+                Zarr datasets.
 
                 See `cfdm.write` for details.
 
@@ -4864,14 +5222,15 @@ class NetCDFWrite(IOWrite):
                 See `cfdm.write` for details.
 
             least_significant_digit: `int`, optional
-                Truncate the input field construct data arrays, but not
-                the data arrays of metadata constructs.
+                Truncate the input field construct data arrays, but
+                not the data arrays of metadata constructs. Ignored
+                for Zarr datasets.
 
                 See `cfdm.write` for details.
 
             chunk_cache: `int` or `None`, optional
-                The amount of memory (in bytes) used in each
-                variable's chunk cache at the HDF5 level.
+                The amount of memory (in bytes) used in each HDF5
+                variable's chunk cache. Ignored for Zarr datasets.
 
                 See `cfdm.write` for details.
 
@@ -4880,29 +5239,31 @@ class NetCDFWrite(IOWrite):
             fletcher32: `bool`, optional
                 If True then the Fletcher-32 HDF5 checksum algorithm is
                 activated to detect compression errors. Ignored if
-                *compress* is ``0``.
+                *compress* is ``0``. Ignored for Zarr datasets.
 
                 See `cfdm.write` for details.
 
             shuffle: `bool`, optional
-                If True (the default) then the HDF5 shuffle filter (which
-                de-interlaces a block of data before compression by
-                reordering the bytes by storing the first byte of all of a
-                variable's values in the chunk contiguously, followed by
-                all the second bytes, and so on) is turned off.
+                If True (the default) then the HDF5 shuffle filter
+                (which de-interlaces a block of data before
+                compression by reordering the bytes by storing the
+                first byte of all of a variable's values in the chunk
+                contiguously, followed by all the second bytes, and so
+                on) is turned off. Ignored for Zarr datasets.
 
                 See `cfdm.write` for details.
 
             string: `bool`, optional
                 By default string-valued construct data are written as
-                netCDF arrays of type string if the output file format is
-                ``'NETCDF4'``, or of type char with an extra dimension
-                denoting the maximum string length for any other output
-                file format (see the *fmt* parameter). If *string* is False
-                then string-valued construct data are written as netCDF
-                arrays of type char with an extra dimension denoting the
-                maximum string length, regardless of the selected output
-                file format.
+                netCDF arrays of type string if the output dataset
+                format is ``'NETCDF4'`` or ``'ZARR3'``, or of type
+                char with an extra dimension denoting the maximum
+                string length for any other output dataset format (see
+                the *fmt* parameter). If *string* is False then
+                string-valued construct data are written as netCDF
+                arrays of type char with an extra dimension denoting
+                the maximum string length, regardless of the selected
+                output dataset format.
 
                 See `cfdm.write` for details.
 
@@ -4918,7 +5279,7 @@ class NetCDFWrite(IOWrite):
 
                 The consequence of writing out-of-range data values is
                 that, by default, these values will be masked when the
-                file is subsequently read.
+                dataset is subsequently read.
 
                 *Parameter example:*
                   If a construct has ``valid_max`` property with value
@@ -4929,9 +5290,9 @@ class NetCDFWrite(IOWrite):
                 .. versionadded:: (cfdm) 1.8.3
 
             group: `bool`, optional
-                If False then create a "flat" netCDF file, i.e. one with
-                only the root group, regardless of any group structure
-                specified by the field constructs.
+                If False then create a "flat" netCDF dataset, i.e. one
+                with only the root group, regardless of any group
+                structure specified by the field constructs.
 
                 See `cfdm.write` for details.
 
@@ -4957,6 +5318,12 @@ class NetCDFWrite(IOWrite):
                 The dataset chunking strategy. The default value is
                 "4MiB". See `cfdm.write` for details.
 
+            dataset_shards: `int` or `None`, optional
+                The Zarr dataset sharding strategy. The default value
+                is `None`. See `cfdm.write` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
             cfa: `dict` or `None`, optional
                 Configure the creation of aggregation variables. See
                 `cfdm.write` for details.
@@ -4976,9 +5343,9 @@ class NetCDFWrite(IOWrite):
 
         logger.info(f"Writing to {fmt}")  # pragma: no cover
 
-        # Expand file name
-        filename = os.path.expanduser(os.path.expandvars(filename))
-        filename = abspath(filename)
+        # Expand dataset name
+        dataset_name = os.path.expanduser(os.path.expandvars(dataset_name))
+        dataset_name = abspath(dataset_name)
 
         # Parse the 'omit_data' parameter
         if omit_data is None:
@@ -5000,11 +5367,15 @@ class NetCDFWrite(IOWrite):
         # Initialise netCDF write parameters
         # ------------------------------------------------------------
         self.write_vars = {
-            "filename": filename,
-            # Format of output file
+            "dataset_name": dataset_name,
+            # Format of output dataset
             "fmt": None,
+            # Backend for writing to the dataset
+            "backend": None,
+            # Whether the output datset is a file or a directory
+            "dataset_type": None,
             # netCDF4.Dataset instance
-            "netcdf": None,
+            #            "netcdf": None,
             # Map netCDF variable names to netCDF4.Variable instances
             "nc": {},
             # Map netCDF dimension names to netCDF dimension sizes
@@ -5038,8 +5409,8 @@ class NetCDFWrite(IOWrite):
             ),
             # Data type conversions to be applied prior to writing
             "datatype": {},
-            # Whether or not to write string data-types to netCDF4
-            # files (as opposed to car data-types).
+            # Whether or not to write string data-types to the output
+            # dataset (as opposed to char data-types).
             "string": string,
             # Conventions
             "Conventions": Conventions,
@@ -5067,7 +5438,8 @@ class NetCDFWrite(IOWrite):
             # dimensions keyed by items of the field (such as a
             # coordinate or a coordinate reference)
             "seen": {},
-            # Dry run: populate 'seen' dict without actually writing to file.
+            # Dry run: populate 'seen' dict without actually writing
+            # to dataset.
             "dry_run": False,
             # To indicate if the previous iteration was a dry run:
             #
@@ -5086,18 +5458,19 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             # Configuration options for writing aggregation variables
             "cfa": None,
-            # The directory of the aggregation file
+            # The directory of the aggregation dataset
             "aggregation_file_directory": None,
             # Cache the CF aggregation variable write status for each
-            # netCDF variable
+            # dataset variable
             "cfa_write_status": {},
             # --------------------------------------------------------
-            # Dataset chunking stategy
+            # Dataset chunking and sharding stategy
             # --------------------------------------------------------
             "dataset_chunks": dataset_chunks,
+            "dataset_shards": dataset_shards,
             # --------------------------------------------------------
             # Quantization: Store unique Quantization objects, keyed
-            #               by their output netCDF variable names.
+            #               by their output dataset variable names.
             # --------------------------------------------------------
             "quantization": {},
         }
@@ -5122,6 +5495,14 @@ class NetCDFWrite(IOWrite):
                 raise ValueError(
                     "Invalid value for the 'dataset_chunks' keyword: "
                     f"{dataset_chunks!r}."
+                )
+
+        # Parse the 'dataset_shards' parameter
+        if dataset_shards is not None:
+            if not isinstance(dataset_shards, Integral) or dataset_shards < 1:
+                raise ValueError(
+                    f"Invalid value for 'dataset_shards' keyword: "
+                    f"{dataset_shards!r}."
                 )
 
         # ------------------------------------------------------------
@@ -5173,14 +5554,15 @@ class NetCDFWrite(IOWrite):
         effective_fields = fields
 
         if mode == "a":
-            # First read in the fields from the existing file:
+            # First read in the fields from the existing dataset:
             effective_fields = self._NetCDFRead(self.implementation).read(
-                filename, netcdf_backend="netCDF4"
+                dataset_name, netcdf_backend="netCDF4"
             )
 
             # Read rather than append for the first iteration to ensure nothing
             # gets written; only want to update the 'seen' dictionary first.
             effective_mode = "r"
+
             overwrite = False
             self.write_vars["dry_run"] = True
 
@@ -5233,14 +5615,14 @@ class NetCDFWrite(IOWrite):
             ):
                 raise ValueError(
                     "Can't append fields with an incompatible 'featureType' "
-                    "global attribute to the original file."
+                    "global attribute to the original dataset."
                 )
 
         self._file_io_iteration(
             mode=effective_mode,
             overwrite=overwrite,
             fields=effective_fields,
-            filename=filename,
+            dataset_name=dataset_name,
             fmt=fmt,
             global_attributes=global_attributes,
             variable_attributes=variable_attributes,
@@ -5273,7 +5655,7 @@ class NetCDFWrite(IOWrite):
                 mode=mode,
                 overwrite=overwrite,
                 fields=fields,
-                filename=filename,
+                dataset_name=dataset_name,
                 fmt=fmt,
                 global_attributes=global_attributes,
                 variable_attributes=variable_attributes,
@@ -5299,7 +5681,7 @@ class NetCDFWrite(IOWrite):
         mode,
         overwrite,
         fields,
-        filename,
+        dataset_name,
         fmt,
         global_attributes,
         variable_attributes,
@@ -5319,11 +5701,11 @@ class NetCDFWrite(IOWrite):
         warn_valid,
         group,
     ):
-        """Perform a file-writing iteration with the given settings."""
+        """Perform a dataset-writing iteration."""
         from packaging.version import Version
 
         # ------------------------------------------------------------
-        # Initiate file IO with given write variables
+        # Initiate dataset IO with given write variables
         # ------------------------------------------------------------
         if mode == "w":
             desc = "Writing to"
@@ -5361,10 +5743,10 @@ class NetCDFWrite(IOWrite):
             if group:
                 # Can't write groups to a netCDF-3 file
                 g["group"] = False
-        elif fmt not in NETCDF4_FMTS:
+        elif fmt not in NETCDF4_FMTS + ZARR_FMTS:
             raise ValueError(
-                f"Unknown output file format: {fmt!r}. "
-                f"Valid formats are {NETCDF4_FMTS + NETCDF3_FMTS}"
+                f"Unknown output dataset format: {fmt!r}. "
+                f"Valid formats are {NETCDF4_FMTS + NETCDF3_FMTS + ZARR_FMTS}"
             )
 
         # ------------------------------------------------------------
@@ -5381,7 +5763,7 @@ class NetCDFWrite(IOWrite):
             if "Conventions" in variable_attributes:
                 raise ValueError(
                     "Can't prevent the 'Conventions' property from being "
-                    f"a netCDF global variable: {variable_attributes}"
+                    f"a CF global variable: {variable_attributes}"
                 )
 
         if global_attributes:
@@ -5430,6 +5812,13 @@ class NetCDFWrite(IOWrite):
         g["least_significant_digit"] = least_significant_digit
 
         g["fmt"] = fmt
+        match fmt:
+            case "ZARR3":
+                g["backend"] = "zarr"
+                g["dataset_type"] = "directory"
+            case _:
+                g["backend"] = "netCDF4"
+                g["dataset_type"] = "file"
 
         if isinstance(
             fields,
@@ -5456,29 +5845,29 @@ class NetCDFWrite(IOWrite):
         g["overwrite"] = overwrite
 
         # ------------------------------------------------------------
-        # Open the output netCDF file
+        # Open the output dataset
         # ------------------------------------------------------------
-        if os.path.isfile(filename):
+        if self.dataset_exists(dataset_name):
             if mode == "w" and not overwrite:
                 raise IOError(
-                    "Can't write with mode {mode!r} to existing file "
-                    f"{os.path.abspath(filename)} unless overwrite=True"
+                    f"Can't write with mode {mode!r} to existing dataset "
+                    f"{os.path.abspath(dataset_name)} unless overwrite=True"
                 )
 
-            if not os.access(filename, os.W_OK):
+            if not os.access(dataset_name, os.W_OK):
                 raise IOError(
-                    "Can't write to existing file "
-                    f"{os.path.abspath(filename)} without permission"
+                    "Can't write to existing dataset "
+                    f"{os.path.abspath(dataset_name)} without permission"
                 )
         else:
             g["overwrite"] = False
 
-        g["filename"] = filename
-        g["netcdf"] = self.file_open(filename, mode, fmt, fields)
+        g["dataset_name"] = dataset_name
+        g["dataset"] = self.dataset_open(dataset_name, mode, fmt, fields)
 
         if not g["dry_run"]:
             # --------------------------------------------------------
-            # Write global properties to the file first. This is
+            # Write global properties to the dataset first. This is
             # important as doing it later could slow things down
             # enormously. This function also creates the
             # g['global_attributes'] set, which is used in the
@@ -5487,7 +5876,7 @@ class NetCDFWrite(IOWrite):
             self._write_global_attributes(fields)
 
             # --------------------------------------------------------
-            # Write group-level properties to the file next
+            # Write group-level properties to the dataset next
             # --------------------------------------------------------
             if (
                 g["group"] and not g["post_dry_run"]
@@ -5504,12 +5893,12 @@ class NetCDFWrite(IOWrite):
                 )
 
             external = os.path.expanduser(os.path.expandvars(external))
-            if os.path.realpath(external) == os.path.realpath(filename):
+            if os.path.realpath(external) == os.path.realpath(dataset_name):
                 raise ValueError(
-                    "Can't set filename and external to the " "same path"
+                    "Can't set 'dataset_name' and 'external' to the same path"
                 )
 
-        g["external_file"] = external
+        g["external_dataset"] = external
 
         # ------------------------------------------------------------
         # Write each field construct
@@ -5520,18 +5909,18 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Write all of the buffered data to disk
         # ------------------------------------------------------------
-        # For append mode, it is cleaner code-wise to close the file
-        # on the read iteration and re-open it for the append
+        # For append mode, it is cleaner code-wise to close the
+        # dataset on the read iteration and re-open it for the append
         # iteration. So we always close it here.
-        self.file_close(filename)
+        self.dataset_close()
 
         # ------------------------------------------------------------
-        # Write external fields to the external file
+        # Write external fields to the external dataset
         # ------------------------------------------------------------
-        if g["external_fields"] and g["external_file"] is not None:
+        if g["external_fields"] and g["external_dataset"] is not None:
             self.write(
                 fields=g["external_fields"],
-                filename=g["external_file"],
+                dataset_name=g["external_dataset"],
                 fmt=fmt,
                 overwrite=overwrite,
                 datatype=datatype,
@@ -5540,6 +5929,9 @@ class NetCDFWrite(IOWrite):
                 fletcher32=fletcher32,
                 shuffle=shuffle,
                 extra_write_vars=extra_write_vars,
+                chunk_cache=chunk_cache,
+                dataset_chunks=g["dataset_chunks"],
+                dataset_shards=g["dataset_shards"],
             )
 
     def _int32(self, array):
@@ -5578,7 +5970,7 @@ class NetCDFWrite(IOWrite):
         return array
 
     def _dimension_in_subgroup(self, v, ncdim):
-        """Return True if the netCDF dimension is in a valid group.
+        """Return True if the dimension is in a valid group.
 
         Returns True if the dimension is in the same group, or a
         parent group, as the group defined by the construct. Otherwise
@@ -5591,7 +5983,7 @@ class NetCDFWrite(IOWrite):
             v: Construct
 
             ncdim: `str`
-                The netCDF dimension name.
+                The dataset dimension name.
 
                 *Parameter example:*
                   ``'lat'``
@@ -5602,8 +5994,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `bool`
-                Whether or not the netCDF dimension is in a valid
-                group.
+                Whether or not the dimension is in a valid group.
 
         """
         v_groups = self.implementation.nc_get_variable_groups(v)
@@ -5625,7 +6016,7 @@ class NetCDFWrite(IOWrite):
         pass
 
     def _chunking_parameters(self, data, ncdimensions):
-        """Set chunking parameters for `netCDF4.createVariable`.
+        """Set chunking parameters for a dataset variable.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
@@ -5635,17 +6026,17 @@ class NetCDFWrite(IOWrite):
                 The data being written.
 
             ncdimensions: `tuple`
-                The data netCDF dimensions.
+                The dataset dimensions of the data.
 
         :Returns:
 
-            2-tuple
-                The *contiguous* and *chunksizes* parameters for
-                `netCDF4.createVariable`.
+            3-tuple
+                The 'contiguous', 'chunksizes', and 'shards'
+                parameters for `_createVariable`.
 
         """
         if data is None:
-            return False, None
+            return False, None, None
 
         g = self.write_vars
 
@@ -5655,31 +6046,36 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Get the chunking strategy defined by the data itself
         chunksizes = self.implementation.nc_get_dataset_chunksizes(data)
+        shards = self.implementation.nc_get_dataset_shards(data)
+
         if chunksizes == "contiguous":
             # Contiguous as defined by 'data'
-            return True, None
+            return True, None, None
 
         # Still here?
+        if shards is None:
+            shards = g["dataset_shards"]
+
         dataset_chunks = g["dataset_chunks"]
         if isinstance(chunksizes, int):
             # Reset dataset chunks to the integer given by 'data'
             dataset_chunks = chunksizes
         elif chunksizes is not None:
             # Chunked as defined by the tuple of int given by 'data'
-            return False, chunksizes
+            return False, chunksizes, shards
 
         # Still here? Then work out the chunking strategy from the
         # dataset_chunks
         if dataset_chunks == "contiguous":
             # Contiguous as defined by 'dataset_chunks'
-            return True, None
+            return True, None, None
 
         # Still here? Then work out the chunks from both the
         # size-in-bytes given by dataset_chunks (e.g. 1024, or '1
         # KiB'), and the data shape (e.g. (12, 73, 96)).
         if self._compressed_data(ncdimensions):
             # Base the dataset chunks on the compressed data that is
-            # going into the file
+            # going into the dataset
             d = self.implementation.get_compressed_array(data)
         else:
             d = data
@@ -5698,11 +6094,11 @@ class NetCDFWrite(IOWrite):
             # (250, 250, 4)). However, we only want one number per
             # dimension, so we choose the largest: [96, 250].
             chunksizes = [max(c) for c in chunksizes]
-            return False, chunksizes
+            return False, chunksizes, shards
         else:
             # The data is scalar, so 'chunksizes' is () => write the
             # data contiguously.
-            return True, None
+            return True, None, None
 
     def _compressed_data(self, ncdimensions):
         """Whether or not the data is being written in compressed form.
@@ -5712,8 +6108,8 @@ class NetCDFWrite(IOWrite):
         :Parameters:
 
             ncdimensions: `sequence` of `str`
-                The ordered netCDF dimension names of the data. These
-                are the dimensions going into the file, and if the
+                The ordered dataset dimension names of the data. These
+                are the dimensions going into the dataset, and if the
                 data is compressed will differ from the dimensions
                 implied by the data in memory.
 
@@ -5845,7 +6241,7 @@ class NetCDFWrite(IOWrite):
         return False
 
     def _cfa_create_data(self, cfa, ncvar, ncdimensions, data, cfvar):
-        """Write an aggregation variable to the netCDF file.
+        """Write an aggregation variable to the dataset.
 
         .. versionadded:: (cfdm) 1.12.0.0
 
@@ -5856,7 +6252,7 @@ class NetCDFWrite(IOWrite):
                 data.
 
             ncvar: `str`
-                The netCDF name for the variable.
+                The dataset xname for the variable.
 
             ncdimensions: sequence of `str`
 
@@ -5872,7 +6268,7 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         # ------------------------------------------------------------
-        # Write the fragment array variables to the netCDF file
+        # Write the fragment array variables to the dataset
         # ------------------------------------------------------------
         aggregated_data = data.nc_get_aggregated_data()
         aggregated_data_attr = []
@@ -5936,7 +6332,7 @@ class NetCDFWrite(IOWrite):
 
             chunking = None
 
-            # Get the fragment array netCDF dimensions from the
+            # Get the fragment array dataset dimensions from the
             # 'location' fragment array variable.
             location_ncdimensions = []
             for ncdim, size in zip(ncdimensions, f_uris.shape):
@@ -5998,8 +6394,8 @@ class NetCDFWrite(IOWrite):
             feature = "unique_values"
             f_unique_value = cfa[feature]
 
-            # Get the fragment array netCDF dimensions from the
-            # 'value' fragment array variable.
+            # Get the fragment array dimensions from the 'value'
+            # fragment array variable.
             unique_value_ncdimensions = []
             for ncdim, size in zip(ncdimensions, f_unique_value.shape):
                 cfa_ncdim = f"a_{ncdim}"
@@ -6011,7 +6407,7 @@ class NetCDFWrite(IOWrite):
 
             unique_value_ncdimensions = tuple(unique_value_ncdimensions)
 
-            # Write the fragment array variable to the netCDF dataset
+            # Write the fragment array variable to the dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
                 f_unique_value,
                 aggregated_data.get(feature, f"fragment_{feature}"),
@@ -6022,7 +6418,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Add the aggregation variable attributes
         # ------------------------------------------------------------
-        self._write_attributes(
+        self._write_variable_attributes(
             None,
             ncvar,
             extra={
@@ -6070,33 +6466,32 @@ class NetCDFWrite(IOWrite):
                 The data to write.
 
             ncvar: `str`
-                The netCDF variable name.
+                The dataset variable name.
 
             ncdimensions: `tuple` of `str`
-                The fragment array variable's netCDF dimensions.
+                The fragment array variable's dataset dimensions.
 
             attributes: `dict`, optional
                 Any attributes to attach to the variable.
 
             chunking: sequence, optional
-                Set `netCDF4.createVariable` 'contiguous' and
-                `chunksizes` parameters (in that order) for the
-                fragment array variable. If not set (the default),
-                then these parameters are inferred from the data.
+                Set `_createVariable` 'contiguous', 'chunksizes', and
+                'shards' parameters (in that order) for the fragment
+                array variable. If `None` (the default), then these
+                parameters are inferred from the data.
 
         :Returns:
 
             `str`
-                The netCDF variable name of the fragment array
-                variable.
+                The name of the fragment array dataset variable.
 
         """
         create = not self._already_in_file(data, ncdimensions)
 
         if create:
-            # Create a new fragment array variable in the file, with
-            # 'contiguous' chunking
-            ncvar = self._netcdf_name(ncvar)
+            # Create a new fragment array variable in the dataset,
+            # with 'contiguous' chunking
+            ncvar = self._name(ncvar)
             self._write_netcdf_variable(
                 ncvar,
                 ncdimensions,
@@ -6107,7 +6502,7 @@ class NetCDFWrite(IOWrite):
             )
         else:
             # This fragment array variable has already been written to
-            # the file
+            # the dataset
             ncvar = self.write_vars["seen"][id(data)]["ncvar"]
 
         return ncvar
@@ -6184,10 +6579,11 @@ class NetCDFWrite(IOWrite):
 
         if not data.nc_get_aggregation_write_status():
             raise AggregationError(
-                f"Can't write {cfvar!r} as a CF-netCDF aggregation variable. "
-                "This is probably because some fragment values have been "
-                "changed relative to those in the fragment files, or a "
-                "rechunking has occured."
+                f"Can't write {cfvar!r} as a CF aggregation variable. "
+                "This is could be "
+                "because some fragment values in memory have been "
+                "changed relative to those in the fragment datasets, "
+                "or a Dask rechunking has occured, etc."
             )
 
         # ------------------------------------------------------------
@@ -6221,11 +6617,11 @@ class NetCDFWrite(IOWrite):
             normalise = not uri_default
 
             if uri_relative:
-                # Get the aggregation file directory as an absolute
+                # Get the aggregation dataset directory as an absolute
                 # URI
                 aggregation_file_directory = g["aggregation_file_directory"]
                 if aggregation_file_directory is None:
-                    uri = urisplit(dirname(g["filename"]))
+                    uri = urisplit(dirname(g["dataset_name"]))
                     if uri.isuri():
                         aggregation_file_scheme = uri.scheme
                         aggregation_file_directory = uri.geturi()
@@ -6236,13 +6632,13 @@ class NetCDFWrite(IOWrite):
                             authority="",
                             path=uri.path,
                         )
-                        fragment = uri.fragment
-                        if fragment is not None:
+                        uri_fragment = uri.fragment
+                        if uri_fragment is not None:
                             # Append a URI fragment. Do this with a
                             # string-append, rather than via
                             # `uricompose` in case the fragment
                             # contains more than one # character.
-                            aggregation_file_directory += f"#{fragment}"
+                            aggregation_file_directory += f"#{uri_fragment}"
 
                     g["aggregation_file_directory"] = (
                         aggregation_file_directory
@@ -6257,10 +6653,10 @@ class NetCDFWrite(IOWrite):
                 data.chunk_indices(), data.chunk_positions()
             ):
                 # Try to get this Dask chunk's data as a reference to
-                # fragment file
+                # fragment dataset
                 fragment = data[index].compute(_force_to_memory=False)
                 try:
-                    filename, address, is_subspace, f_index = (
+                    dataset_name, address, is_subspace, f_index = (
                         fragment.get_filename(normalise=normalise),
                         fragment.get_address(),
                         fragment.is_subspace(),
@@ -6270,47 +6666,47 @@ class NetCDFWrite(IOWrite):
                     # This Dask chunk's data is not a reference to
                     # fragment file
                     raise AggregationError(
-                        f"Can't write {cfvar!r} as a CF-netCDF "
+                        f"Can't write {cfvar!r} as a CF "
                         "aggregation variable: "
                         f"The Dask chunk in position {position} "
                         f"(defined by data index {index!r}) does not "
-                        "reference a unique fragment file. This is could be "
-                        "because some fragment values have been changed "
-                        "relative to those in the fragment files, or a "
-                        "Dask rechunking has occured, etc."
+                        "reference a unique fragment dataset. This is could "
+                        "be because some fragment values in memory have been "
+                        "changed relative to those in the fragment datasets, "
+                        "or a Dask rechunking has occured, etc."
                     )
 
                 if is_subspace:
                     # This Dask chunk's data is a reference to
-                    # fragment file, but only to a subspace of it.
+                    # fragment dataset, but only to a subspace of it.
                     raise AggregationError(
-                        f"Can't write {cfvar!r} as a CF-netCDF "
+                        f"Can't write {cfvar!r} as a CF "
                         "aggregation variable: "
                         f"The Dask chunk in position {position} "
                         f"(defined by data index {index!r}) references "
-                        f"a subspace ({f_index!r}) of the fragment file "
+                        f"a subspace ({f_index!r}) of the fragment dataset "
                         f"{fragment!r}. This might be fixable by setting "
-                        "the 'cfa_write' parameter to the 'read' function."
+                        "the 'cfa_write' keyword in the 'read' function."
                     )
 
-                uri = urisplit(filename)
+                uri = urisplit(dataset_name)
                 if uri_relative and uri.isrelpath():
-                    filename = abspath(filename)
+                    dataset_name = abspath(dataset_name)
 
                 if uri.isabspath():
-                    # File name is an absolute-path URI reference
-                    filename = uricompose(
+                    # Dataset name is an absolute-path URI reference
+                    dataset_name = uricompose(
                         scheme="file",
                         authority="",
                         path=uri.path,
                     )
-                    fragment = uri.fragment
-                    if fragment is not None:
+                    uri_fragment = uri.fragment
+                    if uri_fragment is not None:
                         # Append a URI fragment. Do this with a
                         # string-append, rather than via `uricompose`
                         # in case the fragment contains more than one
                         # # character.
-                        filename += f"#{fragment}"
+                        dataset_name += f"#{uri_fragment}"
 
                 if uri_relative:
                     scheme = uri.scheme
@@ -6319,21 +6715,21 @@ class NetCDFWrite(IOWrite):
 
                     if scheme != aggregation_file_scheme:
                         raise AggregationError(
-                            f"Can't write {cfvar!r} as a CF-netCDF "
+                            f"Can't write {cfvar!r} as a CF "
                             "aggregation variable: "
                             "Attempting to create a relative-path URI "
-                            f"reference for the fragment file {fragment}, "
+                            f"reference for the fragment dataset {fragment}, "
                             "referenced by the Dask chunk in position "
                             f"{position} (defined by data index {index!r}), "
-                            "but the aggregation file URI scheme "
+                            "but the aggregation dataset URI scheme "
                             f"({aggregation_file_scheme}:) is incompatible."
                         )
 
-                    filename = relpath(
-                        filename, start=aggregation_file_directory
+                    dataset_name = relpath(
+                        dataset_name, start=aggregation_file_directory
                     )
 
-                aggregation_uris.append(filename)
+                aggregation_uris.append(dataset_name)
                 aggregation_identifiers.append(address)
 
             # Reshape the 1-d aggregation instruction arrays to span
@@ -6376,7 +6772,7 @@ class NetCDFWrite(IOWrite):
                 d.persist(inplace=True)
             except AggregationError as error:
                 raise AggregationError(
-                    f"Can't write {cfvar!r} as a CF-netCDF aggregation "
+                    f"Can't write {cfvar!r} as a CF aggregation "
                     "variable. "
                     "At least one Dask chunk has more than one unique value: "
                     f"{error}. "
@@ -6390,7 +6786,7 @@ class NetCDFWrite(IOWrite):
         return out
 
     def _write_quantization_container(self, quantization):
-        """Write a CF-netCDF quantization container variable.
+        """Write a CF quantization container variable.
 
         .. note:: It is assumed, but not checked, that the
                   per-variable parameters (such as "quantization_nsd"
@@ -6407,7 +6803,7 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `str`
-                The netCDF variable name for the quantization
+                The dataset variable name for the quantization
                 container.
 
         """
@@ -6419,18 +6815,17 @@ class NetCDFWrite(IOWrite):
                 return ncvar
 
         # Create a new quantization container variable
-        ncvar = self._create_netcdf_variable_name(
+        ncvar = self._create_variable_name(
             quantization, default="quantization"
         )
 
         logger.info(
-            f"    Writing {quantization!r} to netCDF variable: {ncvar}"
+            f"    Writing {quantization!r} to variable: {ncvar}"
         )  # pragma: no cover
 
         kwargs = {
             "varname": ncvar,
             "datatype": "S1",
-            "dimensions": (),
             "endian": g["endian"],
         }
         kwargs.update(g["netcdf_compression"])
@@ -6438,13 +6833,55 @@ class NetCDFWrite(IOWrite):
         if not g["dry_run"]:
             # Create the variable
             self._createVariable(**kwargs)
-
-            # Set the attributes
-            g["nc"][ncvar].setncatts(
-                self.implementation.parameters(quantization)
+            self._set_attributes(
+                self.implementation.parameters(quantization), ncvar
             )
 
         # Update the quantization dictionary
         g["quantization"][ncvar] = quantization
 
         return ncvar
+
+    def _missing_value(self, x, datatype):
+        """Get the missing value.
+
+         .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            x: construct or `Data`
+                The data for which to get the missing value.
+
+            datatype: `str` or str
+                The data type, e.g. ``'S1'``, ``'f4'``, `str`.  Used
+                to get the netCDF default fill value, but only when a
+                missing value can't be found from the attributes of
+                *x*.
+
+        :Returns:
+
+                The missing value, or `None` if no missing value could
+                be found.
+
+        """
+        try:
+            # Try 'x' as a construct
+            mv = x.get_property("_FillValue", None)
+            if mv is None:
+                mv = x.get_property("missing_value", None)
+        except AttributeError:
+            try:
+                # Try 'x' as a `Data` object
+                mv = getattr(x, "fill_value", None)
+            except AttributeError:
+                mv = None
+
+        if mv is None:
+            # Try to get the netCDF default fill value
+            import netCDF4
+
+            mv = netCDF4.default_fillvals.get(datatype)
+            if mv is None and datatype is str:
+                mv = ""
+
+        return mv

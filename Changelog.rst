@@ -1,8 +1,14 @@
 Version NEXTVERSION
--------------------
 
-**2025-12-??**
+**2026-01-??**
 
+* Write Zarr v3 datasets with `cfdm.write`, and allow the reading of
+  grouped Zarr v2 and v3 datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/354)
+* Read Zarr v2 and v3 datasets that contain a group hierarchy with
+  `cfdm.read` (https://github.com/NCAS-CMS/cfdm/issues/355)
+* New optional dependency: ``zarr>=3.1.3``
+* Removed dependency (now optional): ``zarr>=3.0.8``
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
 
@@ -28,7 +34,6 @@ Version 1.12.3.0
 ----------------
 
 **2025-08-18**
-
 
 * Fix `cfdm.Data.reshape` when the underlying data originate on disk
   (https://github.com/NCAS-CMS/cfdm/issues/348)
@@ -57,7 +62,7 @@ Version 1.12.2.0
   retrieved from disk (https://github.com/NCAS-CMS/cfdm/issues/313)
 * New keyword parameter to `cfdm.write`: ``chunk_cache``
   (https://github.com/NCAS-CMS/cfdm/issues/328)
-* Read Zarr datasets with `cfdm.read`
+* Read Zarr v2 and v3 datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/335)
 * Read multiple datasets simultaneously with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/336)
