@@ -29,13 +29,14 @@ class PointTopology:
 
         # ------------------------------------------------------------
         # E.g. For faces, 'node_connectivity' might be (two
-        #      quadrilaterals and a triangle):
+        #      quadrilaterals and one triangle):
         #
         #      [[3 4 2 1 ]
         #       [5 6 4 3 ]
         #       [7 2 4 --]]
         #
-        # E.g. For edges, 'node_connectivity' might be
+        # E.g. For nine edges of the above faces, 'node_connectivity'
+        #      is
         #
         #      [[2 7]
         #       [4 7]
@@ -107,14 +108,16 @@ class PointTopology:
 
         # ------------------------------------------------------------
         # E.g. For both of the face and edges examples above, 'u' is
+        #      now
         #
         #      [[1 2 3 -- --]
-        #       [2 1 4 7  --]
-        #       [3 1 4 5  --]
-        #       [4 2 3 6  7 ]
+        #       [2 1 4  7 --]
+        #       [3 1 4  5 --]
+        #       [4 2 3  6  7]
         #       [5 3 6 -- --]
         #       [6 4 5 -- --]
         #       [7 2 4 -- --]]
+        #
         # ------------------------------------------------------------
 
         if not start_index:
