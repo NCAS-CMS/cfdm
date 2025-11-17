@@ -66,11 +66,10 @@ def example_field(n, _implementation=_implementation):
                     equal to those of example field ``13``.
 
             ``13``  A global HEALPix Multi-Order Coverage grid with
-                    "nested_unique" indexing scheme representing
-                    refinement levels 1 and 2. The field's
-                    area-weighted global latitude-longitude means are
-                    equal to those of example field ``12``.
-
+                    "nuniq" indexing scheme representing refinement
+                    levels 1 and 2. The field's area-weighted global
+                    latitude-longitude means are equal to those of
+                    example field ``12``.
             ======  ==================================================
 
             See the examples for details.
@@ -5836,7 +5835,7 @@ def example_field(n, _implementation=_implementation):
         f = CoordinateConversion()
         f.set_parameters(
             {
-                "indexing_scheme": "nested_unique",
+                "indexing_scheme": "nuniq",
                 "grid_mapping_name": "healpix",
             }
         )
@@ -5926,8 +5925,8 @@ def example_fields(*n, _func=example_field):
                     of example field ``13``.
 
             ``13``  A global HEALPix Multi-Order Coverage grid with
-                    "nested_unique" indices representing refinement
-                    levels 1 and 2. The field's area-weighted global
+                    "nuniq" indices representing refinement levels 1
+                    and 2. The field's area-weighted global
                     latitude-longitude means are equal to those of
                     example field ``12``.
             ======  ==================================================
@@ -6050,8 +6049,8 @@ def example_domain(n, _func=example_field):
                     scheme at refinement level 1.
 
             ``13``  A global HEALPix Multi-Order Coverage grid with
-                    "nested_unique" indexing scheme representing
-                    refinement levels 1 and 2.
+                    "nuniq" indexing scheme representing refinement
+                    levels 1 and 2.
             ======  ==================================================
 
             See the examples for details.
