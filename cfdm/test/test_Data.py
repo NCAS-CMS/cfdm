@@ -2851,6 +2851,17 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.get_cached_elements())
 
         # Test via __init__, which calls `cache_elements`
+        for array in (np.ma.masked, True, "x"):
+            d = cfdm.Data(array)
+            for i in range(2):
+                self.assertEqual(
+                    d.get_cached_elements(), {0: array, -1: array}
+                )
+                # Check that getting the array doesn't change the
+                # cached elements
+                if i:
+                    d.array
+
         for array in (
             1,
             1.0,
@@ -2866,22 +2877,6 @@ class DataTest(unittest.TestCase):
                 # cached elements
                 if i:
                     d.array
-
-        d = cfdm.Data(True)
-        for i in range(2):
-            self.assertEqual(d.get_cached_elements(), {0: True, -1: True})
-            # Check that getting the array doesn't change the cached
-            # elements
-            if i:
-                d.array
-
-        d = cfdm.Data("x")
-        for i in range(2):
-            self.assertEqual(d.get_cached_elements(), {0: "x", -1: "x"})
-            # Check that getting the array doesn't change the cached
-            # elements
-            if i:
-                d.array
 
         for array in (np.array([1, 2]), [1, 2]):
             d = cfdm.Data(array)
@@ -2937,6 +2932,21 @@ class DataTest(unittest.TestCase):
                 if i:
                     d.array
 
+        # Sparse array
+        from scipy.sparse import csr_array
+
+        indptr = np.array([0, 2, 3, 6])
+        indices = np.array([0, 2, 2, 0, 1, 2])
+        data = np.array([1, 2, 3, 4, 5, 6])
+        array = csr_array((data, indices, indptr), shape=(3, 3))
+        d = cfdm.Data(array)
+        for i in range(2):
+            self.assertEqual(d.get_cached_elements(), {0: 1, -1: 6})
+            # Check that getting the array doesn't change the
+            # cached elements
+            if i:
+                d.array
+
         # Check set_cached_elements
         for array in ([1, 2, 3], [[1, 2, 3]]):
             d = cfdm.Data(array)
@@ -2949,6 +2959,18 @@ class DataTest(unittest.TestCase):
         d._del_cached_elements()
         str(d)
         self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 3})
+
+        # Interaction with `cfdm.display_data`
+        d = cfdm.Data([[1, 2, 3]])
+        d._del_cached_elements()
+        org = cfdm.display_data(False)
+        self.assertEqual(repr(d), "<Data(1, 3): [[...]]>")
+        cfdm.display_data(True)
+        self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
+        cfdm.display_data(False)
+        self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
+        # Reset
+        cfdm.display_data(org)
 
 
 if __name__ == "__main__":

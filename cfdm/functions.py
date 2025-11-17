@@ -36,7 +36,7 @@ class DeprecationError(Exception):
 
 
 def configuration(
-    atol=None, rtol=None, log_level=None, chunksize=None, data_elements=None
+    atol=None, rtol=None, log_level=None, chunksize=None, display_data=None
 ):
     """Views and sets constants in the project-wide configuration.
 
@@ -47,7 +47,7 @@ def configuration(
     * `rtol`
     * `log_level`
     * `chunksize`
-    * `data_elements`
+    * `display_data`
 
     These are all constants that apply throughout `cfdm`, except for
     in specific functions only if overridden by the corresponding
@@ -65,7 +65,7 @@ def configuration(
     .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `atol`, `rtol`, `log_level`, `chunksize`,
-                 `data_elements`
+                 `display_data`
 
     :Parameters:
 
@@ -95,7 +95,7 @@ def configuration(
 
             .. versionadded:: (cfdm) 1.11.2.0
 
-        data_elements `bool` or `Constant`, optional
+        display_data `bool` or `Constant`, optional
             The new display data option. The default is to not change
             the current behaviour.
 
@@ -117,13 +117,13 @@ def configuration(
                      'rtol': 2.220446049250313e-16,
                      'log_level': 'WARNING',
                      'chunksize': 134217728,
-                     'data_elements': True}>
+                     'display_data': True}>
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
      'chunksize': 134217728,
-     'data_elements': True}
+     'display_data': True}
 
     Make a change to one constant and see that it is reflected in the
     configuration:
@@ -135,7 +135,7 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG',
      'chunksize': 134217728,
-     'data_elements': True}
+     'display_data': True}
 
     Access specific values by key querying, noting the equivalency to
     using its bespoke function:
@@ -152,13 +152,13 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG',
      'chunksize': 134217728,
-     'data_elements': True}
+     'display_data': True}
     >>> print(cfdm.configuration())
     {'atol': 5e-14,
      'rtol': 2.220446049250313e-16,
      'log_level': 'INFO',
      'chunksize': 134217728,
-     'data_elements': True}
+     'display_data': True}
 
     Set a single constant without using its bespoke function:
 
@@ -167,13 +167,13 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'INFO',
      'chunksize': 134217728,
-     'data_elements': True}
+     'display_data': True}
     >>> cfdm.configuration()
     {'atol': 5e-14,
      'rtol': 1e-17,
      'log_level': 'INFO',
      'chunksize': 134217728,
-     'data_elements': True}
+     'display_data': True}
 
     Use as a context manager:
 
@@ -182,7 +182,7 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
      'chunksize': 134217728,
-     'data_elements': True}
+     'display_data': True}
     >>> with cfdm.configuration(atol=9, rtol=10):
     ...     print(cfdm.configuration())
     ...
@@ -192,7 +192,7 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
      'chunksize': 134217728,
-     'data_elements': True}
+     'display_data': True}
 
     """
     return _configuration(
@@ -201,7 +201,7 @@ def configuration(
         new_rtol=rtol,
         new_log_level=log_level,
         new_chunksize=chunksize,
-        new_data_elements=data_elements,
+        new_display_data=display_data,
     )
 
 
@@ -240,7 +240,7 @@ def _configuration(_Configuration, **kwargs):
         "new_rtol": rtol,
         "new_log_level": log_level,
         "new_chunksize": chunksize,
-        "new_data_elements": data_elements,
+        "new_display_data": display_data,
     }
 
     # Make sure that the constants dictionary is fully populated
@@ -1985,22 +1985,22 @@ class log_level(ConstantAccess):
         return arg
 
 
-class data_elements(ConstantAccess):
+class display_data(ConstantAccess):
     """Control the display of data elements.
 
     If True then show the first and last data elements (and possibly
     others, depending on the data shape) when displaying data and
     constructs with their `!dump` methods, or via `repr` and
-    `str`. This can take a long time if the data needs an expensive
-    computation, possibly including a slow read from local or remote
-    disk, to find the display values.
+    `str`. This can take a long time if the data elements need an
+    expensive computation, possibly including a slow read from local
+    or remote disk, to find the display values.
 
     If False then do not show such data elements, *unless data
     elements have been previously cached*, thereby avoiding a
     potential computational cost.
 
-    Note that whenever data values are displayed, they are cached for
-    fast future retrieval.
+    Note that whenever data values are displayed, they will be cached
+    for fast future retrieval.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -2020,37 +2020,37 @@ class data_elements(ConstantAccess):
 
     **Examples**
 
-    >>> {{package}}.{{class}}()
+    >>> {{package}}.display_data()
     <{{repr}}Constant: True>
-    >>> print({{package}}.{{class}}())
+    >>> print({{package}}.display_data())
     True
-    >>> str({{package}}.{{class}}())
-    'True'
-    >>> {{package}}.{{class}}().value
+    >>> bool({{package}}.display_data())
+    True
+    >>> {{package}}.display_data().value
     True
 
-    >>> old = {{package}}.{{class}}(False)
-    >>> {{package}}.{{class}}()
+    >>> old = {{package}}.display_data(False)
+    >>> {{package}}.display_data()
     <{{repr}}Constant: False>
-    >>> {{package}}.{{class}}(old)
+    >>> {{package}}.display_data(old)
     <{{repr}}Constant: True>
-    >>> {{package}}.{{class}}()
+    >>> {{package}}.display_data()
     <{{repr}}Constant: True>
 
     Use as a context manager:
 
-    >>> print({{package}}.{{class}}())
+    >>> print({{package}}.display_data())
     True
-    >>> with {{package}}.{{class}}(False):
-    ...     print({{package}}.{{class}}())
+    >>> with {{package}}.display_data(False):
+    ...     print({{package}}.display_data())
     ...
     False
-    >>> print({{package}}.{{class}}())
+    >>> print({{package}}.display_data())
     True
 
     """
 
-    _name = "data_elements"
+    _name = "display_data"
     _default = True
 
     def _parse(cls, arg):

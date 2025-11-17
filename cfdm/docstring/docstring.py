@@ -1319,19 +1319,19 @@ _docstring_substitution_definitions = {
                 (and possibly others, depending on the data shape)
                 when displaying data and constructs with their `!dump`
                 methods, or via `repr` and `str`. This can take a long
-                time if the data needs an expensive computation,
-                possibly including a slow read from local or remote
-                disk, to find the display values.
+                time if getting these data elements needs an expensive
+                computation, possibly including a slow read from local
+                or remote disk.
 
                 If False then do not show such data elements, *unless
                 data elements have been previously cached*, thereby
                 avoiding a potential computational cost.
 
                 If `None` (the default) then the value of *data* will
-                taken from the `{{package}}.data_elements` function.
+                taken from the `{{package}}.display_data` function.
 
                 Note that whenever data elements are displayed, they
-                are cached for fast future retrieval.""",
+                will be cached for fast future retrieval.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
