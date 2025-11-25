@@ -558,15 +558,20 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         x.__float__() <==> float(x)
 
+        **Performance**
+
+        `__float__` causes all delayed operations to be executed,
+        unless the dask array size is already known to be greater than
+        1.
+
         """
-        # REVIEW: By using 'first_element', delayed operation might not be executed.
         if self.size != 1:
             raise TypeError(
                 "only length-1 arrays can be converted to "
                 f"Python scalars. Got {self}"
             )
 
-        return float(self.first_element())
+        return float(self.array[(0,) * self.ndim])
 
     def __format__(self, format_spec):
         """Interpret format specifiers for size 1 arrays.
@@ -766,15 +771,19 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         x.__int__() <==> int(x)
 
+        **Performance**
+
+        `__int__` causes all delayed operations to be executed, unless
+        the dask array size is already known to be greater than 1.
+
         """
-        # REVIEW: By using 'first_element', delayed operation might not be executed.
         if self.size != 1:
             raise TypeError(
                 "only length-1 arrays can be converted to "
                 f"Python scalars. Got {self}"
             )
 
-        return int(self.first_element())
+        return int(self.array[(0,) * self.ndim])
 
     def __iter__(self):
         """Called when an iterator is required.
