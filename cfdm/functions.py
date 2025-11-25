@@ -1989,11 +1989,10 @@ class display_data(ConstantAccess):
     """Control the display of data elements.
 
     If True then show the first and last data elements (and possibly
-    others, depending on the data shape) when displaying data and
-    constructs with their `!dump` methods, or via `repr` and
-    `str`. This can take a long time if the data elements need an
-    expensive computation, possibly including a slow read from local
-    or remote disk, to find the display values.
+    others, depending on the data shape) when displaying data via a
+    `!dump` method, `repr` or `str`. This can take a long time if the
+    data elements need an expensive computation, possibly including a
+    slow read from local or remote disk, to find the display values.
 
     If False then do not show such data elements, *unless data
     elements have been previously cached*, thereby avoiding a

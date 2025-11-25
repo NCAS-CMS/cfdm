@@ -2963,14 +2963,14 @@ class DataTest(unittest.TestCase):
         # Interaction with `cfdm.display_data`
         d = cfdm.Data([[1, 2, 3]])
         d._del_cached_elements()
-        org = cfdm.display_data(False)
-        self.assertEqual(repr(d), "<Data(1, 3): [[...]]>")
-        cfdm.display_data(True)
-        self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
-        cfdm.display_data(False)
-        self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
-        # Reset
-        cfdm.display_data(org)
+        with cfdm.display_data(False):
+            self.assertEqual(repr(d), "<Data(1, 3): [[...]]>")
+
+        with cfdm.display_data(True):
+            self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
+
+        with cfdm.display_data(False):
+            self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
 
 
 if __name__ == "__main__":
