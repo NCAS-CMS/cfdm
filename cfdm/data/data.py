@@ -602,7 +602,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 f"Python scalars. Got {self}"
             )
 
-        return float(self.array[(0,) * self.ndim])
+        # Return the first element (which might be cached)
+        return float(self.first_element())
 
     def __format__(self, format_spec):
         """Interpret format specifiers for size 1 arrays.
@@ -814,7 +815,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 f"Python scalars. Got {self}"
             )
 
-        return int(self.array[(0,) * self.ndim])
+        # Return the first element (which might be cached)
+        return int(self.first_element())
 
     def __iter__(self):
         """Called when an iterator is required.
@@ -1030,7 +1032,23 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         :Parameters:
 
-            {{data: `bool` or `None`, optional}}
+            data: `bool` or `None`, optional
+                If True then show the first and last data elements
+                (and possibly others, depending on the data shape)
+                when displaying the data. This can take a long time if
+                getting these data elements needs an expensive
+                computation, possibly including a slow read from local
+                or remote disk.
+
+                If False then do not show such data elements, *unless
+                data elements have been previously cached*, thereby
+                avoiding a potential computational cost.
+
+                If `None` (the default) then the value of *data* will
+                taken from the `{{package}}.display_data` function.
+
+                Note that whenever data elements are displayed, they
+                will be cached for fast future retrieval.
 
         :Returns:
 
@@ -1054,8 +1072,12 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         if data is None:
             data = self._display_data()
+            if not data and self._get_cached_elements():
+                data = True
 
-        if not data and not self._get_cached_elements():
+        if not data:
+            # Don't display any data values, just brackets and units.
+            # E.g. [[[...]]] m2
             out = f"{open_brackets}...{close_brackets}"
             if isreftime:
                 if calendar:
@@ -1065,7 +1087,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
             return out
 
-        # Still here?
+        # Still here? Then do display data values.
+        # E.g. [[[1, ..., 37]]] m2
         size = self.size
         shape = self.shape
 
