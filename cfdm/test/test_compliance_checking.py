@@ -24,9 +24,7 @@ tmpfiles = [
     tempfile.mkstemp("_test_compliance_check.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-(
-    tmpfile0,
-) = tmpfiles
+(tmpfile0,) = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -51,7 +49,7 @@ def _create_noncompliant_names_field(compliant_field, temp_file):
         # - this makes it a certain invalid name and one we can identify as
         # being tied to the original variable, for testing purposes.
         bad_name_mapping = {
-            varname: "badname_"+ varname for varname in field_all_varnames
+            varname: "badname_" + varname for varname in field_all_varnames
         }
 
         for var_name, bad_std_name in bad_name_mapping.items():
@@ -69,7 +67,8 @@ class ComplianceCheckingTest(unittest.TestCase):
     good_snames_general_field = cfdm.example_field(1)
     # TODO set bad names and then write to tempfile and read back in
     bad_snames_general_field = _create_noncompliant_names_field(
-        good_snames_general_field, tmpfile0)
+        good_snames_general_field, tmpfile0
+    )
 
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
@@ -98,6 +97,30 @@ class ComplianceCheckingTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
+
+        # Structures to form the desired outputs
+        # *Variable dict*
+        var_dict = {
+            "attributes": [],
+            "dimensions": [],
+        }
+
+        # *Attribute list*
+        attr_list = [
+            {
+                "variables": {},
+                "dimensions": [],
+                # add value, reason and code
+            },
+        ]
+
+        # *Dimension dict*
+        dim_list = [
+            {
+                "variables": {},
+                # add size, reason and code
+            }
+        ]
 
     def test_extract_names_from_xml(self):
         """Test the `cfvalidation._extract_names_from_xml` function."""
@@ -138,27 +161,28 @@ class ComplianceCheckingTest(unittest.TestCase):
         table_end = "</standard_name_table>"
 
         two_name_output = cfdm.cfvalidation._extract_names_from_xml(
-            two_name_table_start + table_end, include_aliases=False)
+            two_name_table_start + table_end, include_aliases=False
+        )
         self.assertIsInstance(two_name_output, list)
         self.assertEqual(len(two_name_output), 2)
         self.assertIn(
             "acoustic_area_backscattering_strength_in_sea_water",
-            two_name_output
+            two_name_output,
         )
-        self.assertIn(
-            "acoustic_centre_of_mass_in_sea_water", two_name_output)
+        self.assertIn("acoustic_centre_of_mass_in_sea_water", two_name_output)
 
         # No aliases in this table therefore expect same output as before
         # when setting 'include_aliases=True'
         self.assertEqual(
             cfdm.cfvalidation._extract_names_from_xml(
-                two_name_table_start + table_end, include_aliases=True),
-            two_name_output
+                two_name_table_start + table_end, include_aliases=True
+            ),
+            two_name_output,
         )
 
         aliases_inc_output = cfdm.cfvalidation._extract_names_from_xml(
             two_name_table_start + include_two_aliases + table_end,
-            include_aliases=True
+            include_aliases=True,
         )
         self.assertIsInstance(aliases_inc_output, list)
         self.assertEqual(len(aliases_inc_output), 4)
@@ -166,12 +190,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertTrue(set(two_name_output).issubset(aliases_inc_output))
         # Also should have the aliases this time
         self.assertIn(
-            "chlorophyll_concentration_in_sea_water",
-            aliases_inc_output
+            "chlorophyll_concentration_in_sea_water", aliases_inc_output
         )
         self.assertIn(
-            "concentration_of_chlorophyll_in_sea_water",
-            aliases_inc_output
+            "concentration_of_chlorophyll_in_sea_water", aliases_inc_output
         )
 
         # When setting 'include_aliases=True' should ignore the two aliases
@@ -179,9 +201,9 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             cfdm.cfvalidation._extract_names_from_xml(
                 two_name_table_start + include_two_aliases + table_end,
-                include_aliases=False
+                include_aliases=False,
             ),
-            two_name_output
+            two_name_output,
         )
 
     def test_get_all_current_standard_names(self):
@@ -191,9 +213,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         sn_xml_url = cfdm.cfvalidation._STD_NAME_CURRENT_XML_URL
         with request.urlopen(sn_xml_url) as response:
             self.assertEqual(
-                response.status, 200,
+                response.status,
+                200,
                 "Standard name XML inaccesible: unexpected status code "
-                f"{response.status} for reference URL of: {sn_xml_url}"
+                f"{response.status} for reference URL of: {sn_xml_url}",
             )  # 200 == OK
         # SLB-DH discuss TODO: what behaviour do we want for the (v. rare)
         # case that the URL isn't accessible? Ideally we can skip standard
@@ -218,7 +241,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # Check a long name with plenty of underscores is in there too
         self.assertIn(
             "integral_wrt_time_of_radioactivity_concentration_of_113Cd_in_air",
-            output
+            output,
         )
 
         # Check a standard name with known alias
@@ -241,7 +264,7 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         # Check all non-aliases are there, as above
         self.assertTrue(set(output).issubset(aliases_inc_output))
-        
+
         # This time the alias should be included
         self.assertIn("moles_of_cfc113_in_atmosphere", aliases_inc_output)
 
@@ -293,6 +316,7 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         # SLB DEV
         from pprint import pprint
+
         pprint(dc_output)
 
         # 'ta' is the field variable we test on
@@ -322,7 +346,7 @@ class ComplianceCheckingTest(unittest.TestCase):
             noncompl_dict = noncompliance.get(varname)
             self.assertIsNotNone(
                 noncompl_dict,
-                msg=f"Empty non-compliance for variable '{varname}'"
+                msg=f"Empty non-compliance for variable '{varname}'",
             )
             self.assertIsInstance(noncompl_dict, list)
             self.assertEqual(len(noncompl_dict), 1)
@@ -386,9 +410,12 @@ class ComplianceCheckingTest(unittest.TestCase):
             field_all_varnames = list(nc.variables.keys())
             print("VERIFY")
             for varname, var in nc.variables.items():
-                print(varname, getattr(var, "standard_name", "No standard_name"))
+                print(
+                    varname, getattr(var, "standard_name", "No standard_name")
+                )
 
         from pprint import pprint
+
         pprint(dc_output_1)
 
         # 'pa' is the field variable we test on
@@ -418,7 +445,7 @@ class ComplianceCheckingTest(unittest.TestCase):
             noncompl_dict = noncompliance.get(varname)
             self.assertIsNotNone(
                 noncompl_dict,
-                msg=f"Empty non-compliance for variable '{varname}'"
+                msg=f"Empty non-compliance for variable '{varname}'",
             )
             self.assertIsInstance(noncompl_dict, list)
             self.assertEqual(len(noncompl_dict), 1)
@@ -446,6 +473,7 @@ class ComplianceCheckingTest(unittest.TestCase):
             self.assertEqual(noncompl_dict, expected_noncompl_dict)
 
         from pprint import pprint
+
         pprint(dc_output_2)
 
         # 'ta' is the field variable we test on
@@ -475,7 +503,7 @@ class ComplianceCheckingTest(unittest.TestCase):
             noncompl_dict = noncompliance.get(varname)
             self.assertIsNotNone(
                 noncompl_dict,
-                msg=f"Empty non-compliance for variable '{varname}'"
+                msg=f"Empty non-compliance for variable '{varname}'",
             )
             self.assertIsInstance(noncompl_dict, list)
             self.assertEqual(len(noncompl_dict), 1)
@@ -503,6 +531,7 @@ class ComplianceCheckingTest(unittest.TestCase):
             self.assertEqual(noncompl_dict, expected_noncompl_dict)
 
         from pprint import pprint
+
         pprint(dc_output_3)
 
         # 'v' is the field variable we test on
@@ -532,7 +561,7 @@ class ComplianceCheckingTest(unittest.TestCase):
             noncompl_dict = noncompliance.get(varname)
             self.assertIsNotNone(
                 noncompl_dict,
-                msg=f"Empty non-compliance for variable '{varname}'"
+                msg=f"Empty non-compliance for variable '{varname}'",
             )
             self.assertIsInstance(noncompl_dict, list)
             self.assertEqual(len(noncompl_dict), 1)
