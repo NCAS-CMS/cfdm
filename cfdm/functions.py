@@ -2430,6 +2430,18 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
     return parsed_indices
 
 
+def netcdf_flatten(*args, **kwargs):
+    """Create a flattened version of a grouped CF dataset.
+
+    .. versionadded:: (cfdm) 1.11.2.0
+
+    """
+    raise DeprecationError(
+        "Function 'netcdf_flatten' has been renamed 'dataset_flatten' "
+        "at version NEXTVERSION"
+    )
+
+
 def _DEPRECATION_ERROR_KWARGS(
     instance,
     method,

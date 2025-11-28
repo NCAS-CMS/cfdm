@@ -23,7 +23,7 @@ from ..functions import (
 )
 from ..mixin.container import Container
 from ..mixin.files import Files
-from ..mixin.netcdf import NetCDFAggregation, NetCDFChunks
+from ..mixin.netcdf import NetCDFAggregation, NetCDFChunks, NetCDFShards
 from ..units import Units
 from .abstract import Array
 from .creation import to_dask
@@ -50,7 +50,9 @@ from .utils import (
 logger = logging.getLogger(__name__)
 
 
-class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
+class Data(
+    Container, NetCDFAggregation, NetCDFChunks, NetCDFShards, Files, core.Data
+):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -734,12 +736,6 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         # Set the subspaced dask array
         # ------------------------------------------------------------
         new._set_dask(dx, clear=self._ALL ^ self._CFA, in_memory=None)
-
-        if 0 in new.shape:
-            raise IndexError(
-                f"Index [{original_indices}] selects no elements from "
-                f"data with shape {original_shape}"
-            )
 
         # ------------------------------------------------------------
         # Get the axis identifiers for the subspace

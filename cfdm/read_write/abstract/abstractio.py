@@ -16,13 +16,13 @@ class IO(metaclass=abc.ABCMeta):
         self.implementation = implementation
 
     @abc.abstractmethod
-    def file_close(self, *args, **kwargs):
-        """Close the dataset file."""
+    def dataset_close(self, *args, **kwargs):
+        """Close the dataset."""
         raise NotImplementedError()  # pragma: no cover
 
     @abc.abstractmethod
-    def file_open(self, *args, **kwargs):
-        """Open the dataset file."""
+    def dataset_open(self, *args, **kwargs):
+        """Open the dataset."""
         raise NotImplementedError()  # pragma: no cover
 
 
@@ -31,7 +31,7 @@ class IORead(IO, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def read(self, *args, **kwargs):
-        """Read fields from a netCDF file."""
+        """Read fields from a netCDF dataset."""
         raise NotImplementedError()  # pragma: no cover
 
 
@@ -40,5 +40,5 @@ class IOWrite(IO, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def write(self, *args, **kwargs):
-        """Write fields to a netCDF file."""
+        """Write fields to a netCDF dataset."""
         raise NotImplementedError()  # pragma: no cover
