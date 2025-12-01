@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 class netcdf_indexer:
     """A data indexer that also applies netCDF masking and unpacking.
 
-    Here "netCDF4" refers to the API of the netCDF data model, rather
+    Here "netCDF" refers to the API of the netCDF data model, rather
     than any particular dataset encoding or software library API.
 
     Indexing may be orthogonal or non-orthogonal. Orthogonal indexing
@@ -395,8 +395,14 @@ class netcdf_indexer:
         """
         from netCDF4 import default_fillvals
 
-        if dtype.kind in "OS":
+        kind = dtype.kind
+        if kind in "OS":
             return default_fillvals["S1"]
+
+        if kind == "T":
+            # np.dtypes.StringDType, which stores variable-width
+            # string data in a UTF-8 encoding, as used by `zarr`)
+            return ""
 
         return default_fillvals[dtype.str[1:]]
 
@@ -623,7 +629,10 @@ class netcdf_indexer:
             if fvalisnan:
                 mask = np.isnan(data)
             else:
-                mask = data == fval
+                # Must use `np.asanyarray` here, to ensure that that
+                # 'mask' is a never a `bool`, which would make the
+                # following 'mask.any' call' fail.
+                mask = np.asanyarray(data == fval)
 
             if mask.any():
                 if fill_value is None:

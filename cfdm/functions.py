@@ -406,7 +406,7 @@ def environment(display=True, paths=True):
     netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
     h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
     h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
-    zarr: 3.0.8 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
+    zarr: 3.1.3 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
     s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
     scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
     dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
@@ -426,7 +426,7 @@ def environment(display=True, paths=True):
     netCDF4: 1.7.2
     h5netcdf: 1.3.0
     h5py: 3.12.1
-    zarr: 3.0.8
+    zarr: 3.1.3
     s3fs: 2024.12.0
     scipy: 1.15.1
     dask: 2025.5.1
@@ -2428,6 +2428,18 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
         parsed_indices[i] = index
 
     return parsed_indices
+
+
+def netcdf_flatten(*args, **kwargs):
+    """Create a flattened version of a grouped CF dataset.
+
+    .. versionadded:: (cfdm) 1.11.2.0
+
+    """
+    raise DeprecationError(
+        "Function 'netcdf_flatten' has been renamed 'dataset_flatten' "
+        "at version NEXTVERSION"
+    )
 
 
 def _DEPRECATION_ERROR_KWARGS(

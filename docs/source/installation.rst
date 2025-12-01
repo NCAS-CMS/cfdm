@@ -178,6 +178,11 @@ Tests are run from within the ``cfdm/test`` directory:
 **Dependencies**
 ----------------
 
+.. _Required:
+
+Required
+^^^^^^^^
+
 The cfdm package requires:
 
 * `Python <https://www.python.org>`_, version 3.10 or newer.
@@ -195,8 +200,6 @@ The cfdm package requires:
 
 * `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.
 
-* `zarr <https://pypi.org/project/zarr>`_, version 3.0.8 or newer.
-    
 * `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
 
 * `dask <https://pypi.org/project/dask>`_, version 2025.5.1 or newer.
@@ -236,6 +239,19 @@ The cfdm package requires:
   _ut_unmap_symbol_to_unit(_ut_system, _c_char_p(b'Sv'), _UT_ASCII))``
   then setting the ``UDUNITS2_XML_PATH`` environment variable is the
   likely solution.
+
+Optional
+^^^^^^^^
+
+Some further dependencies that enable further functionality are
+optional. This to facilitate cfdm being installed in restricted
+environments for which these features are not required.
+
+.. rubric:: Zarr
+
+* `zarr <https://pypi.org/project/zarr>`_, version 3.1.3 or newer.
+
+  For reading and writing Zarr datasets.
 
 ----
 

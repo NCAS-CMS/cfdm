@@ -1103,6 +1103,23 @@ class CFDMImplementation(Implementation):
         """
         return data.nc_dataset_chunksizes()
 
+    def nc_get_dataset_shards(self, data):
+        """Get the Zarr dataset sharding strategy for the data.
+
+        ..versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `Data`
+
+        :Returns:
+
+            `int` or `tuple` or `None`
+                The dataset sharding strategy.
+
+        """
+        return data.nc_dataset_shards()
+
     def nc_get_sample_dimension(self, count, default=None):
         """Return the name of the netCDF sample dimension.
 
@@ -1244,6 +1261,26 @@ class CFDMImplementation(Implementation):
             "Deprecated at version 1.12.2.0. "
             "Use 'nc_set_dataset_chunksizes' instead."
         )
+
+    def nc_set_dataset_shards(self, data, shards):
+        """Set the Zarr dataset sharding strategy for the data.
+
+        ..versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `Data`
+
+            shards: `None` or `int` or sewunce of `int`
+                Set the sharding strategy when writing to a Zarr
+                dataset.
+
+        :Returns:
+
+            `None`
+
+        """
+        return data.nc_set_dataset_shards(shards)
 
     def parameters(self, parent):
         """Return all parameters from a component.

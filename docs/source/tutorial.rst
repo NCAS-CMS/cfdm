@@ -3465,7 +3465,7 @@ Method                                         Classes                          
 -------------------
 
 The `cfdm.write` function writes a field construct, or a sequence of
-field constructs, to a netCDF file on disk:
+field constructs, to a netCDF or Zarr dataset on disk:
 
 .. code-block:: python
    :caption: *Write a field construct to a netCDF dataset on disk.*
@@ -3535,8 +3535,8 @@ By default the output file will be for CF-|version|.
 
 The `cfdm.write` function has optional parameters to
 
-* set the output netCDF format (all netCDF3 and netCDF4 formats are
-  possible);
+* set the output dataset format (all netCDF3 and netCDF4 formats, as
+  well as Zarr v3 are possible);
 
 * append to the netCDF file rather than over-writing it by default;
 

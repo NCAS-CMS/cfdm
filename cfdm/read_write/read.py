@@ -17,7 +17,8 @@ logger = getLogger(__name__)
 class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
-    The following file formats are supported: netCDF, CDL, and Zarr.
+    The following dataset formats are supported: netCDF, CDL, and
+    Zarr.
 
     NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
     server, or in an S3 object store.
@@ -169,6 +170,10 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.11.2.0
 
+        {{read store_dataset_shards: `bool`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         {{read cfa: `dict`, optional}}
 
             .. versionadded:: (cfdm) 1.12.0.0
@@ -188,6 +193,10 @@ class read(ReadWrite):
         {{read unsqueeze: `bool`, optional}}
 
             .. versionadded:: (cfdm) 1.12.0.0
+
+        {{read group_dimension_search: `str`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
         ignore_unknown_type: Deprecated at version 1.12.2.0
             Use *dataset_type* instead.
@@ -237,6 +246,7 @@ class read(ReadWrite):
         cache=True,
         dask_chunks="storage-aligned",
         store_dataset_chunks=True,
+        store_dataset_shards=True,
         cfa=None,
         cfa_write=None,
         to_memory=False,
@@ -247,6 +257,7 @@ class read(ReadWrite):
         followlinks=False,
         cdl_string=False,
         extra_read_vars=None,
+        group_dimension_search="closest_ancestor",
         **kwargs,
     ):
         """Read field or domain constructs from datasets.
@@ -370,7 +381,10 @@ class read(ReadWrite):
                 if isdir(x):
                     if is_zarr(x):
                         # This directory is a Zarr dataset, so don't
-                        # look in any subdirectories.
+                        # look in any subdirectories, which we contain
+                        # the dataset chunks (but note - it is allowed
+                        # for non-chunk subdirectories to exist, but
+                        # if they do we're going to ignore them!).
                         n_datasets += 1
                         yield x
                         continue
@@ -565,6 +579,7 @@ class read(ReadWrite):
                         "cache",
                         "dask_chunks",
                         "store_dataset_chunks",
+                        "store_dataset_shards",
                         "cfa",
                         "cfa_write",
                         "to_memory",
@@ -573,6 +588,7 @@ class read(ReadWrite):
                         "dataset_type",
                         "cdl_string",
                         "extra_read_vars",
+                        "group_dimension_search",
                     )
                 }
 
