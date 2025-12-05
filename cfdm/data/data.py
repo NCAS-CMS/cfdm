@@ -445,13 +445,12 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             if isinstance(array, (list, tuple)):
                 # Convert list or tuple to np.ndarray
                 array = np.asanyarray(array, dtype=dtype)
-                ndim = array.ndim
                 dtype = None
+                ndim = array.ndim
             else:
                 ndim = np.ndim(array)
         else:
-            # Convert the masked constant to a masked float64 scalar
-            # array
+            # Convert the masked constant to a masked scalar array
             if array is np.ma.masked:
                 array = np.ma.masked_all((), dtype=dtype)
                 dtype = None
@@ -1030,7 +1029,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
                 If False then do not show such data elements, *unless
                 data elements have been previously cached*, thereby
-                avoiding a potential computational cost.
+                avoiding a potentially high computational cost.
 
                 If `None` (the default) then the value of *data* will
                 taken from the `{{package}}.display_data` function.
@@ -1064,8 +1063,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 data = True
 
         if not data:
-            # Don't display any data values, just brackets and units.
-            # E.g. [[[...]]] m2
+            # Don't display any data values, just brackets, ellipsis,
+            # and units. E.g. [[[...]]] m2
             out = f"{open_brackets}...{close_brackets}"
             if isreftime:
                 if calendar:
@@ -1075,7 +1074,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
             return out
 
-        # Still here? Then do display data values.
+        # Still here? Then display data values.
         # E.g. [[[1, ..., 37]]] m2
         size = self.size
         shape = self.shape
@@ -1168,7 +1167,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         x.__str__() <==> str(x)
 
         """
-        return self._str()
+        return self._str(data=None)
 
     def __eq__(self, other):
         """The rich comparison operator ``==``
@@ -2755,7 +2754,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         """
         from scipy.sparse import issparse
 
-        a = self.compute().copy()
+        a = self.compute(_cache_elements=False).copy()
         if issparse(a):
             a = a.toarray()
         elif not isinstance(a, np.ndarray):
@@ -4091,7 +4090,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         d._set_dask(dx, clear=self._ALL, in_memory=True)
         return d
 
-    def compute(self, _force_to_memory=True):
+    def compute(self, _force_to_memory=True, _cache_elements=True):
         """A view of the computed data.
 
         In-place changes to the returned array *might* affect the
@@ -4119,7 +4118,15 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 from computing the returned Dask graph to be in
                 memory. If False then the data resulting from
                 computing the Dask graph may or may not be in memory,
-                depending on the nature of the stack
+                depending on the nature of the stack.
+
+            _cache_elements: `bool`, optional
+                If True (the default) then create a cache of selected
+                elements from the computed array in memory, if the
+                type of the array allows it. See `cache_elements` for
+                details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -4169,8 +4176,13 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
             a.set_fill_value(self.get_fill_value(None))
 
-        if isinstance(a, (np.ndarray, int, float, bool, str)):
-            self.cache_elements(_array=a)
+        if _cache_elements:
+            from scipy.sparse import issparse
+
+            if isinstance(a, (np.ndarray, int, float, bool, str)) or issparse(
+                a
+            ):
+                self.cache_elements(_array=a)
 
         return a
 

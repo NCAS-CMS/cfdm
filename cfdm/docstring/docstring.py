@@ -1324,7 +1324,7 @@ _docstring_substitution_definitions = {
 
                 If False then do not show such data elements, *unless
                 data elements have been previously cached*, thereby
-                avoiding a potential computational cost.
+                avoiding a potentially high computational cost.
 
                 If `None` (the default) then the value of *data* will
                 taken from the `{{package}}.display_data` function.

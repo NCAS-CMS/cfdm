@@ -1996,7 +1996,7 @@ class display_data(ConstantAccess):
 
     If False then do not show such data elements, *unless data
     elements have been previously cached*, thereby avoiding a
-    potential computational cost.
+    potentially high computational cost.
 
     Note that whenever data values are displayed, they will be cached
     for fast future retrieval.
