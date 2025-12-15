@@ -1513,8 +1513,8 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
 
     # Define the dictionary that stores all constant values.
     #
-    # Sublasses must re-define this as an empty dictionary (unless
-    # it's OK for the child to modify the parent's dictionary).
+    # Sublasses may re-define this as an empty dictionary, if they
+    # don't want to modify the parent's dictionary.
     _constants = {}
 
     # Define the `Constant` class that contains a constant value
@@ -1997,10 +1997,10 @@ class display_data(ConstantAccess):
 
     If False then do not show such data elements, *unless data
     elements have been previously cached*, thereby avoiding a
-    potential computational cost.
+    potentially high computational cost.
 
-    Note that whenever data values are displayed, they will be cached
-    for fast future retrieval.
+    Note that whenever data values are displayed, they are cached for
+    fast future retrieval.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -2069,7 +2069,7 @@ class display_data(ConstantAccess):
         :Returns:
 
                 A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                insertion into the `_constants` dictionary.
 
         """
         return bool(arg)

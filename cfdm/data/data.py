@@ -443,15 +443,18 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             ndim = array.ndim
         except AttributeError:
             if isinstance(array, (list, tuple)):
-                # Convert list or tuple to np.ndarray
+                # Convert list or tuple to np.ndarray. Do this because
+                # the alternative of `np.ndim(array)` would do it
+                # anyway, and when it's a numpy array we can get
+                # cached values from it via `cache_elements`.
                 array = np.asanyarray(array, dtype=dtype)
                 ndim = array.ndim
                 dtype = None
             else:
                 ndim = np.ndim(array)
         else:
-            # Convert the masked constant to a masked float64 scalar
-            # array
+            # Convert the masked constant to a masked scalar array so
+            # we can get cached values from it via `cache_elements`.
             if array is np.ma.masked:
                 array = np.ma.masked_all((), dtype=dtype)
                 dtype = None
@@ -503,8 +506,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
-        # Whether or not to get selected array elements for the cache
-        #        cache_elements = isinstance(array, (np.ndarray, int, float, bool, str))
+        # Whether or not to get selected array elements for the cache:
+        # Only do so for data that is already in memory.
         cache_elements = isinstance(
             array, (np.ndarray, int, float, bool, str)
         ) or issparse(array)
@@ -2024,9 +2027,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         >>> d = {{package}}.Data([[1, 2, 3]])
         >>> d._elements(...)
         array([[1, 2, 3]])
-        >>> d._elements((0, 2))
-        array([[3]])
-
+        >>> d._elements((0, slice(0, 3, 2)))
+        array([[1, 3]])
         >>> d._elements((0, 2))
         array([[3]])
         >>> d._elements((0, 2), array=d.array)
@@ -3864,15 +3866,14 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 Otherwise they are derived from *_array*, which is
                 assumed (but not checked) to be equivalent to the Dask
                 array, i.e. *_array* must be equivalent to the array
-                returned by `array`.
+                returned by `array` in implied shape, data type and
+                values.
 
         :Returns:
 
             `None`
 
         """
-        from scipy.sparse import issparse
-
         # Clear all existing cached elements
         self._del_cached_elements()
 
@@ -3887,6 +3888,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         ndim = self.ndim
         if not ndim:
             # 0-d
+            from scipy.sparse import issparse
+
             if _array is not None and not issparse(_array):
                 element = _array
             else:
@@ -3895,18 +3898,20 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             cache[0] = element
             cache[-1] = element
         elif ndim == 1:
-            # 1-d
             if size == 1:
+                # 1-d with size == 1
                 element = self._elements(Ellipsis, array=_array)
                 cache[0] = element
                 cache[-1] = element
             elif size <= 3:
+                # 1-d with 2 <= size <= 3
                 elements = self._elements(Ellipsis, array=_array)
                 cache[0] = elements[0]
                 cache[-1] = elements[-1]
                 if size == 3:
                     cache[1] = elements[1]
             else:
+                # 1-d with size > 3
                 elements = self._elements(
                     slice(0, size, size - 1), array=_array
                 )
@@ -3928,7 +3933,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             cache[-2] = elements[-2]
             cache[-1] = elements[-1]
         elif size == 3:
-            # N-d (N>=2) with size 3
+            # N-d (N>=2) with size == 3
             elements = self._elements(Ellipsis, array=_array)
             elements = elements.flatten()
             cache[0] = elements[0]

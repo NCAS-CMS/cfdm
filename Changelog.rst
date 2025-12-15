@@ -10,6 +10,9 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cfdm/issues/363)
 * Set cached elements during `cfdm.Data.__init__`
   (https://github.com/NCAS-CMS/cfdm/issues/363)
+* Removed the `cfdm.constants.CONSTANTS` dictionary, replacing it
+  `cfdm.functions.ConstantAccess._constants`
+  (https://github.com/NCAS-CMS/cfdm/issues/363)
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
 
