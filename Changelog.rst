@@ -3,7 +3,8 @@ Version NEXTVERSION
 
 **2026-01-??**
 
-* New function: `cfdm.display_data`
+* New function to control the creation of cached elements during data
+  display: `cfdm.display_data`
   (https://github.com/NCAS-CMS/cfdm/issues/363)
 * New methods: `cfdm.Data.get_cached_elements`
   `cfdm.Data.cache_elements`

@@ -1317,9 +1317,8 @@ _docstring_substitution_definitions = {
     "{{data: `bool` or `None`, optional}}": """data: `bool` or `None`, optional
                 If True then show the first and last data elements
                 (and possibly others, depending on the data shape)
-                when displaying data and constructs with their `!dump`
-                methods, or via `repr` and `str`. This can take a long
-                time if getting these data elements needs an expensive
+                when displaying data. This can take a long time if
+                getting these data elements needs an expensive
                 computation, possibly including a slow read from local
                 or remote disk.
 

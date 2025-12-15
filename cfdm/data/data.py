@@ -448,8 +448,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 # anyway, and when it's a numpy array we can get
                 # cached values from it via `cache_elements`.
                 array = np.asanyarray(array, dtype=dtype)
-                ndim = array.ndim
                 dtype = None
+                ndim = array.ndim
             else:
                 ndim = np.ndim(array)
         else:
@@ -592,12 +592,6 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         x.__float__() <==> float(x)
 
-        **Performance**
-
-        `__float__` causes all delayed operations to be executed,
-        unless the dask array size is already known to be greater than
-        1.
-
         """
         if self.size != 1:
             raise TypeError(
@@ -605,7 +599,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 f"Python scalars. Got {self}"
             )
 
-        return float(self.array[(0,) * self.ndim])
+        # Return the first element (which might be cached)
+        return float(self.first_element())
 
     def __format__(self, format_spec):
         """Interpret format specifiers for size 1 arrays.
@@ -805,11 +800,6 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         x.__int__() <==> int(x)
 
-        **Performance**
-
-        `__int__` causes all delayed operations to be executed, unless
-        the dask array size is already known to be greater than 1.
-
         """
         if self.size != 1:
             raise TypeError(
@@ -817,7 +807,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 f"Python scalars. Got {self}"
             )
 
-        return int(self.array[(0,) * self.ndim])
+        # Return the first element (which might be cached)
+        return int(self.first_element())
 
     def __iter__(self):
         """Called when an iterator is required.
@@ -1033,7 +1024,23 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         :Parameters:
 
-            {{data: `bool` or `None`, optional}}
+            data: `bool` or `None`, optional
+                If True then show the first and last data elements
+                (and possibly others, depending on the data shape)
+                when displaying the data. This can take a long time if
+                getting these data elements needs an expensive
+                computation, possibly including a slow read from local
+                or remote disk.
+
+                If False then do not show such data elements, *unless
+                data elements have been previously cached*, thereby
+                avoiding a potentially high computational cost.
+
+                If `None` (the default) then the value of *data* will
+                taken from the `{{package}}.display_data` function.
+
+                Note that whenever data elements are displayed, they
+                will be cached for fast future retrieval.
 
         :Returns:
 
@@ -1057,8 +1064,12 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         if data is None:
             data = self._display_data()
+            if not data and self._get_cached_elements():
+                data = True
 
-        if not data and not self._get_cached_elements():
+        if not data:
+            # Don't display any data values, just brackets, ellipsis,
+            # and units. E.g. [[[...]]] m2
             out = f"{open_brackets}...{close_brackets}"
             if isreftime:
                 if calendar:
@@ -1068,7 +1079,8 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
             return out
 
-        # Still here?
+        # Still here? Then display data values.
+        # E.g. [[[1, ..., 37]]] m2
         size = self.size
         shape = self.shape
 
@@ -1160,7 +1172,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         x.__str__() <==> str(x)
 
         """
-        return self._str()
+        return self._str(data=None)
 
     def __eq__(self, other):
         """The rich comparison operator ``==``
@@ -2012,7 +2024,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             index:
                 The index that defines the elements.
 
-            array: `None` or array_like, optional
+            array: `None` or array_like or sparse array, optional
                 If `None` (the default) then the elements are derived
                 from the data stored in the Dask array. Otherwise they
                 are derived from *array*, which is assumed to be
@@ -2020,6 +2032,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         :Returns:
 
+            `numpy.ndarray`
                 The selected elements of the data.
 
         **Examples**
@@ -2037,12 +2050,12 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         """
         if array is None:
             return self[index].array
-        else:
-            from scipy.sparse import issparse
 
-            array = array[index]
-            if issparse(array):
-                array = array.toarray()
+        from scipy.sparse import issparse
+
+        array = array[index]
+        if issparse(array):
+            array = array.toarray()
 
         return array
 
@@ -2745,7 +2758,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         """
         from scipy.sparse import issparse
 
-        a = self.compute().copy()
+        a = self.compute(_cache_elements=False).copy()
         if issparse(a):
             a = a.toarray()
         elif not isinstance(a, np.ndarray):
@@ -3849,7 +3862,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
         **Performance**
 
-        Deriving the cached values from the Dask array (the default)
+        Deriving the array elements from the Dask array (the default)
         can take a long time if expensive computations, possibly
         including a slow read from local or remote disk, is needed to
         find the values.
@@ -3866,7 +3879,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 Otherwise they are derived from *_array*, which is
                 assumed (but not checked) to be equivalent to the Dask
                 array, i.e. *_array* must be equivalent to the array
-                returned by `array` in implied shape, data type and
+                returned by `array`, in terms of shape, data type, and
                 values.
 
         :Returns:
@@ -3888,6 +3901,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         ndim = self.ndim
         if not ndim:
             # 0-d
+            # Set cache keys 0 and -1
             from scipy.sparse import issparse
 
             if _array is not None and not issparse(_array):
@@ -3897,21 +3911,29 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
             cache[0] = element
             cache[-1] = element
+        elif size == 1:
+            # N-d (N>=1) with size 1
+            # Set cache keys 0 and -1
+            element = self._elements(Ellipsis, array=_array)
+            cache[0] = element
+            cache[-1] = element
         elif ndim == 1:
             if size == 1:
-                # 1-d with size == 1
+                # 1-d with size  1
+                # Set cache keys 0, 1, and -1
                 element = self._elements(Ellipsis, array=_array)
                 cache[0] = element
                 cache[-1] = element
             elif size <= 3:
-                # 1-d with 2 <= size <= 3
+                # 1-d with size 2 or 3
+                # Set cache keys 0, 1, and -1
                 elements = self._elements(Ellipsis, array=_array)
                 cache[0] = elements[0]
+                cache[1] = elements[1]
                 cache[-1] = elements[-1]
-                if size == 3:
-                    cache[1] = elements[1]
             else:
                 # 1-d with size > 3
+                # Set cache keys 0 and -1
                 elements = self._elements(
                     slice(0, size, size - 1), array=_array
                 )
@@ -3920,6 +3942,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         elif ndim == 2 and self.shape[-1] == 2:
             # 2-d with second dimension size 2 (i.e. shape (n, 2),
             # like bounds for 1-d coordinates).
+            # Set cache keys 0, 1, -2, and -1
             size0 = size // 2
             if size0 == 1:
                 step = 1
@@ -3932,8 +3955,9 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             cache[1] = elements[1]
             cache[-2] = elements[-2]
             cache[-1] = elements[-1]
-        elif size == 3:
-            # N-d (N>=2) with size == 3
+        elif size <= 3:
+            # N-d (N>=2) with size 2 or 3
+            # Set cache keys 0, 1, and -1
             elements = self._elements(Ellipsis, array=_array)
             elements = elements.flatten()
             cache[0] = elements[0]
@@ -3941,6 +3965,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
             cache[-1] = elements[-1]
         else:
             # All other N-d (N>=2) cases
+            # Set cache keys 0 and -1
             cache = {}
             cache[0] = self._elements((slice(0, 1, 1),) * ndim, array=_array)
             cache[-1] = self._elements(
@@ -4075,7 +4100,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         d._set_dask(dx, clear=self._ALL, in_memory=True)
         return d
 
-    def compute(self, _force_to_memory=True):
+    def compute(self, _force_to_memory=True, _cache_elements=True):
         """A view of the computed data.
 
         In-place changes to the returned array *might* affect the
@@ -4103,7 +4128,15 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 from computing the returned Dask graph to be in
                 memory. If False then the data resulting from
                 computing the Dask graph may or may not be in memory,
-                depending on the nature of the stack
+                depending on the nature of the stack.
+
+            _cache_elements: `bool`, optional
+                If True (the default) then create a cache of selected
+                elements from the computed array in memory, if the
+                type of the array allows it. See `cache_elements` for
+                details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -4153,8 +4186,13 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
 
             a.set_fill_value(self.get_fill_value(None))
 
-        if isinstance(a, (np.ndarray, int, float, bool, str)):
-            self.cache_elements(_array=a)
+        if _cache_elements:
+            from scipy.sparse import issparse
+
+            if isinstance(a, (np.ndarray, int, float, bool, str)) or issparse(
+                a
+            ):
+                self.cache_elements(_array=a)
 
         return a
 

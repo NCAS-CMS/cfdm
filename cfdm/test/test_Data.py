@@ -559,7 +559,7 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([1, 2])
         d._del_cached_elements()
         d.array
-        self.assertEqual(d.get_cached_elements(), {0: 1, -1: 2})
+        self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 2})
 
     def test_Data_flatten(self):
         """Test Data.flatten."""
@@ -1643,7 +1643,7 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([1, 2])
         d._del_cached_elements()
         d.compute()
-        self.assertEqual(d.get_cached_elements(), {0: 1, -1: 2})
+        self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 2})
 
     def test_Data_chunks(self):
         """Test Data.chunks."""
@@ -2881,7 +2881,7 @@ class DataTest(unittest.TestCase):
         for array in (np.array([1, 2]), [1, 2]):
             d = cfdm.Data(array)
             for i in range(2):
-                self.assertEqual(d.get_cached_elements(), {0: 1, -1: 2})
+                self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 2})
                 # Check that getting the array doesn't change the
                 # cached elements
                 if i:
@@ -2963,14 +2963,14 @@ class DataTest(unittest.TestCase):
         # Interaction with `cfdm.display_data`
         d = cfdm.Data([[1, 2, 3]])
         d._del_cached_elements()
-        org = cfdm.display_data(False)
-        self.assertEqual(repr(d), "<Data(1, 3): [[...]]>")
-        cfdm.display_data(True)
-        self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
-        cfdm.display_data(False)
-        self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
-        # Reset
-        cfdm.display_data(org)
+        with cfdm.display_data(False):
+            self.assertEqual(repr(d), "<Data(1, 3): [[...]]>")
+
+        with cfdm.display_data(True):
+            self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
+
+        with cfdm.display_data(False):
+            self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
 
 
 if __name__ == "__main__":
