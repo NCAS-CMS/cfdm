@@ -3903,8 +3903,13 @@ class NetCDFRead(IORead):
         g["dataset_compliance"][
             "CF version"] = self.implementation.get_cf_version()
 
-        g["dataset_compliance"][field_ncvar]["dimensions"] = dimensions
-        ###g["dataset_compliance"][field_ncvar].setdefault("attributes", [])
+        # DEV MAIN
+        # Create dimensions dict and populate with sizes
+        g_dims = g["dataset_compliance"][field_ncvar]
+        g_dims.update({"dimensions": {}})
+        print("G DIMS IS", g_dims)
+        for dim in dimensions:
+            g_dims["dimensions"][dim] = {}
 
         logger.info(
             "    Converting netCDF variable "
@@ -5590,7 +5595,10 @@ class NetCDFRead(IORead):
         per_var_dict["attributes"][attribute_name] = attribute_value
 
         if dimensions is not None:
-            d["dimensions"] = dimensions
+            d["dimensions"]
+            for dim in dimensions:
+                d["dimensions"].update({dim: per_dim_dict})
+            print("NOW DIM DICT IS:", d["dimensions"])
 
         noncompliance_dict = {}
         g["dataset_compliance"].setdefault(
@@ -5672,18 +5680,13 @@ class NetCDFRead(IORead):
             "variables": {},
             # add size (int or None), and optionally reason and code
         }
+        # DEV MAIN
 
         g = self.read_vars
         component_report = g["component_report"].get(ncvar)
 
-        d = per_var_dict
-        if dimensions is not None:
-            d["dimensions"] = dimensions
-
         # Unlike for 'attribute' input to _add_message, this 'attribute' is the
         # the attribute_name only and not "var_name:attribute_name" to split
-
-        # DEV MAIN
         if component_report:
             g_parent = g["dataset_compliance"][parent_ncvar]["attributes"]
             g_parent.setdefault(attribute, per_attr_dict)
