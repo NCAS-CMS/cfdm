@@ -1328,6 +1328,7 @@ class NetCDFRead(IORead):
             "verbose": verbose,
             # Warnings?
             "warnings": warnings,
+            # SLB maybe inject the CF version here, straight away?
             "dataset_compliance": {},
             "component_report": {},
             "auxiliary_coordinate": {},
@@ -5557,11 +5558,36 @@ class NetCDFRead(IORead):
             code = None
 
         # DEV MAIN
+        per_var_dict = {
+            "attributes": {},
+            "dimensions": {},
+        }
+
+        # *Attribute list*
+        per_attr_dict = {
+            "variables": {},
+            "dimensions": {},
+            # add value (string), and optionally reason and code
+        }
+
+        # *Dimension dict*
+        per_dim_dict = {
+            "variables": {},
+            # add size (int or None), and optionally reason and code
+        }
+
         attribute_key = next(iter(attribute))
         var_name, attribute_name = attribute_key.split(":")
+        # TODO need better way to access this - inefficient, should be able to
+        # use an in-built function!
         attribute_value = attribute[attribute_key]
-        d = {"code": code, "attribute": attribute_value, "reason": message}
-        print("VAR NAME IS", var_name)
+
+        d = per_var_dict
+        if code:
+            per_var_dict["code"] = code
+        if message:
+            per_var_dict["reason"] = message
+        per_var_dict["attributes"][attribute_name] = attribute_value
 
         if dimensions is not None:
             d["dimensions"] = dimensions
