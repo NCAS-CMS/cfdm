@@ -101,27 +101,23 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         # Structures to form the desired outputs
         # *Variable dict*
-        var_dict = {
-            "attributes": [],
-            "dimensions": [],
+        per_var_dict = {
+            "attributes": {},
+            "dimensions": {},
         }
 
         # *Attribute list*
-        attr_list = [
-            {
+        per_attr_dict = {
                 "variables": {},
-                "dimensions": [],
-                # add value, reason and code
-            },
-        ]
+                "dimensions": {},
+                # add value (string), and optionally reason and code
+        }
 
         # *Dimension dict*
-        dim_list = [
-            {
+        per_dim_dict = {
                 "variables": {},
-                # add size, reason and code
-            }
-        ]
+                # add size (int or None), and optionally reason and code
+        }
 
     def test_extract_names_from_xml(self):
         """Test the `cfvalidation._extract_names_from_xml` function."""
