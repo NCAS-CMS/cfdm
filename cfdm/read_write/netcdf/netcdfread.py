@@ -2198,6 +2198,11 @@ class NetCDFRead(IORead):
             if field_or_domain is not None:
                 all_fields_or_domains[ncvar] = field_or_domain
 
+        # SLB add cf version - inject at end, not appearing from init setting
+        print("STOP HERE 0--------------------")
+        pprint(g["dataset_compliance"])
+        print("STOP HERE 1--------------------")
+
         # ------------------------------------------------------------
         # Create domain constructs from UGRID mesh topology variables
         # ------------------------------------------------------------
@@ -3890,10 +3895,13 @@ class NetCDFRead(IORead):
         g["domain_ancillary_key"] = {}
 
         dimensions = g["variable_dimensions"][field_ncvar]
+
+        # Register the CF Conventions version at top-level only
         g["dataset_compliance"].setdefault(field_ncvar, {})
-        g["dataset_compliance"][field_ncvar][
-            "CF version"
-        ] = self.implementation.get_cf_version()
+
+        g["dataset_compliance"][
+            "CF version"] = self.implementation.get_cf_version()
+
         g["dataset_compliance"][field_ncvar]["dimensions"] = dimensions
         g["dataset_compliance"][field_ncvar].setdefault("attributes", [])
 
@@ -5548,71 +5556,24 @@ class NetCDFRead(IORead):
         else:
             code = None
 
-        # SLB DEV
-        # Temporary processing whilst get dataset_compliance data structure
-        # updated - after this we will change attribute argument inputs
-        # so arguments are made separately
-        attribute_key = next(iter(attribute))
-        var_name, attribute_name = attribute_key.split(":")
-        attribute_value = attribute[attribute_key]
-        pre_d = {"code": code, "value": attribute_value, "reason": {}}
-        d = {"code": code, "value": attribute_value, "reason": message}
+        # DEV MAIN
+        d = {"code": code, "attribute": attribute, "reason": message}
 
         if dimensions is not None:
             d["dimensions"] = dimensions
 
         noncompliance_dict = {
-                "CF version": self.implementation.get_cf_version(),
-                "attributes": [],
+            "attributes": [],
         }
         g["dataset_compliance"].setdefault(
-            top_ancestor_ncvar, noncompliance_dict
+            top_ancestor_ncvar, noncompliance_dict,
         )
-        ###print("READ VARS ARE", g)
-        # Only add a component report if there is need i.e. if the direct
-        # parent ncvar is defined so not the same as the top ancestor ncvar
+
+        g["dataset_compliance"][top_ancestor_ncvar].setdefault(
+                ncvar, []).append(d)
         if direct_parent_ncvar:
-            g_next = g["dataset_compliance"][top_ancestor_ncvar][
-                "attributes"]
-            g_next.append(d)
-
-            # Dicts are optimised for key-value lookup, but this requires
-            # value-key lookup -  is there a better way?
-            varattrs = g["variable_attributes"][top_ancestor_ncvar]
-            reverse_varattrs = {v: k for k, v in varattrs.items()}
-            store_attr = reverse_varattrs[ncvar]
-
-            parent_ncdims = self._ncdimensions(top_ancestor_ncvar)
-
-            e = g["component_report"].setdefault(
-                direct_parent_ncvar, noncompliance_dict)
-            e2 = e.setdefault(store_attr, pre_d)
-            e2["reason"][ncvar] = d
-        else:
-            ### print("NON DIRECT PARENT CASE:", ncvar, top_ancestor_ncvar, d)
-            g1 = g["dataset_compliance"][top_ancestor_ncvar]["attributes"]
-            # SLB TODO inefficient for querying though? Simple example:
-            # a = [{1:2}, {3:4}, {5:6}, {7:8}]
-            # [d[1] for d in a if 1 in d]
-            # -> to find value for key 1! Need to do something like:
-            # next((d for d in a if 1 in d), None)[1] = <update value>
-            ###print("Have now g1 of:", g1)
-            g_next = next((d for d in g1 if ncvar in d), None)
-            if g_next:
-                ###print("This time:", g_next[ncvar])
-                g_next[ncvar]["reason"].setdefault(
-                    attribute_name, []).append(d)
-            else:
-                g1.append({ncvar: pre_d})
-                index_next = len(g1) - 1
-                g1[index_next][ncvar]["reason"].setdefault(
-                    attribute_name, []).append(d)  # correct - comp to above?
-
-            # SLB NEW: this shows there are missing parts from the dict!
-            # Some things aren't being added to the component report when
-            # should be...
-            # e = g["component_report"].setdefault(
-            #    top_ancestor_ncvar, noncompliance_dict)
+            e = g["component_report"].setdefault(direct_parent_ncvar, {})
+            e.setdefault(ncvar, []).append(d)
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
@@ -5668,39 +5629,20 @@ class NetCDFRead(IORead):
         # SLB rename this 'd' from _add_message to something better
         # SLB Note: have dropped 'code' because it doesn't make sense to
         # register a code except at the lowest level...
-        # SLB NOTE reason is a dict, not a list!
         d = {"value": attribute, "reason": {}}
         if dimensions is not None:
             d["dimensions"] = dimensions
 
         noncompliance_dict = {
-            "CF version": self.implementation.get_cf_version(),
+            ### "CF version": self.implementation.get_cf_version(),
             "attributes": [],
         }
 
+        # DEV MAIN
         if component_report:
-            g1 = g["dataset_compliance"][parent_ncvar]["attributes"]
-            g_next = next((d for d in g1 if ncvar in d), None)
-            if g_next:
-                if g["mesh"]:
-                    s1 = g_next.setdefault("mesh", d)
-                    s2 = s1["reason"].setdefault(ncvar, noncompliance_dict)
-                    s2["attributes"].append(component_report)
-                else:
-                    print("Should we get here?")  # SLB DEV
-                    # Never used? Chage up method to be mesh specific, then?
-                    #g1.setdefault(
-                    #    ncvar, []
-                    #).append(component_report)
-            else:
-                if g["mesh"]:
-                    g1.append({"mesh": d})
-                    index_next = len(g1) - 1
-                    s2 = g1[index_next][ncvar]["reason"].setdefault(
-                        ncvar, noncompliance_dict)
-                    s2["attributes"].append(component_report)
-                else:
-                    print("Should we get here?")  # SLB DEV, see same above
+            g["dataset_compliance"][parent_ncvar].setdefault(
+                ncvar, []
+            ).extend(component_report)
 
     def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Find a domain axis identifier for the variable's dimensions.
