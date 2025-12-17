@@ -5597,8 +5597,12 @@ class NetCDFRead(IORead):
             top_ancestor_ncvar, noncompliance_dict,
         )
 
-        g["dataset_compliance"][top_ancestor_ncvar].setdefault(
-                ncvar, []).append(d)
+        g_top = g["dataset_compliance"][top_ancestor_ncvar]  # e.g. pa
+        g_down = g_top.setdefault("attributes", {})  # e.g. mesh
+        g_top["attributes"][attribute_name] = per_attr_dict
+        g_top["attributes"][attribute_name]["variables"][var_name] = d  # e.g. Mesh2
+
+        # IGNORE FOR NOW!
         if direct_parent_ncvar:
             e = g["component_report"].setdefault(direct_parent_ncvar, {})
             e.setdefault(ncvar, []).append(d)
@@ -5650,26 +5654,42 @@ class NetCDFRead(IORead):
             `None`
 
         """
-        g = self.read_vars
 
+        per_var_dict = {
+            "attributes": {},
+            "dimensions": {},
+        }
+
+        # *Attribute list*
+        per_attr_dict = {
+            "variables": {},
+            "dimensions": {},
+            # add value (string), and optionally reason and code
+        }
+
+        # *Dimension dict*
+        per_dim_dict = {
+            "variables": {},
+            # add size (int or None), and optionally reason and code
+        }
+
+        g = self.read_vars
         component_report = g["component_report"].get(ncvar)
 
-        # SLB rename this 'd' from _add_message to something better
-        # SLB Note: have dropped 'code' because it doesn't make sense to
-        # register a code except at the lowest level...
-        d = {"value": attribute, "reason": {}}
+        d = per_var_dict
         if dimensions is not None:
             d["dimensions"] = dimensions
 
-        noncompliance_dict = {
-            ### "CF version": self.implementation.get_cf_version(),
-        }
+        # Unlike for 'attribute' input to _add_message, this 'attribute' is the
+        # the attribute_name only and not "var_name:attribute_name" to split
 
         # DEV MAIN
         if component_report:
-            g["dataset_compliance"][parent_ncvar].setdefault(
-                ncvar, []
-            ).extend(component_report)
+            g_parent = g["dataset_compliance"][parent_ncvar]["attributes"]
+            g_parent.setdefault(attribute, per_attr_dict)
+            g_parent[attribute]["variables"].setdefault(ncvar, {})
+            g_parent[attribute]["variables"][ncvar].update(
+                component_report)
 
     def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Find a domain axis identifier for the variable's dimensions.
