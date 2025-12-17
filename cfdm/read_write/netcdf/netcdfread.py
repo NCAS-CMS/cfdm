@@ -3903,13 +3903,11 @@ class NetCDFRead(IORead):
         g["dataset_compliance"][
             "CF version"] = self.implementation.get_cf_version()
 
-        # DEV MAIN
         # Create dimensions dict and populate with sizes
-        g_dims = g["dataset_compliance"][field_ncvar]
-        g_dims.update({"dimensions": {}})
-        print("G DIMS IS", g_dims)
-        for dim in dimensions:
-            g_dims["dimensions"][dim] = {}
+        g["dataset_compliance"][field_ncvar]["dimensions"] = {
+            dim: {"size": g["internal_dimension_sizes"][dim]} for
+            dim in dimensions
+        }
 
         logger.info(
             "    Converting netCDF variable "
@@ -5594,11 +5592,12 @@ class NetCDFRead(IORead):
             per_var_dict["reason"] = message
         per_var_dict["attributes"][attribute_name] = attribute_value
 
+        # Create dimensions dict and populate with sizes
         if dimensions is not None:
-            d["dimensions"]
-            for dim in dimensions:
-                d["dimensions"].update({dim: per_dim_dict})
-            print("NOW DIM DICT IS:", d["dimensions"])
+            d["dimensions"] = {
+                dim: {"size": g["internal_dimension_sizes"][dim]} for
+                dim in dimensions
+            }
 
         noncompliance_dict = {}
         g["dataset_compliance"].setdefault(
