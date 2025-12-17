@@ -1328,7 +1328,7 @@ class NetCDFRead(IORead):
             "verbose": verbose,
             # Warnings?
             "warnings": warnings,
-            "dataset_compliance": {None: {"attributes": []}},
+            "dataset_compliance": {},
             "component_report": {},
             "auxiliary_coordinate": {},
             "cell_measure": {},
@@ -3903,7 +3903,7 @@ class NetCDFRead(IORead):
             "CF version"] = self.implementation.get_cf_version()
 
         g["dataset_compliance"][field_ncvar]["dimensions"] = dimensions
-        g["dataset_compliance"][field_ncvar].setdefault("attributes", [])
+        ###g["dataset_compliance"][field_ncvar].setdefault("attributes", [])
 
         logger.info(
             "    Converting netCDF variable "
@@ -5158,7 +5158,7 @@ class NetCDFRead(IORead):
         # -------------------------------------------------------------
         # Add the structural read report to the field/domain
         dataset_compliance = g["dataset_compliance"][field_ncvar]
-        components = dataset_compliance["attributes"]
+        components = dataset_compliance  # SLB edited
         if components:
             dataset_compliance = {field_ncvar: dataset_compliance}
         else:
@@ -5557,14 +5557,16 @@ class NetCDFRead(IORead):
             code = None
 
         # DEV MAIN
-        d = {"code": code, "attribute": attribute, "reason": message}
+        attribute_key = next(iter(attribute))
+        var_name, attribute_name = attribute_key.split(":")
+        attribute_value = attribute[attribute_key]
+        d = {"code": code, "attribute": attribute_value, "reason": message}
+        print("VAR NAME IS", var_name)
 
         if dimensions is not None:
             d["dimensions"] = dimensions
 
-        noncompliance_dict = {
-            "attributes": [],
-        }
+        noncompliance_dict = {}
         g["dataset_compliance"].setdefault(
             top_ancestor_ncvar, noncompliance_dict,
         )
@@ -5635,7 +5637,6 @@ class NetCDFRead(IORead):
 
         noncompliance_dict = {
             ### "CF version": self.implementation.get_cf_version(),
-            "attributes": [],
         }
 
         # DEV MAIN
@@ -8329,9 +8330,9 @@ class NetCDFRead(IORead):
 
         if component_report is not None:
             for var, report in component_report.items():
-                g["dataset_compliance"][parent_ncvar][
-                    "attributes"
-                ].setdefault(var, []).extend(report)
+                # SLB edited
+                g["dataset_compliance"][parent_ncvar].setdefault(
+                    var, []).extend(report)
 
         return self.implementation.copy_construct(g[construct_type][ncvar])
 
