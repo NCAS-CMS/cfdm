@@ -5585,12 +5585,20 @@ class NetCDFRead(IORead):
         # use an in-built function!
         attribute_value = attribute[attribute_key]
 
-        d = per_var_dict
+        # Form a single issue to register (message, code and attr value)
+        one_issue_dict = {"value": attribute_value}
         if code:
-            d["code"] = code
+            one_issue_dict["code"] = code
         if message:
-            d["reason"] = message
-        d["attributes"][attribute_name] = attribute_value
+            one_issue_dict["reason"] = message
+
+        # Form lowest-level dict which reports an ultimate issue via a 'reason'
+        # message, code and attribute value against the attribute name key
+        d = per_var_dict
+        # Add message to list of reasons: there may be more than one
+        # issue/reason listed per attribute!
+        d["attributes"].setdefault(attribute_name, [])
+        d["attributes"][attribute_name].append(one_issue_dict)
 
         # Create dimensions dict and populate with sizes
         if dimensions is not None:
@@ -5608,6 +5616,11 @@ class NetCDFRead(IORead):
         g_top["attributes"][attribute_name] = per_attr_dict  # e.g. mesh key
         # TODO should use update after setdefault also for variables child
         # evel below (see approach below in 'if direct_parent_ncvar' block)
+
+        # SLB: is this not repeating nest of attr as per above in d?
+        print("////////////////////// D IS", d)
+        print("////////////////////// G_TOP IS", g_top)
+
         g_top["attributes"][attribute_name]["variables"][ncvar] = d  # e.g. Mesh2
 
         # DEV MAIN 2
@@ -5633,7 +5646,7 @@ class NetCDFRead(IORead):
 
         logger.info(
             "    Error processing netCDF variable "
-            f"{ncvar}{dimensions}: {d['reason']}"
+            f"{ncvar}{dimensions}: {message}"
         )  # pragma: no cover
 
         return d
