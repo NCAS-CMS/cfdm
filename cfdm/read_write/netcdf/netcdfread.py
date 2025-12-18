@@ -5580,17 +5580,17 @@ class NetCDFRead(IORead):
         }
 
         attribute_key = next(iter(attribute))
-        var_name, attribute_name = attribute_key.split(":")
+        attribute_name = attribute_key.split(":")[1]
         # TODO need better way to access this - inefficient, should be able to
         # use an in-built function!
         attribute_value = attribute[attribute_key]
 
         d = per_var_dict
         if code:
-            per_var_dict["code"] = code
+            d["code"] = code
         if message:
-            per_var_dict["reason"] = message
-        per_var_dict["attributes"][attribute_name] = attribute_value
+            d["reason"] = message
+        d["attributes"][attribute_name] = attribute_value
 
         # Create dimensions dict and populate with sizes
         if dimensions is not None:
@@ -5601,18 +5601,30 @@ class NetCDFRead(IORead):
 
         noncompliance_dict = {}
         g["dataset_compliance"].setdefault(
-            top_ancestor_ncvar, noncompliance_dict,
-        )
+            top_ancestor_ncvar, noncompliance_dict)
 
         g_top = g["dataset_compliance"][top_ancestor_ncvar]  # e.g. pa
-        g_down = g_top.setdefault("attributes", {})  # e.g. mesh
-        g_top["attributes"][attribute_name] = per_attr_dict
-        g_top["attributes"][attribute_name]["variables"][var_name] = d  # e.g. Mesh2
+        g_top.setdefault("attributes", {})
+        g_top["attributes"][attribute_name] = per_attr_dict  # e.g. mesh key
+        # TODO should use update after setdefault also for variables child
+        # evel below (see approach below in 'if direct_parent_ncvar' block)
+        g_top["attributes"][attribute_name]["variables"][ncvar] = d  # e.g. Mesh2
 
-        # IGNORE FOR NOW!
+        # DEV MAIN 2
         if direct_parent_ncvar:
-            e = g["component_report"].setdefault(direct_parent_ncvar, {})
-            e.setdefault(ncvar, []).append(d)
+            # Dicts are optimised for key-value lookup, but this requires
+            # value-key lookup - find a better way to get relevant attr using
+            # functionlity in this module
+            varattrs = g["variable_attributes"][top_ancestor_ncvar]
+            reverse_varattrs = {v: k for k, v in varattrs.items()}
+            store_attr = reverse_varattrs[ncvar]
+
+            e = g["component_report"].setdefault(
+                direct_parent_ncvar, {})  # e.g. Mesh2
+            e.setdefault("attributes", {})
+            # E.g. edge_node_connectivity key:
+            e["attributes"][store_attr] = per_attr_dict
+            e["attributes"][store_attr]["variables"][ncvar].update(d)
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
