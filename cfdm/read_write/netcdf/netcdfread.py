@@ -5611,8 +5611,19 @@ class NetCDFRead(IORead):
         # processed to be stored on ancestor variables via the
         # logic in _include_component_report and in the 'direct_parent_ncvar'
         # block below if a 'direct_parent_ncvar' is provided.
-        g["dataset_compliance"].setdefault(ncvar, {})
-        g["dataset_compliance"][ncvar].update(d)
+        ###g["dataset_compliance"].setdefault(ncvar, {})
+        ###g["dataset_compliance"][ncvar].update(d)
+
+        ###g_top["dataset_compliance"].setdefault(top_ancestor_ncvar, {})
+        g["dataset_compliance"].setdefault(top_ancestor_ncvar, {})
+        g_top = g["dataset_compliance"][top_ancestor_ncvar]
+        g_top.setdefault("attributes", {})
+        g_top["attributes"][attribute_name] = per_attr_dict  # e.g. mesh key
+        # TODO should use update after setdefault also for variables child
+        # evel below (see approach below in 'if direct_parent_ncvar' block)
+        g_top["attributes"][attribute_name]["variables"].setdefault(ncvar, {})
+        g_top["attributes"][attribute_name]["variables"][ncvar].update(d)  # e.g. Mesh2
+        # END NEW
 
         if direct_parent_ncvar:
             # Dicts are optimised for key-value lookup, but this requires
@@ -5621,6 +5632,7 @@ class NetCDFRead(IORead):
             varattrs = g["variable_attributes"][top_ancestor_ncvar]
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
+            print("\nFOR CASE:", top_ancestor_ncvar, ncvar, direct_parent_ncvar)
 
             g_parent = g["component_report"].setdefault(direct_parent_ncvar, {})
             g_parent.setdefault("attributes", {})
@@ -5703,7 +5715,7 @@ class NetCDFRead(IORead):
         if component_report:
             g_parent = g["dataset_compliance"][parent_ncvar]
             g_parent.setdefault("attributes", {})
-            g_parent["attributes"][attribute] = per_attr_dict  # e.g. mesh key
+            g_parent["attributes"].setdefault(attribute, per_attr_dict)
             g_parent["attributes"][attribute]["variables"].setdefault(ncvar, {})
             g_parent["attributes"][attribute]["variables"][ncvar].update(
                 component_report)
