@@ -5593,10 +5593,10 @@ class NetCDFRead(IORead):
             one_issue_dict["reason"] = message
 
         # Form lowest-level dict which reports an ultimate issue via a 'reason'
-        # message, code and attribute value against the attribute name key
+        # message, code and attribute value against the attribute name key.
+        # These go into a *list*, since there may be more than one issue hence
+        # reason message and corresponding code listed per attribute.
         d = per_var_dict
-        # Add message to list of reasons: there may be more than one
-        # issue/reason listed per attribute!
         d["attributes"].setdefault(attribute_name, [])
         d["attributes"][attribute_name].append(one_issue_dict)
 
@@ -5607,23 +5607,13 @@ class NetCDFRead(IORead):
                 dim in dimensions
             }
 
-        noncompliance_dict = {}
-        g["dataset_compliance"].setdefault(
-            top_ancestor_ncvar, noncompliance_dict)
+        # Store the issue on the immediate variable. The issue will be
+        # processed to be stored on ancestor variables via the
+        # logic in _include_component_report and in the 'direct_parent_ncvar'
+        # block below if a 'direct_parent_ncvar' is provided.
+        g["dataset_compliance"].setdefault(ncvar, {})
+        g["dataset_compliance"][ncvar].update(d)
 
-        g_top = g["dataset_compliance"][top_ancestor_ncvar]  # e.g. pa
-        g_top.setdefault("attributes", {})
-        g_top["attributes"][attribute_name] = per_attr_dict  # e.g. mesh key
-        # TODO should use update after setdefault also for variables child
-        # evel below (see approach below in 'if direct_parent_ncvar' block)
-
-        # SLB: is this not repeating nest of attr as per above in d?
-        print("////////////////////// D IS", d)
-        print("////////////////////// G_TOP IS", g_top)
-
-        g_top["attributes"][attribute_name]["variables"][ncvar] = d  # e.g. Mesh2
-
-        # DEV MAIN 2
         if direct_parent_ncvar:
             # Dicts are optimised for key-value lookup, but this requires
             # value-key lookup - find a better way to get relevant attr using
@@ -5632,12 +5622,11 @@ class NetCDFRead(IORead):
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
 
-            e = g["component_report"].setdefault(
-                direct_parent_ncvar, {})  # e.g. Mesh2
-            e.setdefault("attributes", {})
-            # E.g. edge_node_connectivity key:
-            e["attributes"][store_attr] = per_attr_dict
-            e["attributes"][store_attr]["variables"][ncvar].update(d)
+            g_parent = g["component_report"].setdefault(direct_parent_ncvar, {})
+            g_parent.setdefault("attributes", {})
+            g_parent["attributes"].setdefault(store_attr, per_attr_dict)
+            g_parent["attributes"][store_attr]["variables"].setdefault(ncvar, {})
+            g_parent["attributes"][store_attr]["variables"][ncvar].update(d)
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
@@ -5712,10 +5701,11 @@ class NetCDFRead(IORead):
         # Unlike for 'attribute' input to _add_message, this 'attribute' is the
         # the attribute_name only and not "var_name:attribute_name" to split
         if component_report:
-            g_parent = g["dataset_compliance"][parent_ncvar]["attributes"]
-            g_parent.setdefault(attribute, per_attr_dict)
-            g_parent[attribute]["variables"].setdefault(ncvar, {})
-            g_parent[attribute]["variables"][ncvar].update(
+            g_parent = g["dataset_compliance"][parent_ncvar]
+            g_parent.setdefault("attributes", {})
+            g_parent["attributes"][attribute] = per_attr_dict  # e.g. mesh key
+            g_parent["attributes"][attribute]["variables"].setdefault(ncvar, {})
+            g_parent["attributes"][attribute]["variables"][ncvar].update(
                 component_report)
 
     def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
