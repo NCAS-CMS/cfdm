@@ -5592,13 +5592,18 @@ class NetCDFRead(IORead):
         if message:
             one_issue_dict["reason"] = message
 
-        # Form lowest-level dict which reports an ultimate issue via a 'reason'
-        # message, code and attribute value against the attribute name key.
-        # These go into a *list*, since there may be more than one issue hence
-        # reason message and corresponding code listed per attribute.
-        d = per_var_dict
-        d["attributes"].setdefault(attribute_name, [])
-        d["attributes"][attribute_name].append(one_issue_dict)
+        # If the top_ancestor_ncvar and ncvar are the same, don't need to
+        # process under attributes ??? SLB
+        if top_ancestor_ncvar == ncvar:
+            d = one_issue_dict.copy()
+        else:
+            # Form lowest-level dict which reports an ultimate issue via a 'reason'
+            # message, code and attribute value against the attribute name key.
+            # These go into a *list*, since there may be more than one issue hence
+            # reason message and corresponding code listed per attribute.
+            d = per_var_dict
+            d["attributes"].setdefault(attribute_name, [])
+            d["attributes"][attribute_name].append(one_issue_dict)
 
         # Create dimensions dict and populate with sizes
         if dimensions is not None:
@@ -5607,32 +5612,32 @@ class NetCDFRead(IORead):
                 dim in dimensions
             }
 
-        # Store the issue on the immediate variable. The issue will be
-        # processed to be stored on ancestor variables via the
-        # logic in _include_component_report and in the 'direct_parent_ncvar'
-        # block below if a 'direct_parent_ncvar' is provided.
-        ###g["dataset_compliance"].setdefault(ncvar, {})
-        ###g["dataset_compliance"][ncvar].update(d)
+        # Process issues emerging on or via attributes
+        for g_dict in (g["dataset_compliance"],): ### g["component_report"],):
+            g_dict.setdefault(top_ancestor_ncvar, {})
+            g_top = g_dict[top_ancestor_ncvar]
 
-        ###g_top["dataset_compliance"].setdefault(top_ancestor_ncvar, {})
-        g["dataset_compliance"].setdefault(top_ancestor_ncvar, {})
-        g_top = g["dataset_compliance"][top_ancestor_ncvar]
-        g_top.setdefault("attributes", {})
-        g_top["attributes"][attribute_name] = per_attr_dict  # e.g. mesh key
-        # TODO should use update after setdefault also for variables child
-        # evel below (see approach below in 'if direct_parent_ncvar' block)
-        g_top["attributes"][attribute_name]["variables"].setdefault(ncvar, {})
-        g_top["attributes"][attribute_name]["variables"][ncvar].update(d)  # e.g. Mesh2
-        # END NEW
+            # If the top_ancestor_ncvar and ncvar are the same, there is a
+            # problem with an ncvar with no parents - so store directly on ncvar
+            # TODO should probably make the top_ancestor_ncvar optional
+            # so that we don't need to do this check!
+            if top_ancestor_ncvar == ncvar:
+                g["dataset_compliance"][top_ancestor_ncvar].update(d)
+                return d
+
+            g_top.setdefault("attributes", {})
+            g_top["attributes"][attribute_name] = per_attr_dict  # e.g. mesh key
+            g_top["attributes"][attribute_name]["variables"].setdefault(ncvar, {})
+            g_top["attributes"][attribute_name]["variables"][ncvar].update(d)  # e.g. Mesh2
 
         if direct_parent_ncvar:
+            ### print("\nFOR CASE:", top_ancestor_ncvar, ncvar, direct_parent_ncvar)
             # Dicts are optimised for key-value lookup, but this requires
             # value-key lookup - find a better way to get relevant attr using
             # functionlity in this module
             varattrs = g["variable_attributes"][top_ancestor_ncvar]
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
-            print("\nFOR CASE:", top_ancestor_ncvar, ncvar, direct_parent_ncvar)
 
             g_parent = g["component_report"].setdefault(direct_parent_ncvar, {})
             g_parent.setdefault("attributes", {})
@@ -5705,14 +5710,14 @@ class NetCDFRead(IORead):
             "variables": {},
             # add size (int or None), and optionally reason and code
         }
-        # DEV MAIN
 
         g = self.read_vars
         component_report = g["component_report"].get(ncvar)
 
         # Unlike for 'attribute' input to _add_message, this 'attribute' is the
         # the attribute_name only and not "var_name:attribute_name" to split
-        if component_report:
+        if component_report: ###:
+            ### print(f"CR| HAVE NCVAR {ncvar} AND ATTR {attribute}")
             g_parent = g["dataset_compliance"][parent_ncvar]
             g_parent.setdefault("attributes", {})
             g_parent["attributes"].setdefault(attribute, per_attr_dict)
