@@ -4933,8 +4933,6 @@ class NetCDFRead(IORead):
                     )
 
                     create_new = True
-
-                    known_bad_snames = set()
                     if not coordinates:
                         # DCH ALERT
                         # what to do about duplicate standard names? TODO
@@ -5604,7 +5602,7 @@ class NetCDFRead(IORead):
 
         # Process issues emerging on or via attributes
         g["dataset_compliance"].setdefault(top_ancestor_ncvar, per_attr_dict)
-        g_top = g["dataset_compliance"][top_ancestor_ncvar]
+        g["dataset_compliance"][top_ancestor_ncvar]
 
         # If the top_ancestor_ncvar and ncvar are the same, there is a
         # problem with an ncvar with no parents - so store directly on ncvar
@@ -5648,7 +5646,6 @@ class NetCDFRead(IORead):
                 d["dimensions"] = dim_sizes
 
             g_parent["attributes"][store_attr]["variables"][ncvar].update(d)
-
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
@@ -5736,7 +5733,6 @@ class NetCDFRead(IORead):
             if dim_sizes:
                 g_parent["dimensions"] = dim_sizes  # on var, and on...
                 g_parent["attributes"][attribute]["dimensions"] = dim_sizes  # attr
-
 
     def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Find a domain axis identifier for the variable's dimensions.
@@ -8547,7 +8543,6 @@ class NetCDFRead(IORead):
                 "latter redundant - set it to False with a custom list."
             )
 
-        invalid_names = []
         any_sn_found = False
         invalid_sn_found = False
         for sn_attr in ("standard_name", "computed_standard_name"):
