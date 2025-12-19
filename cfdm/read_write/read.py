@@ -190,6 +190,35 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.12.0.0
 
+        noncompliance_report: `bool`, optional
+            If True then return a warning when any data read in are
+            not fully compliant by the CF Conventions, with a dictionary
+            which registers any detected issues in a structured way to
+            indicate the issue against any netCDF objects (variables,
+            dimensions and/or attributes) which they affect. Note this is
+            in an (early) developmental stage, therefore the default is
+            False to not produce this warning.
+
+            The dictionaries printed in the warning are available
+            post-read through the dataset_compliance() method
+            available on a field or domain.
+
+            .. warning:: Compliance checking in cfdm is not yet mature
+                         and therefore only certain issues of
+                         non-compliance will be detected and reported in
+                         the warning dictionary, so this is not intended,
+                         at present, to be a comprehensive check for
+                         compliance according to the latest version of
+                         the CF Conventions. As-is it may be useful as
+                         a guide to possible issues.
+
+                         In future a human-friendly report will be made
+                         available from the warning dictionary output,
+                         but for now it is only available pretty-printed
+                         from the nested machine-parsable structure.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         ignore_unknown_type: Deprecated at version 1.12.2.0
             Use *dataset_type* instead.
 

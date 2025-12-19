@@ -1098,11 +1098,12 @@ class NetCDFRead(IORead):
                              at present, to be a comprehensive check for
                              compliance according to the latest version of
                              the CF Conventions. As-is it may be useful as
-                             a guide to issues.
+                             a guide to possible issues.
 
                              In future a human-friendly report will be made
                              available from the warning dictionary output,
-                             but for now it is in a nested structure.
+                             but for now it is only available pretty-printed
+                             from the nested machine-parsable structure.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
