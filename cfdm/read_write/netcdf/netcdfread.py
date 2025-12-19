@@ -5476,6 +5476,39 @@ class NetCDFRead(IORead):
 
             return g["geometries"].get(geometry_ncvar)
 
+    def _update_noncompliance_dict(
+            self, noncompliance_dict, ncvar, parent_ncvar, attribute,
+            update_dict,
+    ):
+        """TODO."""
+        var_compliance = noncompliance_dict[parent_ncvar]
+        var_compliance.setdefault("attributes", {})
+        var_compliance["attributes"].setdefault(
+            attribute,
+            {
+                "variables": {},
+                "dimensions": {},
+                # The value (string), and optionally reason and code, will
+                # be added later
+            }
+        )
+        var_compliance["attributes"][attribute]["variables"].setdefault(
+            ncvar, {})
+        var_compliance["attributes"][attribute]["variables"][ncvar].update(
+            update_dict)
+
+        return var_compliance
+
+    def _process_dimension_sizes(self, ncvar):
+        """TODO."""
+        g = self.read_vars
+
+        var_dims = g["variable_dimensions"][ncvar]
+        return {
+            dim: {"size": g["internal_dimension_sizes"][dim]}
+            for dim in var_dims
+        }
+
     def _add_message(
         self,
         top_ancestor_ncvar,
@@ -5557,16 +5590,6 @@ class NetCDFRead(IORead):
         else:
             code = None
 
-        per_var_dict = {
-            "attributes": {},
-            "dimensions": {},
-        }
-        per_attr_dict = {
-            "variables": {},
-            "dimensions": {},
-            # The value (string), and optionally reason and code, will be added
-        }
-
         attribute_key = next(iter(attribute))
         attribute_name = attribute_key.split(":")[1]
         # TODO need better way to access this - inefficient, should be able to
@@ -5589,7 +5612,10 @@ class NetCDFRead(IORead):
             # message, code and attribute value against the attribute name key.
             # These go into a *list*, since there may be more than one issue hence
             # reason message and corresponding code listed per attribute.
-            d = per_var_dict
+            d = {
+                "attributes": {},
+                "dimensions": {},
+            }
             d["attributes"].setdefault(attribute_name, [])
             d["attributes"][attribute_name].append(one_issue_dict)
 
@@ -5601,13 +5627,7 @@ class NetCDFRead(IORead):
                 })
 
         # Process issues emerging on or via attributes
-        g["dataset_compliance"].setdefault(top_ancestor_ncvar, per_attr_dict)
-        g["dataset_compliance"][top_ancestor_ncvar]
-
-        # If the top_ancestor_ncvar and ncvar are the same, there is a
-        # problem with an ncvar with no parents - so store directly on ncvar
-        # TODO should probably make the top_ancestor_ncvar optional
-        # so that we don't need to do this check!
+        g["dataset_compliance"].setdefault(top_ancestor_ncvar, {})
         g["dataset_compliance"][top_ancestor_ncvar].update(d)
 
         if direct_parent_ncvar:
@@ -5618,30 +5638,28 @@ class NetCDFRead(IORead):
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
 
+            # NEXT
+            #g_parent = self._update_noncompliance_dict(
+            #    g["component_report"], ncvar, direct_parent_ncvar, store_attr,
+            #    d
+            #)
+
             g_parent = g["component_report"].setdefault(direct_parent_ncvar, {})
             g_parent.setdefault("attributes", {})
             g_parent["attributes"].setdefault(store_attr, {"variables": {}})
             g_parent["attributes"][store_attr]["variables"].setdefault(ncvar, {})
 
-            # Get ncvar dimensions:
-            var_dim = g["variable_dimensions"][direct_parent_ncvar]
-            dim_sizes = {
-                dim: {"size": g["internal_dimension_sizes"][dim]}
-                for dim in var_dim
-            }
-            g_parent["dimensions"] = dim_sizes
-            g_parent["attributes"][store_attr]["dimensions"] = dim_sizes
-
-            # Get ncvar dimensions:
-            var_dim = g["variable_dimensions"][ncvar]
-            dim_sizes = {
-                dim: {"size": g["internal_dimension_sizes"][dim]}
-                for dim in var_dim
-            }
-
+            # Get dimensions for all variables
             # Set these dims on the variable *and* the attribute
             # TODO technically derives from the variable only, not its
             # attribute too, so is this robust?
+            direct_parent_dim_sizes = self._process_dimension_sizes(
+                direct_parent_ncvar)
+            g_parent["dimensions"] = direct_parent_dim_sizes
+            g_parent["attributes"][store_attr][
+                "dimensions"] = direct_parent_dim_sizes
+
+            dim_sizes = self._process_dimension_sizes(ncvar)
             if dim_sizes:
                 d["dimensions"] = dim_sizes
 
@@ -5697,42 +5715,23 @@ class NetCDFRead(IORead):
         g = self.read_vars
         component_report = g["component_report"].get(ncvar)
 
-        per_attr_dict = {
-            "variables": {},
-            "dimensions": {},
-            # The value (string), and optionally reason and code, will be added
-        }
-        if dimensions is not None:
-            per_attr_dict["dimensions"].update({
-                dim: {"size": g["internal_dimension_sizes"][dim]} for
-                dim in dimensions
-            })
-
         # Unlike for 'attribute' input to _add_message, this 'attribute' is the
         # the attribute_name only and not "var_name:attribute_name" to split
         if component_report:
-            g_parent = g["dataset_compliance"][parent_ncvar]
-            g_parent.setdefault("attributes", {})
-            g_parent["attributes"].setdefault(attribute, per_attr_dict)
-            g_parent["attributes"][attribute]["variables"].setdefault(ncvar, {})
+            g_parent = self._update_noncompliance_dict(
+                g["dataset_compliance"], ncvar, parent_ncvar, attribute,
+                component_report
+            )
 
-            g_parent["attributes"][attribute]["variables"][ncvar].update(
-                component_report)
-
-            # TODO process dimensions on intermediate netCDF objects
-            # Process dimensions on intermediate netCDF objects:
-            # ... on parent ncvar
-            var_dim = g["variable_dimensions"][parent_ncvar]
-            dim_sizes = {
-                dim: {"size": g["internal_dimension_sizes"][dim]}
-                for dim in var_dim
-            }
+            # Process dimensions on parent ncvar
+            dim_sizes = self._process_dimension_sizes(parent_ncvar)
             # Set these dims on the variable *and* the attribute
             # TODO technically derives from the variable only, not its
             # attribute too, so is this robust?
             if dim_sizes:
-                g_parent["dimensions"] = dim_sizes  # on var, and on...
-                g_parent["attributes"][attribute]["dimensions"] = dim_sizes  # attr
+                # On both var and attr
+                g_parent["dimensions"] = dim_sizes
+                g_parent["attributes"][attribute]["dimensions"] = dim_sizes
 
     def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Find a domain axis identifier for the variable's dimensions.
