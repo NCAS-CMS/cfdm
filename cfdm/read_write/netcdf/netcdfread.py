@@ -11,6 +11,7 @@ from functools import reduce
 from math import log, nan, prod
 from numbers import Integral
 from os.path import isdir, isfile, join
+from pprint import pformat
 from typing import Any
 from uuid import uuid4
 
@@ -41,8 +42,6 @@ from .flatten.config import (
     flattener_variable_map,
 )
 from .zarr import ZarrDimension
-
-from pprint import pformat, pprint  # DEBUG
 
 
 logger = logging.getLogger(__name__)
@@ -1328,7 +1327,6 @@ class NetCDFRead(IORead):
             "verbose": verbose,
             # Warnings?
             "warnings": warnings,
-            # SLB maybe inject the CF version here, straight away?
             "dataset_compliance": {},
             "component_report": {},
             "auxiliary_coordinate": {},
@@ -2198,11 +2196,6 @@ class NetCDFRead(IORead):
             )
             if field_or_domain is not None:
                 all_fields_or_domains[ncvar] = field_or_domain
-
-        # SLB add cf version - inject at end, not appearing from init setting
-        print("STOP HERE 0--------------------")
-        pprint(g["dataset_compliance"])
-        print("STOP HERE 1--------------------")
 
         # ------------------------------------------------------------
         # Create domain constructs from UGRID mesh topology variables
@@ -5159,7 +5152,7 @@ class NetCDFRead(IORead):
         # -------------------------------------------------------------
         # Add the structural read report to the field/domain
         dataset_compliance = g["dataset_compliance"][field_ncvar]
-        components = dataset_compliance  # SLB edited
+        components = dataset_compliance
         if components:
             dataset_compliance = {field_ncvar: dataset_compliance}
         else:
@@ -5483,7 +5476,7 @@ class NetCDFRead(IORead):
         var_dims = g["variable_dimensions"][ncvar]
         return {
             dim: {"size": g["internal_dimension_sizes"][dim]}
-            # Here the 'or []' additoin ensures var_dims of None -> {} output
+            # Here the 'or []' addition ensures var_dims of None -> {} output
             for dim in (var_dims or [])
         }
 
@@ -5502,7 +5495,7 @@ class NetCDFRead(IORead):
             {
                 "variables": {},
                 "dimensions": {},
-                # The value (string), and optionally reason and code, will
+                # The value (string), and optionally reason and code, may
                 # be added later
             }
         )
@@ -5608,33 +5601,35 @@ class NetCDFRead(IORead):
         attribute_value = attribute[attribute_key]
 
         # Form a single issue to register (message, code and attr value)
-        one_issue_dict = {"value": attribute_value}
+        one_issue_info = {"value": attribute_value}
         if code:
-            one_issue_dict["code"] = code
+            one_issue_info["code"] = code
         if message:
-            one_issue_dict["reason"] = message
+            one_issue_info["reason"] = message
 
         # Form lowest-level dict which reports an ultimate issue via a 'reason'
         # message, code and attribute value against the attribute name key.
         # These go into a *list*, since there may be more than one issue hence
         # reason message and corresponding code listed per attribute.
-        d = {
+        var_noncompliance_info = {
             "attributes": {},
             "dimensions": {},
         }
-        d["attributes"].setdefault(attribute_name, [])
-        d["attributes"][attribute_name].append(one_issue_dict)
+        var_noncompliance_info["attributes"].setdefault(attribute_name, [])
+        var_noncompliance_info["attributes"][attribute_name].append(
+            one_issue_info)
 
         # Create dimensions dict and populate with sizes
         if dimensions is not None:
-            d["dimensions"].update({
+            var_noncompliance_info["dimensions"].update({
                 dim: {"size": g["internal_dimension_sizes"][dim]} for
                 dim in dimensions
             })
 
         # Process issues emerging on or via attributes
         g["dataset_compliance"].setdefault(top_ancestor_ncvar, {})
-        g["dataset_compliance"][top_ancestor_ncvar].update(d)
+        g["dataset_compliance"][top_ancestor_ncvar].update(
+            var_noncompliance_info)
 
         if direct_parent_ncvar:
             # Dicts are optimised for key-value lookup, but this requires
@@ -5645,14 +5640,15 @@ class NetCDFRead(IORead):
             store_attr = reverse_varattrs[ncvar]
 
             # Update the dimensions to those of the ncvar now, otherwise same
-            # dict is applicable to store on the direct_parent_ncvar
+            # dict, var_noncompliance_info, is applicable to store on the
+            # direct_parent_ncvar
             dim_sizes = self._process_dimension_sizes(ncvar)
             if dim_sizes:
-                d["dimensions"] = dim_sizes
+                var_noncompliance_info["dimensions"] = dim_sizes
 
             self._update_noncompliance_dict(
                 g["component_report"], ncvar, direct_parent_ncvar, store_attr,
-                d,
+                var_noncompliance_info,
             )
 
         if dimensions is None:  # pragma: no cover
@@ -5665,7 +5661,7 @@ class NetCDFRead(IORead):
             f"{ncvar}{dimensions}: {message}"
         )  # pragma: no cover
 
-        return d
+        return var_noncompliance_info
 
     def _include_component_report(
             self, parent_ncvar, ncvar, attribute, dimensions=None):
@@ -8398,7 +8394,6 @@ class NetCDFRead(IORead):
 
         if component_report is not None:
             for var, report in component_report.items():
-                # SLB edited
                 g["dataset_compliance"][parent_ncvar].setdefault(
                     var, []).extend(report)
 
@@ -9067,7 +9062,6 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         coord_ncvar_attrs = g["variable_attributes"][coord_ncvar]
-        pprint(coord_ncvar_attrs)
         self._check_standard_names(
             parent_ncvar,
             coord_ncvar,

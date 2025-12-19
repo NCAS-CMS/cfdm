@@ -5,6 +5,7 @@ import faulthandler
 import logging
 import os
 import platform
+from pprint import pprint
 import sys
 import tempfile
 import unittest
@@ -98,26 +99,6 @@ class ComplianceCheckingTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-
-        # Structures to form the desired outputs
-        # *Variable dict*
-        per_var_dict = {
-            "attributes": {},
-            "dimensions": {},
-        }
-
-        # *Attribute list*
-        per_attr_dict = {
-            "variables": {},
-            "dimensions": {},
-            # add value (string), and optionally reason and code
-        }
-
-        # *Dimension dict*
-        per_dim_dict = {
-                "variables": {},
-                # add size (int or None), and optionally reason and code
-        }
 
     def test_extract_names_from_xml(self):
         """Test the `cfvalidation._extract_names_from_xml` function."""
@@ -311,6 +292,9 @@ class ComplianceCheckingTest(unittest.TestCase):
         f = self.bad_snames_general_field
         dc_output = f.dataset_compliance()
 
+        print("----------------- TEST 1 NON UGRID ---------------------")
+        pprint(dc_output)
+
         # SLB DEV
         # from pprint import pprint
         # pprint(dc_output)
@@ -395,6 +379,11 @@ class ComplianceCheckingTest(unittest.TestCase):
         dc_output_1 = f1.dataset_compliance()
         dc_output_2 = f2.dataset_compliance()
         dc_output_3 = f2.dataset_compliance()
+
+        print("----------------- TEST 2 UGRID ---------------------")
+        pprint(dc_output_1)
+        pprint(dc_output_2)
+        pprint(dc_output_3)
 
         # SLB DEV
         # TODO add error to run to say need to run 'create_test_files'
