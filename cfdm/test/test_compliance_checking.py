@@ -108,9 +108,9 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         # *Attribute list*
         per_attr_dict = {
-                "variables": {},
-                "dimensions": {},
-                # add value (string), and optionally reason and code
+            "variables": {},
+            "dimensions": {},
+            # add value (string), and optionally reason and code
         }
 
         # *Dimension dict*

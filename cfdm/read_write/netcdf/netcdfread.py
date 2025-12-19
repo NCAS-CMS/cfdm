@@ -5560,23 +5560,14 @@ class NetCDFRead(IORead):
         else:
             code = None
 
-        # DEV MAIN
         per_var_dict = {
             "attributes": {},
             "dimensions": {},
         }
-
-        # *Attribute list*
         per_attr_dict = {
             "variables": {},
             "dimensions": {},
-            # add value (string), and optionally reason and code
-        }
-
-        # *Dimension dict*
-        per_dim_dict = {
-            "variables": {},
-            # add size (int or None), and optionally reason and code
+            # The value (string), and optionally reason and code, will be added
         }
 
         attribute_key = next(iter(attribute))
@@ -5607,13 +5598,13 @@ class NetCDFRead(IORead):
 
         # Create dimensions dict and populate with sizes
         if dimensions is not None:
-            d["dimensions"] = {
+            d["dimensions"].update({
                 dim: {"size": g["internal_dimension_sizes"][dim]} for
                 dim in dimensions
-            }
+            })
 
         # Process issues emerging on or via attributes
-        g["dataset_compliance"].setdefault(top_ancestor_ncvar, {})
+        g["dataset_compliance"].setdefault(top_ancestor_ncvar, per_attr_dict)
         g_top = g["dataset_compliance"][top_ancestor_ncvar]
 
         # If the top_ancestor_ncvar and ncvar are the same, there is a
@@ -5632,10 +5623,12 @@ class NetCDFRead(IORead):
             store_attr = reverse_varattrs[ncvar]
 
             g_parent = g["component_report"].setdefault(direct_parent_ncvar, {})
-            g_parent.setdefault("attributes", {})
+            g_parent.setdefault("attributes", per_attr_dict)
             g_parent["attributes"].setdefault(store_attr, per_attr_dict)
             g_parent["attributes"][store_attr]["variables"].setdefault(ncvar, {})
             g_parent["attributes"][store_attr]["variables"][ncvar].update(d)
+
+            # TODO process dimensions on intermediate netCDF objects
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
@@ -5684,27 +5677,19 @@ class NetCDFRead(IORead):
             `None`
 
         """
+        g = self.read_vars
+        component_report = g["component_report"].get(ncvar)
 
-        per_var_dict = {
-            "attributes": {},
-            "dimensions": {},
-        }
-
-        # *Attribute list*
         per_attr_dict = {
             "variables": {},
             "dimensions": {},
-            # add value (string), and optionally reason and code
+            # The value (string), and optionally reason and code, will be added
         }
-
-        # *Dimension dict*
-        per_dim_dict = {
-            "variables": {},
-            # add size (int or None), and optionally reason and code
-        }
-
-        g = self.read_vars
-        component_report = g["component_report"].get(ncvar)
+        if dimensions is not None:
+            per_attr_dict["dimensions"].update({
+                dim: {"size": g["internal_dimension_sizes"][dim]} for
+                dim in dimensions
+            })
 
         # Unlike for 'attribute' input to _add_message, this 'attribute' is the
         # the attribute_name only and not "var_name:attribute_name" to split
@@ -5715,6 +5700,8 @@ class NetCDFRead(IORead):
             g_parent["attributes"][attribute]["variables"].setdefault(ncvar, {})
             g_parent["attributes"][attribute]["variables"][ncvar].update(
                 component_report)
+
+            # TODO process dimensions on intermediate netCDF objects
 
     def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Find a domain axis identifier for the variable's dimensions.
