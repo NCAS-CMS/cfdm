@@ -5187,13 +5187,12 @@ class NetCDFRead(IORead):
         # -------------------------------------------------------------
         # Add the structural read report to the field/domain
         dataset_compliance = g["dataset_compliance"][field_ncvar]
-        components = dataset_compliance
-        if components:
-            dataset_compliance = {field_ncvar: dataset_compliance}
+        if dataset_compliance:
+            field_compliance = {field_ncvar: dataset_compliance}
         else:
-            dataset_compliance = {}
+            field_compliance = {}
 
-        self.implementation.set_dataset_compliance(f, dataset_compliance)
+        self.implementation.set_dataset_compliance(f, field_compliance)
 
         # Return the finished field/domain
         return f
@@ -5662,14 +5661,22 @@ class NetCDFRead(IORead):
             })
 
         # Process issues emerging on or via attributes
-        g["dataset_compliance"].setdefault(top_ancestor_ncvar, {})
-        g["dataset_compliance"][top_ancestor_ncvar].update(
-            var_noncompliance_info)
+        #g["dataset_compliance"].setdefault(ncvar, {})
+        #g["dataset_compliance"][ncvar].update(
+        #    var_noncompliance_info)
+        #self._update_noncompliance_dict(
+        #    g["component_report"], ncvar, top_ancestor_ncvar, attribute_name,
+        #    var_noncompliance_info,
+        #)
+        self._update_noncompliance_dict(
+            g["dataset_compliance"], ncvar, top_ancestor_ncvar, attribute_name,
+            var_noncompliance_info,
+        )
 
         if direct_parent_ncvar:
             # Dicts are optimised for key-value lookup, but this requires
             # value-key lookup - find a better way to get relevant attr using
-            # functionlity in this module
+            # functionality in this module
             varattrs = g["variable_attributes"][direct_parent_ncvar]
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
@@ -8429,8 +8436,10 @@ class NetCDFRead(IORead):
 
         if component_report is not None:
             for var, report in component_report.items():
-                g["dataset_compliance"][parent_ncvar].setdefault(
-                    var, []).extend(report)
+                self._update_noncompliance_dict(
+                    g["dataset_compliance"], ncvar, parent_ncvar, "PLACEHOLDER",
+                    component_report
+                )
 
         return self.implementation.copy_construct(g[construct_type][ncvar])
 
@@ -10213,7 +10222,6 @@ class NetCDFRead(IORead):
 
         g["mesh"][mesh_ncvar] = mesh
 
-    # Y
     def _ugrid_parse_location_index_set(self, parent_attributes):
         """Parse a UGRID location index set variable.
 
@@ -10277,7 +10285,6 @@ class NetCDFRead(IORead):
             mesh_id=uuid4().hex,
         )
 
-    # Y
     def _ugrid_create_auxiliary_coordinates(
         self,
         parent_ncvar,
@@ -10506,7 +10513,6 @@ class NetCDFRead(IORead):
 
         return aux
 
-    # Y
     def _ugrid_create_domain_topology(self, parent_ncvar, f, mesh, location):
         """Create a domain topology construct.
 
@@ -10776,7 +10782,6 @@ class NetCDFRead(IORead):
 
         return cell_dim
 
-    # Y
     def _ugrid_check_mesh_topology(self, mesh_ncvar):
         """Check a UGRID mesh topology variable.
 
@@ -11039,7 +11044,6 @@ class NetCDFRead(IORead):
 
         return ok
 
-    # Y
     def _ugrid_check_location_index_set(
         self,
         location_index_set_ncvar,
@@ -11144,7 +11148,6 @@ class NetCDFRead(IORead):
 
         return ok
 
-    # Y
     def _ugrid_check_field_location_index_set(
         self,
         parent_ncvar,
@@ -11287,7 +11290,6 @@ class NetCDFRead(IORead):
         )
         return ok
 
-    # Y
     def _ugrid_check_field_mesh(
         self,
         parent_ncvar,
@@ -11379,7 +11381,6 @@ class NetCDFRead(IORead):
         )
         return ok
 
-    # Y
     def _ugrid_check_connectivity_variable(
         self, parent_ncvar, mesh_ncvar, connectivity_ncvar, connectivity_attr
     ):
