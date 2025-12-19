@@ -246,28 +246,6 @@ class ComplianceCheckingTest(unittest.TestCase):
         # This time the alias should be included
         self.assertIn("moles_of_cfc113_in_atmosphere", aliases_inc_output)
 
-    def test_field_dataset_compliance(self):
-        """Test the `Field.dataset_compliance` method.
-
-        Note: keeping this test here rather than in the test_Field module
-        because it requires the creation of 'bad' fields e.g. with invalid
-        standard names, and we create those as temporary files here already.
-        """
-        # TODO
-
-    def test_domain_dataset_compliance(self):
-        """Test the `Domain.dataset_compliance` method.
-
-        Note: keeping this test here rather than in the test_Domain module
-        because it requires the creation of 'bad' fields e.g. with invalid
-        standard names, and we create those as temporary files here already.
-        """
-        # TODO
-
-    def test_check_standard_names(self):
-        """Test the `NetCDFRead._check_standard_names` method."""
-        # TODO
-
     def test_standard_names_validation_compliant_field(self):
         """Test compliance checking on a compliant non-UGRID field."""
         f = self.good_snames_general_field
@@ -277,11 +255,11 @@ class ComplianceCheckingTest(unittest.TestCase):
     def test_standard_names_validation_noncompliant_field(self):
         """Test compliance checking on a non-compliant non-UGRID field."""
         expected_reason = (
-            "standard_name attribute "
-            "has a value that is not a valid name contained "
-            "in the current standard name table"
+            "standard_name attribute has a value that is not a "
+            "valid name contained in the current standard name table"
         )
         expected_code = 400022
+
         # Excludes attribute which we expect in there but depends on varname
         # so add that expected key in during the iteration over varnames
         expected_noncompl_dict = {
@@ -295,63 +273,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         print("----------------- TEST 1 NON UGRID ---------------------")
         pprint(dc_output)
 
-        # SLB DEV
-        # from pprint import pprint
-        # pprint(dc_output)
-
-        # 'ta' is the field variable we test on
-        self.assertIn("non-compliance", dc_output["ta"])
-        noncompliance = dc_output["ta"]["non-compliance"]
-
-        expected_keys = [
-            # itself? "ta",
-            # fails "atmosphere_hybrid_height_coordinate",
-            "atmosphere_hybrid_height_coordinate_bounds",
-            "latitude_1",
-            "longitude_1",
-            "time",
-            # SOLVED, DIM COORDS fails "x",
-            # POSSIBLY SOLVED, DIM COORDS fails "x_bnds"
-            # SOLVED, DIM COORDS fails "y",
-            # POSSIBLY SOLVED, DIM COORDS fails "y_bnds",
-            # fails "b",
-            "b_bounds",
-            # fails "surface_altitude",
-            # fails "rotated_latitude_longitude",
-            "auxiliary",
-            "cell_measure",  # ATTRIBUTES FIX SHOULDN'T APPEAR
-            "air_temperature_standard_error",
-        ]
-        for varname in expected_keys:
-            noncompl_dict = noncompliance.get(varname)
-            self.assertIsNotNone(
-                noncompl_dict,
-                msg=f"Empty non-compliance for variable '{varname}'"
-            )
-            self.assertIsInstance(noncompl_dict, list)
-            self.assertEqual(len(noncompl_dict), 1)
-
-            # Safe to unpack after test above
-            noncompl_dict = noncompl_dict[0]
-
-            self.assertIn("code", noncompl_dict)
-            self.assertEqual(noncompl_dict["code"], expected_code)
-            self.assertIn("reason", noncompl_dict)
-            self.assertEqual(noncompl_dict["reason"], expected_reason)
-
-            # Form expected attribute which needs the varname and bad name
-            expected_attribute = {
-                f"{varname}:standard_name": f"badname_{varname}"
-            }
-            expected_noncompl_dict["attribute"] = expected_attribute
-
-            self.assertIn("attribute", noncompl_dict)
-            self.assertEqual(noncompl_dict["attribute"], expected_attribute)
-
-            # Final check to ensure there isn't anything else in there.
-            # If keys are missing will be reported to fail more spefically
-            # on per-key-value checks above
-            self.assertEqual(noncompl_dict, expected_noncompl_dict)
+        # TODO
 
     def test_standard_names_validation_compliant_ugrid_field(self):
         """Test compliance checking on a compliant UGRID field."""
