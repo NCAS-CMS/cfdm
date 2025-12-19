@@ -5476,6 +5476,17 @@ class NetCDFRead(IORead):
 
             return g["geometries"].get(geometry_ncvar)
 
+    def _process_dimension_sizes(self, ncvar):
+        """TODO."""
+        g = self.read_vars
+
+        var_dims = g["variable_dimensions"][ncvar]
+        return {
+            dim: {"size": g["internal_dimension_sizes"][dim]}
+            # Here the 'or []' additoin ensures var_dims of None -> {} output
+            for dim in (var_dims or [])
+        }
+
     def _update_noncompliance_dict(
             self, noncompliance_dict, ncvar, parent_ncvar, attribute,
             update_dict, include_dimension_sizes=True,
@@ -5508,16 +5519,6 @@ class NetCDFRead(IORead):
             var_compliance["attributes"][attribute]["dimensions"] = dim_sizes
 
         return var_compliance
-
-    def _process_dimension_sizes(self, ncvar):
-        """TODO."""
-        g = self.read_vars
-
-        var_dims = g["variable_dimensions"][ncvar]
-        return {
-            dim: {"size": g["internal_dimension_sizes"][dim]}
-            for dim in var_dims
-        }
 
     def _add_message(
         self,
@@ -5613,28 +5614,23 @@ class NetCDFRead(IORead):
         if message:
             one_issue_dict["reason"] = message
 
-        # If the top_ancestor_ncvar and ncvar are the same, don't need to
-        # process under attributes
-        if top_ancestor_ncvar == ncvar or top_ancestor_ncvar is None:
-            d = one_issue_dict.copy()
-        else:
-            # Form lowest-level dict which reports an ultimate issue via a 'reason'
-            # message, code and attribute value against the attribute name key.
-            # These go into a *list*, since there may be more than one issue hence
-            # reason message and corresponding code listed per attribute.
-            d = {
-                "attributes": {},
-                "dimensions": {},
-            }
-            d["attributes"].setdefault(attribute_name, [])
-            d["attributes"][attribute_name].append(one_issue_dict)
+        # Form lowest-level dict which reports an ultimate issue via a 'reason'
+        # message, code and attribute value against the attribute name key.
+        # These go into a *list*, since there may be more than one issue hence
+        # reason message and corresponding code listed per attribute.
+        d = {
+            "attributes": {},
+            "dimensions": {},
+        }
+        d["attributes"].setdefault(attribute_name, [])
+        d["attributes"][attribute_name].append(one_issue_dict)
 
-            # Create dimensions dict and populate with sizes
-            if dimensions is not None:
-                d["dimensions"].update({
-                    dim: {"size": g["internal_dimension_sizes"][dim]} for
-                    dim in dimensions
-                })
+        # Create dimensions dict and populate with sizes
+        if dimensions is not None:
+            d["dimensions"].update({
+                dim: {"size": g["internal_dimension_sizes"][dim]} for
+                dim in dimensions
+            })
 
         # Process issues emerging on or via attributes
         g["dataset_compliance"].setdefault(top_ancestor_ncvar, {})
@@ -5648,6 +5644,8 @@ class NetCDFRead(IORead):
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
 
+            # Update the dimensions to those of the ncvar now, otherwise same
+            # dict is applicable to store on the direct_parent_ncvar
             dim_sizes = self._process_dimension_sizes(ncvar)
             if dim_sizes:
                 d["dimensions"] = dim_sizes
