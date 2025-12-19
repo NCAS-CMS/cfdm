@@ -955,6 +955,7 @@ class NetCDFRead(IORead):
         dataset_type=None,
         cdl_string=False,
         ignore_unknown_type=False,
+        warn_on_noncompliance=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -1076,6 +1077,34 @@ class NetCDFRead(IORead):
                 parameter. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.11.2.0
+
+            noncompliance_report: `bool`, optional
+                If True then return a warning when any data read in are
+                not fully compliant by the CF Conventions, with a dictionary
+                which registers any detected issues in a structured way to
+                indicate the issue against any netCDF objects (variables,
+                dimensions and/or attributes) which they affect. Note this is
+                in an (early) developmental stage, therefore the default is
+                False to not produce this warning.
+
+                The dictionaries printed in the warning are available
+                post-read through the dataset_compliance() method
+                available on a field or domain.
+
+                .. warning:: Compliance checking in cfdm is not yet mature
+                             and therefore only certain issues of
+                             non-compliance will be detected and reported in
+                             the warning dictionary, so this is not intended,
+                             at present, to be a comprehensive check for
+                             compliance according to the latest version of
+                             the CF Conventions. As-is it may be useful as
+                             a guide to issues.
+
+                             In future a human-friendly report will be made
+                             available from the warning dictionary output,
+                             but for now it is in a nested structure.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             _file_systems: `dict`, optional
                 Provide any already-open S3 file systems.
