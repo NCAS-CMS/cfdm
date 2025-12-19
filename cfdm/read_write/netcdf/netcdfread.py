@@ -3899,7 +3899,6 @@ class NetCDFRead(IORead):
 
         # Register the CF Conventions version at top-level only
         g["dataset_compliance"].setdefault(field_ncvar, {})
-
         g["dataset_compliance"][
             "CF version"] = self.implementation.get_cf_version()
 
@@ -5602,7 +5601,6 @@ class NetCDFRead(IORead):
                 dim: {"size": g["internal_dimension_sizes"][dim]} for
                 dim in dimensions
             })
-
         # Process issues emerging on or via attributes
         g["dataset_compliance"].setdefault(top_ancestor_ncvar, per_attr_dict)
         g_top = g["dataset_compliance"][top_ancestor_ncvar]
@@ -5611,6 +5609,7 @@ class NetCDFRead(IORead):
         # problem with an ncvar with no parents - so store directly on ncvar
         # TODO should probably make the top_ancestor_ncvar optional
         # so that we don't need to do this check!
+
         g["dataset_compliance"][top_ancestor_ncvar].update(d)
 
         if direct_parent_ncvar:
@@ -5623,9 +5622,10 @@ class NetCDFRead(IORead):
             store_attr = reverse_varattrs[ncvar]
 
             g_parent = g["component_report"].setdefault(direct_parent_ncvar, {})
-            g_parent.setdefault("attributes", per_attr_dict)
+            g_parent.setdefault("attributes", {})
             g_parent["attributes"].setdefault(store_attr, per_attr_dict)
             g_parent["attributes"][store_attr]["variables"].setdefault(ncvar, {})
+
             g_parent["attributes"][store_attr]["variables"][ncvar].update(d)
 
             # TODO process dimensions on intermediate netCDF objects
