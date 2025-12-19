@@ -11,7 +11,7 @@ from functools import reduce
 from math import log, nan, prod
 from numbers import Integral
 from os.path import isdir, isfile, join
-from pprint import pformat
+from pprint import pformat, pprint
 from typing import Any
 from uuid import uuid4
 
@@ -955,7 +955,7 @@ class NetCDFRead(IORead):
         dataset_type=None,
         cdl_string=False,
         ignore_unknown_type=False,
-        warn_on_noncompliance=False,
+        noncompliance_report=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -2352,14 +2352,19 @@ class NetCDFRead(IORead):
 
         out = [x[1] for x in sorted(items)]
 
-        if warnings:
+        # ------------------------------------------------------------
+        # Provide requested warnings e.g. about non-compliance
+        # ------------------------------------------------------------
+        if warnings or noncompliance_report:
             for x in out:
-                qq = x.dataset_compliance()
-                if qq:
+                noncompliance_dict = x.dataset_compliance()
+                if noncompliance_dict:
                     logger.warning(
-                        f"WARNING: {x.__class__.__name__} incomplete due to "
-                        f"non-CF-compliant dataset. Report:\n{qq}"
+                        f"\nWARNING: {x.__class__.__name__} incomplete or "
+                        "non-stnadard due to non-CF-compliant dataset. "
+                        "Report:\n"
                     )  # pragma: no cover
+                    pprint(noncompliance_dict)
 
         if warn_valid and not g["domain"]:
             # --------------------------------------------------------

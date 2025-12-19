@@ -393,7 +393,6 @@ class ComplianceCheckingTest(unittest.TestCase):
         # for bad case.
         with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
             field_all_varnames = list(nc.variables.keys())
-            print("VERIFY")
             for varname, var in nc.variables.items():
                 print(varname, getattr(var, "standard_name", "No standard_name"))
 

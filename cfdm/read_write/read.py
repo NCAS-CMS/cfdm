@@ -277,6 +277,7 @@ class read(ReadWrite):
         followlinks=False,
         cdl_string=False,
         extra_read_vars=None,
+        noncompliance_report=False,
         **kwargs,
     ):
         """Read field or domain constructs from datasets.
@@ -601,6 +602,7 @@ class read(ReadWrite):
                         "dataset_type",
                         "cdl_string",
                         "extra_read_vars",
+                        "noncompliance_report",
                     )
                 }
 
