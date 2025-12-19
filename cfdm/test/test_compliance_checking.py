@@ -87,6 +87,12 @@ class ComplianceCheckingTest(unittest.TestCase):
     )
     bad_ugrid_sn_fields = cfdm.read(bad_names_ugrid_file_path)
 
+    bad_sn_expected_reason = (
+        "standard_name attribute has a value that is not a "
+        "valid name contained in the current standard name table"
+    )
+    bad_sn_expected_code = 400022
+
     def setUp(self):
         """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
@@ -254,20 +260,8 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_noncompliant_field(self):
         """Test compliance checking on a non-compliant non-UGRID field."""
-        expected_reason = (
-            "standard_name attribute has a value that is not a "
-            "valid name contained in the current standard name table"
-        )
-        expected_code = 400022
-
-        # Excludes attribute which we expect in there but depends on varname
-        # so add that expected key in during the iteration over varnames
-        expected_noncompl_dict = {
-            "code": expected_code,
-            "reason": expected_reason,
-        }
-
         f = self.bad_snames_general_field
+        cfdm.write(f, "kitchen-sink-field.-bad-names.nc")
         dc_output = f.dataset_compliance()
 
         print("----------------- TEST 1 NON UGRID ---------------------")
@@ -283,12 +277,6 @@ class ComplianceCheckingTest(unittest.TestCase):
 
     def test_standard_names_validation_noncompliant_ugrid_fields(self):
         """Test compliance checking on non-compliant UGRID fields."""
-        expected_reason = (
-            "standard_name attribute has a value that is not a "
-            "valid name contained in the current standard name table"
-        )
-        expected_code = 400022
-
         # SLB DEV
         # TODO add error to run to say need to run 'create_test_files'
 
@@ -336,8 +324,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             pa_standard_name[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2",
             },
         )
@@ -411,8 +399,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             edge_sn[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2_edge_nodes",
             },
         )
@@ -450,8 +438,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             face_links_sn[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2_face_links",
             },
         )
@@ -489,8 +477,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             face_nodes_sn[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2_face_nodes",
             },
         )
@@ -532,8 +520,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             ta_standard_name[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2",
             },
         )
@@ -607,8 +595,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             edge_sn[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2_edge_nodes",
             },
         )
@@ -646,8 +634,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             face_links_sn[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2_face_links",
             },
         )
@@ -685,8 +673,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             face_nodes_sn[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2_face_nodes",
             },
         )
@@ -729,8 +717,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             v_standard_name[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2",
             },
         )
@@ -804,8 +792,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             edge_sn[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2_edge_nodes",
             },
         )
@@ -843,8 +831,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             face_links_sn[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2_face_links",
             },
         )
@@ -882,8 +870,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             face_nodes_sn[0],
             {
-                "code": expected_code,
-                "reason": expected_reason,
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
                 "value": "badname_Mesh2_face_nodes",
             },
         )
