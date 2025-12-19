@@ -5481,7 +5481,7 @@ class NetCDFRead(IORead):
             update_dict,
     ):
         """TODO."""
-        var_compliance = noncompliance_dict[parent_ncvar]
+        var_compliance = noncompliance_dict.setdefault(parent_ncvar, {})
         var_compliance.setdefault("attributes", {})
         var_compliance["attributes"].setdefault(
             attribute,
@@ -5638,17 +5638,14 @@ class NetCDFRead(IORead):
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
 
-            # NEXT
-            #g_parent = self._update_noncompliance_dict(
-            #    g["component_report"], ncvar, direct_parent_ncvar, store_attr,
-            #    d
-            #)
+            dim_sizes = self._process_dimension_sizes(ncvar)
+            if dim_sizes:
+                d["dimensions"] = dim_sizes
 
-            g_parent = g["component_report"].setdefault(direct_parent_ncvar, {})
-            g_parent.setdefault("attributes", {})
-            g_parent["attributes"].setdefault(store_attr, {"variables": {}})
-            g_parent["attributes"][store_attr]["variables"].setdefault(ncvar, {})
-
+            g_parent = self._update_noncompliance_dict(
+                g["component_report"], ncvar, direct_parent_ncvar, store_attr,
+                d
+            )
             # Get dimensions for all variables
             # Set these dims on the variable *and* the attribute
             # TODO technically derives from the variable only, not its
@@ -5658,12 +5655,6 @@ class NetCDFRead(IORead):
             g_parent["dimensions"] = direct_parent_dim_sizes
             g_parent["attributes"][store_attr][
                 "dimensions"] = direct_parent_dim_sizes
-
-            dim_sizes = self._process_dimension_sizes(ncvar)
-            if dim_sizes:
-                d["dimensions"] = dim_sizes
-
-            g_parent["attributes"][store_attr]["variables"][ncvar].update(d)
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
