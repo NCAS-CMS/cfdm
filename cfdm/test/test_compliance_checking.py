@@ -362,17 +362,13 @@ class ComplianceCheckingTest(unittest.TestCase):
     def test_standard_names_validation_noncompliant_ugrid_fields(self):
         """Test compliance checking on non-compliant UGRID fields."""
         expected_reason = (
-            "standard_name attribute "
-            "has a value that is not a valid name contained "
-            "in the current standard name table"
+            "standard_name attribute has a value that is not a "
+            "valid name contained in the current standard name table"
         )
         expected_code = 400022
-        # Excludes attribute which we expect in there but depends on varname
-        # so add that expected key in during the iteration over varnames
-        expected_noncompl_dict = {
-            "code": expected_code,
-            "reason": expected_reason,
-        }
+
+        # SLB DEV
+        # TODO add error to run to say need to run 'create_test_files'
 
         # Fields for testing on: those in ugrid_1 with bad names pre-set
         f1, f2, f3 = self.bad_ugrid_sn_fields  # unpack to shorter names
@@ -385,9 +381,6 @@ class ComplianceCheckingTest(unittest.TestCase):
         pprint(dc_output_2)
         pprint(dc_output_3)
 
-        # SLB DEV
-        # TODO add error to run to say need to run 'create_test_files'
-
         # TODO see from below that not all bad names get set - but want
         # that, so should update create_test_files method to set on all
         # for bad case.
@@ -396,180 +389,194 @@ class ComplianceCheckingTest(unittest.TestCase):
             for varname, var in nc.variables.items():
                 print(varname, getattr(var, "standard_name", "No standard_name"))
 
-        # from pprint import pprint
-        # print("DC OUTPUT 1")
-        # pprint(dc_output_1)
+        # =======================================================
+        # Field 1/3: top-level dict (1/4)
+        # =======================================================
+        self.assertIsInstance(dc_output_1, dict)
+        self.assertCountEqual(dc_output_1.keys(), ["pa"])
 
-        # # 'pa' is the field variable we test on
-        # self.assertIn("non-compliance", dc_output_1["pa"])
-        # noncompliance = dc_output_1  ###["pa"]["non-compliance"]
-        # print("^^^^^^^^^^^^^" * 20, "HERE HAVE NONCOMP DICT OF:")
-        # pprint(noncompliance)
+        pa = dc_output_1["pa"]
+        self.assertIsInstance(pa, dict)
+        self.assertCountEqual(pa.keys(), ["attributes", "dimensions"])
 
-        expected_keys = [
-            # itself? "pa",
-            # not for this field "v",
-            # not for this field "ta",
-            # fails "time",
-            # fails "time_bounds",
-            "Mesh2",
-            # fails "Mesh2_node_x",  # aka longitude?
-            # fails "Mesh2_node_y",  # aka latitude?
-            # fails "Mesh2_face_x",  # ... etc.
-            # fails "Mesh2_face_y",
-            # fails "Mesh2_edge_x",
-            # fails "Mesh2_edge_y",
-            # fails "Mesh2_face_nodes",
-            # fails "Mesh2_edge_nodes",
-            # fails "Mesh2_face_edges",
-            # fails "Mesh2_face_links",
-            # fails "Mesh2_edge_face_links",
-        ]
-        for varname in expected_keys:
-            noncompl_dict = noncompliance.get(varname)
+        # pa.dimensions
+        pa_dimensions = pa["dimensions"]
+        self.assertIsInstance(pa_dimensions, dict)
+        self.assertCountEqual(pa_dimensions.keys(), ["nMesh2_node", "time"])
+        self.assertEqual(pa_dimensions["nMesh2_node"], {"size": 7})
+        self.assertEqual(pa_dimensions["time"], {"size": 2})
 
-            self.assertIsNotNone(
-                noncompl_dict,
-                msg=f"Empty non-compliance for variable '{varname}'"
-            )
-            self.assertIsInstance(noncompl_dict, list)
-            self.assertEqual(len(noncompl_dict), 1)
+        # pa.attributes
+        pa_attributes = pa["attributes"]
+        self.assertIsInstance(pa_attributes, dict)
+        self.assertCountEqual(pa_attributes.keys(), ["mesh", "standard_name"])
 
-            # Safe to unpack after test above
-            noncompl_dict = noncompl_dict[0]
+        # pa.attributes.standard_name (1/4)
+        pa_standard_name = pa_attributes["standard_name"]
+        self.assertIsInstance(pa_standard_name, list)
+        self.assertEqual(len(pa_standard_name), 1)
 
-            self.assertIn("code", noncompl_dict)
-            self.assertEqual(noncompl_dict["code"], expected_code)
-            self.assertIn("reason", noncompl_dict)
-            self.assertEqual(noncompl_dict["reason"], expected_reason)
+        self.assertEqual(
+            pa_standard_name[0],
+            {
+                "code": expected_code,
+                "reason": expected_reason,
+                "value": "badname_Mesh2",
+            },
+        )
 
-            # Form expected attribute which needs the varname and bad name
-            expected_attribute = {
-                f"{varname}:standard_name": f"badname_{varname}"
-            }
-            expected_noncompl_dict["attribute"] = expected_attribute
+        # pa.attributes.mesh
+        mesh = pa_attributes["mesh"]
+        self.assertIsInstance(mesh, dict)
+        self.assertCountEqual(mesh.keys(), ["dimensions", "variables"])
 
-            self.assertIn("attribute", noncompl_dict)
-            self.assertEqual(noncompl_dict["attribute"], expected_attribute)
+        # mesh.dimensions
+        mesh_dimensions = mesh["dimensions"]
+        self.assertIsInstance(mesh_dimensions, dict)
+        self.assertCountEqual(mesh_dimensions.keys(), ["nMesh2_node", "time"])
+        self.assertEqual(mesh_dimensions["nMesh2_node"], {"size": 7})
+        self.assertEqual(mesh_dimensions["time"], {"size": 2})
 
-            # Final check to ensure there isn't anything else in there.
-            # If keys are missing will be reported to fail more spefically
-            # on per-key-value checks above
-            self.assertEqual(noncompl_dict, expected_noncompl_dict)
+        # mesh.variables
+        mesh_variables = mesh["variables"]
+        self.assertIsInstance(mesh_variables, dict)
+        self.assertCountEqual(mesh_variables.keys(), ["Mesh2"])
 
-        # from pprint import pprint
-        # pprint(dc_output_2)
+        mesh2 = mesh_variables["Mesh2"]
+        self.assertIsInstance(mesh2, dict)
+        self.assertCountEqual(mesh2.keys(), ["attributes", "dimensions"])
 
-        # 'ta' is the field variable we test on
-        self.assertIn("non-compliance", dc_output_2["ta"])
-        noncompliance = dc_output_2["ta"]["non-compliance"]
+        # Mesh2.dimensions
+        self.assertEqual(mesh2["dimensions"], {})
 
-        expected_keys = [
-            # itself? "ta",
-            # not for this field "pa",
-            # not for this field "v",
-            # fails "time",
-            # fails "time_bounds",
-            "Mesh2",
-            # fails "Mesh2_node_x",  # aka longitude?
-            # fails "Mesh2_node_y",  # aka latitude?
-            # fails "Mesh2_face_x",  # ... etc.
-            # fails "Mesh2_face_y",
-            # fails "Mesh2_edge_x",
-            # fails "Mesh2_edge_y",
-            # fails "Mesh2_face_nodes",
-            # fails "Mesh2_edge_nodes",
-            # fails "Mesh2_face_edges",
-            # fails "Mesh2_face_links",
-            # fails "Mesh2_edge_face_links",
-        ]
-        for varname in expected_keys:
-            noncompl_dict = noncompliance.get(varname)
-            self.assertIsNotNone(
-                noncompl_dict,
-                msg=f"Empty non-compliance for variable '{varname}'"
-            )
-            self.assertIsInstance(noncompl_dict, list)
-            self.assertEqual(len(noncompl_dict), 1)
+        # Mesh2.attributes
+        mesh2_attributes = mesh2["attributes"]
+        self.assertIsInstance(mesh2_attributes, dict)
+        self.assertCountEqual(
+            mesh2_attributes.keys(),
+            [
+                "edge_node_connectivity",
+                "face_face_connectivity",
+                "face_node_connectivity",
+            ],
+        )
 
-            # Safe to unpack after test above
-            noncompl_dict = noncompl_dict[0]
+        # =======================================================
+        # Field 1/3: edge_node_connectivity (2/4)
+        # =======================================================
+        edge_node = mesh2_attributes["edge_node_connectivity"]
+        self.assertIsInstance(edge_node, dict)
+        self.assertCountEqual(edge_node.keys(), ["dimensions", "variables"])
+        self.assertEqual(edge_node["dimensions"], {})
 
-            self.assertIn("code", noncompl_dict)
-            self.assertEqual(noncompl_dict["code"], expected_code)
-            self.assertIn("reason", noncompl_dict)
-            self.assertEqual(noncompl_dict["reason"], expected_reason)
+        edge_node_vars = edge_node["variables"]
+        self.assertIsInstance(edge_node_vars, dict)
+        self.assertCountEqual(edge_node_vars.keys(), ["Mesh2_edge_nodes"])
 
-            # Form expected attribute which needs the varname and bad name
-            expected_attribute = {
-                f"{varname}:standard_name": f"badname_{varname}"
-            }
-            expected_noncompl_dict["attribute"] = expected_attribute
+        edge_nodes = edge_node_vars["Mesh2_edge_nodes"]
+        self.assertIsInstance(edge_nodes, dict)
+        self.assertCountEqual(edge_nodes.keys(), ["attributes", "dimensions"])
+        self.assertEqual(
+            edge_nodes["dimensions"],
+            {
+                "Two": {"size": 2},
+                "nMesh2_edge": {"size": 9},
+            },
+        )
 
-            self.assertIn("attribute", noncompl_dict)
-            self.assertEqual(noncompl_dict["attribute"], expected_attribute)
+        edge_nodes_attrs = edge_nodes["attributes"]
+        self.assertIsInstance(edge_nodes_attrs, dict)
+        self.assertCountEqual(edge_nodes_attrs.keys(), ["standard_name"])
 
-            # Final check to ensure there isn't anything else in there.
-            # If keys are missing will be reported to fail more spefically
-            # on per-key-value checks above
-            self.assertEqual(noncompl_dict, expected_noncompl_dict)
+        edge_sn = edge_nodes_attrs["standard_name"]
+        self.assertIsInstance(edge_sn, list)
+        self.assertEqual(len(edge_sn), 1)
+        self.assertEqual(
+            edge_sn[0],
+            {
+                "code": expected_code,
+                "reason": expected_reason,
+                "value": "badname_Mesh2_edge_nodes",
+            },
+        )
 
-        # from pprint import pprint
-        # pprint(dc_output_3)
+        # =======================================================
+        # Field 1/3: face_face_connectivity (3/4)
+        # =======================================================
+        face_face = mesh2_attributes["face_face_connectivity"]
+        self.assertIsInstance(face_face, dict)
+        self.assertCountEqual(face_face.keys(), ["dimensions", "variables"])
+        self.assertEqual(face_face["dimensions"], {})
 
-        # 'v' is the field variable we test on
-        self.assertIn("non-compliance", dc_output_3["v"])
-        noncompliance = dc_output_3["v"]["non-compliance"]
+        face_face_vars = face_face["variables"]
+        self.assertIsInstance(face_face_vars, dict)
+        self.assertCountEqual(face_face_vars.keys(), ["Mesh2_face_links"])
 
-        expected_keys = [
-            # itself? "v",
-            # not for this field "ta",
-            # not for this field "pa",
-            # fails "time",
-            # fails "time_bounds",
-            "Mesh2",
-            # fails "Mesh2_node_x",  # aka longitude?
-            # fails "Mesh2_node_y",  # aka latitude?
-            # fails "Mesh2_face_x",  # ... etc.
-            # fails "Mesh2_face_y",
-            # fails "Mesh2_edge_x",
-            # fails "Mesh2_edge_y",
-            # fails "Mesh2_face_nodes",
-            # fails "Mesh2_edge_nodes",
-            # fails "Mesh2_face_edges",
-            # fails "Mesh2_face_links",
-            # fails "Mesh2_edge_face_links",
-        ]
-        for varname in expected_keys:
-            noncompl_dict = noncompliance.get(varname)
-            self.assertIsNotNone(
-                noncompl_dict,
-                msg=f"Empty non-compliance for variable '{varname}'"
-            )
-            self.assertIsInstance(noncompl_dict, list)
-            self.assertEqual(len(noncompl_dict), 1)
+        face_links = face_face_vars["Mesh2_face_links"]
+        self.assertIsInstance(face_links, dict)
+        self.assertCountEqual(face_links.keys(), ["attributes", "dimensions"])
+        self.assertEqual(
+            face_links["dimensions"],
+            {
+                "Four": {"size": 4},
+                "nMesh2_face": {"size": 3},
+            },
+        )
 
-            # Safe to unpack after test above
-            noncompl_dict = noncompl_dict[0]
+        face_links_attrs = face_links["attributes"]
+        self.assertIsInstance(face_links_attrs, dict)
+        self.assertCountEqual(face_links_attrs.keys(), ["standard_name"])
 
-            self.assertIn("code", noncompl_dict)
-            self.assertEqual(noncompl_dict["code"], expected_code)
-            self.assertIn("reason", noncompl_dict)
-            self.assertEqual(noncompl_dict["reason"], expected_reason)
+        face_links_sn = face_links_attrs["standard_name"]
+        self.assertIsInstance(face_links_sn, list)
+        self.assertEqual(len(face_links_sn), 1)
+        self.assertEqual(
+            face_links_sn[0],
+            {
+                "code": expected_code,
+                "reason": expected_reason,
+                "value": "badname_Mesh2_face_links",
+            },
+        )
 
-            # Form expected attribute which needs the varname and bad name
-            expected_attribute = {
-                f"{varname}:standard_name": f"badname_{varname}"
-            }
-            expected_noncompl_dict["attribute"] = expected_attribute
+        # =======================================================
+        # Field 1/3: face_node_connectivity (4/4)
+        # =======================================================
+        face_node = mesh2_attributes["face_node_connectivity"]
+        self.assertIsInstance(face_node, dict)
+        self.assertCountEqual(face_node.keys(), ["dimensions", "variables"])
+        self.assertEqual(face_node["dimensions"], {})
 
-            self.assertIn("attribute", noncompl_dict)
-            self.assertEqual(noncompl_dict["attribute"], expected_attribute)
+        face_node_vars = face_node["variables"]
+        self.assertIsInstance(face_node_vars, dict)
+        self.assertCountEqual(face_node_vars.keys(), ["Mesh2_face_nodes"])
 
-            # Final check to ensure there isn't anything else in there.
-            # If keys are missing will be reported to fail more spefically
-            # on per-key-value checks above
-            self.assertEqual(noncompl_dict, expected_noncompl_dict)
+        face_nodes = face_node_vars["Mesh2_face_nodes"]
+        self.assertIsInstance(face_nodes, dict)
+        self.assertCountEqual(face_nodes.keys(), ["attributes", "dimensions"])
+        self.assertEqual(
+            face_nodes["dimensions"],
+            {
+                "Four": {"size": 4},
+                "nMesh2_face": {"size": 3},
+            },
+        )
+
+        face_nodes_attrs = face_nodes["attributes"]
+        self.assertIsInstance(face_nodes_attrs, dict)
+        self.assertCountEqual(face_nodes_attrs.keys(), ["standard_name"])
+
+        face_nodes_sn = face_nodes_attrs["standard_name"]
+        self.assertIsInstance(face_nodes_sn, list)
+        self.assertEqual(len(face_nodes_sn), 1)
+        self.assertEqual(
+            face_nodes_sn[0],
+            {
+                "code": expected_code,
+                "reason": expected_reason,
+                "value": "badname_Mesh2_face_nodes",
+            },
+        )
 
 
 if __name__ == "__main__":

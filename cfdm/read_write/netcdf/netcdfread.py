@@ -2361,7 +2361,7 @@ class NetCDFRead(IORead):
                 if noncompliance_dict:
                     logger.warning(
                         f"\nWARNING: {x.__class__.__name__} incomplete or "
-                        "non-stnadard due to non-CF-compliant dataset. "
+                        "non-standard due to non-CF-compliant dataset. "
                         "Report:\n"
                     )  # pragma: no cover
                     pprint(noncompliance_dict)
