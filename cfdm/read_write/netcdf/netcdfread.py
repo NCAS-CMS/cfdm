@@ -1258,18 +1258,18 @@ class NetCDFRead(IORead):
         # Parse the 'netcdf_backend' keyword parameter
         # ------------------------------------------------------------
         if d_type == "Zarr":
-            netcdf_backend = ("zarr",)
+            netcdf_backend = ("zarr",)  # Zarr
         elif netcdf_backend is None:
             # By default, try netCDF backends in this order:
             netcdf_backend = (
-                "h5netcdf-pyfive",
-                "h5netcdf-h5py",
-                "netCDF4",
-                "netcdf_file",
+                "h5netcdf-pyfive",  # netCDF-4
+                "h5netcdf-h5py",  # netCDF-4
+                "netCDF4",  # netCDF-4 and netCDF-3
+                "netcdf_file",  # netCDF-3
             )
         else:
             valid_netcdf_backends = (
-                "h5netcdf-pyfive",
+            "h5netcdf-pyfive",
                 "h5netcdf-h5py",
                 "netCDF4",
                 "zarr",
@@ -1277,14 +1277,14 @@ class NetCDFRead(IORead):
             )
             if isinstance(netcdf_backend, str):
                 netcdf_backend = (netcdf_backend,)
-
+                
             if not set(netcdf_backend).issubset(valid_netcdf_backends):
                 raise ValueError(
                     "Invalid netCDF backend given by the 'netcdf_backend' "
-                    f"parameter. Got {netcdf_backend}, expected a subset of "
-                    f"{valid_netcdf_backends!r}"
+                    f"parameter. Got {netcdf_backend}, expected a subset "
+                    f"of {valid_netcdf_backends}"
                 )
-
+            
         # ------------------------------------------------------------
         # Parse the 'external' keyword parameter
         # ------------------------------------------------------------
