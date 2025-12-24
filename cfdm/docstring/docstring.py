@@ -304,53 +304,56 @@ _docstring_substitution_definitions = {
                >>> ufd = {{package}}.unique_constructs(x.domain for x in f)""",
     # read netcdf_backend
     "{{read netcdf_backend: `None` or (sequence of) `str`, optional}": """netcdf_backend: `None` or (sequence of) `str`, optional
-            Which library to use for opening and reading netCDF
-            datasets. An attempt to be open a dataset is made by each
-            of the specified libraries, in the order given, stopping
-            afer the first successful read. The following libraries
-            are allowed:
+            Which library to use for opening and reading netCDF-3 and
+            netCDF-4 datasets, and (after they have been internally
+            converted to netCDF-4) CDL datasets. An attempt to open a
+            netCDF dataset is made by each of the following libraries,
+            in the order given, stopping afer the first successful
+            read:
 
-            * ``'h5netcdf-pyfive'``
+            1. ``'h5netcdf-pyfive'``
 
               The `h5netcdf` library using `pyfive` as its backend.
-              This is the default. Reads local and remote (http and
-              s3) netCDF-4 datasets. Allows parallised
-              reading. Improves the performance of active storage
-              reductions (by storing the dataset variables' B-trees so
-              that they don't have to be re-retrieved at compute time).
+              Reads local and remote (http and s3) netCDF-4
+              datasets. **Allows parallised reading**. Improves the
+              performance of active storage reductions (by storing the
+              dataset variables' B-trees at read time so that they
+              don't have to be re-retrieved at compute time).
 
-            * ``'h5netcdf-h5py'``
+            2. ``'h5netcdf-h5py'``
 
               The `h5netcdf` library using `h5py` as its
               backend. Reads netCDF-4 datasets. Reads local and remote
               (http and s3) netCDF-4 datasets. Parallelised reading is
               not allowed.
 
-            * ``'netcdf_file'``
+            3. ``'netcdf_file'``
 
               The `scipy.io.netcdf_file` library. Reads local netCDF-3
-              datasets. Allows parallised reading.
+              datasets. **Allows parallised reading**.
 
-            * ``'netCDF4'``
+            4. ``'netCDF4'``
 
               The `netCDF4` library. Reads local and remote (http)
               netCDF-3 and netCDF-4 datasets. Parallelised reading is
               not allowed.
 
             The default of `None` is equivalent to providing the
-            ordered sequence of libraries ``('h5netcdf-pyfive',
-            'h5netcdf-h5py', 'netcdf_file', 'netCDF4')``.
+            ordered sequence ``('h5netcdf-pyfive', 'h5netcdf-h5py',
+            'netcdf_file', 'netCDF4')``.
 
             *Example:*
-              To only use the `netCDF4` library: ``'netCDF4'`` or
+              To only attempt ``netCDF4``: ``'netCDF4'`` or
               ``['netCDF4']``
 
             *Example:*
-              To only use the `netCDF4` or ``'h5netcdf-h5py'``
-              library, in that order: : ``('netCDF4',
-              'h5netcdf-h5py')``
+              To only attempt ``'netCDF4'`` or ``'h5netcdf-h5py'``, in
+              that order: ``('netCDF4', 'h5netcdf-h5py')``
 
-                 .. versionadded:: (cfdm) 1.11.2.0""",
+            .. note:: A Zarr dataset is always opened and read with
+                      the `zarr` library.
+
+            .. versionadded:: (cfdm) 1.11.2.0""",
     # read  storage_options
     "{{read storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
             Pass parameters to the backend file system driver, such as

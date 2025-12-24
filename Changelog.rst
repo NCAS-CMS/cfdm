@@ -2,6 +2,10 @@ Version NEXTVERSION
 
 **2026-01-??**
 
+* New default backend for netCDF-4: ``h5netcdf-pyfive``
+  (https://github.com/NCAS-CMS/cfdm/issues/???)
+* New backend option for netCDF-3: ``netcdf_file``
+  (https://github.com/NCAS-CMS/cfdm/issues/???)
 * Write Zarr v3 datasets with `cfdm.write`, and allow the reading of
   grouped Zarr v2 and v3 datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/354)

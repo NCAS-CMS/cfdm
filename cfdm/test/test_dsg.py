@@ -46,9 +46,9 @@ class DSGTest(unittest.TestCase):
         "DSG_timeSeriesProfile_indexed_contiguous.nc",
     )
 
-    c = cfdm.read(contiguous, netcdf_backend="netCDF4")
-    i = cfdm.read(indexed, netcdf_backend="netCDF4")
-    ic = cfdm.read(indexed_contiguous, netcdf_backend="netCDF4")
+    c = cfdm.read(contiguous)
+    i = cfdm.read(indexed)
+    ic = cfdm.read(indexed_contiguous)
 
     a = np.ma.masked_all((4, 9), dtype=float)
     a[0, 0:3] = [0.0, 1.0, 2.0]
@@ -191,11 +191,7 @@ class DSGTest(unittest.TestCase):
         self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):
-            #            print (f[i].dump())
-            print(f[i].properties())
-
-            print(g[i].properties())
-            self.assertTrue(g[i].equals(f[i], verbose=-1))
+            self.assertTrue(g[i].equals(f[i], verbose=3))
 
         # ------------------------------------------------------------
         # Test creation

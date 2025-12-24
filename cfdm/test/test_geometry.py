@@ -90,7 +90,7 @@ class GeometryTest(unittest.TestCase):
         f2 = cfdm.read(tempfile, verbose=False)
         self.assertEqual(len(f2), 2)
         for a, b in zip(f, f2):
-            self.assertTrue(a.equals(b))
+            self.assertTrue(a.equals(b, verbose=3))
 
         # Setting of node count properties
         coord = f[0].construct("axis=X")
@@ -182,7 +182,7 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual(len(f), 2)
 
         for g in f:
-            self.assertTrue(g.equals(g.copy()))
+            self.assertTrue(g.equals(g.copy(), verbose=3))
             self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         for axis in ("X", "Y"):
@@ -198,7 +198,7 @@ class GeometryTest(unittest.TestCase):
         self.assertEqual(len(f2), 2)
 
         for a, b in zip(f, f2):
-            self.assertTrue(a.equals(b))
+            self.assertTrue(a.equals(b, verbose=3))
 
         # Setting of node count properties
         coord = f[0].construct("axis=X")

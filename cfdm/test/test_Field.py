@@ -612,7 +612,7 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(f.equals(c, verbose=3), message)
 
                     cfdm.write(c, tmpfile)
-                    c = cfdm.read(tmpfile, verbose=1)[0]
+                    c = cfdm.read(tmpfile)[0]
 
                     self.assertTrue(
                         bool(c.data.get_compression_type()), message
