@@ -7,7 +7,7 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cfdm/issues/354)
 * Read Zarr v2 and v3 datasets that contain a group hierarchy with
   `cfdm.read` (https://github.com/NCAS-CMS/cfdm/issues/355)
-* New optional dependency: ``zarr>=3.1.2``
+* New optional dependency: ``zarr>=3.1.3``
 * Removed dependency (now optional): ``zarr>=3.0.8``
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
