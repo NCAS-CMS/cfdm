@@ -342,8 +342,26 @@ _docstring_substitution_definitions = {
             ordered sequence ``('h5netcdf-pyfive', 'h5netcdf-h5py',
             'netcdf_file', 'netCDF4')``.
 
-            *Example:*
-              To only attempt ``netCDF4``: ``'netCDF4'`` or
+            .. warning:: **The two `h5netcdf` options do not support
+                         all of the array indexing capabilities that
+                         the other backends do** since, in general,
+                         they do not allow slices with negative steps
+                         (e.g. ``x[::-1]``) , nor sequences of
+                         integers that are not strictly monotonically
+                         increasing (e.g. ``x[[4, 2, 1]]``, ``x[[4, 4,
+                         5]]``).
+
+                         However, note that subspacing is implemented
+                         so that consecutively chained subspaces are
+                         converted to a single equivalent subspace,
+                         which mean that disallowed indices may get
+                         "cancelled out". For instance
+                         ``x[[4,2,1]][[-1, -2]]`` will work because it
+                         is collapsed to ``x[[1, 2]]``, and
+                         ``x[::-1][::-2]`` will work because it is
+                         collapsed to ``x[::2]``.
+                            
+            *Example:* To only attempt ``netCDF4``: ``'netCDF4'`` or
               ``['netCDF4']``
 
             *Example:*
