@@ -354,7 +354,7 @@ _docstring_substitution_definitions = {
                          However, note that subspacing is implemented
                          so that consecutively chained subspaces are
                          converted to a single equivalent subspace,
-                         which mean that disallowed indices may get
+                         which means that disallowed indices may get
                          "cancelled out". For instance
                          ``x[[4,2,1]][[-1, -2]]`` will work because it
                          is collapsed to ``x[[1, 2]]``, and
