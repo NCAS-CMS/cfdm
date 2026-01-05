@@ -326,12 +326,6 @@ _docstring_substitution_definitions = {
                 time so that they don't have to be re-retrieved at
                 compute time).
 
-            * ``'netcdf_file'``
-
-              - The `scipy.io.netcdf_file` library.
-              - Reads local netCDF-3 datasets.
-              - Allows parallised reading.
-
             * ``'netCDF4'``
 
               - The `netCDF4` library.
@@ -346,10 +340,18 @@ _docstring_substitution_definitions = {
                 datasets.
               - Parallelised reading is not possible.
 
+            * ``'netcdf_file'``
+
+              - The `scipy.io.netcdf_file` library.
+              - Reads local netCDF-3 datasets.
+              - Allows parallised reading.
+              - Treats unlimited dimensions in the dataset as not
+                unlimited.
+
             By default *netcdf_backend* is `None`, which is equivalant
             to providing the ordered sequence
 
-            ``('h5netcdf-pyfive', 'netcdf_file', 'h5netcdf-h5py', 'netCDF4')``
+            ``('h5netcdf-pyfive', 'h5netcdf-h5py', 'netCDF4', 'netcdf_file')``
 
             which means that by default, reading a netCDF dataset is
             first attempted with the `h5netcdf` library using `pyfive`

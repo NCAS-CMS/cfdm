@@ -191,7 +191,6 @@ class read_writeTest(unittest.TestCase):
             g = g[0]
             self.assertTrue(f.equals(g, verbose=3))
 
-    @unittest.skipIf(True, "Not testing append mode")
     def test_write_netcdf_mode(self):
         """Test the `mode` parameter to `write`, notably append mode."""
         g = cfdm.read(self.filename)[0]
@@ -1042,7 +1041,7 @@ class read_writeTest(unittest.TestCase):
         """Test reading remote url."""
         for scheme in ("http", "https"):
             remote = f"{scheme}:///psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
-            f = cfdm.read(remote)
+            f = cfdm.read(remote, netcdf_backend='netCDF4')
             self.assertEqual(len(f), 1)
 
     def test_write_parametric_Z_coordinate(self):
