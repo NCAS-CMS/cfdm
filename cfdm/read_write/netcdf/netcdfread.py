@@ -5661,17 +5661,11 @@ class NetCDFRead(IORead):
             })
 
         # Process issues emerging on or via attributes
-        #g["dataset_compliance"].setdefault(ncvar, {})
-        #g["dataset_compliance"][ncvar].update(
-        #    var_noncompliance_info)
-        #self._update_noncompliance_dict(
-        #    g["component_report"], ncvar, top_ancestor_ncvar, attribute_name,
-        #    var_noncompliance_info,
-        #)
         self._update_noncompliance_dict(
             g["dataset_compliance"], ncvar, top_ancestor_ncvar, attribute_name,
             var_noncompliance_info,
         )
+        self._include_component_report(ncvar, top_ancestor_ncvar, attribute_name)
 
         if direct_parent_ncvar:
             # Dicts are optimised for key-value lookup, but this requires
