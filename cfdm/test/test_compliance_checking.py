@@ -286,6 +286,9 @@ class ComplianceCheckingTest(unittest.TestCase):
         dc_output_2 = f2.dataset_compliance()
         dc_output_3 = f3.dataset_compliance()
 
+        print("----------------- TEST 2 UGRID ---------------------")
+        pprint(dc_output_1)
+
         # TODO see from below that not all bad names get set - but want
         # that, so should update create_test_files method to set on all
         # for bad case.

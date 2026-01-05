@@ -8430,6 +8430,8 @@ class NetCDFRead(IORead):
 
         if component_report is not None:
             for var, report in component_report.items():
+                # SLB TODO what should the placeholder be replaced by - should
+                # we include attribute as input too?
                 self._update_noncompliance_dict(
                     g["dataset_compliance"], ncvar, parent_ncvar, "PLACEHOLDER",
                     component_report
