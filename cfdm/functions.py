@@ -404,7 +404,7 @@ def environment(display=True, paths=True):
     HDF5 library: 1.14.2
     netcdf library: 4.9.4-development
     netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
-    h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
+    h5netcdf: 1.7.4 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
     h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
     zarr: 3.1.3 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
     s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
@@ -424,7 +424,7 @@ def environment(display=True, paths=True):
     HDF5 library: 1.14.2
     netcdf library: 4.9.4-development
     netCDF4: 1.7.2
-    h5netcdf: 1.3.0
+    h5netcdf: 1.7.4
     h5py: 3.12.1
     zarr: 3.1.3
     s3fs: 2024.12.0

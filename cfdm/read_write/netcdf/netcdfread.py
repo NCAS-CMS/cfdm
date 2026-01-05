@@ -581,9 +581,9 @@ class NetCDFRead(IORead):
         # Map backend names to dataset-open functions
         dataset_open_function = {
             "h5netcdf-pyfive": self._open_h5netcdf_pyfive,
+            "netcdf_file": self._open_netcdf_file,
             "h5netcdf-h5py": self._open_h5netcdf_h5py,
             "netCDF4": self._open_netCDF4,
-            "netcdf_file": self._open_netcdf_file,
             "zarr": self._open_zarr,
         }
 
@@ -764,7 +764,6 @@ class NetCDFRead(IORead):
             decode_vlen_strings=True,
             backend="pyfive",
             phony_dims="sort",
-            #            phony_dims='access'
         )
         self.read_vars["original_dataset_opened_with"] = "h5netcdf-pyfive"
         return nc
@@ -1263,8 +1262,8 @@ class NetCDFRead(IORead):
             #       parameter docstring must be updated.
             netcdf_backend = (
                 "h5netcdf-pyfive",  # netCDF-4
-                "h5netcdf-h5py",  # netCDF-4
                 "netcdf_file",  # netCDF-3
+                "h5netcdf-h5py",  # netCDF-4
                 "netCDF4",  # netCDF-3 and netCDF-4
             )
             # Note: If this order is ever changed, then netcdf_backend
@@ -1272,10 +1271,9 @@ class NetCDFRead(IORead):
         else:
             valid_netcdf_backends = (
                 "h5netcdf-pyfive",
-                "h5netcdf-h5py",
                 "netcdf_file",
+                "h5netcdf-h5py",
                 "netCDF4",
-                "zarr",
             )
             if isinstance(netcdf_backend, str):
                 netcdf_backend = (netcdf_backend,)
@@ -6850,6 +6848,10 @@ class NetCDFRead(IORead):
                     array = self.implementation.initialise_PyfiveArray(
                         **kwargs
                     )
+                case "netcdf_file":
+                    array = self.implementation.initialise_Netcdf_fileArray(
+                        **kwargs
+                    )
                 case "h5netcdf-h5py":
                     array = self.implementation.initialise_H5netcdfArray(
                         **kwargs
@@ -6860,10 +6862,6 @@ class NetCDFRead(IORead):
                     )
                 case "zarr":
                     array = self.implementation.initialise_ZarrArray(**kwargs)
-                case "netcdf_file":
-                    array = self.implementation.initialise_Netcdf_fileArray(
-                        **kwargs
-                    )
 
             return array, kwargs
 
@@ -11049,11 +11047,11 @@ class NetCDFRead(IORead):
             case "h5netcdf-pyfive" | "h5netcdf-h5py" | "netCDF4":
                 return bool(nc.groups)
 
-            case "zarr":
-                return bool(tuple(nc.group_keys()))
-
             case "netcdf_file":
                 return False
+
+            case "zarr":
+                return bool(tuple(nc.group_keys()))
 
     def _file_global_attribute(self, nc, attr):
         """Return a global attribute from a dataset.
@@ -11078,11 +11076,11 @@ class NetCDFRead(IORead):
             case "h5netcdf-pyfive" | "h5netcdf-h5py" | "zarr":
                 return nc.attrs[attr]
 
-            case "netCDF4":
-                return nc.getncattr(attr)
-
             case "netcdf_file":
                 return nc._attributes[attr]
+
+            case "netCDF4":
+                return nc.getncattr(attr)
 
     def _file_global_attributes(self, nc):
         """Return the global attributes from a dataset.
@@ -11106,11 +11104,11 @@ class NetCDFRead(IORead):
             case "h5netcdf-pyfive" | "h5netcdf-h5py" | "zarr":
                 return nc.attrs
 
-            case "netCDF4":
-                return {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
-
             case "netcdf_file":
                 return nc._attributes
+
+            case "netCDF4":
+                return {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
 
     def _file_group_variables(self, group):
         """Return all variables in a group.
@@ -11157,6 +11155,12 @@ class NetCDFRead(IORead):
             case "h5netcdf-pyfive" | "h5netcdf-h5py" | "netCDF4":
                 dimensions = dict(nc.dimensions)
 
+            case "netcdf_file":
+                dimensions = {
+                    name: Dimension(name, size, nc)
+                    for name, size in nc.dimensions.items()
+                }
+
             case "zarr":
                 dimensions = {}
                 for var in self._file_variables(nc).values():
@@ -11169,12 +11173,6 @@ class NetCDFRead(IORead):
                             if name not in dimensions
                         }
                     )
-
-            case "netcdf_file":
-                dimensions = {
-                    name: Dimension(name, size, nc)
-                    for name, size in nc.dimensions.items()
-                }
 
         return dimensions
 
@@ -11269,7 +11267,7 @@ class NetCDFRead(IORead):
         """
         match self.read_vars["nc_opened_with"]:
             case (
-                "h5netcdf-pyfive" | "h5netcdf-h5py" | "netCDF4" | "netcdf_file"
+                "h5netcdf-pyfive" | "netcdf_file" | "h5netcdf-h5py" | "netCDF4"
             ):
                 return nc.variables
 
@@ -11321,6 +11319,9 @@ class NetCDFRead(IORead):
             case "h5netcdf-pyfive" | "h5netcdf-h5py":
                 return dict(var.attrs)
 
+            case "netcdf_file":
+                return var._attributes
+
             case "netCDF4":
                 return {attr: var.getncattr(attr) for attr in var.ncattrs()}
 
@@ -11332,9 +11333,6 @@ class NetCDFRead(IORead):
                     attrs.pop("_ARRAY_DIMENSIONS", None)
 
                 return attrs
-
-            case "netcdf_file":
-                return var._attributes
 
     def _file_variable_dimensions(self, var):
         """Return the variable dimension names.
@@ -11576,6 +11574,10 @@ class NetCDFRead(IORead):
                 if chunks is None:
                     chunks = "contiguous"
 
+            case "netcdf_file":
+                var = nc.variables[ncvar]
+                chunks = "contiguous"
+
             case "netCDF4":
                 var = nc.variables[ncvar]
                 chunks = var.chunking()
@@ -11585,10 +11587,6 @@ class NetCDFRead(IORead):
             case "zarr":
                 var = dict(nc.arrays())[ncvar]
                 chunks = var.chunks
-
-            case "netcdf_file":
-                var = nc.variables[ncvar]
-                chunks = "contiguous"
 
         return chunks, var.shape
 
@@ -12146,13 +12144,13 @@ class NetCDFRead(IORead):
                 if not chunks:
                     chunks = None
 
+            case "netcdf_file":
+                chunks = None
+
             case "netCDF4":
                 chunks = variable.chunking()
                 if chunks == "contiguous":
                     chunks = None
-
-            case "netcdf_file":
-                chunks = None
 
         return chunks
 
