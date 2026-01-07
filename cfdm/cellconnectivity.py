@@ -127,6 +127,7 @@ class CellConnectivity(
 
     def dump(
         self,
+        data=None,
         display=True,
         _omit_properties=None,
         _key=None,
@@ -144,6 +145,10 @@ class CellConnectivity(
 
         :Parameters:
 
+            {{data: `bool` or `None`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
             display: `bool`, optional
                 If False then return the description as a string. By
                 default the description is printed.
@@ -157,6 +162,7 @@ class CellConnectivity(
             _title = "Cell Connectivity: " + self.identity(default="")
 
         return super().dump(
+            data=data,
             display=display,
             _key=_key,
             _omit_properties=_omit_properties,

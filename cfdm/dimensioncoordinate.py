@@ -46,6 +46,7 @@ class DimensionCoordinate(
 
     def dump(
         self,
+        data=None,
         display=True,
         _omit_properties=None,
         _key=None,
@@ -62,6 +63,10 @@ class DimensionCoordinate(
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
+
+            {{data: `bool` or `None`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             display: `bool`, optional
                 If False then return the description as a string. By
@@ -81,6 +86,7 @@ class DimensionCoordinate(
             _title = "Dimension coordinate: " + self.identity(default=default)
 
         return super().dump(
+            data=data,
             display=display,
             _omit_properties=_omit_properties,
             _key=_key,

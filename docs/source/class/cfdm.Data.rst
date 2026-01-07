@@ -25,6 +25,7 @@ Inspection
    ~cfdm.Data.shape
    ~cfdm.Data.size
    ~cfdm.Data.nbytes
+   ~cfdm.Data.get_cached_elements
    
 Units
 -----
@@ -338,6 +339,7 @@ Miscellaneous
    ~cfdm.Data.get_filenames
    ~cfdm.Data.get_original_filenames
    ~cfdm.Data.source
+   ~cfdm.Data.cache_elements
 
 .. rubric:: Attributes
 	    
