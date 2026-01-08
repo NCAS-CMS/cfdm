@@ -401,7 +401,7 @@ class netcdf_indexer:
 
         if kind == "T":
             # np.dtypes.StringDType, which stores variable-width
-            # string data in a UTF-8 encoding, as used by `zarr`)
+            # string data in a UTF-8 encoding, as used by `zarr`
             return ""
 
         return default_fillvals[dtype.str[1:]]
@@ -629,9 +629,9 @@ class netcdf_indexer:
             if fvalisnan:
                 mask = np.isnan(data)
             else:
-                # Must use `np.asanyarray` here, to ensure that that
+                # Must use `np.asanyarray` here, to ensure that
                 # 'mask' is a never a `bool`, which would make the
-                # following 'mask.any' call' fail.
+                # following 'mask.any' call fail.
                 mask = np.asanyarray(data == fval)
 
             if mask.any():
