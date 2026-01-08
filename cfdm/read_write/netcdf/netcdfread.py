@@ -263,6 +263,7 @@ class NetCDFRead(IORead):
                 "latitude",
                 "longitude",
             ),
+            "healpix": ("healpix_index", "latitude", "longitude"),
             "atmosphere_ln_pressure_coordinate": (
                 "atmosphere_ln_pressure_coordinate",
             ),
@@ -1979,7 +1980,7 @@ class NetCDFRead(IORead):
                 "        read_vars['parsed_aggregated_data'] =\n"
                 f"            {g['parsed_aggregated_data']}"
             )  # prgama: no cover
-                
+
         # ------------------------------------------------------------
         # List variables
         #

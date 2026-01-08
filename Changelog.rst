@@ -1,4 +1,15 @@
 Version NEXTVERSION
+----------------
+
+**2026-03-??**
+
+* Support for HEALPix grids
+  (https://github.com/NCAS-CMS/cfdm/issues/370)
+
+----
+
+Version 1.12.4.0
+----------------
 
 **2026-01-??**
 
@@ -9,10 +20,9 @@ Version NEXTVERSION
   `cfdm.read` (https://github.com/NCAS-CMS/cfdm/issues/355)
 * New function `cfdm.dataset_flatten` that replaces the deprecated
   `cfdm.netcdf_flatten` (https://github.com/NCAS-CMS/cfdm/issues/355)
+* Reduce the time taken to import `cfdm`
 * New optional dependency: ``zarr>=3.1.3``
 * Removed dependency (now optional): ``zarr>=3.0.8``
-* Reduce the time taken to import `cfdm`
-  (https://github.com/NCAS-CMS/cfdm/issues/361)
 
 ----
 
