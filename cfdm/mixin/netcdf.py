@@ -5295,7 +5295,7 @@ class NetCDFShards(NetCDFMixin):
         if len(shards) != len(self.shape):
             raise ValueError(
                 f"When shards is a sequence it must have the same length as "
-                f"the number of data dimensions ({len(self.shape)}): "
+                f"the number of data dimensions ({len(self.shape)}). "
                 f"Got: {shards!r} "
             )
 
