@@ -5028,11 +5028,6 @@ class NetCDFWrite(IOWrite):
                     raise RuntimeError(f"{error}: {dataset_name}")
 
             case "zarr":
-                if mode == "a":
-                    raise ValueError(
-                        "Can't write with mode 'a' to a Zarr dataset"
-                    )
-
                 try:
                     import zarr
                 except ModuleNotFoundError as error:
@@ -5560,6 +5555,11 @@ class NetCDFWrite(IOWrite):
         effective_fields = fields
 
         if mode == "a":
+            if fmt == "ZARR3":
+                raise ValueError(
+                    "Can't write with mode 'a' to a Zarr dataset"
+                )
+            
             # First read in the fields from the existing dataset:
             effective_fields = self._NetCDFRead(self.implementation).read(
                 dataset_name, netcdf_backend="netCDF4"

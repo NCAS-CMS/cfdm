@@ -136,7 +136,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(z["q"].shards, (4, 6))
 
     def test_zarr_read_write_CFA(self):
-        """Test CF aggreagtion in Zarr."""
+        """Test CF aggregation in Zarr."""
         f = self.f0
 
         cfdm.write(f, tmpdir1, fmt="ZARR3")
@@ -157,6 +157,14 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(z.equals(f))
         self.assertTrue(z.equals(n))
 
+    def test_zarr_write_append(self):
+        """Test in append mode with Zarr."""
+        # Check that append mode does not work for Zarr
+        f = self.f0
+        cfdm.write(f, tmpdir1, fmt='ZARR3')
+        with self.assertRaises(ValueError):
+            cfdm.write(f, tmpdir1, fmt='ZARR3', mode="a")
+            
     def test_zarr_groups_1(self):
         """Test for the general handling of Zarr hierarchical groups."""
         f = cfdm.example_field(1)
