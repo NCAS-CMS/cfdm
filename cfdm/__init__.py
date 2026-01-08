@@ -75,6 +75,7 @@ from .functions import (
     is_log_level_debug,
     is_log_level_detail,
     is_log_level_info,
+    netcdf_flatten,
 )
 
 # Though these are internal-use methods, include them in the namespace
@@ -161,7 +162,7 @@ from .abstract import Implementation
 from .cfdmimplementation import CFDMImplementation, implementation
 
 from .read_write import read, write
-from .read_write.netcdf.flatten import netcdf_flatten
+from .read_write.netcdf.flatten import dataset_flatten
 
 from .examplefield import example_field, example_fields, example_domain
 

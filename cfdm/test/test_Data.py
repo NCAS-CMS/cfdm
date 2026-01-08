@@ -2877,6 +2877,40 @@ class DataTest(unittest.TestCase):
             if a is not np.ma.masked:
                 self.assertEqual(a.dtype, d.dtype)
 
+    def test_Data_dataset_shards(self):
+        """Test Data.nc_dataset_shards."""
+        d = cfdm.Data(np.arange(24).reshape(2, 3, 4))
+
+        self.assertIsNone(d.nc_dataset_shards())
+        self.assertIsNone(d.nc_set_dataset_shards([1, 2, 3]))
+        self.assertEqual(d.nc_dataset_shards(), (1, 2, 3))
+        self.assertEqual(d.nc_clear_dataset_shards(), (1, 2, 3))
+        self.assertIsNone(d.nc_dataset_shards())
+
+        self.assertIsNone(d.nc_set_dataset_shards(None))
+        self.assertIsNone(d.nc_dataset_shards())
+
+        self.assertIsNone(d.nc_set_dataset_shards(100))
+        self.assertEqual(d.nc_dataset_shards(), 100)
+
+        # Check that shards get copied
+        self.assertEqual(d.copy().nc_dataset_shards(), 100)
+
+        # Bad shards
+        for shards in (
+            [2],
+            [-99, 3, 4],
+            [2, 3, 3.14],
+            ["bad", 3, 4],
+            [2, None, 4],
+            [2, 3, -1],
+            "bad",
+            -1,
+            3.14,
+        ):
+            with self.assertRaises(ValueError):
+                d.nc_set_dataset_shards(shards)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
