@@ -196,6 +196,8 @@ class write(ReadWrite):
                         resultant fields using `set_domain_ancillary`
                         and similar methods if required.
 
+                      .. note: Zarr datasets can not be appended to.
+
             ``'r+'``  Alias for ``'a'``.
 
             ========  =================================================

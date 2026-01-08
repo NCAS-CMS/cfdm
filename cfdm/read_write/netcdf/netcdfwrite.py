@@ -5028,12 +5028,18 @@ class NetCDFWrite(IOWrite):
                     raise RuntimeError(f"{error}: {dataset_name}")
 
             case "zarr":
+                if mode == "a":
+                    raise ValueError(
+                        "Can't write with mode 'a' to a Zarr dataset"
+                    )
+
                 try:
                     import zarr
                 except ModuleNotFoundError as error:
                     error.msg += (
                         ". Install the 'zarr' package "
-                        "(https://pypi.org/project/zarr) to read Zarr datasets"
+                        "(https://pypi.org/project/zarr) to write Zarr "
+                        "datasets"
                     )
                     raise
 
