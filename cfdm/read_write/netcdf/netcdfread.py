@@ -2065,6 +2065,13 @@ class NetCDFRead(IORead):
             # variables
             g["do_not_create_field"].update(g["fragment_array_variables"])
 
+        if debug:
+            logger.debug(
+                "   Aggregated data:\n"
+                "        read_vars['parsed_aggregated_data'] =\n"
+                f"            {g['parsed_aggregated_data']}"
+            )  # prgama: no cover
+
         # ------------------------------------------------------------
         # List variables
         #

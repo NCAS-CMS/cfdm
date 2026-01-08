@@ -5163,7 +5163,7 @@ class NetCDFShards(NetCDFMixin):
         :Returns:
 
             `None` or `int` or sequence of `int`
-                The current sharding strateg. One of:
+                The current sharding strategy. One of:
 
                 {{sharding options}}
 
@@ -5277,8 +5277,8 @@ class NetCDFShards(NetCDFMixin):
         if isinstance(shards, Integral):
             if shards < 1:
                 raise ValueError(
-                    f"'shards' must be None, a positive integer, or a "
-                    f"sequence positive of integers. Got: {shards!r}"
+                    "'shards' must be None, a positive integer, or a "
+                    f"sequence of positive integers. Got: {shards!r}"
                 )
 
             self._set_netcdf("dataset_shards", shards)
@@ -5288,14 +5288,14 @@ class NetCDFShards(NetCDFMixin):
             shards = tuple(shards)
         except TypeError:
             raise ValueError(
-                f"'shards' must be None, a positive integer, or a "
-                f"sequence positive of integers. Got: {shards!r}"
+                "'shards' must be None, a positive integer, or a "
+                f"sequence of positive integers. Got: {shards!r}"
             )
 
         if len(shards) != len(self.shape):
             raise ValueError(
                 f"When shards is a sequence it must have the same length as "
-                f"the number of data dimensions ({len(self.shape)}): "
+                f"the number of data dimensions ({len(self.shape)}). "
                 f"Got: {shards!r} "
             )
 

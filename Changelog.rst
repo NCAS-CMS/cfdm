@@ -1,20 +1,24 @@
 Version NEXTVERSION
+----------------
 
 **2026-01-??**
 
-* New default backend for netCDF-4: ``h5netcdf-pyfive``
+* New default backend for netCDF-4 reads: ``h5netcdf-pyfive``
   (https://github.com/NCAS-CMS/cfdm/issues/375)
-* New backend option for netCDF-3: ``netcdf_file``
+* New optioanl backend for netCDF-3 reads: ``netcdf_file``
   (https://github.com/NCAS-CMS/cfdm/issues/375)
 * Write Zarr v3 datasets with `cfdm.write`, and allow the reading of
   grouped Zarr v2 and v3 datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/354)
 * Read Zarr v2 and v3 datasets that contain a group hierarchy with
   `cfdm.read` (https://github.com/NCAS-CMS/cfdm/issues/355)
+* New function `cfdm.dataset_flatten` that replaces the deprecated
+  `cfdm.netcdf_flatten` (https://github.com/NCAS-CMS/cfdm/issues/355)
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
+* Removed dependency (now optional): ``zarr>=3.0.8``
+* New optional dependency: ``zarr>=3.1.3``
 * New optional dependency: ``pyfive>=1.0.2``
-* New optional dependency (was required): ``zarr>=3.1.3``
 * Changed dependency: ``h5netcdf>=1.7.4``
 
 ----

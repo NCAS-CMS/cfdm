@@ -1041,7 +1041,7 @@ class read_writeTest(unittest.TestCase):
         """Test reading remote url."""
         for scheme in ("http", "https"):
             remote = f"{scheme}:///psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
-            f = cfdm.read(remote, netcdf_backend='netCDF4')
+            f = cfdm.read(remote, netcdf_backend="netCDF4")
             self.assertEqual(len(f), 1)
 
     def test_write_parametric_Z_coordinate(self):

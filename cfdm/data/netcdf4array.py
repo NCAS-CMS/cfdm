@@ -7,6 +7,9 @@ from .netcdfindexer import netcdf_indexer
 class NetCDF4Array(IndexMixin, abstract.FileArray):
     """A netCDF array accessed with `netCDF4`.
 
+    * Accesses local and remote (http) netCDF-3 and netCDF-4 datasets.
+    * Parallelised reading is not possible.
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

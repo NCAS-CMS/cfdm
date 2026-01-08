@@ -322,8 +322,8 @@ _docstring_substitution_definitions = {
                 datasets.
               - Allows parallised reading.
               - Improves the performance of active storage reductions
-                (by storing the dataset variables' B-trees at read
-                time so that they don't have to be re-retrieved at
+                (by storing the a dataset variable's B-tree at read
+                time so that it doesn't have to be re-retrieved at
                 compute time).
 
             * ``'netCDF4'``

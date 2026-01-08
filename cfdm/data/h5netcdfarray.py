@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 class H5netcdfArray(IndexMixin, abstract.FileArray):
     """A netCDF array accessed with `h5netcdf` using the `h5py` backend.
 
+    * Accesses local and remote (http and s3) netCDF-4 datasets.
+    * Parallelised reading is not possible.
+
     .. versionadded:: (cfdm) 1.11.2.0
 
     """
@@ -20,7 +23,8 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         """Return the lock used for netCDF file access.
 
         Returns a lock object that prevents concurrent reads of netCDF
-        files, which are not currently supported by `h5netcdf`.
+        files, which are not currently supported by `h5netcdf` with
+        the `h5py` backend.
 
         .. versionadded:: (cfdm) 1.11.2.0
 

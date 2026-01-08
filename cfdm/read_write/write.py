@@ -17,7 +17,7 @@ class write(ReadWrite):
 
     **Dataset variable and dimension names**
 
-    These names are stored within constructs and are either read a
+    These names are stored within constructs and are either read
     from another dataset or may be set manually. They are used when
     writing a field construct to the dataset. If a name has not been
     set then one will be constructed (usually based on the standard
@@ -195,6 +195,8 @@ class write(ReadWrite):
                         and can appear as extra fields. Set them on the
                         resultant fields using `set_domain_ancillary`
                         and similar methods if required.
+
+                      .. note: Zarr datasets can not be appended to.
 
             ``'r+'``  Alias for ``'a'``.
 
@@ -569,7 +571,7 @@ class write(ReadWrite):
 
             * ``'contiguous'``
 
-              The data will written to the dataset contiguously,
+              The data will be written to the dataset contiguously,
               i.e. no chunking. For a Zarr dataset, this is
               implemented as a single dataset chunk for the entire
               array.
@@ -648,7 +650,7 @@ class write(ReadWrite):
 
               The integer number of dataset chunks to be stored in a
               single shard, favouring an equal number of dataset
-              chunks along each shard dimenson.
+              chunks along each shard dimension.
 
             *Example:*
               For two-dimensional data, ``dataset_shards=9`` will
@@ -767,7 +769,7 @@ class write(ReadWrite):
               URIs). If ``'absolute'`` then all fragment dataset names
               will be written as absolute URIs. If ``'relative'`` then
               all fragment dataset names will be written as
-              relative-path URI references URIs, relative to the
+              relative-path URI references, relative to the
               location of the aggregation dataset.
 
             * ``'strict'``: `bool`

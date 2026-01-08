@@ -6,6 +6,10 @@ from .netcdfindexer import netcdf_indexer
 class Netcdf_fileArray(IndexMixin, FileArray):
     """A netCDF-3 array accessed with `scipy.io.netcdf_file`.
 
+    * Accesses local netCDF-3 datasets.
+    * Allows parallised reading.
+    * Treats unlimited dimensions in the dataset as not unlimited.
+
     .. versionadded:: (cfdm) NEXTVERSION
 
     """

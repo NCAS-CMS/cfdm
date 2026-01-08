@@ -6,6 +6,12 @@ from .netcdfindexer import netcdf_indexer
 class PyfiveArray(IndexMixin, FileArray):
     """A netCDF array accessed with `pyfive`.
 
+    * Accesses local and remote (http and s3) netCDF-4 datasets.
+    * Allows parallised reading.
+    * Improves the performance of active storage reductions (by
+      storing the dataset variable's B-tree at read time so that it
+      doesn't have to be re-retrieved at compute time).
+
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
