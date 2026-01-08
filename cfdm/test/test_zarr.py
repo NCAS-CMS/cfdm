@@ -161,10 +161,10 @@ class read_writeTest(unittest.TestCase):
         """Test in append mode with Zarr."""
         # Check that append mode does not work for Zarr
         f = self.f0
-        cfdm.write(f, tmpdir1, fmt='ZARR3')
+        cfdm.write(f, tmpdir1, fmt="ZARR3")
         with self.assertRaises(ValueError):
-            cfdm.write(f, tmpdir1, fmt='ZARR3', mode="a")
-            
+            cfdm.write(f, tmpdir1, fmt="ZARR3", mode="a")
+
     def test_zarr_groups_1(self):
         """Test for the general handling of Zarr hierarchical groups."""
         f = cfdm.example_field(1)
