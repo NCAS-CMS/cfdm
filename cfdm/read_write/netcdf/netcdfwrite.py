@@ -2589,8 +2589,8 @@ class NetCDFWrite(IOWrite):
 
                 contiguous = kwargs.get("contiguous")
 
-                NETCDF4 = g["dataset"].data_model.startswith("NETCDF4")
-                if NETCDF4 and contiguous:
+                is_netcdf4 = g["dataset"].data_model.startswith("NETCDF4")
+                if is_netcdf4 and contiguous:
                     # NETCDF4 contiguous variables can't be compressed
                     kwargs["compression"] = None
                     kwargs["complevel"] = 0
