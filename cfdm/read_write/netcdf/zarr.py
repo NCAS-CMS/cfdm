@@ -44,9 +44,9 @@ class ZarrDimension:
         return self.size
 
     def __repr__(self):
-        """The size of the dimension.
+        """Called by the `repr` built-in function.
 
-        x.__len__() <==> len(x)
+        x.__repr__() <==> repr(x)
 
         .. versionadded:: (cfdm) 1.12.2.0
 

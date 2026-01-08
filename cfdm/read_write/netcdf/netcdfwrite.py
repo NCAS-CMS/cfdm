@@ -81,7 +81,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         :Parameters:
 
-            parent: `netCDF4.Dateset` or `netCDF4.Group` or `Zarr.Group`
+            parent: `netCDF4.Dataset` or `netCDF4.Group` or `Zarr.Group`
                 The group in which to create the new group.
 
             group_name: `str`
@@ -1025,7 +1025,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         :Returns:
 
-            `dict` A representation off the CF geometry container
+            `dict`
+                A representation of the CF geometry container
                 variable for field construct. If there is no geometry
                 container then the dictionary is empty.
 
@@ -1313,7 +1314,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 bounds dimension).
 
             coord_ncvar: `str`
-                The datset variable name of the parent variable
+                The dataset variable name of the parent variable
 
         :Returns:
 
@@ -2433,7 +2434,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
     def _write_cell_measure(self, f, key, cell_measure):
         """Write a cell measure construct to the dataset.
 
-        If an identical construct has already in the dataset then the
+        If an identical construct is already in the dataset then the
         cell measure will not be written.
 
         :Parameters:
@@ -2593,8 +2594,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
                 contiguous = kwargs.get("contiguous")
 
-                NETCDF4 = g["dataset"].data_model.startswith("NETCDF4")
-                if NETCDF4 and contiguous:
+                is_netcdf4 = g["dataset"].data_model.startswith("NETCDF4")
+                if is_netcdf4 and contiguous:
                     # NETCDF4 contiguous variables can't be compressed
                     kwargs["compression"] = None
                     kwargs["complevel"] = 0
@@ -2634,10 +2635,10 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                     chunks = shape
 
                 if shards is not None:
-                    # create the shard shape in the format expected by
-                    # `zarr.create_array`, 'shards' is curerntly
+                    # Create the shard shape in the format expected by
+                    # `zarr.create_array`. 'shards' is currently
                     # defined by how many *chunks* along each
-                    # dimension are in each shard, but `zarr requires
+                    # dimension are in each shard, but `zarr` requires
                     # shards defined by how many *array elements*
                     # along each dimension are in each shard.
                     if chunks == shape:
@@ -2662,8 +2663,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                         if prod(shards) > 1:
                             # More than one chunk per shard.
                             #
-                            # E.g. shards=(10, 11, 12), chunks=(10, 20,
-                            #      30) => shards=(100, 220, 360)
+                            # E.g. shards=(10, 11, 12) and chunks=(10,
+                            #      20, 30) => shards=(100, 220, 360)
                             shards = [c * n for c, n in zip(chunks, shards)]
                         else:
                             # One chunk per shard.
@@ -5066,7 +5067,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 except ModuleNotFoundError as error:
                     error.msg += (
                         ". Install the 'zarr' package "
-                        "(https://pypi.org/project/zarr) to read Zarr datasets"
+                        "(https://pypi.org/project/zarr) to write Zarr "
+                        "datasets"
                     )
                     raise
 
@@ -5591,6 +5593,9 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         effective_fields = fields
 
         if mode == "a":
+            if fmt == "ZARR3":
+                raise ValueError("Can't write with mode 'a' to a Zarr dataset")
+
             # First read in the fields from the existing dataset:
             effective_fields = self._NetCDFRead(self.implementation).read(
                 dataset_name, netcdf_backend="netCDF4"
@@ -6296,7 +6301,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 data.
 
             ncvar: `str`
-                The dataset xname for the variable.
+                The dataset name for the variable.
 
             ncdimensions: sequence of `str`
 
@@ -6624,7 +6629,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         if not data.nc_get_aggregation_write_status():
             raise AggregationError(
                 f"Can't write {cfvar!r} as a CF aggregation variable. "
-                "This is could be "
+                "This could be "
                 "because some fragment values in memory have been "
                 "changed relative to those in the fragment datasets, "
                 "or a Dask rechunking has occured, etc."
@@ -6714,7 +6719,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                         "aggregation variable: "
                         f"The Dask chunk in position {position} "
                         f"(defined by data index {index!r}) does not "
-                        "reference a unique fragment dataset. This is could "
+                        "reference a unique fragment dataset. This could "
                         "be because some fragment values in memory have been "
                         "changed relative to those in the fragment datasets, "
                         "or a Dask rechunking has occured, etc."
@@ -6889,7 +6894,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
     def _missing_value(self, x, datatype):
         """Get the missing value.
 
-         .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 

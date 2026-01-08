@@ -244,7 +244,7 @@ Optional
 ^^^^^^^^
 
 Some further dependencies that enable further functionality are
-optional. This to facilitate cfdm being installed in restricted
+optional. This is to facilitate cfdm being installed in restricted
 environments for which these features are not required.
 
 .. rubric:: Zarr

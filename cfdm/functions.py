@@ -406,7 +406,7 @@ def environment(display=True, paths=True):
     netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
     h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
     h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
-    zarr: 3.0.8 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
+    zarr: 3.1.3 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
     s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
     scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
     dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
@@ -426,7 +426,7 @@ def environment(display=True, paths=True):
     netCDF4: 1.7.2
     h5netcdf: 1.3.0
     h5py: 3.12.1
-    zarr: 3.0.8
+    zarr: 3.1.3
     s3fs: 2024.12.0
     scipy: 1.15.1
     dask: 2025.5.1
@@ -2436,10 +2436,13 @@ def netcdf_flatten(*args, **kwargs):
     .. versionadded:: (cfdm) 1.11.2.0
 
     """
-    raise DeprecationError(
-        "Function 'netcdf_flatten' has been renamed 'dataset_flatten' "
-        "at version NEXTVERSION"
-    )
+    _DEPRECATION_ERROR_FUNCTION(
+        "netcdf_flatten",
+        "Use 'cfdm.dataset_flatten' instead, "
+        "which has a slightly different API.",
+        version="NEXTVERSION",
+        removed_at="1.15.0.0",
+    )  # pragma: no cover
 
 
 def _DEPRECATION_ERROR_KWARGS(
@@ -2490,4 +2493,21 @@ def _DEPRECATION_ERROR_METHOD(
         f"{instance.__class__.__name__} method {method!r} has been deprecated "
         f"at version {version} and is no longer available{removed_at}. "
         f"{message}"
+    )
+
+
+def _DEPRECATION_ERROR_FUNCTION(
+    func, message="", version=None, removed_at=None
+):
+    """Error handling for deprecated functions.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"Function {func!r} has been deprecated at version {version} and is "
+        f"no longer available{removed_at}. {message}"
     )

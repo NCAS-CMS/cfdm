@@ -1476,7 +1476,7 @@ class NetCDFRead(IORead):
             "cfa_write": cfa_write,
             # --------------------------------------------------------
             # Whether or not to store the dataset chunking and
-            # sharding strategy
+            # sharding strategies
             # --------------------------------------------------------
             "store_dataset_chunks": bool(store_dataset_chunks),
             "store_dataset_shards": bool(store_dataset_shards),
@@ -1976,6 +1976,13 @@ class NetCDFRead(IORead):
             # Do not create fields/domains from fragment array
             # variables
             g["do_not_create_field"].update(g["fragment_array_variables"])
+
+        if debug:
+            logger.debug(
+                "   Aggregated data:\n"
+                "        read_vars['parsed_aggregated_data'] =\n"
+                f"            {g['parsed_aggregated_data']}"
+            )  # prgama: no cover
 
         # ------------------------------------------------------------
         # List variables
@@ -8300,7 +8307,7 @@ class NetCDFRead(IORead):
         )
 
         # Set whether or not to read the data into memory
-        to_memory = self.read_vars["to_memory"]
+        to_memory = g["to_memory"]
         to_memory = "all" in to_memory or construct_type in to_memory
 
         data = self.implementation.initialise_Data(
@@ -8315,7 +8322,7 @@ class NetCDFRead(IORead):
 
         if ncvar is not None:
             # Store the dataset chunking
-            if self.read_vars["store_dataset_chunks"]:
+            if g["store_dataset_chunks"]:
                 # Only store the dataset chunking if 'data' has the
                 # same shape as its netCDF variable. This may not be
                 # the case for variables compressed by convention
@@ -8325,7 +8332,7 @@ class NetCDFRead(IORead):
                     self.implementation.nc_set_dataset_chunksizes(data, chunks)
 
             # Store the dataset sharding
-            if self.read_vars["store_dataset_shards"]:
+            if g["store_dataset_shards"]:
                 # Only store the dataset sharding if 'data' has the
                 # same shape as its netCDF variable. This may not be
                 # the case for variables compressed by convention
@@ -12089,6 +12096,10 @@ class NetCDFRead(IORead):
     def _get_dataset_shards(self, ncvar):
         """Return a netCDF variable's dataset storage shards.
 
+        The sharding strategy is defined as the number of dataset
+        chunks (*not* the number of data array elements) along each
+        data array axis.
+
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
@@ -12125,8 +12136,9 @@ class NetCDFRead(IORead):
         var = nc[ncvar]
         shards = var.shards
         if shards is not None:
-            # Re-cast 'shards' as the number of chunks (as opposed to
-            # data elemnents) along each of its dimensions
+            # 'shards' is currently the number of data array elements
+            # along each data array axis => re-cast it as the number
+            # of chunks along each of axis.
             shards = [s // c for s, c in zip(shards, var.chunks)]
 
         return shards, var.shape

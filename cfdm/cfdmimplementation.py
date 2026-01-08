@@ -1144,7 +1144,9 @@ class CFDMImplementation(Implementation):
     def nc_get_dataset_shards(self, data):
         """Get the Zarr dataset sharding strategy for the data.
 
-        ..versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_set_dataset_shards`
 
         :Parameters:
 
@@ -1303,13 +1305,15 @@ class CFDMImplementation(Implementation):
     def nc_set_dataset_shards(self, data, shards):
         """Set the Zarr dataset sharding strategy for the data.
 
-        ..versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_get_dataset_shards`
 
         :Parameters:
 
             data: `Data`
 
-            shards: `None` or `int` or sewunce of `int`
+            shards: `None` or `int` or sequence of `int`
                 Set the sharding strategy when writing to a Zarr
                 dataset.
 
