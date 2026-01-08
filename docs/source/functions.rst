@@ -20,8 +20,8 @@ Reading and writing
 
    cfdm.read 
    cfdm.write
-   cfdm.netcdf_flatten
-   cfdm.netcdf_index
+   cfdm.dataset_flatten
+   cfdm.netcdf_indexer
 
 Mathematical operations
 -----------------------
