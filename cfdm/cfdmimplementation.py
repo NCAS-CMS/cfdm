@@ -1107,7 +1107,7 @@ class CFDMImplementation(Implementation):
         """Get the Zarr dataset sharding strategy for the data.
 
         .. versionadded:: (cfdm) NEXTVERSION
-        
+
         .. seealso:: `nc_set_dataset_shards`
 
         :Parameters:
@@ -1268,7 +1268,7 @@ class CFDMImplementation(Implementation):
         """Set the Zarr dataset sharding strategy for the data.
 
         .. versionadded:: (cfdm) NEXTVERSION
-        
+
         .. seealso:: `nc_get_dataset_shards`
 
         :Parameters:

@@ -2436,10 +2436,13 @@ def netcdf_flatten(*args, **kwargs):
     .. versionadded:: (cfdm) 1.11.2.0
 
     """
-    raise DeprecationError(
-        "Function 'netcdf_flatten' has been renamed 'dataset_flatten' "
-        "at version NEXTVERSION"
-    )
+    _DEPRECATION_ERROR_FUNCTION(
+        "netcdf_flatten",
+        "Use 'cfdm.dataset_flatten' instead, "
+        "which has a slightly different API.",
+        version="NEXTVERSION",
+        removed_at="1.15.0.0",
+    )  # pragma: no cover
 
 
 def _DEPRECATION_ERROR_KWARGS(
@@ -2490,4 +2493,21 @@ def _DEPRECATION_ERROR_METHOD(
         f"{instance.__class__.__name__} method {method!r} has been deprecated "
         f"at version {version} and is no longer available{removed_at}. "
         f"{message}"
+    )
+
+
+def _DEPRECATION_ERROR_FUNCTION(
+    func, message="", version=None, removed_at=None
+):
+    """Error handling for deprecated functions.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"Function {func!r} has been deprecated at version {version} and is "
+        f"no longer available{removed_at}. {message}"
     )
