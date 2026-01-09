@@ -2400,6 +2400,20 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
     if len_parsed_indices < ndim:
         parsed_indices.extend([slice(None)] * (ndim - len_parsed_indices))
 
+    # Check that the indices are valid for the dimensions before integral
+    # indices are converted to slices, below. Out-of-range slicing works
+    # in Python generally (slices are allowed to extend past end points)
+    # but if known indices are out-of-range we error early with this
+    # for (one for) consistent behaviour between setitem and getitem.
+    for position, (dim_size, index) in enumerate(zip(shape, indices)):
+        # Integer index case
+        if isinstance(index, Integral) and index > dim_size:
+            raise IndexError(
+                f"Index {index!r} is out of bounds for axis {position} "
+                f"with size {dim_size}."
+            )
+        # Slice case - check upper and lower bounds etc.
+
     if not ndim and parsed_indices:
         raise IndexError(
             "Scalar array can only be indexed with () or Ellipsis"
