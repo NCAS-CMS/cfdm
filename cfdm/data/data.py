@@ -4596,17 +4596,24 @@ class Data(
             # otherwise the same considered equal. E.g. '<f8' and
             # 'float64'.
             #
-            # TODONUMPY2: Maybe use np.isdtype instead of np.issubdtype ?
-            dtype0 = self.dtype
-            dtype1 = other.dtype
-            if not (
-                np.issubdtype(dtype0, dtype1) and np.issubdtype(dtype1, dtype0)
-            ):
+#            # TODONUMPY2: Maybe use np.isdtype instead of np.issubdtype ?
+            if not np.isdtype(self.dtype, other.dtype):
                 logger.info(
                     f"{self.__class__.__name__}: Different data types: "
                     f"{self.dtype}, {other.dtype}"
                 )  # pragma: no cover
                 return False
+
+#            dtype0 = self.dtype
+#            dtype1 = other.dtype
+#            if not (
+#                np.issubdtype(dtype0, dtype1) and np.issubdtype(dtype1, dtype0)
+#            ):
+#                logger.info(
+#                    f"{self.__class__.__name__}: Different data types: "
+#                    f"{self.dtype}, {other.dtype}"
+#                )  # pragma: no cover
+#                return False
 
         # Check that each instance has the same units.
         self_Units = self.Units
