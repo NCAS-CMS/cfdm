@@ -311,7 +311,7 @@ _docstring_substitution_definitions = {
             Any one or more of the following backends may be
             specified, and an attempt to open each netCDF-3 or
             netCDF-4 dataset is made by the given backends in the
-            order given, stopping afer the first successful read.
+            order given, stopping after the first successful read.
             Note that a Zarr dataset is always opened with the `zarr`
             library.
 
@@ -348,7 +348,7 @@ _docstring_substitution_definitions = {
               - Treats unlimited dimensions in the dataset as not
                 unlimited.
 
-            By default *netcdf_backend* is `None`, which is equivalant
+            By default *netcdf_backend* is `None`, which is equivalent
             to providing the ordered sequence
 
             ``('h5netcdf-pyfive', 'h5netcdf-h5py', 'netCDF4', 'netcdf_file')``
@@ -643,7 +643,7 @@ _docstring_substitution_definitions = {
               to be applied to the directories of the fragment file
               locations. The dictionary comprises keyword arguments to
               the {{package}}.Data.replace_directory` method, which is
-              used to make the the changes. The aggregation file being
+              used to make the changes. The aggregation file being
               read is unaltered. An empty dictionary results in no
               modifications.
 
@@ -858,8 +858,8 @@ _docstring_substitution_definitions = {
                 If False then the compression type and, if applicable,
                 the underlying compressed arrays must be the same, as
                 well as the arrays in their uncompressed forms. By
-                default only the the arrays in their uncompressed
-                forms are compared.""",
+                default only the arrays in their uncompressed forms
+                are compared.""",
     # ignore_data_type: `bool`, optional
     "{{ignore_data_type: `bool`, optional}}": """ignore_data_type: `bool`, optional
                 If True then ignore the data types in all numerical

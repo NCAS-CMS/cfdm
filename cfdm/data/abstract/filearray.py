@@ -614,7 +614,7 @@ class FileArray(Array):
 
         a._set_component("filename", filename, copy=False)
 
-        # Remove an obselete variable
+        # Remove an obsolete variable
         a._del_component("variable", None)
 
         return a
@@ -712,7 +712,7 @@ class FileArray(Array):
         a = self.copy()
         a._set_component("filename", filename, copy=False)
 
-        # Remove an obselete variable
+        # Remove an obsolete variable
         a._del_component("variable", None)
 
         return a

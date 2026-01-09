@@ -347,7 +347,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
             `tuple` of `numpy.ndarray`
                 The three-dimensionsal (x, y, z) vector representation
-                of the the interpolated points along the subsampled
+                of the interpolated points along the subsampled
                 dimension.
 
         """

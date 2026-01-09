@@ -409,7 +409,7 @@ class NetCDFRead(IORead):
                 referenced. If `None` then ``0`` is always returned.
 
             referencing_ncvar: `str`
-                The netCDF name of the the variable that is doing the
+                The netCDF name of the variable that is doing the
                 referencing.
 
                 .. versionaddedd:: (cfdm) 1.8.6.0
@@ -6354,7 +6354,7 @@ class NetCDFRead(IORead):
         )
 
         # Set the name of the netCDF interpolation subarea dimension
-        # associated with the the subsampled dimension.
+        # associated with the subsampled dimension.
         if subarea_ncdim is not None:
             self.implementation.nc_set_interpolation_subarea_dimension(
                 variable, self._ncdim_abspath(subarea_ncdim)
@@ -6773,18 +6773,6 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         variable = self._original_dataset_variable(ncvar)
-        #        if g["has_groups"]:  # ppp
-        #            # Get the variable from the original grouped file. This is
-        #            # primarily so that unlimited dimensions don't come out
-        #            # with size 0 (v1.8.8.1)
-        #            group, name = self._netCDF4_group(
-        #                g["variable_grouped_dataset"][ncvar], ncvar
-        #            )
-        #            variable = self._file_group_variables(group).get(name)
-        #
-        #        else:
-        #            variable = g["variables"].get(ncvar)
-
         if variable is None:
             return None
 
@@ -6847,8 +6835,8 @@ class NetCDFRead(IORead):
 
             match g["original_dataset_opened_with"]:
                 case "h5netcdf-pyfive":
-                    # Add the pyfive.Variable object to the Array object
-                    # initialization
+                    # Add the pyfive.Variable object to the Array
+                    # object initialisation
                     variable = self._original_dataset_variable(ncvar)
                     kwargs["variable"] = variable._h5ds
                     array = self.implementation.initialise_PyfiveArray(
@@ -12060,8 +12048,8 @@ class NetCDFRead(IORead):
         elif ndim == 2 and data.shape[-1] == 2:
             # Assume that 2-d data with a last dimension of size 2
             # contains coordinate bounds, for which it is useful to
-            # cache the upper and lower bounds of the the first and
-            # last cells.
+            # cache the upper and lower bounds of the first and last
+            # cells.
             indices = (0, 1, -2, -1)
             ndim1 = ndim - 1
             if one_chunk:

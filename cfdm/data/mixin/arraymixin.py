@@ -172,7 +172,7 @@ class ArrayMixin:
                 If True then the returned attribute dictionary is a
                 deep copy of those stored. If False (the default) then
                 the any in-place changes to dictionary or attributes
-                will also affect the stored attirbutes.
+                will also affect the stored attributes.
 
         :Returns:
 
