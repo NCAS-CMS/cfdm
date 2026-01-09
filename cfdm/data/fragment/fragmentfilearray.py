@@ -35,7 +35,6 @@ class FragmentFileArray(
 
         instance = super().__new__(cls)
         instance._FragmentArrays = (
-            #            FragmentVariableArray,
             FragmentPyfiveArray,
             FragmentNetCDF4Array,
             FragmentH5netcdfArray,

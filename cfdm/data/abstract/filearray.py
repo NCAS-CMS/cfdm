@@ -274,17 +274,6 @@ class FileArray(Array):
         """
         return self._get_component("address", default)
 
-    #        address = self._get_component("address", None)
-    #        if address is None:
-    #            if default is None:
-    #                return
-    #
-    #            return self._default(
-    #                default, f"{self.__class__.__name__} has no address"
-    #            )
-    #
-    #        return address
-
     def file_directory(self, normalise=False, default=AttributeError()):
         """The file directory.
 

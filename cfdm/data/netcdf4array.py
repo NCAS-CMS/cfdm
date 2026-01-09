@@ -145,33 +145,6 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
 
         return dataset
 
-    #    def _set_attributes(self, var):
-    #        """Set the netCDF variable attributes.
-    #
-    #        These are set from the netCDF variable attributes, but only if
-    #        they have not already been defined, either during `{{class}}`
-    #        instantiation or by a previous call to `_set_attributes`.
-    #
-    #        .. versionadded:: (cfdm) 1.11.2.0
-    #
-    #        :Parameters:
-    #
-    #            var: `netCDF4.Variable`
-    #                The netCDF variable.
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                The attributes.
-    #
-    #        """
-    #        attributes = self._get_component("attributes", None)
-    #        if attributes is not None:
-    #            return
-    #
-    #        attributes = {attr: var.getncattr(attr) for attr in var.ncattrs()}
-    #        self._set_component("attributes", attributes, copy=False)
-
     def close(self, dataset):
         """Close the dataset containing the data.
 

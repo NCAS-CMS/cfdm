@@ -497,10 +497,6 @@ class NetCDFRead(IORead):
             except AttributeError:
                 pass
 
-    #        # Close s3fs.File objects
-    #        for f in g["s3fs_File_objects"]:
-    #            f.close()
-
     def dataset_open(self, dataset, flatten=True, verbose=None):
         """Open the netCDF dataset for reading.
 
@@ -571,7 +567,6 @@ class NetCDFRead(IORead):
             # Reset 'dataset' to an s3fs.File object that can be
             # passed to the netCDF backend
             dataset = file_system.open(u.path[1:], "rb")
-            # TODO?            g["s3fs_File_objects"].append(dataset)
 
             if is_log_level_detail(logger):
                 logger.detail(
@@ -1536,8 +1531,6 @@ class NetCDFRead(IORead):
             "file_system_storage_options": {},
             # Cached s3fs.S3FileSystem objects
             "file_systems": _file_systems,
-            #            # Cache of open s3fs.File objects
-            #            "s3fs_File_objects": [],
             # --------------------------------------------------------
             # Array element caching
             # --------------------------------------------------------
@@ -1571,8 +1564,8 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "squeeze": bool(squeeze),
             "unsqueeze": bool(unsqueeze),
-            #
-            "cached_Data": {},
+            #            # Cache the Data objects created for netCDF variables
+            #            "cached_Data": {},
             # --------------------------------------------------------
             # Quantization
             # --------------------------------------------------------
@@ -1789,8 +1782,6 @@ class NetCDFRead(IORead):
             groups = ()
             group_attributes = {}
 
-            # variable = self._file_variable(nc, ncvar)
-
             # --------------------------------------------------------
             # Specify the group structure for each variable (CF>=1.8)
             # TODO
@@ -1840,9 +1831,7 @@ class NetCDFRead(IORead):
 
             variable_attributes[ncvar] = {}
             dd = self._file_variable_attributes(variable)
-            for attr, value in dd.items():  # self._file_variable_attributes(
-                #                variable
-                #            ).items():
+            for attr, value in dd.items():
                 attr = str(attr)
                 if isinstance(value, bytes):
                     value = value.decode(errors="ignore")
@@ -1888,8 +1877,6 @@ class NetCDFRead(IORead):
 
             dimension_groups[ncdim] = groups
             dimension_basename[ncdim] = ncdim_basename
-
-            #            dimension_isunlimited[ncdim] = file_dimensions[ncdim_org].isunlimited()
             dimension_isunlimited[ncdim] = self._file_dimension_isunlimited(
                 nc, ncdim_org
             )
@@ -8403,7 +8390,7 @@ class NetCDFRead(IORead):
                 if shards is not None and shape == data.shape:
                     self.implementation.nc_set_dataset_shards(data, shards)
 
-        g["cached_Data"][ncvar] = data
+        #        g["cached_Data"][ncvar] = data
 
         return data
 
@@ -11367,34 +11354,6 @@ class NetCDFRead(IORead):
                         # Zarr v2
                         return tuple(var.attrs["_ARRAY_DIMENSIONS"])
 
-    def _file_variable_size(self, var):
-        """Return the size of a variable's array.
-
-        .. versionadded:: (cfdm) 1.11.2.0
-
-        :Parameters:
-
-            var:
-                The variable. One of `netCDF4.Variable`,
-               `scipy.io.netcdf_variable`, `h5netcdf.Variable`,
-               `zarr.Array`
-
-        :Returns:
-
-            `int`
-                The array size.
-
-        """
-        # Use try/except here because the variable type could differ
-        # from that implied by the value of
-        # read_vars["file_opened_with"] TODO MATCH
-        try:
-            # netCDF4, zarr
-            return var.size
-        except AttributeError:
-            # h5netcdf, scipy
-            return prod(var.shape)
-
     def _ndim(self, var):
         """Return the size of a variable's array.
 
@@ -11640,7 +11599,6 @@ class NetCDFRead(IORead):
 
         variable = self._original_dataset_variable(ncvar)
         storage_chunks = self._variable_chunksizes(variable)
-        #        storage_chunks = self._variable_chunksizes(g["variables"][ncvar])
 
         ndim = array.ndim
         if (
@@ -12376,7 +12334,21 @@ class NetCDFRead(IORead):
         return shards, var.shape
 
     def _original_dataset_variable(self, ncvar):
-        """TODO."""
+        """Return a variable object from the origin dataset.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+           ncvar: `str`
+                The netCDF variable name.
+
+        :Returns:
+
+                The variable object with this name in the original
+                dataset as passed to `read`.
+
+        """
         g = self.read_vars
         if g["has_groups"]:
             group, name = self._netCDF4_group(

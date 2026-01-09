@@ -212,6 +212,5 @@ class PyfiveArray(IndexMixin, FileArray):
             decode_vlen_strings=True,
             netcdf_backend="pyfive",
             phony_dims="sort",
-            #            phony_dims='access'
             **kwargs
         )

@@ -286,7 +286,6 @@ class netcdf_indexer:
             if kind == "O":
                 dtype = data.dtype
 
-        #        if dtype is str:
         dtype = data.dtype
 
         dtype_unsigned_int = None
