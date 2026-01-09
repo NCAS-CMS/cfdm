@@ -2126,6 +2126,12 @@ class DataTest(unittest.TestCase):
             (d[0, [4, 0, 3, 1]].array == [[0.018, 0.007, 0.014, 0.034]]).all()
         )
 
+        # Test IndexError emerges for out-of-range indices
+        d = cfdm.Data(np.ones((4, 4)))
+        for indices in ((0, 5), (5, 0), (5, 5)):
+            with self.assertRaises(IndexError):
+                d[indices]
+
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
         """Test arithmetic, logical and comparison operators on Data."""
         a = np.arange(3 * 4 * 5).reshape(3, 4, 5)
