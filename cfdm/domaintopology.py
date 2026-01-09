@@ -591,8 +591,8 @@ class DomainTopology(
                 .. warning:: No checks are carried out to ensure that
                              the given *face_nodes* match the actual
                              node ids stored in the data, and a
-                             mis-match will result in an exceptiion
-                             or, worse, an incorrect result.
+                             mis-match will result in an exception or,
+                             worse, an incorrect result.
 
         :Returns:
 

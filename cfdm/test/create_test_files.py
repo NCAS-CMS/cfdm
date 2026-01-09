@@ -2373,7 +2373,6 @@ def _make_ugrid_3(filename):
     return filename
 
 
-# ppp2
 def _make_aggregation_value(filename):
     """Create an aggregation variable with 'unique_values'."""
     n = netCDF4.Dataset(filename, "w")

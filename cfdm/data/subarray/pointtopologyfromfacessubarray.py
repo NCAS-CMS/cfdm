@@ -84,15 +84,15 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
             # Get the neighbours of 'node', which is in position 'col'
             # in the face.
             if not col:
-                # 'node' is in position 0, so it's neighbours are in
+                # 'node' is in position 0, so its neighbours are in
                 # positions -1 and 1
                 nodes_extend((row[-1], row[1]))
             elif col == len(row) - 1:
-                # 'node' is in position -1, so it's neighbours are in
+                # 'node' is in position -1, so its neighbours are in
                 # positions -2 and 0
                 nodes_extend((row[-2], row[0]))
             else:
-                # 'node' is in any other position (col), so it's
+                # 'node' is in any other position (col), so its
                 # neighbours are in positions col-1 and col+1
                 nodes_extend((row[col - 1], row[col + 1]))
 

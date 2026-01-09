@@ -110,7 +110,7 @@ class Topology:
             # Move missing values to the end of each row.
             #
             # Note: this might reorder the each row (excluding the
-            # firt column).
+            # first column).
             data[:, 1:].sort(axis=1, endwith=True)
 
         if remove_empty_columns:

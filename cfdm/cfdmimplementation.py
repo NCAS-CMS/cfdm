@@ -2027,7 +2027,7 @@ class CFDMImplementation(Implementation):
         :Parameters:
 
             kwargs: optional
-                Parameters with whcih to intialising the object.
+                Parameters with which to intialising the object.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 

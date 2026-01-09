@@ -4746,7 +4746,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         :Parameters:
 
-            parent: `netCDF4.Dateset` or `netCDF4.Group` or `Zarr.Group`
+            parent: `netCDF4.Dataset` or `netCDF4.Group` or `Zarr.Group`
                 The group in which to find or create new group.
 
             groups: sequence of `str`

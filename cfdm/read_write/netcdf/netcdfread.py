@@ -34,9 +34,6 @@ from .flatten.config import (
 )
 from .zarr import ZarrDimension
 
-# from uuid import uuid4
-
-
 logger = logging.getLogger(__name__)
 
 _cached_temporary_files = {}

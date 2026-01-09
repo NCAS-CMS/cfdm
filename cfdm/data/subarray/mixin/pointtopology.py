@@ -29,14 +29,14 @@ class PointTopology:
 
         # ------------------------------------------------------------
         # E.g. For faces, 'node_connectivity' might be (two
-        #      quadrilaterals and one triangle):
+        # quadrilaterals and one triangle):
         #
         #      [[3 4 2 1 ]
         #       [5 6 4 3 ]
         #       [7 2 4 --]]
         #
-        # E.g. For nine edges of the above faces, 'node_connectivity'
-        #      is
+        # E.g. For the nine edges of the above faces,
+        #      'node_connectivity' could be:
         #
         #      [[2 7]
         #       [4 7]
@@ -107,8 +107,8 @@ class PointTopology:
         u = np.ma.where(u == 0, np.ma.masked, u)
 
         # ------------------------------------------------------------
-        # E.g. For both of the face and edges examples above, 'u' is
-        #      now
+        # E.g. For either of the face and edge examples above, 'u'
+        #      would now be:
         #
         #      [[1 2 3 -- --]
         #       [2 1 4  7 --]

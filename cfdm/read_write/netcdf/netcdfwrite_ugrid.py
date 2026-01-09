@@ -348,15 +348,20 @@ class NetCDFWriteUgrid:
            'face_face_connectivity'
            'volume_volume_connectivity'
 
-        More optional keys might get added later on by
-        `_ugrid_update_mesh`. The 'attributes' dictionary might get
-        updated by `_ugrid_update_mesh`. The 'sorted_edges' dictionary
-        might get updated by various methods.
+        After the mesh description is a dictionary has been created
+        with this method:
 
-        E.g. the mesh description for the UGRID mesh topology of face
-             cells taken from ``cfdm.example_field(8)``. In this case
-             the 'node_coordinates' Auxiliary Coordinates are derived
-             from the face cell bounds::
+        * More of the optional keys might get added by
+          `_ugrid_update_mesh`.
+        * The 'attributes' dictionary might get updated by
+          `_ugrid_update_mesh`.
+        * The 'sorted_edges' dictionary might get updated by various
+          methods.
+
+        For instance, consider the mesh description for the UGRID mesh
+        topology of face cells taken from ``cfdm.example_field(8)``.
+        In this case the 'node_coordinates' Auxiliary Coordinates are
+        derived from the face cell bounds::
 
            {'attributes':
                 {'face_coordinates': ['Mesh2_face_x', 'Mesh2_face_y'],
@@ -378,10 +383,10 @@ class NetCDFWriteUgrid:
                 2
            }
 
-        E.g. the mesh description for the UGRID mesh topology of edge
-             cells taken from ``cfdm.example_field(9)``. In this case
-             the 'node_coordinates' Auxiliary Coordinates are derived
-             from the edge cell bounds::
+        For instance, consider the mesh description for the UGRID mesh
+        topology of edge cells taken from ``cfdm.example_field(9). In
+        this case the 'node_coordinates' Auxiliary Coordinates are
+        derived from the edge cell bounds::
 
            {'attributes':
                 {'edge_coordinates': ['Mesh2_edge_x', 'Mesh2_edge_y'],
@@ -403,10 +408,10 @@ class NetCDFWriteUgrid:
                 1
            }
 
-        E.g. the mesh description for the UGRID mesh topology of point
-             cells taken from ``cfdm.example_field(10)``. In this case
-             the 'node_coordinates' Auxiliary Coordinates are
-             explicitly defined by the point cell locations::
+        For instance, consider the mesh description for the UGRID mesh
+        topology of node cells taken from ``cfdm.example_field(10). In
+        this case the 'node_coordinates' Auxiliary Coordinates are
+        explicitly defined by the point cell locations::
 
            {'attributes':
                 {'edge_node_connectivity': [],
@@ -723,8 +728,8 @@ class NetCDFWriteUgrid:
         # uber-mesh.
         return True
 
-    def _ugrid_check_node_edge(self, node=None, edge=None):
-        """Whether or not nodes imply edges, and vice versa.
+    def _ugrid_check_node_edge(self, node, edge):
+        """Whether or not the nodes imply the edges, and vice versa.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -761,8 +766,8 @@ class NetCDFWriteUgrid:
 
         return bool((node_edges.data == edges.data).all())
 
-    def _ugrid_check_edge_face(self, edge=None, face=None):
-        """Whether or not edges imply faces, and vice versa.
+    def _ugrid_check_edge_face(self, edge, face):
+        """Whether or not the edges imply the faces, and vice versa.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -817,8 +822,8 @@ class NetCDFWriteUgrid:
 
         return bool((face_edges.data == edges.data).all())
 
-    def _ugrid_check_node_face(self, node=None, face=None):
-        """Whether or not nodes imply faces, and vice versa.
+    def _ugrid_check_node_face(self, node, face):
+        """Whether or not the nodes imply the faces, and vice versa.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
