@@ -536,7 +536,6 @@ _docstring_substitution_definitions = {
                 None}``.""",
     # read store_dataset_chunks
     "{{read store_dataset_chunks: `bool`, optional}}": """store_dataset_chunks: `bool`, optional
-
             If True (the default) then store the dataset chunking
             strategy for each returned data array. The dataset
             chunking strategy is then accessible via an object's
@@ -545,17 +544,33 @@ _docstring_substitution_definitions = {
             written to a new netCDF file with `{{package}}.write`
             (unless the strategy is modified prior to writing).
 
-            If False, or if the dataset being read does not support
-            chunking (such as a netCDF-3 dataset), then no dataset
-            chunking strategy is stored (i.e. an
-            `nc_dataset_chunksizes` method will return `None` for all
-            `Data` objects). In this case, when the data is written to
-            a new netCDF file, the dataset chunking strategy will be
-            determined by `{{package}}.write`.
+            If False then no dataset chunking strategy is stored
+            (i.e. the `nc_dataset_chunksizes` method will return
+            `None` for all returned `Data` objects). In this case,
+            when the data is written to a new dataset, the dataset
+            chunking strategy will be determined by
+            `{{package}}.write`.
 
             See the `{{package}}.write` *dataset_chunks* parameter for
             details on how the dataset chunking strategy is determined
             at the time of writing.""",
+    # read store_dataset_shards
+    "{{read store_dataset_shards: `bool`, optional}}": """store_dataset_shards: `bool`, optional
+            If True (the default) then store the Zarr dataset sharding
+            strategy for each returned data array. The dataset
+            sharding strategy is then accessible via an object's
+            `nc_dataset_shards` method. When the dataset sharding
+            strategy is stored, it will be used when the data is
+            written to a new Zarr dataset with `{{package}}.write`
+            (unless the strategy is modified prior to writing).
+
+            If False, or if the dataset being read does not support
+            sharding (such as a Zarr v2 or netCDF dataset), then no
+            dataset sharding strategy is stored (i.e. the
+            `nc_dataset_shards` method will return `None` for all
+            returned `Data` objects). In this case, when the data is
+            written to a new Zarr dataset, the dataset sharding
+            strategy will be determined by `{{package}}.write`.""",
     # read cfa
     "{{read cfa: `dict`, optional}}": """cfa: `dict`, optional
             Configure the reading of CF-netCDF aggregation files.
@@ -703,6 +718,61 @@ _docstring_substitution_definitions = {
             Note that setting ``recursive=True, followlinks=True`` can
             lead to infinite recursion if a symbolic link points to a
             parent directory of itself.""",
+    # read group_dimension_search
+    "{{read group_dimension_search: `str`, optional}}": """group_dimension_search: `str`, optional
+            How to interpret a dimension name that contains no
+            group-separator characters, such as ``dim`` (as opposed to
+            ``group/dim``, ``/group/dim``, ``../dim``, etc.). The
+            *group_dimension_search* parameter must be one of:
+
+            * ``'closest_ancestor'``
+
+              This is the default and is the behaviour defined by the
+              CF conventions (section 2.7 Groups).
+
+              Assume that the sub-group dimension is the same as the
+              dimension with the same name and size in an ancestor
+              group, if one exists. If multiple such dimensions exist,
+              then the correspondence is with the dimension in the
+              ancestor group that is **closest** to the sub-group
+              (i.e. that is furthest away from the root group).
+
+            * ``'furthest_ancestor'``
+
+              This behaviour is different to that defined by the CF
+              conventions (section 2.7 Groups).
+
+              Assume that the sub-group dimension is the same as the
+              one with the same name and size in an ancestor group, if
+              one exists. If multiple such dimensions exist, then the
+              correspondence is with the dimension in the ancestor
+              group that is **furthest away** from the sub-group
+              (i.e. that is closest to the root group).
+
+            * ``'local'``
+
+              This behaviour is different to that defined by the CF
+              conventions (section 2.7 Groups).
+
+              Assume that the Zarr sub-group dimension is different to
+              any with the same name and size in all ancestor groups.
+
+            .. note:: For a netCDF dataset, for which it is always
+                      well-defined in which group a dimension is
+                      defined, *group_dimension_search* may only take
+                      the default value of ``'closest_ancestor'`,
+                      which applies the behaviour defined by the CF
+                      conventions (section 2.7 Groups).
+
+                      For a Zarr dataset, for which there is no means
+                      of indicating whether or not the same dimension
+                      names that appear in different groups correspond
+                      to each other, setting this parameter may be
+                      necessary for the correct interpretation of the
+                      dataset in the event that its dimensions are
+                      named in a manner that is inconsistent with CF
+                      rules defined by the CF conventions (section 2.7
+                      Groups).""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully
@@ -1313,6 +1383,20 @@ _docstring_substitution_definitions = {
                 names, are normalised to absolute paths prior to the
                 replacement. If False (the default) then no
                 normalisation is done.""",
+    # sharding
+    "{{sharding description}}": """
+        When writing to a Zarr dataset, sharding provides a mechanism
+        to store multiple dataset chunks in a single storage object or
+        file. Without sharding, each dataset chunk is written to its
+        own file. Traditional file systems and object storage systems
+        may have performance issues storing and accessing large number
+        of files, and small files can be inefficient to store if they
+        are smaller than the block size of the file system. Sharding
+        can improve performance by creating fewer, and larger, files
+        for storing the dataset chunks.
+
+        The sharding strategy is ignored when writing to a non-Zarr
+        dataset.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
@@ -1340,4 +1424,18 @@ _docstring_substitution_definitions = {
     "{{Returns original filenames}}": """The original file names in normalised absolute
                 form. If there are no original files then an empty
                 `set` will be returned.""",
+    # sharding options
+    "{{sharding options}}": """* `None`
+
+                  No sharding.
+
+                * `int`
+
+                  The integer number of dataset chunks to be stored in
+                  a single shard, favouring an equal number of dataset
+                  chunks along each shard dimension.
+
+                * sequence of `int`
+
+                  The number of chunks along each shard dimension.""",
 }

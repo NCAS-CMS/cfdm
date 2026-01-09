@@ -13,4 +13,4 @@ of the License at http://www.apache.org/licenses/LICENSE-2.0.
 
 """
 
-from .flatten import netcdf_flatten
+from .flatten import dataset_flatten

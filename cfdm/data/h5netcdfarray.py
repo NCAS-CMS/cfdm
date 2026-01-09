@@ -194,13 +194,14 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         return out[:-1], out[-1]
 
     def open(self, **kwargs):
-        """Return a dataset file object and address.
-
-        When multiple files have been provided an attempt is made to
-        open each one, in the order stored, and a file object is
-        returned from the first file that exists.
+        """Return a dataset object and address.
 
         .. versionadded:: (cfdm) 1.11.2.0
+
+        :Parameters:
+
+            kwargs: optional
+                Extra keyword arguments to `h5netcdf.File`.
 
         :Returns:
 
