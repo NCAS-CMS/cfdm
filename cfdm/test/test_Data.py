@@ -459,6 +459,13 @@ class DataTest(unittest.TestCase):
             d[indices] = value
             self.assertEqual((d.array < 0).sum(), 4)
 
+        # Test IndexError emerges for out-of-range indices
+        d = cfdm.Data(np.ones((4, 4)))
+        for indices in (
+                (0, 5), (5, 0), (5, 5), (slice(None), 5), (5, slice(None))):
+            with self.assertRaises(IndexError):
+                d[indices] = 2
+
     def test_Data_apply_masking(self):
         """Test Data.apply_masking."""
         a = np.ma.arange(12).reshape(3, 4)
@@ -2128,7 +2135,8 @@ class DataTest(unittest.TestCase):
 
         # Test IndexError emerges for out-of-range indices
         d = cfdm.Data(np.ones((4, 4)))
-        for indices in ((0, 5), (5, 0), (5, 5)):
+        for indices in (
+                (0, 5), (5, 0), (5, 5), (slice(None), 5), (5, slice(None))):
             with self.assertRaises(IndexError):
                 d[indices]
 
