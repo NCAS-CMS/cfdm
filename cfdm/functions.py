@@ -2400,19 +2400,6 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
     if len_parsed_indices < ndim:
         parsed_indices.extend([slice(None)] * (ndim - len_parsed_indices))
 
-    # Check that any integer indices are in range for the dimension sizes
-    # before integral indices are converted to slices below, for (one for)
-    # consistent behaviour between setitem and getitem. Note out-of-range
-    # slicing works in Python generally (slices are allowed to extend past
-    # end points with clipping applied) so we allow those.
-    for position, (dim_size, index) in enumerate(zip(shape, indices)):
-        # Integer index case
-        if isinstance(index, Integral) and index > dim_size:
-            raise IndexError(
-                f"Index {index!r} is out of bounds for axis {position} "
-                f"with size {dim_size}."
-            )
-
     if not ndim and parsed_indices:
         raise IndexError(
             "Scalar array can only be indexed with () or Ellipsis"
@@ -2423,6 +2410,17 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
             raise IndexError(
                 f"Invalid indices {indices!r} for array with shape {shape}: "
                 "New axis indices are not allowed"
+            )
+
+        # Check that any integer indices are in range for the dimension sizes
+        # before integral indices are converted to slices below, for (one for)
+        # consistent behaviour between setitem and getitem. Note out-of-range
+        # slicing works in Python generally (slices are allowed to extend past
+        # end points with clipping applied) so we allow those.
+        if isinstance(index, Integral) and index > size:
+            raise IndexError(
+                f"Index {index!r} is out of bounds for axis {i} with "
+                f"size {size}."
             )
 
         if keepdims and isinstance(index, Integral):
