@@ -462,8 +462,15 @@ class DataTest(unittest.TestCase):
         # Test IndexError emerges for out-of-range indices
         d = cfdm.Data(np.ones((4, 4)))
         for indices in (
-                (0, 4), (4, 0), (100, 100), (slice(None), 4), (4, slice(None)),
-                (0, -5), (-5, 0), (-100, -100), (100, -100),
+            (0, 4),
+            (4, 0),
+            (100, 100),
+            (slice(None), 4),
+            (4, slice(None)),
+            (0, -5),
+            (-5, 0),
+            (-100, -100),
+            (100, -100),
         ):
             with self.assertRaises(IndexError):
                 d[indices] = 2
@@ -2138,8 +2145,15 @@ class DataTest(unittest.TestCase):
         # Test IndexError emerges for out-of-range indices
         d = cfdm.Data(np.ones((4, 4)))
         for indices in (
-                (0, 4), (4, 0), (100, 100), (slice(None), 4), (4, slice(None)),
-                (0, -5), (-5, 0), (-100, -100), (100, -100),
+            (0, 4),
+            (4, 0),
+            (100, 100),
+            (slice(None), 4),
+            (4, slice(None)),
+            (0, -5),
+            (-5, 0),
+            (-100, -100),
+            (100, -100),
         ):
             with self.assertRaises(IndexError):
                 d[indices]
