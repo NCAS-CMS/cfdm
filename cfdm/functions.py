@@ -2417,7 +2417,9 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
         # consistent behaviour between setitem and getitem. Note out-of-range
         # slicing works in Python generally (slices are allowed to extend past
         # end points with clipping applied) so we allow those.
-        if isinstance(index, Integral) and index > size:
+        if isinstance(index, Integral) and not (
+                -1 * size - 1 < index < size  # consider negative indices too
+        ):
             raise IndexError(
                 f"Index {index!r} is out of bounds for axis {i} with "
                 f"size {size}."
