@@ -585,7 +585,7 @@ class PropertiesData(Properties):
             shape = ", ".join(x)
 
             string.append(
-                f"{indent1}{_prefix}Data({shape}) = " f"{d._str(data=data)}"
+                f"{indent1}{_prefix}Data({shape}) = {d._str(data=data)}"
             )
 
         # Quantization
