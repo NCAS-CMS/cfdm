@@ -1990,7 +1990,7 @@ class display_data(ConstantAccess):
 
     If True then show the first and last data elements (and possibly
     others, depending on the data shape) when displaying data via a
-    `!dump` method, or via `repr` and `str`. This can take a long time if the
+    `dump` method, or via `repr` and `str`. This can take a long time if the
     data elements need an expensive computation, possibly including a
     slow read from local or remote disk, to find the display values.
 

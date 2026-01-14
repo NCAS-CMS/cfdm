@@ -1037,7 +1037,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
                 avoiding a potentially high computational cost.
 
                 If `None` (the default) then the value of *data* will
-                taken from the `{{package}}.display_data` function.
+                be taken from the `{{package}}.display_data` function.
 
                 Note that whenever data elements are displayed, they
                 will be cached for fast future retrieval.
@@ -2114,7 +2114,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         :Parameters:
 
             index:
-                The index that define the element.
+                The index that defines the element.
 
         :Returns:
 
@@ -3858,7 +3858,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         """Create a cache of selected array elements.
 
         Any existing cached elements are removed prior to the
-        createion of the new cached elements.
+        creation of the new cached elements.
 
         **Performance**
 
@@ -5595,7 +5595,7 @@ class Data(Container, NetCDFAggregation, NetCDFChunks, Files, core.Data):
         """Get the cache of selected array elements.
 
         If the cache is empty, then `cache_elements` may used to
-        populated it.
+        populate it.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

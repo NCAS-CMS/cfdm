@@ -6,13 +6,13 @@ Version NEXTVERSION
 * New function to control the creation of cached elements during data
   display: `cfdm.display_data`
   (https://github.com/NCAS-CMS/cfdm/issues/363)
-* New methods: `cfdm.Data.get_cached_elements`
+* New methods: `cfdm.Data.get_cached_elements`,
   `cfdm.Data.cache_elements`
   (https://github.com/NCAS-CMS/cfdm/issues/363)
 * Set cached elements during `cfdm.Data.__init__`
   (https://github.com/NCAS-CMS/cfdm/issues/363)
 * Removed the `cfdm.constants.CONSTANTS` dictionary, replacing it
-  `cfdm.ConstantAccess.constants`
+  with `cfdm.ConstantAccess.constants`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)

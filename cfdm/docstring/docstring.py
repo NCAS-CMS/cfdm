@@ -1327,7 +1327,7 @@ _docstring_substitution_definitions = {
                 avoiding a potentially high computational cost.
 
                 If `None` (the default) then the value of *data* will
-                taken from the `{{package}}.display_data` function.
+                be taken from the `{{package}}.display_data` function.
 
                 Note that whenever data elements are displayed, they
                 are cached for fast future retrieval.""",
