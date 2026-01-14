@@ -314,7 +314,7 @@ class FunctionsTest(unittest.TestCase):
         # Test getting of all config. and store original values to test on:
         org = cfdm.configuration()
         self.assertIsInstance(org, dict)
-        self.assertEqual(len(org), 4)
+        self.assertEqual(len(org), 5)
         org_atol = org["atol"]
         self.assertIsInstance(org_atol, float)
         org_rtol = org["rtol"]
@@ -323,6 +323,8 @@ class FunctionsTest(unittest.TestCase):
         self.assertIsInstance(org_ll, str)
         org_chunksize = org["chunksize"]
         self.assertIsInstance(org_chunksize, int)
+        org_display_data = org["display_data"]
+        self.assertIsInstance(org_display_data, bool)
 
         # Store some sensible values to reset items to for testing,
         # ensure these are kept to be different to the defaults:
@@ -343,6 +345,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(post_set["rtol"], atol_rtol_reset_value)
         self.assertEqual(post_set["log_level"], org_ll)
         self.assertEqual(post_set["chunksize"], org_chunksize)
+        self.assertEqual(post_set["display_data"], org_display_data)
         # don't reset to org this time to test change persisting...
 
         # Note setting of previous items persist, e.g. atol above
@@ -518,12 +521,13 @@ class FunctionsTest(unittest.TestCase):
         # Full configuration
         func = cfdm.configuration
 
-        org = func(rtol=10, atol=20, log_level="DETAIL")
+        org = func(rtol=10, atol=20, log_level="DETAIL", display_data=False)
         old = func()
         new = dict(old)
         new["rtol"] = 10 * 2
         new["atol"] = 20 * 2
         new["log_level"] = "DEBUG"
+        new["display_data"] = True
 
         with func(**new):
             self.assertEqual(func(), new)
@@ -531,11 +535,17 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(func(), old)
         func(**org)
 
-        org = func(rtol=cfdm.Constant(10), atol=20, log_level="DETAIL")
+        org = func(
+            rtol=cfdm.Constant(10),
+            atol=20,
+            log_level="DETAIL",
+            display_data=False,
+        )
         old = func()
         new["rtol"] = cfdm.Constant(10 * 2)
         new["atol"] = 20 * 2
         new["log_level"] = "DEBUG"
+        new["display_data"] = True
 
         with func(**new):
             self.assertEqual(func(), new)

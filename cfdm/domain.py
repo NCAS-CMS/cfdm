@@ -648,6 +648,7 @@ class Domain(
     @_display_or_return
     def dump(
         self,
+        data=None,
         display=True,
         _omit_properties=(),
         _prefix="",
@@ -664,6 +665,10 @@ class Domain(
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
+
+            {{data: `bool` or `None`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             display: `bool`, optional
                 If False then return the description as a string. By
@@ -727,6 +732,7 @@ class Domain(
             string.append("")
             string.append(
                 value.dump(
+                    data=data,
                     display=False,
                     _level=_level,
                     _title=f"Dimension coordinate: {construct_name[cid]}",
@@ -741,6 +747,7 @@ class Domain(
             string.append("")
             string.append(
                 value.dump(
+                    data=data,
                     display=False,
                     _level=_level,
                     _title=f"Auxiliary coordinate: {construct_name[cid]}",
@@ -754,6 +761,7 @@ class Domain(
             string.append("")
             string.append(
                 value.dump(
+                    data=data,
                     display=False,
                     _level=_level,
                     _title=f"Domain ancillary: {construct_name[cid]}",
@@ -783,6 +791,7 @@ class Domain(
             string.append("")
             string.append(
                 value.dump(
+                    data=data,
                     display=False,
                     _key=cid,
                     _level=_level,
@@ -797,6 +806,7 @@ class Domain(
             string.append("")
             string.append(
                 value.dump(
+                    data=data,
                     display=False,
                     _key=cid,
                     _level=_level,
@@ -813,6 +823,7 @@ class Domain(
             string.append("")
             string.append(
                 value.dump(
+                    data=data,
                     display=False,
                     _key=cid,
                     _level=_level,

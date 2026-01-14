@@ -1,7 +1,7 @@
 Version NEXTVERSION
 ----------------
 
-**2026-03-??**
+**2026-??-??**
 
 * Write UGRID datasets with `cfdm.write`
   (https://github.com/NCAS-CMS/cfdm/issues/271)
@@ -16,8 +16,19 @@ Version 1.12.4.0
   (https://github.com/NCAS-CMS/cfdm/issues/354)
 * Read Zarr v2 and v3 datasets that contain a group hierarchy with
   `cfdm.read` (https://github.com/NCAS-CMS/cfdm/issues/355)
-* New function `cfdm.dataset_flatten` that replaces the deprecated
+* New function `cfdm.dataset_flatten` that replaces the deprecated*
   `cfdm.netcdf_flatten` (https://github.com/NCAS-CMS/cfdm/issues/355)
+* New function to control the creation of cached elements during data
+  display: `cfdm.display_data`
+  (https://github.com/NCAS-CMS/cfdm/issues/363)
+* New methods: `cfdm.Data.get_cached_elements`,
+  `cfdm.Data.cache_elements`
+  (https://github.com/NCAS-CMS/cfdm/issues/363)
+* Set cached elements during `cfdm.Data.__init__`
+  (https://github.com/NCAS-CMS/cfdm/issues/363)
+* Removed the `cfdm.constants.CONSTANTS` dictionary, replacing it
+  with `cfdm.ConstantAccess.constants`
+  (https://github.com/NCAS-CMS/cfdm/issues/361)
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
 * New optional dependency: ``zarr>=3.1.3``
