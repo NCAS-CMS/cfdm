@@ -56,6 +56,7 @@ Miscellaneous
    cfdm.CF
    cfdm.abspath
    cfdm.dirname
+   cfdm.display_data
    cfdm.environment
    cfdm.example_field
    cfdm.example_fields
