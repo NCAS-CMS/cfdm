@@ -2971,6 +2971,7 @@ class DataTest(unittest.TestCase):
 
         with cfdm.display_data(False):
             self.assertEqual(repr(d), "<Data(1, 3): [[1, 2, 3]]>")
+
     def test_Data_dataset_shards(self):
         """Test Data.nc_dataset_shards."""
         d = cfdm.Data(np.arange(24).reshape(2, 3, 4))
