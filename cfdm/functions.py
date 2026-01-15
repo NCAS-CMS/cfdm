@@ -99,7 +99,7 @@ def configuration(
             The new display data option. The default is to not change
             the current behaviour.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.13.0.0
 
     :Returns:
 
@@ -2001,7 +2001,7 @@ class display_data(ConstantAccess):
     Note that whenever data values are displayed, they are cached for
     fast future retrieval.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.0.0
 
     .. seealso:: `configuration`
 
@@ -2055,7 +2055,7 @@ class display_data(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: (cfdm) NEXTVERSION
+        .. versionaddedd:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -2517,13 +2517,24 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
                 "New axis indices are not allowed"
             )
 
-        if keepdims and isinstance(index, Integral):
+        # Check that any integer indices are in range for the dimension sizes
+        # before integral indices are converted to slices below, for (one for)
+        # consistent behaviour between setitem and getitem. Note out-of-range
+        # slicing works in Python generally (slices are allowed to extend past
+        # end points with clipping applied) so we allow those.
+        integral_index = isinstance(index, Integral)
+        if integral_index and not -size <= index < size:  # could be negative
+            raise IndexError(
+                f"Index {index!r} is out of bounds for axis {i} with "
+                f"size {size}."
+            )
+
+        if integral_index and keepdims:
             # Convert an integral index to a slice
             if index == -1:
                 index = slice(-1, None, None)
             else:
                 index = slice(index, index + 1, 1)
-
         elif hasattr(index, "to_dask_array"):
             to_dask_array = index.to_dask_array
             if callable(to_dask_array):
@@ -2545,7 +2556,7 @@ def netcdf_flatten(*args, **kwargs):
         "netcdf_flatten",
         "Use 'cfdm.dataset_flatten' instead, "
         "which has a slightly different API.",
-        version="NEXTVERSION",
+        version="1.13.0.0",
         removed_at="1.15.0.0",
     )  # pragma: no cover
 
@@ -2606,7 +2617,7 @@ def _DEPRECATION_ERROR_FUNCTION(
 ):
     """Error handling for deprecated functions.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.0.0
 
     """
     if removed_at:

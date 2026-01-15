@@ -8,14 +8,14 @@
     <title>cfdm.Data.__setitem__ &#8212; Documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=7e90eb75"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/copybutton.js?v=a56c686a"></script>
     <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -31,12 +31,12 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.3.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data.__setitem__<a class="headerlink" href="#cfdm-data-setitem" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.Data.__setitem__">
-<span class="sig-prename descclassname"><span class="pre">Data.</span></span><span class="sig-name descname"><span class="pre">__setitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.1/cfdm/data/data.py#L886-L992"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Data.__setitem__" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Data.</span></span><span class="sig-name descname"><span class="pre">__setitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/data/data.py#L914-L1020"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Data.__setitem__" title="Link to this definition">¶</a></dt>
 <dd><p>Implement indexed assignment.</p>
 <p>x.__setitem__(indices, y) &lt;==&gt; x[indices]=y</p>
 <p>Assignment to data array elements defined by indices.</p>
@@ -134,7 +134,7 @@ a subspace. See <a class="reference internal" href="cfdm.Data.__getitem__.html#c
 subspace of the data array.</p>
 <p><strong>Missing data</strong></p>
 <p>The treatment of missing data elements during assignment to a
-subspace depends on the value of the <a class="reference internal" href="../attribute/cfdm.Data.hardmask.html#cfdm.Data.hardmask" title="cfdm.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute. If
+subspace depends on the value of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code> attribute. If
 it is True then masked elements will not be unmasked,
 otherwise masked elements may be set to any value.</p>
 <p>In either case, unmasked elements may be set, (including
@@ -153,7 +153,7 @@ computed immediately.</p>
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cfdm.Data.__getitem__.html#cfdm.Data.__getitem__" title="cfdm.Data.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">__keedims_indexing__</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">__orthogonal_indexing__</span></code>, <a class="reference internal" href="../constant.html#cfdm.cfdm.masked" title="cfdm.cfdm.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.masked</span></code></a>,
-<a class="reference internal" href="../attribute/cfdm.Data.hardmask.html#cfdm.Data.hardmask" title="cfdm.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></p>
 </div>
 </dd></dl>
 
@@ -168,10 +168,10 @@ computed immediately.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2025, NCAS | Page built on 2025-10-15.
+      &#169;2026, NCAS | Page built on 2026-01-15.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>

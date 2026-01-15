@@ -362,6 +362,9 @@ Performance
    ~cfdm.Data.nc_clear_dataset_chunksizes
    ~cfdm.Data.nc_dataset_chunksizes
    ~cfdm.Data.nc_set_dataset_chunksizes
+   ~cfdm.Data.nc_clear_dataset_shards
+   ~cfdm.Data.nc_dataset_shards
+   ~cfdm.Data.nc_set_dataset_shards
    ~cfdm.Data.to_memory
 
 Aggregation

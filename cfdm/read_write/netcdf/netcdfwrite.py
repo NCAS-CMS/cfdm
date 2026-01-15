@@ -312,7 +312,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
     def _set_attributes(self, attributes, ncvar=None, group=None):
         """Set dataset attributes on a variable or group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -519,7 +519,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
     def _createDimension(self, group, ncdim, size):
         """Create a dataset dimension in group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -3479,7 +3479,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
     def _filled_array(self, array, fill_value):
         """Replace masked values with a fill value.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -4742,7 +4742,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         The group will be created if it doesn't already exist.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -4946,7 +4946,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
     def dataset_exists(self, dataset):
         """Whether or not a dataset exists on disk.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -4973,7 +4973,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                   not removed. To do so could be very dangerous (what
                   if it were your home space?).
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Returns:
 
@@ -5357,7 +5357,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 The Zarr dataset sharding strategy. The default value
                 is `None`. See `cfdm.write` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.0.0
 
             cfa: `dict` or `None`, optional
                 Configure the creation of aggregation variables. See
@@ -6894,7 +6894,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
     def _missing_value(self, x, datatype):
         """Get the missing value.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 

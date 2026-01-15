@@ -13,6 +13,11 @@ Documentation for all versions of cfdm.
    :local:
    :backlinks: entry
 
+**CF-1.13**
+-----------
+
+* `Version 1.13.0.0 <https://ncas-cms.github.io/cfdm-docs/1.13.0.0>`_ (2026-01-15)
+
 **CF-1.12**
 -----------
 
