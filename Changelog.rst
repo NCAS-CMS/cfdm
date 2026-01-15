@@ -8,7 +8,7 @@ Version 1.13.0.0
   (https://github.com/NCAS-CMS/cfdm/issues/354)
 * Read Zarr v2 and v3 datasets that contain a group hierarchy with
   `cfdm.read` (https://github.com/NCAS-CMS/cfdm/issues/355)
-* New function `cfdm.dataset_flatten` that replaces the deprecated*
+* New function `cfdm.dataset_flatten` that replaces the deprecated
   `cfdm.netcdf_flatten` (https://github.com/NCAS-CMS/cfdm/issues/355)
 * Raise `IndexError` for out-of-range indices in a value-setting
   operation on a data array (https://github.com/NCAS-CMS/cfdm/issues/377)
