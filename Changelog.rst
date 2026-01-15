@@ -1,7 +1,7 @@
-Version NEXTVERSION
+Version 1.13.0.0
 ----------------
 
-**2026-01-??**
+**2026-01-15**
 
 * Write Zarr v3 datasets with `cfdm.write`, and allow the reading of
   grouped Zarr v2 and v3 datasets with `cfdm.read`
