@@ -1383,6 +1383,24 @@ _docstring_substitution_definitions = {
                 names, are normalised to absolute paths prior to the
                 replacement. If False (the default) then no
                 normalisation is done.""",
+    # data
+    "{{data: `bool` or `None`, optional}}": """data: `bool` or `None`, optional
+                If True then show the first and last data elements
+                (and possibly others, depending on the data shape)
+                when displaying data. This can take a long time if
+                getting these data elements needs an expensive
+                computation, possibly including a slow read from local
+                or remote disk.
+
+                If False then do not show such data elements, *unless
+                data elements have been previously cached*, thereby
+                avoiding a potentially high computational cost.
+
+                If `None` (the default) then the value of *data* will
+                be taken from the `{{package}}.display_data` function.
+
+                Note that whenever data elements are displayed, they
+                are cached for fast future retrieval.""",
     # sharding
     "{{sharding description}}": """
         When writing to a Zarr dataset, sharding provides a mechanism

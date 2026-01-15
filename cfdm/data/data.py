@@ -17,7 +17,9 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
     _numpy_allclose,
+    display_data,
     is_log_level_info,
     parse_indices,
 )
@@ -135,6 +137,9 @@ class Data(
         """Store component classes."""
         instance = super().__new__(cls)
         instance._Units_class = Units
+        # Function for determining whether or not to display data
+        # elements during `__str__`
+        instance._display_data = display_data
         return instance
 
     def __init__(
@@ -435,10 +440,26 @@ class Data(
         else:
             in_memory = getattr(array, "__in_memory__", None)
 
+        # Get the number of array dimensions
         try:
             ndim = array.ndim
         except AttributeError:
-            ndim = np.ndim(array)
+            if isinstance(array, (list, tuple)):
+                # Convert list or tuple to np.ndarray. Do this because
+                # the alternative of `np.ndim(array)` would do it
+                # anyway, and when it's a numpy array we can get
+                # cached values from it via `cache_elements`.
+                array = np.asanyarray(array, dtype=dtype)
+                dtype = None
+                ndim = array.ndim
+            else:
+                ndim = np.ndim(array)
+        else:
+            # Convert the masked constant to a masked scalar array so
+            # we can get cached values from it via `cache_elements`.
+            if array is np.ma.masked:
+                array = np.ma.masked_all((), dtype=dtype)
+                dtype = None
 
         # Create the _axes attribute: an ordered sequence of unique
         # names (within this instance) for each array axis.
@@ -487,6 +508,12 @@ class Data(
                 "options. Use the 'chunks' parameter instead."
             )
 
+        # Whether or not to get selected array elements for the cache:
+        # Only do so for data that is already in memory.
+        cache_elements = isinstance(
+            array, (np.ndarray, int, float, bool, str)
+        ) or issparse(array)
+
         dx = to_dask(array, chunks, **kwargs)
 
         # Find out if we have an array of date-time objects
@@ -507,9 +534,16 @@ class Data(
             dx, units = convert_to_reftime(dx, units, first_value)
             # Reset the units
             self._Units = units
+            # Don't get selected array elements for the cache, because
+            # we've just changed the values!
+            cache_elements = False
 
         # Store the dask array
         self._set_dask(dx, clear=self._NONE, in_memory=in_memory)
+
+        # Get elements for the cache
+        if cache_elements:
+            self.cache_elements(_array=array)
 
         # Override the data type
         if dtype is not None:
@@ -560,12 +594,6 @@ class Data(
 
         x.__float__() <==> float(x)
 
-        **Performance**
-
-        `__float__` causes all delayed operations to be executed,
-        unless the dask array size is already known to be greater than
-        1.
-
         """
         if self.size != 1:
             raise TypeError(
@@ -573,7 +601,8 @@ class Data(
                 f"Python scalars. Got {self}"
             )
 
-        return float(self.array[(0,) * self.ndim])
+        # Return the first element (which might be cached)
+        return float(self.first_element())
 
     def __format__(self, format_spec):
         """Interpret format specifiers for size 1 arrays.
@@ -773,11 +802,6 @@ class Data(
 
         x.__int__() <==> int(x)
 
-        **Performance**
-
-        `__int__` causes all delayed operations to be executed, unless
-        the dask array size is already known to be greater than 1.
-
         """
         if self.size != 1:
             raise TypeError(
@@ -785,7 +809,8 @@ class Data(
                 f"Python scalars. Got {self}"
             )
 
-        return int(self.array[(0,) * self.ndim])
+        # Return the first element (which might be cached)
+        return int(self.first_element())
 
     def __iter__(self):
         """Called when an iterator is required.
@@ -994,10 +1019,35 @@ class Data(
 
         return
 
-    def __str__(self):
-        """Called by the `str` built-in function.
+    def _str(self, data=None):
+        """Create the `str` representation.
 
-        x.__str__() <==> str(x)
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `bool` or `None`, optional
+                If True then show the first and last data elements
+                (and possibly others, depending on the data shape)
+                when displaying the data. This can take a long time if
+                getting these data elements needs an expensive
+                computation, possibly including a slow read from local
+                or remote disk.
+
+                If False then do not show such data elements, *unless
+                data elements have been previously cached*, thereby
+                avoiding a potentially high computational cost.
+
+                If `None` (the default) then the value of *data* will
+                be taken from the `{{package}}.display_data` function.
+
+                Note that whenever data elements are displayed, they
+                will be cached for fast future retrieval.
+
+        :Returns:
+
+            `str`
+                The string representation.
 
         """
         units = self.get_units(None)
@@ -1010,16 +1060,36 @@ class Data(
             else:
                 units = "??"
 
+        ndim = self.ndim
+        open_brackets = "[" * ndim
+        close_brackets = "]" * ndim
+
+        if data is None:
+            data = self._display_data()
+            if not data and self._get_cached_elements():
+                data = True
+
+        if not data:
+            # Don't display any data values, just brackets, ellipsis,
+            # and units. E.g. [[[...]]] m2
+            out = f"{open_brackets}...{close_brackets}"
+            if isreftime:
+                if calendar:
+                    out += f" {calendar}"
+            elif units:
+                out += f" {units}"
+
+            return out
+
+        # Still here? Then display data values.
+        # E.g. [[[1, ..., 37]]] m2
+        size = self.size
+        shape = self.shape
+
         try:
             first = self.first_element()
         except Exception:
             first = "??"
-
-        size = self.size
-        shape = self.shape
-        ndim = self.ndim
-        open_brackets = "[" * ndim
-        close_brackets = "]" * ndim
 
         mask = [False, False, False]
 
@@ -1097,6 +1167,14 @@ class Data(
             out += f" {units}"
 
         return out
+
+    def __str__(self):
+        """Called by the `str` built-in function.
+
+        x.__str__() <==> str(x)
+
+        """
+        return self._str(data=None)
 
     def __eq__(self, other):
         """The rich comparison operator ``==``
@@ -1938,6 +2016,51 @@ class Data(
         self._clear_after_dask_update(clear)
         return out
 
+    def _elements(self, index, array=None):
+        """Return the selected elements of the data.
+
+        .. versionadded:: NEXTVERSION
+
+        :Parameters:
+
+            index:
+                The index that defines the elements.
+
+            array: `None` or array_like or sparse array, optional
+                If `None` (the default) then the elements are derived
+                from the data stored in the Dask array. Otherwise they
+                are derived from *array*, which is assumed to be
+                entirely equivalent to the array returned by `array`.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The selected elements of the data.
+
+        **Examples**
+
+        >>> d = {{package}}.Data([[1, 2, 3]])
+        >>> d._elements(...)
+        array([[1, 2, 3]])
+        >>> d._elements((0, slice(0, 3, 2)))
+        array([[1, 3]])
+        >>> d._elements((0, 2))
+        array([[3]])
+        >>> d._elements((0, 2), array=d.array)
+        np.int64(3)
+
+        """
+        if array is None:
+            return self[index].array
+
+        from scipy.sparse import issparse
+
+        array = array[index]
+        if issparse(array):
+            array = array.toarray()
+
+        return array
+
     def _get_cached_elements(self):
         """Return the cache of selected element values.
 
@@ -1982,12 +2105,18 @@ class Data(
     def _item(self, index):
         """Return an element of the data as a scalar.
 
+        Deprecated at version NEXTVERSION. Use the `_elements` method
+        instead.
+
         It is assumed, but not checked, that the given index selects
         exactly one element.
+
+        .. seealso:: `_items`
 
         :Parameters:
 
             index:
+                The index that defines the element.
 
         :Returns:
 
@@ -2003,11 +2132,13 @@ class Data(
         masked
 
         """
-        array = self[index].array.squeeze()
-        if np.ma.is_masked(array):
-            array = np.ma.masked
-
-        return array
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "_item",
+            "Use the '_elements' method instead.",
+            version="NEXTVERSION",
+            removed_at="1.14.0.0",
+        )  # pragma: no cover
 
     def _modify_dask_graph(
         self, method, args=(), kwargs=None, exceptions=(AttributeError,)
@@ -2133,8 +2264,10 @@ class Data(
     def _set_cached_elements(self, elements):
         """Cache selected element values.
 
-        Updates the `Data` instance in-place to store the given
-        element values.
+        Updates the `Data` instance in-place to cache the given
+        element values. Existing cached elements will be overwritten
+        if also specified by *elements*, but otherwise will not be
+        removed.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
@@ -2161,23 +2294,23 @@ class Data(
             return
 
         # Parse the new elements
-        elements = elements.copy()
+        new_cache = {}
         for i, x in elements.items():
-            if np.ma.is_masked(x):
-                x = np.ma.masked
-            else:
-                x = np.squeeze(x)
+            if x is not np.ma.masked:
+                if np.ma.is_masked(x):
+                    x = np.ma.masked
+                else:
+                    x = np.squeeze(x)
 
-            elements[i] = x
+            new_cache[i] = x
 
-        cache = self._get_component("cached_elements", None)
+        cache = self._get_cached_elements()
         if cache:
             cache = cache.copy()
-            cache.update(elements)
-        else:
-            cache = elements.copy()
+            cache.update(new_cache)
+            new_cache = cache
 
-        self._set_component("cached_elements", cache, copy=False)
+        self._set_component("cached_elements", new_cache, copy=False)
 
     def _set_CompressedArray(self, array, copy=True):
         """Set the compressed array.
@@ -2627,36 +2760,13 @@ class Data(
         """
         from scipy.sparse import issparse
 
-        a = self.compute().copy()
+        a = self.compute(_cache_elements=False).copy()
         if issparse(a):
             a = a.toarray()
         elif not isinstance(a, np.ndarray):
             a = np.asanyarray(a)
 
-        ndim = a.ndim
-        shape = a.shape
-        size = a.size
-        if not size:
-            return a
-
-        ndim = a.ndim
-        shape = a.shape
-
-        # Set cached elements
-        items = [0, -1]
-        indices = [(slice(0, 1, 1),) * ndim, (slice(-1, None, 1),) * ndim]
-        if ndim == 2 and shape[-1] == 2:
-            items.extend((1, -2))
-            indices.extend(
-                (np.unravel_index(1, shape), np.unravel_index(size - 2, shape))
-            )
-        elif size == 3:
-            items.append(1)
-            indices.append(np.unravel_index(1, a.shape))
-
-        cache = {i: a[index] for i, index in zip(items, indices)}
-        self._set_cached_elements(cache)
-
+        self.cache_elements(_array=a)
         return a
 
     @property
@@ -2916,7 +3026,7 @@ class Data(
             _force_mask_hardness=False, _force_to_memory=True
         )
         if dx.dtype != value:
-            cache = self._get_cached_elements().copy()
+            cache = self._get_cached_elements()
 
             dx = dx.astype(value)
             self._set_dask(dx, in_memory=True)
@@ -3746,6 +3856,126 @@ class Data(
 
         return data
 
+    def cache_elements(self, _array=None):
+        """Create a cache of selected array elements.
+
+        Any existing cached elements are removed prior to the
+        creation of the new cached elements.
+
+        **Performance**
+
+        Deriving the array elements from the Dask array (the default)
+        can take a long time if expensive computations, possibly
+        including a slow read from local or remote disk, is needed to
+        find the values.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_cached_elements`
+
+        :Parameters:
+
+            _array: `None` or array_like, optional
+                If `None` (the default) then the cached elements are
+                derived from the data stored in the Dask array.
+                Otherwise they are derived from *_array*, which is
+                assumed (but not checked) to be equivalent to the Dask
+                array, i.e. *_array* must be equivalent to the array
+                returned by `array`, in terms of shape, data type, and
+                values.
+
+        :Returns:
+
+            `None`
+
+        """
+        # Clear all existing cached elements
+        self._del_cached_elements()
+
+        size = self.size
+        if not size:
+            # No elements
+            return
+
+        # Initialise the new cache
+        cache = {}
+
+        ndim = self.ndim
+        if not ndim:
+            # 0-d
+            # Set cache keys 0 and -1
+            from scipy.sparse import issparse
+
+            if _array is not None and not issparse(_array):
+                element = _array
+            else:
+                element = self._elements(Ellipsis, array=_array)
+
+            cache[0] = element
+            cache[-1] = element
+        elif size == 1:
+            # N-d (N>=1) with size 1
+            # Set cache keys 0 and -1
+            element = self._elements(Ellipsis, array=_array)
+            cache[0] = element
+            cache[-1] = element
+        elif ndim == 1:
+            if size == 1:
+                # 1-d with size  1
+                # Set cache keys 0, 1, and -1
+                element = self._elements(Ellipsis, array=_array)
+                cache[0] = element
+                cache[-1] = element
+            elif size <= 3:
+                # 1-d with size 2 or 3
+                # Set cache keys 0, 1, and -1
+                elements = self._elements(Ellipsis, array=_array)
+                cache[0] = elements[0]
+                cache[1] = elements[1]
+                cache[-1] = elements[-1]
+            else:
+                # 1-d with size > 3
+                # Set cache keys 0 and -1
+                elements = self._elements(
+                    slice(0, size, size - 1), array=_array
+                )
+                cache[0] = elements[0]
+                cache[-1] = elements[-1]
+        elif ndim == 2 and self.shape[-1] == 2:
+            # 2-d with second dimension size 2 (i.e. shape (n, 2),
+            # like bounds for 1-d coordinates).
+            # Set cache keys 0, 1, -2, and -1
+            size0 = size // 2
+            if size0 == 1:
+                step = 1
+            else:
+                step = size0 - 1
+
+            elements = self._elements(slice(0, size0, step), array=_array)
+            elements = elements.flatten()
+            cache[0] = elements[0]
+            cache[1] = elements[1]
+            cache[-2] = elements[-2]
+            cache[-1] = elements[-1]
+        elif size <= 3:
+            # N-d (N>=2) with size 2 or 3
+            # Set cache keys 0, 1, and -1
+            elements = self._elements(Ellipsis, array=_array)
+            elements = elements.flatten()
+            cache[0] = elements[0]
+            cache[1] = elements[1]
+            cache[-1] = elements[-1]
+        else:
+            # All other N-d (N>=2) cases
+            # Set cache keys 0 and -1
+            cache = {}
+            cache[0] = self._elements((slice(0, 1, 1),) * ndim, array=_array)
+            cache[-1] = self._elements(
+                (slice(-1, None, 1),) * ndim, array=_array
+            )
+
+        self._set_cached_elements(cache)
+
     def chunk_indices(self):
         """Return indices of the data that define each dask chunk.
 
@@ -3872,7 +4102,7 @@ class Data(
         d._set_dask(dx, clear=self._ALL, in_memory=True)
         return d
 
-    def compute(self, _force_to_memory=True):
+    def compute(self, _force_to_memory=True, _cache_elements=True):
         """A view of the computed data.
 
         In-place changes to the returned array *might* affect the
@@ -3900,7 +4130,15 @@ class Data(
                 from computing the returned Dask graph to be in
                 memory. If False then the data resulting from
                 computing the Dask graph may or may not be in memory,
-                depending on the nature of the stack
+                depending on the nature of the stack.
+
+            _cache_elements: `bool`, optional
+                If True (the default) then create a cache of selected
+                elements from the computed array in memory, if the
+                type of the array allows it. See `cache_elements` for
+                details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -3949,6 +4187,14 @@ class Data(
                 a.soften_mask()
 
             a.set_fill_value(self.get_fill_value(None))
+
+        if _cache_elements:
+            from scipy.sparse import issparse
+
+            if isinstance(a, (np.ndarray, int, float, bool, str)) or issparse(
+                a
+            ):
+                self.cache_elements(_array=a)
 
         return a
 
@@ -4116,7 +4362,7 @@ class Data(
                 ):
                     # 3) The status must be False when any two input
                     #    Data objects have different fragment types,
-                    #    onew of which is 'location'.
+                    #    one of which is 'location'.
                     data0._nc_del_aggregation_fragment_type()
                     CFA = cls._NONE
                     break
@@ -4835,7 +5081,7 @@ class Data(
         try:
             return self._get_cached_elements()[0]
         except KeyError:
-            item = self._item((slice(0, 1, 1),) * self.ndim)
+            item = self._elements((slice(0, 1, 1),) * self.ndim)
             self._set_cached_elements({0: item})
             return self._get_cached_elements()[0]
 
@@ -5346,6 +5592,32 @@ class Data(
             units.formatted(definition=True, names=True),
             units._canonical_calendar,
         )
+
+    def get_cached_elements(self):
+        """Get the cache of selected array elements.
+
+        If the cache is empty, then `cache_elements` may used to
+        populate it.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `cache_elements`
+
+        :Returns:
+
+            `dict`
+                The existing cached elements. The cache can not be
+                modified by adding or removing keys to this
+                dictionary.
+
+        **Examples**
+
+        >>> d = {{package}}.Data([[1, 2, 3, 4]])
+        >>> d.get_cached_elements()
+        {0: array(1), -1: array(4)}
+
+        """
+        return self._get_cached_elements().copy()
 
     def get_filenames(self, normalise=False, per_chunk=False):
         """The names of files containing parts of the data array.
@@ -5882,7 +6154,7 @@ class Data(
         try:
             return self._get_cached_elements()[-1]
         except KeyError:
-            item = self._item((slice(-1, None, 1),) * self.ndim)
+            item = self._elements((slice(-1, None, 1),) * self.ndim)
             self._set_cached_elements({-1: item})
             return self._get_cached_elements()[-1]
 
@@ -6314,6 +6586,9 @@ class Data(
         d._set_dask(
             dx, clear=self._ALL ^ self._ARRAY ^ self._CACHE, in_memory=True
         )
+
+        self.cache_elements()
+
         return d
 
     @_inplace_enabled(default=False)
@@ -6677,7 +6952,7 @@ class Data(
         try:
             return self._get_cached_elements()[1]
         except KeyError:
-            item = self._item(np.unravel_index(1, self.shape))
+            item = self._elements(np.unravel_index(1, self.shape))
             self._set_cached_elements({1: item})
             return self._get_cached_elements()[1]
 

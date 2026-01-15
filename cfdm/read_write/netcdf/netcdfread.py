@@ -1979,7 +1979,7 @@ class NetCDFRead(IORead):
                 "        read_vars['parsed_aggregated_data'] =\n"
                 f"            {g['parsed_aggregated_data']}"
             )  # prgama: no cover
-                
+
         # ------------------------------------------------------------
         # List variables
         #
