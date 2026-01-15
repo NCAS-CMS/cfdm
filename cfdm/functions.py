@@ -2417,21 +2417,19 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
         # consistent behaviour between setitem and getitem. Note out-of-range
         # slicing works in Python generally (slices are allowed to extend past
         # end points with clipping applied) so we allow those.
-        if isinstance(index, Integral) and not (
-            -1 * size - 1 < index < size  # consider negative indices too
-        ):
+        integral_index = isinstance(index, Integral)
+        if integral_index and not -size <= index < size:  # could be negative
             raise IndexError(
                 f"Index {index!r} is out of bounds for axis {i} with "
                 f"size {size}."
             )
 
-        if keepdims and isinstance(index, Integral):
+        if integral_index and keepdims:
             # Convert an integral index to a slice
             if index == -1:
                 index = slice(-1, None, None)
             else:
                 index = slice(index, index + 1, 1)
-
         elif hasattr(index, "to_dask_array"):
             to_dask_array = index.to_dask_array
             if callable(to_dask_array):
