@@ -8,14 +8,14 @@
     <title>cfdm.Data.masked_values &#8212; Documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=7e90eb75"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/copybutton.js?v=a56c686a"></script>
     <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -31,12 +31,12 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.3.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data.masked_values<a class="headerlink" href="#cfdm-data-masked-values" title="Link to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.Data.masked_values">
-<span class="sig-prename descclassname"><span class="pre">Data.</span></span><span class="sig-name descname"><span class="pre">masked_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.1/cfdm/data/data.py#L5853-L5906"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Data.masked_values" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Data.</span></span><span class="sig-name descname"><span class="pre">masked_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/data/data.py#L6161-L6216"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Data.masked_values" title="Link to this definition">¶</a></dt>
 <dd><p>Mask using floating point equality.</p>
 <p>Masks the data where elements are approximately equal to the
 given value. For integer types, exact equality is used.</p>
@@ -134,7 +134,7 @@ given value. For integer types, exact equality is used.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="../attribute/cfdm.Data.mask.html#cfdm.Data.mask" title="cfdm.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a>, <a class="reference internal" href="cfdm.Data.masked_where.html#cfdm.Data.masked_where" title="cfdm.Data.masked_where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_where</span></code></a></p>
+<p><a class="reference internal" href="../attribute/cfdm.Data.mask.html#cfdm.Data.mask" title="cfdm.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_where</span></code></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -143,11 +143,11 @@ given value. For integer types, exact equality is used.</p>
 </dd>
 <dt>rtol: number, optional</dt><dd><p>The tolerance on relative differences between real
 numbers. The default value is set by the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code> function.</p>
+<a class="reference internal" href="../function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a> function.</p>
 </dd>
 <dt>atol: number, optional</dt><dd><p>The tolerance on absolute differences between real
 numbers. The default value is set by the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code> function.</p>
+<a class="reference internal" href="../function/cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a> function.</p>
 </dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
 <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
@@ -183,10 +183,10 @@ in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2025, NCAS | Page built on 2025-10-15.
+      &#169;2026, NCAS | Page built on 2026-01-15.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>

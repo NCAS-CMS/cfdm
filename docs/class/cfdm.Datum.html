@@ -8,18 +8,18 @@
     <title>cfdm.Datum &#8212; Documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=7e90eb75"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/copybutton.js?v=a56c686a"></script>
     <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Datum.dump" href="../method/cfdm.Datum.dump.html" />
+    <link rel="next" title="cfdm.Datum.del_parameter" href="../method/cfdm.Datum.del_parameter.html" />
     <link rel="prev" title="cfdm.CoordinateConversion._docstring_method_exclusions" href="../method/cfdm.CoordinateConversion._docstring_method_exclusions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -31,12 +31,12 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.3.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
 
 
 
@@ -85,7 +85,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.CoordinateConversion._docstring_method_exclusions.html" title="previous chapter">cfdm.CoordinateConversion._docstring_method_exclusions</a></li>
-      <li>Next: <a href="../method/cfdm.Datum.dump.html" title="next chapter">cfdm.Datum.dump</a></li>
+      <li>Next: <a href="../method/cfdm.Datum.del_parameter.html" title="next chapter">cfdm.Datum.del_parameter</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -124,7 +124,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.Datum">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Datum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.1/cfdm/datum.py#L4-L27"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Datum" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Datum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/datum.py#L4-L27"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Datum" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Files</span></code>, <a class="reference internal" href="cfdm.core.Datum.html#cfdm.core.Datum" title="cfdm.core.datum.Datum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datum</span></code></a></p>
 <p>A datum component of a CF data model coordinate reference.</p>
 <p>A datum is a complete or partial definition of the zeroes of the
@@ -187,7 +187,7 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Datum.dump.html#cfdm.Datum.dump" title="cfdm.Datum.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></p></td>
 <td><p>A full description.</p></td>
 </tr>
 </tbody>
@@ -236,7 +236,7 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Datum.get_original_filenames.html#cfdm.Datum.get_original_filenames" title="cfdm.Datum.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
 <td><p>The names of files containing the original data and metadata.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Datum.creation_commands.html#cfdm.Datum.creation_commands" title="cfdm.Datum.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></p></td>
 <td><p>Return the commands that would create the component.</p></td>
 </tr>
 </tbody>
@@ -330,10 +330,10 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2025, NCAS | Page built on 2025-10-15.
+      &#169;2026, NCAS | Page built on 2026-01-15.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>

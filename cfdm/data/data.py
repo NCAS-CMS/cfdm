@@ -1022,7 +1022,7 @@ class Data(
     def _str(self, data=None):
         """Create the `str` representation.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -2019,7 +2019,7 @@ class Data(
     def _elements(self, index, array=None):
         """Return the selected elements of the data.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.13.0.0
 
         :Parameters:
 
@@ -2105,7 +2105,7 @@ class Data(
     def _item(self, index):
         """Return an element of the data as a scalar.
 
-        Deprecated at version NEXTVERSION. Use the `_elements` method
+        Deprecated at version 1.13.0.0. Use the `_elements` method
         instead.
 
         It is assumed, but not checked, that the given index selects
@@ -2136,7 +2136,7 @@ class Data(
             self,
             "_item",
             "Use the '_elements' method instead.",
-            version="NEXTVERSION",
+            version="1.13.0.0",
             removed_at="1.14.0.0",
         )  # pragma: no cover
 
@@ -3869,7 +3869,7 @@ class Data(
         including a slow read from local or remote disk, is needed to
         find the values.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         .. seealso:: `get_cached_elements`
 
@@ -4138,7 +4138,7 @@ class Data(
                 type of the array allows it. See `cache_elements` for
                 details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.0.0
 
         :Returns:
 
@@ -5599,7 +5599,7 @@ class Data(
         If the cache is empty, then `cache_elements` may used to
         populate it.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         .. seealso:: `cache_elements`
 

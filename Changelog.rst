@@ -8,18 +8,20 @@ Version NEXTVERSION
 
 ----
 
-Version 1.12.4.0
+Version 1.13.0.0
 ----------------
 
-**2026-01-??**
+**2026-01-15**
 
 * Write Zarr v3 datasets with `cfdm.write`, and allow the reading of
   grouped Zarr v2 and v3 datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/354)
 * Read Zarr v2 and v3 datasets that contain a group hierarchy with
   `cfdm.read` (https://github.com/NCAS-CMS/cfdm/issues/355)
-* New function `cfdm.dataset_flatten` that replaces the deprecated*
+* New function `cfdm.dataset_flatten` that replaces the deprecated
   `cfdm.netcdf_flatten` (https://github.com/NCAS-CMS/cfdm/issues/355)
+* Raise `IndexError` for out-of-range indices in a value-setting
+  operation on a data array (https://github.com/NCAS-CMS/cfdm/issues/377)
 * New function to control the creation of cached elements during data
   display: `cfdm.display_data`
   (https://github.com/NCAS-CMS/cfdm/issues/363)
