@@ -149,7 +149,7 @@ class write(ReadWrite):
 
         mode: `str`, optional
             Specify the mode of write access for the output
-            datset. One of:
+            dataset. One of:
 
             ========  =================================================
             *mode*    Description
@@ -348,7 +348,7 @@ class write(ReadWrite):
             ``'little'``, ``'big'`` or ``'native'``. By default the
             output is native endian. See the `netCDF4 package
             <http://unidata.github.io/netcdf4-python>`_ for more
-            details. Ignored for Zarr datsets.
+            details. Ignored for Zarr datasets.
 
             *Parameter example:*
               ``endian='big'``
@@ -632,7 +632,7 @@ class write(ReadWrite):
             storing the dataset chunks.
 
             The *dataset_shards* parameter is ignored when writing to
-            a non-Zarr datset.
+            a non-Zarr dataset.
 
             If any `Data` being written already stores its own dataset
             sharding strategy (i.e. its `Data.nc_dataset_shards`
