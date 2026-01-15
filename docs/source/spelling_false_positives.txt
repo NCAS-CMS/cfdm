@@ -190,6 +190,7 @@ sep
 setdefault
 setitem
 setstate
+sharding
 Signell
 situ
 spatiotemporal
