@@ -786,7 +786,7 @@ class write(ReadWrite):
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
 
-        filename: Deprecated at version NEXTVERSION
+        filename: Deprecated at version 1.13.0.0
             Use *dataset_name* instead.
 
     :Returns:

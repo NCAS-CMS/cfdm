@@ -1044,7 +1044,7 @@ class NetCDFRead(IORead):
                  Store the dataset sharding strategy. See `cfdm.read`
                  for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.0.0
 
             cfa: `dict`, optional
                 Configure the reading of CF-netCDF aggregation
@@ -1099,7 +1099,7 @@ class NetCDFRead(IORead):
                 How to interpret a group dimension name that has no
                 path. See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.0.0
 
         :Returns:
 
@@ -10995,7 +10995,7 @@ class NetCDFRead(IORead):
     def _file_group_variables(self, group):
         """Return all variables in a group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -11703,7 +11703,7 @@ class NetCDFRead(IORead):
             attributes: `dict`
                 The attributes of the netCDF variable.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.0.0
 
         :Returns:
 
@@ -12060,7 +12060,7 @@ class NetCDFRead(IORead):
         chunks (*not* the number of data array elements) along each
         data array axis.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 

@@ -5145,7 +5145,7 @@ class NetCDFShards(NetCDFMixin):
     The sharding strategy is ignored when writing to a non-Zarr
     dataset.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.0.0
 
     """
 
@@ -5154,7 +5154,7 @@ class NetCDFShards(NetCDFMixin):
 
         {{sharding description}}
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         .. seealso:: `nc_clear_dataset_shards`,
                      `nc_set_dataset_shards`, `nc_dataset_chunksizes`,
@@ -5192,7 +5192,7 @@ class NetCDFShards(NetCDFMixin):
 
         {{sharding description}}
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         .. seealso:: `nc_dataset_shards`, `nc_set_dataset_shards`,
                      `nc_dataset_chunksizes`, `{{package}}.write`
@@ -5229,7 +5229,7 @@ class NetCDFShards(NetCDFMixin):
 
         {{sharding description}}
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         .. seealso:: `nc_dataset_shards`, `nc_clear_dataset_shards`,
                      `nc_dataset_chunksizes`, `{{package}}.write`

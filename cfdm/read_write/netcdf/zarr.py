@@ -25,7 +25,7 @@ class ZarrDimension:
             reference_variable: `zarr.Array`, optional
                 The variable that provided the dimension definition.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.0.0
 
         """
         self._name = name
@@ -57,7 +57,7 @@ class ZarrDimension:
     def name(self):
         """Return the dimension name.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         """
         return self._name
@@ -66,7 +66,7 @@ class ZarrDimension:
     def size(self):
         """Return the dimension size.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         """
         return self._size
@@ -105,7 +105,7 @@ class ZarrDimension:
         Note that the variable does not have to be in the dimension's
         `group`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Returns:
 

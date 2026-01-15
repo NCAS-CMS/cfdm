@@ -99,7 +99,7 @@ def configuration(
             The new display data option. The default is to not change
             the current behaviour.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.13.0.0
 
     :Returns:
 
@@ -2001,7 +2001,7 @@ class display_data(ConstantAccess):
     Note that whenever data values are displayed, they are cached for
     fast future retrieval.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.0.0
 
     .. seealso:: `configuration`
 
@@ -2055,7 +2055,7 @@ class display_data(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: (cfdm) NEXTVERSION
+        .. versionaddedd:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -2545,7 +2545,7 @@ def netcdf_flatten(*args, **kwargs):
         "netcdf_flatten",
         "Use 'cfdm.dataset_flatten' instead, "
         "which has a slightly different API.",
-        version="NEXTVERSION",
+        version="1.13.0.0",
         removed_at="1.15.0.0",
     )  # pragma: no cover
 
@@ -2606,7 +2606,7 @@ def _DEPRECATION_ERROR_FUNCTION(
 ):
     """Error handling for deprecated functions.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.0.0
 
     """
     if removed_at:

@@ -65,7 +65,7 @@ class Count(
 
             {{data: `bool` or `None`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.0.0
 
             display: `bool`, optional
                 If False then return the description as a string. By
