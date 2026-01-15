@@ -10,6 +10,8 @@ Version 1.13.0.0
   `cfdm.read` (https://github.com/NCAS-CMS/cfdm/issues/355)
 * New function `cfdm.dataset_flatten` that replaces the deprecated*
   `cfdm.netcdf_flatten` (https://github.com/NCAS-CMS/cfdm/issues/355)
+* Raise `IndexError` for out-of-range indices in a value-setting
+  operation on a data array (https://github.com/NCAS-CMS/cfdm/issues/377)
 * New function to control the creation of cached elements during data
   display: `cfdm.display_data`
   (https://github.com/NCAS-CMS/cfdm/issues/363)
