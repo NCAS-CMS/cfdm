@@ -406,50 +406,7 @@ def environment(display=True, paths=True):
         `None` or `list`
             If *display* is True then the description of the
             environment is printed and `None` is returned. Otherwise
-            the description is returned as in a `list`.
-
-    **Examples**
-
-    >>> cfdm.environment()
-    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
-    Python: 3.12.8 /home/miniconda3/bin/python
-    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
-    numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
-    cfdm.core: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
-    udunits2 library: libudunits2.so.0
-    HDF5 library: 1.14.2
-    netcdf library: 4.9.4-development
-    netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
-    h5netcdf: 1.7.4 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
-    h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
-    zarr: 3.1.3 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
-    s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
-    scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
-    dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
-    cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py
-    cfunits: 3.3.7 /home/miniconda3/lib/python3.12/site-packages/cfunits/__init__.py
-    cfdm: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/__init__.py
-
-    >>> cfdm.environment(paths=False)
-    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
-    Python: 3.12.8
-    packaging: 24.2
-    numpy: 2.2.6
-    cfdm.core: 1.12.2.0
-    udunits2 library: libudunits2.so.0
-    HDF5 library: 1.14.2
-    netcdf library: 4.9.4-development
-    netCDF4: 1.7.2
-    h5netcdf: 1.7.4
-    h5py: 3.12.1
-    zarr: 3.1.3
-    s3fs: 2024.12.0
-    scipy: 1.15.1
-    dask: 2025.5.1
-    distributed: 2025.5.1
-    cftime: 1.6.4.post1
-    cfunits: 3.3.7
-    cfdm: 1.12.2.0
+            the descriptions is returned in a `list`.
 
     """
     import ctypes
@@ -463,12 +420,13 @@ def environment(display=True, paths=True):
         "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
         "HDF5 library": (netCDF4.__hdf5libversion__, ""),
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
-        "netCDF4": _get_module_info("netCDF4"),
-        "h5netcdf": _get_module_info("h5netcdf"),
-        "h5py": _get_module_info("h5py"),
-        "zarr": _get_module_info("zarr"),
-        "s3fs": _get_module_info("s3fs"),
-        "scipy": _get_module_info("scipy"),
+        "netCDF4": _get_module_info("netCDF4", try_except=True),
+        "h5netcdf": _get_module_info("h5netcdf", try_except=True),
+        "h5py": _get_module_info("h5py", try_except=True),
+        "pyfive": _get_module_info("pyfive", try_except=True),
+        "zarr": _get_module_info("zarr", try_except=True),
+        "s3fs": _get_module_info("s3fs", try_except=True),
+        "scipy": _get_module_info("scipy", try_except=True),
         "dask": _get_module_info("dask"),
         "distributed": _get_module_info("distributed"),
         "cftime": _get_module_info("cftime"),
