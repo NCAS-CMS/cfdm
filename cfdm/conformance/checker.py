@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 import numpy as np
 
 from ..read_write.netcdf.constants import CF_QUANTIZATION_PARAMETERS
+from .reporting import Report
 from .standardnames import get_all_current_standard_names
 
 
@@ -62,7 +63,7 @@ class Mesh:
     mesh_id: Any = None
 
 
-class Checker():
+class Checker(Report):
     """Contains checks of CF Compliance for Field instantiation from netCDF.
 
     Holds methods for checking CF compliance. These methods (whose names

@@ -210,8 +210,7 @@ del _minimum_vn
 
 from .constants import masked
 
-# Note internal ones here are passed on so they can be used in cf-python (see
-# comment below)
+# Internal ones passed on so they can be used in cf-python (see comment below)
 from .functions import (
     ATOL,
     CF,

@@ -1,4 +1,4 @@
-from .checker import Checker
+from .checker import Checker, Report
 
 from .standardnames import (
     get_all_current_standard_names,
