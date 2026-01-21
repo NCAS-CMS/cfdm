@@ -500,7 +500,7 @@ following:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">'storage-aligned'</span></code></p>
 <p>This is the default. The Dask chunk size in bytes will
 be as close as possible the size given by
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code>, favouring square-like chunk
+<a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a>, favouring square-like chunk
 shapes, with the added guarantee that the entirety of
 each storage chunk lies within exactly one Dask
 chunk. This strategy is general the most performant, as
@@ -513,19 +513,19 @@ chunk shape of (100, 5, 60). This has an overall size of
 54.93 MiB, partitioned into 240 storage chunks each of
 size 100*5*60*8 bytes = 0.23 MiB. Then:</p>
 <ul class="simple">
-<li><p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code> returns 134217728 (i.e. 128
+<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 134217728 (i.e. 128
 MiB), then the storage-aligned Dask chunks will have
 shape (400, 300, 60), giving 1 Dask chunk with size of
 54.93 MiB (compare with a Dask chunk shape of (400,
 300, 60) and size 54.93 MiB when <em>dask_chunks</em> is
 <code class="docutils literal notranslate"><span class="pre">'auto'</span></code>.)</p></li>
-<li><p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code> returns 33554432 (i.e. 32
+<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 33554432 (i.e. 32
 MiB), then the storage-aligned Dask chunks will have
 shape (200, 260, 60), giving 4 Dask chunks with a
 maximum size of 23.80 MiB (compare with a Dask chunk
 shape of (264, 264, 60) and maximum size 31.90 MiB
 when <em>dask_chunks</em> is <code class="docutils literal notranslate"><span class="pre">'auto'</span></code>.)</p></li>
-<li><p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code> returns 4194304 (i.e. 4
+<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 4194304 (i.e. 4
 MiB), then the storage-aligned Dask chunks will have
 shape (100, 85, 60), giving 16 Dask chunks with a
 maximum size of 3.89 MiB (compare with a Dask chunk
@@ -574,7 +574,7 @@ compressed array in the file.</p></li>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p>
 <p>The Dask chunk size in bytes will be as close as
-possible to the size given by <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code>,
+possible to the size given by <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a>,
 favouring square-like chunk shapes. This may give
 similar Dask chunk shapes as the <code class="docutils literal notranslate"><span class="pre">'storage-aligned'</span></code>
 option, but without the guarantee that each storage
