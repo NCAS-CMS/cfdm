@@ -1,10 +1,12 @@
+import numpy as np
+
 from .cfdmimplementation import implementation
 from .functions import CF
 
 _implementation = implementation()
 
 # The number of example fields
-_n_example_fields = 12
+_n_example_fields = 14
 
 
 def example_field(n, _implementation=_implementation):
@@ -57,6 +59,17 @@ def example_field(n, _implementation=_implementation):
 
             ``11``  Discrete sampling geometry (DSG) "trajectory"
                     features.
+
+            ``12``  A global HEALPix grid with "nested" indexing
+                    scheme at refinement level 1. The field's
+                    area-weighted global latitude-longitude means are
+                    equal to those of example field ``13``.
+
+            ``13``  A global HEALPix Multi-Order Coverage grid with
+                    "nuniq" indexing scheme representing refinement
+                    levels 1 and 2. The field's area-weighted global
+                    latitude-longitude means are equal to those of
+                    example field ``12``.
             ======  ==================================================
 
             See the examples for details.
@@ -228,6 +241,26 @@ def example_field(n, _implementation=_implementation):
                     : longitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[0.0, ..., 0.31]] degree_east
                     : cf_role=trajectory_id(cf_role=trajectory_id(1)) = [flight1]
 
+    >>> print(cfdm.example_field(12))
+    Field: air_temperature (ncvar%tas)
+    ----------------------------------
+    Data            : air_temperature(time(2), healpix_index(48)) K
+    Cell methods    : time(2): mean area: mean
+    Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                    : height(1) = [1.5] m
+                    : healpix_index(healpix_index(48)) = [0, ..., 47]
+    Coord references: grid_mapping_name:healpix
+
+    >>> print(cfdm.example_field(13))
+    Field: air_temperature (ncvar%tas)
+    ----------------------------------
+    Data            : air_temperature(time(2), healpix_index(60)) K
+    Cell methods    : time(2): mean area: mean
+    Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                    : height(1) = [1.5] m
+    Auxiliary coords: healpix_index(healpix_index(60)) = [64, ..., 63]
+    Coord references: grid_mapping_name:healpix
+
     """
     # For safety given the private second argument which we might not
     # document, otherwise a user gets an obscure error if they tried, say:
@@ -244,7 +277,9 @@ def example_field(n, _implementation=_implementation):
     CellConnectivity = _implementation.get_class("CellConnectivity")
     CellMeasure = _implementation.get_class("CellMeasure")
     CellMethod = _implementation.get_class("CellMethod")
+    CoordinateConversion = _implementation.get_class("CoordinateConversion")
     CoordinateReference = _implementation.get_class("CoordinateReference")
+    Datum = _implementation.get_class("Datum")
     DimensionCoordinate = _implementation.get_class("DimensionCoordinate")
     DomainAncillary = _implementation.get_class("DomainAncillary")
     DomainAxis = _implementation.get_class("DomainAxis")
@@ -258,6 +293,8 @@ def example_field(n, _implementation=_implementation):
     Data = _implementation.get_class("Data")
 
     mesh_id = "f51e5aa5e2b0439f9fae4f04e51556f7"
+
+    field = None
 
     if n == 0:
         f = Field()
@@ -5290,11 +5327,543 @@ def example_field(n, _implementation=_implementation):
         #
         # field data axes
         f.set_data_axes(("domainaxis0", "domainaxis1"))
+    elif n == 12:
+        # field: air_temperature
+        field = Field()
+        field.set_properties(
+            {
+                "Conventions": "CF-1.12",
+                "standard_name": "air_temperature",
+                "units": "K",
+                "units_metadata": "temperature: on_scale",
+            }
+        )
+        field.nc_set_variable("tas")
+        data = Data(
+            [
+                [
+                    291.5,
+                    293.5,
+                    285.3,
+                    286.3,
+                    286.2,
+                    289.6,
+                    285.6,
+                    285.5,
+                    287.1,
+                    285.5,
+                    291.5,
+                    285.2,
+                    285.0,
+                    291.1,
+                    287.9,
+                    290.9,
+                    288.6,
+                    291.6,
+                    289.6,
+                    289.0,
+                    294.0,
+                    293.1,
+                    291.5,
+                    288.3,
+                    289.6,
+                    285.3,
+                    285.4,
+                    286.9,
+                    294.3,
+                    289.0,
+                    294.5,
+                    286.3,
+                    288.3,
+                    287.2,
+                    285.7,
+                    291.7,
+                    290.1,
+                    291.1,
+                    286.8,
+                    286.0,
+                    291.1,
+                    292.2,
+                    285.7,
+                    288.8,
+                    285.8,
+                    290.8,
+                    287.0,
+                    290.0,
+                ],
+                [
+                    294.2,
+                    287.7,
+                    294.6,
+                    289.5,
+                    289.2,
+                    293.0,
+                    286.8,
+                    287.8,
+                    285.2,
+                    294.0,
+                    288.1,
+                    293.5,
+                    289.6,
+                    292.5,
+                    290.0,
+                    290.5,
+                    292.9,
+                    290.7,
+                    293.6,
+                    288.3,
+                    293.5,
+                    294.0,
+                    288.7,
+                    292.0,
+                    292.9,
+                    289.5,
+                    286.8,
+                    288.3,
+                    292.6,
+                    290.3,
+                    290.8,
+                    290.4,
+                    287.7,
+                    289.9,
+                    288.4,
+                    294.7,
+                    291.4,
+                    294.7,
+                    287.6,
+                    286.5,
+                    291.4,
+                    293.0,
+                    288.8,
+                    288.8,
+                    292.3,
+                    293.7,
+                    290.1,
+                    285.9,
+                ],
+            ],
+            units="K",
+            dtype="f8",
+        )
+        field.set_data(data)
+        #
+        # domain_axis: ncdim%time
+        c = DomainAxis()
+        c.set_size(2)
+        c.nc_set_dimension("time")
+        field.set_construct(c, key="domainaxis0", copy=False)
+        #
+        # domain_axis: ncdim%cell
+        c = DomainAxis()
+        c.set_size(48)
+        c.nc_set_dimension("cell")
+        field.set_construct(c, key="domainaxis1", copy=False)
+        #
+        # domain_axis: ncdim%height
+        c = DomainAxis()
+        c.set_size(1)
+        c.nc_set_dimension("height")
+        field.set_construct(c, key="domainaxis2", copy=False)
+        #
+        # dimension_coordinate: healpix_index
+        c = DimensionCoordinate()
+        c.set_properties({"standard_name": "healpix_index"})
+        c.nc_set_variable("healpix_index")
+        data = Data(np.arange(48, dtype="int32"))
+        c.set_data(data)
+        field.set_construct(
+            c, axes=("domainaxis1",), key="dimensioncoordinate2", copy=False
+        )
+        #
+        # dimension_coordinate: time
+        c = DimensionCoordinate()
+        c.set_properties(
+            {
+                "standard_name": "time",
+                "calendar": "proleptic_gregorian",
+                "units": "days since 2025-06-01",
+            }
+        )
+        c.nc_set_variable("time")
+        data = Data(
+            [15.0, 45.5],
+            units="days since 2025-06-01",
+            calendar="proleptic_gregorian",
+            dtype="f4",
+        )
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable("time_bounds")
+        data = Data(
+            [[0.0, 30.0], [30.0, 61.0]],
+            units="days since 2025-06-01",
+            calendar="proleptic_gregorian",
+            dtype="f4",
+        )
+        b.set_data(data)
+        c.set_bounds(b)
+        field.set_construct(
+            c, axes=("domainaxis0",), key="dimensioncoordinate0", copy=False
+        )
+        #
+        # dimension_coordinate: height
+        c = DimensionCoordinate()
+        c.set_properties({"standard_name": "height", "units": "m"})
+        c.nc_set_variable("height")
+        data = Data([1.5], units="m", dtype="f4")
+        c.set_data(data)
+        field.set_construct(
+            c, axes=("domainaxis2",), key="dimensioncoordinate1", copy=False
+        )
+        #
+        # coordinate_reference: grid_mapping_name:healpix
+        c = CoordinateReference()
+        c.nc_set_variable("healpix")
+        c.set_coordinates({"dimensioncoordinate2"})
+        d = Datum()
+        d.set_parameters({"earth_radius": 6371000})
+        c.set_datum(d)
+        f = CoordinateConversion()
+        f.set_parameters(
+            {
+                "indexing_scheme": "nested",
+                "refinement_level": 1,
+                "grid_mapping_name": "healpix",
+            }
+        )
+        c.set_coordinate_conversion(f)
+        field.set_construct(c)
+        #
+        # cell_method: mean
+        c = CellMethod()
+        c.set_method("mean")
+        c.set_axes(("domainaxis0",))
+        field.set_construct(c)
+        #
+        # cell_method: mean
+        c = CellMethod()
+        c.set_method("mean")
+        c.set_axes(("area",))
+        field.set_construct(c)
+        #
+        # field data axes
+        field.set_data_axes(("domainaxis0", "domainaxis1"))
+    elif n == 13:
+        # field: air_temperature
+        field = Field()
+        field.set_properties(
+            {
+                "Conventions": "CF-1.12",
+                "standard_name": "air_temperature",
+                "units": "K",
+                "units_metadata": "temperature: on_scale",
+            }
+        )
+        field.nc_set_variable("tas")
+        data = Data(
+            [
+                [
+                    291.6,
+                    291.7,
+                    291.4,
+                    291.3,
+                    293.6,
+                    293.7,
+                    293.4,
+                    293.3,
+                    285.4,
+                    285.5,
+                    285.2,
+                    285.1,
+                    286.4,
+                    286.5,
+                    286.2,
+                    286.1,
+                    286.2,
+                    289.6,
+                    285.6,
+                    285.5,
+                    287.1,
+                    285.5,
+                    291.5,
+                    285.2,
+                    285.0,
+                    291.1,
+                    287.9,
+                    290.9,
+                    288.6,
+                    291.6,
+                    289.6,
+                    289.0,
+                    294.0,
+                    293.1,
+                    291.5,
+                    288.3,
+                    289.6,
+                    285.3,
+                    285.4,
+                    286.9,
+                    294.3,
+                    289.0,
+                    294.5,
+                    286.3,
+                    288.3,
+                    287.2,
+                    285.7,
+                    291.7,
+                    290.1,
+                    291.1,
+                    286.8,
+                    286.0,
+                    291.1,
+                    292.2,
+                    285.7,
+                    288.8,
+                    285.8,
+                    290.8,
+                    287.0,
+                    290.0,
+                ],
+                [
+                    294.3,
+                    294.4,
+                    294.1,
+                    294.0,
+                    287.8,
+                    287.9,
+                    287.6,
+                    287.5,
+                    294.7,
+                    294.8,
+                    294.5,
+                    294.4,
+                    289.6,
+                    289.7,
+                    289.4,
+                    289.3,
+                    289.2,
+                    293.0,
+                    286.8,
+                    287.8,
+                    285.2,
+                    294.0,
+                    288.1,
+                    293.5,
+                    289.6,
+                    292.5,
+                    290.0,
+                    290.5,
+                    292.9,
+                    290.7,
+                    293.6,
+                    288.3,
+                    293.5,
+                    294.0,
+                    288.7,
+                    292.0,
+                    292.9,
+                    289.5,
+                    286.8,
+                    288.3,
+                    292.6,
+                    290.3,
+                    290.8,
+                    290.4,
+                    287.7,
+                    289.9,
+                    288.4,
+                    294.7,
+                    291.4,
+                    294.7,
+                    287.6,
+                    286.5,
+                    291.4,
+                    293.0,
+                    288.8,
+                    288.8,
+                    292.3,
+                    293.7,
+                    290.1,
+                    285.9,
+                ],
+            ],
+            units="K",
+            dtype="f8",
+        )
+        field.set_data(data)
+        #
+        # domain_axis: ncdim%time
+        c = DomainAxis()
+        c.set_size(2)
+        c.nc_set_dimension("time")
+        field.set_construct(c, key="domainaxis0", copy=False)
+        #
+        # domain_axis: ncdim%cell
+        c = DomainAxis()
+        c.set_size(60)
+        c.nc_set_dimension("cell")
+        field.set_construct(c, key="domainaxis1", copy=False)
+        #
+        # domain_axis: ncdim%height
+        c = DomainAxis()
+        c.set_size(1)
+        c.nc_set_dimension("height")
+        field.set_construct(c, key="domainaxis2", copy=False)
+        #
+        # auxiliary_coordinate: healpix_index
+        c = AuxiliaryCoordinate()
+        c.set_properties({"standard_name": "healpix_index"})
+        c.nc_set_variable("healpix_index")
+        data = Data(
+            [
+                64,
+                65,
+                66,
+                67,
+                68,
+                69,
+                70,
+                71,
+                72,
+                73,
+                74,
+                75,
+                76,
+                77,
+                78,
+                79,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39,
+                40,
+                41,
+                42,
+                43,
+                44,
+                45,
+                46,
+                47,
+                48,
+                49,
+                50,
+                51,
+                52,
+                53,
+                54,
+                55,
+                56,
+                57,
+                58,
+                59,
+                60,
+                61,
+                62,
+                63,
+            ],
+            dtype="i4",
+        )
+        c.set_data(data)
+        field.set_construct(
+            c, axes=("domainaxis1",), key="auxiliarycoordinate0", copy=False
+        )
+        #
+        # dimension_coordinate: time
+        c = DimensionCoordinate()
+        c.set_properties(
+            {
+                "standard_name": "time",
+                "calendar": "proleptic_gregorian",
+                "units": "days since 2025-06-01",
+            }
+        )
+        c.nc_set_variable("time")
+        data = Data(
+            [15.0, 45.5],
+            units="days since 2025-06-01",
+            calendar="proleptic_gregorian",
+            dtype="f4",
+        )
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable("time_bounds")
+        data = Data(
+            [[0.0, 30.0], [30.0, 61.0]],
+            units="days since 2025-06-01",
+            calendar="proleptic_gregorian",
+            dtype="f4",
+        )
+        b.set_data(data)
+        c.set_bounds(b)
+        field.set_construct(
+            c, axes=("domainaxis0",), key="dimensioncoordinate0", copy=False
+        )
+        #
+        # dimension_coordinate: height
+        c = DimensionCoordinate()
+        c.set_properties({"standard_name": "height", "units": "m"})
+        c.nc_set_variable("height")
+        data = Data([1.5], units="m", dtype="f4")
+        c.set_data(data)
+        field.set_construct(
+            c, axes=("domainaxis2",), key="dimensioncoordinate1", copy=False
+        )
+        #
+        # coordinate_reference: grid_mapping_name:healpix
+        c = CoordinateReference()
+        c.nc_set_variable("healpix")
+        c.set_coordinates({"auxiliarycoordinate0"})
+        d = Datum()
+        d.set_parameters({"earth_radius": 6371000})
+        c.set_datum(d)
+        f = CoordinateConversion()
+        f.set_parameters(
+            {
+                "indexing_scheme": "nuniq",
+                "grid_mapping_name": "healpix",
+            }
+        )
+        c.set_coordinate_conversion(f)
+        field.set_construct(c)
+        #
+        # cell_method: mean
+        c = CellMethod()
+        c.set_method("mean")
+        c.set_axes(("domainaxis0",))
+        field.set_construct(c)
+        #
+        # cell_method: mean
+        c = CellMethod()
+        c.set_method("mean")
+        c.set_axes(("area",))
+        field.set_construct(c)
+        #
+        # field data axes
+        field.set_data_axes(("domainaxis0", "domainaxis1"))
     else:
         raise ValueError(
             "Must select an example construct with an integer argument "
             f"between 0 and {_n_example_fields - 1} inclusive. Got {n!r}"
         )
+
+    if field is not None:
+        f = field
 
     return f
 
@@ -5317,7 +5886,6 @@ def example_fields(*n, _func=example_field):
             ======  ==================================================
             ``0``   Cell method and dimension coordinate metadata
                     constructs.
-
             ``1``   Cell method, dimension coordinate, auxiliary
                     coordinate, cell measure, coordinate reference,
                     domain ancillary and field ancillary metadata
@@ -5350,6 +5918,17 @@ def example_fields(*n, _func=example_field):
 
             ``11``  Discrete sampling geometry (DSG) "trajectory"
                     features.
+
+            ``12``  A global HEALPix grid with "nested" indices at
+                    refinement level 1. The field's area-weighted
+                    global latitude-longitude means are equal to those
+                    of example field ``13``.
+
+            ``13``  A global HEALPix Multi-Order Coverage grid with
+                    "nuniq" indices representing refinement levels 1
+                    and 2. The field's area-weighted global
+                    latitude-longitude means are equal to those of
+                    example field ``12``.
             ======  ==================================================
 
             If no individual field constructs are selected then all
@@ -5382,7 +5961,9 @@ def example_fields(*n, _func=example_field):
      <Field: air_temperature(time(2), ncdim%nMesh2_face(3)) K>,
      <Field: northward_wind(time(2), ncdim%nMesh2_edge(9)) ms-1>,
      <Field: air_pressure(time(2), ncdim%nMesh2_node(7)) hPa>,
-     <CF Field: mole_fraction_of_ozone_in_air(cf_role=trajectory_id(1), ncdim%trajectory(4)) ppb>]
+     <CF Field: mole_fraction_of_ozone_in_air(cf_role=trajectory_id(1), ncdim%trajectory(4)) ppb>
+     <Field: air_temperature(time(2), healpix_index(48)) K>,
+     <Field: air_temperature(time(2), healpix_index(60)) K>]
 
     >>> cfdm.example_fields(7, 1)
     [<Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
@@ -5463,6 +6044,13 @@ def example_domain(n, _func=example_field):
 
             ``11``  Discrete sampling geometry (DSG) "trajectory"
                     features.
+
+            ``12``  A global HEALPix grid with "nested" indexing
+                    scheme at refinement level 1.
+
+            ``13``  A global HEALPix Multi-Order Coverage grid with
+                    "nuniq" indexing scheme representing refinement
+                    levels 1 and 2.
             ======  ==================================================
 
             See the examples for details.
@@ -5580,6 +6168,18 @@ def example_domain(n, _func=example_field):
                     : latitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[52.0, ..., 52.2]] degree_north
                     : longitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[0.0, ..., 0.31]] degree_east
                     : cf_role=trajectory_id(cf_role=trajectory_id(1)) = [flight1]
+
+    >>> print(cfdm.example_domain(12))
+    Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                    : height(1) = [1.5] m
+                    : healpix_index(healpix_index(48)) = [0, ..., 47]
+    Coord references: grid_mapping_name:healpix
+
+    >>> print(cfdm.example_domain(13))
+    Dimension coords: time(2) = [2025-06-16 00:00:00, 2025-07-16 12:00:00] proleptic_gregorian
+                    : height(1) = [1.5] m
+    Auxiliary coords: healpix_index(healpix_index(60)) = [64, ..., 63]
+    Coord references: grid_mapping_name:healpix
 
     """
     return _func(n).get_domain()

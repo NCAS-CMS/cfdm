@@ -1,3 +1,13 @@
+Version NEXTVERSION
+----------------
+
+**2026-??-??**
+
+* Support for HEALPix grids
+  (https://github.com/NCAS-CMS/cfdm/issues/370)
+
+----
+
 Version 1.13.0.0
 ----------------
 

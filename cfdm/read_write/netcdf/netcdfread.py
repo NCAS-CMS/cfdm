@@ -263,6 +263,7 @@ class NetCDFRead(IORead):
                 "latitude",
                 "longitude",
             ),
+            "healpix": ("healpix_index", "latitude", "longitude"),
             "atmosphere_ln_pressure_coordinate": (
                 "atmosphere_ln_pressure_coordinate",
             ),
