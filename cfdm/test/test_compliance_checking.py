@@ -1,19 +1,13 @@
 import atexit
-import copy
 import datetime
 import faulthandler
-import logging
 import os
-import platform
 from pprint import pprint
-import sys
 import tempfile
 import unittest
 
 from netCDF4 import Dataset
 from urllib import request
-
-import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -52,7 +46,7 @@ def _create_noncompliant_names_field(compliant_field, temp_file):
         # - this makes it a certain invalid name and one we can identify as
         # being tied to the original variable, for testing purposes.
         bad_name_mapping = {
-            varname: "badname_"+ varname for varname in field_all_varnames
+            varname: "badname_" + varname for varname in field_all_varnames
         }
 
         for var_name, bad_std_name in bad_name_mapping.items():
@@ -293,7 +287,6 @@ class ComplianceCheckingTest(unittest.TestCase):
         # that, so should update create_test_files method to set on all
         # for bad case.
         with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
-            field_all_varnames = list(nc.variables.keys())
             for varname, var in nc.variables.items():
                 print(varname, getattr(var, "standard_name", "No standard_name"))
 
