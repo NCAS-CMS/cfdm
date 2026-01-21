@@ -162,7 +162,7 @@ def dataset_flatten(
                       rules defined by the CF conventions (section 2.7
                       Groups).
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.13.0.0
 
     :Returns:
 
@@ -328,7 +328,7 @@ class _Flattener:
             group_dimension_search: `str`, optional
                 See `dataset_flatten`.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.0.0
 
         """
         # Mapping of flattened attribute names to their full-path
@@ -1938,7 +1938,7 @@ class _Flattener:
     def _group_dimensions(self, group):
         """Return dimensions that are defined in a group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -1976,7 +1976,7 @@ class _Flattener:
     def _group_variables(self, group):
         """Return variables that are defined in a group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -2042,7 +2042,7 @@ class _Flattener:
 
         See `dataset_flatten` for details.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -2293,7 +2293,7 @@ class _Flattener:
         variables. An `AttributeError` will be raised if called for
         any other type of variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -2333,7 +2333,7 @@ class _Flattener:
     def _child_groups(self, group):
         """Return groups that are defined in this group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -2356,7 +2356,7 @@ class _Flattener:
     def _backend(self, dataset=None):
         """Return the name of the backend that defines a dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.0.0
 
         :Parameters:
 
@@ -2394,7 +2394,7 @@ class AttributeParsingException(Exception):
 class DimensionParsingException(Exception):
     """Exception for unparsable dimension.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.0.0
 
     """
 

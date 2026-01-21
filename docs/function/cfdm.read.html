@@ -8,14 +8,14 @@
     <title>cfdm.read &#8212; Documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=7e90eb75"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/copybutton.js?v=a56c686a"></script>
     <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -31,12 +31,12 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.3.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
 
 
 
@@ -123,9 +123,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.read<a class="headerlink" href="#cfdm-read" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cfdm.read">
-<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dask_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storage-aligned'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsqueeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdl_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_read_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.1/cfdm/read_write/read.py#L18-L594"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.read" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dask_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storage-aligned'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsqueeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdl_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_read_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_dimension_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'closest_ancestor'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/read_write/read.py#L17-L611"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.read" title="Link to this definition">¶</a></dt>
 <dd><p>Read field or domain constructs from a dataset.</p>
-<p>The following file formats are supported: netCDF, CDL, and Zarr.</p>
+<p>The following dataset formats are supported: netCDF, CDL, and
+Zarr.</p>
 <p>NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
 server, or in an S3 object store.</p>
 <p>CDL files must be on local disk.</p>
@@ -433,16 +434,14 @@ function. For example:</p>
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.9.0.0</p>
 </div>
 </dd>
-<dt>netcdf_backend: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify which library, or libraries, to use for opening
-and reading netCDF files. By default, or if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, then
-the first one of <code class="xref py py-obj docutils literal notranslate"><span class="pre">h5netcdf</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4</span></code> to successfully
-open the netCDF file is used. The libraries will be used
-in the order given, until a file is successfully
-opened.}</p>
-<div class="versionadded">
+</dl>
+<p>{{read netcdf_backend: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional}}</p>
+<blockquote>
+<div><div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
-</dd>
+</div></blockquote>
+<dl>
 <dt>storage_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Pass parameters to the backend file system driver, such as
 username, password, server, port, etc. How the storage
 options are interpreted depends on the location of the
@@ -501,7 +500,7 @@ following:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">'storage-aligned'</span></code></p>
 <p>This is the default. The Dask chunk size in bytes will
 be as close as possible the size given by
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code>, favouring square-like chunk
+<a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a>, favouring square-like chunk
 shapes, with the added guarantee that the entirety of
 each storage chunk lies within exactly one Dask
 chunk. This strategy is general the most performant, as
@@ -514,19 +513,19 @@ chunk shape of (100, 5, 60). This has an overall size of
 54.93 MiB, partitioned into 240 storage chunks each of
 size 100*5*60*8 bytes = 0.23 MiB. Then:</p>
 <ul class="simple">
-<li><p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code> returns 134217728 (i.e. 128
+<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 134217728 (i.e. 128
 MiB), then the storage-aligned Dask chunks will have
 shape (400, 300, 60), giving 1 Dask chunk with size of
 54.93 MiB (compare with a Dask chunk shape of (400,
 300, 60) and size 54.93 MiB when <em>dask_chunks</em> is
 <code class="docutils literal notranslate"><span class="pre">'auto'</span></code>.)</p></li>
-<li><p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code> returns 33554432 (i.e. 32
+<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 33554432 (i.e. 32
 MiB), then the storage-aligned Dask chunks will have
 shape (200, 260, 60), giving 4 Dask chunks with a
 maximum size of 23.80 MiB (compare with a Dask chunk
 shape of (264, 264, 60) and maximum size 31.90 MiB
 when <em>dask_chunks</em> is <code class="docutils literal notranslate"><span class="pre">'auto'</span></code>.)</p></li>
-<li><p>If <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code> returns 4194304 (i.e. 4
+<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 4194304 (i.e. 4
 MiB), then the storage-aligned Dask chunks will have
 shape (100, 85, 60), giving 16 Dask chunks with a
 maximum size of 3.89 MiB (compare with a Dask chunk
@@ -575,7 +574,7 @@ compressed array in the file.</p></li>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p>
 <p>The Dask chunk size in bytes will be as close as
-possible to the size given by <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code>,
+possible to the size given by <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a>,
 favouring square-like chunk shapes. This may give
 similar Dask chunk shapes as the <code class="docutils literal notranslate"><span class="pre">'storage-aligned'</span></code>
 option, but without the guarantee that each storage
@@ -664,31 +663,44 @@ or <code class="docutils literal notranslate"><span class="pre">{'T':</span> <sp
 </li>
 </ul>
 </dd>
-</dl>
-<p>store_dataset_chunks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</p>
-<blockquote>
-<div><p>If True (the default) then store the dataset chunking
+<dt>store_dataset_chunks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then store the dataset chunking
 strategy for each returned data array. The dataset
 chunking strategy is then accessible via an object’s
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code> method. When the dataset chunking
 strategy is stored, it will be used when the data is
 written to a new netCDF file with <a class="reference internal" href="cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>
 (unless the strategy is modified prior to writing).</p>
-<p>If False, or if the dataset being read does not support
-chunking (such as a netCDF-3 dataset), then no dataset
-chunking strategy is stored (i.e. an
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code> method will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> for all
-<a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). In this case, when the data is written to
-a new netCDF file, the dataset chunking strategy will be
-determined by <a class="reference internal" href="cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>.</p>
+<p>If False then no dataset chunking strategy is stored
+(i.e. the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code> method will return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> for all returned <a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). In this case,
+when the data is written to a new dataset, the dataset
+chunking strategy will be determined by
+<a class="reference internal" href="cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>.</p>
 <p>See the <a class="reference internal" href="cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> <em>dataset_chunks</em> parameter for
 details on how the dataset chunking strategy is determined
 at the time of writing.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
-</div></blockquote>
-<dl>
+</dd>
+<dt>store_dataset_shards: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then store the Zarr dataset sharding
+strategy for each returned data array. The dataset
+sharding strategy is then accessible via an object’s
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_shards</span></code> method. When the dataset sharding
+strategy is stored, it will be used when the data is
+written to a new Zarr dataset with <a class="reference internal" href="cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>
+(unless the strategy is modified prior to writing).</p>
+<p>If False, or if the dataset being read does not support
+sharding (such as a Zarr v2 or netCDF dataset), then no
+dataset sharding strategy is stored (i.e. the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_shards</span></code> method will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> for all
+returned <a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). In this case, when the data is
+written to a new Zarr dataset, the dataset sharding
+strategy will be determined by <a class="reference internal" href="cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.0.0</p>
+</div>
+</dd>
 <dt>cfa: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Configure the reading of CF-netCDF aggregation files.</p>
 <p>The dictionary may have any subset of the following
 key/value pairs that supplement or override the
@@ -865,6 +877,60 @@ the data are stored in its dataset.</p>
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
 </div>
 </dd>
+<dt>group_dimension_search: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>How to interpret a dimension name that contains no
+group-separator characters, such as <code class="docutils literal notranslate"><span class="pre">dim</span></code> (as opposed to
+<code class="docutils literal notranslate"><span class="pre">group/dim</span></code>, <code class="docutils literal notranslate"><span class="pre">/group/dim</span></code>, <code class="docutils literal notranslate"><span class="pre">../dim</span></code>, etc.). The
+<em>group_dimension_search</em> parameter must be one of:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'closest_ancestor'</span></code></p>
+<p>This is the default and is the behaviour defined by the
+CF conventions (section 2.7 Groups).</p>
+<p>Assume that the sub-group dimension is the same as the
+dimension with the same name and size in an ancestor
+group, if one exists. If multiple such dimensions exist,
+then the correspondence is with the dimension in the
+ancestor group that is <strong>closest</strong> to the sub-group
+(i.e. that is furthest away from the root group).</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'furthest_ancestor'</span></code></p>
+<p>This behaviour is different to that defined by the CF
+conventions (section 2.7 Groups).</p>
+<p>Assume that the sub-group dimension is the same as the
+one with the same name and size in an ancestor group, if
+one exists. If multiple such dimensions exist, then the
+correspondence is with the dimension in the ancestor
+group that is <strong>furthest away</strong> from the sub-group
+(i.e. that is closest to the root group).</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'local'</span></code></p>
+<p>This behaviour is different to that defined by the CF
+conventions (section 2.7 Groups).</p>
+<p>Assume that the Zarr sub-group dimension is different to
+any with the same name and size in all ancestor groups.</p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For a netCDF dataset, for which it is always
+well-defined in which group a dimension is
+defined, <em>group_dimension_search</em> may only take
+the default value of <a href="#id1"><span class="problematic" id="id2">``</span></a>’closest_ancestor’<a href="#id3"><span class="problematic" id="id4">`</span></a>,
+which applies the behaviour defined by the CF
+conventions (section 2.7 Groups).</p>
+<p>For a Zarr dataset, for which there is no means
+of indicating whether or not the same dimension
+names that appear in different groups correspond
+to each other, setting this parameter may be
+necessary for the correct interpretation of the
+dataset in the event that its dimensions are
+named in a manner that is inconsistent with CF
+rules defined by the CF conventions (section 2.7
+Groups).</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.0.0</p>
+</div>
+</dd>
 <dt>ignore_unknown_type: Deprecated at version 1.12.2.0</dt><dd><p>Use <em>dataset_type</em> instead.</p>
 </dd>
 </dl>
@@ -910,10 +976,10 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2025, NCAS | Page built on 2025-10-15.
+      &#169;2026, NCAS | Page built on 2026-01-15.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>

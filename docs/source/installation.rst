@@ -115,7 +115,7 @@ To install from source:
 1. Download the cfdm package from https://pypi.org/project/cfdm
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``1.11.0.0``):
+   you want to install, e.g. ``1.13.0.0``):
 
    .. code:: console
 	 
