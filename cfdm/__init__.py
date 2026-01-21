@@ -249,12 +249,6 @@ from .decorators import (
     _display_or_return,
 )
 
-from .cfvalidation import (
-    get_all_current_standard_names,
-    _extract_names_from_xml,
-    _STD_NAME_CURRENT_XML_URL
-)
-
 from .constructs import Constructs
 
 from .data import (
@@ -334,8 +328,6 @@ from .read_write.netcdf.flatten import netcdf_flatten
 from .examplefield import example_field, example_fields, example_domain
 
 from .abstract import Container
-
-from .conformance import conformance
 
 # --------------------------------------------------------------------
 # Set up basic logging for the full project with a root logger

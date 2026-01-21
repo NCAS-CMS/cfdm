@@ -1,4 +1,4 @@
-from .conformance import conformance
+from .checker import Checker
 
 # Eventually structure as with individual modules per class, like:
 # from .domainvariable import DomainVariable
