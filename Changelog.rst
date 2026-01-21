@@ -12,6 +12,8 @@ Version NEXTVERSION
 * Changed dependency: ``h5netcdf>=1.7.4``
 * New optional dependency: ``pyfive>=1.0.2``
 
+----
+
 Version 1.13.0.0
 ----------------
 
