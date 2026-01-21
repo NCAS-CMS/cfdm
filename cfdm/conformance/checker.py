@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 import numpy as np
 
-from .cfvalidation import get_all_current_standard_names
+from .standardnames import get_all_current_standard_names
 
 
 class Checker():
