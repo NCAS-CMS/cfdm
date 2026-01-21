@@ -11,7 +11,20 @@ from .standardnames import get_all_current_standard_names
 
 
 class Checker():
-    """Contains checks of CF Compliance for Field instantiation from netCDF."""
+    """Contains checks of CF Compliance for Field instantiation from netCDF.
+
+    Holds methods for checking CF compliance. These methods (whose names
+    all start with "_check") check the minimum required for mapping the
+    file to CFDM structural elements.
+
+    General CF compliance is not checked (e.g. whether or
+    not grid mapping variable has a grid_mapping_name attribute)
+    except for the case of (so far):
+      * whether (computed_)standard_name values are valid according
+        to specified criteria under Section 3.3. of the Conformance
+        document.
+
+    """
 
     def _check_standard_names(
             self, top_ancestor_ncvar,
@@ -199,21 +212,6 @@ class Checker():
             return False
         else:  # found at least one and all are valid standard names
             return True
-
-    # ================================================================
-    # Methods for checking CF compliance
-    #
-    # These methods (whose names all start with "_check") check the
-    # minimum required for mapping the file to CFDM structural
-    # elements.
-    #
-    # General CF compliance is not checked (e.g. whether or
-    # not grid mapping variable has a grid_mapping_name attribute)
-    # except for the case of (so far):
-    #   * whether (computed_)standard_name values are valid according
-    #     to specified criteria under Section 3.3. of the Conformance
-    #     document.
-    # ================================================================
 
     def _check_bounds(
         self, parent_ncvar, coord_ncvar, attribute, bounds_ncvar
