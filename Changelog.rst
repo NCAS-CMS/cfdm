@@ -3,14 +3,14 @@ Version NEXTVERSION
 
 **2026-??-??**
 
-* New default backend for netCDF-4 reads, ``h5netcdf-pyfive``, that
-  allows parallel reading
+* New default backend for netCDF-4 in `cfdm.read` that allows parallel
+  reading: ``h5netcdf-pyfive``
   (https://github.com/NCAS-CMS/cfdm/issues/375)
-* New optional backend for netCDF-3 reads, ``netcdf_file``, that
-  allows parallel reading
+* New optional backend for netCDF-3 in `cfdm.read` that allows
+  parallel reading: ``netcdf_file``
   (https://github.com/NCAS-CMS/cfdm/issues/375)
-* Changed dependency: ``h5netcdf>=1.7.4``
-* New optional dependency: ``pyfive>=1.0.2``
+* New dependency: ``pyfive>=1.0.2``
+* Changed dependency: ``h5netcdf>=1.8.0``
 
 ----
 
