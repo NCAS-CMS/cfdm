@@ -101,7 +101,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_extract_names_from_xml(self):
-        """Test the `standardnames._extract_names_from_xml` function."""
+        """Test the `conformance._extract_names_from_xml` function."""
         # Check with a small 'dummy' XML table which is the current table
         # but with only the first two names included, w/ or w/o a few aliases
         # (note the aliases don't match up to the two included names but
@@ -138,7 +138,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         """
         table_end = "</standard_name_table>"
 
-        two_name_output = cfdm.standardnames._extract_names_from_xml(
+        two_name_output = cfdm.conformance._extract_names_from_xml(
             two_name_table_start + table_end, include_aliases=False)
         self.assertIsInstance(two_name_output, list)
         self.assertEqual(len(two_name_output), 2)
@@ -152,12 +152,12 @@ class ComplianceCheckingTest(unittest.TestCase):
         # No aliases in this table therefore expect same output as before
         # when setting 'include_aliases=True'
         self.assertEqual(
-            cfdm.standardnames._extract_names_from_xml(
+            cfdm.conformance._extract_names_from_xml(
                 two_name_table_start + table_end, include_aliases=True),
             two_name_output
         )
 
-        aliases_inc_output = cfdm.standardnames._extract_names_from_xml(
+        aliases_inc_output = cfdm.conformance._extract_names_from_xml(
             two_name_table_start + include_two_aliases + table_end,
             include_aliases=True
         )
@@ -178,7 +178,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # When setting 'include_aliases=True' should ignore the two aliases
         # in table so expect same as two_name_output
         self.assertEqual(
-            cfdm.standardnames._extract_names_from_xml(
+            cfdm.conformance._extract_names_from_xml(
                 two_name_table_start + include_two_aliases + table_end,
                 include_aliases=False
             ),
@@ -186,10 +186,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         )
 
     def test_get_all_current_standard_names(self):
-        """Test the `standardnames.get_all_current_standard_names` function."""
+        """Test the `conformance.get_all_current_standard_names` function."""
         # First check the URL used is actually available in case of issues
         # arising in case GitHub endpoints go down
-        sn_xml_url = cfdm.standardnames._STD_NAME_CURRENT_XML_URL
+        sn_xml_url = cfdm.conformance._STD_NAME_CURRENT_XML_URL
         with request.urlopen(sn_xml_url) as response:
             self.assertEqual(
                 response.status, 200,
@@ -200,7 +200,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # case that the URL isn't accessible? Ideally we can skip standard
         # name validation with a warning, in these cases.
 
-        output = cfdm.standardnames.get_all_current_standard_names()
+        output = cfdm.conformance.get_all_current_standard_names()
         self.assertIsInstance(output, list)
 
         # The function gets the current table so we can't know exactly how
@@ -228,7 +228,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # of the above should not be in the list
         self.assertNotIn("moles_of_cfc113_in_atmosphere", output)
 
-        aliases_inc_output = cfdm.standardnames.get_all_current_standard_names(
+        aliases_inc_output = cfdm.conformance.get_all_current_standard_names(
             include_aliases=True
         )
         self.assertIsInstance(aliases_inc_output, list)
