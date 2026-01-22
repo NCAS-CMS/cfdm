@@ -145,16 +145,16 @@ class Report():
         # SLB NEW
         attr_nc = Attribute(
             attribute_name, value=attribute_value,
-            non_conformances=[NonConformance(message, code)],
+            non_conformances=[NonConformance(message, code),],
         )
-        dim_nc_list = []
-        if dimensions is not None:
-            for dim in dimensions:
-                dim_nc_list.append(
-                    Dimension(dim, size=g["internal_dimension_sizes"][dim]),
-                )
+        # dim_nc_list = []
+        # if dimensions is not None:
+        #     for dim in dimensions:
+        #         dim_nc_list.append(
+        #             Dimension(dim, size=g["internal_dimension_sizes"][dim]),
+        #         )
         var_nc = Variable(
-            ncvar, attributes=attr_nc, dimensions=dim_nc_list)
+            ncvar, attributes=[attr_nc,])  #, dimensions=dim_nc_list)
         print(
             "ATTR AND VAR NC IS:",
             attr_nc.as_report_fragment(),
@@ -179,13 +179,13 @@ class Report():
             # Update the dimensions to those of the ncvar now, otherwise same
             # dict, var_nc, is applicable to store on the
             # direct_parent_ncvar
-            dim_sizes = self._process_dimension_sizes(ncvar)
-            if dim_sizes:
-                var_nc["dimensions"] = dim_sizes
+            # dim_sizes = self._process_dimension_sizes(ncvar)
+            # if dim_sizes:
+            #    var_nc["dimensions"] = dim_sizes
 
             self._update_noncompliance_dict(
                 g["component_report"], ncvar, direct_parent_ncvar, store_attr,
-                var_nc,
+                var_nc.as_report_fragment(),
             )
 
         if dimensions is None:  # pragma: no cover
