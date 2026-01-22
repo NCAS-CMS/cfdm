@@ -22,6 +22,13 @@ class NonConformance:
             "code": self.code,
         }
 
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+        """
+        return self.as_report_fragment()
+
 
 class Attribute:
     """Non-conformances related to a netCDF attribute."""
@@ -54,11 +61,11 @@ class Attribute:
         #     )
 
         # UML: 1..* Non-conformance
-        self.non_conformances = non_conformances or {}
+        self.non_conformances = non_conformances or []
 
         # UML associations
-        self.variables = variables or {}
-        self.dimensions = dimensions or {}
+        self.variables = variables or []
+        self.dimensions = dimensions or []
 
     def set_variables(self, variables):
         """Set variables associated with the attribute's non-compliance."""
@@ -77,10 +84,13 @@ class Attribute:
         self.dimensions.append(dim)
 
     def as_report_fragment(self):
-        """Report the attribute non-compliance in dictionary fragment form."""
+        """Report the attribute non-compliance in dictionary form.
+
+        For a more concise dict with class-based value representation,
+        see repr().
+        """
         return {
             "value": self.value,
-            # TODO replace with dedicated method to show full dict repr.
             "variables": {
                 var_nc.name: var_nc.as_report_fragment()
                 for var_nc in self.variables
@@ -94,6 +104,18 @@ class Attribute:
             ],
         }
 
+        def __repr__(self):
+            """Called by the `repr` built-in function.
+
+            x.__repr__() <==> repr(x)
+            """
+            return {
+                "value": self.value,
+                "variables": self.variables,
+                "dimensions": self.dimensions,
+                "non-conformance": self.non_conformances,
+            }
+
 
 class Dimension:
     """Non-conformances related to a netCDF dimension."""
@@ -106,7 +128,7 @@ class Dimension:
         self.size = size
 
         # UML: 1..* Non-conformance
-        self.non_conformances = non_conformances or {}
+        self.non_conformances = non_conformances or []
 
         # Must be a non-empty list of NonConformance objects
         # if (
@@ -122,7 +144,7 @@ class Dimension:
         #     )
 
         # UML associations
-        self.variables = variables or {}
+        self.variables = variables or []
 
     def set_variables(self, variables):
         """Set variables associated with the dimension's non-compliance."""
@@ -133,7 +155,11 @@ class Dimension:
         self.variables.append(attr)
 
     def as_report_fragment(self):
-        """Report the dimension non-compliance in dictionary fragment form."""
+        """Report the dimension non-compliance in dictionary form.
+
+        For a more concise dict with class-based value representation,
+        see repr().
+        """
         return {
             "size": self.size,
             "variables": {
@@ -143,6 +169,17 @@ class Dimension:
             "non-conformance": [
                 nc.as_report_fragment() for nc in self.non_conformances
             ],
+        }
+
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+        """
+        return {
+            "size": self.size,
+            "variables": self.variables,
+            "non-conformance": self.non_conformances,
         }
 
 
@@ -160,10 +197,10 @@ class Variable:
             raise ValueError("Variable name (a string) is required.")
 
         self.name = name
-        self.non_conformances = non_conformances or {}  # optional for a var
+        self.non_conformances = non_conformances or []  # optional for a var
 
-        self.attributes = attributes or {}
-        self.dimensions = dimensions or {}
+        self.attributes = attributes or []
+        self.dimensions = dimensions or []
 
     def set_attributes(self, attributes):
         """Set attributes associated with the variable's non-compliance."""
@@ -182,9 +219,12 @@ class Variable:
         self.dimensions.append(dim)
 
     def as_report_fragment(self):
-        """Report the variable non-compliance in dictionary fragment form."""
+        """Report the variable non-compliance in dictionary fragment form.
+
+        For a more concise dict with class-based value representation,
+        see repr().
+        """
         fragment = {
-            # TODO replace with dedicated method to show full dict repr.
             "attributes": {
                 attr_nc.name: attr_nc.as_report_fragment()
                 for attr_nc in self.attributes
@@ -199,6 +239,17 @@ class Variable:
                 nc.as_report_fragment() for nc in self.non_conformances
             ]
         return fragment
+
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+        """
+        return {
+            "attributes": self.attributes,
+            "dimensions": self.dimensions,
+            "non-conformance": self.non_conformances,
+        }
 
 
 class DataDomainVariable(Variable):
