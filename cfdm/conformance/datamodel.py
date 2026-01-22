@@ -54,11 +54,11 @@ class Attribute:
         #     )
 
         # UML: 1..* Non-conformance
-        self.non_conformances = non_conformances or []
+        self.non_conformances = non_conformances or {}
 
         # UML associations
-        self.variables = variables or []
-        self.dimensions = dimensions or []
+        self.variables = variables or {}
+        self.dimensions = dimensions or {}
 
     def set_variables(self, variables):
         """Set variables associated with the attribute's non-compliance."""
@@ -101,7 +101,7 @@ class Dimension:
         self.size = size
 
         # UML: 1..* Non-conformance
-        self.non_conformances = non_conformances or []
+        self.non_conformances = non_conformances or {}
 
         # Must be a non-empty list of NonConformance objects
         # if (
@@ -117,7 +117,7 @@ class Dimension:
         #     )
 
         # UML associations
-        self.variables = variables or []
+        self.variables = variables or {}
 
     def set_variables(self, variables):
         """Set variables associated with the dimension's non-compliance."""
@@ -152,10 +152,10 @@ class Variable:
             raise ValueError("Variable name (a string) is required.")
 
         self.name = name
-        self.non_conformances = non_conformances or []  # optional for a var
+        self.non_conformances = non_conformances or {}  # optional for a var
 
-        self.attributes = attributes or []
-        self.dimensions = dimensions or []
+        self.attributes = attributes or {}
+        self.dimensions = dimensions or {}
 
     def set_attributes(self, attributes):
         """Set attributes associated with the variable's non-compliance."""
