@@ -3,8 +3,10 @@ class NonConformance:
 
     def __init__(self, reason, code):
         if (
-                not reason or not code or not isinstance(reason, str) or not
-                isinstance(code, int)
+            not reason
+            or not code
+            or not isinstance(reason, str)
+            or not isinstance(code, int)
         ):
             raise ValueError(
                 "Non-conformance object requires a string reason and an "
@@ -33,19 +35,36 @@ class Attribute:
 
         # Must be a non-empty list of NonConformance objects
         if (
-                not isinstance(non_conformances, list) or
-                not non_conformances or
-                not all(
-                    isinstance(nc, NonConformance) for nc in non_conformances)
+            not isinstance(non_conformances, list)
+            or not non_conformances
+            or not all(
+                isinstance(nc, NonConformance) for nc in non_conformances
+            )
         ):
-                raise TypeError(
-                    f"Parameter 'non_conformances' for Dimension {name} "
-                    "must be a non-empty list of NonConformance instances."
+            raise TypeError(
+                f"Parameter 'non_conformances' for Dimension {name} "
+                "must be a non-empty list of NonConformance instances."
             )
 
         # UML associations
         self.variables = []
         self.dimensions = []
+
+    def set_variables(self, variables):
+        """Set variables associated with the attribute's non-compliance."""
+        self.variables = variables
+
+    def set_dimensions(self, dimensions):
+        """Set dimensions associated with the attribute's non-compliance."""
+        self.dimensions = dimensions
+
+    def add_variable(self, attr):
+        """Append a variable relating to the attribute's non-compliance."""
+        self.variables.append(attr)
+
+    def add_dimension(self, dim):
+        """Append a dimension relating to the attribute's non-compliance."""
+        self.dimensions.append(dim)
 
     def as_report_fragment(self):
         """Report the attribute non-compliance in dictionary fragment form."""
@@ -70,18 +89,27 @@ class Dimension:
 
         # Must be a non-empty list of NonConformance objects
         if (
-                not isinstance(non_conformances, list) or
-                not non_conformances or
-                not all(
-                    isinstance(nc, NonConformance) for nc in non_conformances)
+            not isinstance(non_conformances, list)
+            or not non_conformances
+            or not all(
+                isinstance(nc, NonConformance) for nc in non_conformances
+            )
         ):
-                raise TypeError(
-                    f"Parameter 'non_conformances' for Dimension {name} "
-                    "must be a non-empty list of NonConformance instances."
+            raise TypeError(
+                f"Parameter 'non_conformances' for Dimension {name} "
+                "must be a non-empty list of NonConformance instances."
             )
 
         # UML associations
         self.variables = []
+
+    def set_variables(self, variables):
+        """Set variables associated with the dimension's non-compliance."""
+        self.variables = variables
+
+    def add_variable(self, attr):
+        """Append a variable relating to the dimension's non-compliance."""
+        self.variables.append(attr)
 
     def as_report_fragment(self):
         """Report the dimension non-compliance in dictionary fragment form."""
@@ -112,6 +140,22 @@ class Variable:
 
         for dimension in self.dimensions:
             dimension.variables.append(self)
+
+    def set_attributes(self, attributes):
+        """Set attributes associated with the variable's non-compliance."""
+        self.attributes = attributes
+
+    def set_dimensions(self, dimensions):
+        """Set dimensions associated with the variable's non-compliance."""
+        self.dimensions = dimensions
+
+    def add_attribute(self, attr):
+        """Append an attribute relating to the variable's non-compliance."""
+        self.attributes.append(attr)
+
+    def add_dimension(self, dim):
+        """Append a dimension relating to the variable's non-compliance."""
+        self.dimensions.append(dim)
 
     def as_report_fragment(self):
         """Report the variable non-compliance in dictionary fragment form."""
