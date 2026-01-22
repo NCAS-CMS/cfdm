@@ -5307,3 +5307,697 @@ class NetCDFShards(NetCDFMixin):
                 )
 
         self._set_netcdf("dataset_shards", shards)
+
+
+class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
+    """Mixin for accessing the netCDF mesh variable name.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+
+    def nc_del_mesh_variable(self, default=ValueError()):
+        """Remove the netCDF mesh variable name.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_get_mesh_variable`, `nc_has_mesh_variable`,
+                     `nc_set_mesh_variable`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                netCDF mesh variable name has not been set. If set to
+                an `Exception` instance then it will be raised
+                instead.
+
+        :Returns:
+
+            `str`
+                The removed netCDF mesh variable name.
+
+        **Examples**
+
+        >>> f.nc_set_mesh_variable('mesh1')
+        >>> f.nc_has_mesh_variable()
+        True
+        >>> f.nc_get_mesh_variable()
+        'mesh1'
+        >>> f.nc_del_mesh_variable()
+        'mesh1'
+        >>> f.nc_has_mesh_variable()
+        False
+        >>> print(f.nc_get_mesh_variable(None))
+        None
+        >>> print(f.nc_del_mesh_variable(None))
+        None
+
+        """
+        return self._nc_del("mesh_variable", default=default)
+
+    def nc_get_mesh_variable(self, default=ValueError()):
+        """Return the netCDF mesh variable name.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_mesh_variable`, `nc_has_mesh_variable`,
+                     `nc_set_mesh_variable`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                netCDF mesh variable name has not been
+                set. If set to an `Exception` instance then it will be
+                raised instead.
+
+        :Returns:
+
+            `str`
+                The netCDF mesh variable name. If unset
+                then *default* is returned, if provided.
+
+        **Examples**
+
+        >>> f.nc_set_mesh_variable('mesh1')
+        >>> f.nc_has_mesh_variable()
+        True
+        >>> f.nc_get_mesh_variable()
+        'mesh1'
+        >>> f.nc_del_mesh_variable()
+        'mesh1'
+        >>> f.nc_has_mesh_variable()
+        False
+        >>> print(f.nc_get_mesh_variable(None))
+        None
+        >>> print(f.nc_del_mesh_variable(None))
+        None
+
+        """
+        return self._nc_get("mesh_variable", default=default)
+
+    def nc_has_mesh_variable(self):
+        """Whether the netCDF mesh variable name is set.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_get_mesh_variable`, `nc_del_mesh_variable`,
+                     `nc_set_mesh_variable`
+
+        :Returns:
+
+            `bool`
+                `True` if the netCDF mesh variable name has
+                been set, otherwise `False`.
+
+        **Examples**
+
+        >>> f.nc_set_mesh_variable('mesh1')
+        >>> f.nc_has_mesh_variable()
+        True
+        >>> f.nc_get_mesh_variable()
+        'mesh1'
+        >>> f.nc_del_mesh_variable()
+        'mesh1'
+        >>> f.nc_has_mesh_variable()
+        False
+        >>> print(f.nc_get_mesh_variable(None))
+        None
+        >>> print(f.nc_del_mesh_variable(None))
+        None
+
+        """
+        return "mesh_variable" in self._get_netcdf()
+
+    def nc_set_mesh_variable(self, value):
+        """Set the netCDF mesh variable name.
+
+        If there are any ``/`` (slash) characters in the netCDF name
+        then these act as delimiters for a group hierarchy. By
+        default, or if the name starts with a ``/`` character and
+        contains no others, the name is assumed to be in the root
+        group.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_get_mesh_variable`, `nc_has_mesh_variable`,
+                     `nc_del_mesh_variable`
+
+        :Parameters:
+
+            value: `str`
+                The value for the netCDF mesh variable
+                name.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.nc_set_mesh_variable('mesh1')
+        >>> f.nc_has_mesh_variable()
+        True
+        >>> f.nc_get_mesh_variable()
+        'mesh1'
+        >>> f.nc_del_mesh_variable()
+        'mesh1'
+        >>> f.nc_has_mesh_variable()
+        False
+        >>> print(f.nc_get_mesh_variable(None))
+        None
+        >>> print(f.nc_del_mesh_variable(None))
+        None
+
+        """
+        return self._nc_set("mesh_variable", value)
+
+    def nc_mesh_variable_groups(self):
+        """Return the netCDF mesh variable group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_mesh_variable_groups`,
+                     `nc_set_mesh_variable_groups`
+
+        :Returns:
+
+            `tuple` of `str`
+                The group structure.
+
+        **Examples**
+
+        >>> f.nc_set_mesh_variable('time')
+        >>> f.nc_mesh_variable_groups()
+        ()
+        >>> f.nc_set_mesh_variable_groups(['forecast', 'model'])
+        >>> f.nc_mesh_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_mesh_variable()
+        '/forecast/model/time'
+        >>> f.nc_clear_mesh_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_variable()
+        'time'
+
+        >>> f.nc_set_mesh_variable('/forecast/model/time')
+        >>> f.nc_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_mesh_variable('/forecast/model/time')
+        '/forecast/model/time'
+        >>> f.nc_mesh_variable_groups()
+        ()
+
+        """
+        return self._nc_groups(nc_get=self.nc_get_mesh_variable)
+
+    def nc_set_mesh_variable_groups(self, groups):
+        """Set the netCDF mesh_variable group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        An alternative technique for setting the group structure is to
+        set the netCDF mesh variable name, with
+        `nc_set_mesh_variable`, with the group structure
+        delimited by ``/`` characters.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_mesh_variable_groups`,
+                     `nc_mesh_variable_groups`
+
+        :Parameters:
+
+            groups: sequence of `str`
+                The new group structure.
+
+        :Returns:
+
+            `tuple` of `str`
+                The group structure prior to being reset.
+
+        **Examples**
+
+        >>> f.nc_set_mesh_variable('time')
+        >>> f.nc_mesh_variable_groups()
+        ()
+        >>> f.nc_set_mesh_variable_groups(['forecast', 'model'])
+        >>> f.nc_mesh_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_mesh_variable()
+        '/forecast/model/time'
+        >>> f.nc_clear_mesh_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_variable()
+        'time'
+
+        >>> f.nc_set_mesh_variable('/forecast/model/time')
+        >>> f.nc_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_mesh_variable('/forecast/model/time')
+        '/forecast/model/time'
+        >>> f.nc_mesh_variable_groups()
+        ()
+
+        """
+        return self._nc_set_groups(
+            groups,
+            nc_get=self.nc_get_mesh_variable,
+            nc_set=self.nc_set_mesh_variable,
+            nc_groups=self.nc_mesh_variable_groups,
+        )
+
+    def nc_clear_mesh_variable_groups(self):
+        """Remove the netCDF mesh variable group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        An alternative technique for removing the group structure is
+        to set the netCDF mesh variable name, with
+        `nc_set_mesh_variable`, with no ``/`` characters.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_mesh_variable_groups`,
+                     `nc_set_mesh_variable_groups`
+
+        :Returns:
+
+            `tuple` of `str`
+                The removed group structure.
+
+        **Examples**
+
+        >>> f.nc_set_mesh_variable('time')
+        >>> f.nc_mesh_variable_groups()
+        ()
+        >>> f.nc_set_mesh_variable_groups(['forecast', 'model'])
+        >>> f.nc_mesh_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_mesh_variable()
+        '/forecast/model/time'
+        >>> f.nc_clear_mesh_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_variable()
+        'time'
+
+        >>> f.nc_set_mesh_variable('/forecast/model/time')
+        >>> f.nc_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_mesh_variable('/forecast/model/time')
+        '/forecast/model/time'
+        >>> f.nc_mesh_variable_groups()
+        ()
+
+        """
+        return self._nc_clear_groups(
+            nc_get=self.nc_get_mesh_variable,
+            nc_set=self.nc_set_mesh_variable,
+            nc_groups=self.nc_mesh_variable_groups,
+        )
+
+
+class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
+    """Mixin class for accessing the netCDF connectivity dimension name.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+
+    def nc_del_connectivity_dimension(self, default=ValueError()):
+        """Remove the netCDF connectivity dimension name.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_get_connectivity_dimension`,
+                     `nc_has_connectivity_dimension`,
+                     `nc_set_connectivity_dimension`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                netCDF connectivity dimension name has not been
+                set. If set to an `Exception` instance then it will be
+                raised instead.
+
+        :Returns:
+
+            `str`
+                The removed netCDF connectivity dimension name.
+
+        **Examples**
+
+        >>> f.nc_set_connectivity_dimension('time')
+        >>> f.nc_has_connectivity_dimension()
+        True
+        >>> f.nc_get_connectivity_dimension()
+        'time'
+        >>> f.nc_del_connectivity_dimension()
+        'time'
+        >>> f.nc_has_connectivity_dimension()
+        False
+        >>> print(f.nc_get_connectivity_dimension(None))
+        None
+        >>> print(f.nc_del_connectivity_dimension(None))
+        None
+
+        """
+        try:
+            return self._get_netcdf().pop("connectivity_dimension")
+        except KeyError:
+            if default is None:
+                return default
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} has no netCDF connectivity "
+                "dimension name",
+            )
+
+    def nc_get_connectivity_dimension(self, default=ValueError()):
+        """Return the netCDF connectivity dimension name.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_connectivity_dimension`,
+                     `nc_has_connectivity_dimension`,
+                     `nc_set_connectivity_dimension`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                netCDF connectivity dimension name has not been
+                set. If set to an `Exception` instance then it will be
+                raised instead.
+
+        :Returns:
+
+            `str`
+                The netCDF connectivity dimension name.
+
+        **Examples**
+
+        >>> f.nc_set_connectivity_dimension('time')
+        >>> f.nc_has_connectivity_dimension()
+        True
+        >>> f.nc_get_connectivity_dimension()
+        'time'
+        >>> f.nc_del_connectivity_dimension()
+        'time'
+        >>> f.nc_has_connectivity_dimension()
+        False
+        >>> print(f.nc_get_connectivity_dimension(None))
+        None
+        >>> print(f.nc_del_connectivity_dimension(None))
+        None
+
+        """
+        try:
+            return self._get_netcdf()["connectivity_dimension"]
+        except KeyError:
+            if default is None:
+                return default
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} has no netCDF connectivity "
+                "dimension name",
+            )
+
+    def nc_has_connectivity_dimension(self):
+        """Whether the netCDF connectivity dimension name has been set.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_connectivity_dimension`,
+                     `nc_get_connectivity_dimension`,
+                     `nc_set_connectivity_dimension`
+
+        :Returns:
+
+            `bool`
+                `True` if the netCDF connectivity dimension name has
+                been set, otherwise `False`.
+
+        **Examples**
+
+        >>> f.nc_set_connectivity_dimension('time')
+        >>> f.nc_has_connectivity_dimension()
+        True
+        >>> f.nc_get_connectivity_dimension()
+        'time'
+        >>> f.nc_del_connectivity_dimension()
+        'time'
+        >>> f.nc_has_connectivity_dimension()
+        False
+        >>> print(f.nc_get_connectivity_dimension(None))
+        None
+        >>> print(f.nc_del_connectivity_dimension(None))
+        None
+
+        """
+        return "connectivity_dimension" in self._get_netcdf()
+
+    def nc_set_connectivity_dimension(self, value):
+        """Set the netCDF connectivity dimension name.
+
+        If there are any ``/`` (slash) characters in the netCDF name
+        then these act as delimiters for a group hierarchy. By
+        default, or if the name starts with a ``/`` character and
+        contains no others, the name is assumed to be in the root
+        group.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_connectivity_dimension`,
+                     `nc_get_connectivity_dimension`,
+                     `nc_has_connectivity_dimension`
+
+        :Parameters:
+
+            value: `str`
+                The value for the netCDF connectivity dimension name.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.nc_set_connectivity_dimension('time')
+        >>> f.nc_has_connectivity_dimension()
+        True
+        >>> f.nc_get_connectivity_dimension()
+        'time'
+        >>> f.nc_del_connectivity_dimension()
+        'time'
+        >>> f.nc_has_connectivity_dimension()
+        False
+        >>> print(f.nc_get_connectivity_dimension(None))
+        None
+        >>> print(f.nc_del_connectivity_dimension(None))
+        None
+
+        """
+        if not value or value == "/":
+            raise ValueError(
+                f"Invalid netCDF connectivity dimension name: {value!r}"
+            )
+
+        if "/" in value:
+            if not value.startswith("/"):
+                raise ValueError(
+                    "A netCDF connectivity dimension name with a group "
+                    f"structure must start with a '/'. Got {value!r}"
+                )
+
+            if value.count("/") == 1:
+                value = value[1:]
+            elif value.endswith("/"):
+                raise ValueError(
+                    "A netCDF connectivity dimension name with a group "
+                    f"structure can't end with a '/'. Got {value!r}"
+                )
+
+        self._set_netcdf("connectivity_dimension", value)
+
+    def nc_connectivity_dimension_groups(self):
+        """Return the netCDF connectivity dimension group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        .. versionadded:: (cfdm) 1.8.6
+
+        .. seealso:: `nc_clear_connectivity_dimension_groups`,
+                     `nc_set_connectivity_dimension_groups`
+
+        :Returns:
+
+            `tuple` of `str`
+                The group structure.
+
+        **Examples**
+
+        >>> f.nc_set_connectivity_dimension('element')
+        >>> f.nc_connectivity_dimension_groups()
+        ()
+        >>> f.nc_set_connectivity_dimension_groups(['forecast', 'model'])
+        >>> f.nc_connectivity_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_connectivity_dimension()
+        '/forecast/model/element'
+        >>> f.nc_clear_connectivity_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_connectivity_dimension()
+        'element'
+
+        >>> f.nc_set_connectivity_dimension('/forecast/model/element')
+        >>> f.nc_connectivity_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_connectivity_dimension('/forecast/model/element')
+        '/forecast/model/element'
+        >>> f.nc_connectivity_dimension_groups()
+        ()
+
+        """
+        return self._nc_groups(nc_get=self.nc_get_connectivity_dimension)
+
+    def nc_set_connectivity_dimension_groups(self, groups):
+        """Set the netCDF connectivity dimension group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        An alternative technique for setting the group structure is to
+        set the netCDF dimension name, with
+        `nc_set_connectivity_dimension`, with the group structure
+        delimited by ``/`` characters.
+
+        .. versionadded:: (cfdm) 1.8.6
+
+        .. seealso:: `nc_clear_connectivity_dimension_groups`,
+                     `nc_connectivity_dimension_groups`
+
+        :Parameters:
+
+            groups: sequence of `str`
+                The new group structure.
+
+        :Returns:
+
+            `tuple` of `str`
+                The group structure prior to being reset.
+
+        **Examples**
+
+        >>> f.nc_set_connectivity_dimension('element')
+        >>> f.nc_connectivity_dimension_groups()
+        ()
+        >>> f.nc_set_connectivity_dimension_groups(['forecast', 'model'])
+        >>> f.nc_connectivity_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_connectivity_dimension()
+        '/forecast/model/element'
+        >>> f.nc_clear_connectivity_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_connectivity_dimension()
+        'element'
+
+        >>> f.nc_set_connectivity_dimension('/forecast/model/element')
+        >>> f.nc_connectivity_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_connectivity_dimension('/forecast/model/element')
+        '/forecast/model/element'
+        >>> f.nc_connectivity_dimension_groups()
+        ()
+
+        """
+        return self._nc_set_groups(
+            groups,
+            nc_get=self.nc_get_connectivity_dimension,
+            nc_set=self.nc_set_connectivity_dimension,
+            nc_groups=self.nc_connectivity_dimension_groups,
+        )
+
+    def nc_clear_connectivity_dimension_groups(self):
+        """Remove the netCDF connectivity dimension group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        An alternative technique for removing the group structure is
+        to set the netCDF dimension name, with
+        `nc_set_connectivity_dimension`, with no ``/`` characters.
+
+        .. versionadded:: (cfdm) 1.8.6
+
+        .. seealso:: `nc_connectivity_dimension_groups`,
+                     `nc_set_connectivity_dimension_groups`
+
+        :Returns:
+
+            `tuple` of `str`
+                The removed group structure.
+
+        **Examples**
+
+        >>> f.nc_set_connectivity_dimension('element')
+        >>> f.nc_connectivity_dimension_groups()
+        ()
+        >>> f.nc_set_connectivity_dimension_groups(['forecast', 'model'])
+        >>> f.nc_connectivity_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_connectivity_dimension()
+        '/forecast/model/element'
+        >>> f.nc_clear_connectivity_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_connectivity_dimension()
+        'element'
+
+        >>> f.nc_set_connectivity_dimension('/forecast/model/element')
+        >>> f.nc_connectivity_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_connectivity_dimension('/forecast/model/element')
+        '/forecast/model/element'
+        >>> f.nc_connectivity_dimension_groups()
+        ()
+
+        """
+        return self._nc_clear_groups(
+            nc_get=self.nc_get_connectivity_dimension,
+            nc_set=self.nc_set_connectivity_dimension,
+            nc_groups=self.nc_connectivity_dimension_groups,
+        )

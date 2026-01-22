@@ -1,3 +1,11 @@
+Version NEXTVERSION
+----------------
+
+**2026-??-??**
+
+* Write UGRID datasets with `cfdm.write`
+  (https://github.com/NCAS-CMS/cfdm/issues/271)
+
 Version 1.13.0.0
 ----------------
 
