@@ -80,10 +80,15 @@ class Attribute:
         """Report the attribute non-compliance in dictionary fragment form."""
         return {
             "value": self.value,
-            "variables": [
-                var_nc.as_report_fragment() for var_nc in self.variables
-            ],  # TODO replace with dedicated method to show full dict repr.
-            "dimensions": self.dimensions,
+            # TODO replace with dedicated method to show full dict repr.
+            "variables": {
+                var_nc.name: var_nc.as_report_fragment()
+                for var_nc in self.variables
+            },
+            "dimensions": {
+                dim_nc.name: dim_nc.as_report_fragment()
+                for dim_nc in self.dimensions
+            },
             "non-conformance": [
                 nc.as_report_fragment() for nc in self.non_conformances
             ],
@@ -131,7 +136,10 @@ class Dimension:
         """Report the dimension non-compliance in dictionary fragment form."""
         return {
             "size": self.size,
-            "variables": self.variables,
+            "variables": {
+                var_nc.name: var_nc.as_report_fragment()
+                for var_nc in self.variables
+            },
             "non-conformance": [
                 nc.as_report_fragment() for nc in self.non_conformances
             ],
@@ -176,13 +184,17 @@ class Variable:
     def as_report_fragment(self):
         """Report the variable non-compliance in dictionary fragment form."""
         fragment = {
-            "attributes": [
-                attr_nc.as_report_fragment() for attr_nc in self.attributes
-            ],  # TODO replace with dedicated method to show full dict repr.
-            "dimensions": self.dimensions,
+            # TODO replace with dedicated method to show full dict repr.
+            "attributes": {
+                attr_nc.name: attr_nc.as_report_fragment()
+                for attr_nc in self.attributes
+            },
+            "dimensions": {
+                dim_nc.name: dim_nc.as_report_fragment()
+                for dim_nc in self.dimensions
+            },
         }
         if self.non_conformances:
-            print("FRAGMENT ISSUE:", self.non_conformances)
             fragment["non-conformance"] = [
                 nc.as_report_fragment() for nc in self.non_conformances
             ]

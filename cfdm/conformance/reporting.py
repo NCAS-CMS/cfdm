@@ -136,25 +136,26 @@ class Report():
         else:
             code = None
 
-        attribute_key = next(iter(attribute))
-        attribute_name = attribute_key.split(":")[1]
         # TODO need better way to access this - inefficient, should be able to
         # use an in-built function!
+        attribute_key = next(iter(attribute))
+        attribute_name = attribute_key.split(":")[1]
         attribute_value = attribute[attribute_key]
 
-        # SLB NEW
         attr_nc = Attribute(
             attribute_name, value=attribute_value,
             non_conformances=[NonConformance(message, code),],
         )
-        # dim_nc_list = []
-        # if dimensions is not None:
-        #     for dim in dimensions:
-        #         dim_nc_list.append(
-        #             Dimension(dim, size=g["internal_dimension_sizes"][dim]),
-        #         )
+
+        dim_nc_list = []
+        if dimensions is not None:
+            for dim in dimensions:
+                dim_nc_list.append(
+                    Dimension(dim, size=g["internal_dimension_sizes"][dim]),
+                )
+
         var_nc = Variable(
-            ncvar, attributes=[attr_nc,])  #, dimensions=dim_nc_list)
+            ncvar, attributes=[attr_nc,], dimensions=dim_nc_list)
         print(
             "ATTR AND VAR NC IS:",
             attr_nc.as_report_fragment(),
@@ -177,8 +178,7 @@ class Report():
             store_attr = reverse_varattrs[ncvar]
 
             # Update the dimensions to those of the ncvar now, otherwise same
-            # dict, var_nc, is applicable to store on the
-            # direct_parent_ncvar
+            # dict, var_nc, is applicable to store on the direct_parent_ncvar
             # dim_sizes = self._process_dimension_sizes(ncvar)
             # if dim_sizes:
             #    var_nc["dimensions"] = dim_sizes
