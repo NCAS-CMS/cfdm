@@ -27,7 +27,7 @@ class NonConformance:
 
         x.__repr__() <==> repr(x)
         """
-        return self.as_report_fragment()
+        return str(self.as_report_fragment())
 
 
 class Attribute:
@@ -109,12 +109,12 @@ class Attribute:
 
             x.__repr__() <==> repr(x)
             """
-            return {
+            return str({
                 "value": self.value,
                 "variables": self.variables,
                 "dimensions": self.dimensions,
                 "non-conformance": self.non_conformances,
-            }
+            })
 
 
 class Dimension:
@@ -176,11 +176,11 @@ class Dimension:
 
         x.__repr__() <==> repr(x)
         """
-        return {
+        return str({
             "size": self.size,
             "variables": self.variables,
             "non-conformance": self.non_conformances,
-        }
+        })
 
 
 class Variable:
@@ -245,11 +245,11 @@ class Variable:
 
         x.__repr__() <==> repr(x)
         """
-        return {
+        return str({
             "attributes": self.attributes,
             "dimensions": self.dimensions,
             "non-conformance": self.non_conformances,
-        }
+        })
 
 
 class DataDomainVariable(Variable):

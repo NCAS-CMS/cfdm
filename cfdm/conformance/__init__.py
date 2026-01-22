@@ -1,5 +1,5 @@
 from .checker import Checker, Report
-
+from .datamodel import NonConformance, Attribute, Dimension, Variable
 from .standardnames import (
     get_all_current_standard_names,
     # Intended for internal use but used in testing, so need exposing:

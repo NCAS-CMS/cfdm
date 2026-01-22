@@ -20,7 +20,9 @@ from packaging.version import Version
 from s3fs import S3FileSystem
 from uritools import urisplit
 
-from ...conformance import Checker
+from ...conformance import (
+    Checker, NonConformance, Attribute, Dimension, Variable
+)
 from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
@@ -3480,15 +3482,21 @@ class NetCDFRead(IORead, Checker):
         dimensions = g["variable_dimensions"][field_ncvar]
 
         # Register the CF Conventions version at top-level only
-        g["dataset_compliance"].setdefault(field_ncvar, {})
+        # SLB
+        # g["dataset_compliance"].setdefault(field_ncvar, {})
+        # g["dataset_compliance"][
+        #     "CF version"] = self.implementation.get_cf_version()
+
+        # # Create dimensions dict and populate with sizes
+        # g["dataset_compliance"][field_ncvar]["dimensions"] = {
+        #     dim: {"size": g["internal_dimension_sizes"][dim]} for
+        #     dim in dimensions
+        # }
+        field_nc = Variable(field_ncvar)
+        g["dataset_compliance"] = {field_ncvar: field_nc.as_report_fragment()}
         g["dataset_compliance"][
             "CF version"] = self.implementation.get_cf_version()
-
-        # Create dimensions dict and populate with sizes
-        g["dataset_compliance"][field_ncvar]["dimensions"] = {
-            dim: {"size": g["internal_dimension_sizes"][dim]} for
-            dim in dimensions
-        }
+        # print("FIELD DC IS:", g["dataset_compliance"])
 
         logger.info(
             "    Converting netCDF variable "
