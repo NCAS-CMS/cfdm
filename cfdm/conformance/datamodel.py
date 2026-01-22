@@ -26,7 +26,14 @@ class NonConformance:
 class Attribute:
     """Non-conformances related to a netCDF attribute."""
 
-    def __init__(self, name, value=None, non_conformances=None):
+    def __init__(
+        self,
+        name,
+        value=None,
+        non_conformances=None,
+        variables=None,
+        dimensions=None,
+    ):
         if not name and not isinstance(name, str):
             raise ValueError("Attribute name (a string) is required.")
 
@@ -50,8 +57,8 @@ class Attribute:
         self.non_conformances = non_conformances or []
 
         # UML associations
-        self.variables = []
-        self.dimensions = []
+        self.variables = variables or []
+        self.dimensions = dimensions or []
 
     def set_variables(self, variables):
         """Set variables associated with the attribute's non-compliance."""
@@ -74,14 +81,15 @@ class Attribute:
         return {
             "value": self.value,
             "non-conformance": [
-                nc.as_report_fragment() for nc in self.non_conformances],
+                nc.as_report_fragment() for nc in self.non_conformances
+            ],
         }
 
 
 class Dimension:
     """Non-conformances related to a netCDF dimension."""
 
-    def __init__(self, name, size=None, non_conformances=None):
+    def __init__(self, name, size=None, non_conformances=None, variables=None):
         if not name and not isinstance(name, str):
             raise ValueError("Dimension name (a string) is required.")
 
@@ -105,7 +113,7 @@ class Dimension:
             )
 
         # UML associations
-        self.variables = []
+        self.variables = variables or []
 
     def set_variables(self, variables):
         """Set variables associated with the dimension's non-compliance."""
@@ -120,7 +128,8 @@ class Dimension:
         return {
             "size": self.size,
             "non-conformance": [
-                nc.as_report_fragment() for nc in self.non_conformances],
+                nc.as_report_fragment() for nc in self.non_conformances
+            ],
         }
 
 
@@ -128,7 +137,11 @@ class Variable:
     """Non-conformances related to a netCDF variable."""
 
     def __init__(
-        self, name, attributes=None, dimensions=None, non_conformances=None
+        self,
+        name,
+        non_conformances=None,
+        attributes=None,
+        dimensions=None,
     ):
         if not name and not isinstance(name, str):
             raise ValueError("Variable name (a string) is required.")
@@ -159,7 +172,8 @@ class Variable:
         """Report the variable non-compliance in dictionary fragment form."""
         return {
             "non-conformance": [
-                nc.as_report_fragment() for nc in self.non_conformances],
+                nc.as_report_fragment() for nc in self.non_conformances
+            ],
         }
 
 
