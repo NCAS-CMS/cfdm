@@ -8,8 +8,7 @@ from .standardnames import (
 )
 
 # Eventually structure as with individual modules per class, like:
-# from .domainvariable import DomainVariable
-# from .ncattribute import NetCDFAttribute
-# from .ncvariable import NetCDFVariable
-# from .ncdimension import NetCDFDimension
-# from .nonconformance import NonConformanceReport
+# from .ncattribute import Attribute
+# from .ncvariable import Variable
+# from .ncdimension import Dimension
+# from .nonconformance import NonConformance

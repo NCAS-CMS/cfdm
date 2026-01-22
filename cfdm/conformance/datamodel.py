@@ -46,6 +46,9 @@ class Attribute:
                 "must be a non-empty list of NonConformance instances."
             )
 
+        # UML: 1..* Non-conformance
+        self.non_conformances = non_conformances or []
+
         # UML associations
         self.variables = []
         self.dimensions = []
@@ -70,7 +73,8 @@ class Attribute:
         """Report the attribute non-compliance in dictionary fragment form."""
         return {
             "value": self.value,
-            "non-conformance": self.non_conformances,
+            "non-conformance": [
+                nc.as_report_fragment() for nc in self.non_conformances],
         }
 
 
@@ -115,7 +119,8 @@ class Dimension:
         """Report the dimension non-compliance in dictionary fragment form."""
         return {
             "size": self.size,
-            "non-conformance": self.non_conformances,
+            "non-conformance": [
+                nc.as_report_fragment() for nc in self.non_conformances],
         }
 
 
@@ -133,13 +138,6 @@ class Variable:
 
         self.attributes = attributes or []
         self.dimensions = dimensions or []
-
-        # Establish bi-directional links between the netCDF components
-        for attribute in self.attributes:
-            attribute.variables.append(self)
-
-        for dimension in self.dimensions:
-            dimension.variables.append(self)
 
     def set_attributes(self, attributes):
         """Set attributes associated with the variable's non-compliance."""
@@ -160,7 +158,8 @@ class Variable:
     def as_report_fragment(self):
         """Report the variable non-compliance in dictionary fragment form."""
         return {
-            "non-conformance": self.non_conformances,
+            "non-conformance": [
+                nc.as_report_fragment() for nc in self.non_conformances],
         }
 
 

@@ -142,36 +142,29 @@ class Report():
         # use an in-built function!
         attribute_value = attribute[attribute_key]
 
-        # Form a single issue to register (message, code and attr value)
-        one_issue_info = {"value": attribute_value}
-        if code:
-            one_issue_info["code"] = code
-        if message:
-            one_issue_info["reason"] = message
-
-        # Form lowest-level dict which reports an ultimate issue via a 'reason'
-        # message, code and attribute value against the attribute name key.
-        # These go into a *list*, since there may be more than one issue hence
-        # reason message and corresponding code listed per attribute.
-        var_noncompliance_info = {
-            "attributes": {},
-            "dimensions": {},
-        }
-        var_noncompliance_info["attributes"].setdefault(attribute_name, [])
-        var_noncompliance_info["attributes"][attribute_name].append(
-            one_issue_info)
-
-        # Create dimensions dict and populate with sizes
+        # SLB NEW
+        attr_nc = Attribute(
+            attribute_name, value=attribute_value,
+            non_conformances=[NonConformance(message, code)],
+        )
+        dim_nc_list = []
         if dimensions is not None:
-            var_noncompliance_info["dimensions"].update({
-                dim: {"size": g["internal_dimension_sizes"][dim]} for
-                dim in dimensions
-            })
+            for dim in dimensions:
+                dim_nc_list.append(
+                    Dimension(dim, size=g["internal_dimension_sizes"][dim]),
+                )
+        var_nc = Variable(
+            ncvar, attributes=attr_nc, dimensions=dim_nc_list)
+        print(
+            "ATTR AND VAR NC IS:",
+            attr_nc.as_report_fragment(),
+            var_nc.as_report_fragment(),
+        )
 
         # Process issues emerging on or via attributes
         self._update_noncompliance_dict(
             g["dataset_compliance"], ncvar, top_ancestor_ncvar, attribute_name,
-            var_noncompliance_info,
+            var_nc.as_report_fragment()
         )
         self._include_component_report(ncvar, top_ancestor_ncvar, attribute_name)
 
@@ -184,15 +177,15 @@ class Report():
             store_attr = reverse_varattrs[ncvar]
 
             # Update the dimensions to those of the ncvar now, otherwise same
-            # dict, var_noncompliance_info, is applicable to store on the
+            # dict, var_nc, is applicable to store on the
             # direct_parent_ncvar
             dim_sizes = self._process_dimension_sizes(ncvar)
             if dim_sizes:
-                var_noncompliance_info["dimensions"] = dim_sizes
+                var_nc["dimensions"] = dim_sizes
 
             self._update_noncompliance_dict(
                 g["component_report"], ncvar, direct_parent_ncvar, store_attr,
-                var_noncompliance_info,
+                var_nc,
             )
 
         if dimensions is None:  # pragma: no cover
@@ -205,7 +198,7 @@ class Report():
             f"{ncvar}{dimensions}: {message}"
         )  # pragma: no cover
 
-        return var_noncompliance_info
+        return var_nc
 
     def _include_component_report(
             self, parent_ncvar, ncvar, attribute, dimensions=None):
