@@ -41,17 +41,17 @@ class Attribute:
         self.value = value
 
         # Must be a non-empty list of NonConformance objects
-        if (
-            not isinstance(non_conformances, list)
-            or not non_conformances
-            or not all(
-                isinstance(nc, NonConformance) for nc in non_conformances
-            )
-        ):
-            raise TypeError(
-                f"Parameter 'non_conformances' for Dimension {name} "
-                "must be a non-empty list of NonConformance instances."
-            )
+        # if (
+        #     not isinstance(non_conformances, list)
+        #     or not non_conformances
+        #     or not all(
+        #         isinstance(nc, NonConformance) for nc in non_conformances
+        #     )
+        # ):
+        #     raise TypeError(
+        #         f"Parameter 'non_conformances' for Dimension {name} "
+        #         "must be a non-empty list of NonConformance instances."
+        #     )
 
         # UML: 1..* Non-conformance
         self.non_conformances = non_conformances or []
@@ -80,6 +80,10 @@ class Attribute:
         """Report the attribute non-compliance in dictionary fragment form."""
         return {
             "value": self.value,
+            "variables": [
+                var_nc.as_report_fragment() for var_nc in self.variables
+            ],  # TODO replace with dedicated method to show full dict repr.
+            "dimensions": self.dimensions,
             "non-conformance": [
                 nc.as_report_fragment() for nc in self.non_conformances
             ],
@@ -100,17 +104,17 @@ class Dimension:
         self.non_conformances = non_conformances or []
 
         # Must be a non-empty list of NonConformance objects
-        if (
-            not isinstance(non_conformances, list)
-            or not non_conformances
-            or not all(
-                isinstance(nc, NonConformance) for nc in non_conformances
-            )
-        ):
-            raise TypeError(
-                f"Parameter 'non_conformances' for Dimension {name} "
-                "must be a non-empty list of NonConformance instances."
-            )
+        # if (
+        #     not isinstance(non_conformances, list)
+        #     or not non_conformances
+        #     or not all(
+        #         isinstance(nc, NonConformance) for nc in non_conformances
+        #     )
+        # ):
+        #     raise TypeError(
+        #         f"Parameter 'non_conformances' for Dimension {name} "
+        #         "must be a non-empty list of NonConformance instances."
+        #     )
 
         # UML associations
         self.variables = variables or []
@@ -127,6 +131,7 @@ class Dimension:
         """Report the dimension non-compliance in dictionary fragment form."""
         return {
             "size": self.size,
+            "variables": self.variables,
             "non-conformance": [
                 nc.as_report_fragment() for nc in self.non_conformances
             ],
@@ -170,11 +175,18 @@ class Variable:
 
     def as_report_fragment(self):
         """Report the variable non-compliance in dictionary fragment form."""
-        return {
-            "non-conformance": [
-                nc.as_report_fragment() for nc in self.non_conformances
-            ],
+        fragment = {
+            "attributes": [
+                attr_nc.as_report_fragment() for attr_nc in self.attributes
+            ],  # TODO replace with dedicated method to show full dict repr.
+            "dimensions": self.dimensions,
         }
+        if self.non_conformances:
+            print("FRAGMENT ISSUE:", self.non_conformances)
+            fragment["non-conformance"] = [
+                nc.as_report_fragment() for nc in self.non_conformances
+            ]
+        return fragment
 
 
 class DataDomainVariable(Variable):
