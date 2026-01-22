@@ -142,20 +142,9 @@ class Report():
         attribute_name = attribute_key.split(":")[1]
         attribute_value = attribute[attribute_key]
 
-        attr_nc = Attribute(
-            attribute_name, value=attribute_value,
-            non_conformances=[NonConformance(message, code),],
-        )
-
-        dim_nc_list = []
-        if dimensions is not None:
-            for dim in dimensions:
-                dim_nc_list.append(
-                    Dimension(dim, size=g["internal_dimension_sizes"][dim]),
-                )
-
-        var_nc = Variable(
-            ncvar, attributes=[attr_nc,], dimensions=dim_nc_list)
+        nc = [NonConformance(message, code),]
+        var_nc, attr_nc = self._create_var_nc(
+            nc, top_ancestor_ncvar, attribute_name, attribute_value, dimensions)
         print(
             "ATTR AND VAR NC IS:",
             attr_nc.as_report_fragment(),
@@ -177,12 +166,10 @@ class Report():
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
 
-            # Update the dimensions to those of the ncvar now, otherwise same
-            # dict, var_nc, is applicable to store on the direct_parent_ncvar
-            # dim_sizes = self._process_dimension_sizes(ncvar)
-            # if dim_sizes:
-            #    var_nc["dimensions"] = dim_sizes
-
+            var_nc, attr_nc = self._create_var_nc(
+                nc, direct_parent_ncvar, attribute_name, attribute_value,
+                dimensions
+            )
             self._update_noncompliance_dict(
                 g["component_report"], ncvar, direct_parent_ncvar, store_attr,
                 var_nc.as_report_fragment(),
@@ -199,6 +186,28 @@ class Report():
         )  # pragma: no cover
 
         return var_nc
+
+    def _create_var_nc(
+            self, nc, ncvar, attribute_name, attribute_value, dimensions=None):
+        """Create NonCompliance for a variable and associated attribute."""
+        g = self.read_vars
+
+        attr_nc = Attribute(
+            attribute_name, value=attribute_value,
+            non_conformances=nc,
+        )
+
+        dim_nc_list = []
+        if dimensions is not None:
+            for dim in dimensions:
+                dim_nc_list.append(
+                    Dimension(dim, size=g["internal_dimension_sizes"][dim]),
+                )
+
+        var_nc = Variable(
+            ncvar, attributes=[attr_nc,], dimensions=dim_nc_list)
+
+        return var_nc, attr_nc
 
     def _include_component_report(
             self, parent_ncvar, ncvar, attribute, dimensions=None):
