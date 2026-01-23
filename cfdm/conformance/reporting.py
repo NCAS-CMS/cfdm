@@ -23,37 +23,17 @@ class Report():
         }
 
     def _update_noncompliance_dict(
-            self, noncompliance_dict, ncvar, parent_ncvar, attribute,
-            update_dict, include_dimension_sizes=True,
+            self, noncompliance, ncvar, parent_ncvar, attribute, update_nc,
     ):
         """Update non-compliance dictionary for a given netCDF variable."""
-        var_compliance = noncompliance_dict.setdefault(parent_ncvar, {})
-
-        # Process attributes
-        var_compliance.setdefault("attributes", {})
-        attrs_dict = var_compliance["attributes"]
-        attrs_dict.setdefault(
-            attribute,
-            {
-                "variables": {},
-                "dimensions": {},
-                # The value (string), and optionally reason and code, may
-                # be added later
-            }
-        )
-        attrs_dict[attribute]["variables"].setdefault(ncvar, {})
-        attrs_dict[attribute]["variables"][ncvar].update(update_dict)
-
-        # Optionally process in dimensions
-        if include_dimension_sizes:
-            dim_sizes = self._process_dimension_sizes(parent_ncvar)
-            # Set these dims on the variable *and* the attribute
-            # TODO technically derives from the variable only, not its
-            # attribute too, so is this robust?
-            var_compliance["dimensions"] = dim_sizes
-            var_compliance["attributes"][attribute]["dimensions"] = dim_sizes
-
-        return var_compliance
+        attr_nc = Attribute(attribute, value="???", non_conformances=[update_nc,])
+        par_var_nc = Variable(parent_ncvar)
+        var_nc = Variable(ncvar)
+        attr_nc.add_variable(par_var_nc)
+        attr_nc.add_variable(var_nc)
+        print("ABOUT", attr_nc.as_report_fragment())
+        print("AT DC STAGE", type(noncompliance), noncompliance)
+        noncompliance.add_attribute(attr_nc)
 
     def _add_message(
         self,
@@ -142,21 +122,19 @@ class Report():
         attribute_name = attribute_key.split(":")[1]
         attribute_value = attribute[attribute_key]
 
-        nc = [NonConformance(message, code),]
-        var_nc, attr_nc = self._create_var_nc(
-            nc, top_ancestor_ncvar, attribute_name, attribute_value, dimensions)
-        print(
-            "ATTR AND VAR NC IS:",
-            attr_nc.as_report_fragment(),
-            var_nc.as_report_fragment(),
-        )
+        # New:
+        # Potentially still a dict from init a dict so set here for now -
+        # ugrid cases only seemingly hit this
+        if g["dataset_compliance"] == {}:
+            g["dataset_compliance"] = Variable(top_ancestor_ncvar)
 
-        # Process issues emerging on or via attributes
-        self._update_noncompliance_dict(
-            g["dataset_compliance"], ncvar, top_ancestor_ncvar, attribute_name,
-            var_nc.as_report_fragment()
-        )
-        self._include_component_report(ncvar, top_ancestor_ncvar, attribute_name)
+        nc = [NonConformance(message, code),]
+        var_nc = Variable(ncvar)
+        attr_nc = Attribute(
+            attribute, value=attribute_value, non_conformances=[nc,])
+        attr_nc.add_variable(var_nc)
+        g["dataset_compliance"].add_attribute(var_nc)
+        print("DC DICT IS:", g["dataset_compliance"].as_report_fragment())
 
         if direct_parent_ncvar:
             # Dicts are optimised for key-value lookup, but this requires
@@ -172,7 +150,7 @@ class Report():
             )
             self._update_noncompliance_dict(
                 g["component_report"], ncvar, direct_parent_ncvar, store_attr,
-                var_nc.as_report_fragment(),
+                var_nc  ###.as_report_fragment(),
             )
 
         if dimensions is None:  # pragma: no cover
@@ -245,7 +223,9 @@ class Report():
 
         """
         g = self.read_vars
+
         component_report = g["component_report"].get(ncvar)
+        print("COMPONENT REPORT IS", type(component_report))
 
         # Unlike for 'attribute' input to _add_message, this 'attribute' is the
         # the attribute_name only and not "var_name:attribute_name" to split

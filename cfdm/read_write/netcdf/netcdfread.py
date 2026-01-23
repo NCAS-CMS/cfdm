@@ -1312,7 +1312,7 @@ class NetCDFRead(IORead, Checker):
             "verbose": verbose,
             # Warnings?
             "warnings": warnings,
-            "dataset_compliance": {},
+            "dataset_compliance": {},  # SLB
             "component_report": {},
             "auxiliary_coordinate": {},
             "cell_measure": {},
