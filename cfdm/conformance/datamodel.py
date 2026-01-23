@@ -98,7 +98,7 @@ class Attribute:
         For a more concise dict with class-based value representation,
         see repr().
         """
-        return {
+        fragment = {
             "value": self.value,
             "variables": {
                 var_nc.name: var_nc.as_report_fragment()
@@ -108,10 +108,13 @@ class Attribute:
                 dim_nc.name: dim_nc.as_report_fragment()
                 for dim_nc in self.dimensions
             },
-            "non-conformance": [
-                nc.as_report_fragment() for nc in self.non_conformances
-            ],
         }
+        if self.non_conformances:
+            fragment["non-conformance"] = [
+                nc.as_report_fragment() for nc in self.non_conformances
+            ]
+
+        return fragment
 
         def __repr__(self):
             """Called by the `repr` built-in function.
@@ -189,16 +192,19 @@ class Dimension:
         For a more concise dict with class-based value representation,
         see repr().
         """
-        return {
+        fragment = {
             "size": self.size,
             "variables": {
                 var_nc.name: var_nc.as_report_fragment()
                 for var_nc in self.variables
             },
-            "non-conformance": [
-                nc.as_report_fragment() for nc in self.non_conformances
-            ],
         }
+        if self.non_conformances:
+            fragment["non-conformance"] = [
+                nc.as_report_fragment() for nc in self.non_conformances
+            ]
+
+        return fragment
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -296,6 +302,7 @@ class Variable:
             fragment["non-conformance"] = [
                 nc.as_report_fragment() for nc in self.non_conformances
             ]
+
         return fragment
 
     def __repr__(self):

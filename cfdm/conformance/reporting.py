@@ -142,8 +142,10 @@ class Report():
 
         nc = [NonConformance(message, code),]
 
-        attr_01_nc = Attribute(
+        # NEW
+        attr_lowest_nc = Attribute(
             attribute_name, value=attribute_value, non_conformances=nc)
+        attr_01_nc = Attribute(attribute_name, value=attribute_value)
         var_01_nc = g["dataset_compliance"].get_variable(top_ancestor_ncvar)
         if not var_01_nc:
             print("NEW CREATE 01")
@@ -169,6 +171,8 @@ class Report():
                 var_03_nc = Variable(ncvar)
             else:
                 print("USING EXISTING 03!")
+            var_03_nc.add_attribute(attr_lowest_nc)
+
             store_attr_nc.add_variable(var_03_nc)
             var_01_nc.add_attribute(store_attr_nc)
 
