@@ -3481,22 +3481,13 @@ class NetCDFRead(IORead, Checker):
 
         dimensions = g["variable_dimensions"][field_ncvar]
 
-        # Register the CF Conventions version at top-level only
-        # SLB
-        # g["dataset_compliance"].setdefault(field_ncvar, {})
-        # g["dataset_compliance"][
-        #     "CF version"] = self.implementation.get_cf_version()
-
-        # # Create dimensions dict and populate with sizes
-        # g["dataset_compliance"][field_ncvar]["dimensions"] = {
-        #     dim: {"size": g["internal_dimension_sizes"][dim]} for
-        #     dim in dimensions
-        # }
-        field_nc = Variable(field_ncvar)
-        g["dataset_compliance"] = {field_ncvar: field_nc.as_report_fragment()}
-        g["dataset_compliance"][
-            "CF version"] = self.implementation.get_cf_version()
-        # print("FIELD DC IS:", g["dataset_compliance"])
+        # Set the top-level i.e. field variable conformance as a Conformance
+        # Data Model object corresponding to the field variable. As we process
+        # the read we add non-conformance information to it structured
+        # according to affected netCDF components.
+        # Later we convert the overall object to a dictionary report to set
+        # as the overall field 'dataset compliance' output.
+        g["dataset_compliance"] = Variable(field_ncvar)
 
         logger.info(
             "    Converting netCDF variable "
@@ -4748,11 +4739,13 @@ class NetCDFRead(IORead, Checker):
         # Compliance reporting
         # -------------------------------------------------------------
         # Add the structural read report to the field/domain
-        dataset_compliance = g["dataset_compliance"][field_ncvar]
+        dataset_compliance = g["dataset_compliance"].as_report_fragment()
+
+        # At top (field) level, always include the CF Conventions version at
+        # which the compliance/conformance was checked against
+        field_compliance = {"CF version": self.implementation.get_cf_version()}
         if dataset_compliance:
-            field_compliance = {field_ncvar: dataset_compliance}
-        else:
-            field_compliance = {}
+            field_compliance[field_ncvar] = dataset_compliance
 
         self.implementation.set_dataset_compliance(f, field_compliance)
 
