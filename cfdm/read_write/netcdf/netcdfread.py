@@ -7739,16 +7739,17 @@ class NetCDFRead(IORead, Checker):
         """
         g = self.read_vars
 
-        component_report = g["component_report"].get(ncvar)
+        # SLB reinstate once conformance work stabilises
+        # component_report = g["component_report"].get(ncvar)
 
-        if component_report is not None:
-            for var, report in component_report.items():
-                # SLB TODO what should the placeholder be replaced by - should
-                # we include attribute as input too?
-                self._update_noncompliance_dict(
-                    g["dataset_compliance"], ncvar, parent_ncvar, "PLACEHOLDER",
-                    component_report
-                )
+        # if component_report is not None:
+        #     for var, report in component_report.items():
+        #         # SLB TODO what should the placeholder be replaced by - should
+        #         # we include attribute as input too?
+        #         self._update_noncompliance_dict(
+        #             g["dataset_compliance"], ncvar, parent_ncvar, "PLACEHOLDER",
+        #             component_report
+        #         )
 
         return self.implementation.copy_construct(g[construct_type][ncvar])
 

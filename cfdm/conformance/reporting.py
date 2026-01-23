@@ -1,4 +1,5 @@
 import logging
+from pprint import pprint
 
 from .datamodel import NonConformance, Attribute, Dimension, Variable
 
@@ -22,19 +23,6 @@ class Report():
             for dim in (var_dims or [])
         }
 
-    def _update_noncompliance_dict(
-            self, noncompliance, ncvar, parent_ncvar, attribute, update_nc,
-    ):
-        """Update non-compliance dictionary for a given netCDF variable."""
-        attr_nc = Attribute(attribute, value="???", non_conformances=[update_nc,])
-        par_var_nc = Variable(parent_ncvar)
-        var_nc = Variable(ncvar)
-        attr_nc.add_variable(par_var_nc)
-        attr_nc.add_variable(var_nc)
-        print("ABOUT", attr_nc.as_report_fragment())
-        print("AT DC STAGE", type(noncompliance), noncompliance)
-        noncompliance.add_attribute(attr_nc)
-
     def _add_message(
         self,
         top_ancestor_ncvar,
@@ -44,6 +32,7 @@ class Report():
         attribute=None,
         dimensions=None,
         conformance=None,
+        # is_ugrid=False,
     ):
         """Stores and logs a message about an issue with a field.
 
@@ -119,22 +108,66 @@ class Report():
         # TODO need better way to access this - inefficient, should be able to
         # use an in-built function!
         attribute_key = next(iter(attribute))
-        attribute_name = attribute_key.split(":")[1]
+        # TODO tidy below into one call to split
+        var_name, attribute_name = attribute_key.split(":")
+        # print("HAVE FOR ATTRS SOMETHINGS", attribute_key.split(":"))
         attribute_value = attribute[attribute_key]
 
-        # New:
+        # print(
+        #     "HAVE", var_name, attribute_name, attribute_value, ncvar,
+        #     top_ancestor_ncvar, direct_parent_ncvar
+        # )
+        # print("ALL OF G IS, looking for pa -> mesh -> Mesh2 \n\n\n\n")
+        # pprint(g)
+        # HAVE Mesh2_edge_nodes standard_name badname_Mesh2_edge_nodes
+        # Mesh2_edge_nodes Mesh2 None
+
+        # order needs to be (from ncdump -h ugrid_1_bad_names.nc):
+        # pa (v) -> mesh (a) -> Mesh2 (v) -> face_node_connectivity (a) ->
+        #     Mesh2_face_nodes (v) -> standard_name (a) -> BAD NAME (value)
+        #
+        # => order needs to be:
+        # [field top-level] -> "missing ? mesh" (a) THE KEY, NED TOP LEVEL VAR!
+        # using now attr_01 -> top_ancestor_ncvar (v) -> ??? get face_node
+        # connectivity
+        #
+        # Additions that shouldn't be there!
+
         # Potentially still a dict from init a dict so set here for now -
         # ugrid cases only seemingly hit this
         if g["dataset_compliance"] == {}:
+            print("DC NOT SET!")
             g["dataset_compliance"] = Variable(top_ancestor_ncvar)
+        if g["component_report"] == {}:
+            print("CR NOT SET!")
+            g["component_report"] = Variable(top_ancestor_ncvar)
+
+        # if is_ugrid:
+        #     attr_01 = "mesh"
+        # else:
+        #     attr_01 = "?var?"
+        # attr_01_nc = Attribute(attr_01, value="???")
+        # g["dataset_compliance"].add_attribute(attr_01_nc)
+        # g["component_report"].add_attribute(attr_01_nc)
+        # Now do variables nested!
 
         nc = [NonConformance(message, code),]
-        var_nc = Variable(ncvar)
-        attr_nc = Attribute(
-            attribute, value=attribute_value, non_conformances=[nc,])
-        attr_nc.add_variable(var_nc)
-        g["dataset_compliance"].add_attribute(var_nc)
-        print("DC DICT IS:", g["dataset_compliance"].as_report_fragment())
+
+        # NOTE: ncvar and var_name still unused!
+        attr_01_nc = Attribute(
+            attribute_name, value=attribute_value, non_conformances=nc)
+        ### attr_02_nc.add_variable(var_02_nc)
+
+        var_01_nc = g["dataset_compliance"].get_variable(top_ancestor_ncvar)
+        if not var_01_nc:
+            print("NEW CREATE 01")
+            var_01_nc = Variable(top_ancestor_ncvar)
+        else:
+            print("USING EXISTING 01!")
+
+        attr_01_nc.add_variable(var_01_nc)
+        g["dataset_compliance"].add_attribute(attr_01_nc)
+        g["component_report"].add_attribute(attr_01_nc)
 
         if direct_parent_ncvar:
             # Dicts are optimised for key-value lookup, but this requires
@@ -144,14 +177,29 @@ class Report():
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
 
-            var_nc, attr_nc = self._create_var_nc(
-                nc, direct_parent_ncvar, attribute_name, attribute_value,
-                dimensions
-            )
-            self._update_noncompliance_dict(
-                g["component_report"], ncvar, direct_parent_ncvar, store_attr,
-                var_nc  ###.as_report_fragment(),
-            )
+            attr_02_nc = Attribute(
+                store_attr, value=attribute_value, non_conformances=nc)
+            ### attr_02_nc.add_variable(var_02_nc)
+
+            var_02_nc = g["dataset_compliance"].get_variable(direct_parent_ncvar)
+            if not var_01_nc:
+                print("NEW CREATE 01")
+                var_02_nc = Variable(direct_parent_ncvar)
+            else:
+                print("USING EXISTING 02!")
+
+            ###var_01_nc.add_attribute(attr_02_nc)
+            attr_01_nc.add_variable(var_01_nc)
+            #g["dataset_compliance"].add_attribute(attr_01_nc)
+            #g["component_report"].add_attribute(attr_01_nc)
+            # var_01_nc = g["dataset_compliance"].get_variable(direct_parent_ncvar)
+            # if not var_01_nc:
+            #     print("NEW CREATE 01")
+            #     var_01_nc = Variable(direct_parent_ncvar)
+            # else:
+            #     print("USING EXISTING!")
+            # var_01_nc.add_attribute(attr_02_nc)
+            # attr_01_nc.add_variable(var_01_nc)
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
@@ -163,7 +211,6 @@ class Report():
             f"{ncvar}{dimensions}: {message}"
         )  # pragma: no cover
 
-        return var_nc
 
     def _create_var_nc(
             self, nc, ncvar, attribute_name, attribute_value, dimensions=None):
@@ -224,13 +271,31 @@ class Report():
         """
         g = self.read_vars
 
-        component_report = g["component_report"].get(ncvar)
+        # Potentially still a dict from init a dict so set here for now -
+        # ugrid cases only seemingly hit this
+        if g["dataset_compliance"] == {}:
+            g["dataset_compliance"] = Variable(parent_ncvar)
+        if g["component_report"] == {}:
+            print("CR WAS DICT")
+            g["component_report"] = Variable(parent_ncvar)
+
+        component_report = g["component_report"].get_variable(ncvar)
         print("COMPONENT REPORT IS", type(component_report))
 
         # Unlike for 'attribute' input to _add_message, this 'attribute' is the
         # the attribute_name only and not "var_name:attribute_name" to split
         if component_report:
-            self._update_noncompliance_dict(
-                g["dataset_compliance"], ncvar, parent_ncvar, attribute,
-                component_report
-            )
+            var_nc = g["dataset_compliance"].get_variable(ncvar)
+            if not var_nc:
+                var_nc = Variable(ncvar)
+
+            par_var_nc = g["dataset_compliance"].get_variable(parent_ncvar)
+            if not par_var_nc:
+                par_var_nc = Variable(parent_ncvar)
+
+            attr_nc = Attribute(attribute, value="????")
+            attr_nc.add_variable(var_nc)
+            attr_nc.add_variable(par_var_nc)
+
+            g["dataset_compliance"].add_attribute(attr_nc)
+            g["component_report"].add_attribute(attr_nc)
