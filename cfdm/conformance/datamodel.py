@@ -316,9 +316,10 @@ class Variable:
             for var in attr.variables:
                 if var.name == var_name:
                     count.append(var)
+
         print("COUNT IS", len(count))
         if count:
-            return count[-1]
+            return count[0]
 
         return False
 
