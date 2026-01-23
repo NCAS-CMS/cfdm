@@ -75,9 +75,16 @@ class Attribute:
         """Set dimensions associated with the attribute's non-compliance."""
         self.dimensions = dimensions
 
-    def add_variable(self, attr):
+    def add_variable(self, var):
         """Append a variable relating to the attribute's non-compliance."""
-        self.variables.append(attr)
+        # Check if already there first
+        for vari in self.variables:
+            if vari.name == var.name:
+                print("Already exists!")
+                return vari
+
+        self.variables.append(var)
+        return var
 
     def add_dimension(self, dim):
         """Append a dimension relating to the attribute's non-compliance."""
@@ -251,6 +258,14 @@ class Variable:
             "non-conformance": self.non_conformances,
         })
 
+    def get_variable(self, var_name):
+        """Fetch a child variable connected via an attribute, else is False."""
+        for attr in self.attributes:
+            for var in attr.variables:
+                if var.name == var_name:
+                    return var
+
+        return False
 
 class DataDomainVariable(Variable):
     """A data or domain variable with associated conventions."""
