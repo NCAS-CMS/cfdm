@@ -79,8 +79,10 @@ class Attribute:
         """Append a variable relating to the attribute's non-compliance."""
         # Check if already there first
         for vari in self.variables:
-            if vari.name == var.name:
-                print("Already exists!")
+            if vari.equals(var):
+                print("VAR already exists!, COMBINING")
+                # Need to combine components
+                var.combine(vari)
                 return vari
 
         self.variables.append(var)
@@ -122,6 +124,26 @@ class Attribute:
                 "dimensions": self.dimensions,
                 "non-conformance": self.non_conformances,
             })
+
+    def equals(self, other):
+        """Equality checking between same class."""
+        return self.name == other.name
+
+    def combine(self, other):
+        """Combine one Attribute object with another when they represent the
+        same underlying netCDF attribute.
+
+        Returns the self object where the other should be discarded.
+
+        TODO shorten summary line to one line.
+        """
+        # Need to combine components
+        old_vars = self.variables
+        old_dims = self.dimensions
+        self.set_variables(old_vars + other.variables)
+        self.set_dimensions(old_dims + other.dimensions)
+
+        return self
 
 
 class Dimension:
@@ -189,6 +211,24 @@ class Dimension:
             "non-conformance": self.non_conformances,
         })
 
+    def equals(self, other):
+        """Equality checking between same class."""
+        return self.name == other.name
+
+    def combine(self, other):
+        """Combine one Dimension object with another when they represent the
+        same underlying netCDF dimension.
+
+        Returns the self object where the other should be discarded.
+
+        TODO shorten summary line to one line.
+        """
+        # Need to combine components
+        old_vars = self.variables
+        self.set_variables(old_vars + other.variables)
+
+        return self
+
 
 class Variable:
     """Non-conformances related to a netCDF variable."""
@@ -219,7 +259,18 @@ class Variable:
 
     def add_attribute(self, attr):
         """Append an attribute relating to the variable's non-compliance."""
+        # Check if already there first
+        for attrib in self.attributes:
+            if attrib.equals(attr):
+                print("ATTR already exists!, COMBINING")
+                # Need to combine components
+                attr.combine(attrib)
+
+                # NOW REMOVE OTHER FROM LIST!
+                return attrib
+
         self.attributes.append(attr)
+        return attr
 
     def add_dimension(self, dim):
         """Append a dimension relating to the variable's non-compliance."""
@@ -260,12 +311,37 @@ class Variable:
 
     def get_variable(self, var_name):
         """Fetch a child variable connected via an attribute, else is False."""
+        count = []
         for attr in self.attributes:
             for var in attr.variables:
                 if var.name == var_name:
-                    return var
+                    count.append(var)
+        print("COUNT IS", len(count))
+        if count:
+            return count[-1]
 
         return False
+
+    def equals(self, other):
+        """Equality checking between same class."""
+        return self.name == other.name
+
+    def combine(self, other):
+        """Combine one Variable object with another when they represent the
+        same underlying netCDF variable.
+
+        Returns the self object where the other should be discarded.
+
+        TODO shorten summary line to one line.
+        """
+        # Need to combine components
+        old_dims = self.dimensions
+        old_attrs = self.attributes
+        self.set_dimensions(old_dims + other.dimensions)
+        self.set_attributes(old_attrs + other.attributes)
+
+        return self
+
 
 class DataDomainVariable(Variable):
     """A data or domain variable with associated conventions."""
