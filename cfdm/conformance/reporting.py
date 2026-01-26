@@ -115,6 +115,7 @@ class Report():
         attribute_value = attribute[attribute_key]
 
         print(
+            "£££££" * 10,
             "HAVE", higher_attr_value, attribute_name, attribute_value, ncvar,
             top_ancestor_ncvar, direct_parent_ncvar
         )
@@ -146,16 +147,15 @@ class Report():
         # b) Attributes of relevance - direct attribute and associated
         attr_lowest_nc = Attribute(
             attribute_name, value=attribute_value, non_conformances=nc)
-        attr_highest_nc = Attribute(attribute_name, value=higher_attr_value)
+        attr_highest_nc = Attribute(
+            attribute_name, value=higher_attr_value, non_conformances=nc)
 
         # c) Variables of relevance - direct variable and those in association
-        # If exist already, add to existing report
+        # If exist already, add to existing report. Note we also create
+        # a direct_parent_ncvar_nc if appropriate, below.
         ncvar_nc = self._get_variable_non_compliance(ncvar)
         top_parent_ncvar_nc = self._get_variable_non_compliance(
             top_ancestor_ncvar)
-        if direct_parent_ncvar:
-            direct_parent_ncvar_nc = self._get_variable_non_compliance(
-                direct_parent_ncvar)
 
         # 2. Make associations as appropriate
         # * If direct parent, connect DC - > top -> parent -> direct
@@ -163,6 +163,9 @@ class Report():
         # * If no direct parent, connect DC -> top -> direct variable
         #   via: DC -> highest attr -> top ncvar -> lowest attr -> ncvar
         if direct_parent_ncvar:
+            direct_parent_ncvar_nc = self._get_variable_non_compliance(
+                direct_parent_ncvar)
+
             # Dicts are optimised for key-value lookup, but this requires
             # value-key lookup - find a better way to get relevant attr using
             # functionality in this module
@@ -170,15 +173,24 @@ class Report():
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
             print("HAVE STORE ATTR OF", store_attr)
-            store_attr_nc = Attribute(store_attr, value="???")
+            # Attribute value is same as the variable name in these cases
+            store_attr_nc = Attribute(
+                store_attr, value=ncvar, non_conformances=nc)
 
-            # In thise case, can join to ncvar via the direct parent
+            ncvar_nc.add_attribute(attr_highest_nc)
             store_attr_nc.add_variable(ncvar_nc)
-            top_parent_ncvar_nc.add_attribute(store_attr_nc)
+            direct_parent_ncvar_nc.add_attribute(store_attr_nc)
+            attr_lowest_nc.add_variable(direct_parent_ncvar_nc)
+        else:
+            attr_highest_nc.add_variable(ncvar_nc)
+            top_parent_ncvar_nc.add_attribute(attr_highest_nc)
+            attr_lowest_nc.add_variable(top_parent_ncvar_nc)
 
-        attr_lowest_nc.add_variable(top_parent_ncvar_nc)
+        # GOOD WORKING WELL ENOUGH BELOW
+
         g["dataset_compliance"].add_attribute(attr_lowest_nc)
         g["component_report"].add_attribute(attr_lowest_nc)
+
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
@@ -242,7 +254,8 @@ class Report():
             ncvar_nc = self._get_variable_non_compliance(ncvar)
             parent_ncvar_nc = self._get_variable_non_compliance(ncvar)
 
-            attr_nc = Attribute(attribute, value="???")
+            # Attribute value is same as the variable name in these cases
+            attr_nc = Attribute(attribute, value=ncvar)
             attr_nc.add_variable(ncvar_nc)
             attr_nc.add_variable(parent_ncvar_nc)
 
