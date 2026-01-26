@@ -1,3 +1,11 @@
+def _merge_unique(existing, incoming):
+    merged = list(existing)
+    for obj in incoming:
+        if not any(o.equals(obj) for o in merged):
+            merged.append(obj)
+    return merged
+
+
 class NonConformance:
     """Represents a case of CF Conventions non-conformance with description."""
 
@@ -132,7 +140,7 @@ class Attribute:
 
     def equals(self, other):
         """Equality checking between same class."""
-        return self.name == other.name
+        return self.name == other.name and self.value == other.value
 
     def combine(self, other):
         """Combine one Attribute object with another when they represent the
@@ -142,12 +150,8 @@ class Attribute:
 
         TODO shorten summary line to one line.
         """
-        # Need to combine components
-        old_vars = self.variables
-        old_dims = self.dimensions
-        self.set_variables(old_vars + other.variables)
-        self.set_dimensions(old_dims + other.dimensions)
-
+        self.set_variables(_merge_unique(self.variables, other.variables))
+        self.set_dimensions(_merge_unique(self.dimensions, other.dimensions))
         return self
 
 
@@ -232,10 +236,7 @@ class Dimension:
 
         TODO shorten summary line to one line.
         """
-        # Need to combine components
-        old_vars = self.variables
-        self.set_variables(old_vars + other.variables)
-
+        self.set_variables(_merge_unique(self.variables, other.variables))
         return self
 
 
@@ -346,12 +347,8 @@ class Variable:
 
         TODO shorten summary line to one line.
         """
-        # Need to combine components
-        old_dims = self.dimensions
-        old_attrs = self.attributes
-        self.set_dimensions(old_dims + other.dimensions)
-        self.set_attributes(old_attrs + other.attributes)
-
+        self.set_attributes(_merge_unique(self.attributes, other.attributes))
+        self.set_dimensions(_merge_unique(self.dimensions, other.dimensions))
         return self
 
 
