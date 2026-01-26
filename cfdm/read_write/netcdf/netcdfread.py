@@ -120,6 +120,10 @@ class NetCDFRead(IORead, Checker):
             "in the current standard name table"
         ): 22,
     }
+    def __init__(self, implementation=None):
+        Checker.__init__(self)
+        self.implementation = implementation  # from IORead
+        self.variable_report = []
 
     def cf_datum_parameters(self):
         """Datum-defining parameters names."""
@@ -1313,7 +1317,6 @@ class NetCDFRead(IORead, Checker):
             # Warnings?
             "warnings": warnings,
             "dataset_compliance": {},  # SLB
-            "component_report": {},
             "auxiliary_coordinate": {},
             "cell_measure": {},
             "dimension_coordinate": {},
