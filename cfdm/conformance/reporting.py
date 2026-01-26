@@ -115,7 +115,6 @@ class Report():
         attribute_value = attribute[attribute_key]
 
         print(
-            "£££££" * 10,
             "HAVE", higher_attr_value, attribute_name, attribute_value, ncvar,
             top_ancestor_ncvar, direct_parent_ncvar
         )
@@ -146,9 +145,9 @@ class Report():
 
         # b) Attributes of relevance - direct attribute and associated
         attr_lowest_nc = Attribute(
-            attribute_name, value=attribute_value, non_conformances=nc)
-        attr_highest_nc = Attribute(
             attribute_name, value=higher_attr_value, non_conformances=nc)
+        attr_highest_nc = Attribute(
+            attribute_name, value=attribute_value, non_conformances=nc)
 
         # c) Variables of relevance - direct variable and those in association
         # If exist already, add to existing report. Note we also create
@@ -174,23 +173,27 @@ class Report():
             store_attr = reverse_varattrs[ncvar]
             print("HAVE STORE ATTR OF", store_attr)
             # Attribute value is same as the variable name in these cases
-            store_attr_nc = Attribute(
-                store_attr, value=ncvar, non_conformances=nc)
+            store_attr_nc = Attribute(store_attr, value=ncvar)
 
+            print("£££££" * 10,
+                  "VALUES ARE", attribute_value, higher_attr_value,
+                  store_attr
+                  )
+            #if direct_parent_ncvar != top_ancestor_ncvar:
             ncvar_nc.add_attribute(attr_highest_nc)
             store_attr_nc.add_variable(ncvar_nc)
             direct_parent_ncvar_nc.add_attribute(store_attr_nc)
             attr_lowest_nc.add_variable(direct_parent_ncvar_nc)
+        elif False:
+            # TODO: final case to prevent extras on standard name attrs etc.
+            pass
         else:
             attr_highest_nc.add_variable(ncvar_nc)
             top_parent_ncvar_nc.add_attribute(attr_highest_nc)
             attr_lowest_nc.add_variable(top_parent_ncvar_nc)
 
-        # GOOD WORKING WELL ENOUGH BELOW
-
         g["dataset_compliance"].add_attribute(attr_lowest_nc)
         g["component_report"].add_attribute(attr_lowest_nc)
-
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
