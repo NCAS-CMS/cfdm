@@ -100,15 +100,17 @@ class Attribute:
         """
         fragment = {
             "value": self.value,
-            "variables": {
+        }
+        if self.variables:
+            fragment["variables"] = {
                 var_nc.name: var_nc.as_report_fragment()
                 for var_nc in self.variables
-            },
-            "dimensions": {
+            }
+        if self.dimensions:
+            fragment["dimensions"] = {
                 dim_nc.name: dim_nc.as_report_fragment()
                 for dim_nc in self.dimensions
-            },
-        }
+            }
         if self.non_conformances:
             fragment["non-conformance"] = [
                 nc.as_report_fragment() for nc in self.non_conformances
@@ -194,11 +196,12 @@ class Dimension:
         """
         fragment = {
             "size": self.size,
-            "variables": {
+        }
+        if self.variables:
+            fragment["variables"] = {
                 var_nc.name: var_nc.as_report_fragment()
                 for var_nc in self.variables
-            },
-        }
+            }
         if self.non_conformances:
             fragment["non-conformance"] = [
                 nc.as_report_fragment() for nc in self.non_conformances
@@ -288,16 +291,17 @@ class Variable:
         For a more concise dict with class-based value representation,
         see repr().
         """
-        fragment = {
-            "attributes": {
+        fragment = {}
+        if self.attributes:
+            fragment["attributes"] = {
                 attr_nc.name: attr_nc.as_report_fragment()
                 for attr_nc in self.attributes
-            },
-            "dimensions": {
+            }
+        if self.dimensions:
+            fragment["dimensions"] = {
                 dim_nc.name: dim_nc.as_report_fragment()
                 for dim_nc in self.dimensions
-            },
-        }
+            }
         if self.non_conformances:
             fragment["non-conformance"] = [
                 nc.as_report_fragment() for nc in self.non_conformances
