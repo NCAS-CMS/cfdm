@@ -192,7 +192,7 @@ class Report():
             top_parent_ncvar_nc.add_attribute(attr_highest_nc)
             attr_lowest_nc.add_variable(top_parent_ncvar_nc)
 
-        g["dataset_compliance"].add_attribute(attr_lowest_nc)
+        # g["dataset_compliance"].add_attribute(attr_lowest_nc)
         g["component_report"].add_attribute(attr_lowest_nc)
 
         if dimensions is None:  # pragma: no cover
