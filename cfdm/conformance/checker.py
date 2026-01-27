@@ -199,7 +199,6 @@ class Checker(Report):
                 continue
 
             any_sn_found = True
-
             # 2. Check, if requested, if name is a native or numpy string type
             if check_is_string and not (
                     isinstance(sn_value, (str, np.str_, np.bytes_))

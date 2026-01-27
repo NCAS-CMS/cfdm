@@ -123,7 +123,6 @@ class NetCDFRead(IORead, Checker):
     def __init__(self, implementation=None):
         Checker.__init__(self)
         self.implementation = implementation  # from IORead
-        self.variable_report = []
 
     def cf_datum_parameters(self):
         """Datum-defining parameters names."""
@@ -1316,7 +1315,6 @@ class NetCDFRead(IORead, Checker):
             "verbose": verbose,
             # Warnings?
             "warnings": warnings,
-            "dataset_compliance": {},  # SLB
             "auxiliary_coordinate": {},
             "cell_measure": {},
             "dimension_coordinate": {},
@@ -3490,7 +3488,7 @@ class NetCDFRead(IORead, Checker):
         # according to affected netCDF components.
         # Later we convert the overall object to a dictionary report to set
         # as the overall field 'dataset compliance' output.
-        g["dataset_compliance"] = Variable(field_ncvar)
+        self.dataset_compliance = Variable(field_ncvar)
 
         logger.info(
             "    Converting netCDF variable "
@@ -4742,7 +4740,7 @@ class NetCDFRead(IORead, Checker):
         # Compliance reporting
         # -------------------------------------------------------------
         # Add the structural read report to the field/domain
-        dataset_compliance = g["dataset_compliance"].as_report_fragment()
+        dataset_compliance = self.dataset_compliance.as_report_fragment()
 
         # At top (field) level, always include the CF Conventions version at
         # which the compliance/conformance was checked against
@@ -7741,18 +7739,6 @@ class NetCDFRead(IORead, Checker):
 
         """
         g = self.read_vars
-
-        # SLB reinstate once conformance work stabilises
-        # component_report = g["component_report"].get(ncvar)
-
-        # if component_report is not None:
-        #     for var, report in component_report.items():
-        #         # SLB TODO what should the placeholder be replaced by - should
-        #         # we include attribute as input too?
-        #         self._update_noncompliance_dict(
-        #             g["dataset_compliance"], ncvar, parent_ncvar, "PLACEHOLDER",
-        #             component_report
-        #         )
 
         return self.implementation.copy_construct(g[construct_type][ncvar])
 
