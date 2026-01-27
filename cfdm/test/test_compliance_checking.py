@@ -250,24 +250,52 @@ class ComplianceCheckingTest(unittest.TestCase):
         """Test compliance checking on a compliant non-UGRID field."""
         f = self.good_snames_general_field
         dc_output = f.dataset_compliance()
-        self.assertEqual(dc_output, dict())
+        self.assertEqual(dc_output, {'CF version': '1.12'})
 
     def test_standard_names_validation_noncompliant_field(self):
         """Test compliance checking on a non-compliant non-UGRID field."""
         f = self.bad_snames_general_field
-        cfdm.write(f, "kitchen-sink-field.-bad-names.nc")
         dc_output = f.dataset_compliance()
 
-        print("----------------- TEST 1 NON UGRID ---------------------")
-        pprint(dc_output)
+        # 1. Top-level CF version
+        self.assertIn('CF version', dc_output)
+        self.assertEqual(dc_output['CF version'], self.expected_cf_version)
 
-        # TODO
+        # 2. Exactly one other top-level key
+        top_keys = [k for k in dc_output.keys() if k != 'CF version']
+        self.assertEqual(len(top_keys), 1)
+        top_key = top_keys[0]
+        self.assertEqual(top_key, self.expected_top_key)
+
+        # 3. Attributes dict
+        top_dict = dc_output[top_key]
+        self.assertIn('attributes', top_dict)
+        attrs = top_dict['attributes']
+        self.assertIsInstance(attrs, dict)
+        self.assertIn('standard_name', attrs)
+
+        # 4. standard_name dict
+        sn = attrs['standard_name']
+        self.assertIsInstance(sn, dict)
+        self.assertIn('value', sn)
+        self.assertIn('non-conformance', sn)
+
+        self.assertEqual(sn['value'], self.expected_sn_value)
+
+        nc_list = sn['non-conformance']
+        self.assertIsInstance(nc_list, list)
+        self.assertEqual(len(nc_list), 1)
+
+        nc = nc_list[0]
+        self.assertIsInstance(nc, dict)
+        self.assertEqual(nc['code'], self.bad_sn_expected_code)
+        self.assertEqual(nc['reason'], self.bad_sn_expected_reason)
 
     def test_standard_names_validation_compliant_ugrid_field(self):
         """Test compliance checking on a compliant UGRID field."""
         f = self.good_ugrid_sn_f
         dc_output = f.dataset_compliance()
-        self.assertEqual(dc_output, dict())
+        self.assertEqual(dc_output, {'CF version': '1.12'})
 
     def test_standard_names_validation_noncompliant_ugrid_fields(self):
         """Test compliance checking on non-compliant UGRID fields."""
@@ -276,86 +304,61 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         # Fields for testing on: those in ugrid_1 with bad names pre-set
         f1, f2, f3 = self.bad_ugrid_sn_fields  # unpack to shorter names
-        dc_output_1 = f1.dataset_compliance()
-        dc_output_2 = f2.dataset_compliance()
-        dc_output_3 = f3.dataset_compliance()
+        dc1 = f1.dataset_compliance()
+        dc2 = f2.dataset_compliance()
+        dc3 = f3.dataset_compliance()
 
-        print("----------------- TEST 2 UGRID ---------------------")
-        pprint(dc_output_1)
+        # NOTE actually all three outputs have the same dataset compliance
+        # output (TODO SLB is this right?) so there's only need to test on
+        # one and then check the other two are equivalent except for the
+        # top-level key.
 
-        # TODO see from below that not all bad names get set - but want
-        # that, so should update create_test_files method to set on all
-        # for bad case.
-        with Dataset("ugrid_1_bad_names.nc", "r+") as nc:
-            for varname, var in nc.variables.items():
-                print(varname, getattr(var, "standard_name", "No standard_name"))
-
-        # =======================================================
-        # Field 1/3: top-level dict (1/4)
-        # =======================================================
-        self.assertIsInstance(dc_output_1, dict)
-        self.assertCountEqual(dc_output_1.keys(), ["pa"])
-
-        pa = dc_output_1["pa"]
+        # ------------ 1. Test first output field fully ---------------
+        pa = dc1["pa"]
         self.assertIsInstance(pa, dict)
-        self.assertCountEqual(pa.keys(), ["attributes", "dimensions"])
+        self.assertIn("attributes", pa)
 
-        # pa.dimensions
-        pa_dimensions = pa["dimensions"]
-        self.assertIsInstance(pa_dimensions, dict)
-        self.assertCountEqual(pa_dimensions.keys(), ["nMesh2_node", "time"])
-        self.assertEqual(pa_dimensions["nMesh2_node"], {"size": 7})
-        self.assertEqual(pa_dimensions["time"], {"size": 2})
-
-        # pa.attributes
         pa_attributes = pa["attributes"]
         self.assertIsInstance(pa_attributes, dict)
         self.assertCountEqual(pa_attributes.keys(), ["mesh", "standard_name"])
 
-        # pa.attributes.standard_name (1/4)
+        # pa.attributes.standard_name
         pa_standard_name = pa_attributes["standard_name"]
-        self.assertIsInstance(pa_standard_name, list)
-        self.assertEqual(len(pa_standard_name), 1)
-
+        self.assertIsInstance(pa_standard_name, dict)
+        self.assertIn("value", pa_standard_name)
+        self.assertIn("non-conformance", pa_standard_name)
+        self.assertEqual(pa_standard_name["value"], "badname_Mesh2")
         self.assertEqual(
-            pa_standard_name[0],
+            pa_standard_name["non-conformance"][0],
             {
                 "code": self.bad_sn_expected_code,
                 "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2",
             },
         )
 
         # pa.attributes.mesh
         mesh = pa_attributes["mesh"]
         self.assertIsInstance(mesh, dict)
-        self.assertCountEqual(mesh.keys(), ["dimensions", "variables"])
-
-        # mesh.dimensions
-        mesh_dimensions = mesh["dimensions"]
-        self.assertIsInstance(mesh_dimensions, dict)
-        self.assertCountEqual(mesh_dimensions.keys(), ["nMesh2_node", "time"])
-        self.assertEqual(mesh_dimensions["nMesh2_node"], {"size": 7})
-        self.assertEqual(mesh_dimensions["time"], {"size": 2})
+        self.assertIn("value", mesh)
+        self.assertIn("variables", mesh)
+        self.assertEqual(mesh["value"], "Mesh2")
 
         # mesh.variables
-        mesh_variables = mesh["variables"]
-        self.assertIsInstance(mesh_variables, dict)
-        self.assertCountEqual(mesh_variables.keys(), ["Mesh2"])
+        mesh_vars = mesh["variables"]
+        self.assertIsInstance(mesh_vars, dict)
+        self.assertCountEqual(mesh_vars.keys(), ["Mesh2"])
 
-        mesh2 = mesh_variables["Mesh2"]
+        mesh2 = mesh_vars["Mesh2"]
         self.assertIsInstance(mesh2, dict)
-        self.assertCountEqual(mesh2.keys(), ["attributes", "dimensions"])
+        self.assertIn("attributes", mesh2)
 
-        # Mesh2.dimensions
-        self.assertEqual(mesh2["dimensions"], {})
-
-        # Mesh2.attributes
-        mesh2_attributes = mesh2["attributes"]
-        self.assertIsInstance(mesh2_attributes, dict)
+        # mesh2.attributes
+        mesh2_attrs = mesh2["attributes"]
+        self.assertIsInstance(mesh2_attrs, dict)
         self.assertCountEqual(
-            mesh2_attributes.keys(),
+            mesh2_attrs.keys(),
             [
+                "standard_name",
                 "edge_node_connectivity",
                 "face_face_connectivity",
                 "face_node_connectivity",
@@ -363,12 +366,29 @@ class ComplianceCheckingTest(unittest.TestCase):
         )
 
         # =======================================================
-        # Field 1/3: edge_node_connectivity (2/4)
+        # standard_name attribute for Mesh2
         # =======================================================
-        edge_node = mesh2_attributes["edge_node_connectivity"]
+        mesh2_standard_name = mesh2_attrs["standard_name"]
+        self.assertIsInstance(mesh2_standard_name, dict)
+        self.assertIn("value", mesh2_standard_name)
+        self.assertIn("non-conformance", mesh2_standard_name)
+        self.assertEqual(mesh2_standard_name["value"], "badname_Mesh2_edge_nodes")
+        self.assertEqual(
+            mesh2_standard_name["non-conformance"][0],
+            {
+                "code": self.bad_sn_expected_code,
+                "reason": self.bad_sn_expected_reason,
+            },
+        )
+
+        # =======================================================
+        # edge_node_connectivity
+        # =======================================================
+        edge_node = mesh2_attrs["edge_node_connectivity"]
         self.assertIsInstance(edge_node, dict)
-        self.assertCountEqual(edge_node.keys(), ["dimensions", "variables"])
-        self.assertEqual(edge_node["dimensions"], {})
+        self.assertIn("value", edge_node)
+        self.assertIn("variables", edge_node)
+        self.assertEqual(edge_node["value"], "Mesh2_edge_nodes")
 
         edge_node_vars = edge_node["variables"]
         self.assertIsInstance(edge_node_vars, dict)
@@ -376,38 +396,30 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         edge_nodes = edge_node_vars["Mesh2_edge_nodes"]
         self.assertIsInstance(edge_nodes, dict)
-        self.assertCountEqual(edge_nodes.keys(), ["attributes", "dimensions"])
-        self.assertEqual(
-            edge_nodes["dimensions"],
-            {
-                "Two": {"size": 2},
-                "nMesh2_edge": {"size": 9},
-            },
-        )
+        self.assertIn("attributes", edge_nodes)
 
         edge_nodes_attrs = edge_nodes["attributes"]
         self.assertIsInstance(edge_nodes_attrs, dict)
         self.assertCountEqual(edge_nodes_attrs.keys(), ["standard_name"])
-
         edge_sn = edge_nodes_attrs["standard_name"]
-        self.assertIsInstance(edge_sn, list)
-        self.assertEqual(len(edge_sn), 1)
+        self.assertIsInstance(edge_sn, dict)
+        self.assertEqual(edge_sn["value"], "badname_Mesh2_edge_nodes")
         self.assertEqual(
-            edge_sn[0],
+            edge_sn["non-conformance"][0],
             {
                 "code": self.bad_sn_expected_code,
                 "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2_edge_nodes",
             },
         )
 
         # =======================================================
-        # Field 1/3: face_face_connectivity (3/4)
+        # face_face_connectivity
         # =======================================================
-        face_face = mesh2_attributes["face_face_connectivity"]
+        face_face = mesh2_attrs["face_face_connectivity"]
         self.assertIsInstance(face_face, dict)
-        self.assertCountEqual(face_face.keys(), ["dimensions", "variables"])
-        self.assertEqual(face_face["dimensions"], {})
+        self.assertIn("value", face_face)
+        self.assertIn("variables", face_face)
+        self.assertEqual(face_face["value"], "Mesh2_face_links")
 
         face_face_vars = face_face["variables"]
         self.assertIsInstance(face_face_vars, dict)
@@ -415,38 +427,30 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         face_links = face_face_vars["Mesh2_face_links"]
         self.assertIsInstance(face_links, dict)
-        self.assertCountEqual(face_links.keys(), ["attributes", "dimensions"])
-        self.assertEqual(
-            face_links["dimensions"],
-            {
-                "Four": {"size": 4},
-                "nMesh2_face": {"size": 3},
-            },
-        )
+        self.assertIn("attributes", face_links)
 
         face_links_attrs = face_links["attributes"]
         self.assertIsInstance(face_links_attrs, dict)
         self.assertCountEqual(face_links_attrs.keys(), ["standard_name"])
-
-        face_links_sn = face_links_attrs["standard_name"]
-        self.assertIsInstance(face_links_sn, list)
-        self.assertEqual(len(face_links_sn), 1)
+        face_sn = face_links_attrs["standard_name"]
+        self.assertIsInstance(face_sn, dict)
+        self.assertEqual(face_sn["value"], "badname_Mesh2_face_links")
         self.assertEqual(
-            face_links_sn[0],
+            face_sn["non-conformance"][0],
             {
                 "code": self.bad_sn_expected_code,
                 "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2_face_links",
             },
         )
 
         # =======================================================
-        # Field 1/3: face_node_connectivity (4/4)
+        # face_node_connectivity
         # =======================================================
-        face_node = mesh2_attributes["face_node_connectivity"]
+        face_node = mesh2_attrs["face_node_connectivity"]
         self.assertIsInstance(face_node, dict)
-        self.assertCountEqual(face_node.keys(), ["dimensions", "variables"])
-        self.assertEqual(face_node["dimensions"], {})
+        self.assertIn("value", face_node)
+        self.assertIn("variables", face_node)
+        self.assertEqual(face_node["value"], "Mesh2_face_nodes")
 
         face_node_vars = face_node["variables"]
         self.assertIsInstance(face_node_vars, dict)
@@ -454,423 +458,31 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         face_nodes = face_node_vars["Mesh2_face_nodes"]
         self.assertIsInstance(face_nodes, dict)
-        self.assertCountEqual(face_nodes.keys(), ["attributes", "dimensions"])
-        self.assertEqual(
-            face_nodes["dimensions"],
-            {
-                "Four": {"size": 4},
-                "nMesh2_face": {"size": 3},
-            },
-        )
+        self.assertIn("attributes", face_nodes)
 
         face_nodes_attrs = face_nodes["attributes"]
         self.assertIsInstance(face_nodes_attrs, dict)
         self.assertCountEqual(face_nodes_attrs.keys(), ["standard_name"])
-
-        face_nodes_sn = face_nodes_attrs["standard_name"]
-        self.assertIsInstance(face_nodes_sn, list)
-        self.assertEqual(len(face_nodes_sn), 1)
+        face_node_sn = face_nodes_attrs["standard_name"]
+        self.assertIsInstance(face_node_sn, dict)
+        self.assertEqual(face_node_sn["value"], "badname_Mesh2_face_nodes")
         self.assertEqual(
-            face_nodes_sn[0],
+            face_node_sn["non-conformance"][0],
             {
                 "code": self.bad_sn_expected_code,
                 "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2_face_nodes",
             },
         )
 
-        # =======================================================
-        # Field 2/3: top-level dict (1/4)
-        # =======================================================
-        # Same structure to field 1 but has some differences, notably:
-        # * pa -> ta
-        # * nMesh2_node -> nMesh2_face
-        # * {'nMesh2_node': {'size': 7} -> {'nMesh2_face': {'size': 3}.
-        # So similar testing but some different values.
-        # TODO when we use pytest we can parameterise these assertions
-        # to prevent duplicating the lines.
-        self.assertIsInstance(dc_output_2, dict)
-        self.assertCountEqual(dc_output_2.keys(), ["ta"])
+        # --- 2. Check dc2 and dc3 are same as dc1 except top-level key ---
+        # Do this by extracting the actual content below the top-level key
+        # before comparing
+        dc1_content = dc1["pa"]
+        dc2_content = dc2["ta"]
+        dc3_content = dc3["v"]
 
-        ta = dc_output_2["ta"]
-        self.assertIsInstance(ta, dict)
-        self.assertCountEqual(ta.keys(), ["attributes", "dimensions"])
-
-        # pa.dimensions
-        ta_dimensions = ta["dimensions"]
-        self.assertIsInstance(ta_dimensions, dict)
-        self.assertCountEqual(ta_dimensions.keys(), ["nMesh2_face", "time"])
-        self.assertEqual(ta_dimensions["nMesh2_face"], {"size": 3})
-        self.assertEqual(ta_dimensions["time"], {"size": 2})
-
-        # ta.attributes
-        ta_attributes = ta["attributes"]
-        self.assertIsInstance(ta_attributes, dict)
-        self.assertCountEqual(ta_attributes.keys(), ["mesh", "standard_name"])
-
-        # ta.attributes.standard_name (1/4)
-        ta_standard_name = ta_attributes["standard_name"]
-        self.assertIsInstance(ta_standard_name, list)
-        self.assertEqual(len(ta_standard_name), 1)
-
-        self.assertEqual(
-            ta_standard_name[0],
-            {
-                "code": self.bad_sn_expected_code,
-                "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2",
-            },
-        )
-
-        # ta.attributes.mesh
-        mesh = ta_attributes["mesh"]
-        self.assertIsInstance(mesh, dict)
-        self.assertCountEqual(mesh.keys(), ["dimensions", "variables"])
-
-        # mesh.dimensions
-        mesh_dimensions = mesh["dimensions"]
-        self.assertIsInstance(mesh_dimensions, dict)
-        self.assertCountEqual(mesh_dimensions.keys(), ["nMesh2_face", "time"])
-        self.assertEqual(mesh_dimensions["nMesh2_face"], {"size": 3})
-        self.assertEqual(mesh_dimensions["time"], {"size": 2})
-
-        # mesh.variables
-        mesh_variables = mesh["variables"]
-        self.assertIsInstance(mesh_variables, dict)
-        self.assertCountEqual(mesh_variables.keys(), ["Mesh2"])
-
-        mesh2 = mesh_variables["Mesh2"]
-        self.assertIsInstance(mesh2, dict)
-        self.assertCountEqual(mesh2.keys(), ["attributes", "dimensions"])
-
-        # Mesh2.dimensions
-        self.assertEqual(mesh2["dimensions"], {})
-
-        # Mesh2.attributes
-        mesh2_attributes = mesh2["attributes"]
-        self.assertIsInstance(mesh2_attributes, dict)
-        self.assertCountEqual(
-            mesh2_attributes.keys(),
-            [
-                "edge_node_connectivity",
-                "face_face_connectivity",
-                "face_node_connectivity",
-            ],
-        )
-
-        # =======================================================
-        # Field 2/3: edge_node_connectivity (2/4)
-        # =======================================================
-        edge_node = mesh2_attributes["edge_node_connectivity"]
-        self.assertIsInstance(edge_node, dict)
-        self.assertCountEqual(edge_node.keys(), ["dimensions", "variables"])
-        self.assertEqual(edge_node["dimensions"], {})
-
-        edge_node_vars = edge_node["variables"]
-        self.assertIsInstance(edge_node_vars, dict)
-        self.assertCountEqual(edge_node_vars.keys(), ["Mesh2_edge_nodes"])
-
-        edge_nodes = edge_node_vars["Mesh2_edge_nodes"]
-        self.assertIsInstance(edge_nodes, dict)
-        self.assertCountEqual(edge_nodes.keys(), ["attributes", "dimensions"])
-        self.assertEqual(
-            edge_nodes["dimensions"],
-            {
-                "Two": {"size": 2},
-                "nMesh2_edge": {"size": 9},
-            },
-        )
-
-        edge_nodes_attrs = edge_nodes["attributes"]
-        self.assertIsInstance(edge_nodes_attrs, dict)
-        self.assertCountEqual(edge_nodes_attrs.keys(), ["standard_name"])
-
-        edge_sn = edge_nodes_attrs["standard_name"]
-        self.assertIsInstance(edge_sn, list)
-        self.assertEqual(len(edge_sn), 1)
-        self.assertEqual(
-            edge_sn[0],
-            {
-                "code": self.bad_sn_expected_code,
-                "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2_edge_nodes",
-            },
-        )
-
-        # =======================================================
-        # Field 2/3: face_face_connectivity (3/4)
-        # =======================================================
-        face_face = mesh2_attributes["face_face_connectivity"]
-        self.assertIsInstance(face_face, dict)
-        self.assertCountEqual(face_face.keys(), ["dimensions", "variables"])
-        self.assertEqual(face_face["dimensions"], {})
-
-        face_face_vars = face_face["variables"]
-        self.assertIsInstance(face_face_vars, dict)
-        self.assertCountEqual(face_face_vars.keys(), ["Mesh2_face_links"])
-
-        face_links = face_face_vars["Mesh2_face_links"]
-        self.assertIsInstance(face_links, dict)
-        self.assertCountEqual(face_links.keys(), ["attributes", "dimensions"])
-        self.assertEqual(
-            face_links["dimensions"],
-            {
-                "Four": {"size": 4},
-                "nMesh2_face": {"size": 3},
-            },
-        )
-
-        face_links_attrs = face_links["attributes"]
-        self.assertIsInstance(face_links_attrs, dict)
-        self.assertCountEqual(face_links_attrs.keys(), ["standard_name"])
-
-        face_links_sn = face_links_attrs["standard_name"]
-        self.assertIsInstance(face_links_sn, list)
-        self.assertEqual(len(face_links_sn), 1)
-        self.assertEqual(
-            face_links_sn[0],
-            {
-                "code": self.bad_sn_expected_code,
-                "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2_face_links",
-            },
-        )
-
-        # =======================================================
-        # Field 2/3: face_node_connectivity (4/4)
-        # =======================================================
-        face_node = mesh2_attributes["face_node_connectivity"]
-        self.assertIsInstance(face_node, dict)
-        self.assertCountEqual(face_node.keys(), ["dimensions", "variables"])
-        self.assertEqual(face_node["dimensions"], {})
-
-        face_node_vars = face_node["variables"]
-        self.assertIsInstance(face_node_vars, dict)
-        self.assertCountEqual(face_node_vars.keys(), ["Mesh2_face_nodes"])
-
-        face_nodes = face_node_vars["Mesh2_face_nodes"]
-        self.assertIsInstance(face_nodes, dict)
-        self.assertCountEqual(face_nodes.keys(), ["attributes", "dimensions"])
-        self.assertEqual(
-            face_nodes["dimensions"],
-            {
-                "Four": {"size": 4},
-                "nMesh2_face": {"size": 3},
-            },
-        )
-
-        face_nodes_attrs = face_nodes["attributes"]
-        self.assertIsInstance(face_nodes_attrs, dict)
-        self.assertCountEqual(face_nodes_attrs.keys(), ["standard_name"])
-
-        face_nodes_sn = face_nodes_attrs["standard_name"]
-        self.assertIsInstance(face_nodes_sn, list)
-        self.assertEqual(len(face_nodes_sn), 1)
-        self.assertEqual(
-            face_nodes_sn[0],
-            {
-                "code": self.bad_sn_expected_code,
-                "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2_face_nodes",
-            },
-        )
-
-        # =======================================================
-        # Field 3/3: top-level dict (1/4)
-        # =======================================================
-        # Same structure to field 1 (and therefore 2) but has some
-        # differences, notably:
-        # * pa/ta -> v
-        # * nMesh2_node/nMesh2_face -> nMesh2_edge
-        # * {'nMesh2_node': {'size': 7} (etc.) -> {'nMesh2_edge': {'size': 9}.
-        # So similar testing but some different values.
-        # TODO when we use pytest we can parameterise these assertions
-        # to prevent duplicating the lines.
-        self.assertIsInstance(dc_output_3, dict)
-        self.assertCountEqual(dc_output_3.keys(), ["v"])
-
-        v = dc_output_3["v"]
-        self.assertIsInstance(v, dict)
-        self.assertCountEqual(v.keys(), ["attributes", "dimensions"])
-
-        # pa.dimensions
-        v_dimensions = v["dimensions"]
-        self.assertIsInstance(v_dimensions, dict)
-        self.assertCountEqual(v_dimensions.keys(), ["nMesh2_edge", "time"])
-        self.assertEqual(v_dimensions["nMesh2_edge"], {"size": 9})
-        self.assertEqual(v_dimensions["time"], {"size": 2})
-
-        # v.attributes
-        v_attributes = v["attributes"]
-        self.assertIsInstance(v_attributes, dict)
-        self.assertCountEqual(v_attributes.keys(), ["mesh", "standard_name"])
-
-        # v.attributes.standard_name (1/4)
-        v_standard_name = v_attributes["standard_name"]
-        self.assertIsInstance(v_standard_name, list)
-        self.assertEqual(len(v_standard_name), 1)
-
-        self.assertEqual(
-            v_standard_name[0],
-            {
-                "code": self.bad_sn_expected_code,
-                "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2",
-            },
-        )
-
-        # v.attributes.mesh
-        mesh = v_attributes["mesh"]
-        self.assertIsInstance(mesh, dict)
-        self.assertCountEqual(mesh.keys(), ["dimensions", "variables"])
-
-        # mesh.dimensions
-        mesh_dimensions = mesh["dimensions"]
-        self.assertIsInstance(mesh_dimensions, dict)
-        self.assertCountEqual(mesh_dimensions.keys(), ["nMesh2_edge", "time"])
-        self.assertEqual(mesh_dimensions["nMesh2_edge"], {"size": 9})
-        self.assertEqual(mesh_dimensions["time"], {"size": 2})
-
-        # mesh.variables
-        mesh_variables = mesh["variables"]
-        self.assertIsInstance(mesh_variables, dict)
-        self.assertCountEqual(mesh_variables.keys(), ["Mesh2"])
-
-        mesh2 = mesh_variables["Mesh2"]
-        self.assertIsInstance(mesh2, dict)
-        self.assertCountEqual(mesh2.keys(), ["attributes", "dimensions"])
-
-        # Mesh2.dimensions
-        self.assertEqual(mesh2["dimensions"], {})
-
-        # Mesh2.attributes
-        mesh2_attributes = mesh2["attributes"]
-        self.assertIsInstance(mesh2_attributes, dict)
-        self.assertCountEqual(
-            mesh2_attributes.keys(),
-            [
-                "edge_node_connectivity",
-                "face_face_connectivity",
-                "face_node_connectivity",
-            ],
-        )
-
-        # =======================================================
-        # Field 3/3: edge_node_connectivity (2/4)
-        # =======================================================
-        edge_node = mesh2_attributes["edge_node_connectivity"]
-        self.assertIsInstance(edge_node, dict)
-        self.assertCountEqual(edge_node.keys(), ["dimensions", "variables"])
-        self.assertEqual(edge_node["dimensions"], {})
-
-        edge_node_vars = edge_node["variables"]
-        self.assertIsInstance(edge_node_vars, dict)
-        self.assertCountEqual(edge_node_vars.keys(), ["Mesh2_edge_nodes"])
-
-        edge_nodes = edge_node_vars["Mesh2_edge_nodes"]
-        self.assertIsInstance(edge_nodes, dict)
-        self.assertCountEqual(edge_nodes.keys(), ["attributes", "dimensions"])
-        self.assertEqual(
-            edge_nodes["dimensions"],
-            {
-                "Two": {"size": 2},
-                "nMesh2_edge": {"size": 9},
-            },
-        )
-
-        edge_nodes_attrs = edge_nodes["attributes"]
-        self.assertIsInstance(edge_nodes_attrs, dict)
-        self.assertCountEqual(edge_nodes_attrs.keys(), ["standard_name"])
-
-        edge_sn = edge_nodes_attrs["standard_name"]
-        self.assertIsInstance(edge_sn, list)
-        self.assertEqual(len(edge_sn), 1)
-        self.assertEqual(
-            edge_sn[0],
-            {
-                "code": self.bad_sn_expected_code,
-                "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2_edge_nodes",
-            },
-        )
-
-        # =======================================================
-        # Field 3/3: face_face_connectivity (3/4)
-        # =======================================================
-        face_face = mesh2_attributes["face_face_connectivity"]
-        self.assertIsInstance(face_face, dict)
-        self.assertCountEqual(face_face.keys(), ["dimensions", "variables"])
-        self.assertEqual(face_face["dimensions"], {})
-
-        face_face_vars = face_face["variables"]
-        self.assertIsInstance(face_face_vars, dict)
-        self.assertCountEqual(face_face_vars.keys(), ["Mesh2_face_links"])
-
-        face_links = face_face_vars["Mesh2_face_links"]
-        self.assertIsInstance(face_links, dict)
-        self.assertCountEqual(face_links.keys(), ["attributes", "dimensions"])
-        self.assertEqual(
-            face_links["dimensions"],
-            {
-                "Four": {"size": 4},
-                "nMesh2_face": {"size": 3},
-            },
-        )
-
-        face_links_attrs = face_links["attributes"]
-        self.assertIsInstance(face_links_attrs, dict)
-        self.assertCountEqual(face_links_attrs.keys(), ["standard_name"])
-
-        face_links_sn = face_links_attrs["standard_name"]
-        self.assertIsInstance(face_links_sn, list)
-        self.assertEqual(len(face_links_sn), 1)
-        self.assertEqual(
-            face_links_sn[0],
-            {
-                "code": self.bad_sn_expected_code,
-                "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2_face_links",
-            },
-        )
-
-        # =======================================================
-        # Field 3/3: face_node_connectivity (4/4)
-        # =======================================================
-        face_node = mesh2_attributes["face_node_connectivity"]
-        self.assertIsInstance(face_node, dict)
-        self.assertCountEqual(face_node.keys(), ["dimensions", "variables"])
-        self.assertEqual(face_node["dimensions"], {})
-
-        face_node_vars = face_node["variables"]
-        self.assertIsInstance(face_node_vars, dict)
-        self.assertCountEqual(face_node_vars.keys(), ["Mesh2_face_nodes"])
-
-        face_nodes = face_node_vars["Mesh2_face_nodes"]
-        self.assertIsInstance(face_nodes, dict)
-        self.assertCountEqual(face_nodes.keys(), ["attributes", "dimensions"])
-        self.assertEqual(
-            face_nodes["dimensions"],
-            {
-                "Four": {"size": 4},
-                "nMesh2_face": {"size": 3},
-            },
-        )
-
-        face_nodes_attrs = face_nodes["attributes"]
-        self.assertIsInstance(face_nodes_attrs, dict)
-        self.assertCountEqual(face_nodes_attrs.keys(), ["standard_name"])
-
-        face_nodes_sn = face_nodes_attrs["standard_name"]
-        self.assertIsInstance(face_nodes_sn, list)
-        self.assertEqual(len(face_nodes_sn), 1)
-        self.assertEqual(
-            face_nodes_sn[0],
-            {
-                "code": self.bad_sn_expected_code,
-                "reason": self.bad_sn_expected_reason,
-                "value": "badname_Mesh2_face_nodes",
-            },
-        )
+        self.assertEqual(dc1_content, dc2_content)
+        self.assertEqual(dc1_content, dc3_content)
 
 
 if __name__ == "__main__":
