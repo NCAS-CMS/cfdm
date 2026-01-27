@@ -129,12 +129,14 @@ class Attribute:
 
             x.__repr__() <==> repr(x)
             """
-            return str({
-                "value": self.value,
-                "variables": self.variables,
-                "dimensions": self.dimensions,
-                "non-conformance": self.non_conformances,
-            })
+            return str(
+                {
+                    "value": self.value,
+                    "variables": self.variables,
+                    "dimensions": self.dimensions,
+                    "non-conformance": self.non_conformances,
+                }
+            )
 
     def equals(self, other):
         """Equality checking between same class."""
@@ -204,11 +206,13 @@ class Dimension:
 
         x.__repr__() <==> repr(x)
         """
-        return str({
-            "size": self.size,
-            "variables": self.variables,
-            "non-conformance": self.non_conformances,
-        })
+        return str(
+            {
+                "size": self.size,
+                "variables": self.variables,
+                "non-conformance": self.non_conformances,
+            }
+        )
 
     def equals(self, other):
         """Equality checking between same class."""
@@ -292,11 +296,13 @@ class Variable:
 
         x.__repr__() <==> repr(x)
         """
-        return str({
-            "attributes": self.attributes,
-            "dimensions": self.dimensions,
-            "non-conformance": self.non_conformances,
-        })
+        return str(
+            {
+                "attributes": self.attributes,
+                "dimensions": self.dimensions,
+                "non-conformance": self.non_conformances,
+            }
+        )
 
     def get_variable(self, var_name):
         """Fetch a child variable connected via an attribute, else is False."""

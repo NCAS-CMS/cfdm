@@ -1,5 +1,6 @@
 import logging
 from functools import lru_cache
+
 # Prefer using built-in urllib to extract XML from cf-convention.github.io repo
 # over the 'github' module to use the GitHub API directly, because it avoids
 # the need for another dependency to the CF Data Tools.
@@ -96,7 +97,7 @@ def get_all_current_standard_names(include_aliases=False):
     """
     logger.info(
         "Retrieving XML for set of current standard names from: ",
-        _STD_NAME_CURRENT_XML_URL
+        _STD_NAME_CURRENT_XML_URL,
     )  # pragma: no cover
     with request.urlopen(_STD_NAME_CURRENT_XML_URL) as response:
         all_snames_xml = response.read()
@@ -106,4 +107,5 @@ def get_all_current_standard_names(include_aliases=False):
     )  # pragma: no cover
 
     return _extract_names_from_xml(
-        all_snames_xml, include_aliases=include_aliases)
+        all_snames_xml, include_aliases=include_aliases
+    )

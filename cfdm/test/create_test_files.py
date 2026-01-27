@@ -2388,10 +2388,7 @@ ugrid_1_valid_standard_names = [
     "northward_wind",
     "air_pressure",
 ]
-ugrid_1 = _make_ugrid_1(
-    "ugrid_1.nc",
-    ugrid_1_valid_standard_names
-)
+ugrid_1 = _make_ugrid_1("ugrid_1.nc", ugrid_1_valid_standard_names)
 ugrid_1_bad_standard_names = [
     "badname_" + name for name in ugrid_1_valid_standard_names
 ]
@@ -2406,7 +2403,8 @@ ugrid_1_bad_standard_names += [
 ]
 
 ugrid_1_bad_names = _make_ugrid_1(
-    "ugrid_1_bad_names.nc", ugrid_1_bad_standard_names,
+    "ugrid_1_bad_names.nc",
+    ugrid_1_bad_standard_names,
 )
 ugrid_2 = _make_ugrid_2("ugrid_2.nc")
 

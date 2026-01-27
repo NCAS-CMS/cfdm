@@ -4,6 +4,7 @@ from uuid import uuid4
 from math import nan
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 import numpy as np
@@ -78,10 +79,14 @@ class Checker(Report):
     """
 
     def _check_standard_names(
-            self, top_ancestor_ncvar,
-            ncvar, ncvar_attrs, direct_parent_ncvar=None,
-            check_is_string=True, check_is_in_table=True,
-            check_is_in_custom_list=False,
+        self,
+        top_ancestor_ncvar,
+        ncvar,
+        ncvar_attrs,
+        direct_parent_ncvar=None,
+        check_is_string=True,
+        check_is_in_table=True,
+        check_is_in_custom_list=False,
     ):
         """Check the `(computed_)standard_name` attribute for validity.
 
@@ -186,12 +191,8 @@ class Checker(Report):
         for sn_attr in ("standard_name", "computed_standard_name"):
             # 1. Check if there is a (computed_)standard_name property
             sn_value = ncvar_attrs.get(sn_attr)
-            attribute_value = {
-                f"{ncvar}:{sn_attr}": sn_value
-            }
-            logger.debug(
-                f"Found a {sn_attr} of '{sn_value}' on {ncvar}"
-            )
+            attribute_value = {f"{ncvar}:{sn_attr}": sn_value}
+            logger.debug(f"Found a {sn_attr} of '{sn_value}' on {ncvar}")
 
             if not sn_value:
                 continue
@@ -199,7 +200,7 @@ class Checker(Report):
             any_sn_found = True
             # 2. Check, if requested, if name is a native or numpy string type
             if check_is_string and not (
-                    isinstance(sn_value, (str, np.str_, np.bytes_))
+                isinstance(sn_value, (str, np.str_, np.bytes_))
             ):
                 invalid_sn_found = True
                 self._add_message(
@@ -216,8 +217,8 @@ class Checker(Report):
 
             # 3. Check, if requested, that the SN is in the custom list given
             elif (
-                    check_is_in_custom_list and sn_value not in
-                    check_is_in_custom_list
+                check_is_in_custom_list
+                and sn_value not in check_is_in_custom_list
             ):
                 invalid_sn_found = True
                 self._add_message(
@@ -234,8 +235,8 @@ class Checker(Report):
 
             # 4. Check, if requested, if string is in the list of valid names
             elif (
-                    check_is_in_table and sn_value not in
-                    get_all_current_standard_names()
+                check_is_in_table
+                and sn_value not in get_all_current_standard_names()
             ):
                 invalid_sn_found = True
                 logger.warning(
@@ -1344,8 +1345,9 @@ class Checker(Report):
             for tie_point_ncvar in coords:
                 # TODO: is this necessary or is it covered by the interp_ncvar
                 # standard name check already?
-                tie_point_interp_ncvar_attrs = g[
-                    "variable_attributes"][tie_point_ncvar]
+                tie_point_interp_ncvar_attrs = g["variable_attributes"][
+                    tie_point_ncvar
+                ]
                 self._check_standard_names(
                     parent_ncvar,
                     tie_point_ncvar,
@@ -3066,8 +3068,10 @@ class Checker(Report):
         # SLB check attribute in question is always "location_index_set" here
         # an verify whether dimensions should be registered here
         self._include_component_report(
-            parent_ncvar, location_index_set_ncvar, "location_index_set",
-            dimensions=g["variable_dimensions"][location_index_set_ncvar]
+            parent_ncvar,
+            location_index_set_ncvar,
+            "location_index_set",
+            dimensions=g["variable_dimensions"][location_index_set_ncvar],
         )
         return ok
 
@@ -3157,9 +3161,7 @@ class Checker(Report):
 
         # SLB check attribute in question is always "mesh" here ->
         # looks like it could be "location" in some cases? No dims it seems?
-        self._include_component_report(
-            parent_ncvar, mesh_ncvar, "mesh"
-        )
+        self._include_component_report(parent_ncvar, mesh_ncvar, "mesh")
         return ok
 
     def _ugrid_check_connectivity_variable(

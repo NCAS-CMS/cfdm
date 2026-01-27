@@ -1,6 +1,7 @@
 import logging
 
 from .datamodel import NonConformance, Attribute, Variable
+
 # TODO yet to incorporate dimensions (from .datamodel import Dimension) into
 # the reporting, since the initial scope is to report issues with standard
 # names. However the Conformance Data Model has set up the class Dimension
@@ -10,11 +11,12 @@ from .datamodel import NonConformance, Attribute, Variable
 logger = logging.getLogger(__name__)
 
 
-class Report():
+class Report:
     """Reporting of CF Compliance non-conformance for field creation from netCDF.
 
     Holds methods for reporting about non-compliance.
     """
+
     def __init__(self):
         self.read_vars = {}  # intended to be overloaded by NetCDFRead
         self.dataset_compliance = {}
@@ -127,25 +129,31 @@ class Report():
 
         # 1. Create the relevant non-compliance objects
         # a) Non-conformance description for the message in question
-        nc = [NonConformance(message, code),]
+        nc = [
+            NonConformance(message, code),
+        ]
 
         # b) Attributes of relevance - direct attribute and associated
         attr_lowest_nc = Attribute(
-            attribute_name, value=higher_attr_value, non_conformances=nc)
+            attribute_name, value=higher_attr_value, non_conformances=nc
+        )
         attr_highest_nc = Attribute(
-            attribute_name, value=attribute_value, non_conformances=nc)
+            attribute_name, value=attribute_value, non_conformances=nc
+        )
 
         # c) Variables of relevance - direct variable and those in association
         # If exist already, add to existing report. Note we also create
         # a direct_parent_ncvar_nc if appropriate, below.
         ncvar_nc = self._get_variable_non_compliance(ncvar)
         top_parent_ncvar_nc = self._get_variable_non_compliance(
-            top_ancestor_ncvar)
+            top_ancestor_ncvar
+        )
 
         # 2. Make associations as appropriate
         if direct_parent_ncvar:
             direct_parent_ncvar_nc = self._get_variable_non_compliance(
-                direct_parent_ncvar)
+                direct_parent_ncvar
+            )
 
             # Dicts are optimised for key-value lookup, but this requires
             # value-key lookup - find a better way to get relevant attr using
@@ -155,7 +163,11 @@ class Report():
             store_attr = reverse_varattrs[ncvar]
             # Attribute value is same as the variable name in these cases
             store_attr_nc = Attribute(
-                store_attr, value=ncvar, variables=[ncvar_nc,],
+                store_attr,
+                value=ncvar,
+                variables=[
+                    ncvar_nc,
+                ],
             )
 
             ncvar_nc.add_attribute(attr_highest_nc)
@@ -182,7 +194,8 @@ class Report():
         )  # pragma: no cover
 
     def _include_component_report(
-            self, parent_ncvar, ncvar, attribute, dimensions=None):
+        self, parent_ncvar, ncvar, attribute, dimensions=None
+    ):
         """Include a component in the dataset compliance report.
 
         .. versionadded:: (cfdm) 1.11.0.0
@@ -217,7 +230,8 @@ class Report():
 
         """
         component_report = self._get_variable_non_compliance_report(
-            parent_ncvar)
+            parent_ncvar
+        )
         # Unlike for 'attribute' input to _add_message, this 'attribute' is the
         # the attribute_name only and not "var_name:attribute_name" to split
         if component_report:

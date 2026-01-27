@@ -332,7 +332,7 @@ from .abstract import Container
 from .conformance import (
     get_all_current_standard_names,
     _extract_names_from_xml,
-    _STD_NAME_CURRENT_XML_URL
+    _STD_NAME_CURRENT_XML_URL,
 )
 
 # --------------------------------------------------------------------

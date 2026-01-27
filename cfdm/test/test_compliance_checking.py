@@ -19,9 +19,7 @@ tmpfiles = [
     tempfile.mkstemp("_test_compliance_check.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-(
-    tmpfile0,
-) = tmpfiles
+(tmpfile0,) = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -64,7 +62,8 @@ class ComplianceCheckingTest(unittest.TestCase):
     good_snames_general_field = cfdm.example_field(1)
     # TODO set bad names and then write to tempfile and read back in
     bad_snames_general_field = _create_noncompliant_names_field(
-        good_snames_general_field, tmpfile0)
+        good_snames_general_field, tmpfile0
+    )
 
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
@@ -139,27 +138,28 @@ class ComplianceCheckingTest(unittest.TestCase):
         table_end = "</standard_name_table>"
 
         two_name_output = cfdm.conformance._extract_names_from_xml(
-            two_name_table_start + table_end, include_aliases=False)
+            two_name_table_start + table_end, include_aliases=False
+        )
         self.assertIsInstance(two_name_output, list)
         self.assertEqual(len(two_name_output), 2)
         self.assertIn(
             "acoustic_area_backscattering_strength_in_sea_water",
-            two_name_output
+            two_name_output,
         )
-        self.assertIn(
-            "acoustic_centre_of_mass_in_sea_water", two_name_output)
+        self.assertIn("acoustic_centre_of_mass_in_sea_water", two_name_output)
 
         # No aliases in this table therefore expect same output as before
         # when setting 'include_aliases=True'
         self.assertEqual(
             cfdm.conformance._extract_names_from_xml(
-                two_name_table_start + table_end, include_aliases=True),
-            two_name_output
+                two_name_table_start + table_end, include_aliases=True
+            ),
+            two_name_output,
         )
 
         aliases_inc_output = cfdm.conformance._extract_names_from_xml(
             two_name_table_start + include_two_aliases + table_end,
-            include_aliases=True
+            include_aliases=True,
         )
         self.assertIsInstance(aliases_inc_output, list)
         self.assertEqual(len(aliases_inc_output), 4)
@@ -167,12 +167,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertTrue(set(two_name_output).issubset(aliases_inc_output))
         # Also should have the aliases this time
         self.assertIn(
-            "chlorophyll_concentration_in_sea_water",
-            aliases_inc_output
+            "chlorophyll_concentration_in_sea_water", aliases_inc_output
         )
         self.assertIn(
-            "concentration_of_chlorophyll_in_sea_water",
-            aliases_inc_output
+            "concentration_of_chlorophyll_in_sea_water", aliases_inc_output
         )
 
         # When setting 'include_aliases=True' should ignore the two aliases
@@ -180,9 +178,9 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(
             cfdm.conformance._extract_names_from_xml(
                 two_name_table_start + include_two_aliases + table_end,
-                include_aliases=False
+                include_aliases=False,
             ),
-            two_name_output
+            two_name_output,
         )
 
     def test_get_all_current_standard_names(self):
@@ -192,9 +190,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         sn_xml_url = cfdm.conformance._STD_NAME_CURRENT_XML_URL
         with request.urlopen(sn_xml_url) as response:
             self.assertEqual(
-                response.status, 200,
+                response.status,
+                200,
                 "Standard name XML inaccesible: unexpected status code "
-                f"{response.status} for reference URL of: {sn_xml_url}"
+                f"{response.status} for reference URL of: {sn_xml_url}",
             )  # 200 == OK
         # SLB-DH discuss TODO: what behaviour do we want for the (v. rare)
         # case that the URL isn't accessible? Ideally we can skip standard
@@ -219,7 +218,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # Check a long name with plenty of underscores is in there too
         self.assertIn(
             "integral_wrt_time_of_radioactivity_concentration_of_113Cd_in_air",
-            output
+            output,
         )
 
         # Check a standard name with known alias
@@ -250,7 +249,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         """Test compliance checking on a compliant non-UGRID field."""
         f = self.good_snames_general_field
         dc_output = f.dataset_compliance()
-        self.assertEqual(dc_output, {'CF version': '1.12'})
+        self.assertEqual(dc_output, {"CF version": "1.12"})
 
     def test_standard_names_validation_noncompliant_field(self):
         """Test compliance checking on a non-compliant non-UGRID field."""
@@ -258,44 +257,44 @@ class ComplianceCheckingTest(unittest.TestCase):
         dc_output = f.dataset_compliance()
 
         # 1. Top-level CF version
-        self.assertIn('CF version', dc_output)
-        self.assertEqual(dc_output['CF version'], self.expected_cf_version)
+        self.assertIn("CF version", dc_output)
+        self.assertEqual(dc_output["CF version"], self.expected_cf_version)
 
         # 2. Exactly one other top-level key
-        top_keys = [k for k in dc_output.keys() if k != 'CF version']
+        top_keys = [k for k in dc_output.keys() if k != "CF version"]
         self.assertEqual(len(top_keys), 1)
         top_key = top_keys[0]
         self.assertEqual(top_key, self.expected_top_key)
 
         # 3. Attributes dict
         top_dict = dc_output[top_key]
-        self.assertIn('attributes', top_dict)
-        attrs = top_dict['attributes']
+        self.assertIn("attributes", top_dict)
+        attrs = top_dict["attributes"]
         self.assertIsInstance(attrs, dict)
-        self.assertIn('standard_name', attrs)
+        self.assertIn("standard_name", attrs)
 
         # 4. standard_name dict
-        sn = attrs['standard_name']
+        sn = attrs["standard_name"]
         self.assertIsInstance(sn, dict)
-        self.assertIn('value', sn)
-        self.assertIn('non-conformance', sn)
+        self.assertIn("value", sn)
+        self.assertIn("non-conformance", sn)
 
-        self.assertEqual(sn['value'], self.expected_sn_value)
+        self.assertEqual(sn["value"], self.expected_sn_value)
 
-        nc_list = sn['non-conformance']
+        nc_list = sn["non-conformance"]
         self.assertIsInstance(nc_list, list)
         self.assertEqual(len(nc_list), 1)
 
         nc = nc_list[0]
         self.assertIsInstance(nc, dict)
-        self.assertEqual(nc['code'], self.bad_sn_expected_code)
-        self.assertEqual(nc['reason'], self.bad_sn_expected_reason)
+        self.assertEqual(nc["code"], self.bad_sn_expected_code)
+        self.assertEqual(nc["reason"], self.bad_sn_expected_reason)
 
     def test_standard_names_validation_compliant_ugrid_field(self):
         """Test compliance checking on a compliant UGRID field."""
         f = self.good_ugrid_sn_f
         dc_output = f.dataset_compliance()
-        self.assertEqual(dc_output, {'CF version': '1.12'})
+        self.assertEqual(dc_output, {"CF version": "1.12"})
 
     def test_standard_names_validation_noncompliant_ugrid_fields(self):
         """Test compliance checking on non-compliant UGRID fields."""
@@ -372,7 +371,9 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertIsInstance(mesh2_standard_name, dict)
         self.assertIn("value", mesh2_standard_name)
         self.assertIn("non-conformance", mesh2_standard_name)
-        self.assertEqual(mesh2_standard_name["value"], "badname_Mesh2_edge_nodes")
+        self.assertEqual(
+            mesh2_standard_name["value"], "badname_Mesh2_edge_nodes"
+        )
         self.assertEqual(
             mesh2_standard_name["non-conformance"][0],
             {
