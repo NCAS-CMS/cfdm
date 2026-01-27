@@ -1,4 +1,4 @@
-from .checker import Checker, Report
+from .checker import Checker, Report, Mesh
 from .datamodel import NonConformance, Attribute, Dimension, Variable
 from .standardnames import (
     get_all_current_standard_names,
