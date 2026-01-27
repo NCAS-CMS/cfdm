@@ -111,7 +111,9 @@ class Report():
 
         # TODO need better way to access this - inefficient, should be able to
         # use an in-built function!
+        print("ATTR IS", attribute)
         attribute_key = next(iter(attribute))
+        print("ATTR KEY IS", attribute_key)
         higher_attr_value, attribute_name = attribute_key.split(":")
         attribute_value = attribute[attribute_key]
 
@@ -128,6 +130,8 @@ class Report():
         # 1. Create the relevant non-compliance objects
         # a) Non-conformance description for the message in question
         nc = [NonConformance(message, code),]
+        #nc_low = list(nc)  # shallow copy the non-conformances
+        #nc_high = list(nc)
 
         # b) Attributes of relevance - direct attribute and associated
         attr_lowest_nc = Attribute(
@@ -155,24 +159,21 @@ class Report():
             store_attr = reverse_varattrs[ncvar]
             # Attribute value is same as the variable name in these cases
             store_attr_nc = Attribute(
-                store_attr, value=ncvar, variables=[ncvar_nc,])
+                store_attr, value=ncvar, variables=[ncvar_nc,],
+            )
 
             ncvar_nc.add_attribute(attr_highest_nc)
             store_attr_nc.add_variable(ncvar_nc)
             direct_parent_ncvar_nc.add_attribute(store_attr_nc)
             attr_lowest_nc.add_variable(direct_parent_ncvar_nc)
-
-            self.dataset_compliance.add_attribute(attr_highest_nc)
         else:
-            # Need to use copies here to avoid same attributes object
+            # NO need to use copies here to avoid same attributes object
             # being included in the wrong places due to referencing. Don't
             # think deep copies are required but review that assumption.
-            attr_1_nc = copy(attr_lowest_nc)
-            attr_2_nc = copy(attr_highest_nc)
-            top_parent_ncvar_nc.add_attribute(attr_2_nc)
-            attr_1_nc.add_variable(top_parent_ncvar_nc)
+            top_parent_ncvar_nc.add_attribute(attr_highest_nc)
+            attr_lowest_nc.add_variable(top_parent_ncvar_nc)
 
-            self.dataset_compliance.add_attribute(attr_2_nc)
+        self.dataset_compliance.add_attribute(attr_highest_nc)
 
         if dimensions is None:  # pragma: no cover
             dimensions = ""  # pragma: no cover
@@ -234,7 +235,7 @@ class Report():
             self.dataset_compliance.add_attribute(attr_nc)
 
     def _get_variable_non_compliance_report(self, var):
-        """TODO."""
+        """Return if present a Variable NonCompliance stored in the report."""
         component_report = False
         for variable in self.variable_report:
             if variable.name == var:
@@ -243,16 +244,13 @@ class Report():
         return False
 
     def _get_variable_non_compliance(self, var):
-        """Get a variable's NonCompliance stored in the dataset compliance."""
+        """Return an existing else new Variable NonCompliance for a variable."""
         g = self.read_vars
 
         var_nc = self._get_variable_non_compliance_report(var)
 
         if not var_nc:
-            print(f"New, creating: {var}")
             var_nc = Variable(var)
-        else:
-            print(f"Using existing NC for {var}: {var_nc}")
+            self.variable_report.append(var_nc)
 
-        self.variable_report.append(var_nc)
         return var_nc

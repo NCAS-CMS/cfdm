@@ -56,6 +56,8 @@ class Attribute:
         self.value = value
 
         # Must be a non-empty list of NonConformance objects
+        # TODO In the UML this is the case, but in practice not so, the issue
+        # could be registered further down via associated variable children?
         # if (
         #     not isinstance(non_conformances, list)
         #     or not non_conformances
@@ -64,7 +66,7 @@ class Attribute:
         #     )
         # ):
         #     raise TypeError(
-        #         f"Parameter 'non_conformances' for Dimension {name} "
+        #         f"Parameter 'non_conformances' for Attribute {name} "
         #         "must be a non-empty list of NonConformance instances."
         #     )
 
@@ -88,8 +90,6 @@ class Attribute:
         # Check if already there first
         for vari in self.variables:
             if vari.equals(var):
-                print("VAR already exists!, COMBINING")
-                # Need to combine components
                 var.combine(vari)
                 return vari
 
@@ -169,17 +169,17 @@ class Dimension:
         self.non_conformances = non_conformances or []
 
         # Must be a non-empty list of NonConformance objects
-        # if (
-        #     not isinstance(non_conformances, list)
-        #     or not non_conformances
-        #     or not all(
-        #         isinstance(nc, NonConformance) for nc in non_conformances
-        #     )
-        # ):
-        #     raise TypeError(
-        #         f"Parameter 'non_conformances' for Dimension {name} "
-        #         "must be a non-empty list of NonConformance instances."
-        #     )
+        if (
+            not isinstance(non_conformances, list)
+            or not non_conformances
+            or not all(
+                isinstance(nc, NonConformance) for nc in non_conformances
+            )
+        ):
+            raise TypeError(
+                f"Parameter 'non_conformances' for Dimension {name} "
+                "must be a non-empty list of NonConformance instances."
+            )
 
         # UML associations
         self.variables = variables or []
@@ -272,11 +272,7 @@ class Variable:
         # Check if already there first
         for attrib in self.attributes:
             if attrib.equals(attr):
-                print("ATTR already exists!, COMBINING")
-                # Need to combine components
                 attr.combine(attrib)
-
-                # NOW REMOVE OTHER FROM LIST!
                 return attrib
 
         self.attributes.append(attr)
@@ -329,7 +325,6 @@ class Variable:
                 if var.name == var_name:
                     count.append(var)
 
-        print("COUNT IS", len(count))
         if count:
             return count[0]
 
