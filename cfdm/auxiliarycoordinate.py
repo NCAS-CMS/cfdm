@@ -49,6 +49,7 @@ class AuxiliaryCoordinate(
     def dump(
         self,
         display=True,
+        data=None,
         _omit_properties=None,
         _key=None,
         _level=0,
@@ -65,6 +66,10 @@ class AuxiliaryCoordinate(
 
         :Parameters:
 
+            {{data: `bool` or `None`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.0.0
+
             display: `bool`, optional
                 If False then return the description as a string. By
                 default the description is printed.
@@ -78,6 +83,7 @@ class AuxiliaryCoordinate(
             _title = "Auxiliary coordinate: " + self.identity(default="")
 
         return super().dump(
+            data=data,
             display=display,
             _key=_key,
             _level=_level,

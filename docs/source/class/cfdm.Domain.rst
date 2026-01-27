@@ -208,6 +208,24 @@ Components
    ~cfdm.Domain.nc_set_component_sample_dimension_groups
    ~cfdm.Domain.nc_clear_component_sample_dimension_groups
 
+
+UGRID
+^^^^^
+
+.. rubric:: Methods
+
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Domain.del_mesh_id
+   ~cfdm.Domain.get_mesh_id
+   ~cfdm.Domain.has_mesh_id
+   ~cfdm.Domain.set_mesh_id
+
+
 Dataset compliance
 ^^^^^^^^^^^^^^^^^^
 

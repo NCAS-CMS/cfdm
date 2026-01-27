@@ -58,6 +58,7 @@ class FieldTest(unittest.TestCase):
         repr(f)
         str(f)
         self.assertIsInstance(f.dump(display=False), str)
+        self.assertIsInstance(f.dump(data=False, display=False), str)
         self.assertEqual(f.construct_type, "field")
 
         # Test when any construct which can have data in fact has no data.

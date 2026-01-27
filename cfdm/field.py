@@ -1081,6 +1081,7 @@ class Field(
                         ):
                             c_start = shape1 * i
                             c_end = c_start + shape1
+
                             last = sum(n > 0 for n in count[c_start:c_end])
 
                             end = start + last
@@ -1787,7 +1788,13 @@ class Field(
         return out
 
     @_display_or_return
-    def dump(self, display=True, _level=0, _title=None):
+    def dump(
+        self,
+        data=None,
+        display=True,
+        _level=0,
+        _title=None,
+    ):
         """A full description of the field construct.
 
         Returns a description of all properties, including those of
@@ -1797,6 +1804,10 @@ class Field(
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
+
+            {{data: `bool` or `None`, optional}}
+
+                .. versionadded:: (cfdm) 1.12.3.0
 
             display: `bool`, optional
                 If False then return the description as a string. By
@@ -1839,12 +1850,12 @@ class Field(
             string.append(self._dump_properties(_level=_level))
 
         # Data
-        data = self.get_data(None)
-        if data is not None:
+        d = self.get_data(None)
+        if d is not None:
             x = [axis_to_name[axis] for axis in self.get_data_axes(default=())]
-
+            x = f"{indent0}Data({', '.join(x)}) = {d._str(data=data)}"
             string.append("")
-            string.append(f"{indent0}Data({', '.join(x)}) = {data}")
+            string.append(x)
             string.append("")
 
         # Quantization
@@ -1874,6 +1885,7 @@ class Field(
         for cid, value in sorted(self.field_ancillaries(todict=True).items()):
             string.append(
                 value.dump(
+                    data=data,
                     display=False,
                     _axes=constructs_data_axes[cid],
                     _axis_names=axis_to_name,
@@ -1883,7 +1895,11 @@ class Field(
             string.append("")
 
         string.append(
-            self.get_domain().dump(display=False, _create_title=False)
+            self.get_domain().dump(
+                data=data,
+                display=False,
+                _create_title=False,
+            )
         )
 
         return "\n".join(string)

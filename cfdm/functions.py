@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from copy import deepcopy
 from functools import total_ordering
 from math import isnan
@@ -10,13 +11,9 @@ from os.path import dirname as os_dirname
 from os.path import join
 
 import numpy as np
-from dask import config as _config
-from dask.base import is_dask_collection
-from dask.utils import parse_bytes
-from uritools import uricompose, urisplit
 
 from . import __cf_version__, __file__, __version__, core
-from .constants import CONSTANTS, ValidLogLevels
+from .constants import ValidLogLevels
 from .core import DocstringRewriteMeta
 from .core.docstring import (
     _docstring_substitution_definitions as _core_docstring_substitution_definitions,
@@ -39,10 +36,7 @@ class DeprecationError(Exception):
 
 
 def configuration(
-    atol=None,
-    rtol=None,
-    log_level=None,
-    chunksize=None,
+    atol=None, rtol=None, log_level=None, chunksize=None, display_data=None
 ):
     """Views and sets constants in the project-wide configuration.
 
@@ -53,6 +47,7 @@ def configuration(
     * `rtol`
     * `log_level`
     * `chunksize`
+    * `display_data`
 
     These are all constants that apply throughout `cfdm`, except for
     in specific functions only if overridden by the corresponding
@@ -69,7 +64,8 @@ def configuration(
 
     .. versionadded:: (cfdm) 1.8.6
 
-    .. seealso:: `atol`, `rtol`, `log_level`, `chunksize`
+    .. seealso:: `atol`, `rtol`, `log_level`, `chunksize`,
+                 `display_data`
 
     :Parameters:
 
@@ -99,6 +95,12 @@ def configuration(
 
             .. versionadded:: (cfdm) 1.11.2.0
 
+        display_data `bool` or `Constant`, optional
+            The new display data option. The default is to not change
+            the current behaviour.
+
+            .. versionadded:: (cfdm) 1.13.0.0
+
     :Returns:
 
         `Configuration`
@@ -114,12 +116,14 @@ def configuration(
     <{{repr}}Configuration: {'atol': 2.220446049250313e-16,
                      'rtol': 2.220446049250313e-16,
                      'log_level': 'WARNING',
-                     'chunksize': 134217728}>
+                     'chunksize': 134217728,
+                     'display_data': True}>
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
 
     Make a change to one constant and see that it is reflected in the
     configuration:
@@ -130,7 +134,8 @@ def configuration(
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
 
     Access specific values by key querying, noting the equivalency to
     using its bespoke function:
@@ -146,12 +151,14 @@ def configuration(
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
     >>> print(cfdm.configuration())
     {'atol': 5e-14,
      'rtol': 2.220446049250313e-16,
      'log_level': 'INFO',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
 
     Set a single constant without using its bespoke function:
 
@@ -159,12 +166,14 @@ def configuration(
     {'atol': 5e-14,
      'rtol': 2.220446049250313e-16,
      'log_level': 'INFO',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
     >>> cfdm.configuration()
     {'atol': 5e-14,
      'rtol': 1e-17,
      'log_level': 'INFO',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
 
     Use as a context manager:
 
@@ -172,7 +181,8 @@ def configuration(
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
     >>> with cfdm.configuration(atol=9, rtol=10):
     ...     print(cfdm.configuration())
     ...
@@ -181,7 +191,8 @@ def configuration(
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
-     'chunksize': 134217728}
+     'chunksize': 134217728,
+     'display_data': True}
 
     """
     return _configuration(
@@ -190,6 +201,7 @@ def configuration(
         new_rtol=rtol,
         new_log_level=log_level,
         new_chunksize=chunksize,
+        new_display_data=display_data,
     )
 
 
@@ -222,20 +234,25 @@ def _configuration(_Configuration, **kwargs):
             values are specified.
 
     """
-    old = {name.lower(): val for name, val in CONSTANTS.items()}
-
-    # Filter out 'None' kwargs from configuration() defaults. Note that this
-    # does not filter out '0' or 'True' values, which is important as the user
-    # might be trying to set those, as opposed to None emerging as default.
-    kwargs = {name: val for name, val in kwargs.items() if val is not None}
-
     # Note values are the functions not the keyword arguments of same name:
     reset_mapping = {
         "new_atol": atol,
         "new_rtol": rtol,
         "new_log_level": log_level,
         "new_chunksize": chunksize,
+        "new_display_data": display_data,
     }
+
+    # Make sure that the constants dictionary is fully populated
+    for func in reset_mapping.values():
+        func()
+
+    old = ConstantAccess.constants(copy=True)
+
+    # Filter out 'None' kwargs from configuration() defaults. Note that this
+    # does not filter out '0' or 'True' values, which is important as the user
+    # might be trying to set those, as opposed to None emerging as default.
+    kwargs = {name: val for name, val in kwargs.items() if val is not None}
 
     old_values = {}
 
@@ -405,7 +422,7 @@ def environment(display=True, paths=True):
     netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
     h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
     h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
-    zarr: 3.0.8 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
+    zarr: 3.1.3 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
     s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
     scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
     dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
@@ -425,7 +442,7 @@ def environment(display=True, paths=True):
     netCDF4: 1.7.2
     h5netcdf: 1.3.0
     h5py: 3.12.1
-    zarr: 3.0.8
+    zarr: 3.1.3
     s3fs: 2024.12.0
     scipy: 1.15.1
     dask: 2025.5.1
@@ -582,10 +599,14 @@ def abspath(path, uri=None):
     ValueError: Can't set uri=False for path='http:///file.nc'
 
     """
+    from uritools import uricompose, urisplit
+
     u = urisplit(path)
     scheme = u.scheme
     path = u.path
+
     if scheme:
+        # Remote or "file"
         if scheme == "file" or path.startswith(os_sep):
             path = os_abspath(path)
 
@@ -594,11 +615,18 @@ def abspath(path, uri=None):
         elif scheme != "file":
             raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
-        return path
+    else:
+        # Local
+        path = os_abspath(path)
+        if uri:
+            path = uricompose(scheme="file", authority=u.authority, path=path)
 
-    path = os_abspath(path)
-    if uri:
-        path = uricompose(scheme="file", authority=u.authority, path=path)
+    fragment = u.fragment
+    if fragment is not None:
+        # Append a URI fragment. Do this with a string-append, rather
+        # than via `uricompose` in case the fragment contains more
+        # than one # character.
+        path += f"#{fragment}"
 
     return path
 
@@ -719,6 +747,8 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
     '/data'
 
     """
+    from uritools import uricompose, urisplit
+
     u = urisplit(path)
     scheme = u.scheme
     path = u.path
@@ -735,27 +765,31 @@ def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
         if not isdir:
             path = os_dirname(path)
 
-        if sep:
-            path = join(path, "")
-
         if uri or uri is None:
             path = uricompose(scheme=scheme, authority=authority, path=path)
         elif scheme != "file":
             raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
-        return path
+    else:
+        # Local file
+        if not isdir:
+            path = os_dirname(path)
 
-    # Local file
-    if not isdir:
-        path = os_dirname(path)
+        if normalise:
+            path = os_abspath(path)
 
-    if normalise:
-        path = os_abspath(path)
+        if uri:
+            path = uricompose(scheme="file", authority=authority, path=path)
 
-    if uri:
-        path = uricompose(scheme="file", authority=authority, path=path)
+    fragment = u.fragment
+    if fragment is not None:
+        # Append a URI fragment. Do this with a string-append, rather
+        # than via `uricompose` in case the fragment contains more
+        # than one # character.
+        path += f"#{fragment}"
 
     if sep:
+        # Append the directory separator
         path = join(path, "")
 
     return path
@@ -1452,44 +1486,52 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
 
 
 class ConstantAccess(metaclass=DocstringRewriteMeta):
-    '''Base class to act as a function accessing package-wide constants.
+    """Base class to act as a function accessing package-wide constants.
 
     Subclasses must implement or inherit a method called `_parse` as
-    follows:
+    follows::
 
        def _parse(cls, arg):
-          """Parse a new constant value.
+          '''Parse a new constant value.
 
-       :Parameter:
+          :Parameter:
 
-            cls:
-                This class.
+               cls:
+                   This class.
 
-            arg:
-                The given new constant value.
+               arg:
+                   The given new constant value.
 
-       :Returns:
+          :Returns:
 
-                A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                   A version of the new constant value suitable for
+                   insertion into the `_constants` dictionary.
 
-           """
+           '''
 
-    '''
+    """
 
-    # Define the dictionary that stores the constant values
-    _CONSTANTS = CONSTANTS
+    # Define the dictionary that stores all constant values.
+    #
+    # Sublasses may re-define this as an empty dictionary, if they
+    # don't want to modify the parent's dictionary.
+    _constants = {}
 
-    # Define the `Constant` object that contains a constant value
+    # Define the `Constant` class that contains a constant value
     _Constant = Constant
 
-    # Define the key of the _CONSTANTS dictionary that contains the
+    # Define the key of the `_constants` dictionary that contains the
     # constant value
     _name = None
 
+    # Define the default value of the constant
+    _default = None
+
     def __new__(cls, *arg):
         """Return a `Constant` instance during class creation."""
-        old = cls._CONSTANTS[cls._name]
+        name = cls._name
+        constants = cls.constants(copy=False)
+        old = constants.setdefault(name, cls._default)
         if arg:
             arg = arg[0]
             try:
@@ -1498,7 +1540,7 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
             except AttributeError:
                 pass
 
-            cls._CONSTANTS[cls._name] = cls._parse(cls, arg)
+            constants[name] = cls._parse(cls, arg)
 
         return cls._Constant(old, _func=cls)
 
@@ -1532,6 +1574,15 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
 
         """
         return 0
+
+    @classmethod
+    def constants(cls, copy=True):
+        """See docstring to `ConstantAccess`."""
+        out = cls._constants
+        if copy:
+            out = out.copy()
+
+        return out
 
 
 class atol(ConstantAccess):
@@ -1595,7 +1646,8 @@ class atol(ConstantAccess):
 
     """
 
-    _name = "ATOL"
+    _name = "atol"
+    _default = sys.float_info.epsilon
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1613,7 +1665,7 @@ class atol(ConstantAccess):
         :Returns:
 
                 A version of the new constant value suitable for
-                insertion into the `CONSTANTS` dictionary.
+                insertion into the `_constants` dictionary.
 
         """
         return float(arg)
@@ -1680,7 +1732,8 @@ class rtol(ConstantAccess):
 
     """
 
-    _name = "RTOL"
+    _name = "rtol"
+    _default = sys.float_info.epsilon
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1697,8 +1750,8 @@ class rtol(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         return float(arg)
@@ -1765,7 +1818,8 @@ class chunksize(ConstantAccess):
 
     """
 
-    _name = "CHUNKSIZE"
+    _name = "chunksize"
+    _default = 134217728  # 134217728 = 128 MiB
 
     def _parse(cls, arg):
         """Parse a new constant value.
@@ -1782,12 +1836,16 @@ class chunksize(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
-        _config.set({"array.chunk-size": arg})
-        return parse_bytes(arg)
+        from dask import config
+        from dask.utils import parse_bytes
+
+        arg = parse_bytes(arg)
+        config.set({"array.chunk-size": arg})
+        return arg
 
 
 class log_level(ConstantAccess):
@@ -1862,7 +1920,8 @@ class log_level(ConstantAccess):
 
     """
 
-    _name = "LOG_LEVEL"
+    _name = "log_level"
+    _default = logging.getLevelName(logging.getLogger().level)
 
     # Define the valid log levels
     _ValidLogLevels = ValidLogLevels
@@ -1893,8 +1952,8 @@ class log_level(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
 
         """
         # Ensuring it is a valid level specifier to set & use, either
@@ -1924,6 +1983,95 @@ class log_level(ConstantAccess):
         cls._reset_log_emergence_level(arg)
 
         return arg
+
+
+class display_data(ConstantAccess):
+    """Control the display of data elements.
+
+    If True then show the first and last data elements (and possibly
+    others, depending on the data shape) when displaying data via a
+    `dump` method, or via `repr` and `str`. This can take a long time if the
+    data elements need an expensive computation, possibly including a
+    slow read from local or remote disk, to find the display values.
+
+    If False then do not show such data elements, *unless data
+    elements have been previously cached*, thereby avoiding a
+    potentially high computational cost.
+
+    Note that whenever data values are displayed, they are cached for
+    fast future retrieval.
+
+    .. versionadded:: (cfdm) 1.13.0.0
+
+    .. seealso:: `configuration`
+
+    :Parameters:
+
+        arg: `bool` or `Constant`, optional
+            The new data display option. The default is to not change
+            the current value.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> {{package}}.display_data()
+    <{{repr}}Constant: True>
+    >>> print({{package}}.display_data())
+    True
+    >>> bool({{package}}.display_data())
+    True
+    >>> {{package}}.display_data().value
+    True
+
+    >>> old = {{package}}.display_data(False)
+    >>> {{package}}.display_data()
+    <{{repr}}Constant: False>
+    >>> {{package}}.display_data(old)
+    <{{repr}}Constant: True>
+    >>> {{package}}.display_data()
+    <{{repr}}Constant: True>
+
+    Use as a context manager:
+
+    >>> print({{package}}.display_data())
+    True
+    >>> with {{package}}.display_data(False):
+    ...     print({{package}}.display_data())
+    ...
+    False
+    >>> print({{package}}.display_data())
+    True
+
+    """
+
+    _name = "display_data"
+    _default = True
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: (cfdm) 1.13.0.0
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
+
+        """
+        return bool(arg)
 
 
 def ATOL(*new_atol):
@@ -2217,6 +2365,8 @@ def indices_shape(indices, full_shape, keepdims=True):
     []
 
     """
+    from dask.base import is_dask_collection
+
     shape = []
     #    i = 0
     for index, full_size in zip(indices, full_shape):
@@ -2367,13 +2517,24 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
                 "New axis indices are not allowed"
             )
 
-        if keepdims and isinstance(index, Integral):
+        # Check that any integer indices are in range for the dimension sizes
+        # before integral indices are converted to slices below, for (one for)
+        # consistent behaviour between setitem and getitem. Note out-of-range
+        # slicing works in Python generally (slices are allowed to extend past
+        # end points with clipping applied) so we allow those.
+        integral_index = isinstance(index, Integral)
+        if integral_index and not -size <= index < size:  # could be negative
+            raise IndexError(
+                f"Index {index!r} is out of bounds for axis {i} with "
+                f"size {size}."
+            )
+
+        if integral_index and keepdims:
             # Convert an integral index to a slice
             if index == -1:
                 index = slice(-1, None, None)
             else:
                 index = slice(index, index + 1, 1)
-
         elif hasattr(index, "to_dask_array"):
             to_dask_array = index.to_dask_array
             if callable(to_dask_array):
@@ -2383,6 +2544,21 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
         parsed_indices[i] = index
 
     return parsed_indices
+
+
+def netcdf_flatten(*args, **kwargs):
+    """Create a flattened version of a grouped CF dataset.
+
+    .. versionadded:: (cfdm) 1.11.2.0
+
+    """
+    _DEPRECATION_ERROR_FUNCTION(
+        "netcdf_flatten",
+        "Use 'cfdm.dataset_flatten' instead, "
+        "which has a slightly different API.",
+        version="1.13.0.0",
+        removed_at="1.15.0.0",
+    )  # pragma: no cover
 
 
 def _DEPRECATION_ERROR_KWARGS(
@@ -2433,4 +2609,21 @@ def _DEPRECATION_ERROR_METHOD(
         f"{instance.__class__.__name__} method {method!r} has been deprecated "
         f"at version {version} and is no longer available{removed_at}. "
         f"{message}"
+    )
+
+
+def _DEPRECATION_ERROR_FUNCTION(
+    func, message="", version=None, removed_at=None
+):
+    """Error handling for deprecated functions.
+
+    .. versionadded:: (cfdm) 1.13.0.0
+
+    """
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"Function {func!r} has been deprecated at version {version} and is "
+        f"no longer available{removed_at}. {message}"
     )

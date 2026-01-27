@@ -1,4 +1,4 @@
-from ...quantization import Quantization
+from cfdm.quantization import Quantization
 
 CODE0 = {
     # Physically meaningful and corresponding to constructs
@@ -66,6 +66,9 @@ NETCDF3_FMTS = (
 
 # NetCDF-4 file formats
 NETCDF4_FMTS = ("NETCDF4", "NETCDF4_CLASSIC")
+
+# Zarr dataset formats
+ZARR_FMTS = ("ZARR3",)
 
 # --------------------------------------------------------------------
 # Quantization

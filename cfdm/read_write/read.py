@@ -4,10 +4,9 @@ from logging import getLogger
 from os import walk
 from os.path import expanduser, expandvars, isdir, join
 
-from uritools import urisplit
+from cfdm.decorators import _manage_log_level_via_verbosity
+from cfdm.functions import abspath, is_log_level_info
 
-from ..decorators import _manage_log_level_via_verbosity
-from ..functions import is_log_level_info
 from .abstract import ReadWrite
 from .exceptions import DatasetTypeError
 from .netcdf import NetCDFRead
@@ -18,7 +17,8 @@ logger = getLogger(__name__)
 class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
-    The following file formats are supported: netCDF, CDL, and Zarr.
+    The following dataset formats are supported: netCDF, CDL, and
+    Zarr.
 
     NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
     server, or in an S3 object store.
@@ -170,6 +170,10 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.11.2.0
 
+        {{read store_dataset_shards: `bool`, optional}}
+
+            .. versionadded:: (cfdm) 1.13.0.0
+
         {{read cfa: `dict`, optional}}
 
             .. versionadded:: (cfdm) 1.12.0.0
@@ -189,6 +193,10 @@ class read(ReadWrite):
         {{read unsqueeze: `bool`, optional}}
 
             .. versionadded:: (cfdm) 1.12.0.0
+
+        {{read group_dimension_search: `str`, optional}}
+
+            .. versionadded:: (cfdm) 1.13.0.0
 
         noncompliance_report: `bool`, optional
             If True then return a warning when any data read in are
@@ -267,6 +275,7 @@ class read(ReadWrite):
         cache=True,
         dask_chunks="storage-aligned",
         store_dataset_chunks=True,
+        store_dataset_shards=True,
         cfa=None,
         cfa_write=None,
         to_memory=False,
@@ -277,6 +286,7 @@ class read(ReadWrite):
         followlinks=False,
         cdl_string=False,
         extra_read_vars=None,
+        group_dimension_search="closest_ancestor",
         noncompliance_report=False,
         **kwargs,
     ):
@@ -372,6 +382,8 @@ class read(ReadWrite):
 
             return
 
+        from uritools import urisplit
+
         if followlinks and not recursive:
             raise ValueError(
                 f"Can only set followlinks={followlinks!r} when "
@@ -392,14 +404,17 @@ class read(ReadWrite):
                 continue
 
             # Glob files/directories on disk
-            datasets1 = u.path
+            datasets1 = abspath(datasets1, uri=False)
 
             n_datasets = 0
             for x in iglob(datasets1):
                 if isdir(x):
                     if is_zarr(x):
                         # This directory is a Zarr dataset, so don't
-                        # look in any subdirectories.
+                        # look in any subdirectories, which contain
+                        # the dataset chunks (but note - it is allowed
+                        # for non-chunk subdirectories to exist, but
+                        # if they do we're going to ignore them!).
                         n_datasets += 1
                         yield x
                         continue
@@ -594,6 +609,7 @@ class read(ReadWrite):
                         "cache",
                         "dask_chunks",
                         "store_dataset_chunks",
+                        "store_dataset_shards",
                         "cfa",
                         "cfa_write",
                         "to_memory",
@@ -602,6 +618,7 @@ class read(ReadWrite):
                         "dataset_type",
                         "cdl_string",
                         "extra_read_vars",
+                        "group_dimension_search",  
                         "noncompliance_report",
                     )
                 }

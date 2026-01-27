@@ -1,4 +1,3 @@
-from dask.utils import SerializableLock
+from threading import Lock
 
-# Global lock for netCDFfile access
-netcdf_lock = SerializableLock()
+netcdf_lock = Lock()

@@ -15,6 +15,11 @@
   $ find cfdm/ -type f | xargs sed -i 's/NEXTVERSION/<VN>/g'
   ```
 
+- [ ] Edit the name of the `NEXTVERSION` milestone in GitHub to be the
+      upcoming version `<VN>` (replacing `<VN>` appropriately,
+      e.g. `1.12.0.0`). Then close the new `<VN>` milestone, and create
+      a new `NEXTVERSION` milestone.
+
 - [ ] Change the "version" and "dateModified" in `codemeta.json`.
 
 - [ ] Ensure that the requirements on dependencies and their versions are
@@ -22,6 +27,9 @@
   `docs/source/installation.rst`; and in the `_requires` list and
   `Version` checks in both `cfdm/core/__init__.py` and
   `cfdm/__init__.py`.
+
+- [ ] Change the version and date in `cfdm/core/__init__.py` (`__version__` and
+  `__date__` variables).
 
 - [ ] If required, change the CF conventions version in
   `cfdm/core/__init__.py` (`__cf_version__` variable), `setup.py`, and
@@ -69,19 +77,11 @@
 - [ ] Create a link to the new documentation in `docs/source/releases.rst`
 
 - [ ] Ensure you have an environment with the right version of
-  Sphinx and some extensions for the build output we want.
-
-  The following version installation conditions should establish
-  this (note it will likely be useful to create a dedicated
-  environment and/or make use of `pip install --no-deps <lib>`
-  in order to handle the quite old Sphinx version):
-  ```bash
-  sphinx==2.4.5
-  sphinx-copybutton==0.5.1
-  sphinx-toggleprompt==0.2.0
-  sphinxcontrib-spelling==4.3.0
-  jinja2==3.0.3
-  ```
+  Sphinx and some extensions for the build output we want. We
+  need Sphinx 7.0.0 at least, but otherwise use the latest
+  versions of any documentation related library unless
+  you notice anything undesired in the development build - check the
+  API reference in particular for any possible issues.
 
   where the last requirement is to avoid a deprecation issue
   relating to Jinja2 usage by the Sphinx libraries and

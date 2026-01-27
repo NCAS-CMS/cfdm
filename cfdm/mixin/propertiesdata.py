@@ -523,6 +523,7 @@ class PropertiesData(Properties):
     @_display_or_return
     def dump(
         self,
+        data=None,
         display=True,
         _key=None,
         _omit_properties=(),
@@ -538,6 +539,10 @@ class PropertiesData(Properties):
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
+
+            {{data: `bool` or `None`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.0.0
 
             display: `bool`, optional
                 If False then return the description as a string. By
@@ -566,20 +571,22 @@ class PropertiesData(Properties):
         indent1 = "    " * (_level + 1)
 
         # Data
-        data = self.get_data(None)
-        if data is not None:
+        d = self.get_data(None)
+        if d is not None:
             if _axes and _axis_names:
                 x = [_axis_names[axis] for axis in _axes]
-                ndim = data.ndim
+                ndim = d.ndim
                 x = x[:ndim]
                 if len(x) < ndim:
-                    x.extend([str(size) for size in data.shape[len(x) :]])
+                    x.extend([str(size) for size in d.shape[len(x) :]])
             else:
-                x = [str(size) for size in data.shape]
+                x = [str(size) for size in d.shape]
 
             shape = ", ".join(x)
 
-            string.append(f"{indent1}{_prefix}Data({shape}) = {data}")
+            string.append(
+                f"{indent1}{_prefix}Data({shape}) = {d._str(data=data)}"
+            )
 
         # Quantization
         q = self.get_quantization(None)

@@ -91,7 +91,9 @@ GatheredArray
 Geosci
 geosciences
 geospatial
+getinitargs
 getitem
+getstate
 GiB
 Hankin
 hardmask
@@ -101,6 +103,7 @@ Hassell
 hdf
 indexable
 init
+Initialize
 initio
 inplace
 instantiation
@@ -186,6 +189,8 @@ seealso
 sep
 setdefault
 setitem
+setstate
+sharding
 Signell
 situ
 spatiotemporal
@@ -210,6 +215,7 @@ timeSeriesProfile
 todict
 tolist
 topologies
+traceback
 trajectoryProfile
 Treshansky
 Typecode

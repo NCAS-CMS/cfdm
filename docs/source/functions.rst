@@ -20,8 +20,8 @@ Reading and writing
 
    cfdm.read 
    cfdm.write
-   cfdm.netcdf_flatten
-   cfdm.netcdf_index
+   cfdm.dataset_flatten
+   cfdm.netcdf_indexer
 
 Mathematical operations
 -----------------------
@@ -31,8 +31,8 @@ Mathematical operations
    :toctree: function/
    :template: function.rst
 
-   cf.atol
-   cf.rtol
+   cfdm.atol
+   cfdm.rtol
 
 Resource management
 -------------------
@@ -42,8 +42,8 @@ Resource management
    :toctree: function/
    :template: function.rst
 
-   cf.configuration
-   cf.chunksize
+   cfdm.configuration
+   cfdm.chunksize
 
 Miscellaneous
 -------------
@@ -56,6 +56,7 @@ Miscellaneous
    cfdm.CF
    cfdm.abspath
    cfdm.dirname
+   cfdm.display_data
    cfdm.environment
    cfdm.example_field
    cfdm.example_fields

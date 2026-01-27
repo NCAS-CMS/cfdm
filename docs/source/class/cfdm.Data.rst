@@ -25,6 +25,7 @@ Inspection
    ~cfdm.Data.shape
    ~cfdm.Data.size
    ~cfdm.Data.nbytes
+   ~cfdm.Data.get_cached_elements
    
 Units
 -----
@@ -174,16 +175,6 @@ Joining data
    :template: method.rst
 
    ~cfdm.Data.concatenate
-   
-Adding and removing elements
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.Data.unique
 
 Expanding the data
 ^^^^^^^^^^^^^^^^^^
@@ -307,16 +298,6 @@ Order statistics
    ~cfdm.Data.max
    ~cfdm.Data.min
 
-Sums
-^^^^
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.Data.sum
-
 Compression by convention
 -------------------------
    
@@ -358,7 +339,7 @@ Miscellaneous
    ~cfdm.Data.get_filenames
    ~cfdm.Data.get_original_filenames
    ~cfdm.Data.source
-   ~cfdm.Data.chunk_indices
+   ~cfdm.Data.cache_elements
 
 .. rubric:: Attributes
 	    
@@ -381,6 +362,9 @@ Performance
    ~cfdm.Data.nc_clear_dataset_chunksizes
    ~cfdm.Data.nc_dataset_chunksizes
    ~cfdm.Data.nc_set_dataset_chunksizes
+   ~cfdm.Data.nc_clear_dataset_shards
+   ~cfdm.Data.nc_dataset_shards
+   ~cfdm.Data.nc_set_dataset_shards
    ~cfdm.Data.to_memory
 
 Aggregation

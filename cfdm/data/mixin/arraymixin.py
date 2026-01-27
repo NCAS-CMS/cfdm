@@ -1,7 +1,8 @@
 from copy import deepcopy
 
 import numpy as np
-from cfunits import Units
+
+from cfdm.units import Units
 
 
 class ArrayMixin:

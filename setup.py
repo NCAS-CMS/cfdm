@@ -58,7 +58,7 @@ The **cfdm** package can
 * read field and domain constructs from netCDF, CDL, and Zarr datasets with a choice of netCDF backends,
 * be fully flexible with respect to dataset storage chunking,
 * create new field and domain constructs in memory,
-* write and append field and domain constructs to netCDF datasets on disk,
+* write and append field and domain constructs to netCDF and Zarr v3 datasets on disk,
 * read, write, and manipulate UGRID mesh topologies,
 * read, write, and create coordinates defined by geometry cells,
 * read and write netCDF4 string data-type variables,
@@ -124,7 +124,7 @@ tests_require = (
 )
 extras_require = {
     "documentation": [
-        "sphinx==2.4.5",
+        "sphinx>=7.0.0",
         "sphinx-copybutton",
         "sphinx-toggleprompt",
         "sphinxcontrib-spelling",
@@ -135,6 +135,9 @@ extras_require = {
         "docformatter",
         "flake8",
         "pydocstyle",
+    ],
+    "zarr": [
+        "zarr>=3.1.3",
     ],
 }
 
@@ -169,7 +172,6 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -177,7 +179,7 @@ setup(
     ],
     packages=find_packages(),
     scripts=["scripts/cfdump"],
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,

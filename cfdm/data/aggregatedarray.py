@@ -2,7 +2,6 @@ from copy import deepcopy
 from itertools import accumulate, product
 
 import numpy as np
-from uritools import isuri, uricompose
 
 from ..functions import dirname
 from . import abstract
@@ -263,9 +262,17 @@ class AggregatedArray(abstract.FileArray):
                 if not scalar:
                     identifier = fa_identifiers[index].item()
 
+                uri = fa_uris[index]
+                try:
+                    # 'uri' is scalar numpy string type
+                    uri = uri.item()
+                except AttributeError:
+                    # E.g. 'uri' is already a `str` instance
+                    pass
+
                 parsed_fragment_array[index] = {
                     "map": shape,
-                    "uri": fa_uris[index].item(),
+                    "uri": uri,
                     "identifier": identifier,
                 }
         else:
@@ -704,6 +711,7 @@ class AggregatedArray(abstract.FileArray):
         import dask.array as da
         from dask.array.core import getter
         from dask.base import tokenize
+        from uritools import isuri, uricompose
 
         name = (f"{self.__class__.__name__}-{tokenize(self)}",)
 

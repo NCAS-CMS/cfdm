@@ -2,7 +2,8 @@ from math import prod
 
 import numpy as np
 
-from ....units import Units
+from cfdm.units import Units
+
 from ...netcdfindexer import netcdf_indexer
 
 

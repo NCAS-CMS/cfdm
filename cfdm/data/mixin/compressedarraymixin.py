@@ -1,6 +1,3 @@
-import dask.array as da
-
-
 class CompressedArrayMixin:
     """Mixin class for compressed arrays.
 
@@ -45,6 +42,8 @@ class CompressedArrayMixin:
         except AttributeError:
             pass
         else:
+            import dask.array as da
+
             array = da.from_array(array, chunks=chunks, lock=True)
 
         return array
@@ -74,9 +73,11 @@ class CompressedArrayMixin:
         """
         from functools import partial
 
+        import dask.array as da
         from dask import config
-        from dask.array.core import getter
         from dask.base import tokenize
+
+        getter = da.core.getter
 
         from ..utils import normalize_chunks
 

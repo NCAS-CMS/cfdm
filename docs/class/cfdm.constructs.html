@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>cfdm.constructs &#8212; Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=541523b4" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
+    <script src="../_static/documentation_options.js?v=dae86f6c"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=b578dfe4"></script>
+    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cfdm 1.12.3.0</a></h1>
+
+
+
+<p class="blurb">A Python reference implementation of the CF data model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cfdm&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="module-cfdm.constructs">
+<span id="cfdm-constructs"></span><h1>cfdm.constructs<a class="headerlink" href="#module-cfdm.constructs" title="Link to this heading">¶</a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cfdm.constructs.Constructs" title="cfdm.constructs.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a>([auxiliary_coordinate, ...])</p></td>
+<td><p>A container for metadata constructs.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.constructs.</span></span><span class="sig-name descname"><span class="pre">Constructs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auxiliary_coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension_coordinate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_ancillary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_ancillary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_topology</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_connectivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_use_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L12-L3608"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code>, <a class="reference internal" href="cfdm.core.constructs.html#cfdm.core.constructs.Constructs" title="cfdm.core.constructs.Constructs"><code class="xref py py-class docutils literal notranslate"><span class="pre">Constructs</span></code></a></p>
+<p>A container for metadata constructs.</p>
+<p>The container has similarities to a <cite>dict</cite> in that it presents the
+metadata constructs as key/value pairs, where the key is the
+unique identifier that corresponds to a metadata construct value;
+is indexable by metadata construct identifier; and provides a
+subset of the usual dictionary methods: <cite>get</cite>, <cite>items</cite>, <cite>keys</cite>,
+and <cite>values</cite>. The number of constructs (which may be zero) can be
+found via the Python <cite>len</cite> function. The container can be
+converted to an actual <cite>dict</cite> with the <cite>todict</cite> method.</p>
+<p><strong>Filtering</strong></p>
+<p>A subset of the metadata constructs can be defined and returned in
+a new <cite>Constructs</cite> instance by using the various filter methods.
+See <cite>filter</cite> for more details.</p>
+<p><strong>Calling</strong></p>
+<p>Calling a <cite>Constructs</cite> instance also creates a new <cite>Constructs</cite>
+instance that contains a subset of the metadata constructs,
+primarily selecting by construct identity. For instance, selecting
+constructs that have an identity of ‘latitude’ could be done by
+either <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">c('latitude')</span></code> or <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span>
+<span class="pre">c.filter_by_identity('latitude')</span></code>. More generally,
+<code class="docutils literal notranslate"><span class="pre">c(*identities,</span> <span class="pre">**filter_kwargs)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">c.filter(filter_by_identity=identities,</span> <span class="pre">**filter_kwargs)</span></code>.</p>
+<p><strong>Metadata constructs</strong></p>
+<p>The following metadata constructs can be included:</p>
+<ul class="simple">
+<li><p>domain axis constructs</p></li>
+<li><p>dimension coordinate constructs</p></li>
+<li><p>auxiliary coordinate constructs</p></li>
+<li><p>coordinate reference constructs</p></li>
+<li><p>domain ancillary constructs</p></li>
+<li><p>cell measure constructs</p></li>
+<li><p>domain topology constructs</p></li>
+<li><p>cell connectivity constructs</p></li>
+<li><p>cell method constructs</p></li>
+<li><p>field ancillary constructs</p></li>
+</ul>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>auxiliary_coordinate: <cite>str</cite>, optional</dt><dd><p>The base name for keys of auxiliary coordinate
+constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">auxiliary_coordinate='auxiliarycoordinate'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>dimension_coordinate: <cite>str</cite>, optional</dt><dd><p>The base name for keys of dimension coordinate
+constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">dimension_coordinate='dimensioncoordinate'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>domain_ancillary: <cite>str</cite>, optional</dt><dd><p>The base name for keys of domain ancillary constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">domain_ancillary='domainancillary'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>field_ancillary: <cite>str</cite>, optional</dt><dd><p>The base name for keys of field ancillary constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">field_ancillary='fieldancillary'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>cell_measure: <cite>str</cite>, optional</dt><dd><p>The base name for keys of cell measure constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">cell_measure='cellmeasure'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>coordinate_reference: <cite>str</cite>, optional</dt><dd><p>The base name for keys of coordinate reference
+constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">coordinate_reference='coordinatereference'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>domain_axis: <cite>str</cite>, optional</dt><dd><p>The base name for keys of domain axis constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">domain_axis='domainaxis'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>domain_topology: <cite>str</cite>, optional</dt><dd><p>The base name for keys of domain topology constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'domaintopology'</span></code></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
+</div>
+</dd>
+<dt>cell_connectivity: <cite>str</cite>, optional</dt><dd><p>The base name for keys of cell connectivity
+constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'cellconnectivity'</span></code></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
+</div>
+</dd>
+<dt>cell_method: <cite>str</cite>, optional</dt><dd><p>The base name for keys of cell method constructs.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">cell_method='cellmethod'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <cite>Constructs</cite> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <cite>Constructs</cite> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <cite>Constructs</cite> instance then
+<code class="docutils literal notranslate"><span class="pre">cfdm.Constructs(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt><dd><p>If True (the default) then deep copy metadata constructs
+from those of <em>source</em> prior to initialisation, else they
+are not deep copied.</p>
+</dd>
+<dt>_ignore: sequence of <cite>str</cite>, optional</dt><dd><p>Ignores the given construct types.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">_ignore=('cell_method',</span> <span class="pre">'field_ancillary')</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.clear_filters_applied">
+<span class="sig-name descname"><span class="pre">clear_filters_applied</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L3311-L3354"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.clear_filters_applied" title="Link to this definition">¶</a></dt>
+<dd><p>Remove the history of filters that have been applied.</p>
+<p>This method does not change the metadata constructs, it just
+forgets the history of any filters that have previously been
+applied. Use <cite>inverse_filter</cite> or <cite>unfilter</cite> retrieve
+previously filtered constructs.</p>
+<p>The removed history is returned in a tuple. The last element
+of the tuple describes the last filter applied. Each element
+is a single-entry dictionary whose key is the name of the
+filter method that was used, with a value that gives the
+arguments that were passed to the call of that method. If no
+filters have been applied then the tuple is empty.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>unfilter</cite></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><cite>tuple</cite></dt><dd><p>The removed history of filters that have been applied,
+ordered from first to last. If no filters have been
+applied then the tuple is empty.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">filters_applied</span><span class="p">()</span>
+<span class="go">({&#39;filter_by_naxes&#39;: (3, 1)},</span>
+<span class="go"> {&#39;filter_by_identity&#39;: (&#39;grid_longitude&#39;,)})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">clear_filters_applied</span><span class="p">()</span>
+<span class="go">({&#39;filter_by_naxes&#39;: (3, 1)},</span>
+<span class="go"> {&#39;filter_by_identity&#39;: (&#39;grid_longitude&#39;,)})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">filters_applied</span><span class="p">()</span>
+<span class="go">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.construct_type">
+<span class="sig-name descname"><span class="pre">construct_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L941-L964"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.construct_type" title="Link to this definition">¶</a></dt>
+<dd><p>Return the type of a construct for a given key.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>construct_types</cite></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>key: <cite>str</cite></dt><dd><p>A construct identifier.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>str</cite> or <cite>None</cite></dt><dd><p>The construct type, or <cite>None</cite> if the <em>key</em> is not
+present.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.construct_types">
+<span class="sig-name descname"><span class="pre">construct_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L966-L982"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.construct_types" title="Link to this definition">¶</a></dt>
+<dd><p>Return all of the construct types for all keys.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>construct_type</cite></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L976-L1007"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.copy" title="Link to this definition">¶</a></dt>
+<dd><p>Return a deep copy.</p>
+<p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>data: <cite>bool</cite>, optional</dt><dd><p>If True (the default) then copy data contained in the
+metadata constructs.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite></dt><dd><p>The deep copy.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.data_axes">
+<span class="sig-name descname"><span class="pre">data_axes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L1016-L1064"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.data_axes" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the axes spanned by the data.</p>
+<p>Specifically, returns the domain axis constructs spanned by
+metadata construct data.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><cite>dict</cite></dt><dd><p>The keys of the domain axes constructs spanned by
+metadata construct data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">constructs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;,</span>
+<span class="go"> &#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
+<span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(8)&gt;,</span>
+<span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(1)&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">data_axes</span><span class="p">()</span>
+<span class="go">{&#39;dimensioncoordinate0&#39;: (&#39;domainaxis0&#39;,),</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: (&#39;domainaxis1&#39;,),</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: (&#39;domainaxis2&#39;,)}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.domain_axes">
+<span class="sig-name descname"><span class="pre">domain_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">identities</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">filter_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L1105-L1204"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.domain_axes" title="Link to this definition">¶</a></dt>
+<dd><p>Return domain axis constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>constructs</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>identities: <cite>tuple</cite>, optional</dt><dd><p>Select domain axis constructs that have an identity,
+defined by their <cite>!identities</cite> methods, that matches
+any of the given values.</p>
+<p>Additionally, the values are matched against construct
+identifiers, with or without the <code class="docutils literal notranslate"><span class="pre">'key%'</span></code> prefix.</p>
+<p>Additionally, if for a given <code class="docutils literal notranslate"><span class="pre">value</span></code>,
+<code class="docutils literal notranslate"><span class="pre">c.filter(filter_by_type=[&quot;dimension_coordinate&quot;,</span>
+<span class="pre">&quot;auxiliary_coordinate&quot;],</span> <span class="pre">filter_by_naxes=(1,),</span>
+<span class="pre">filter_by_identity=(value,))</span></code> returns 1-d coordinate
+constructs that all span the same domain axis
+construct then that domain axis construct is
+selected. See <cite>filter</cite> for details.</p>
+<p>Additionally, if there is an associated <cite>Field</cite> data
+array and a value matches the integer position of an
+array dimension, then the corresponding domain axis
+construct is selected.</p>
+<p>If no values are provided then all domain axis
+constructs are selected.</p>
+<p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <cite>re.Pattern</cite> object that matches
+via its <cite>~re.Pattern.search</cite> method.</p>
+<p>Note that in the output of a <cite>dump</cite> method or <cite>print</cite>
+call, a construct is always described by an identity
+that will select it.</p>
+</dd>
+<dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <cite>Constructs.filter</cite>
+that define additional construct selection
+criteria. Also to configure the returned value.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The selected constructs in a new <cite>Constructs</cite> object,
+unless modified by any <em>filter_kwargs</em> parameters. The
+returned object will contain no constructs if none
+were selected.</p>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.domain_axis_identity">
+<span class="sig-name descname"><span class="pre">domain_axis_identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L1009-L1103"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.domain_axis_identity" title="Link to this definition">¶</a></dt>
+<dd><p>Return the canonical identity for a domain axis construct.</p>
+<p>The identity is the first found of the following:</p>
+<ol class="arabic simple">
+<li><p>The canonical identity of a dimension coordinate construct that
+span the domain axis construct.</p></li>
+<li><p>The identity of a one-dimensional auxiliary coordinate
+construct that spans the domain axis construct. This will
+either be the value of a <code class="docutils literal notranslate"><span class="pre">standard_name</span></code>, <code class="docutils literal notranslate"><span class="pre">cf_role</span></code>
+(preceded by <code class="docutils literal notranslate"><span class="pre">'cf_role='</span></code>) or <code class="docutils literal notranslate"><span class="pre">axis</span></code> (preceded by
+<code class="docutils literal notranslate"><span class="pre">'axis='</span></code>) property, as appropriate.</p></li>
+<li><p>The netCDF dimension name, preceded by ‘ncdim%’.</p></li>
+<li><p>The domain axis construct key, preceded by ‘key%’.</p></li>
+</ol>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>key: <cite>str</cite></dt><dd><p>The construct key for the domain axis construct.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">key='domainaxis2'</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>str</cite></dt><dd><p>The identity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">domain_axis_identity</span><span class="p">(</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">)</span>
+<span class="go">&#39;longitude&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">domain_axis_identity</span><span class="p">(</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">)</span>
+<span class="go">&#39;axis=Y&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">domain_axis_identity</span><span class="p">(</span><span class="s1">&#39;domainaxis3&#39;</span><span class="p">)</span>
+<span class="go">&#39;cf_role=timeseries_id&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">domain_axis_identity</span><span class="p">(</span><span class="s1">&#39;domainaxis4&#39;</span><span class="p">)</span>
+<span class="go">&#39;key%domainaxis4&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.equals">
+<span class="sig-name descname"><span class="pre">equals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_compression</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ignore_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_return_axis_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L1206-L1465"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.equals" title="Link to this definition">¶</a></dt>
+<dd><p>Whether two <cite>Constructs</cite> instances are the same.</p>
+<p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
+<code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on
+absolute differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative
+differences) are positive, typically very small numbers. See
+the <em>atol</em> and <em>rtol</em> parameters.</p>
+<p>Any compression is ignored by default, with only the arrays in
+their uncompressed forms being compared. See the
+<em>ignore_compression</em> parameter.</p>
+<p>Any type of object may be tested but equality is only possible
+with another <cite>Constructs</cite> construct, or a subclass of one.</p>
+<p>NetCDF elements, such as netCDF variable and dimension names,
+do not constitute part of the CF data model and so are not
+checked.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>other:</dt><dd><p>The object to compare for equality.</p>
+</dd>
+<dt>atol: number, optional</dt><dd><p>The tolerance on absolute differences between real
+numbers. The default value is set by the
+<cite>cfdm.atol</cite> function.</p>
+</dd>
+<dt>rtol: number, optional</dt><dd><p>The tolerance on relative differences between real
+numbers. The default value is set by the
+<cite>cfdm.rtol</cite> function.</p>
+</dd>
+<dt>ignore_fill_value: <cite>bool</cite>, optional</dt><dd><p>If True then the <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>
+properties are omitted from the comparison for the
+metadata constructs.</p>
+</dd>
+<dt>ignore_data_type: <cite>bool</cite>, optional</dt><dd><p>If True then ignore the data types in all numerical
+comparisons. By default different numerical data types
+imply inequality, regardless of whether the elements
+are within the tolerance for equality.</p>
+</dd>
+<dt>ignore_compression: <cite>bool</cite>, optional</dt><dd><p>If False then the compression type and, if applicable,
+the underlying compressed arrays must be the same, as
+well as the arrays in their uncompressed forms. By
+default only the the arrays in their uncompressed
+forms are compared.</p>
+</dd>
+<dt>verbose: <cite>int</cite> or <cite>str</cite> or <cite>None</cite>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
+string equal ignoring case to one of:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'WARNING'</span></code> (<code class="docutils literal notranslate"><span class="pre">1</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'INFO'</span></code> (<code class="docutils literal notranslate"><span class="pre">2</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code> (<code class="docutils literal notranslate"><span class="pre">3</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code> (<code class="docutils literal notranslate"><span class="pre">-1</span></code>)</p></li>
+</ul>
+<p>set for the duration of the method call only as the
+minimum cut-off for the verboseness level of displayed
+output (log) messages, regardless of the
+globally-configured <cite>cfdm.log_level</cite>. Note that
+increasing numerical value corresponds to increasing
+verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special
+case of maximal and extreme verbosity.</p>
+<p>Otherwise, if <cite>None</cite> (the default value), output
+messages will be shown according to the value of the
+<cite>cfdm.log_level</cite> setting.</p>
+<p>Overall, the higher a non-negative integer or
+equivalent string that is set (up to a maximum of
+<code class="docutils literal notranslate"><span class="pre">3</span></code>/<code class="docutils literal notranslate"><span class="pre">'DETAIL'</span></code>) for increasing verbosity, the more
+description that is printed to convey information
+about the operation.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>bool</cite></dt><dd><p>Whether the two instances are equal.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;something else&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'and'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'and'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_identity_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L1467-L1652"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter" title="Link to this definition">¶</a></dt>
+<dd><p>Select metadata constructs by a chain of filters.</p>
+<p>This method allows multiple filters defined by the
+“filter_by_*” methods to be chained in an alternative manner
+to calling the individual methods in sequence.</p>
+<p>For instance, to select the domain axis constructs with size
+73 or 96</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">filter_by_type</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domain_axis&#39;</span><span class="p">],</span>
+<span class="gp">... </span>              <span class="n">filter_by_size</span><span class="o">=</span><span class="p">[</span><span class="mi">73</span><span class="p">,</span> <span class="mi">96</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>is equivalent to</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;domain_axis&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">c2</span><span class="o">.</span><span class="n">filter_by_size</span><span class="p">(</span><span class="mi">73</span><span class="p">,</span> <span class="mi">96</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When the results are requested as a dictionary as opposed to a
+<cite>Constructs</cite> object (see the <em>todict</em> parameter), using the
+<cite>filter</cite> method to call two or more filters is faster than
+calling the individual methods in sequence. For instance</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">filter_by_type</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="n">filter_by_identity</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="n">todict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>is equivalent to, but faster than</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c2</span><span class="o">.</span><span class="n">filter_by_identity</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">todict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter_by_axis</cite>, <cite>filter_by_cell</cite>,
+<cite>filter_by_connectivity</cite>, <cite>filter_by_data</cite>,
+<cite>filter_by_identity</cite>, <cite>filter_by_key</cite>,
+<cite>filter_by_measure</cite>, <cite>filter_by_method</cite>,
+<cite>filter_by_identity</cite>, <cite>filter_by_naxes</cite>,
+<cite>filter_by_ncdim</cite>, <cite>filter_by_ncvar</cite>,
+<cite>filter_by_property</cite>, <cite>filter_by_type</cite>,
+<cite>filters_applied</cite>, <cite>inverse_filter</cite>, <cite>unfilter</cite>,
+<cite>clear_filters_applied</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>filters: optional</dt><dd><p>Keyword arguments defining the filters to apply. Each
+filter keyword defines a filter method, and its value
+provides the arguments for that method.</p>
+<p>For instance, <code class="docutils literal notranslate"><span class="pre">filter_by_type=['domain_axis']</span></code> will
+cause the <cite>filter_by_type</cite> method to be called with
+positional arguments <code class="docutils literal notranslate"><span class="pre">*['domain_axis']</span></code>.</p>
+<p>The filters are applied in the same order that the
+keyword arguments appear.</p>
+<p>Valid keywords and their values are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Keyword</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_axis</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>axes</em> parameter of
+<cite>filter_by_axis</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_cell</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>cells</em> parameter of
+<cite>filter_by_cell</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_connectivity</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>connectivity</em>
+parameter of
+<cite>filter_by_connectivities</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_data</span></code></p></td>
+<td><p>Any value is allowed which
+will be ignored, as
+<cite>filter_by_data</cite> does not
+have any positional
+arguments.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_identity</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>identities</em> parameter
+of <cite>filter_by_identity</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_key</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>keys</em> parameter of
+<cite>filter_by_key</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_measure</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>measures</em> parameter
+of <cite>filter_by_measure</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_method</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>methods</em> parameter of
+<cite>filter_by_method</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>naxes</em> parameter of
+<cite>filter_by_naxes</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>ncdims</em> parameter of
+<cite>filter_by_ncdim</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>ncvars</em> parameter of
+<cite>filter_by_ncvar</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_property</span></code></p></td>
+<td><p>A dictionary as expected
+by the <em>properties</em>
+parameter of
+<cite>filter_by_property</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_size</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>sizes</em> parameter of
+<cite>filter_by_size</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">filter_by_type</span></code></p></td>
+<td><p>A sequence as expected by
+the <em>types</em> parameter of
+<cite>filter_by_type</cite></p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>axis_mode: <cite>str</cite>, optional</dt><dd><p>Provide a value for the <em>axis_mode</em> parameter of the
+<cite>filter_by_axis</cite> method. By default <em>axis_mode</em> is
+<code class="docutils literal notranslate"><span class="pre">'and'</span></code>.</p>
+</dd>
+<dt>property_mode: <cite>str</cite>, optional</dt><dd><p>Provide a value for the <em>property_mode</em> parameter of
+the <cite>filter_by_property</cite> method. By default
+<em>property_mode</em> is <code class="docutils literal notranslate"><span class="pre">'and'</span></code>.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+</dd>
+<dt>_identity_config: optional</dt><dd><p>Provide a value for the <em>_config</em> parameter of the
+<cite>filter_by_identity</cite> method.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_axis">
+<span class="sig-name descname"><span class="pre">filter_by_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'and'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L1822-L1936"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_axis" title="Link to this definition">¶</a></dt>
+<dd><p>Select metadata constructs by axes spanned by their data.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>mode: <cite>str</cite></dt><dd><p>Deprecated at version 1.8.9.0. Use the <em>axis_mode</em>
+parameter instead.</p>
+</dd>
+<dt>axes: optional</dt><dd><p>Select constructs that whose data spans the domain
+axis constructs specified by the given values. A value
+may be:</p>
+<ul class="simple">
+<li><p>A domain axis construct identifier, with or without
+the <code class="docutils literal notranslate"><span class="pre">'key%'</span></code> prefix.</p></li>
+<li><p>The unique domain axis construct spanned by all of
+the 1-d coordinate constructs returned by, for a
+given <code class="docutils literal notranslate"><span class="pre">value</span></code>,
+<code class="docutils literal notranslate"><span class="pre">c.filter(filter_by_type=[&quot;dimension_coordinate&quot;,</span>
+<span class="pre">&quot;auxiliary_coordinate&quot;],</span> <span class="pre">filter_by_naxes=(1,),</span>
+<span class="pre">filter_by_identity=(value,))</span></code>. See <cite>filter</cite> for
+details.</p></li>
+<li><p>If there is an associated <cite>Field</cite> data array and a
+value matches the integer position of an array
+dimension, then the corresponding domain axis
+construct is specified.</p></li>
+<li><p>A unique domain axis construct identity, defined by
+its <cite>!identities</cite> methods. In this case a value may
+be any object that can match via the <code class="docutils literal notranslate"><span class="pre">==</span></code>
+operator, or a <cite>re.Pattern</cite> object that matches via
+its <cite>~re.Pattern.search</cite> method.</p></li>
+</ul>
+<p>If no axes are provided then all constructs that do,
+or could have data, spanning any domain axes
+constructs, are selected.</p>
+</dd>
+<dt>axis_mode: <cite>str</cite></dt><dd><p>Define the relationship between the given domain axes
+and the constructs’ data.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><em>axis_mode</em></p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'and'</span></code></p></td>
+<td><p>A construct is selected if it spans <em>all</em>
+of the given domain axes, <em>and possibly
+others</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'or'</span></code></p></td>
+<td><p>A construct is selected if it spans <em>any</em>
+of the domain axes, <em>and possibly
+others</em>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exact</span></code></p></td>
+<td><p>A construct is selected if it spans <em>all</em>
+of the given domain axes, <em>and no
+others</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">subset</span></code></p></td>
+<td><p>A construct is selected if it spans <em>a
+subset</em> of the given domain axes, <em>and no
+others</em>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>By default <em>axis_mode</em> is <code class="docutils literal notranslate"><span class="pre">'and'</span></code>.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>Select constructs whose data spans the “domainaxis1” domain
+axis construct:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select constructs whose data does not span the “domainaxis2”
+domain axis construct:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Select constructs whose data spans the “domainaxis1”, but not
+the “domainaxis2” domain axis constructs:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>  <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select constructs whose data spans the “domainaxis1” or the
+“domainaxis2” domain axis constructs:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_axis</span><span class="p">(</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">,</span> <span class="s1">&#39;domainaxis2&#39;</span><span class="p">,</span> <span class="n">axis_mode</span><span class="o">=</span><span class="s2">&quot;or&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_cell">
+<span class="sig-name descname"><span class="pre">filter_by_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">cells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L1953-L2021"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_cell" title="Link to this definition">¶</a></dt>
+<dd><p>Select domain topology constructs by cell type.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>cells: optional</dt><dd><p>Select domain topology constructs that have a cell
+type, defined by their <cite>!get_cell</cite> methods, that
+matches any of the given values.</p>
+<p>If no cell types are provided then all domain topology
+constructs are selected.</p>
+<p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <cite>re.Pattern</cite> object that matches
+via its <cite>~re.Pattern.search</cite> method.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected domain topology constructs, or a cached
+valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;domain_topology&#39;</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;domaintopology0&#39;: &lt;DomainTopology: cell:face&gt;}</span>
+</pre></div>
+</div>
+<p>Select domain topology constructs that have a cell type of
+“face”:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_cell</span><span class="p">(</span><span class="s1">&#39;face&#39;</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;domaintopology0&#39;: &lt;DomainTopology: cell:face&gt;}</span>
+</pre></div>
+</div>
+<p>Select domain topology constructs that have a cell type of
+‘face’ or ‘edge’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_cell</span><span class="p">(</span><span class="s1">&#39;face&#39;</span><span class="p">,</span> <span class="s1">&#39;edge&#39;</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;domaintopology0&#39;: &lt;DomainTopology: cell:face&gt;}</span>
+</pre></div>
+</div>
+<p>Select domain topology constructs that have a cell type that
+ends with “e”:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_cell</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;e$&#39;</span><span class="p">)))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;domaintopology0&#39;: &lt;DomainTopology: cell:face&gt;}</span>
+</pre></div>
+</div>
+<p>Select domain topology constructs that have a cell type of any
+value:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_cell</span><span class="p">())</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;domaintopology0&#39;: &lt;DomainTopology: cell:face&gt;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_connectivity">
+<span class="sig-name descname"><span class="pre">filter_by_connectivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">connectivities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2038-L2111"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_connectivity" title="Link to this definition">¶</a></dt>
+<dd><p>Select cell connectivity constructs by connectivity type.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>connectivities: optional</dt><dd><p>Select cell connectivity constructs that have a
+connectivity type, defined by their <cite>!get_connectivity</cite>
+methods, that matches any of the given values.</p>
+<p>If no connectivities are provided then all cell
+connectivity constructs are selected.</p>
+<p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <cite>re.Pattern</cite> object that matches
+via its <cite>~re.Pattern.search</cite> method.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected cell connectivity constructs, or a cached
+value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;cell_connectivity&#39;</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellconnectivity0&#39;: &lt;CellConnectivity: connectivity:edge(13824) &gt;,</span>
+<span class="go"> &#39;cellconnectivity1&#39;: &lt;CellConnectivity: connectivity:node(13824) &gt;}</span>
+</pre></div>
+</div>
+<p>Select cell connectivity constructs that have a connectivity
+type of “edge”:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_connectivity</span><span class="p">(</span><span class="s1">&#39;edge&#39;</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellconnectivity0&#39;: &lt;CellConnectivity: connectivity:edge(13824) &gt;,</span>
+</pre></div>
+</div>
+<p>Select cell connectivity constructs that have a connectivity
+type of ‘edge’ or ‘node’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_connectivity</span><span class="p">(</span><span class="s1">&#39;edge&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellconnectivity0&#39;: &lt;CellConnectivity: connectivity:edge(13824) &gt;,</span>
+<span class="go"> &#39;cellconnectivity1&#39;: &lt;CellConnectivity: connectivity:node(13824) &gt;}</span>
+</pre></div>
+</div>
+<p>Select cell connectivity constructs that have a connectivity
+type that starts with “n”:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_connectivity</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^n&#39;</span><span class="p">)))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellconnectivity1&#39;: &lt;CellConnectivity: connectivity:node(13824) &gt;}</span>
+</pre></div>
+</div>
+<p>Select cell connectivity constructs that have a connectivity
+type of any value:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_connectivity</span><span class="p">())</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellconnectivity0&#39;: &lt;CellConnectivity: connectivity:edge(13824) &gt;,</span>
+<span class="go"> &#39;cellconnectivity1&#39;: &lt;CellConnectivity: connectivity:node(13824) &gt;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_data">
+<span class="sig-name descname"><span class="pre">filter_by_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2132-L2170"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_data" title="Link to this definition">¶</a></dt>
+<dd><p>Selects metadata constructs that could contain data.</p>
+<p>Selection is not based on whether they actually have data,
+rather by whether the construct supports the inclusion of
+data. For example, constructs selected by this method will all
+have a <cite>!get_data</cite> method.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>Select constructs that could contain data:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_data</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_identity">
+<span class="sig-name descname"><span class="pre">filter_by_identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">identities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2284-L2361"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_identity" title="Link to this definition">¶</a></dt>
+<dd><p>Select metadata constructs by identity.</p>
+<p>Calling a <cite>Constructs</cite> instance is an alias for
+<cite>filter_by_identity</cite>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>identities: optional</dt><dd><p>Select constructs that have an identity, defined by
+their <cite>!identities</cite> methods, that matches any of the
+given values.</p>
+</dd>
+</dl>
+<ul>
+<li><p>A metadata construct identity.</p>
+<dl>
+<dt>A construct has a number of string-valued identities</dt><dd><p>defined by its <cite>!identities</cite> method, and is selected
+if any of them match the <em>identity</em>
+parameter. <em>identity</em> may be a string that equals one
+of a construct’s identities; or a <cite>re.Pattern</cite> object
+that matches one of a construct’s identities via
+<cite>re.search</cite>.</p>
+<p>Note that in the output of a <cite>dump</cite> method or <cite>print</cite>
+call, a metadata construct is always described by one
+of its identities, and so this description may always
+be used as an <em>identity</em> value.</p>
+</dd>
+</dl>
+</li>
+<li><p>The key of a metadata construct</p></li>
+</ul>
+<dl>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='latitude'</span></code></p>
+<blockquote>
+<div><p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <cite>re.Pattern</cite> object that matches
+via its <cite>~re.Pattern.search</cite> method.</p>
+<p>Note that in the output of a <cite>dump</cite> method or <cite>print</cite>
+call, a construct is always described by an identity
+that will select it.</p>
+</div></blockquote>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>_config: optional</dt><dd><p>Additional parameters for configuring the application
+of a construct’s <cite>identities</cite> method.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> property of
+‘latitude’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_identity</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">long_name</span></code> property of
+‘Height’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_identity</span><span class="p">(</span><span class="s1">&#39;long_name=Height&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> property of
+‘latitude’ or a “foo” property of ‘bar’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_identity</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;foo=bar&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select constructs that have a netCDF variable name of ‘time’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_identity</span><span class="p">(</span><span class="s1">&#39;ncvar%time&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_key">
+<span class="sig-name descname"><span class="pre">filter_by_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2393-L2441"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_key" title="Link to this definition">¶</a></dt>
+<dd><p>Select metadata constructs by key.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>key: optional</dt><dd><p>Select constructs that have a construct identifier
+(e.g. <code class="docutils literal notranslate"><span class="pre">'dimensioncoordinate1'</span></code>) that matches any of
+the given values.</p>
+<p>If no keys are provided then all constructs are
+selected.</p>
+<p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <cite>re.Pattern</cite> object that matches
+via its <cite>~re.Pattern.search</cite> method.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>Select the construct with key ‘domainancillary0’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_key</span><span class="p">(</span><span class="s1">&#39;domainancillary0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select the constructs with keys ‘dimensioncoordinate1’ or
+‘fieldancillary0’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_key</span><span class="p">(</span><span class="s1">&#39;dimensioncoordinate1&#39;</span><span class="p">,</span> <span class="s1">&#39;fieldancillary0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_measure">
+<span class="sig-name descname"><span class="pre">filter_by_measure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">measures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2458-L2536"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_measure" title="Link to this definition">¶</a></dt>
+<dd><p>Select cell measure constructs by measure.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>measures: optional</dt><dd><p>Select cell measure constructs that have a measure,
+defined by their <cite>!get_measure</cite> methods, that matches
+any of the given values.</p>
+<p>If no measures are provided then all cell measure
+constructs are selected.</p>
+<p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <cite>re.Pattern</cite> object that matches
+via its <cite>~re.Pattern.search</cite> method.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+<dt><cite>Constructs</cite></dt><dd><p>The selected cell measure constructs and their
+construct keys.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;measure&#39;</span><span class="p">))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmeasure0&#39;: &lt;CellMeasure: measure:area(9, 10) km2&gt;,</span>
+<span class="go"> &#39;cellmeasure1&#39;: &lt;CellMeasure: measure:volume(3, 9, 10) m3&gt;}</span>
+</pre></div>
+</div>
+<p>Select cell measure constructs that have a measure of ‘area’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_measure</span><span class="p">(</span><span class="s1">&#39;area&#39;</span><span class="p">))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmeasure0&#39;: &lt;CellMeasure: measure:area(9, 10) km2&gt;}</span>
+</pre></div>
+</div>
+<p>Select cell measure constructs that have a measure of ‘area’
+or ‘volume’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_measure</span><span class="p">(</span><span class="s1">&#39;area&#39;</span><span class="p">,</span> <span class="s1">&#39;volume&#39;</span><span class="p">))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmeasure0&#39;: &lt;CellMeasure: measure:area(9, 10) km2&gt;,</span>
+<span class="go"> &#39;cellmeasure1&#39;: &lt;CellMeasure: measure:volume(3, 9, 10) m3&gt;}</span>
+</pre></div>
+</div>
+<p>Select cell measure constructs that have a measure of start
+with the letter “a” or “v”:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_measure</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^a|v&#39;</span><span class="p">)))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmeasure0&#39;: &lt;CellMeasure: measure:area(9, 10) km2&gt;,</span>
+<span class="go"> &#39;cellmeasure1&#39;: &lt;CellMeasure: measure:volume(3, 9, 10) m3&gt;}</span>
+</pre></div>
+</div>
+<p>Select cell measure constructs that have a measure of any
+value:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filer_by_measure</span><span class="p">())</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmeasure0&#39;: &lt;CellMeasure: measure:area(9, 10) km2&gt;,</span>
+<span class="go"> &#39;cellmeasure1&#39;: &lt;CellMeasure: measure:volume(3, 9, 10) m3&gt;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_method">
+<span class="sig-name descname"><span class="pre">filter_by_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">methods</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2553-L2626"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_method" title="Link to this definition">¶</a></dt>
+<dd><p>Select cell method constructs by method.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>methods: optional</dt><dd><p>Select cell method constructs that have a method,
+defined by their <cite>!get_method</cite> methods, that matches
+any of the given values.</p>
+<p>If no methods are provided then all cell method
+constructs are selected.</p>
+<p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <cite>re.Pattern</cite> object that matches
+via its <cite>~re.Pattern.search</cite> method.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">constructs</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;cell_method&#39;</span><span class="p">))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)&gt;,</span>
+<span class="go"> &#39;cellmethod1&#39;: &lt;CellMethod: domainaxis3: maximum&gt;}</span>
+</pre></div>
+</div>
+<p>Select cell method constructs that have a method of ‘mean’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_method</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)&gt;}</span>
+</pre></div>
+</div>
+<p>Select cell method constructs that have a method of ‘mean’ or
+‘maximum’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_method</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;maximum&#39;</span><span class="p">))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)&gt;,</span>
+<span class="go"> &#39;cellmethod1&#39;: &lt;CellMethod: domainaxis3: maximum&gt;}</span>
+</pre></div>
+</div>
+<p>Select cell method constructs that have a method that contain
+the letter ‘x’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_method</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod1&#39;: &lt;CellMethod: domainaxis3: maximum&gt;}</span>
+</pre></div>
+</div>
+<p>Select cell method constructs that have a method of any value:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filter_by_method</span><span class="p">())</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)&gt;,</span>
+<span class="go"> &#39;cellmethod1&#39;: &lt;CellMethod: domainaxis3: maximum&gt;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_naxes">
+<span class="sig-name descname"><span class="pre">filter_by_naxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">naxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2661-L2714"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_naxes" title="Link to this definition">¶</a></dt>
+<dd><p>Selects constructs by the number of axes their data spans.</p>
+<p>Specifically, selects metadata constructs by the number of
+domain axis constructs spanned by their data.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>naxes: optional</dt><dd><p>Select constructs that have data whose number of
+dimensions matches any of the given values.</p>
+<p>If no values are provided then all constructs that do
+or could have data, spanning any domain axes
+constructs, are selected.</p>
+<p>A value may be any object that can match an integer
+via <code class="docutils literal notranslate"><span class="pre">==</span></code>.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>Select constructs that contain data that spans two domain axis
+constructs:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_naxes</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select constructs that contain data that spans one or two
+domain axis constructs:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_ncdim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_ncdim">
+<span class="sig-name descname"><span class="pre">filter_by_ncdim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">ncdims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2762-L2812"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_ncdim" title="Link to this definition">¶</a></dt>
+<dd><p>Select domain axis constructs by netCDF dimension name.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>ncdims: optional</dt><dd><p>Select constructs that have a netCDF dimension name,
+defined by their <cite>!nc_get_dimension</cite> methods, that
+match any of the given values.</p>
+<p>If no netCDF dimension names are provided then all
+constructs that do or could have a netCDF dimension
+name are selected.</p>
+<p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <cite>re.Pattern</cite> object that matches
+via its <cite>~re.Pattern.search</cite> method.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>Select the domain axis constructs with netCDF dimension name
+‘time’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_ncdim</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select the domain axis constructs with netCDF dimension name
+‘time’ or ‘lat’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_ncdim</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_ncvar">
+<span class="sig-name descname"><span class="pre">filter_by_ncvar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">ncvars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2860-L2909"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_ncvar" title="Link to this definition">¶</a></dt>
+<dd><p>Select domain axis constructs by netCDF variable name.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>ncvars: optional</dt><dd><p>Select constructs that have a netCDF variable name,
+defined by their <cite>!nc_get_variable</cite> methods, that
+match any of the given values.</p>
+<p>If no netCDF variable names are provided then all
+constructs that do or could have a netCDF variable
+name are selected.</p>
+<p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <cite>re.Pattern</cite> object that matches
+via its <cite>~re.Pattern.search</cite> method.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>Select the constructs with netCDF variable name ‘time’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_ncvar</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select the constructs with netCDF variable name ‘time’ or
+‘lat’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_ncvar</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_property">
+<span class="sig-name descname"><span class="pre">filter_by_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">property_mode</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">properties</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L2990-L3075"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_property" title="Link to this definition">¶</a></dt>
+<dd><p>Select metadata constructs by property.</p>
+<p>Unlike the other “<a href="#id1"><span class="problematic" id="id2">filter_by_</span></a>” methods, this method has no
+<em>todict</em> or <em>cached</em> parameters. To get the results as a
+dictionary, use the <cite>todict</cite> method on the result, or for
+faster performance use the <cite>filter</cite> method. For instance, to
+get a dictionary of all constructs with a long_name of
+<code class="docutils literal notranslate"><span class="pre">'time'</span></code> you could do
+<code class="docutils literal notranslate"><span class="pre">c.filter_by_property(long_name=&quot;time&quot;).todict()</span></code>, or the
+faster <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">c.filter(filter_by_property={&quot;long_name&quot;:</span>
+<span class="pre">&quot;time&quot;},</span> <span class="pre">todict=True)</span></code>. To return a cached result, you have
+to use the <cite>filter</cite> method:
+<code class="docutils literal notranslate"><span class="pre">c.filter(filter_by_property={&quot;long_name&quot;:</span> <span class="pre">&quot;time&quot;},</span>
+<span class="pre">cached=x)</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>property_mode: optional</dt><dd><p>Define the behaviour when multiple properties are
+provided:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><em>property_mode</em></p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'and'</span></code></p></td>
+<td><p>A construct is selected if it matches
+all of the given properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'or'</span></code></p></td>
+<td><p>A construct is selected when at least
+one of its properties matches.</p></td>
+</tr>
+</tbody>
+</table>
+<p>By default <em>property_mode</em> is <code class="docutils literal notranslate"><span class="pre">'and'</span></code>.</p>
+</dd>
+<dt>properties:  optional</dt><dd><p>Select constructs that have a CF property, defined by
+their <cite>!properties</cite> methods, that matches any of the
+given values.</p>
+<p>A property names and their given values are specified
+by keyword argument names and values.</p>
+<p>A value may be any object that can match via the
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <cite>re.Pattern</cite> object that matches
+via its <cite>~re.Pattern.search</cite> method.</p>
+<p>The special value of <cite>None</cite> selects any construct that
+has that property, regardless of the construct’s
+property value.</p>
+<p>If no properties are provided then all constructs that
+do or could have CF properties, with any values, are
+selected.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite></dt><dd><p>The selected constructs.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> of ‘latitude’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">long_name</span></code> of ‘height’ <em>and</em>
+<code class="docutils literal notranslate"><span class="pre">units</span></code> of ‘m’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="n">long_name</span><span class="o">=</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">long_name</span></code> of ‘height’ <em>or</em> a
+<code class="docutils literal notranslate"><span class="pre">foo</span></code> of ‘bar’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="n">long_name</span><span class="o">=</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="n">foo</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> which contains
+start with the string ‘air’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="n">standard_name</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^air&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_size">
+<span class="sig-name descname"><span class="pre">filter_by_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L3113-L3161"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_size" title="Link to this definition">¶</a></dt>
+<dd><p>Select domain axis constructs by size.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.3</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>sizes: optional</dt><dd><p>Select domain axis constructs that have sizes, defined
+by their <cite>!get_size</cite> methods, that match any of the
+given values.</p>
+<p>If no sizes are provided then all domain axis
+constructs are selected.</p>
+<p>A value may be any object that can match an integer
+via <code class="docutils literal notranslate"><span class="pre">==</span></code>.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>Select domain axis constructs that have a size of 1:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select domain axis constructs that have a size of 1 or 96:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_size</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">96</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filter_by_type">
+<span class="sig-name descname"><span class="pre">filter_by_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L3192-L3252"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filter_by_type" title="Link to this definition">¶</a></dt>
+<dd><p>Select metadata constructs by type.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>types: optional</dt><dd><p>Select constructs that have are of any of the given
+types.</p>
+<p>A type is specified by one of the following strings:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><em>type</em></p></th>
+<th class="head"><p>Construct selected</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'domain_ancillary'</span></code></p></td>
+<td><p>Domain ancillary constructs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'dimension_coordinate'</span></code></p></td>
+<td><p>Dimension coordinate constructs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'domain_axis'</span></code></p></td>
+<td><p>Domain axis constructs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'auxiliary_coordinate'</span></code></p></td>
+<td><p>Auxiliary coordinate constructs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'cell_measure'</span></code></p></td>
+<td><p>Cell measure constructs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'coordinate_reference'</span></code></p></td>
+<td><p>Coordinate reference constructs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'domain_topology'</span></code></p></td>
+<td><p>Domain topology constructs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'cell_connectivity'</span></code></p></td>
+<td><p>Cell connectivity constructs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'cell_method'</span></code></p></td>
+<td><p>Cell method constructs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'field_ancillary'</span></code></p></td>
+<td><p>Field ancillary constructs</p></td>
+</tr>
+</tbody>
+</table>
+<p>If no types are provided then all constructs are selected.</p>
+</dd>
+<dt>todict: <cite>bool</cite>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+by their construct identifiers, instead of a
+<cite>Constructs</cite> object. This is a faster option.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+<dt>cached: optional</dt><dd><p>If any value other than <cite>None</cite> then return <em>cached</em>
+without selecting any constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite> or <cite>dict</cite> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<p>Select dimension coordinate constructs:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select dimension coordinate and field ancillary constructs:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">,</span> <span class="s1">&#39;field_ancillary&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.filters_applied">
+<span class="sig-name descname"><span class="pre">filters_applied</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L3254-L3309"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.filters_applied" title="Link to this definition">¶</a></dt>
+<dd><p>A history of filters that have been applied.</p>
+<p>The history is returned in a tuple. The last element of the
+tuple describes the last filter applied. Each element is a
+single-entry dictionary whose key is the name of the filter
+method that was used, with a value that gives the arguments
+that were passed to the call of that method. If no filters
+have been applied then the tuple is empty.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>inverse_filter</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><cite>tuple</cite></dt><dd><p>The history of filters that have been applied, ordered
+from first to last. If no filters have been applied
+then the tuple is empty.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">{&#39;auxiliarycoordinate0&#39;: &lt;AuxiliaryCoordinate: latitude(10, 9) degrees_N&gt;,</span>
+<span class="go"> &#39;auxiliarycoordinate1&#39;: &lt;AuxiliaryCoordinate: longitude(9, 10) degrees_E&gt;,</span>
+<span class="go"> &#39;coordinatereference1&#39;: &lt;CoordinateReference: grid_mapping_name:rotated_latitude_longitude&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: grid_latitude(10) degrees&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: grid_longitude(9) degrees&gt;,</span>
+<span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(10)&gt;,</span>
+<span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(9)&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">filters_applied</span><span class="p">()</span>
+<span class="go">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">,</span> <span class="s1">&#39;auxiliary_coordinate&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">filters_applied</span><span class="p">()</span>
+<span class="go">({&#39;filter_by_type&#39;: (&#39;dimension_coordinate&#39;, &#39;auxiliary_coordinate&#39;)},)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">filters_applied</span><span class="p">()</span>
+<span class="go">({&#39;filter_by_type&#39;: (&#39;dimension_coordinate&#39;, &#39;auxiliary_coordinate&#39;)},</span>
+<span class="go"> {&#39;filter_by_property&#39;: ((), {&#39;units&#39;: &#39;degrees&#39;})})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;grid_latitude&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">filters_applied</span><span class="p">()</span>
+<span class="go">({&#39;filter_by_type&#39;: (&#39;dimension_coordinate&#39;, &#39;auxiliary_coordinate&#39;)},</span>
+<span class="go"> {&#39;filter_by_property&#39;: ((), {&#39;units&#39;: &#39;degrees&#39;})},</span>
+<span class="go"> {&#39;filter_by_property&#39;: ((&#39;or&#39;,), {&#39;axis&#39;: &#39;Y&#39;, &#39;standard_name&#39;: &#39;grid_latitude&#39;})})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: grid_latitude(10) degrees&gt;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L809-L821"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.get" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the construct for the key, else default.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>items</cite>, <cite>keys</cite>, <cite>values</cite></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.get_data_axes">
+<span class="sig-name descname"><span class="pre">get_data_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L1157-L1194"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.get_data_axes" title="Link to this definition">¶</a></dt>
+<dd><p>Return the keys of the axes spanned by a construct’s data.</p>
+<p>Specifically, returns the keys of the domain axis constructs
+spanned by the data of a metadata construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>key: <cite>str</cite></dt><dd><p>Specify a metadata construct.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">key='auxiliarycoordinate0'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the data
+axes have not been set.</p>
+<p>If set to an <cite>Exception</cite> instance then it will be
+raised instead.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>tuple</cite></dt><dd><p>The keys of the domain axis constructs spanned by the data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.inverse_filter">
+<span class="sig-name descname"><span class="pre">inverse_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L3356-L3475"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.inverse_filter" title="Link to this definition">¶</a></dt>
+<dd><p>Return the inverse of previous filters.</p>
+<p>By default, the inverse comprises all of the constructs that
+were <em>not</em> selected by all previously applied filters. If no
+filters have been applied, then this will result in empty
+<cite>Constructs</cite> instance being returned.</p>
+<p>If the <em>depth</em> parameter is set to <em>N</em> then the inverse is
+relative to the constructs selected by the <em>N</em>-th most
+recently applied filter.</p>
+<p>A history of the filters that have been applied is returned in
+a <cite>tuple</cite> by the <cite>filters_applied</cite> method. The last element of
+the tuple describes the last filter applied. If no filters
+have been applied then the tuple is empty.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>,
+<cite>clear_filters_applied</cite>, <cite>unfilter</cite></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>depth: <cite>int</cite>, optional</dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then the inverse is relative to the
+constructs selected by the <code class="docutils literal notranslate"><span class="pre">N</span></code>-th most recently
+applied filter. By default the inverse is relative to
+the constructs selected by all previously applied
+filters. <code class="docutils literal notranslate"><span class="pre">N</span></code> may be larger than the total number of
+filters applied, which results in the default
+behaviour.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite></dt><dd><p>The constructs, and their construct keys, that were
+not selected by the last filter applied. If no
+filtering has been applied, or the last filter was an
+inverse filter, then an empty <cite>Constructs</cite> instance is
+returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;,</span>
+<span class="go"> &#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
+<span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(8)&gt;,</span>
+<span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(1)&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
+<span class="go">Constructs:</span>
+<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">,</span> <span class="s1">&#39;cell_method&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
+<span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(8)&gt;,</span>
+<span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(1)&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">filter_by_method</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;,</span>
+<span class="go"> &#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
+<span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(8)&gt;,</span>
+<span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(1)&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">inverse_filter</span><span class="p">())</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
+<span class="go"> &#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
+<span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(8)&gt;,</span>
+<span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(1)&gt;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.items">
+<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L823-L861"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.items" title="Link to this definition">¶</a></dt>
+<dd><p>Return the items as (construct key, construct) pairs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>get</cite>, <cite>keys</cite>, <cite>values</cite></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><cite>dict_items</cite></dt><dd><p>The construct key and constructs respectively as
+key-value pairs in a Python <cite>dict_items</cite> iterator.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">constructs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c_items</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c_items</span><span class="p">)</span>
+<span class="go">dict_items([(&#39;dimensioncoordinate0&#39;, &lt;DimensionCoordinate: latitude(5) degrees_north&gt;),</span>
+<span class="go">            (&#39;dimensioncoordinate1&#39;, &lt;DimensionCoordinate: longitude(8) degrees_east&gt;),</span>
+<span class="go">            (&#39;dimensioncoordinate2&#39;, &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;),</span>
+<span class="go">            (&#39;domainaxis0&#39;, &lt;DomainAxis: size(5)&gt;),</span>
+<span class="go">            (&#39;domainaxis1&#39;, &lt;DomainAxis: size(8)&gt;),</span>
+<span class="go">            (&#39;domainaxis2&#39;, &lt;DomainAxis: size(1)&gt;),</span>
+<span class="go">            (&#39;cellmethod0&#39;, &lt;CellMethod: area: mean&gt;)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">c_items</span><span class="p">)</span>
+<span class="go">&lt;class &#39;dict_items&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">c_items</span><span class="p">)</span>
+<span class="go">{&#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;,</span>
+<span class="go"> &#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
+<span class="go"> &#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
+<span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(8)&gt;,</span>
+<span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(1)&gt;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.key">
+<span class="sig-name descname"><span class="pre">key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L1196-L1250"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.key" title="Link to this definition">¶</a></dt>
+<dd><p>Return the construct key of the sole metadata construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>get</cite>, <cite>keys</cite>, <cite>value</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if there
+is not exactly one construct.</p>
+<p>If set to an <cite>Exception</cite> instance then it will be
+raised instead.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>str</cite></dt><dd><p>The construct key.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">constructs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">properties</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees_north&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">_set_construct</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">&#39;dimensioncoordinate0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">key</span><span class="p">()</span>
+<span class="go">&#39;dimensioncoordinate0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+<span class="go">&lt;DimensionCoordinate: latitude(5) degrees_north&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.keys">
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L863-L900"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.keys" title="Link to this definition">¶</a></dt>
+<dd><p>Return all of the construct keys, in arbitrary order.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>get</cite>, <cite>items</cite>, <cite>values</cite></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><cite>dict_keys</cite></dt><dd><p>The construct keys as a Python <cite>dict_keys</cite> iterator.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">constructs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c_keys</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c_keys</span><span class="p">)</span>
+<span class="go">dict_keys([&#39;domainaxis0&#39;,</span>
+<span class="go">           &#39;domainaxis1&#39;,</span>
+<span class="go">           &#39;domainaxis2&#39;,</span>
+<span class="go">           &#39;dimensioncoordinate0&#39;,</span>
+<span class="go">           &#39;dimensioncoordinate1&#39;,</span>
+<span class="go">           &#39;dimensioncoordinate2&#39;,</span>
+<span class="go">           &#39;cellmethod0&#39;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">c_keys</span><span class="p">)</span>
+<span class="go">&lt;class &#39;dict_keys&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c_keys</span><span class="p">)</span>
+<span class="go">[&#39;domainaxis0&#39;,</span>
+<span class="go"> &#39;domainaxis1&#39;,</span>
+<span class="go"> &#39;domainaxis2&#39;,</span>
+<span class="go"> &#39;dimensioncoordinate0&#39;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;,</span>
+<span class="go"> &#39;cellmethod0&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.new_identifier">
+<span class="sig-name descname"><span class="pre">new_identifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">construct_type</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L1252-L1300"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.new_identifier" title="Link to this definition">¶</a></dt>
+<dd><p>Return a new, unused construct key.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>construct_type: <cite>str</cite></dt><dd><p>The construct type for which the identifier is being
+created.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">construct_type='dimension_coordinate'</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>str</cite></dt><dd><p>The new construct identifier.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">constructs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">[&#39;domainaxis0&#39;,</span>
+<span class="go"> &#39;domainaxis1&#39;,</span>
+<span class="go"> &#39;domainaxis2&#39;,</span>
+<span class="go"> &#39;dimensioncoordinate0&#39;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;,</span>
+<span class="go"> &#39;cellmethod0&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">new_identifier</span><span class="p">(</span><span class="s1">&#39;domain_axis&#39;</span><span class="p">)</span>
+<span class="go">&#39;domainaxis3&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">new_identifier</span><span class="p">(</span><span class="s1">&#39;cell_method&#39;</span><span class="p">)</span>
+<span class="go">&#39;cellmethod1&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.replace">
+<span class="sig-name descname"><span class="pre">replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">construct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L1302-L1318"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.replace" title="Link to this definition">¶</a></dt>
+<dd><p>Replace one metadata construct with another.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>No checks on the axes are done.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.shallow_copy">
+<span class="sig-name descname"><span class="pre">shallow_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L3477-L3505"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.shallow_copy" title="Link to this definition">¶</a></dt>
+<dd><p>Return a shallow copy.</p>
+<p><code class="docutils literal notranslate"><span class="pre">f.shallow_copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.copy(f)</span></code>.</p>
+<p>Any in-place changes to the actual constructs of the copy will
+not be seen in the original <cite>Constructs</cite> object, and vice
+versa, but the copy is otherwise independent of its parent.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><cite>Constructs</cite></dt><dd><p>The shallow copy.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">shallow_copy</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.todict">
+<span class="sig-name descname"><span class="pre">todict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L1353-L1380"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.todict" title="Link to this definition">¶</a></dt>
+<dd><p>Return a dictionary of the metadata constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.8.9.0</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>copy: <cite>bool</cite>, optional</dt><dd><p>If True then deep copy the metadata construct values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>dict</cite></dt><dd><p>The dictionary representation, keyed by construct
+identifiers with metadata construct values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.unfilter">
+<span class="sig-name descname"><span class="pre">unfilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/constructs.py#L3507-L3608"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.unfilter" title="Link to this definition">¶</a></dt>
+<dd><p>Return the constructs that existed prior to previous filters.</p>
+<p>By default, the unfiltered constructs are those that existed
+before all previously applied filters.</p>
+<p>If the <em>depth</em> parameter is set to <em>N</em> then the unfiltered
+constructs are those that existed before the <em>N</em>-th most
+recently applied filter.</p>
+<p>A history of the filters that have been applied is returned in
+a <cite>tuple</cite> by the <cite>filters_applied</cite> method. The last element of
+the tuple describes the last filter applied. If no filters
+have been applied then the tuple is empty.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>filter</cite>, <cite>filters_applied</cite>,
+<cite>clear_filters_applied</cite>, <cite>inverse_filter</cite></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>depth: <cite>int</cite>, optional</dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then return the constructs selected by
+the <code class="docutils literal notranslate"><span class="pre">N</span></code>-th most recently applied filter. By default
+the constructs from before all previously applied
+filters are returned. <code class="docutils literal notranslate"><span class="pre">N</span></code> may be larger than the
+total number of filters applied, which results in the
+default behaviour.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><cite>Constructs</cite></dt><dd><p>The constructs, and their construct keys, that existed
+before the last filter was applied. If no filters have
+been applied then all of the constructs are returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;,</span>
+<span class="go"> &#39;domainaxis0&#39;: &lt;DomainAxis: size(5)&gt;,</span>
+<span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: size(8)&gt;,</span>
+<span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: size(1)&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_type</span><span class="p">(</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">,</span> <span class="s1">&#39;cell_method&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">unfilter</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">filter_by_method</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">unfilter</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">unfilter</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">unfilter</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">unfilter</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">unfilter</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>If no filters have been applied then the unfiltered constructs are
+unchanged:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">filters_applied</span><span class="p">()</span>
+<span class="go">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">unfilter</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.value">
+<span class="sig-name descname"><span class="pre">value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L1382-L1435"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.value" title="Link to this definition">¶</a></dt>
+<dd><p>Return the sole metadata construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>get</cite>, <cite>key</cite>, <cite>values</cite></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if there
+is not exactly one construct.</p>
+<p>If set to an <cite>Exception</cite> instance then it will be
+raised instead.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The metadata construct.</p>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">constructs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">properties</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees_north&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">_set_construct</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">&#39;dimensioncoordinate0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">Constructs:</span>
+<span class="go">{&#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">key</span><span class="p">()</span>
+<span class="go">&#39;dimensioncoordinate0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+<span class="go">&lt;DimensionCoordinate: latitude(5) degrees_north&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.constructs.Constructs.values">
+<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/constructs.py#L902-L939"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.constructs.Constructs.values" title="Link to this definition">¶</a></dt>
+<dd><p>Return all of the metadata constructs, in arbitrary order.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><cite>get</cite>, <cite>items</cite>, <cite>keys</cite></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><cite>dict_values</cite></dt><dd><p>The constructs as a Python <cite>dict_values</cite> iterator.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">constructs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c_values</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c_values</span><span class="p">)</span>
+<span class="go">dict_values([&lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go">             &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go">             &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;,</span>
+<span class="go">             &lt;DomainAxis: size(5)&gt;,</span>
+<span class="go">             &lt;DomainAxis: size(8)&gt;,</span>
+<span class="go">             &lt;DomainAxis: size(1)&gt;,</span>
+<span class="go">             &lt;CellMethod: area: mean&gt;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">c_values</span><span class="p">)</span>
+<span class="go">&lt;class &#39;dict_values&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c_values</span><span class="p">)</span>
+<span class="go">[&lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go"> &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go"> &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;,</span>
+<span class="go"> &lt;DomainAxis: size(5)&gt;,</span>
+<span class="go"> &lt;DomainAxis: size(8)&gt;,</span>
+<span class="go"> &lt;DomainAxis: size(1)&gt;,</span>
+<span class="go"> &lt;CellMethod: area: mean&gt;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2025, NCAS | Page built on 2025-08-18.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

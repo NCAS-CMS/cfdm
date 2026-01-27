@@ -85,7 +85,8 @@ The `cfdm` package can
 
 * create new field and domain constructs in memory,
 
-* write field and domain constructs to netCDF datasets on disk,
+* write field and domain constructs to netCDF and Zarr datasets on
+  disk,
 
 * read, write, and manipulate UGRID mesh topologies,
 
@@ -197,10 +198,9 @@ Hassell, D., and Bartholomew, S. L. (2020).
 **References**
 --------------
 
-Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S., Caron, J., Signell, R., et al. (2020).
-  NetCDF Climate and Forecast (CF)
-  Metadata Conventions. CF Conventions Committee. Retrieved from
-  https://cfconventions.org/cf-conventions/cf-conventions.html
+Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S. et al.
+  NetCDF Climate and Forecast (CF) Metadata Conventions (latest
+  version). CF Community. https://doi.org/10.5281/zenodo.14274886.
 
 Hassell, D., and Bartholomew, S. L. (2020).
   cfdm: A Python reference implementation of the CF data

@@ -120,6 +120,7 @@ class CellMeasure(
 
     def dump(
         self,
+        data=None,
         display=True,
         _omit_properties=None,
         _key=None,
@@ -136,6 +137,10 @@ class CellMeasure(
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
+
+            {{data: `bool` or `None`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.0.0
 
             display: `bool`, optional
                 If False then return the description as a string. By
@@ -161,6 +166,7 @@ class CellMeasure(
                 _title += f" (external variable: {ncvar})"
 
         return super().dump(
+            data=data,
             display=display,
             _key=_key,
             _omit_properties=_omit_properties,

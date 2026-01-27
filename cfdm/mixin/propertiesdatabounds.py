@@ -699,6 +699,7 @@ class PropertiesDataBounds(PropertiesData):
     @_display_or_return
     def dump(
         self,
+        data=None,
         display=True,
         _key=None,
         _omit_properties=None,
@@ -713,6 +714,10 @@ class PropertiesDataBounds(PropertiesData):
 
         :Parameters:
 
+            {{data: `bool` or `None`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.0.0
+
             display: `bool`, optional
                 If False then return the description as a string. By
                 default
@@ -726,6 +731,7 @@ class PropertiesDataBounds(PropertiesData):
         # Properties and Data
         # ------------------------------------------------------------
         string = super().dump(
+            data=data,
             display=False,
             _key=_key,
             _omit_properties=_omit_properties,
@@ -754,6 +760,7 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is not None:
             string.append(
                 bounds.dump(
+                    data=data,
                     display=False,
                     _key=_key,
                     _prefix=_prefix + "Bounds:",
@@ -771,6 +778,7 @@ class PropertiesDataBounds(PropertiesData):
         if interior_ring is not None:
             string.append(
                 interior_ring.dump(
+                    data=data,
                     display=False,
                     _key=_key,
                     _prefix=_prefix + "Interior Ring:",

@@ -4,7 +4,8 @@ from numbers import Number
 
 import numpy as np
 
-from ..core.utils import cached_property
+from cfdm.core.utils import cached_property
+
 from .abstract import CompressedArray
 from .mixin import CompressedArrayMixin
 from .netcdfindexer import netcdf_indexer

@@ -1,9 +1,4 @@
-import os
-import platform
-import sys
-from pickle import dumps, loads
-
-from . import __cf_version__, __file__, __version__
+from . import __cf_version__
 
 
 def environment(display=True, paths=True):
@@ -46,8 +41,14 @@ def environment(display=True, paths=True):
     cfdm.core: 1.12.2.0
 
     """
+    import os
+    import platform
+    import sys
+
     import numpy as np
     import packaging
+
+    from . import __file__, __version__
 
     dependency_version_paths_mapping = {
         "Platform": (platform.platform(), ""),
@@ -104,4 +105,6 @@ def deepcopy(x):
     b) be "not slower, sometimes much faster" than `copy.deepcopy`.
 
     """
+    from pickle import dumps, loads
+
     return loads(dumps(x))
