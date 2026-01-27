@@ -7,8 +7,8 @@ from .standardnames import (
     _STD_NAME_CURRENT_XML_URL
 )
 
-# Eventually structure as with individual modules per class, like:
-# from .ncattribute import Attribute
-# from .ncvariable import Variable
-# from .ncdimension import Dimension
+# Eventually structure as with individual modules per class, something like:
+# from .attributeconformance import Attribute
+# from .variableconformance import Variable
+# from .dimensionconformance import Dimension
 # from .nonconformance import NonConformance

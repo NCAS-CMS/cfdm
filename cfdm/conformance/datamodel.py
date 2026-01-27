@@ -1,11 +1,3 @@
-def _merge_unique(existing, incoming):
-    merged = list(existing)
-    for obj in incoming:
-        if not any(o.equals(obj) for o in merged):
-            merged.append(obj)
-    return merged
-
-
 class NonConformance:
     """Represents a case of CF Conventions non-conformance with description."""
 
@@ -90,7 +82,13 @@ class Attribute:
         # Check if already there first
         for vari in self.variables:
             if vari.equals(var):
-                var.combine(vari)
+                # TODO to be robust need a good way to prevent duplicates,
+                # but yet to implement an elegant way to do this. So for
+                # now just return the first found - should be reasonably safe
+                # given that in 'reporting' module we use the variable_report
+                # attribute (a list of Variable NC) to ensure that we always
+                # check if the Variable is already defined first and if so
+                # use that object - so no duplicates should emerge.
                 return vari
 
         self.variables.append(var)
@@ -141,18 +139,6 @@ class Attribute:
     def equals(self, other):
         """Equality checking between same class."""
         return self.name == other.name and self.value == other.value
-
-    def combine(self, other):
-        """Combine one Attribute object with another when they represent the
-        same underlying netCDF attribute.
-
-        Returns the self object where the other should be discarded.
-
-        TODO shorten summary line to one line.
-        """
-        self.set_variables(_merge_unique(self.variables, other.variables))
-        self.set_dimensions(_merge_unique(self.dimensions, other.dimensions))
-        return self
 
 
 class Dimension:
@@ -228,17 +214,6 @@ class Dimension:
         """Equality checking between same class."""
         return self.name == other.name
 
-    def combine(self, other):
-        """Combine one Dimension object with another when they represent the
-        same underlying netCDF dimension.
-
-        Returns the self object where the other should be discarded.
-
-        TODO shorten summary line to one line.
-        """
-        self.set_variables(_merge_unique(self.variables, other.variables))
-        return self
-
 
 class Variable:
     """Non-conformances related to a netCDF variable."""
@@ -272,7 +247,13 @@ class Variable:
         # Check if already there first
         for attrib in self.attributes:
             if attrib.equals(attr):
-                attr.combine(attrib)
+                # TODO to be robust need a good way to prevent duplicates,
+                # but yet to implement an elegant way to do this. So for
+                # now just return the first found - should be reasonably safe
+                # given that in 'reporting' module we use the variable_report
+                # attribute (a list of Variable NC) to ensure that we always
+                # check if the Variable is already defined first and if so
+                # use that object - so no duplicates should emerge.
                 return attrib
 
         self.attributes.append(attr)
@@ -333,39 +314,3 @@ class Variable:
     def equals(self, other):
         """Equality checking between same class."""
         return self.name == other.name
-
-    def combine(self, other):
-        """Combine one Variable object with another when they represent the
-        same underlying netCDF variable.
-
-        Returns the self object where the other should be discarded.
-
-        TODO shorten summary line to one line.
-        """
-        self.set_attributes(_merge_unique(self.attributes, other.attributes))
-        self.set_dimensions(_merge_unique(self.dimensions, other.dimensions))
-        return self
-
-
-class DataDomainVariable(Variable):
-    """A data or domain variable with associated conventions."""
-
-    def __init__(
-        self,
-        name,
-        conventions,
-        attributes=None,
-        dimensions=None,
-        non_conformances=None,
-    ):
-        if not conventions:
-            raise ValueError("Conventions are required.")
-
-        super().__init__(
-            name=name,
-            attributes=attributes,
-            dimensions=dimensions,
-            non_conformances=non_conformances,
-        )
-
-        self.conventions = conventions

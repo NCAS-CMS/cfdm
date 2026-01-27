@@ -1,5 +1,3 @@
-# TODO move all _check methods from netcdfread to here! For now, only
-# include new classes for PR #373 to make reviewing simpler.
 from dataclasses import dataclass, field
 from typing import Any
 from uuid import uuid4
@@ -15,7 +13,7 @@ from .reporting import Report
 from .standardnames import get_all_current_standard_names
 
 
-# TODO SLB: this Mesh object doesn't really belong in the conformance module
+# NOTE SLB: this Mesh object doesn't really belong in the conformance module
 # according to context, but it is only usde by the UGRID checker methods
 # therefore it should be accessible for this module. (Can't put it in the
 # netcdfread module since then we will have circular importing.)
