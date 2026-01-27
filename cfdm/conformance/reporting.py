@@ -1,8 +1,11 @@
-from copy import copy
 import logging
-from pprint import pprint
 
-from .datamodel import NonConformance, Attribute, Dimension, Variable
+from .datamodel import NonConformance, Attribute, Variable
+# TODO yet to incorporate dimensions (from .datamodel import Dimension) into
+# the reporting, since the initial scope is to report issues with standard
+# names. However the Conformance Data Model has set up the class Dimension
+# which is trivial to associate with Variable and Attribute objects below,
+# as appropriate.
 
 logger = logging.getLogger(__name__)
 
@@ -13,12 +16,14 @@ class Report():
     Holds methods for reporting about non-compliance.
     """
     def __init__(self):
-        self.read_vars = {}  # intended to be overloaded
+        self.read_vars = {}  # intended to be overloaded by NetCDFRead
         self.dataset_compliance = {}
         self.variable_report = []
 
     def _process_dimension_sizes(self, ncvar):
         """Process dimension sizes to report in issues with dimensions."""
+        # NOTE: not actually used yet, but will be when issues with Dimensions
+        # are incorporated into the new Conformance Data Model.
         g = self.read_vars
 
         var_dims = g["variable_dimensions"][ncvar]
@@ -109,16 +114,9 @@ class Report():
         else:
             code = None
 
-        # TODO need better way to access this - inefficient, should be able to
-        # use an in-built function!
-        print("ATTR IS", attribute)
         attribute_key = next(iter(attribute))
-        print("ATTR KEY IS", attribute_key)
         higher_attr_value, attribute_name = attribute_key.split(":")
         attribute_value = attribute[attribute_key]
-
-        ### print("FULL G:")
-        ###pprint(g)
 
         # Potentially still a dict from init a dict so set here for now -
         # ugrid cases only seemingly hit this. How to avoid, and ensure that
@@ -130,8 +128,6 @@ class Report():
         # 1. Create the relevant non-compliance objects
         # a) Non-conformance description for the message in question
         nc = [NonConformance(message, code),]
-        #nc_low = list(nc)  # shallow copy the non-conformances
-        #nc_high = list(nc)
 
         # b) Attributes of relevance - direct attribute and associated
         attr_lowest_nc = Attribute(
@@ -220,8 +216,6 @@ class Report():
             `None`
 
         """
-        g = self.read_vars
-
         component_report = self._get_variable_non_compliance_report(
             parent_ncvar)
         # Unlike for 'attribute' input to _add_message, this 'attribute' is the
@@ -236,7 +230,6 @@ class Report():
 
     def _get_variable_non_compliance_report(self, var):
         """Return if present a Variable NonCompliance stored in the report."""
-        component_report = False
         for variable in self.variable_report:
             if variable.name == var:
                 return variable
@@ -245,8 +238,6 @@ class Report():
 
     def _get_variable_non_compliance(self, var):
         """Return an existing else new Variable NonCompliance for a variable."""
-        g = self.read_vars
-
         var_nc = self._get_variable_non_compliance_report(var)
 
         if not var_nc:

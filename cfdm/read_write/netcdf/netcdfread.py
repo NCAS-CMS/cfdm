@@ -20,9 +20,7 @@ from packaging.version import Version
 from s3fs import S3FileSystem
 from uritools import urisplit
 
-from ...conformance import (
-    Checker, NonConformance, Attribute, Dimension, Variable
-)
+from ...conformance import Checker, Variable
 from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
@@ -120,6 +118,7 @@ class NetCDFRead(IORead, Checker):
             "in the current standard name table"
         ): 22,
     }
+
     def __init__(self, implementation=None):
         Checker.__init__(self)
         self.implementation = implementation  # from IORead
