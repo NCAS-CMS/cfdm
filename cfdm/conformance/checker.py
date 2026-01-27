@@ -266,6 +266,17 @@ class Checker(Report):
         else:  # found at least one and all are valid standard names
             return True
 
+    def _check_field_ncvar(self, field_ncvar):
+        """Check (properties of) the top-level field variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+        """
+        self._check_standard_names(
+            field_ncvar,
+            field_ncvar,
+            self.read_vars["variable_attributes"][field_ncvar],
+        )
+
     # -------- Non-UGRID checking methods (old relative to #373) ------------
 
     def _check_bounds(
@@ -275,7 +286,7 @@ class Checker(Report):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        Checks that
+        Checks that:
 
         * The bounds variable has exactly one more dimension than the
           parent coordinate variable
@@ -314,6 +325,13 @@ class Checker(Report):
         incorrect_dimensions = (variable_type, "spans incorrect dimensions")
 
         g = self.read_vars
+
+        bounds_ncvar_attrs = g["variable_attributes"][bounds_ncvar]
+        self._check_standard_names(
+            parent_ncvar,
+            bounds_ncvar,
+            bounds_ncvar_attrs,
+        )
 
         if bounds_ncvar not in g["internal_variables"]:
             bounds_ncvar, message = self._missing_variable(
@@ -383,6 +401,13 @@ class Checker(Report):
         g = self.read_vars
 
         geometry_ncvar = g["variable_geometry"].get(field_ncvar)
+
+        geometry_ncvar_attrs = g["variable_attributes"][geometry_ncvar]
+        self._check_standard_names(
+            node_ncvar,
+            geometry_ncvar,
+            geometry_ncvar_attrs,
+        )
 
         attribute = {
             field_ncvar
@@ -490,6 +515,21 @@ class Checker(Report):
 
             ncvar = values[0]
 
+            # For external variables, the variable will not be in covered
+            # in read_vars["variable_attributes"], so in this case we
+            # can't rely on the ncvar key being present, hence get().
+            # Note that at present this is an outlier since only cell
+            # measures can be external (but consult
+            # https://cfconventions.org/cf-conventions/
+            # cf-conventions.html#external-variables in case this changes).
+            ncvar_attrs = g["variable_attributes"].get(ncvar)
+            if ncvar_attrs:
+                self._check_standard_names(
+                    field_ncvar,
+                    ncvar,
+                    ncvar_attrs,
+                )
+
             unknown_external = ncvar in external_variables
 
             # Check that the variable exists in the file, or if not
@@ -565,6 +605,13 @@ class Checker(Report):
             return False
 
         for ncvar in parsed_string:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                parent_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             # Check that the geometry variable exists in the file
             if ncvar not in g["variables"]:
                 ncvar, message = self._missing_variable(
@@ -633,6 +680,8 @@ class Checker(Report):
 
         ok = True
         for ncvar in parsed_string:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+
             # Check that the variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
@@ -685,6 +734,13 @@ class Checker(Report):
         )
 
         g = self.read_vars
+
+        coord_ncvar_attrs = g["variable_attributes"][coord_ncvar]
+        self._check_standard_names(
+            parent_ncvar,
+            coord_ncvar,
+            coord_ncvar_attrs,
+        )
 
         if coord_ncvar not in g["internal_variables"]:
             coord_ncvar, message = self._missing_variable(
@@ -753,6 +809,14 @@ class Checker(Report):
 
         g = self.read_vars
 
+        tie_point_ncvar_attrs = g["variable_attributes"][tie_point_ncvar]
+        self._check_standard_names(
+            parent_ncvar,
+            tie_point_ncvar,
+            tie_point_ncvar_attrs,
+        )
+        # SLB STOP
+
         if tie_point_ncvar not in g["internal_variables"]:
             ncvar, message = self._missing_variable(
                 tie_point_ncvar, "Tie point coordinate variable"
@@ -817,6 +881,9 @@ class Checker(Report):
         )
 
         g = self.read_vars
+
+        # Note: we don't call _check_standard_names for the grid mapping
+        # check because in this case the standard_name is not standardised
 
         if not parsed_grid_mapping:
             self._add_message(
@@ -924,6 +991,13 @@ class Checker(Report):
 
         g = self.read_vars
 
+        geometry_ncvar_attrs = g["variable_attributes"][geometry_ncvar]
+        self._check_standard_names(
+            field_ncvar,
+            geometry_ncvar,
+            geometry_ncvar_attrs,
+        )
+
         incorrectly_formatted = (
             "node_coordinates attribute",
             "is incorrectly formatted",
@@ -955,6 +1029,13 @@ class Checker(Report):
             # Check that the node coordinate variable exists in the
             # file
             if ncvar not in g["internal_variables"]:
+                ncvar_attrs = g["variable_attributes"][ncvar]
+                self._check_standard_names(
+                    field_ncvar,
+                    ncvar,
+                    ncvar_attrs,
+                )
+
                 ncvar, message = self._missing_variable(
                     ncvar, "Node coordinate variable"
                 )
@@ -993,6 +1074,13 @@ class Checker(Report):
         ok = True
 
         for ncvar in parsed_node_count:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                field_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             # Check that the node count variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
@@ -1037,6 +1125,13 @@ class Checker(Report):
         ok = True
 
         for ncvar in parsed_part_node_count:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                field_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             # Check that the variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
@@ -1092,6 +1187,13 @@ class Checker(Report):
             return False
 
         for ncvar in parsed_interior_ring:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                field_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             # Check that the variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
@@ -1205,6 +1307,13 @@ class Checker(Report):
         ok = True
 
         for interp_ncvar, coords in parsed_coordinate_interpolation.items():
+            interp_ncvar_attrs = g["variable_attributes"][interp_ncvar]
+            self._check_standard_names(
+                parent_ncvar,
+                interp_ncvar,
+                interp_ncvar_attrs,
+            )
+
             # Check that the interpolation variable exists in the file
             if interp_ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
@@ -1231,6 +1340,15 @@ class Checker(Report):
             # Check that the tie point coordinate variables exist in
             # the file
             for tie_point_ncvar in coords:
+                tie_point_interp_ncvar_attrs = g["variable_attributes"][
+                    tie_point_ncvar
+                ]
+                self._check_standard_names(
+                    parent_ncvar,
+                    tie_point_ncvar,
+                    tie_point_interp_ncvar_attrs,
+                )
+
                 if tie_point_ncvar not in g["internal_variables"]:
                     ncvar, message = self._missing_variable(
                         tie_point_ncvar, "Tie point coordinate variable"
@@ -1269,9 +1387,14 @@ class Checker(Report):
 
         g = self.read_vars
 
-        ok = True
+        self._check_standard_names(
+            parent_ncvar,
+            ncvar,
+            ncvar_attrs,
+        )
 
         # Check that the quantization variable exists in the file
+        ok = True
         if ncvar not in g["internal_variables"]:
             ncvar, message = self._missing_variable(
                 ncvar, "Quantization variable"
@@ -1728,8 +1851,18 @@ class Checker(Report):
         """
         g = self.read_vars
 
-        ok = True
+        mesh_ncvar_attrs = g["variable_attributes"][mesh_ncvar]
 
+        # TODO: not sure if this should be included. It reports a bad
+        # standard name which can also be reported on the field variable
+        # as an overall issues, so effectively is duplicated!
+        self._check_standard_names(
+            mesh_ncvar,
+            mesh_ncvar,
+            mesh_ncvar_attrs,
+        )
+
+        ok = True
         if mesh_ncvar not in g["internal_variables"]:
             mesh_ncvar, message = self._missing_variable(
                 mesh_ncvar, "Mesh topology variable"
@@ -1797,6 +1930,8 @@ class Checker(Report):
                     )
                     ok = False
                 else:
+                    ncvar_attrs = g["variable_attributes"][ncvar]
+
                     dims = []
                     ncdims = self._ncdimensions(ncvar)
                     if len(ncdims) != 1:
@@ -1837,6 +1972,8 @@ class Checker(Report):
             ok = False
         elif topology_dimension == 2:
             ncvar = attributes.get("face_node_connectivity")
+            ncvar_attrs = g["variable_attributes"][ncvar]
+
             if ncvar is None:
                 self._add_message(
                     mesh_ncvar,
@@ -1858,6 +1995,13 @@ class Checker(Report):
                 ok = False
         elif topology_dimension == 1:
             ncvar = attributes.get("edge_node_connectivity")
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                mesh_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             if ncvar is None:
                 self._add_message(
                     mesh_ncvar,
@@ -1879,6 +2023,13 @@ class Checker(Report):
                 ok = False
         elif topology_dimension == 3:
             ncvar = attributes.get("volume_node_connectivity")
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                mesh_ncvar,
+                ncvar,
+                ncvar_attrs,
+            )
+
             if ncvar is None:
                 self._add_message(
                     mesh_ncvar,
@@ -1949,7 +2100,6 @@ class Checker(Report):
         g = self.read_vars
 
         ok = True
-
         if location_index_set_ncvar not in g["internal_variables"]:
             location_index_set_ncvar, message = self._missing_variable(
                 location_index_set_ncvar, "Location index set variable"
@@ -1984,6 +2134,13 @@ class Checker(Report):
             ok = False
 
         mesh_ncvar = location_index_set_attributes.get("mesh")
+        mesh_ncvar_attrs = g["variable_attributes"][mesh_ncvar]
+        self._check_standard_names(
+            location_index_set_ncvar,
+            mesh_ncvar,
+            mesh_ncvar_attrs,
+        )
+
         if mesh_ncvar is None:
             self._add_message(
                 location_index_set_ncvar,
@@ -2045,8 +2202,14 @@ class Checker(Report):
         """
         g = self.read_vars
 
-        ok = True
+        ncvar_attrs = g["variable_attributes"][location_index_set_ncvar]
+        self._check_standard_names(
+            parent_ncvar,
+            location_index_set_ncvar,
+            ncvar_attrs,
+        )
 
+        ok = True
         if "mesh" in g["variable_attributes"][parent_ncvar]:
             self._add_message(
                 parent_ncvar,
@@ -2073,6 +2236,11 @@ class Checker(Report):
         location_index_set_attributes = g["variable_attributes"][
             location_index_set_ncvar
         ]
+        self._check_standard_names(
+            parent_ncvar,
+            location_index_set_ncvar,
+            location_index_set_attributes
+        )
 
         location = location_index_set_attributes.get("location")
         if location is None:
@@ -2135,7 +2303,12 @@ class Checker(Report):
             )
             ok = False
 
-        self._include_component_report(parent_ncvar, location_index_set_ncvar)
+        self._include_component_report(
+            parent_ncvar,
+            location_index_set_ncvar,
+            "location_index_set",
+            dimensions=g["variable_dimensions"][location_index_set_ncvar],
+        )
         return ok
 
     def _ugrid_check_field_mesh(
@@ -2163,6 +2336,13 @@ class Checker(Report):
 
         """
         g = self.read_vars
+
+        mesh_ncvar_attrs = g["variable_attributes"][mesh_ncvar]
+        self._check_standard_names(
+            parent_ncvar,
+            mesh_ncvar,
+            mesh_ncvar_attrs,
+        )
 
         ok = True
 
@@ -2215,7 +2395,7 @@ class Checker(Report):
             )
             ok = False
 
-        self._include_component_report(parent_ncvar, mesh_ncvar)
+        self._include_component_report(parent_ncvar, mesh_ncvar, "mesh")
         return ok
 
     def _ugrid_check_connectivity_variable(
@@ -2251,6 +2431,14 @@ class Checker(Report):
 
         """
         g = self.read_vars
+
+        ncvar_attrs = g["variable_attributes"][connectivity_ncvar]
+        self._check_standard_names(
+            parent_ncvar,
+            connectivity_ncvar,
+            ncvar_attrs,
+            direct_parent_ncvar=mesh_ncvar,
+        )
 
         ok = True
         if connectivity_ncvar is None:

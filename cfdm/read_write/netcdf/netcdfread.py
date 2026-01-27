@@ -4790,6 +4790,9 @@ class NetCDFRead(IORead, Checker):
         # -------------------------------------------------------------
         # Compliance reporting
         # -------------------------------------------------------------
+        # Perform check on the final field (properties e.g standard name)
+        self._check_field_ncvar(field_ncvar)
+
         # Add the structural read report to the field/domain
         dataset_compliance = self.dataset_compliance.as_report_fragment()
 
