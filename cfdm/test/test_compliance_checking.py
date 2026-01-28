@@ -262,8 +262,11 @@ class ComplianceCheckingTest(unittest.TestCase):
     def test_standard_names_validation_noncompliant_field(self):
         """Test compliance checking on a non-compliant non-UGRID
         field."""
+        # SLB
         f = self.bad_snames_general_field
         dc_output = f.dataset_compliance()
+        from pprint import pprint
+        pprint(dc_output)
 
         # 1. Top-level CF version
         self.assertIn("CF version", dc_output)

@@ -1,6 +1,5 @@
 class NonConformanceCase:
-    """Represents a case of CF Conventions non-conformance with
-    description."""
+    """Describes a case of CF Conventions non-conformance."""
 
     def __init__(self, reason, code):
         if (
@@ -49,19 +48,19 @@ class AttributeNonConformance:
         self.name = name
         self.value = value
 
-        # Must be a non-empty list of NonConformance objects
+        # Must be a non-empty list of NonConformanceCase objects
         # TODO In the UML this is the case, but in practice not so, the issue
         # could be registered further down via associated variable children?
         # if (
         #     not isinstance(non_conformances, list)
         #     or not non_conformances
         #     or not all(
-        #         isinstance(nc, NonConformance) for nc in non_conformances
+        #         isinstance(nc, NonConformanceCase) for nc in non_conformances
         #     )
         # ):
         #     raise TypeError(
         #         f"Parameter 'non_conformances' for Attribute {name} "
-        #         "must be a non-empty list of NonConformance instances."
+        #         "must be a non-empty list of NonConformanceCase instances."
         #     )
 
         # UML: 1..* Non-conformance
@@ -84,20 +83,12 @@ class AttributeNonConformance:
     def add_variable(self, var):
         """Append a variable relating to the attribute's non-
         compliance."""
-        # Check if already there first
-        for vari in self.variables:
-            if vari.equals(var):
-                # TODO to be robust need a good way to prevent duplicates,
-                # but yet to implement an elegant way to do this. So for
-                # now just return the first found - should be reasonably safe
-                # given that in 'reporting' module we use the variable_report
-                # attribute (a list of Variable NC) to ensure that we always
-                # check if the Variable is already defined first and if so
-                # use that object - so no duplicates should emerge.
-                return vari
-
-        self.variables.append(var)
-        return var
+        # Ensure attribute has a list to store objects
+        if not hasattr(self, "variables"):
+            self.variables = []
+        # Use identity to avoid duplicate objects
+        if not any(v is var for v in self.variables):
+            self.variables.append(var)
 
     def add_dimension(self, dim):
         """Append a dimension relating to the attribute's non-
@@ -164,17 +155,17 @@ class DimensionNonConformance:
         # UML: 1..* Non-conformance
         self.non_conformances = non_conformances or []
 
-        # Must be a non-empty list of NonConformance objects
+        # Must be a non-empty list of NonConformanceCase objects
         if (
             not isinstance(non_conformances, list)
             or not non_conformances
             or not all(
-                isinstance(nc, NonConformance) for nc in non_conformances
+                isinstance(nc, NonConformanceCase) for nc in non_conformances
             )
         ):
             raise TypeError(
                 f"Parameter 'non_conformances' for Dimension {name} "
-                "must be a non-empty list of NonConformance instances."
+                "must be a non-empty list of NonConformanceCase instances."
             )
 
         # UML associations
@@ -185,10 +176,11 @@ class DimensionNonConformance:
         compliance."""
         self.variables = variables
 
-    def add_variable(self, attr):
+    def add_variable(self, var):
         """Append a variable relating to the dimension's non-
         compliance."""
-        self.variables.append(attr)
+        self.variables.append(var)
+        return var
 
     def as_report_fragment(self):
         """Report the dimension non-compliance in dictionary form.
@@ -250,6 +242,13 @@ class VariableNonConformance:
         self.attributes = attributes or []
         self.dimensions = dimensions or []
 
+    def get_attribute(self, name):
+        """Return existing Attribute object with this name or None."""
+        for attr in getattr(self, "attributes", []):
+            if attr.name == name:
+                return attr
+        return None
+
     def set_attributes(self, attributes):
         """Set attributes associated with the variable's non-
         compliance."""
@@ -266,13 +265,6 @@ class VariableNonConformance:
         # Check if already there first
         for attrib in self.attributes:
             if attrib.equals(attr):
-                # TODO to be robust need a good way to prevent duplicates,
-                # but yet to implement an elegant way to do this. So for
-                # now just return the first found - should be reasonably safe
-                # given that in 'reporting' module we use the variable_report
-                # attribute (a list of Variable NC) to ensure that we always
-                # check if the Variable is already defined first and if so
-                # use that object - so no duplicates should emerge.
                 return attrib
 
         self.attributes.append(attr)
@@ -322,20 +314,6 @@ class VariableNonConformance:
                 "non-conformance": self.non_conformances,
             }
         )
-
-    def get_variable(self, var_name):
-        """Fetch a child variable connected via an attribute, else is
-        False."""
-        count = []
-        for attr in self.attributes:
-            for var in attr.variables:
-                if var.name == var_name:
-                    count.append(var)
-
-        if count:
-            return count[0]
-
-        return False
 
     def equals(self, other):
         """Equality checking between same class."""

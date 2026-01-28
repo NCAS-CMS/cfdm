@@ -4712,12 +4712,14 @@ class NetCDFRead(IORead, Checker):
                 cell_method = self._create_cell_method(
                     axes, method, properties
                 )
-
                 logger.detail(
                     f"        [i] Inserting {method!r} "
                     f"{cell_method.__class__.__name__}"
                 )  # pragma: no cover
 
+                # TODO at present this check does nothing, need to find
+                # approach for checking cell methods
+                self._check_cell_methods(field_ncvar, cell_methods_string)
                 self.implementation.set_cell_method(
                     f, construct=cell_method, copy=False
                 )

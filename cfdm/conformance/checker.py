@@ -67,16 +67,16 @@ class Checker(Report):
     all start with "_check") check the minimum required for mapping the
     file to CFDM structural elements.
 
-    General CF compliance is not checked (e.g. whether or
-    not grid mapping variable has a grid_mapping_name attribute)
-    except for the case of (so far):
+    General CF compliance is only partially checked (e.g. whether or
+    not grid mapping variable has a grid_mapping_name attribute is not
+    includded) except for coverage of cases of (so far):
       * whether (computed_)standard_name values are valid according
         to specified criteria under Section 3.3. of the Conformance
         document.
 
     """
 
-    # --------------------- New method for PR #373 ------------------------
+    # --------------------- New methods from PR #373 ------------------------
 
     def _check_standard_names(
         self,
@@ -275,6 +275,20 @@ class Checker(Report):
             field_ncvar,
             self.read_vars["variable_attributes"][field_ncvar],
         )
+
+    def _check_cell_methods(self, field_ncvar, cell_method):
+        """Check the cell methods.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        # TODO SLB unclear how to check on cell methods, will leave
+        # for now.
+        # self._check_standard_names(
+        #     field_ncvar,
+        #     field_ncvar,
+        #     # self.read_vars["variable_attributes"][field_ncvar]["cell_methods"],
+        # )
 
     # -------- Non-UGRID checking methods (old relative to #373) ------------
 
@@ -528,6 +542,11 @@ class Checker(Report):
                     ncvar,
                     ncvar_attrs,
                 )
+                self._include_component_report(
+                    field_ncvar,
+                    ncvar,
+                    "cell_measures",
+                )
 
             unknown_external = ncvar in external_variables
 
@@ -746,12 +765,6 @@ class Checker(Report):
         g = self.read_vars
 
         coord_ncvar_attrs = g["variable_attributes"][coord_ncvar]
-        print(
-            "PROCESSING",
-            parent_ncvar,
-            coord_ncvar,
-            coord_ncvar_attrs,
-        )
         self._check_standard_names(
             parent_ncvar,
             coord_ncvar,

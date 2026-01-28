@@ -125,6 +125,7 @@ class Report:
         else:
             code = None
 
+        # Process attribute inputs
         attribute_key = next(iter(attribute))
         lower_attr_value, attribute_name = attribute_key.split(":")
         attribute_value = attribute[attribute_key]
@@ -184,9 +185,6 @@ class Report:
             direct_parent_ncvar_nc.add_attribute(store_attr_nc)
             attr_lowest_nc.add_variable(direct_parent_ncvar_nc)
         else:
-            # NO need to use copies here to avoid same attributes object
-            # being included in the wrong places due to referencing. Don't
-            # think deep copies are required but review that assumption.
             top_parent_ncvar_nc.add_attribute(attr_highest_nc)
             attr_lowest_nc.add_variable(top_parent_ncvar_nc)
 
@@ -238,30 +236,26 @@ class Report:
             `None`
 
         """
-        component_report = self._get_variable_non_compliance_report(
-            parent_ncvar
-        )
-        # Unlike for 'attribute' input to _add_message, this 'attribute' is the
-        # the attribute_name only and not "var_name:attribute_name" to split
+        component_report = self._get_variable_non_compliance_report(parent_ncvar)
         if component_report:
+            # Ensure canonical Variable for ncvar
             ncvar_nc = self._get_variable_non_compliance(ncvar)
 
-            # print("INC COMP REPORT FOR:", parent_ncvar, ncvar, attribute)
-            # print("NCVAR NC IS")
-            from pprint import pprint
-            pprint(component_report.as_report_fragment())
+            attr_name = attribute
+            # Try to find an existing attribute object at the top level
+            existing_attr = self.dataset_compliance.get_attribute(attr_name)
 
-            # Attribute value is same as the variable name in these cases
-            attr_nc = AttributeNonConformance(attribute, value=ncvar)
-            attr_nc.add_variable(ncvar_nc)
-            self.dataset_compliance.add_attribute(attr_nc)
-
-            # Update the variable report
-            self.variable_report.append(ncvar_nc)
+            if existing_attr is None:
+                # Create new attribute and attach the variable
+                attr_nc = AttributeNonConformance(attr_name, value=ncvar)
+                attr_nc.add_variable(ncvar_nc)
+                self.dataset_compliance.add_attribute(attr_nc)
+            else:
+                # Merge: just add this variable to the existing attribute
+                existing_attr.add_variable(ncvar_nc)
 
     def _get_variable_non_compliance_report(self, var):
         """Return if present a Variable NonCompliance from the report."""
-        # TODO better to have a method for 'get_' on variable_report
         for variable in self.variable_report:
             if variable.name == var:
                 return variable
