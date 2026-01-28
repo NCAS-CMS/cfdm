@@ -110,6 +110,9 @@ class NetCDFRead(IORead, Checker):
             "has a value that is not a valid name contained "
             "in the current standard name table"
         ): 22,
+        (
+            "has a modifier that is not a valid standard name modifier"
+        ): 23,
     }
 
     def __init__(self, implementation=None):

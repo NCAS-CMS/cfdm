@@ -78,6 +78,40 @@ class Checker(Report):
 
     # --------------------- New methods from PR #373 ------------------------
 
+    def _check_standard_name_modifier(self, standard_name):
+        """True if a (computed) standard name has a valid modifier, or none.
+
+        Also return the standard name with modifiers stripped, as the second
+        tuple item.
+
+        .. versionadded:: NEXTVERSION
+        """
+        # From Appendix C of the Conventions document:
+        # https://cfconventions.org/cf-conventions/
+        # cf-conventions.html#standard-name-modifiers
+        valid_modifiers = {
+            "detection_minimum",
+            "number_of_observations",
+            "standard_error",
+            "status_flag",
+        }
+
+        # Whitespace-separated modifiers
+        # TODO check in case these can be underscore-delimited - this is not
+        # covered in the logic below
+        parts = standard_name.split()
+
+        length_parts = len(parts)
+        if length_parts == 1:
+            # No modifier
+            return True, standard_name
+        elif length_parts == 2:
+            base, modifier = parts
+            return modifier in valid_modifiers, base
+
+        # More than one modifier is invalid
+        return False, parts[0]
+
     def _check_standard_names(
         self,
         top_ancestor_ncvar,
@@ -197,8 +231,29 @@ class Checker(Report):
             if not sn_value:
                 continue
 
+            # 2. Check that any modifiers are valid
+            # Strips off the modifiers in the process
+            modifiers_valid, sn_value = self._check_standard_name_modifier(
+                sn_value)
+            if not modifiers_valid:
+                self._add_message(
+                    top_ancestor_ncvar,
+                    ncvar,
+                    attribute=attribute_value,
+                    message=(
+                        f"{sn_attr} attribute",
+                        "has a modifier that is not a valid standard "
+                        "name modifier"
+                    ),
+                    conformance="3.3.requirement.1",
+                    direct_parent_ncvar=direct_parent_ncvar,
+                )
+                invalid_sn_found = not modifiers_valid
+
             any_sn_found = True
-            # 2. Check, if requested, if name is a native or numpy string type
+
+            print("NOW HAVE SN OF 2", sn_value)
+            # 3. Check, if requested, if name is a native or numpy string type
             if check_is_string and not (
                 isinstance(sn_value, (str, np.str_, np.bytes_))
             ):
@@ -215,7 +270,7 @@ class Checker(Report):
                     direct_parent_ncvar=direct_parent_ncvar,
                 )
 
-            # 3. Check, if requested, that the SN is in the custom list given
+            # 4. Check, if requested, that the SN is in the custom list given
             elif (
                 check_is_in_custom_list
                 and sn_value not in check_is_in_custom_list
@@ -233,7 +288,7 @@ class Checker(Report):
                     direct_parent_ncvar=direct_parent_ncvar,
                 )
 
-            # 4. Check, if requested, if string is in the list of valid names
+            # 5. Check, if requested, if string is in the list of valid names
             elif (
                 check_is_in_table
                 and sn_value not in get_all_current_standard_names()
