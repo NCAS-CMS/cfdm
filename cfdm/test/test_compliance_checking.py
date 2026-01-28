@@ -2,17 +2,16 @@ import atexit
 import datetime
 import faulthandler
 import os
-from pprint import pprint
 import tempfile
 import unittest
+from pprint import pprint
+from urllib import request
 
 from netCDF4 import Dataset
-from urllib import request
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-
 
 n_tmpfiles = 2
 tmpfiles = [
@@ -35,7 +34,8 @@ atexit.register(_remove_tmpfiles)
 
 
 def _create_noncompliant_names_field(compliant_field, temp_file):
-    """Create a copy of a field with bad standard names on all variables."""
+    """Create a copy of a field with bad standard names on all
+    variables."""
     cfdm.write(compliant_field, temp_file)
 
     with Dataset(temp_file, "r+") as nc:
@@ -192,7 +192,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         )
 
     def test_get_all_current_standard_names(self):
-        """Test the `conformance.get_all_current_standard_names` function."""
+        """Test the `conformance.get_all_current_standard_names`
+        function."""
         # First check the URL used is actually available in case of issues
         # arising in case GitHub endpoints go down
         sn_xml_url = cfdm.conformance._STD_NAME_CURRENT_XML_URL
@@ -260,7 +261,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(dc_output, {"CF version": self.expected_cf_version})
 
     def test_standard_names_validation_noncompliant_field(self):
-        """Test compliance checking on a non-compliant non-UGRID field."""
+        """Test compliance checking on a non-compliant non-UGRID
+        field."""
         f = self.bad_snames_general_field
         dc_output = f.dataset_compliance()
 
@@ -378,9 +380,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertIsInstance(mesh2_standard_name, dict)
         self.assertIn("value", mesh2_standard_name)
         self.assertIn("non-conformance", mesh2_standard_name)
-        self.assertEqual(
-            mesh2_standard_name["value"], "badname_Mesh2"
-        )
+        self.assertEqual(mesh2_standard_name["value"], "badname_Mesh2")
         self.assertEqual(
             mesh2_standard_name["non-conformance"][0],
             {

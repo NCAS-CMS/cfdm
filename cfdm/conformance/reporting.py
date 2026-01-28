@@ -1,6 +1,6 @@
 import logging
 
-from .datamodel import NonConformance, Attribute, Variable
+from .datamodel import Attribute, NonConformance, Variable
 
 # TODO yet to incorporate dimensions (from .datamodel import Dimension) into
 # the reporting, since the initial scope is to report issues with standard
@@ -12,9 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class Report:
-    """Reporting of CF Compliance non-conformance for field creation from netCDF.
+    """Reporting of CF Compliance non-conformance for field creation
+    from netCDF.
 
     Holds methods for reporting about non-compliance.
+
     """
 
     def __init__(self):
@@ -23,7 +25,8 @@ class Report:
         self.variable_report = []
 
     def _process_dimension_sizes(self, ncvar):
-        """Process dimension sizes to report in issues with dimensions."""
+        """Process dimension sizes to report in issues with
+        dimensions."""
         # NOTE: not actually used yet, but will be when issues with Dimensions
         # are incorporated into the new Conformance Data Model.
         g = self.read_vars
@@ -243,7 +246,8 @@ class Report:
             self.dataset_compliance.add_attribute(attr_nc)
 
     def _get_variable_non_compliance_report(self, var):
-        """Return if present a Variable NonCompliance stored in the report."""
+        """Return if present a Variable NonCompliance stored in the
+        report."""
         for variable in self.variable_report:
             if variable.name == var:
                 return variable
@@ -251,7 +255,8 @@ class Report:
         return False
 
     def _get_variable_non_compliance(self, var):
-        """Return an existing else new Variable NonCompliance for a variable."""
+        """Return an existing else new Variable NonCompliance for a
+        variable."""
         var_nc = self._get_variable_non_compliance_report(var)
 
         if not var_nc:

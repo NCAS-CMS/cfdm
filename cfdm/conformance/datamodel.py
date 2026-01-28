@@ -1,5 +1,6 @@
 class NonConformance:
-    """Represents a case of CF Conventions non-conformance with description."""
+    """Represents a case of CF Conventions non-conformance with
+    description."""
 
     def __init__(self, reason, code):
         if (
@@ -26,6 +27,7 @@ class NonConformance:
         """Called by the `repr` built-in function.
 
         x.__repr__() <==> repr(x)
+
         """
         return str(self.as_report_fragment())
 
@@ -70,15 +72,18 @@ class Attribute:
         self.dimensions = dimensions or []
 
     def set_variables(self, variables):
-        """Set variables associated with the attribute's non-compliance."""
+        """Set variables associated with the attribute's non-
+        compliance."""
         self.variables = variables
 
     def set_dimensions(self, dimensions):
-        """Set dimensions associated with the attribute's non-compliance."""
+        """Set dimensions associated with the attribute's non-
+        compliance."""
         self.dimensions = dimensions
 
     def add_variable(self, var):
-        """Append a variable relating to the attribute's non-compliance."""
+        """Append a variable relating to the attribute's non-
+        compliance."""
         # Check if already there first
         for vari in self.variables:
             if vari.equals(var):
@@ -95,7 +100,8 @@ class Attribute:
         return var
 
     def add_dimension(self, dim):
-        """Append a dimension relating to the attribute's non-compliance."""
+        """Append a dimension relating to the attribute's non-
+        compliance."""
         self.dimensions.append(dim)
 
     def as_report_fragment(self):
@@ -103,6 +109,7 @@ class Attribute:
 
         For a more concise dict with class-based value representation,
         see repr().
+
         """
         fragment = {
             "value": self.value,
@@ -128,6 +135,7 @@ class Attribute:
             """Called by the `repr` built-in function.
 
             x.__repr__() <==> repr(x)
+
             """
             return str(
                 {
@@ -173,11 +181,13 @@ class Dimension:
         self.variables = variables or []
 
     def set_variables(self, variables):
-        """Set variables associated with the dimension's non-compliance."""
+        """Set variables associated with the dimension's non-
+        compliance."""
         self.variables = variables
 
     def add_variable(self, attr):
-        """Append a variable relating to the dimension's non-compliance."""
+        """Append a variable relating to the dimension's non-
+        compliance."""
         self.variables.append(attr)
 
     def as_report_fragment(self):
@@ -185,6 +195,7 @@ class Dimension:
 
         For a more concise dict with class-based value representation,
         see repr().
+
         """
         fragment = {
             "size": self.size,
@@ -205,6 +216,7 @@ class Dimension:
         """Called by the `repr` built-in function.
 
         x.__repr__() <==> repr(x)
+
         """
         return str(
             {
@@ -239,15 +251,18 @@ class Variable:
         self.dimensions = dimensions or []
 
     def set_attributes(self, attributes):
-        """Set attributes associated with the variable's non-compliance."""
+        """Set attributes associated with the variable's non-
+        compliance."""
         self.attributes = attributes
 
     def set_dimensions(self, dimensions):
-        """Set dimensions associated with the variable's non-compliance."""
+        """Set dimensions associated with the variable's non-
+        compliance."""
         self.dimensions = dimensions
 
     def add_attribute(self, attr):
-        """Append an attribute relating to the variable's non-compliance."""
+        """Append an attribute relating to the variable's non-
+        compliance."""
         # Check if already there first
         for attrib in self.attributes:
             if attrib.equals(attr):
@@ -264,14 +279,17 @@ class Variable:
         return attr
 
     def add_dimension(self, dim):
-        """Append a dimension relating to the variable's non-compliance."""
+        """Append a dimension relating to the variable's non-
+        compliance."""
         self.dimensions.append(dim)
 
     def as_report_fragment(self):
-        """Report the variable non-compliance in dictionary fragment form.
+        """Report the variable non-compliance in dictionary fragment
+        form.
 
         For a more concise dict with class-based value representation,
         see repr().
+
         """
         fragment = {}
         if self.attributes:
@@ -295,6 +313,7 @@ class Variable:
         """Called by the `repr` built-in function.
 
         x.__repr__() <==> repr(x)
+
         """
         return str(
             {
@@ -305,7 +324,8 @@ class Variable:
         )
 
     def get_variable(self, var_name):
-        """Fetch a child variable connected via an attribute, else is False."""
+        """Fetch a child variable connected via an attribute, else is
+        False."""
         count = []
         for attr in self.attributes:
             for var in attr.variables:

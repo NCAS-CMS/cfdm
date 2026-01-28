@@ -6,7 +6,7 @@ import tempfile
 from ast import literal_eval
 from copy import deepcopy
 from functools import reduce
-from math import log, prod, nan
+from math import log, nan, prod
 from numbers import Integral
 from os.path import isdir, isfile, join
 from pprint import pformat, pprint
@@ -18,11 +18,10 @@ from cfdm.data.netcdfindexer import netcdf_indexer
 from cfdm.decorators import _manage_log_level_via_verbosity
 from cfdm.functions import abspath, is_log_level_debug, is_log_level_detail
 
-from ...conformance import Checker, Variable, Mesh
+from ...conformance import Checker, Mesh, Variable
 from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
-
 from .. import IORead
 from ..exceptions import DatasetTypeError, ReadError
 from .constants import (
@@ -38,7 +37,6 @@ from .flatten.config import (
     flattener_variable_map,
 )
 from .zarr import ZarrDimension
-
 
 logger = logging.getLogger(__name__)
 

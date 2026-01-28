@@ -1,13 +1,13 @@
 import logging
+
+# To parse the XML - better than using manual regex parsing!
+import xml.etree.ElementTree as ET
 from functools import lru_cache
 
 # Prefer using built-in urllib to extract XML from cf-convention.github.io repo
 # over the 'github' module to use the GitHub API directly, because it avoids
 # the need for another dependency to the CF Data Tools.
 from urllib import request
-
-# To parse the XML - better than using manual regex parsing!
-import xml.etree.ElementTree as ET
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,8 @@ _STD_NAME_CURRENT_XML_URL = (
 
 
 def _extract_names_from_xml(snames_xml, include_aliases):
-    """Extract standard names from a valid Standard Name Table XML document.
+    """Extract standard names from a valid Standard Name Table XML
+    document.
 
     Whether or not to include registered aliases is dependent on the value
     of the `include_aliases` flag.
@@ -72,7 +73,8 @@ def _extract_names_from_xml(snames_xml, include_aliases):
 
 @lru_cache
 def get_all_current_standard_names(include_aliases=False):
-    """Get a list of all CF Standard Names from the current version table.
+    """Get a list of all CF Standard Names from the current version
+    table.
 
     Entries are always returned from the current table. By default aliases
     are not included in the output but can also be included by setting the

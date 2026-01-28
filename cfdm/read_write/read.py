@@ -618,7 +618,7 @@ class read(ReadWrite):
                         "dataset_type",
                         "cdl_string",
                         "extra_read_vars",
-                        "group_dimension_search",  
+                        "group_dimension_search",
                         "noncompliance_report",
                     )
                 }

@@ -1,9 +1,8 @@
+import logging
 from dataclasses import dataclass, field
+from math import nan
 from typing import Any
 from uuid import uuid4
-from math import nan
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +62,8 @@ class Mesh:
 
 
 class Checker(Report):
-    """Contains checks of CF Compliance for Field instantiation from netCDF.
+    """Contains checks of CF Compliance for Field instantiation from
+    netCDF.
 
     Holds methods for checking CF compliance. These methods (whose names
     all start with "_check") check the minimum required for mapping the
@@ -270,6 +270,7 @@ class Checker(Report):
         """Check (properties of) the top-level field variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
         """
         self._check_standard_names(
             field_ncvar,
@@ -1449,7 +1450,6 @@ class Checker(Report):
 
         return ok
 
-
     def _check_external_variables(
         self, external_variables, parsed_external_variables
     ):
@@ -2239,7 +2239,7 @@ class Checker(Report):
         self._check_standard_names(
             parent_ncvar,
             location_index_set_ncvar,
-            location_index_set_attributes
+            location_index_set_attributes,
         )
 
         location = location_index_set_attributes.get("location")
