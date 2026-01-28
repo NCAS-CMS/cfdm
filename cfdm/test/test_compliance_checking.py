@@ -257,51 +257,118 @@ class ComplianceCheckingTest(unittest.TestCase):
         """Test compliance checking on a compliant non-UGRID field."""
         f = self.good_snames_general_field
         dc_output = f.dataset_compliance()
+
+        # SLB
+        from pprint import pprint
+        pprint(dc_output)
+
         self.assertEqual(dc_output, {"CF version": self.expected_cf_version})
 
     def test_standard_names_validation_noncompliant_field(self):
         """Test compliance checking on a non-compliant non-UGRID
         field."""
-        # SLB
         f = self.bad_snames_general_field
         dc_output = f.dataset_compliance()
-        from pprint import pprint
 
-        pprint(dc_output)
-
-        # 1. Top-level CF version
-        self.assertIn("CF version", dc_output)
+        # =======================================================
+        # Top-level structure
+        # =======================================================
+        self.assertIsInstance(dc_output, dict)
+        self.assertCountEqual(dc_output.keys(), ["CF version", "ta"])
         self.assertEqual(dc_output["CF version"], self.expected_cf_version)
 
-        # 2. Exactly one other top-level key
-        top_keys = [k for k in dc_output.keys() if k != "CF version"]
-        self.assertEqual(len(top_keys), 1)
-        top_key = top_keys[0]
-        self.assertEqual(top_key, "ta")
+        # =======================================================
+        # ta
+        # =======================================================
+        ta = dc_output["ta"]
+        self.assertIsInstance(ta, dict)
+        self.assertCountEqual(ta.keys(), ["attributes"])
 
-        # 3. Attributes dict
-        top_dict = dc_output[top_key]
-        self.assertIn("attributes", top_dict)
-        attrs = top_dict["attributes"]
-        self.assertIsInstance(attrs, dict)
-        self.assertIn("standard_name", attrs)
+        ta_attributes = ta["attributes"]
+        self.assertIsInstance(ta_attributes, dict)
+        self.assertCountEqual(
+            ta_attributes.keys(),
+            [
+                "standard_name",
+                "ancillary_variables",
+                "cell_measures",
+                "coordinates",
+            ],
+        )
 
-        # 4. standard_name dict
-        sn = attrs["standard_name"]
-        self.assertIsInstance(sn, dict)
-        self.assertIn("value", sn)
-        self.assertIn("non-conformance", sn)
+        # =======================================================
+        # ta.attributes.standard_name
+        # =======================================================
+        ta_sn = ta_attributes["standard_name"]
+        self.assertIsInstance(ta_sn, dict)
+        self.assertCountEqual(ta_sn.keys(), ["value", "non-conformance"])
+        self.assertEqual(ta_sn["value"], "badname_ta")
+        self.assertEqual(
+            ta_sn["non-conformance"],
+            [
+                {
+                    "code": self.bad_sn_expected_code,
+                    "reason": self.bad_sn_expected_reason,
+                }
+            ],
+        )
 
-        self.assertEqual(sn["value"], "badname_ta")
+        # =======================================================
+        # ta.attributes.ancillary_variables
+        # =======================================================
+        anc = ta_attributes["ancillary_variables"]
+        self.assertIsInstance(anc, dict)
+        self.assertCountEqual(anc.keys(), ["value", "variables"])
+        self.assertEqual(
+            anc["value"],
+            "air_temperature_standard_error",
+        )
 
-        nc_list = sn["non-conformance"]
-        self.assertIsInstance(nc_list, list)
-        self.assertEqual(len(nc_list), 1)
+        anc_vars = anc["variables"]
+        self.assertIsInstance(anc_vars, dict)
+        self.assertCountEqual(
+            anc_vars.keys(),
+            ["air_temperature_standard_error"],
+        )
 
-        nc = nc_list[0]
-        self.assertIsInstance(nc, dict)
-        self.assertEqual(nc["code"], self.bad_sn_expected_code)
-        self.assertEqual(nc["reason"], self.bad_sn_expected_reason)
+        anc_var = anc_vars["air_temperature_standard_error"]
+        self.assertIsInstance(anc_var, dict)
+        self.assertCountEqual(anc_var.keys(), ["attributes"])
+
+        anc_attrs = anc_var["attributes"]
+        self.assertIsInstance(anc_attrs, dict)
+        self.assertCountEqual(anc_attrs.keys(), ["standard_name"])
+
+        anc_sn = anc_attrs["standard_name"]
+        self.assertIsInstance(anc_sn, dict)
+        self.assertCountEqual(anc_sn.keys(), ["value", "non-conformance"])
+        self.assertEqual(
+            anc_sn["value"],
+            "badname_air_temperature_standard_error",
+        )
+        self.assertEqual(
+            anc_sn["non-conformance"],
+            [
+                {
+                    "code": self.bad_sn_expected_code,
+                    "reason": self.bad_sn_expected_reason,
+                }
+            ],
+        )
+
+        # =======================================================
+        # ta.attributes.cell_measures
+        # =======================================================
+        cell = ta_attributes["cell_measures"]
+        self.assertIsInstance(cell, dict)
+        self.assertCountEqual(cell.keys(), ["value", "variables"])
+        self.assertEqual(cell["value"], "cell_measure")
+
+        cell_vars = cell["variables"]
+        self.assertIsInstance(cell_vars, dict)
+        self.assertCountEqual(cell_vars.keys(), ["cell_measure"])
+
+        cell_var = cell_vars["cell_measure"]
 
     def test_standard_names_validation_compliant_ugrid_field(self):
         """Test compliance checking on a compliant UGRID field."""
@@ -324,7 +391,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         # differences due to the top-level field variable name and its
         # standard name (see 2).
 
-        # ------------ 1. Test first output field fully ---------------
+        # 1. Test first output field fully
+        # =======================================================
+        # Top-level structure
+        # =======================================================
         pa = dc1["pa"]
         self.assertIsInstance(pa, dict)
         self.assertIn("attributes", pa)
@@ -485,7 +555,7 @@ class ComplianceCheckingTest(unittest.TestCase):
             },
         )
 
-        # --- 2. Check dc2 and dc3 are same as dc1 except top-level key ---
+        # 2. Check dc2 and dc3 are same as dc1 except top-level key
         # Do this by first extracting the actual content below the top-level
         # key, then setting the one key that should differ to be the same
         # dummy key, before comparing.
