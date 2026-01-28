@@ -266,6 +266,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         f = self.bad_snames_general_field
         dc_output = f.dataset_compliance()
         from pprint import pprint
+
         pprint(dc_output)
 
         # 1. Top-level CF version

@@ -135,7 +135,9 @@ class Report:
         # the top-most Variable is the one corresponding to the field? May
         # at present be subject to _add_message call order which is bad.
         if self.dataset_compliance == {}:
-            self.dataset_compliance = VariableNonConformance(top_ancestor_ncvar)
+            self.dataset_compliance = VariableNonConformance(
+                top_ancestor_ncvar
+            )
 
         # 1. Create the relevant non-compliance objects
         # a) Non-conformance description for the message in question
@@ -236,7 +238,9 @@ class Report:
             `None`
 
         """
-        component_report = self._get_variable_non_compliance_report(parent_ncvar)
+        component_report = self._get_variable_non_compliance_report(
+            parent_ncvar
+        )
         if component_report:
             # Ensure canonical Variable for ncvar
             ncvar_nc = self._get_variable_non_compliance(ncvar)
@@ -255,7 +259,8 @@ class Report:
                 existing_attr.add_variable(ncvar_nc)
 
     def _get_variable_non_compliance_report(self, var):
-        """Return if present a Variable NonCompliance from the report."""
+        """Return if present a Variable NonCompliance from the
+        report."""
         for variable in self.variable_report:
             if variable.name == var:
                 return variable
