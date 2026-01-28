@@ -14,12 +14,12 @@ faulthandler.enable()  # to debug seg faults and timeouts
 import cfdm
 
 
-n_tmpfiles = 1
+n_tmpfiles = 2
 tmpfiles = [
     tempfile.mkstemp("_test_compliance_check.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-(tmpfile0,) = tmpfiles
+(tmpfile0, tmpfile1) = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -58,9 +58,15 @@ class ComplianceCheckingTest(unittest.TestCase):
     """Test CF Conventions compliance checking functionality."""
 
     # 1. Create a file with field with invalid standard names generally
-    # using our 'kitchen sink' field as a basis
-    good_snames_general_field = cfdm.example_field(1)
-    # TODO set bad names and then write to tempfile and read back in
+    # using our 'kitchen sink' field as a basis. Need to write it out and
+    # read it back in so that the dataset_compliance is set by the new logic!
+    # TODO is that (necessary read-write of example fields in this context)
+    # a sign of badness?
+    good_snames_f = cfdm.example_field(1)
+    cfdm.write(good_snames_f, tmpfile1)
+    good_snames_general_field = cfdm.read(tmpfile1)[0]
+
+    # Set bad names and then write to tempfile and read back in
     bad_snames_general_field = _create_noncompliant_names_field(
         good_snames_general_field, tmpfile0
     )
@@ -85,6 +91,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         "valid name contained in the current standard name table"
     )
     bad_sn_expected_code = 400022
+
+    expected_cf_version = "1.13"
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -249,7 +257,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         """Test compliance checking on a compliant non-UGRID field."""
         f = self.good_snames_general_field
         dc_output = f.dataset_compliance()
-        self.assertEqual(dc_output, {"CF version": "1.12"})
+        self.assertEqual(dc_output, {"CF version": self.expected_cf_version})
 
     def test_standard_names_validation_noncompliant_field(self):
         """Test compliance checking on a non-compliant non-UGRID field."""
@@ -264,7 +272,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         top_keys = [k for k in dc_output.keys() if k != "CF version"]
         self.assertEqual(len(top_keys), 1)
         top_key = top_keys[0]
-        self.assertEqual(top_key, self.expected_top_key)
+        self.assertEqual(top_key, "ta")
 
         # 3. Attributes dict
         top_dict = dc_output[top_key]
@@ -279,7 +287,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertIn("value", sn)
         self.assertIn("non-conformance", sn)
 
-        self.assertEqual(sn["value"], self.expected_sn_value)
+        self.assertEqual(sn["value"], "badname_ta")
 
         nc_list = sn["non-conformance"]
         self.assertIsInstance(nc_list, list)
@@ -294,23 +302,22 @@ class ComplianceCheckingTest(unittest.TestCase):
         """Test compliance checking on a compliant UGRID field."""
         f = self.good_ugrid_sn_f
         dc_output = f.dataset_compliance()
-        self.assertEqual(dc_output, {"CF version": "1.12"})
+        self.assertEqual(dc_output, {"CF version": self.expected_cf_version})
 
     def test_standard_names_validation_noncompliant_ugrid_fields(self):
         """Test compliance checking on non-compliant UGRID fields."""
-        # SLB DEV
-        # TODO add error to run to say need to run 'create_test_files'
-
         # Fields for testing on: those in ugrid_1 with bad names pre-set
         f1, f2, f3 = self.bad_ugrid_sn_fields  # unpack to shorter names
         dc1 = f1.dataset_compliance()
         dc2 = f2.dataset_compliance()
         dc3 = f3.dataset_compliance()
 
-        # NOTE actually all three outputs have the same dataset compliance
-        # output (TODO SLB is this right?) so there's only need to test on
-        # one and then check the other two are equivalent except for the
-        # top-level key.
+        # Since all three outputs have largely the same dataset
+        # compliance output (TODO SLB is this right?), there's only need
+        # to test one for the precise expected form and values (see 1) and
+        # then check the other two are equivalent except for the few small
+        # differences due to the top-level field variable name and its
+        # standard name (see 2).
 
         # ------------ 1. Test first output field fully ---------------
         pa = dc1["pa"]
@@ -326,7 +333,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertIsInstance(pa_standard_name, dict)
         self.assertIn("value", pa_standard_name)
         self.assertIn("non-conformance", pa_standard_name)
-        self.assertEqual(pa_standard_name["value"], "badname_Mesh2")
+        self.assertEqual(pa_standard_name["value"], "badname_air_pressure")
         self.assertEqual(
             pa_standard_name["non-conformance"][0],
             {
@@ -372,7 +379,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertIn("value", mesh2_standard_name)
         self.assertIn("non-conformance", mesh2_standard_name)
         self.assertEqual(
-            mesh2_standard_name["value"], "badname_Mesh2_edge_nodes"
+            mesh2_standard_name["value"], "badname_Mesh2"
         )
         self.assertEqual(
             mesh2_standard_name["non-conformance"][0],
@@ -476,11 +483,16 @@ class ComplianceCheckingTest(unittest.TestCase):
         )
 
         # --- 2. Check dc2 and dc3 are same as dc1 except top-level key ---
-        # Do this by extracting the actual content below the top-level key
-        # before comparing
+        # Do this by first extracting the actual content below the top-level
+        # key, then setting the one key that should differ to be the same
+        # dummy key, before comparing.
         dc1_content = dc1["pa"]
         dc2_content = dc2["ta"]
         dc3_content = dc3["v"]
+
+        dc1_content["attributes"]["standard_name"]["value"] = "dummy"
+        dc2_content["attributes"]["standard_name"]["value"] = "dummy"
+        dc3_content["attributes"]["standard_name"]["value"] = "dummy"
 
         self.assertEqual(dc1_content, dc2_content)
         self.assertEqual(dc1_content, dc3_content)
