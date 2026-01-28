@@ -1,8 +1,6 @@
 import logging
 from dataclasses import dataclass, field
-from math import nan
 from typing import Any
-from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
@@ -681,8 +679,6 @@ class Checker(Report):
 
         ok = True
         for ncvar in parsed_string:
-            ncvar_attrs = g["variable_attributes"][ncvar]
-
             # Check that the variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
@@ -1388,6 +1384,7 @@ class Checker(Report):
 
         g = self.read_vars
 
+        ncvar_attrs = g["variable_attributes"][ncvar]
         self._check_standard_names(
             parent_ncvar,
             ncvar,

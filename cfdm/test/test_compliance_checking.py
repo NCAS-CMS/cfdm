@@ -4,7 +4,6 @@ import faulthandler
 import os
 import tempfile
 import unittest
-from pprint import pprint
 from urllib import request
 
 from netCDF4 import Dataset
