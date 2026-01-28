@@ -198,7 +198,7 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.13.0.0
 
-        noncompliance_report: `bool`, optional
+        _noncompliance_report: `bool`, optional
             If True then return a warning when any data read in are
             not fully compliant by the CF Conventions, with a dictionary
             which registers any detected issues in a structured way to
@@ -287,7 +287,7 @@ class read(ReadWrite):
         cdl_string=False,
         extra_read_vars=None,
         group_dimension_search="closest_ancestor",
-        noncompliance_report=False,
+        _noncompliance_report=False,
         **kwargs,
     ):
         """Read field or domain constructs from datasets.
@@ -619,7 +619,7 @@ class read(ReadWrite):
                         "cdl_string",
                         "extra_read_vars",
                         "group_dimension_search",
-                        "noncompliance_report",
+                        "_noncompliance_report",
                     )
                 }
 

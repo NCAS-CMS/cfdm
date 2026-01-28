@@ -932,7 +932,7 @@ class NetCDFRead(IORead, Checker):
         cdl_string=False,
         ignore_unknown_type=False,
         group_dimension_search="closest_ancestor",
-        noncompliance_report=False,
+        _noncompliance_report=False,
     ):
         """Reads a netCDF or Zarr dataset from file or OPenDAP URL.
 
@@ -1061,7 +1061,7 @@ class NetCDFRead(IORead, Checker):
 
                 .. versionadded:: (cfdm) 1.11.2.0
 
-            noncompliance_report: `bool`, optional
+            _noncompliance_report: `bool`, optional
                 If True then return a warning when any data read in are
                 not fully compliant by the CF Conventions, with a dictionary
                 which registers any detected issues in a structured way to
@@ -2356,7 +2356,7 @@ class NetCDFRead(IORead, Checker):
         # ------------------------------------------------------------
         # Provide requested warnings e.g. about non-compliance
         # ------------------------------------------------------------
-        if warnings or noncompliance_report:
+        if warnings or _noncompliance_report:
             for x in out:
                 noncompliance_dict = x.dataset_compliance()
                 if noncompliance_dict:
