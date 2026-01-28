@@ -1,4 +1,4 @@
-class NonConformance:
+class NonConformanceCase:
     """Represents a case of CF Conventions non-conformance with
     description."""
 
@@ -32,7 +32,7 @@ class NonConformance:
         return str(self.as_report_fragment())
 
 
-class Attribute:
+class AttributeNonConformance:
     """Non-conformances related to a netCDF attribute."""
 
     def __init__(
@@ -151,7 +151,7 @@ class Attribute:
         return self.name == other.name and self.value == other.value
 
 
-class Dimension:
+class DimensionNonConformance:
     """Non-conformances related to a netCDF dimension."""
 
     def __init__(self, name, size=None, non_conformances=None, variables=None):
@@ -231,7 +231,7 @@ class Dimension:
         return self.name == other.name
 
 
-class Variable:
+class VariableNonConformance:
     """Non-conformances related to a netCDF variable."""
 
     def __init__(

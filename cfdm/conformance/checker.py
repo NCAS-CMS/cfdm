@@ -679,6 +679,18 @@ class Checker(Report):
 
         ok = True
         for ncvar in parsed_string:
+            ncvar_attrs = g["variable_attributes"][ncvar]
+            self._check_standard_names(
+                field_ncvar,
+                ncvar,
+                ncvar_attrs=ncvar_attrs,
+            )
+            self._include_component_report(
+                field_ncvar,
+                ncvar,
+                "ancillary_variables",
+            )
+
             # Check that the variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
@@ -687,6 +699,7 @@ class Checker(Report):
                 self._add_message(
                     field_ncvar, ncvar, message=message, attribute=attribute
                 )
+
                 return False
 
             if not self._dimensions_are_subset(
@@ -733,10 +746,21 @@ class Checker(Report):
         g = self.read_vars
 
         coord_ncvar_attrs = g["variable_attributes"][coord_ncvar]
+        print(
+            "PROCESSING",
+            parent_ncvar,
+            coord_ncvar,
+            coord_ncvar_attrs,
+        )
         self._check_standard_names(
             parent_ncvar,
             coord_ncvar,
             coord_ncvar_attrs,
+        )
+        self._include_component_report(
+            parent_ncvar,
+            coord_ncvar,
+            "coordinates",
         )
 
         if coord_ncvar not in g["internal_variables"]:
@@ -812,7 +836,6 @@ class Checker(Report):
             tie_point_ncvar,
             tie_point_ncvar_attrs,
         )
-        # SLB STOP
 
         if tie_point_ncvar not in g["internal_variables"]:
             ncvar, message = self._missing_variable(

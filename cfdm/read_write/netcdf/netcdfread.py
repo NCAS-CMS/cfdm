@@ -14,7 +14,7 @@ from uuid import uuid4
 
 import numpy as np
 
-from ...conformance import Checker, Mesh, Variable
+from ...conformance import Checker, Mesh, VariableNonConformance
 from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
@@ -3532,7 +3532,7 @@ class NetCDFRead(IORead, Checker):
         # according to affected netCDF components.
         # Later we convert the overall object to a dictionary report to set
         # as the overall field 'dataset compliance' output.
-        self.dataset_compliance = Variable(field_ncvar)
+        self.dataset_compliance = VariableNonConformance(field_ncvar)
 
         logger.info(
             "    Converting netCDF variable "

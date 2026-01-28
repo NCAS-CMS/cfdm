@@ -1,6 +1,10 @@
 import logging
 
-from .datamodel import Attribute, NonConformance, Variable
+from .datamodel import (
+    AttributeNonConformance,
+    NonConformanceCase,
+    VariableNonConformance,
+)
 
 # TODO yet to incorporate dimensions (from .datamodel import Dimension) into
 # the reporting, since the initial scope is to report issues with standard
@@ -21,6 +25,8 @@ class Report:
 
     def __init__(self):
         self.read_vars = {}  # intended to be overloaded by NetCDFRead
+
+        # Reporting stores
         self.dataset_compliance = {}
         self.variable_report = []
 
@@ -120,7 +126,7 @@ class Report:
             code = None
 
         attribute_key = next(iter(attribute))
-        higher_attr_value, attribute_name = attribute_key.split(":")
+        lower_attr_value, attribute_name = attribute_key.split(":")
         attribute_value = attribute[attribute_key]
 
         # Potentially still a dict from init a dict so set here for now -
@@ -128,19 +134,19 @@ class Report:
         # the top-most Variable is the one corresponding to the field? May
         # at present be subject to _add_message call order which is bad.
         if self.dataset_compliance == {}:
-            self.dataset_compliance = Variable(top_ancestor_ncvar)
+            self.dataset_compliance = VariableNonConformance(top_ancestor_ncvar)
 
         # 1. Create the relevant non-compliance objects
         # a) Non-conformance description for the message in question
         nc = [
-            NonConformance(message, code),
+            NonConformanceCase(message, code),
         ]
 
         # b) Attributes of relevance - direct attribute and associated
-        attr_lowest_nc = Attribute(
-            attribute_name, value=higher_attr_value, non_conformances=nc
+        attr_lowest_nc = AttributeNonConformance(
+            attribute_name, value=lower_attr_value, non_conformances=nc
         )
-        attr_highest_nc = Attribute(
+        attr_highest_nc = AttributeNonConformance(
             attribute_name, value=attribute_value, non_conformances=nc
         )
 
@@ -165,7 +171,7 @@ class Report:
             reverse_varattrs = {v: k for k, v in varattrs.items()}
             store_attr = reverse_varattrs[ncvar]
             # Attribute value is same as the variable name in these cases
-            store_attr_nc = Attribute(
+            store_attr_nc = AttributeNonConformance(
                 store_attr,
                 value=ncvar,
                 variables=[
@@ -240,14 +246,22 @@ class Report:
         if component_report:
             ncvar_nc = self._get_variable_non_compliance(ncvar)
 
+            # print("INC COMP REPORT FOR:", parent_ncvar, ncvar, attribute)
+            # print("NCVAR NC IS")
+            from pprint import pprint
+            pprint(component_report.as_report_fragment())
+
             # Attribute value is same as the variable name in these cases
-            attr_nc = Attribute(attribute, value=ncvar)
+            attr_nc = AttributeNonConformance(attribute, value=ncvar)
             attr_nc.add_variable(ncvar_nc)
             self.dataset_compliance.add_attribute(attr_nc)
 
+            # Update the variable report
+            self.variable_report.append(ncvar_nc)
+
     def _get_variable_non_compliance_report(self, var):
-        """Return if present a Variable NonCompliance stored in the
-        report."""
+        """Return if present a Variable NonCompliance from the report."""
+        # TODO better to have a method for 'get_' on variable_report
         for variable in self.variable_report:
             if variable.name == var:
                 return variable
@@ -260,7 +274,7 @@ class Report:
         var_nc = self._get_variable_non_compliance_report(var)
 
         if not var_nc:
-            var_nc = Variable(var)
+            var_nc = VariableNonConformance(var)
             self.variable_report.append(var_nc)
 
         return var_nc

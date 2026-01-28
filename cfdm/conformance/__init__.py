@@ -1,5 +1,10 @@
 from .checker import Checker, Report, Mesh
-from .datamodel import NonConformance, Attribute, Dimension, Variable
+from .datamodel import (
+    AttributeNonConformance,
+    DimensionNonConformance,
+    NonConformanceCase,
+    VariableNonConformance,
+)
 from .standardnames import (
     get_all_current_standard_names,
     # Intended for internal use but used in testing, so need exposing:
@@ -8,7 +13,7 @@ from .standardnames import (
 )
 
 # Eventually structure as with individual modules per class, something like:
-# from .attributeconformance import Attribute
-# from .variableconformance import Variable
-# from .dimensionconformance import Dimension
-# from .nonconformance import NonConformance
+# from .attributeconformance import AttributeNonConformance
+# from .variableconformance import VariableNonConformance
+# from .dimensionconformance import DimensionNonConformance
+# from .nonconformance import NonConformanceCase
