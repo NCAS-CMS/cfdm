@@ -48,8 +48,7 @@ __version__ = core.__version__
 
 from .constants import masked
 
-# Internal ones passed on so they can be used in cf-python (see
-# comment below)
+# Internal ones passed on so they can be used in cf-python (see comment below)
 from .functions import (
     ATOL,
     CF,
@@ -168,6 +167,13 @@ from .read_write.netcdf.flatten import dataset_flatten
 from .examplefield import example_field, example_fields, example_domain
 
 from .abstract import Container
+
+# For now only intended for internal use but used in testing, so need exposing:
+from .conformance import (
+    get_all_current_standard_names,
+    _extract_names_from_xml,
+    _STD_NAME_CURRENT_XML_URL,
+)
 
 # --------------------------------------------------------------------
 # Set up basic logging for the full project with a root logger
