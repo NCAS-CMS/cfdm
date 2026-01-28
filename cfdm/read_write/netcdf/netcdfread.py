@@ -9,14 +9,10 @@ from functools import reduce
 from math import log, nan, prod
 from numbers import Integral
 from os.path import isdir, isfile, join
-from pprint import pformat, pprint
+from pprint import pformat
 from uuid import uuid4
 
 import numpy as np
-
-from cfdm.data.netcdfindexer import netcdf_indexer
-from cfdm.decorators import _manage_log_level_via_verbosity
-from cfdm.functions import abspath, is_log_level_debug, is_log_level_detail
 
 from ...conformance import Checker, Mesh, Variable
 from ...data.netcdfindexer import netcdf_indexer
@@ -2369,7 +2365,6 @@ class NetCDFRead(IORead, Checker):
                         "non-standard due to non-CF-compliant dataset. "
                         "Report:\n"
                     )  # pragma: no cover
-                    pprint(noncompliance_dict)
 
         if warn_valid and not g["domain"]:
             # --------------------------------------------------------
@@ -7825,233 +7820,6 @@ class NetCDFRead(IORead, Checker):
 
         return self.implementation.copy_construct(g[construct_type][ncvar])
 
-    def _split_string_by_white_space(
-        self, parent_ncvar, string, variables=False, trailing_colon=False
-    ):
-        """Split a string by white space.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Parameters:
-
-            parent_ncvar: `str`
-                Not used
-
-            string: `str or `None`
-
-            variables: `bool`
-                If True then *string* contains internal netCDF variable
-                names. (Not sure yet what to do about external names.)
-
-                .. versionadded:: (cfdm) 1.8.6
-
-            trailing_colon: `bool`
-                If True then trailing colons are not part of the
-                string components that are variable names. Ignored if
-                *variables* is False.
-
-                .. versionadded:: (cfdm) 1.10.0.0
-
-        :Returns:
-
-            `list`
-
-        """
-        if string is None:
-            return []
-
-        try:
-            out = string.split()
-        except AttributeError:
-            out = []
-        else:
-            if variables and out and self.read_vars["has_groups"]:
-                mapping = self.read_vars["flattener_variables"]
-                if trailing_colon:
-                    out = [
-                        (
-                            mapping[ncvar[:-1]] + ":"
-                            if ncvar.endswith(":")
-                            else mapping[ncvar]
-                        )
-                        for ncvar in out
-                    ]
-                else:
-                    out = [mapping[ncvar] for ncvar in out]
-
-        return out
-
-    def _parse_grid_mapping(self, parent_ncvar, string):
-        """Parse a netCDF grid_mapping attribute.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        """
-        g = self.read_vars
-
-        out = []
-
-        if g["CF>=1.7"]:
-            # The grid mapping attribute may point to a single netCDF
-            # variable OR to multiple variables with associated
-            # coordinate variables (CF>=1.7)
-            out = self._parse_x(parent_ncvar, string, keys_are_variables=True)
-        else:
-            # The grid mapping attribute may only point to a single
-            # netCDF variable (CF<=1.6)
-            out = self._split_string_by_white_space(
-                parent_ncvar, string, variables=True
-            )
-
-            if len(out) == 1:
-                out = [{out[0]: []}]
-
-        return out
-
-    def _parse_x(
-        self,
-        parent_ncvar,
-        string,
-        keys_are_variables=False,
-        keys_are_dimensions=False,
-    ):
-        """Parse CF-netCDF strings.
-
-        Handling of CF-compliant strings:
-        ---------------------------------
-
-        'area: areacello' ->
-            [{'area': ['areacello']}]
-
-        'area: areacello volume: volumecello' ->
-            [{'area': ['areacello']}, {'volume': ['volumecello']}]
-
-        'rotated_latitude_longitude' ->
-            [{'rotated_latitude_longitude': []}]
-
-        'rotated_latitude_longitude: x y latitude_longitude: lat lon' ->
-            [{'rotated_latitude_longitude': ['x', 'y']},
-             {'latitude_longitude': ['lat', 'lon']}]
-
-        'rotated_latitude_longitude: x latitude_longitude: lat lon' ->
-            [{'rotated_latitude_longitude': ['x']},
-             {'latitude_longitude': ['lat', 'lon']}]
-
-        'a: A b: B orog: OROG' ->
-            [{'a': ['A']}, {'b': ['B']}, {'orog': ['OROG']}]
-
-        Handling of non-CF-compliant strings:
-        -------------------------------------
-
-        'area' ->
-            [{'area': []}]
-
-        'a: b: B orog: OROG' ->
-            []
-
-        'rotated_latitude_longitude:' ->
-            []
-
-        'rotated_latitude_longitude zzz' ->
-            []
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        """
-        # ============================================================
-        # Thanks to Alan Iwi for creating these regular expressions
-        # ============================================================
-
-        def subst(s):
-            """Substitutes WORD and SEP tokens for regular expressions.
-
-            All WORD tokens are replaced by the expression for a space
-            and all SEP tokens are replaced by the expression for the
-            end of string.
-
-            """
-            return s.replace("WORD", r"[A-Za-z0-9_#]+").replace(
-                "SEP", r"(\s+|$)"
-            )
-
-        out = []
-
-        pat_value = subst(r"(?P<value>WORD)SEP")
-        pat_values = f"({pat_value})+"
-
-        pat_mapping = subst(
-            rf"(?P<mapping_name>WORD):SEP(?P<values>{pat_values})"
-        )
-        pat_mapping_list = f"({pat_mapping})+"
-
-        pat_all = subst(
-            rf"((?P<sole_mapping>WORD)|(?P<mapping_list>{pat_mapping_list}))$"
-        )
-
-        if not parsed_string:
-            self._add_message(
-                field_ncvar,
-                field_ncvar,
-                message=incorrectly_formatted,
-                attribute=attribute,
-                conformance="7.2.requirement.1",
-            )
-            return False
-
-        parent_dimensions = self._ncdimensions(field_ncvar)
-        external_variables = g["external_variables"]
-
-        ok = True
-        for x in parsed_string:
-            measure, values = list(x.items())[0]
-            if len(values) != 1:
-                self._add_message(
-                    field_ncvar,
-                    field_ncvar,
-                    message=incorrectly_formatted,
-                    attribute=attribute,
-                    conformance="7.2.requirement.1",
-                )
-                ok = False
-                continue
-
-            ncvar = values[0]
-
-            unknown_external = ncvar in external_variables
-
-            # Check that the variable exists in the file, or if not
-            # that it is listed in the 'external_variables' global
-            # file attribute.
-            if not unknown_external and ncvar not in g["variables"]:
-                self._add_message(
-                    field_ncvar,
-                    ncvar,
-                    message=missing_variable,
-                    attribute=attribute,
-                    conformance="7.2.requirement.3",
-                )
-                ok = False
-                continue
-
-            if not unknown_external:
-                dimensions = self._ncdimensions(ncvar)
-                if not unknown_external and not self._dimensions_are_subset(
-                    ncvar, dimensions, parent_dimensions
-                ):
-                    # The cell measure variable's dimensions do NOT span a
-                    # subset of the parent variable's dimensions.
-                    self._add_message(
-                        field_ncvar,
-                        ncvar,
-                        message=incorrect_dimensions,
-                        attribute=attribute,
-                        dimensions=g["variable_dimensions"][ncvar],
-                        conformance="7.2.requirement.4",
-                    )
-                    ok = False
-
-        return ok
-
     def _dimensions_are_subset(self, ncvar, dimensions, parent_dimensions):
         """True if dimensions are a subset of the parent dimensions."""
         if not set(dimensions).issubset(parent_dimensions):
@@ -8261,38 +8029,6 @@ class NetCDFRead(IORead, Checker):
                     ]
 
         return out
-
-    def _netCDF4_group(self, nc, name):
-        """Return the group of a variable or dimension in the dataset.
-
-        Given a dataset and a variable or dimension name, return the
-        group object for the name, and the name within the group.
-
-        .. versionadded:: (cfdm) 1.8.8.1
-
-        :Parameters:
-
-            nc: `netCDF4.Dataset` or `h5netcdf.Group` or `zarr.Group`
-
-            name: `str`
-
-        :Returns:
-
-            2-`tuple`:
-                The group object, and the relative-path variable name.
-
-        **Examples**
-
-        >>> n._netCDF4_group(nc, '/forecast/count')
-        (<Group file:///home/david/cfdm/cfdm/test/tmpdir1/forecast>, 'count')
-
-        """
-        group = nc
-        path = name.split("/")
-        for group_name in path[1:-1]:
-            group = group[group_name]
-
-        return group, path[-1]
 
     def _ugrid_parse_mesh_topology(self, mesh_ncvar, attributes):
         """Parse a UGRID mesh topology or location index set variable.
