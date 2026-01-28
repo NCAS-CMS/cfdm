@@ -257,11 +257,6 @@ class ComplianceCheckingTest(unittest.TestCase):
         """Test compliance checking on a compliant non-UGRID field."""
         f = self.good_snames_general_field
         dc_output = f.dataset_compliance()
-
-        # SLB
-        from pprint import pprint
-        pprint(dc_output)
-
         self.assertEqual(dc_output, {"CF version": self.expected_cf_version})
 
     def test_standard_names_validation_noncompliant_field(self):
@@ -369,6 +364,73 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertCountEqual(cell_vars.keys(), ["cell_measure"])
 
         cell_var = cell_vars["cell_measure"]
+        self.assertIsInstance(cell_var, dict)
+        self.assertCountEqual(cell_var.keys(), ["attributes"])
+
+        cell_attrs = cell_var["attributes"]
+        self.assertIsInstance(cell_attrs, dict)
+        self.assertCountEqual(cell_attrs.keys(), ["standard_name"])
+
+        cell_sn = cell_attrs["standard_name"]
+        self.assertIsInstance(cell_sn, dict)
+        self.assertCountEqual(cell_sn.keys(), ["value", "non-conformance"])
+        self.assertEqual(cell_sn["value"], "badname_cell_measure")
+        self.assertEqual(
+            cell_sn["non-conformance"],
+            [
+                {
+                    "code": self.bad_sn_expected_code,
+                    "reason": self.bad_sn_expected_reason,
+                }
+            ],
+        )
+
+        # =======================================================
+        # ta.attributes.coordinates
+        # =======================================================
+        coords = ta_attributes["coordinates"]
+        self.assertIsInstance(coords, dict)
+        self.assertCountEqual(coords.keys(), ["value", "variables"])
+        self.assertEqual(coords["value"], "time")
+
+        coord_vars = coords["variables"]
+        self.assertIsInstance(coord_vars, dict)
+        self.assertCountEqual(
+            coord_vars.keys(),
+            ["auxiliary", "latitude_1", "longitude_1", "time"],
+        )
+
+        expected_coord_values = {
+            "auxiliary": "badname_auxiliary",
+            "latitude_1": "badname_latitude_1",
+            "longitude_1": "badname_longitude_1",
+            "time": "badname_time",
+        }
+
+        for name, expected_value in expected_coord_values.items():
+            coord = coord_vars[name]
+            self.assertIsInstance(coord, dict)
+            self.assertCountEqual(coord.keys(), ["attributes"])
+
+            coord_attrs = coord["attributes"]
+            self.assertIsInstance(coord_attrs, dict)
+            self.assertCountEqual(coord_attrs.keys(), ["standard_name"])
+
+            coord_sn = coord_attrs["standard_name"]
+            self.assertIsInstance(coord_sn, dict)
+            self.assertCountEqual(
+                coord_sn.keys(), ["value", "non-conformance"]
+            )
+            self.assertEqual(coord_sn["value"], expected_value)
+            self.assertEqual(
+                coord_sn["non-conformance"],
+                [
+                    {
+                        "code": self.bad_sn_expected_code,
+                        "reason": self.bad_sn_expected_reason,
+                    }
+                ],
+            )
 
     def test_standard_names_validation_compliant_ugrid_field(self):
         """Test compliance checking on a compliant UGRID field."""
