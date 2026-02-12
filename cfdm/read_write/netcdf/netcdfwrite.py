@@ -795,7 +795,7 @@ class NetCDFWrite(IOWrite):
             if not ncvar.startswith(groups):
                 create = True
 
-        # Do these coordinates have a formula_terms?
+        # Do these coordinates need a formula_terms?
         formula_terms = False
         for ref in f.coordinate_references(todict=True).values():
             if (
@@ -807,14 +807,17 @@ class NetCDFWrite(IOWrite):
 
         if formula_terms and already_in_file and not create:
             if not self._matching_coordinate_formula_terms(f, ref, coord):
-                # This Dimension Coordinate is already in the file,
-                # but it will need putting in again because it has a
-                # different formula_terms to the one that's already in
-                # the file.
+                # This a coordiante variable for this dimension
+                # coordinate is already in the file, but we need to
+                # create a new one because it has a different
+                # formula_terms to the one that's already in the file.
                 create = True
 
         if create:
             if formula_terms:
+                # Record the (field, coordinate reference, dimension
+                # cooridnate) triple for comparison with fields that
+                # may written later on.
                 g["field_ref_coord"].append((f, ref, coord))
 
             ncvar = self._create_variable_name(coord, default=None)
@@ -5496,8 +5499,8 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             "quantization": {},
             # --------------------------------------------------------
-            # Cache selected (Field, Coordinate Reference, Dimension
-            # Coordinate) triples.
+            # Cache selected (field, coordinate reference, dimension
+            # coordinate) triples
             # --------------------------------------------------------
             "field_ref_coord": [],
         }
@@ -6936,14 +6939,14 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `bool`
-                `True` if False` if the coordinate/formula_terms pair is
-                already in the file.
+                `True` if the coordinate/formula_terms pair is already
+                in the file, otherwise `False`.
 
         """
         field_ref_coord = self.write_vars["field_ref_coord"]
         if not field_ref_coord:
-            # There are no matching coordinate/formula_terms pairs in
-            # the file
+            # There are currently no matching coordinate/formula_terms
+            # pairs in the file
             return False
 
         terms = ref.coordinate_conversion.domain_ancillaries()
@@ -6955,19 +6958,23 @@ class NetCDFWrite(IOWrite):
                 found_match = False
                 continue
 
+            # Check that the coordinate conversion terms are the same
             for term, key in terms.items():
                 key1 = terms1[term]
-                if key is None != key1 is None:
+                if (key is None) != (key1 is None):
                     found_match = False
                     break
 
             if not found_match:
                 continue
 
+            # Check that the dimension coordinate constructs are the
+            # same
             if not coord.equals(coord1):
                 found_match = False
                 continue
 
+            # Check that the domain ancillaries are the same
             for term, key in terms.items():
                 if key is None:
                     continue
@@ -6982,6 +6989,6 @@ class NetCDFWrite(IOWrite):
                 # pair in the file
                 return True
 
-        # Still here? Then there are no matching
-        # coordinate/formula_terms pairs in the file
+        # Still here? Then there are currently no matching
+        #             coordinate/formula_terms pairs in the file.
         return False

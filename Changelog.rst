@@ -3,8 +3,9 @@ Version NEXTVERSION
 
 **2026-03-??**
 
-* Fix `cfdm.write` for the writing of coordinates with formula_terms
-  (https://github.com/NCAS-CMS/cfdm/issues/???)
+* Fix bug in `cfdm.write` when writing identical coordinates that have
+  different ``formula_terms``
+  (https://github.com/NCAS-CMS/cfdm/issues/380)
 
 ----
 
