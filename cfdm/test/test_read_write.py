@@ -1361,12 +1361,16 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(g.equals(f))
 
     def test_differing_formula_terms(self):
+        # Read in example field with shape (1, 10, 9)
         f = cfdm.example_field(1)
         
+        # Write dummy file with original field and a slice.
         cfdm.write([f, f[0, 1:]], tmpfile_formula_terms)
 
+        # Read file back in.
         g = cfdm.read(tmpfile_formula_terms)
 
+        # Check file and slice are the same shape.
         self.assertTrue(g[1].equals(f[0, 1:], verbose=True))
 
 
