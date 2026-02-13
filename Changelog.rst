@@ -5,7 +5,7 @@ Version NEXTVERSION
 
 * Fix bug in `cfdm.write` when writing identical coordinates that have
   different ``formula_terms``
-  (https://github.com/NCAS-CMS/cfdm/issues/380)
+  (https://github.com/NCAS-CMS/cfdm/issues/380). New unit test added.
 
 ----
 
