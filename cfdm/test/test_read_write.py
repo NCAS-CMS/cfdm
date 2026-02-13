@@ -36,6 +36,7 @@ tmpfiles.append(tempfile.mkstemp("#test_read_write.nc", dir=os.getcwd())[1])
     tmpfile0,
     tmpfile1,
     tmpfile_hash,
+    tmpfile_formula_terms
 ] = tmpfiles
 
 
