@@ -1359,6 +1359,15 @@ class read_writeTest(unittest.TestCase):
         g = cfdm.read(tmpfile_hash)[0]
         self.assertTrue(g.equals(f))
 
+    def test_differing_formula_terms(self):
+        f = cfdm.example_field(1)
+        
+        cfdm.write([f, f[0, 1:]], tmpfile_formula_terms)
+
+        g = cfdm.read(tmpfile_formula_terms)
+
+        self.assertTrue(g[1].equals(f[0, 1:], verbose=True))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
