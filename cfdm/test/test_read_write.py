@@ -23,9 +23,10 @@ tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-tmpfiles.append(tempfile.mkstemp("#test_read_write.nc", dir=os.getcwd())[1])
+tmpfiles.insert(0, tempfile.mkstemp("#test_read_write.nc", dir=os.getcwd())[1])
 
 [
+    tmpfile_hash,
     tmpfile,
     tmpfileh,
     tmpfileh2,
@@ -35,8 +36,6 @@ tmpfiles.append(tempfile.mkstemp("#test_read_write.nc", dir=os.getcwd())[1])
     tmpfilec3,
     tmpfile0,
     tmpfile1,
-    tmpfile_hash,
-    tmpfile_formula_terms,
 ] = tmpfiles
 
 
@@ -1360,18 +1359,22 @@ class read_writeTest(unittest.TestCase):
         g = cfdm.read(tmpfile_hash)[0]
         self.assertTrue(g.equals(f))
 
-    def test_differing_formula_terms(self):
+    def test_write_differing_formula_terms(self):
+        """Test cfdm.write for differing formula terms."""
         # Read in example field with shape (1, 10, 9)
-        f = cfdm.example_field(1)
-        
-        # Write dummy file with original field and a slice.
-        cfdm.write([f, f[0, 1:]], tmpfile_formula_terms)
+        f = self.f1
 
-        # Read file back in.
-        g = cfdm.read(tmpfile_formula_terms)
+        # Write dummy file with original field and a slice
+        f01 = [f, f[0, 1:]]
+        cfdm.write(f01, tmpfile)
 
-        # Check file and slice are the same shape.
-        self.assertTrue(g[1].equals(f[0, 1:], verbose=True))
+        # Read file back in
+        g01 = cfdm.read(tmpfile)
+
+        # Check the original fields are the same as the
+        # written-then-read fields.
+        for a, b in zip(f01, g01):
+            self.assertTrue(b.equals(a))
 
 
 if __name__ == "__main__":
