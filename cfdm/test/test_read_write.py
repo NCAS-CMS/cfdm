@@ -18,7 +18,7 @@ from cfdm.read_write.exceptions import DatasetTypeError, ReadError
 warnings = False
 
 # Set up temporary files
-n_tmpfiles = 9
+n_tmpfiles = 10
 tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
