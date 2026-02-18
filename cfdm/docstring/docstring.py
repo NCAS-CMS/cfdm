@@ -303,13 +303,71 @@ _docstring_substitution_definitions = {
                >>> f = {{package}}.read('file.nc')
                >>> ufd = {{package}}.unique_constructs(x.domain for x in f)""",
     # read netcdf_backend
-    "{{read netcdf_backend: `None` or (sequence of) `str`, optional}": """netcdf_backend: `None` or (sequence of) `str`, optional
-            Specify which library, or libraries, to use for opening
-            and reading netCDF files. By default, or if `None`, then
-            the first one of `h5netcdf` and `netCDF4` to successfully
-            open the netCDF file is used. The libraries will be used
-            in the order given, until a file is successfully
-            opened.""",
+    "{{read netcdf_backend: `None` or (sequence of) `str`, optional}}": """netcdf_backend: `None` or (sequence of) `str`, optional
+            Which library or libraries to use for opening and reading
+            netCDF-3, netCDF-4, and CDL datasets (the latter after
+            they have been internally converted to netCDF-4).
+
+            Any one or more of the following backends may be
+            specified, and an attempt to open each netCDF-3 or
+            netCDF-4 dataset is made by the given backends in the
+            order given, stopping after the first successful read.
+            Note that a Zarr dataset is always opened with the `zarr`
+            library.
+
+            * ``'h5netcdf-pyfive'``
+
+              - The `h5netcdf` library using `pyfive` as its backend.
+              - Reads local and remote (http and s3) netCDF-4
+                datasets.
+              - Allows parallised reading.
+              - Improves the performance of active storage reductions
+                (by storing the a dataset variable's B-tree at read
+                time so that it doesn't have to be re-retrieved at
+                compute time).
+
+            * ``'netCDF4'``
+
+              - The `netCDF4` library.
+              - Reads local and remote (http) netCDF-3 and netCDF-4
+                datasets.
+              - Parallelised reading is not possible.
+
+            * ``'h5netcdf-h5py'``
+
+              - The `h5netcdf` library using `h5py` as its backend.
+              - Reads local and remote (http and s3) netCDF-4
+                datasets.
+              - Parallelised reading is not possible.
+
+            * ``'netcdf_file'``
+
+              - The `scipy.io.netcdf_file` library.
+              - Reads local netCDF-3 datasets.
+              - Allows parallised reading.
+              - Treats unlimited dimensions in the dataset as not
+                unlimited.
+
+            By default *netcdf_backend* is `None`, which is equivalent
+            to providing the ordered sequence
+
+            ``('h5netcdf-pyfive', 'h5netcdf-h5py', 'netCDF4', 'netcdf_file')``
+
+            which means that by default, reading a netCDF dataset is
+            first attempted with the `h5netcdf` library using `pyfive`
+            backend.
+
+            *Example:*
+              To only attempt ``'netCDF4'``: ``'netCDF4'`` or
+              ``['netCDF4']``
+
+            *Example:*
+              To only attempt ``'netCDF4'`` or ``'h5netcdf-h5py'``, in
+              that order: ``('netCDF4', 'h5netcdf-h5py')``
+
+            *Example:*
+              ``('netCDF4', 'h5netcdf-pyfive', 'netcdf_file',
+              'h5netcdf-h5py')``""",
     # read  storage_options
     "{{read storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
             Pass parameters to the backend file system driver, such as
@@ -468,7 +526,7 @@ _docstring_substitution_definitions = {
                 A Dask chunksize of 2 MiB may be specified as
                 ``'2097152'`` or ``'2 MiB'``.
 
-            * `-1` or `None`
+            * ``-1`` or `None`
 
               There is no Dask chunking, i.e. every data array has one
               Dask chunk regardless of its size. In this case each
@@ -493,7 +551,7 @@ _docstring_substitution_definitions = {
               dimension is identified in one of three ways:
 
               1. the netCDF dimension name, preceded by ``ncdim%``
-                (e.g. ``'ncdim%lat'``);
+                 (e.g. ``'ncdim%lat'``);
 
               2. the value of the "standard name" attribute of a
                  CF-netCDF coordinate variable that spans the
@@ -585,7 +643,7 @@ _docstring_substitution_definitions = {
               to be applied to the directories of the fragment file
               locations. The dictionary comprises keyword arguments to
               the {{package}}.Data.replace_directory` method, which is
-              used to make the the changes. The aggregation file being
+              used to make the changes. The aggregation file being
               read is unaltered. An empty dictionary results in no
               modifications.
 
@@ -800,8 +858,8 @@ _docstring_substitution_definitions = {
                 If False then the compression type and, if applicable,
                 the underlying compressed arrays must be the same, as
                 well as the arrays in their uncompressed forms. By
-                default only the the arrays in their uncompressed
-                forms are compared.""",
+                default only the arrays in their uncompressed forms
+                are compared.""",
     # ignore_data_type: `bool`, optional
     "{{ignore_data_type: `bool`, optional}}": """ignore_data_type: `bool`, optional
                 If True then ignore the data types in all numerical

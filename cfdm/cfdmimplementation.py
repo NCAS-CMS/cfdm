@@ -34,7 +34,9 @@ from .data import (
     GatheredArray,
     H5netcdfArray,
     NetCDF4Array,
+    Netcdf_fileArray,
     PointTopologyArray,
+    PyfiveArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
@@ -2572,6 +2574,42 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("H5netcdfArray")
         return cls(**kwargs)
 
+    def initialise_Netcdf_fileArray(self, **kwargs):
+        """Return a `NetCDF4Array` instance.
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `Netcdf_fileArray`
+
+        """
+        cls = self.get_class("Netcdf_fileArray")
+        return cls(**kwargs)
+
+    def initialise_PyfiveArray(self, **kwargs):
+        """Return a `PyfiveArray` instance.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+        :Returns:
+
+            `PyfiveArray`
+
+        """
+        cls = self.get_class("PyfiveArray")
+        return cls(**kwargs)
+
     def initialise_ZarrArray(self, **kwargs):
         """Return a `ZarrArray` instance.
 
@@ -4030,7 +4068,9 @@ _implementation = CFDMImplementation(
     GatheredArray=GatheredArray,
     H5netcdfArray=H5netcdfArray,
     NetCDF4Array=NetCDF4Array,
+    Netcdf_fileArray=Netcdf_fileArray,
     PointTopologyArray=PointTopologyArray,
+    PyfiveArray=PyfiveArray,
     Quantization=Quantization,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
@@ -4044,50 +4084,54 @@ _implementation = CFDMImplementation(
 def implementation():
     """Return a container for the CF data model implementation.
 
-    .. versionadded:: (cfdm) 1.7.0
+      .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `cfdm.example_field`, `cfdm.read`, `cfdm.write`
+      .. seealso:: `cfdm.example_field`, `cfdm.read`, `cfdm.write`
 
-    :Returns:
+      :Returns:
 
-        `CFDMImplementation`
-            A container for the CF data model implementation.
+          `CFDMImplementation`
+              A container for the CF data model implementation.
 
-    **Examples**
+      **Examples**
 
-    >>> i = cfdm.implementation()
-    >>> i
-    <CFDMImplementation: >
-    >>> i.classes()
-    {'AuxiliaryCoordinate': <class 'cfdm.auxiliarycoordinate.AuxiliaryCoordinate'>,
-     'CellMeasure': <class 'cfdm.cellmeasure.CellMeasure'>,
-     'CellMethod': <class 'cfdm.cellmethod.CellMethod'>,
-     'CoordinateReference': <class 'cfdm.coordinatereference.CoordinateReference'>,
-     'DimensionCoordinate': <class 'cfdm.dimensioncoordinate.DimensionCoordinate'>,
-     'DomainAncillary': <class 'cfdm.domainancillary.DomainAncillary'>,
-     'DomainAxis': <class 'cfdm.domainaxis.DomainAxis'>,
-     'Field': <class 'cfdm.field.Field'>,
-     'FieldAncillary': <class 'cfdm.fieldancillary.FieldAncillary'>,
-     'Bounds': <class 'cfdm.bounds.Bounds'>,
-     'InteriorRing': <class 'cfdm.interiorring.InteriorRing'>,
-     'CoordinateConversion': <class 'cfdm.coordinateconversion.CoordinateConversion'>,
-     'Datum': <class 'cfdm.datum.Datum'>,
-     'Data': <class 'cfdm.data.data.Data'>,
-     'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
-     'H5netcdfArray': <class 'cfdm.data.h5netcdfarray.H5netcdfArray'>,
-     'NetCDF4Array': <class 'cfdm.data.netcdf4array.NetCDF4Array'>,
-     'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
-     'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
-     'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
-     'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>,
-     'SubsampledArray': <class 'cfdm.data.subsampledrray.SubsampledArray'>,
-     'List': <class 'cfdm.list.List'>,
-     'Count': <class 'cfdm.count.Count'>,
-     'Index': <class 'cfdm.index.Index'>,
-     'NodeCountProperties': <class 'cfdm.nodecountproperties.NodeCountProperties'>,
-     'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>,
-     'Quantization': <class 'cfdm.quantization.Quantization'>,
-     'ZarrArray': <class 'cfdm.data.zarrarray.ZarrArray'>}
+      >>> i = cfdm.implementation()
+      >>> i
+      <CFDMImplementation: >
+      >>> i.classes()
+      {'AuxiliaryCoordinate': <class 'cfdm.auxiliarycoordinate.AuxiliaryCoordinate'>,
+       'CellMeasure': <class 'cfdm.cellmeasure.CellMeasure'>,
+       'CellMethod': <class 'cfdm.cellmethod.CellMethod'>,
+       'CoordinateReference': <class 'cfdm.coordinatereference.CoordinateReference'>,
+       'DimensionCoordinate': <class 'cfdm.dimensioncoordinate.DimensionCoordinate'>,
+       'DomainAncillary': <class 'cfdm.domainancillary.DomainAncillary'>,
+       'DomainAxis': <class 'cfdm.domainaxis.DomainAxis'>,
+       'Field': <class 'cfdm.field.Field'>,
+       'FieldAncillary': <class 'cfdm.fieldancillary.FieldAncillary'>,
+       'Bounds': <class 'cfdm.bounds.Bounds'>,
+       'InteriorRing': <class 'cfdm.interiorring.InteriorRing'>,
+       'CoordinateConversion': <class 'cfdm.coordinateconversion.CoordinateConversion'>,
+       'Datum': <class 'cfdm.datum.Datum'>,
+       'Data': <class 'cfdm.data.data.Data'>,
+       'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
+       'H5netcdfArray': <class 'cfdm.data.h5netcdfarray.H5netcdfArray'>,
+       'NetCDF4Array': <class 'cfdm.data.netcdf4array.NetCDF4Array'>,
+       'Netcdf_fileArray': <class 'cfdm.data.netcdf4array.Netcdf_fileArray'>,
+       'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
+       'PyfiveArray': <class 'cfdm.data.pyfivearray.PyFiveArray'>.
+       'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
+       'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
+       'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>,
+       'SubsampledArray': <class 'cfdm.data.subsampledrray.SubsampledArray'>,
+       'List': <class 'cfdm.list.List'>,
+       'Count': <class 'cfdm.count.Count'>,
+       'Index': <class 'cfdm.index.Index'>,
+       'NodeCountProperties': <class 'cfdm.nodecountproperties.NodeCountProperties'>,
+       'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>
+       'Quantization': <class 'cfdm.quantization.Quantization'>,
+       'ZarrArray': <class 'cfdm.data.zarrarray.ZarrArray'>}
+
+    }
 
     """
     return _implementation.copy()

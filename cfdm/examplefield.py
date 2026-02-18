@@ -5382,7 +5382,7 @@ def example_fields(*n, _func=example_field):
      <Field: air_temperature(time(2), ncdim%nMesh2_face(3)) K>,
      <Field: northward_wind(time(2), ncdim%nMesh2_edge(9)) ms-1>,
      <Field: air_pressure(time(2), ncdim%nMesh2_node(7)) hPa>,
-     <CF Field: mole_fraction_of_ozone_in_air(cf_role=trajectory_id(1), ncdim%trajectory(4)) ppb>]
+     <Field: mole_fraction_of_ozone_in_air(cf_role=trajectory_id(1), ncdim%trajectory(4)) ppb>]
 
     >>> cfdm.example_fields(7, 1)
     [<Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
