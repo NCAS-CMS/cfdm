@@ -12,7 +12,7 @@ Version NEXTVERSION
 * Fix bug in `cfdm.write` when writing identical coordinates that have
   different ``formula_terms``
   (https://github.com/NCAS-CMS/cfdm/issues/380). New unit test added.
-* New dependency: ``pyfive>=1.0.2``
+* New dependency: ``pyfive>=1.1.0``
 * Changed dependency: ``h5netcdf>=1.8.0``
 
 ----
@@ -42,7 +42,6 @@ Version 1.13.0.0
 * Removed the `cfdm.constants.CONSTANTS` dictionary, replacing it
   with `cfdm.ConstantAccess.constants`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
->>>>>>> main
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
 * New optional dependency: ``zarr>=3.1.3``
