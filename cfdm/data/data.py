@@ -6621,6 +6621,8 @@ class Data(
 
             {{balance: `bool`, optional}}
 
+            {{inplace: `bool`, optional}}
+
         :Returns:
 
             `Data` or `None`
@@ -6833,8 +6835,8 @@ class Data(
         """Change the shape of the data without changing its values.
 
         It assumes that the array is stored in row-major order, and
-        only allows for reshapings that collapse or merge dimensions
-        like ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
+        only allows for reshapings that collapse or merge dimensions,
+        e.g. ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
 
         .. versionadded:: (cfdm) 1.11.2.0
 

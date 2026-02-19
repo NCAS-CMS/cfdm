@@ -297,7 +297,7 @@ class Constructs(Container, core_Constructs):
             # --------------------------------------------------------
             # Since a cell method construct was deleted, check to see
             # if it was for climatological time, and if so reset the
-            # climatology status of approriate coordinate constructs.
+            # climatology status of appropriate coordinate constructs.
             # --------------------------------------------------------
             qualifiers = out.qualifiers()
             if "within" in qualifiers or "over" in qualifiers:
@@ -553,7 +553,7 @@ class Constructs(Container, core_Constructs):
         return True
 
     def _set_climatology(self, cell_methods=None, coordinates=None):
-        """Set the climatology flag on approriate coordinate constructs.
+        """Set the climatology flag on coordinate constructs.
 
         The setting is based on the cell method constructs.
 

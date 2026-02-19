@@ -87,6 +87,7 @@ The ``cfdm`` package can:
 * write and append field and domain constructs to netCDF and Zarr v3
   datasets on disk,
 * read, write, and manipulate UGRID mesh topologies,
+* read, write, and manipulate HEALPix grids,
 * read, write, and create coordinates defined by geometry cells,
 * read and write netCDF4 string data-type variables,
 * read, write, and create netCDF and CDL datasets containing
