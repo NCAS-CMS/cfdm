@@ -4,7 +4,7 @@ Version NEXTVERSION
 **2026-03-??**
 
 * Read Kerchunk datasets with `cfdm.read`
-  (https://github.com/NCAS-CMS/cfdm/issues/???)
+  (https://github.com/NCAS-CMS/cfdm/issues/385)
 * Fix bug in `cfdm.write` when writing identical coordinates that have
   different ``formula_terms``
   (https://github.com/NCAS-CMS/cfdm/issues/380)
