@@ -1,6 +1,7 @@
 import logging
 
 from ..decorators import _manage_log_level_via_verbosity
+from ..functions import _DEPRECATION_ERROR_METHOD
 
 logger = logging.getLogger(__name__)
 
@@ -11,39 +12,6 @@ class FieldDomain:
     .. versionadded:: (cfdm) 1.9.0.0
 
     """
-
-    def __initialise_from_source(self, source, copy=True):
-        """Initialise mesh_id information from a source.
-
-        This method is called by
-        `_Container__parent_initialise_from_source`, which in turn is
-        called by `cfdm.core.Container.__init__`.
-
-        .. versionadded:: (cfdm) 1.12.2.0
-
-        :Parameters:
-
-            source:
-                The object from which to extract the initialisation
-                information. Typically, but not necessarily, a
-                `{{class}}` object.
-
-            copy: `bool`, optional
-                If True (the default) then deep copy the
-                initialisation information.
-
-        :Returns:
-
-            `None`
-
-        """
-        try:
-            mesh_id = source.get_mesh_id(None)
-        except AttributeError:
-            pass
-        else:
-            if mesh_id is not None:
-                self.set_mesh_id(mesh_id)
 
     def _apply_masking_constructs(self):
         """Apply masking to metadata constructs in-place.
@@ -706,7 +674,12 @@ class FieldDomain:
         None
 
         """
-        return self._del_component("mesh_id", default=default)
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "del_mesh_id",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def domain_topology(
         self,
@@ -2315,7 +2288,12 @@ class FieldDomain:
         None
 
         """
-        return self._get_component("mesh_id", default=default)
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "get_mesh_id",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def has_construct(self, *identity, **filter_kwargs):
         """Whether a unique metadata construct exists.
@@ -2434,7 +2412,12 @@ class FieldDomain:
         None
 
         """
-        return self._has_component("mesh_id")
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "has_mesh_id",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def set_mesh_id(self, mesh_id):
         """Set a UGRID mesh topology identifier.
@@ -2474,4 +2457,9 @@ class FieldDomain:
         None
 
         """
-        return self._set_component("mesh_id", mesh_id, copy=False)
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "set_mesh_id",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover

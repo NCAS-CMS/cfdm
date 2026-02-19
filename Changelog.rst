@@ -1,8 +1,10 @@
 Version NEXTVERSION
 ----------------
 
-**2026-03-??**
+**2026-??-??**
 
+* Write UGRID datasets with `cfdm.write`
+  (https://github.com/NCAS-CMS/cfdm/issues/271)
 * Fix bug in `cfdm.write` when writing identical coordinates that have
   different ``formula_terms``
   (https://github.com/NCAS-CMS/cfdm/issues/380). New unit test added.

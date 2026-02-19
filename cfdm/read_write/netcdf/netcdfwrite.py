@@ -21,6 +21,7 @@ from .constants import (
     ZARR_FMTS,
 )
 from .netcdfread import NetCDFRead
+from .netcdfwrite_ugrid import NetCDFWriteUgrid
 
 logger = logging.getLogger(__name__)
 
@@ -35,8 +36,8 @@ class AggregationError(Exception):
     pass
 
 
-class NetCDFWrite(IOWrite):
-    """A container for writing Fields to a netCDF dataset.
+class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
+    """A container for writing Fields to a dataset.
 
     NetCDF3, netCDF4 and Zarr output formats are supported.
 
@@ -705,14 +706,14 @@ class NetCDFWrite(IOWrite):
                 except RuntimeError as error:
                     message = (
                         "Can't create unlimited dimension "
-                        f"in {g['netcdf'].data_model} dataset ({error})."
+                        f"in {g['dataset'].data_model} dataset ({error})."
                     )
 
                     error = str(error)
                     if error == "NetCDF: NC_UNLIMITED size already in use":
                         raise RuntimeError(
                             message
-                            + f" In a {g['netcdf'].data_model} dataset only "
+                            + f" In a {g['dataset'].data_model} dataset only "
                             "one unlimited dimension is allowed. Consider "
                             "using a netCDF4 format."
                         )
@@ -726,7 +727,7 @@ class NetCDFWrite(IOWrite):
                 except RuntimeError as error:
                     raise RuntimeError(
                         f"Can't create size {size} dimension {ncdim!r} in "
-                        f"{g['netcdf'].data_model} dataset ({error})"
+                        f"{g['dataset'].data_model} dataset ({error})"
                     )
 
         g["dimensions"].add(ncdim)
@@ -1038,7 +1039,7 @@ class NetCDFWrite(IOWrite):
         return ncvar
 
     def _create_geometry_container(self, field):
-        """Create a geometry container variable in the dataset.
+        """Create a geometry container.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -1372,7 +1373,7 @@ class NetCDFWrite(IOWrite):
             # CF>=1.8 and we have geometry bounds, which are dealt
             # with separately
             # --------------------------------------------------------
-            extra = self._write_node_coordinates(
+            extra = self._write_geometry_node_coordinates(
                 f, coord, coord_ncvar, coord_ncdimensions
             )
             return extra
@@ -1491,10 +1492,10 @@ class NetCDFWrite(IOWrite):
 
         return extra
 
-    def _write_node_coordinates(
+    def _write_geometry_node_coordinates(
         self, f, coord, coord_ncvar, coord_ncdimensions
     ):
-        """Create a node coordinates dataset variable.
+        """Create a geometry node coordinates dataset variable.
 
         This will create:
 
@@ -2287,7 +2288,6 @@ class NetCDFWrite(IOWrite):
                 )
             else:
                 ncvar = self._create_variable_name(coord, default="auxiliary")
-
                 # TODO: move setting of bounds ncvar to here - why?
 
                 # If this auxiliary coordinate has bounds then create
@@ -2305,11 +2305,16 @@ class NetCDFWrite(IOWrite):
                         self.implementation.get_data_axes(f, key),
                         extra=extra,
                     )
+                else:
+                    # There is no data (although there might be
+                    # bounds, though), so there can't be an auxiliary
+                    # coordinate variable.
+                    ncvar = None
 
-        g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
 
         if ncvar is not None:
+            g["key_to_ncvar"][key] = ncvar
             coordinates.append(ncvar)
 
         return coordinates
@@ -3770,14 +3775,13 @@ class NetCDFWrite(IOWrite):
             ).get("grid_mapping_name", False)
         ]
 
-        # Check if the field or domain has a domain topology construct
-        # (CF>=1.11)
-        ugrid = self.implementation.has_domain_topology(f)
-        if ugrid:
-            raise NotImplementedError(
-                "Can't yet write UGRID datasets. "
-                "This feature is coming soon ..."
-            )
+        # Initialise the dictionary of the field/domain's normalised
+        # domain topologies
+        g["normalised_domain_topologies"] = {}
+
+        # Initialise the dictionary of the field/domain's normalised
+        # cell connectivities
+        g["normalised_cell_connectivities"] = {}
 
         field_coordinates = self.implementation.get_coordinates(f)
 
@@ -4419,6 +4423,18 @@ class NetCDFWrite(IOWrite):
             ]
 
         # ------------------------------------------------------------
+        # Domain topology variables (CF>=1.11)
+        # ------------------------------------------------------------
+        for key, dt in self.implementation.get_domain_topologies(f).items():
+            self._ugrid_write_domain_topology(f, key, dt)
+
+        # ------------------------------------------------------------
+        # Cell connectivity variables (CF>=1.11)
+        # ------------------------------------------------------------
+        for key, cc in self.implementation.get_cell_connectivities(f).items():
+            self._ugrid_write_cell_connectivity(f, key, cc)
+
+        # ------------------------------------------------------------
         # Create the data/domain dataset variable
         # ------------------------------------------------------------
         if field:
@@ -4426,7 +4442,7 @@ class NetCDFWrite(IOWrite):
         else:
             default = "domain"
 
-        ncvar = self._create_variable_name(f, default=default)
+        field_ncvar = self._create_variable_name(f, default=default)
 
         ncdimensions = data_ncdimensions
 
@@ -4437,7 +4453,7 @@ class NetCDFWrite(IOWrite):
             cell_measures = " ".join(cell_measures)
             logger.debug(
                 "    Writing cell_measures attribute to "
-                f"variable {ncvar}: {cell_measures!r}"
+                f"variable {field_ncvar}: {cell_measures!r}"
             )  # pragma: no cover
 
             extra["cell_measures"] = cell_measures
@@ -4447,7 +4463,7 @@ class NetCDFWrite(IOWrite):
             coordinates = " ".join(coordinates)
             logger.info(
                 "    Writing coordinates attribute to "
-                f"variable {ncvar}: {coordinates!r}"
+                f"variable {field_ncvar}: {coordinates!r}"
             )  # pragma: no cover
 
             extra["coordinates"] = coordinates
@@ -4457,7 +4473,7 @@ class NetCDFWrite(IOWrite):
             grid_mapping = " ".join(grid_mapping)
             logger.info(
                 "    Writing grid_mapping attribute to "
-                f"variable {ncvar}: {grid_mapping!r}"
+                f"variable {field_ncvar}: {grid_mapping!r}"
             )  # pragma: no cover
 
             extra["grid_mapping"] = grid_mapping
@@ -4468,7 +4484,7 @@ class NetCDFWrite(IOWrite):
             ancillary_variables = re.sub(r"\s+", " ", ancillary_variables)
             logger.info(
                 "    Writing ancillary_variables attribute to "
-                f"variable {ncvar}: {ancillary_variables!r}"
+                f"variable {field_ncvar}: {ancillary_variables!r}"
             )  # pragma: no cover
 
             extra["ancillary_variables"] = ancillary_variables
@@ -4505,7 +4521,7 @@ class NetCDFWrite(IOWrite):
                 cell_methods = " ".join(cell_methods_strings)
                 logger.info(
                     "    Writing cell_methods attribute to "
-                    f"variable {ncvar}: {cell_methods}"
+                    f"variable {field_ncvar}: {cell_methods}"
                 )  # pragma: no cover
 
                 extra["cell_methods"] = cell_methods
@@ -4520,6 +4536,24 @@ class NetCDFWrite(IOWrite):
                     f, geometry_container
                 )
                 extra["geometry"] = gc_ncvar
+
+        # ------------------------------------------------------------
+        # UGRID mesh (CF>=1.11)
+        #
+        # Note this must be done *after* domain topologies and cell
+        # connectivities have been written to the dataset, as we'll
+        # need their netCDF variable names.
+        # ------------------------------------------------------------
+        if g["output_version"] >= g["CF-1.11"]:
+            mesh_ncvar = self._ugrid_get_mesh_ncvar(f)
+            if mesh_ncvar is not None:
+                extra["mesh"] = mesh_ncvar
+
+                location = f.domain_topology().get_cell()
+                if location == "point":
+                    location = "node"
+
+                extra["location"] = location
 
         # ------------------------------------------------------------
         # Create a new data/domain dataset variable
@@ -4543,7 +4577,7 @@ class NetCDFWrite(IOWrite):
         # automatically changed to () within the
         # _write_netcdf_variable method. CF-1.9
         self._write_netcdf_variable(
-            ncvar,
+            field_ncvar,
             ncdimensions,
             f,
             self.implementation.get_data_axes(f, None),
@@ -4557,7 +4591,7 @@ class NetCDFWrite(IOWrite):
         if add_to_seen:
             seen[id_f] = {
                 "variable": org_f,
-                "ncvar": ncvar,
+                "ncvar": field_ncvar,
                 "ncdims": ncdimensions,
             }
 
@@ -4736,7 +4770,7 @@ class NetCDFWrite(IOWrite):
 
         :Parameters:
 
-            parent: `netCDF4.Dateset` or `netCDF4.Group` or `Zarr.Group`
+            parent: `netCDF4.Dataset` or `netCDF4.Group` or `Zarr.Group`
                 The group in which to find or create new group.
 
             groups: sequence of `str`
@@ -5499,6 +5533,9 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             "quantization": {},
             # --------------------------------------------------------
+            # UGRID:
+            # --------------------------------------------------------
+            "meshes": {},
             # Cache selected (field, coordinate reference, dimension
             # coordinate) triples
             # --------------------------------------------------------
@@ -5678,7 +5715,8 @@ class NetCDFWrite(IOWrite):
 
         if mode == "w":  # only one iteration required in this simple case
             return
-        elif mode == "a":  # need another iteration to append after reading
+
+        if mode == "a":  # need another iteration to append after reading
             self.write_vars["dry_run"] = False
             self.write_vars["post_dry_run"] = True  # i.e. follows a dry run
 
@@ -5938,6 +5976,12 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         for f in fields:
             self._write_field_or_domain(f)
+
+        # ------------------------------------------------------------
+        # Now write any UGRID meshes referenced by any of the
+        # fields/domains (CF>=1.11)
+        # ------------------------------------------------------------
+        self._ugrid_write_mesh_variables()
 
         # ------------------------------------------------------------
         # Write all of the buffered data to disk

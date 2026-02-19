@@ -257,8 +257,6 @@ def example_field(n, _implementation=_implementation):
 
     Data = _implementation.get_class("Data")
 
-    mesh_id = "f51e5aa5e2b0439f9fae4f04e51556f7"
-
     if n == 0:
         f = Field()
 
@@ -4681,7 +4679,6 @@ def example_field(n, _implementation=_implementation):
             dtype="f8",
         )
         f.set_data(data)
-        f.set_mesh_id(mesh_id)
         #
         # domain_axis: ncdim%time
         c = DomainAxis()
@@ -4737,7 +4734,7 @@ def example_field(n, _implementation=_implementation):
         data = Data([-44, -44, -42], units="degrees_east", dtype="f8")
         c.set_data(data)
         b = Bounds()
-        b.nc_set_variable("Mesh2_node_x_bounds")
+        b.nc_set_variable("Mesh2_face_x_bounds")
         data = Data(
             [
                 [-45, -43, -43, -45],
@@ -4763,7 +4760,7 @@ def example_field(n, _implementation=_implementation):
         data = Data([34, 32, 34], units="degrees_north", dtype="f8")
         c.set_data(data)
         b = Bounds()
-        b.nc_set_variable("Mesh2_node_y_bounds")
+        b.nc_set_variable("Mesh2_face_y_bounds")
         data = Data(
             [
                 [33, 33, 35, 35],
@@ -4785,7 +4782,7 @@ def example_field(n, _implementation=_implementation):
         c.set_properties({"long_name": "Maps every face to its corner nodes"})
         c.nc_set_variable("Mesh2_face_nodes")
         data = Data(
-            [[2, 3, 1, 0], [4, 5, 3, 2], [1, 3, 6, -99]],
+            [[2, 3, 1, 0], [4, 5, 3, 2], [6, 1, 3, -99]],
             dtype="i4",
             mask_value=-99,
         )
@@ -4844,7 +4841,6 @@ def example_field(n, _implementation=_implementation):
             dtype="f8",
         )
         f.set_data(data)
-        f.set_mesh_id(mesh_id)
         #
         # domain_axis: ncdim%time
         c = DomainAxis()
@@ -4904,7 +4900,7 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.nc_set_variable("Mesh2_node_x_bounds")
+        b.nc_set_variable("Mesh2_edge_x_bounds")
         data = Data(
             [
                 [-43, -40],
@@ -4939,7 +4935,7 @@ def example_field(n, _implementation=_implementation):
         )
         c.set_data(data)
         b = Bounds()
-        b.nc_set_variable("Mesh2_node_y_bounds")
+        b.nc_set_variable("Mesh2_edge_y_bounds")
         data = Data(
             [
                 [35, 34],
@@ -5050,7 +5046,6 @@ def example_field(n, _implementation=_implementation):
             dtype="f8",
         )
         f.set_data(data)
-        f.set_mesh_id(mesh_id)
         #
         # domain_axis: ncdim%time
         c = DomainAxis()
@@ -5138,10 +5133,10 @@ def example_field(n, _implementation=_implementation):
         data = Data(
             [
                 [0, 1, 2, -99, -99],
-                [1, 0, 3, 6, -99],
-                [2, 0, 4, 3, -99],
+                [1, 6, 0, 3, -99],
+                [2, 0, 3, 4, -99],
                 [3, 2, 1, 5, 6],
-                [4, 5, 2, -99, -99],
+                [4, 2, 5, -99, -99],
                 [5, 4, 3, -99, -99],
                 [6, 3, 1, -99, -99],
             ],

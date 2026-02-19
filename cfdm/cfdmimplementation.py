@@ -419,6 +419,25 @@ class CFDMImplementation(Implementation):
 
         return self.nc_get_variable(bounds, default=default)
 
+    def get_cell_connectivities(self, parent):
+        """Return the cell connectivities from a parent.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+                The parent object.
+
+        :Returns:
+
+            `dict`
+                A dictionary whose values are cell connectivity
+                objects, keyed by unique identifiers.
+
+        """
+        return parent.cell_connectivities(todict=True)
+
     def get_cell_measures(self, field):
         """Return all of the cell measure constructs of a field.
 
@@ -1011,6 +1030,25 @@ class CFDMImplementation(Implementation):
 
         """
         return field.domain_axes(todict=True)[axis].get_size()
+
+    def get_domain_topologies(self, parent):
+        """Return the domain topologies from  a parent.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+                The parent object.
+
+        :Returns:
+
+            `dict`
+                A dictionary whose values are domain topology objects,
+                keyed by unique identifiers.
+
+        """
+        return parent.domain_topologies(todict=True)
 
     def get_sample_dimension_position(self, construct):
         """Returns the position of the compressed data sample dimension.
@@ -1983,8 +2021,15 @@ class CFDMImplementation(Implementation):
 
         return data.source(default)
 
-    def initialise_AuxiliaryCoordinate(self):
+    def initialise_AuxiliaryCoordinate(self, **kwargs):
         """Return an auxiliary coordinate construct.
+
+        :Parameters:
+
+            kwargs: optional
+                Parameters with which to intialising the object.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -1992,7 +2037,7 @@ class CFDMImplementation(Implementation):
 
         """
         cls = self.get_class("AuxiliaryCoordinate")
-        return cls()
+        return cls(**kwargs)
 
     def initialise_Bounds(self):
         """Return a bounds component.
@@ -3420,26 +3465,6 @@ class CFDMImplementation(Implementation):
             calendar=data.get_calendar(None),
         )
         construct.set_data(data)
-
-    def set_mesh_id(self, parent, mesh_id):
-        """Set a mesh identifier.
-
-        .. versionadded:: (cfdm)  1.11.0.0
-
-        :Parameters:
-
-            parent: construct
-                The construct on which to set the mesh id
-
-            mesh_id:
-                The mesh identifier.
-
-        :Returns:
-
-            `None`
-
-        """
-        parent.set_mesh_id(mesh_id)
 
     def nc_set_external(self, construct):
         """Set the external status of a construct.

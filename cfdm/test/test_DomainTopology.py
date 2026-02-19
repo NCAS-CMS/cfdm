@@ -8,23 +8,13 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
-# Create test domain topology object
-c = cfdm.DomainTopology()
-c.set_properties({"long_name": "Maps every face to its corner nodes"})
-c.nc_set_variable("Mesh2_face_nodes")
-data = cfdm.Data(
-    [[2, 3, 1, 0], [6, 7, 3, 2], [1, 3, 8, -99]],
-    dtype="i4",
-)
-data.masked_values(-99, inplace=True)
-c.set_data(data)
-c.set_cell("face")
-
 
 class DomainTopologyTest(unittest.TestCase):
     """Unit test for the DomainTopology class."""
 
-    d = c
+    face = cfdm.example_field(8).domain_topology()
+    edge = cfdm.example_field(9).domain_topology()
+    point = cfdm.example_field(10).domain_topology()
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -41,7 +31,7 @@ class DomainTopologyTest(unittest.TestCase):
 
     def test_DomainTopology__repr__str__dump(self):
         """Test all means of DomainTopology inspection."""
-        d = self.d
+        d = self.face
         self.assertEqual(repr(d), "<DomainTopology: cell:face(3, 4) >")
         self.assertEqual(str(d), "cell:face(3, 4) ")
         self.assertEqual(
@@ -53,17 +43,17 @@ class DomainTopologyTest(unittest.TestCase):
 
     def test_DomainTopology_copy(self):
         """Test the copy of DomainTopology."""
-        d = self.d
+        d = self.face
         self.assertTrue(d.equals(d.copy()))
 
     def test_DomainTopology_data(self):
         """Test the data of DomainTopology."""
-        d = self.d
+        d = self.face
         self.assertEqual(d.ndim, 1)
 
     def test_DomainTopology_cell(self):
         """Test the 'cell' methods of DomainTopology."""
-        d = self.d.copy()
+        d = self.face.copy()
         self.assertTrue(d.has_cell())
         self.assertEqual(d.get_cell(), "face")
         self.assertEqual(d.del_cell(), "face")
@@ -83,7 +73,7 @@ class DomainTopologyTest(unittest.TestCase):
 
     def test_DomainTopology_transpose(self):
         """Test the 'transpose' method of DomainTopology."""
-        d = self.d.copy()
+        d = self.face.copy()
         e = d.transpose()
         self.assertTrue(d.equals(e))
         self.assertIsNone(d.transpose(inplace=True))
@@ -198,6 +188,85 @@ class DomainTopologyTest(unittest.TestCase):
         self.assertEqual(d0.shape, n.shape)
         self.assertTrue((d0.mask == n.mask).all())
         self.assertTrue((d0 == n).all())
+
+    def test_DomainTopology_sort(self):
+        """Test cfdm.DomainTopology.sort."""
+        # Test sorting of "point"
+        d = self.point
+        e = d.sort()
+        self.assertIsInstance(e, cfdm.DomainTopology)
+
+        result = cfdm.Data(
+            [
+                [0, 1, 2, -99, -99],
+                [1, 0, 3, 6, -99],
+                [2, 0, 3, 4, -99],
+                [3, 1, 2, 5, 6],
+                [4, 2, 5, -99, -99],
+                [5, 3, 4, -99, -99],
+                [6, 1, 3, -99, -99],
+            ],
+            dtype="i4",
+            mask_value=-99,
+        )
+        self.assertTrue(e.data.equals(result))
+
+        e = d[::-1]
+        self.assertFalse(e.equals(d))
+        e = e.sort()
+        self.assertTrue(e.data.equals(result))
+
+        # Test sorting of "edge"
+        d = self.edge
+        e = d.sort()
+        self.assertIsInstance(e, cfdm.DomainTopology)
+
+        result = cfdm.Data(
+            [
+                [0, 1],
+                [0, 2],
+                [1, 3],
+                [1, 6],
+                [2, 3],
+                [2, 4],
+                [3, 5],
+                [3, 6],
+                [4, 5],
+            ],
+            dtype="i4",
+            mask_value=-99,
+        )
+        self.assertTrue(e.data.equals(result))
+
+        e = d[::-1]
+        self.assertFalse(e.equals(d))
+        e = e.sort()
+        self.assertTrue(e.data.equals(result))
+
+        # Can't sort "face"
+        with self.assertRaises(ValueError):
+            self.face.sort()
+
+    def test_DomainTopology_to_edge(self):
+        """Test cfdm.DomainTopology.to_edge."""
+        # Test "edge" to_edge
+        d = self.edge
+        e = d.to_edge()
+        self.assertIsInstance(e, cfdm.DomainTopology)
+        self.assertTrue(e.equals(d))
+        self.assertTrue(d.to_edge(sort=True).equals(d.sort()))
+
+        # Test "point" to_edge
+        d = self.point
+        e = d.to_edge(sort=True)
+        self.assertIsInstance(e, cfdm.DomainTopology)
+        self.assertTrue(e.data.equals(self.edge.sort().data))
+
+        # Test "face" to_edge
+        d = self.face
+        e = d.to_edge(sort=True)
+        self.assertIsInstance(e, cfdm.DomainTopology)
+        self.assertTrue(e.data.equals(self.edge.sort().data))
 
 
 if __name__ == "__main__":
