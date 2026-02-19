@@ -796,7 +796,31 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             if not ncvar.startswith(groups):
                 create = True
 
+        # Do these coordinates need a formula_terms attribute?
+        formula_terms = False
+        for ref in f.coordinate_references(todict=True).values():
+            if (
+                ref.coordinate_conversion.has_parameter("standard_name")
+                and key in ref.coordinates()
+            ):
+                formula_terms = True
+                break
+
+        if formula_terms and already_in_file and not create:
+            if not self._matching_coordinate_formula_terms(f, ref, coord):
+                # This a coordinate variable for this dimension
+                # coordinate is already in the file, but we need to
+                # create a new one because it has a different
+                # formula_terms to the one that's already in the file.
+                create = True
+
         if create:
+            if formula_terms:
+                # Record the (field, coordinate reference, dimension
+                # coordinate) triple for comparison with fields that
+                # may be written later on.
+                g["field_ref_coord"].append((f, ref, coord))
+
             ncvar = self._create_variable_name(coord, default=None)
             if ncvar is None:
                 # No dataset variable name has been set, so use the
@@ -5512,6 +5536,10 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             # UGRID:
             # --------------------------------------------------------
             "meshes": {},
+            # Cache selected (field, coordinate reference, dimension
+            # coordinate) triples
+            # --------------------------------------------------------
+            "field_ref_coord": [],
         }
 
         if mode not in ("w", "a", "r+"):
@@ -6934,3 +6962,77 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 mv = ""
 
         return mv
+
+    def _matching_coordinate_formula_terms(self, f, ref, coord):
+        """Is the coordinate/formula_terms pair already in the dataset?
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            f: `Field`
+                The parent field.
+
+            ref: `CoordinateReference`
+                The coordinate reference containing the formula_terms
+                information.
+
+            coord: `DimensionCoordinate`
+                The coordinates.
+
+        :Returns:
+
+            `bool`
+                `True` if the coordinate/formula_terms pair is already
+                in the file, otherwise `False`.
+
+        """
+        field_ref_coord = self.write_vars["field_ref_coord"]
+        if not field_ref_coord:
+            # There are currently no matching coordinate/formula_terms
+            # pairs in the file
+            return False
+
+        terms = ref.coordinate_conversion.domain_ancillaries()
+        for f1, ref1, coord1 in field_ref_coord:
+            found_match = True
+
+            terms1 = ref1.coordinate_conversion.domain_ancillaries()
+            if tuple(terms) != tuple(terms1):
+                found_match = False
+                continue
+
+            # Check that the coordinate conversion terms are the same
+            for term, key in terms.items():
+                key1 = terms1[term]
+                if (key is None) != (key1 is None):
+                    found_match = False
+                    break
+
+            if not found_match:
+                continue
+
+            # Check that the dimension coordinate constructs are the
+            # same
+            if not coord.equals(coord1):
+                found_match = False
+                continue
+
+            # Check that the domain ancillaries are the same
+            for term, key in terms.items():
+                if key is None:
+                    continue
+
+                key1 = terms1[term]
+                if not f.construct(key).equals(f1.construct(key1)):
+                    found_match = False
+                    break
+
+            if found_match:
+                # There is already a matching coordinate/formula_terms
+                # pair in the file
+                return True
+
+        # Still here? Then there are currently no matching
+        #             coordinate/formula_terms pairs in the file.
+        return False
