@@ -55,7 +55,7 @@ inspecting it:
 
 The **cfdm** package can
 
-* read field and domain constructs from netCDF, CDL, and Zarr datasets with a choice of netCDF backends,
+* read field and domain constructs from netCDF, CDL, Zarr, and Kerchunk datasets with a choice of netCDF backends,
 * be fully flexible with respect to dataset storage chunking,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF and Zarr v3 datasets on disk,
@@ -138,6 +138,9 @@ extras_require = {
     ],
     "zarr": [
         "zarr>=3.1.3",
+    ],
+    "kerchunk": [
+        "fsspec>=2026.2.0",
     ],
 }
 

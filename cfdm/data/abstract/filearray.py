@@ -331,7 +331,11 @@ class FileArray(Array):
             )
 
         if normalise:
-            filename = abspath(filename)
+            try:
+                filename = abspath(filename)
+            except TypeError:
+                # filename is not a string
+                pass
 
         return filename
 
@@ -464,19 +468,20 @@ class FileArray(Array):
         from urllib.parse import urlparse
 
         filename = self.get_filename(normalise=True)
-        url = urlparse(filename)
-        if url.scheme == "file":
-            # Convert a file URI into an absolute local path
-            filename = abspath(filename, uri=False)
-        elif url.scheme == "s3":
-            # Create an openable S3 file object
-            from s3fs import S3FileSystem
+        if isinstance(filename, str):
+            url = urlparse(filename)
+            if url.scheme == "file":
+                # Convert a file URI into an absolute local path
+                filename = abspath(filename, uri=False)
+            elif url.scheme == "s3":
+                # Create an openable S3 file object
+                from s3fs import S3FileSystem
 
-            storage_options = self.get_storage_options(
-                create_endpoint_url=True, parsed_filename=url
-            )
-            fs = S3FileSystem(**storage_options)
-            filename = fs.open(url.path[1:], "rb")
+                storage_options = self.get_storage_options(
+                    create_endpoint_url=True, parsed_filename=url
+                )
+                fs = S3FileSystem(**storage_options)
+                filename = fs.open(url.path[1:], "rb")
 
         try:
             dataset = func(filename, *args, **kwargs)

@@ -60,12 +60,20 @@ class read_writeTest(unittest.TestCase):
 
     filename = filename
 
+    nc = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "example_field_0.nc"
+    )
+
     zarr2 = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr2"
     )
 
     zarr3 = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr3"
+    )
+
+    kerchunk = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "example_field_0.kerchunk"
     )
 
     f0 = cfdm.example_field(0)
@@ -1375,6 +1383,16 @@ class read_writeTest(unittest.TestCase):
         # written-then-read fields.
         for a, b in zip(f01, g01):
             self.assertTrue(b.equals(a))
+
+    def test_read_kerchunk(self):
+        """Test cfdm.read for Kerchunk files."""
+        n = cfdm.read(self.nc)[0]
+        for backend in (None, "zarr"):
+            k = cfdm.read(self.kerchunk, netcdf_backend=backend)[0]
+            self.assertTrue(k.equals(n))
+
+            with self.assertRaises(DatasetTypeError):
+                cfdm.read(self.kerchunk, netcdf_backend="netCDF4")
 
 
 if __name__ == "__main__":

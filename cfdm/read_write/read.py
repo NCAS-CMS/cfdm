@@ -17,8 +17,8 @@ logger = getLogger(__name__)
 class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
-    The following dataset formats are supported: netCDF, CDL, and
-    Zarr.
+    The following dataset formats are supported: netCDF, CDL, Zarr,
+    and Kerchunk.
 
     NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
     server, or in an S3 object store.
@@ -122,6 +122,7 @@ class read(ReadWrite):
             ``'netCDF'``    A netCDF-3 or netCDF-4 dataset
             ``'CDL'``       A text CDL file of a netCDF dataset
             ``'Zarr'``      A Zarr v2 (xarray) or Zarr v3 dataset
+            ``'Kerchunk'``  A Kerchunked dataset
             ==============  ==========================================
 
             .. versionadded:: (cfdm) 1.12.2.0
@@ -459,7 +460,7 @@ class read(ReadWrite):
         self.dataset_type = dataset_type
 
         # Recognised netCDF dataset formats
-        self.netCDF_dataset_types = set(("netCDF", "CDL", "Zarr"))
+        self.netCDF_dataset_types = set(("netCDF", "CDL", "Zarr", "Kerchunk"))
 
         # Allowed dataset formats
         self.allowed_dataset_types = self.netCDF_dataset_types.copy()

@@ -565,6 +565,7 @@ class NetCDFRead(IORead):
             "h5netcdf": self._open_h5netcdf,
             "netCDF4": self._open_netCDF4,
             "zarr": self._open_zarr,
+            "Kerchunk": self._open_zarr,
         }
 
         # Loop around the netCDF backends until we successfully open
@@ -720,8 +721,20 @@ class NetCDFRead(IORead):
             )
             raise
 
+        g = self.read_vars
+        if g["d_type"] == "Kerchunk":
+            # In fsspec, the string before the :// is a protocol,
+            # e.g. when you use s3://, fsspec looks for the S3
+            # implementation. When you use reference://, it triggers a
+            # specific implementation called ReferenceFileSystem,
+            # which was essentially created to support the Kerchunk
+            # project and is a standalone feature of fsspec.
+            import fsspec
+
+            dataset = fsspec.get_mapper("reference://", fo=dataset)
+
         nc = zarr.open(dataset, mode="r")
-        self.read_vars["original_dataset_opened_with"] = "zarr"
+        g["original_dataset_opened_with"] = "zarr"
         return nc
 
     def cdl_to_netcdf(self, filename):
@@ -899,7 +912,26 @@ class NetCDFRead(IORead):
                     if netcdf:
                         d_type = "CDL"
                     else:
-                        d_type = None
+                        # Check for a Kerchunk file
+                        try:
+                            import fsspec
+                        except ModuleNotFoundError as error:
+                            error.msg += (
+                                ". Install the 'fsspec' package "
+                                "(https://pypi.org/project/fsspec) to read "
+                                "Kerchunk datasets"
+                            )
+                            raise
+
+                        try:
+                            # This will fail fast if the structure is
+                            # wrong for a Kerchunk file. See
+                            # `_open_zarr` for details.
+                            fsspec.get_mapper("reference://", fo=dataset)
+                        except Exception:
+                            d_type = None
+                        else:
+                            d_type = "Kerchunk"
 
         try:
             fh.close()
@@ -1116,7 +1148,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Parse the 'dataset_type' keyword parameter
         # ------------------------------------------------------------
-        valid_dataset_types = ("netCDF", "CDL", "Zarr")
+        valid_dataset_types = ("netCDF", "CDL", "Zarr", "Kerchunk")
         if dataset_type is not None:
             if isinstance(dataset_type, str):
                 dataset_type = (dataset_type,)
@@ -1181,22 +1213,24 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Parse the 'netcdf_backend' keyword parameter
         # ------------------------------------------------------------
-        if d_type == "Zarr":
-            netcdf_backend = ("zarr",)
-        elif netcdf_backend is None:
-            # By default, try netCDF backends in this order:
-            netcdf_backend = ("h5netcdf", "netCDF4")
-        else:
-            valid_netcdf_backends = ("h5netcdf", "netCDF4", "zarr")
-            if isinstance(netcdf_backend, str):
-                netcdf_backend = (netcdf_backend,)
+        valid_netcdf_backends = ("h5netcdf", "netCDF4", "zarr")
+        if isinstance(netcdf_backend, str):
+            netcdf_backend = (netcdf_backend,)
 
-            if not set(netcdf_backend).issubset(valid_netcdf_backends):
-                raise ValueError(
-                    "Invalid netCDF backend given by the 'netcdf_backend' "
-                    f"parameter. Got {netcdf_backend}, expected a subset of "
-                    f"{valid_netcdf_backends!r}"
-                )
+        if netcdf_backend is not None and not set(netcdf_backend).issubset(
+            valid_netcdf_backends
+        ):
+            raise ValueError(
+                "Invalid netCDF backend given by the 'netcdf_backend' "
+                f"parameter. Got {netcdf_backend}, expected a subset of "
+                f"{valid_netcdf_backends!r}"
+            )
+
+        if netcdf_backend is None:
+            if d_type in ("Zarr", "Kerchunk"):
+                netcdf_backend = ("zarr",)
+            elif netcdf_backend is None:
+                netcdf_backend = ("h5netcdf", "netCDF4")
 
         # ------------------------------------------------------------
         # Parse the 'external' keyword parameter
@@ -1493,9 +1527,14 @@ class NetCDFRead(IORead):
             # Maps variable names to their quantization container
             # variable names
             "quantization": {},
+            # --------------------------------------------------------
             # Cached data elements, keyed by variable names.
             # --------------------------------------------------------
             "cached_data_elements": {},
+            # --------------------------------------------------------
+            # Store the dataset type (netCDF, Zarr, Kerchunk, etc.)
+            # --------------------------------------------------------
+            "d_type": d_type,
         }
 
         g = self.read_vars
@@ -6747,6 +6786,13 @@ class NetCDFRead(IORead):
             "attributes": attributes,
             "storage_options": g["file_system_storage_options"].get(dataset),
         }
+
+        if g["d_type"] == "Kerchunk":
+            # Replace filename with a <class 'fsspec.mapping.FSMap'>
+            # object. See `_open_zarr` for details.
+            import fsspec
+
+            kwargs["filename"] = fsspec.get_mapper("reference://", fo=dataset)
 
         if not self._cfa_is_aggregation_variable(ncvar):
             # Normal (non-aggregation) variable

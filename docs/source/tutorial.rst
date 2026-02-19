@@ -160,6 +160,8 @@ datasets <Sample-datasets>`), which contains two field constructs:
   <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
   formats.
 
+* Datasets in `Kerchunk <https://fsspec.github.io/kerchunk>`_ format.
+
 Descriptive properties are always read into memory, but `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
 data arrays, which means that no data is read into memory until the
