@@ -783,7 +783,7 @@ class write(ReadWrite):
             .. versionadded:: (cfdm) 1.11.2.0
 
         backend: `str` or `None`, optional
-            Which library to use for creating the dataset.
+            Which backend library to use for creating the dataset.
 
             The allowed backends are:
 
@@ -804,27 +804,29 @@ class write(ReadWrite):
               - The `zarr` library.
               - Writes Zarr datasets.
 
-            The default backend of `None` results in a backend that is
-            dependent on the dataset format specified with the *fmt*
+            The default backend of `None` results in a backend that
+            depends on the dataset format specified with the *fmt*
             parameter, as follows:
 
             * For all netCDF-4 formats the default backend is
               ``h5netcdf-h5py``.
-    
+
             * For all netCDF-3 formats the default backend is
               ``netCDF4``.
-    
+
             * For all Zarr formats the default backend is ``zarr``.
 
             .. versionadded:: (cfdm) NEXTVERSION
-    
+
         h5py_kwargs: `dict` or `None`, optional
-            Additional keyword arguments to be passed to the
-            `h5py.File` file constructor, when the backend is
-            ``h5netcdf-h5py``. In particular, these keywords can be
-            used to control the structure of the HDF5 internal
-            metadata. Ignored for all other backends.
-    
+            When the backend is ``h5netcdf-h5py``, provide additional
+            keyword arguments to be passed to the `h5py.File` file
+            constructor. In particular, these keywords can be used to
+            control the structure of the HDF5 internal metadata (such
+            as the file space handling strategy, the file space page
+            size, the meta block size, etc.). Ignored for all other
+            backends.
+
             See
             https://docs.h5py.org/en/stable/high/file.html#h5py.File
             for details on which keywords are available.
@@ -834,10 +836,10 @@ class write(ReadWrite):
               fs_page_size=2**20)``
 
             *Example:*
-              ``h5py_kwargs=dict(meta_bloc_size=500000)``
+              ``h5py_kwargs=dict(meta_block_size=500000)``
 
             .. versionadded:: (cfdm) NEXTVERSION
-        
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
@@ -895,7 +897,8 @@ class write(ReadWrite):
         dataset_shards=None,
         cfa="auto",
         extra_write_vars=None,
-            backend=None,h5py_kwargs=None,
+        backend=None,
+        h5py_kwargs=None,
     ):
         """Write field and domain constructs to a dataset."""
         # Flatten the sequence of intput fields

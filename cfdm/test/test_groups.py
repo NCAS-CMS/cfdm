@@ -492,8 +492,8 @@ class GroupsTest(unittest.TestCase):
 
         # ------------------------------------------------------------
         # Move the latitude coordinate to the /forecast group. Note
-        # that this will drag its netDF dimension along with it,
-        # because it's a dimension coordinate variable
+        # that this will drag its dimension along with it, because
+        # it's a dimension coordinate variable
         # ------------------------------------------------------------
         lat = f.construct("latitude")
         lat.nc_set_variable_groups(["forecast"])
@@ -503,14 +503,15 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         f.nc_set_variable_groups(["forecast", "model"])
 
+        grouped_file5 = "grouped_file5.nc"
         grouped_file = grouped_file5
 
-        cfdm.write(f, grouped_file5, verbose=1)
+        cfdm.write(f, grouped_file5)
 
         h = cfdm.read(grouped_file, netcdf_backend="netCDF4")
         self.assertEqual(len(h), 1)
         h = h[0]
-        self.assertTrue(f.equals(h))
+        self.assertTrue(f.equals(h, verbose=-1))
 
         # Check that h5netcdf reads the file correctly
         h5 = cfdm.read(grouped_file, netcdf_backend="h5netcdf-pyfive")

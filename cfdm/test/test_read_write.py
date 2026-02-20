@@ -205,7 +205,7 @@ class read_writeTest(unittest.TestCase):
         cfdm.write(g, tmpfile, fmt="NETCDF4", mode="w")  # 1. overwrite to wipe
         f = cfdm.read(tmpfile)
         with self.assertRaises(ValueError):
-            cfdm.write(g, tmpfile, fmt="NETCDF4", mode="a")
+            cfdm.write(g, tmpfile, fmt="NETCDF4", mode="a", backend="netCDF4")
 
         # Test special case #2: attempt to append fields with contradictory
         # featureType to the original file:
@@ -221,7 +221,7 @@ class read_writeTest(unittest.TestCase):
         h = cfdm.example_field(3)
         h.nc_set_global_attribute("featureType", "timeSeries")
         with self.assertRaises(ValueError):
-            cfdm.write(h, tmpfile, fmt="NETCDF4", mode="a")
+            cfdm.write(h, tmpfile, fmt="NETCDF4", mode="a", backend="netCDF4")
         # Now remove featureType attribute for subsquent tests:
         g_attrs = g.nc_clear_global_attributes()
         del g_attrs["featureType"]
@@ -279,7 +279,9 @@ class read_writeTest(unittest.TestCase):
                 if ex_field_n in (8, 9, 10):
                     continue
 
-                cfdm.write(ex_field, tmpfile, fmt=fmt, mode="a")
+                cfdm.write(
+                    ex_field, tmpfile, fmt=fmt, mode="a", backend="netCDF4"
+                )
                 f = cfdm.read(tmpfile)
 
                 new_length += 1  # there should be exactly one more field now
@@ -321,7 +323,7 @@ class read_writeTest(unittest.TestCase):
 
             overall_length = len(append_ex_fields) + 1  # 1 for original 'g'
             cfdm.write(
-                append_ex_fields, tmpfile, fmt=fmt, mode="a"
+                append_ex_fields, tmpfile, fmt=fmt, mode="a", backend="netCDF4"
             )  # 2. now append
             f = cfdm.read(tmpfile)
             self.assertEqual(len(f), overall_length)
@@ -329,7 +331,11 @@ class read_writeTest(unittest.TestCase):
             # Also test the mode="r+" alias for mode="a".
             cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
             cfdm.write(
-                append_ex_fields, tmpfile, fmt=fmt, mode="r+"
+                append_ex_fields,
+                tmpfile,
+                fmt=fmt,
+                mode="r+",
+                backend="netCDF4",
             )  # 2. now append
             f = cfdm.read(tmpfile)
             self.assertEqual(len(f), overall_length)
@@ -447,7 +453,7 @@ class read_writeTest(unittest.TestCase):
             cfdm.write(g_new, tmpfile, fmt=fmt, mode="w")  # overwrite to wipe
 
             #   2. Conduct the test by appending the identical field g_copy
-            cfdm.write(g_copy, tmpfile, fmt=fmt, mode="a")
+            cfdm.write(g_copy, tmpfile, fmt=fmt, mode="a", backend="netCDF4")
             f = cfdm.read(tmpfile)
             self.assertEqual(len(f), 2)
             self.assertTrue(
@@ -964,7 +970,7 @@ class read_writeTest(unittest.TestCase):
 
         cfdm.write(f, tmpfile)
 
-        cfdm.write(f, tmpfile, omit_data="all")
+        cfdm.write(f, tmpfile, omit_data="all", backend="netCDF4")
         g = cfdm.read(tmpfile)
         self.assertEqual(len(g), 1)
         g = g[0]
@@ -976,7 +982,12 @@ class read_writeTest(unittest.TestCase):
         # Check that a dump works
         g.dump(display=False)
 
-        cfdm.write(f, tmpfile, omit_data=("field", "dimension_coordinate"))
+        cfdm.write(
+            f,
+            tmpfile,
+            omit_data=("field", "dimension_coordinate"),
+            backend="netCDF4",
+        )
         g = cfdm.read(tmpfile)[0]
 
         # Check that only the field and dimension coordinate data are
@@ -985,7 +996,7 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(np.ma.count(g.construct("grid_latitude").array))
         self.assertTrue(np.ma.count(g.construct("latitude").array))
 
-        cfdm.write(f, tmpfile, omit_data="field")
+        cfdm.write(f, tmpfile, omit_data="field", backend="netCDF4")
         g = cfdm.read(tmpfile)[0]
 
         # Check that only the field data are missing
@@ -1383,6 +1394,54 @@ class read_writeTest(unittest.TestCase):
         # written-then-read fields.
         for a, b in zip(f01, g01):
             self.assertTrue(b.equals(a))
+
+    def test_write_backend(self):
+        """Test cfdm.write with different backends."""
+        f = self.f0
+
+        cfdm.write(f, tmpfile0, backend="h5netcdf-h5py")
+        cfdm.write(f, tmpfile1, backend="netCDF4")
+        f0 = cfdm.read(tmpfile0)[0]
+        f1 = cfdm.read(tmpfile1)[0]
+        self.assertTrue(f1.equals(f0))
+
+        f = cfdm.read(filename)
+        cfdm.write(f, tmpfile0, backend="h5netcdf-h5py")
+        cfdm.write(f, tmpfile1, backend="netCDF4")
+        f0 = cfdm.read(tmpfile0)[0]
+        f1 = cfdm.read(tmpfile1)[0]
+        self.assertTrue(f1.equals(f0))
+
+        # Bad fmt/backend combinations
+        for backend in ("netCDF4", "h5netcdf-h5py"):
+            with self.assertRaises(ValueError):
+                cfdm.write(f, tmpfile, fmt="ZARR3", backend=backend)
+
+        for backend in ("zarr", "h5netcdf-h5py"):
+            with self.assertRaises(ValueError):
+                cfdm.write(f, tmpfile, fmt="NETCDF3_CLASSIC", backend=backend)
+
+        for backend in ("zarr",):
+            with self.assertRaises(ValueError):
+                cfdm.write(f, tmpfile, fmt="NETCDF4", backend=backend)
+
+    def test_write_h5py_kwargs(self):
+        """Test cfdm.write with h5py_kwargs."""
+        # Read in example field with shape (1, 10, 9)
+        f = self.f0
+
+        h5py_kwargs = dict(
+            fs_strategy="page", fs_page_size=2**20, meta_block_size=500000
+        )
+
+        cfdm.write(
+            f, tmpfile0, backend="h5netcdf-h5py", h5py_kwargs=h5py_kwargs
+        )
+        cfdm.write(f, tmpfile1, backend="netCDF4", h5py_kwargs=h5py_kwargs)
+
+        f0 = cfdm.read(tmpfile0)[0]
+        f1 = cfdm.read(tmpfile1)[0]
+        self.assertTrue(f1.equals(f0))
 
 
 if __name__ == "__main__":

@@ -88,21 +88,29 @@ class NetCDF4ArrayTest(unittest.TestCase):
 
     def test_NetCDF4Array_unpack(self):
         """Test NetCDF4Array unpacking."""
-        add_offset = 10.0
-        scale_factor = 3.14
+        add_offset = np.array(10.0, dtype="float32")
+        scale_factor = np.array(2.0, dtype="float32")
 
         f = self.f0.copy()
+        f.data[...] = f.array * 100
+        f.data.dtype = "int32"
         f.data[0] = np.ma.masked
         array0 = f.array
-        array1 = (array0 - add_offset) / scale_factor
+        array1 = array0 * scale_factor + add_offset
 
         f.set_property("add_offset", add_offset)
         f.set_property("scale_factor", scale_factor)
-        cfdm.write(f, tmpfile)
+        tmpfile = "tmpfile.nc"
+        cfdm.write(f, tmpfile)  # , backend='netCDF4')
 
         n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
         self.assertTrue(n.get_unpack())
         n = np.asanyarray(n[...])
+
+        print()
+        print(array0)
+        print(array1)
+        print(n)
         self.assertTrue((n.mask == array0.mask).all())
         self.assertTrue(np.ma.allclose(n, array0))
 
