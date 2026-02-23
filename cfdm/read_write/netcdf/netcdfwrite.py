@@ -94,6 +94,12 @@ class NetCDFWrite(IOWrite):
         """
         g = self.write_vars
         match g["backend"]:
+            case "h5netcdf-h5py":
+                if group_name in parent:
+                    return parent[group_name]
+
+                return parent.create_group(group_name)
+
             case "netCDF4":
                 return parent.createGroup(group_name)
 
@@ -103,6 +109,12 @@ class NetCDFWrite(IOWrite):
 
                 return parent.create_group(
                     group_name, overwrite=g["overwrite"]
+                )
+
+            case _:
+                raise NotImplementedError(
+                    "Need to implement _createGroup for the "
+                    f"{g['backend']!r} backend"
                 )
 
     def _create_variable_name(self, parent, default):
@@ -358,12 +370,24 @@ class NetCDFWrite(IOWrite):
         match g["backend"]:
             case "h5netcdf-h5py":
                 attributes = attributes.copy()
-                for key , value in attributes.items():
+                for key, value in attributes.items():
                     if isinstance(value, str):
-                        # We prefer string-valued attributes to be
-                        # encoded as byte strings (as opposed to VLEN
-                        # strings)
-                        attributes[key] =  np.bytes_(value)
+                        # Write string-valued attributes as
+                        # byte strings (rather than VLEN strings)
+                        attributes[key] = np.bytes_(value)
+
+                    if g["fmt"] == "NETCDF4_CLASSIC":
+                        # Cast integers to 32-bit (which is what
+                        # netCDF4 does).
+                        if isinstance(value, int):
+                            attributes[key] = np.array(value, dtype="int32")
+                        else:
+                            try:
+                                value.dtype.str[1:] == "i8"
+                            except AttributeError:
+                                pass
+                            else:
+                                attributes[key] = value.astype("int32")
 
                 x.attrs.update(attributes)
             case "netCDF4":
@@ -568,6 +592,11 @@ class NetCDFWrite(IOWrite):
             case "zarr":
                 # Dimensions are not created in Zarr datasets
                 pass
+            case _:
+                raise NotImplementedError(
+                    "Need to implement _createDimension for backend "
+                    f"{self.write_vars['backend']!r}"
+                )
 
     def _dataset_dimensions(self, field, key, construct):
         """Returns the dataset dimension names for the construct.
@@ -728,7 +757,6 @@ class NetCDFWrite(IOWrite):
                 size = None
                 try:
                     self._createDimension(parent_group, ncdim, size)
-#                    parent_group.createDimension(ncdim, size)
                 except RuntimeError as error:
                     message = (
                         "Can't create unlimited dimension "
@@ -750,7 +778,6 @@ class NetCDFWrite(IOWrite):
             else:
                 try:
                     self._createDimension(parent_group, ncdim, size)
-#                    parent_group.createDimension(ncdim, size)
                 except RuntimeError as error:
                     raise RuntimeError(
                         f"Can't create size {size} dimension {ncdim!r} in "
@@ -2626,6 +2653,9 @@ class NetCDFWrite(IOWrite):
     def _createVariable(self, **kwargs):
         """Create a variable in the dataset.
 
+        Each backend needs a seperate parsing the input kwargs to suit
+        its API.
+
         .. versionadded:: (cfdm) 1.7.0
 
         """
@@ -2635,23 +2665,29 @@ class NetCDFWrite(IOWrite):
 
         match g["backend"]:
             case "h5netcdf-h5py":
-                print(kwargs)
-                kwargs['name'] = kwargs.pop('varname', None)
-                kwargs['dtype'] = kwargs.pop('datatype', None)
-                kwargs['fillvalue'] = kwargs.pop('fill_value', None)
-                kwargs['compression_opts'] = kwargs.pop('complevel', None)
-#                  kwargs['maxshape'] = None
-                
-                kwargs.setdefault("dimensions", ()) 
+                kwargs["name"] = kwargs.pop("varname", None)
+                kwargs["fillvalue"] = kwargs.pop("fill_value", None)
+                kwargs["compression_opts"] = kwargs.pop("complevel", None)
 
-                # Chunked/contiguous
-                kwargs['chunks'] = kwargs.pop("chunksizes", None)
-                if kwargs.pop("contiguous", False):
-                    kwargs['chunks'] = None
-                    kwargs.pop("compression", None )
-                    kwargs.pop("compression_opts", None)
-                    kwargs.pop("fletcher32", None)
-                    kwargs.pop("shuffle", None)
+                kwargs["fillvalue"] = kwargs.pop("fill_value", None)
+                if kwargs["fillvalue"] is None:
+                    del kwargs["fillvalue"]
+
+                kwargs.setdefault("dimensions", ())
+                kwargs["dimensions"] = tuple(kwargs["dimensions"])
+
+                kwargs["dtype"] = kwargs.pop("datatype", None)
+                if kwargs["dtype"] is None:
+                    kwargs["dtype"] = np.dtype("S1")
+
+                chunks = kwargs.pop("chunksizes", None)
+                contiguous = kwargs.pop("contiguous", False)
+                scalar = not kwargs["dimensions"]
+
+                if contiguous or scalar:
+                    # Contiguous
+                    chunks = None
+                    kwargs.pop("compression", None)
 
                     # NETCDF4 contiguous variables can't span
                     # unlimited dimensions
@@ -2668,22 +2704,44 @@ class NetCDFWrite(IOWrite):
                             "that spans one or more unlimited dimensions: "
                             f"{unlimited_dimensions}"
                         )
-                    
+
+                if chunks is not None:
+                    # Chunked
+                    chunks = tuple(chunks)
+
+                kwargs["chunks"] = chunks
+
+                # Tidy up the compression parameters
+                if kwargs.get("compression") is None:
+                    kwargs.pop("compression_opts", None)
+                    kwargs.pop("fletcher32", None)
+                    kwargs.pop("shuffle", None)
+
+                if kwargs["dtype"] is str:
+                    # Define a variable-length UTF-8 string type explicitly
+                    import h5py
+
+                    kwargs["dtype"] = h5py.string_dtype(encoding="utf-8")
+
                 # Remove netCDF4-specific kwargs
-                kwargs.pop('chunk_cache', None)
-                if kwargs.pop('endian', 'native') != 'native':
-                    raise ValueError("TODOHDF5")
-                
-                for key in ('least_significant_digit',):
+                kwargs.pop("chunk_cache", None)
+                if kwargs.pop("endian", "native") != "native":
+                    raise ValueError(
+                        "Can only set endian='native' with the "
+                        f"{g['backend']!r} backend"
+                    )
+
+                for key in ("least_significant_digit",):
                     if kwargs.pop(key, None) is not None:
-                        raise ValueError("TODOHDF5")
-                
+                        raise ValueError(
+                            "Can't set 'least_significant_digit' with the "
+                            f"{g['backend']!r} backend"
+                        )
+
                 # Remove Zarr-specific kwargs
                 kwargs.pop("shape", None)
                 kwargs.pop("shards", None)
 
-                print(kwargs)
-                print()
                 variable = g["dataset"].create_variable(**kwargs)
 
             case "netCDF4":
@@ -2788,6 +2846,12 @@ class NetCDFWrite(IOWrite):
                 }
 
                 variable = g["dataset"].create_array(**zarr_kwargs)
+
+            case _:
+                raise NotImplementedError(
+                    "Need to implement _createVariable for the "
+                    f"{g['backend']!r} backend"
+                )
 
         g["nc"][ncvar] = variable
 
@@ -3143,10 +3207,11 @@ class NetCDFWrite(IOWrite):
             # any per-variable quantization parameters, such as
             # "quantization_nsd").
             if quantize_on_write:
-                if g["backend"] == "zarr":
+                if g["backend"] in ("zarr", "h5netcdf-h5py"):
                     raise NotImplementedError(
-                        f"Can't yet quantize-on-write {cfvar!r} to a Zarr "
-                        "dataset"
+                        f"Can't yet quantize-on-write {cfvar!r} with the "
+                        f"{g['backend']!r} backend. Use the 'netCDF4' "
+                        "backend instead."
                     )
 
                 # Set "implemention" to this version of the netCDF-C
@@ -3501,6 +3566,7 @@ class NetCDFWrite(IOWrite):
         import dask.array as da
 
         zarr = g["backend"] == "zarr"
+        h5netcdf_h5py = g["backend"] == "h5netcdf-h5py"
 
         if compressed:
             # Write data in its compressed form
@@ -3556,20 +3622,41 @@ class NetCDFWrite(IOWrite):
                 meta=np.array((), dx.dtype),
             )
 
-        if zarr:
-            # `zarr` can't write a masked array to a variable, so we
-            # have to manually replace missing data with the fill
-            # value.
+        if h5netcdf_h5py or zarr:
+            # `zarr` and `h5netcdf` (unlike `netCDF4`) don't auto pack
+            # an array when scale_factor or add_offset attributes are
+            # present, so we do it here instead.
+            add_offset = attributes.get("add_offset")
+            scale_factor = attributes.get("scale_factor")
+
+            if add_offset is not None or scale_factor is not None:
+                dx = dx.map_blocks(
+                    self._pack_array,
+                    meta=np.array((), dx.dtype),
+                    scale_factor=scale_factor,
+                    add_offset=add_offset,
+                )
+
+            # `zarr` and `h5netcdf` (unlike `netCDF4`) can't write a
+            # masked array to a variable, so we have to manually
+            # replace missing data with the fill value.
+            fill_value = getattr(data, "fill_value", None)
+            if fill_value is None:
+                fill_value = self.default_netCDF_fill_value(ncvar)
+
             dx = dx.map_blocks(
                 self._filled_array,
                 meta=np.array((), dx.dtype),
-                fill_value=g["nc"][ncvar].fill_value,
+                fill_value=fill_value,
             )
 
         if lock is None:
             # We need to define the dataset lock for data writing from
             # Dask
             from cfdm.data.locks import netcdf_lock as lock
+
+        # Set the current size of unlimited dimensions
+        self.set_unlimited_dimension_sizes(g["nc"][ncvar], data.shape)
 
         da.store(
             dx, g["nc"][ncvar], compute=True, return_stored=False, lock=lock
@@ -5101,13 +5188,11 @@ class NetCDFWrite(IOWrite):
             `netCDF.Dataset` or `zarr.Group`
 
         """
-#        import netCDF4
-
         if fields and mode == "w":
             dataset_name = os.path.abspath(dataset_name)
             for f in fields:
                 if dataset_name in self.implementation.get_original_filenames(
-                        f
+                    f
                 ):
                     raise ValueError(
                         "Can't write with mode 'w' to a dataset that contains "
@@ -5124,14 +5209,14 @@ class NetCDFWrite(IOWrite):
         if mode == "w" and g["overwrite"]:
             self.dataset_remove()
 
-        match g["backend"]:           
+        match g["backend"]:
             case "h5netcdf-h5py":
                 import h5netcdf
-                
+
                 try:
-                    nc = h5netcdf.File(dataset_name, mode, format=fmt,
-                                       **g['h5py_kwargs'])
-                        #fs_strategy="page", fs_page_size=10*2**20)
+                    nc = h5netcdf.File(
+                        dataset_name, mode, format=fmt, **g["h5py_options"]
+                    )
                 except RuntimeError as error:
                     raise RuntimeError(f"{error}: {dataset_name}")
 
@@ -5195,8 +5280,8 @@ class NetCDFWrite(IOWrite):
         dataset_shards=None,
         cfa="auto",
         reference_datetime=None,
-        backend=None,
-            h5py_kwargs=None,
+        netcdf_backend=None,
+        h5py_options=None,
     ):
         """Write field and domain constructs to a dataset.
 
@@ -5449,19 +5534,19 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.11.2.0
 
-            backend: `str` or `None`, optional
+            netcdf_backend: `str` or `None`, optional
                 Which library to use for creating the dataset. The
                 default value is `None`. See `cfdm.write` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            h5py_kwargs: `dict` or `None`, optional
+            h5py_options: `dict` or `None`, optional
                 Additional keyword arguments to be passed to the
                 `h5py.File` file constructor. The default value is
                 `None`. See `cfdm.write` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
-        
+
         :Returns:
 
             `None`
@@ -5501,9 +5586,9 @@ class NetCDFWrite(IOWrite):
         self.write_vars = {
             "dataset_name": dataset_name,
             # Format of output dataset
-            "fmt": None,
+            "fmt": fmt,
             # Backend for writing to the dataset
-            "backend": backend,
+            "backend": netcdf_backend,
             # Whether the output datset is a file or a directory
             "dataset_type": None,
             # netCDF4.Dataset instance
@@ -5616,7 +5701,7 @@ class NetCDFWrite(IOWrite):
             # https://h5netcdf.org/generated/h5netcdf.File.html and
             # https://docs.h5py.org/en/stable/high/file.html#h5py.File
             # --------------------------------------------------------
-            'h5py_kwargs': h5py_kwargs,
+            "h5py_options": h5py_options,
         }
 
         if mode not in ("w", "a", "r+"):
@@ -5648,11 +5733,61 @@ class NetCDFWrite(IOWrite):
                     f"Invalid value for 'dataset_shards' keyword: "
                     f"{dataset_shards!r}."
                 )
+        # -------------------------------------------------------
+        # Backend
+        # -------------------------------------------------------
+        backend = self.write_vars["backend"]
+        if backend is None:
+            # Set default backend based on output dataset format
+            match fmt:
+                case "NETCDF4" | "NETCDF4_CLASSIC":
+                    backend = "h5netcdf-h5py"
+                case "ZARR3":
+                    backend = "zarr"
+                case _:
+                    backend = "netCDF4"
 
-        # Parse the 'h5py_kwargs' parameter
-        if h5py_kwargs is None:
-            self.write_vars['h5py_kwargs'] = {}
-            
+            self.write_vars["backend"] = backend
+
+        match backend:
+            case "h5netcdf-h5py":
+                if fmt not in NETCDF4_FMTS:
+                    raise ValueError(
+                        f"Backend {backend!r} can't write {fmt!r} datasets"
+                    )
+            case "netCDF4":
+                if fmt not in NETCDF4_FMTS + NETCDF3_FMTS:
+                    raise ValueError(
+                        f"Backend {backend!r} can't write {fmt!r} datasets"
+                    )
+            case "zarr":
+                if fmt not in ZARR_FMTS:
+                    raise ValueError(
+                        f"Backend {backend!r} can't write {fmt!r} datasets"
+                    )
+            case _:
+                valid_backends = ("h5netcdf-h5py", "zarr", "netCDF4")
+                raise ValueError(
+                    "Invalid backend given by the 'backend' parameter. "
+                    f"Got: {backend!r}, expected one of {valid_backends}"
+                )
+
+        if self.write_vars["omit_data"] and backend != "netCDF4":
+            raise ValueError(
+                "Can only set omit_data=True when netcdf_backend='netCDF4'"
+            )
+
+        # Set dataset_fmt
+        match fmt:
+            case "ZARR3":
+                self.write_vars["dataset_type"] = "directory"
+            case _:
+                self.write_vars["dataset_type"] = "file"
+
+        # Parse the 'h5py_options' parameter
+        if h5py_options is None:
+            self.write_vars["h5py_options"] = {}
+
         # ------------------------------------------------------------
         # Parse the 'cfa' keyword
         # ------------------------------------------------------------
@@ -5702,8 +5837,11 @@ class NetCDFWrite(IOWrite):
         effective_fields = fields
 
         if mode == "a":
-            if fmt == "ZARR3":
-                raise ValueError("Can't write with mode 'a' to a Zarr dataset")
+            if self.write_vars["backend"] in ("h5netcdf-h5py", "zarr"):
+                raise ValueError(
+                    "Can't write with mode 'a' with the "
+                    f"{self.write_vars['backend']!r} backend"
+                )
 
             # First read in the fields from the existing dataset:
             effective_fields = self._NetCDFRead(self.implementation).read(
@@ -5886,7 +6024,6 @@ class NetCDFWrite(IOWrite):
         else:
             compression = None
 
-
         g["fmt"] = fmt
         if fmt in NETCDF3_FMTS:
             if compress:
@@ -5963,40 +6100,6 @@ class NetCDFWrite(IOWrite):
         )
         g["endian"] = endian
         g["least_significant_digit"] = least_significant_digit
-
-        # -------------------------------------------------------
-        # Backend
-        # -------------------------------------------------------
-        if g["backend"] is None:
-            # Set default backend based on output dataset format
-            match fmt:
-                case "NETCDF4" | "NETCDF4_CLASSIC":
-                    g["backend"] = "h5netcdf-h5py"
-                case "ZARR3":
-                    g["backend"] = "zarr"
-                case _:
-                    g["backend"] = "netCDF4"
-        elif g["backend"] not in ("h5netcdf-h5py", "zarr", "netCDF4"):
-            raise ValueError("TODOHDF5")
-
-        # Check that the chosen backend can write the chosen dataset
-        # format
-        match fmt:
-            case fmt if fmt in NETCDF4_FMTS:
-                if g["backend"] not in ("h5netcdf-h5py", "netCDF4"):
-                    raise ValueError("TODOHDF5")
-            case fmt if fmt in NETCDF3_FMTS:
-                if g["backend"] != "netCDF4":
-                    raise ValueError("TODOHDF5")
-            case fmt if fmt in ZARR_FMTS:
-                if g["backend"] != "zarr":
-                    raise ValueError("TODOHDF5")
-                
-        match fmt:
-            case "ZARR3":
-                g["dataset_type"] = "directory"
-            case _:
-                g["dataset_type"] = "file"
 
         if isinstance(
             fields,
@@ -7137,3 +7240,108 @@ class NetCDFWrite(IOWrite):
         # Still here? Then there are currently no matching
         #             coordinate/formula_terms pairs in the file.
         return False
+
+    def default_netCDF_fill_value(self, ncvar):
+        """The default netCDF fill value for a variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            ncvar: `str`
+                The netCDF variable name of the variable.
+
+        :Returns:
+
+                The default fill value for the netCDF variable.
+
+        **Examples**
+
+        >>> n.default_netCDF_fill_value('ua')
+        9.969209968386869e+36
+
+        """
+        import netCDF4
+
+        data_type = self.write_vars["nc"][ncvar].dtype.str[-2:]
+        fillvals = netCDF4.default_fillvals
+        return fillvals.get(data_type, fillvals["S1"])
+
+    def set_unlimited_dimension_sizes(self, var, shape):
+        """Manually set the current size of unlimted dimensions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            ncvar:
+                The variable.
+
+            shape: `str`
+                The variable's data shape.
+
+        :Returns:
+
+            `None`
+
+        """
+        if self.write_vars["backend"] != "h5netcdf-h5py":
+            # No need to do anything for these backends
+            return
+
+        for size, ncdim in zip(shape, var.dimensions):
+            group = var._parent
+
+            while group is not None:
+                dim = group.dimensions.get(ncdim)
+                if dim is not None:
+                    if dim.isunlimited():
+                        group.resize_dimension(ncdim, size)
+
+                    break
+
+                if group.name == "/":
+                    break
+
+                # Move up to a group
+                group = getattr(group, "parent", None)
+
+    def _pack_array(self, array, scale_factor=None, add_offset=None):
+        """Pack an array like `netCDF4` does.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            array: `np.ndarray`
+                The array to be packed.
+
+            scale_factor: number
+                The packing scale factor.
+
+            add_offset: number
+                The packing offset.
+
+        :Returns:
+
+            `np.ndarray`
+                The packed array.
+
+        """
+        dtype = array.dtype
+        if scale_factor is not None and add_offset is not None:
+            array = (array - add_offset) / scale_factor
+        elif scale_factor is not None:
+            array = array / scale_factor
+        elif add_offset is not None:
+            array = array - add_offset
+
+        if (
+            scale_factor is not None or add_offset is not None
+        ) and dtype.kind in "iu":
+            array = np.around(array)
+
+        if dtype != array.dtype:
+            array = array.astype(dtype)
+
+        return array
