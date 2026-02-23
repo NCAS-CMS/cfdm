@@ -360,6 +360,9 @@ class NetCDFWrite(IOWrite):
                 attributes = attributes.copy()
                 for key , value in attributes.items():
                     if isinstance(value, str):
+                        # We prefer string-valued attributes to be
+                        # encoded as byte strings (as opposed to VLEN
+                        # strings)
                         attributes[key] =  np.bytes_(value)
 
                 x.attrs.update(attributes)
