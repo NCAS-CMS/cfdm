@@ -4,8 +4,8 @@ Version NEXTVERSION
 **2026-03-??**
 
 * Fix bug in `cfdm.write` to correctly create unlimited aggregation
-  dimensions that correposend to unlimited normal dimensions
-  (https://github.com/NCAS-CMS/cfdm/pull/???)
+  dimensions that correspond to unlimited normal dimensions
+  (https://github.com/NCAS-CMS/cfdm/pull/387)
 * Fix bug in `cfdm.write` when writing identical coordinates that have
   different ``formula_terms``
   (https://github.com/NCAS-CMS/cfdm/issues/380). New unit test added.
