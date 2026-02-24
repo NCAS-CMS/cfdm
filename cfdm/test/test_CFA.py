@@ -375,6 +375,38 @@ class CFATest(unittest.TestCase):
         with self.assertRaises(AggregationError):
             cfdm.write(f[1:3], cfa_file2, cfa="field")
 
+    def test_CFA_unlimited_dimension(self):
+        """Test aggregation with an unlimited aggregation dimension."""
+        # Check that the 'a_time' CFA dimension is unlimited when it's
+        # originally created via a fragment-URIs CFA variable.
+        f = cfdm.example_field(2)
+
+        cfdm.write(f, tmpfile1)
+        f = cfdm.read(tmpfile1, cfa_write="field")[0]
+
+        axis, t = f.domain_axis("time", item=True)
+        t.nc_set_unlimited(True)
+
+        cfdm.write(f, tmpfile2, cfa="field")
+
+        with netCDF4.Dataset(tmpfile2, "r") as nc:
+            self.assertTrue(nc.dimensions["a_time"].isunlimited)
+
+        # Check that the 'a_time' CFA dimension is unlimited when it's
+        # originally created via a unique-values CFA variable.
+        fa = cfdm.FieldAncillary(
+            data=cfdm.Data.zeros((t.get_size(),), chunks=-1)
+        )
+        fa.data._nc_set_aggregation_write_status(True)
+        f.set_construct(fa, axes=axis)
+
+        cfdm.write(
+            f, tmpfile2, cfa={"constructs": ("field", "field_ancillary")}
+        )
+
+        with netCDF4.Dataset(tmpfile2, "r") as nc:
+            self.assertTrue(nc.dimensions["a_time"].isunlimited)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
