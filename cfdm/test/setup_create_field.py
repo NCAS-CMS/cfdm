@@ -229,7 +229,7 @@ class create_fieldTest(unittest.TestCase):
 
         cfdm.write(f, self.filename, verbose=verbose)
 
-        g = cfdm.read(self.filename, verbose=1)
+        g = cfdm.read(self.filename, netcdf_backend="h5netcdf-pyfive")
 
         array = (
             g[0]

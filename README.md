@@ -85,7 +85,7 @@ The ``cfdm`` package can:
 * be fully flexible with respect to dataset storage chunking,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF and Zarr v3
-  datasets on disk,
+  datasets on disk, with control over HDF5 internal metadata,
 * read, write, and manipulate UGRID mesh topologies,
 * read, write, and create coordinates defined by geometry cells,
 * read and write netCDF4 string data-type variables,

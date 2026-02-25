@@ -1,43 +1,33 @@
-from . import abstract
-from .locks import netcdf_lock
+from .abstract import FileArray
 from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
 
 
-class NetCDF4Array(IndexMixin, abstract.FileArray):
-    """A netCDF array accessed with `netCDF4`.
+class PyfiveArray(IndexMixin, FileArray):
+    """A netCDF array accessed with `pyfive`.
 
-    * Accesses local and remote (http) netCDF-3 and netCDF-4 datasets.
-    * Parallelised reading is not possible.
+    * Accesses local and remote (http and s3) netCDF-4 datasets.
+    * Allows parallised reading.
+    * Improves the performance of active storage reductions (by
+      storing the dataset variable's B-tree at read time so that it
+      doesn't have to be re-retrieved at compute time).
 
-    .. versionadded:: (cfdm) 1.7.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
-
-    @property
-    def _lock(self):
-        """Return the lock used for netCDF file access.
-
-        Returns a lock object that prevents concurrent reads of netCDF
-        files, which are not currently supported by `netCDF4`.
-
-        .. versionadded:: (cfdm) 1.11.2.0
-
-        """
-        return netcdf_lock
 
     def _attributes(self, var):
         """Get the netCDF variable attributes.
 
         If the attributes have not been set, then they are retrieved
-        from the netCDF variable *var* and stored for fast future
+        from the netCDF variable *var* and stored in for fast future
         access.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            var: `netCDF4.Variable`
+            var: `pyfive.Dataset`
                 The netCDF variable.
 
         :Returns:
@@ -49,7 +39,7 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
         """
         attributes = self._get_component("attributes", None)
         if attributes is None:
-            attributes = {attr: var.getncattr(attr) for attr in var.ncattrs()}
+            attributes = dict(var.attrs)
             self._set_component("attributes", attributes, copy=False)
 
         return attributes
@@ -57,10 +47,7 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        The subspace is defined by the `index` attributes, and is
-        applied with `cfdm.netcdf_indexer`.
-
-        .. versionadded:: (cfdm) 1.11.2.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `__array__`, `index`
 
@@ -77,66 +64,63 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
         if index is None:
             index = self.index()
 
-        # Note: We need to lock because netCDF-C is about to access
-        #       the file.
-        with self._lock:
-            netcdf, address = self.open()
-            dataset = netcdf
+        # Get the variable for subspacing
+        variable = self.get_variable(None)
+
+        dataset = None
+        if variable is None:
+            # The variable has not been provided, so get it.
+            dataset, address = self.open()
+            dataset0 = dataset
 
             groups, address = self.get_groups(address)
             if groups:
-                # Traverse the group structure, if there is one (CF>=1.8).
-                netcdf = self._group(netcdf, groups)
+                dataset = self._group(dataset, groups)
 
-            if isinstance(address, str):
-                # Get the variable by netCDF name
-                variable = netcdf.variables[address]
-            else:
-                # Get the variable by netCDF integer ID
-                for variable in netcdf.variables.values():
-                    if variable._varid == address:
-                        break
+            variable = dataset.variables[address]
 
-            # Get the data, applying masking and scaling as required.
-            array = netcdf_indexer(
-                variable,
-                mask=self.get_mask(),
-                unpack=self.get_unpack(),
-                always_masked_array=False,
-                orthogonal_indexing=True,
-                attributes=self._attributes(variable),
-                copy=False,
-            )
-            array = array[index]
+            # Cache the variable
+            self._set_component("variable", variable, copy=False)
 
-            self.close(dataset)
-            del netcdf, dataset
+            self.close(dataset0)
+            del dataset, dataset0
 
-        if not self.ndim:
-            # Hmm netCDF4 has a thing for making scalar size 1, 1d
-            array = array.squeeze()
+        # Get the data, applying masking and scaling as required.
+        array = netcdf_indexer(
+            variable,
+            mask=self.get_mask(),
+            unpack=self.get_unpack(),
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            attributes=self._attributes(variable),
+            copy=False,
+        )
+        array = array[index]
+
+        if dataset is not None:
+            self.close(dataset0)
 
         return array
 
     def _group(self, dataset, groups):
         """Return the group object containing a variable.
 
-        .. versionadded:: (cfdm) 1.12.0.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            dataset: `netCDF4.Dataset
+            dataset: `h5netcdf.File`
                 The dataset containing the variable.
 
             groups: sequence of `str`
                 The definition of which group the variable is in. For
-                instance, if the variable is in group
+                instance, of the variable is in group
                 ``/forecast/model`` then *groups* would be
                 ``['forecast', 'model']``.
 
         :Returns:
 
-            `netCDF4.Dataset` or `netCDF4.Group`
+            `h5netcdf.File` or `h5netcdf.Group`
                 The group object, which might be the root group.
 
         """
@@ -148,7 +132,7 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
     def close(self, dataset):
         """Close the dataset containing the data.
 
-        .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -166,15 +150,13 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
     def get_groups(self, address):
         """The netCDF4 group structure of a netCDF variable.
 
-        .. versionadded:: (cfdm) 1.8.6.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
             address: `str` or `int`
                 The netCDF variable name, or integer varid, from which
                 to get the groups.
-
-                .. versionadded:: (cfdm) 1.10.1.0
 
         :Returns:
 
@@ -208,20 +190,27 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
         return out[:-1], out[-1]
 
     def open(self, **kwargs):
-        """Return a dataset object and address.
+        """Return a dataset file object and address.
 
         :Parameters:
 
             kwargs: optional
-                Extra keyword arguments to `netCDF4.Dataset`.
+                Extra keyword arguments to `h5netcdf.File`.
 
         :Returns:
 
-            (`netCDF4.Dataset`, `str`)
-                The file object open in read-only mode, and the
-                address of the data within the file.
+            (`h5netcdf.File`, `str`)
+                The open file object, and the address of the data
+                within the file.
 
         """
-        import netCDF4
+        import h5netcdf
 
-        return super().open(netCDF4.Dataset, mode="r", **kwargs)
+        return super().open(
+            h5netcdf.File,
+            mode="r",
+            decode_vlen_strings=True,
+            netcdf_backend="pyfive",
+            phony_dims="sort",
+            **kwargs
+        )

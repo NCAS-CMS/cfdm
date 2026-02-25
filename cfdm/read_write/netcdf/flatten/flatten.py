@@ -690,10 +690,15 @@ class _Flattener:
         """
         match self._backend():
             case "h5netcdf" | "zarr":
-                return x.attrs[attr]
+                value = x.attrs[attr]
 
             case "netCDF4":
-                return getattr(x, attr)
+                value = getattr(x, attr)
+
+        if isinstance(value, bytes):
+            value = value.decode()
+
+        return value
 
     def group(self, x):
         """Return the group that a variable or dimension belongs to.

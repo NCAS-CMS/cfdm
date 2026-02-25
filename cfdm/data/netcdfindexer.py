@@ -122,13 +122,14 @@ class netcdf_indexer:
 
             variable:
                 The variable to be indexed. May be any variable that
-                has the same API as one of `numpy.ndarray`,
-                `netCDF4.Variable`, `h5py.Variable`,
-                `h5netcdf.Variable`, or `zarr.Array`. Any masking and
-                unpacking that could be applied by *variable* itself
-                (e.g. by a `netCDF4.Variable` instance) is disabled,
-                ensuring that any masking and unpacking is always done
-                by the `netcdf_indexer` instance.
+                has one of the `numpy.ndarray`, `netCDF4.Variable`,
+                `h5py.Variable` (which includes `h5netcdf.Variable`),
+                `scipy.io.netcdf_variable`, or `zarr.Array`. APIs. Any
+                masking and unpacking that could be applied by
+                *variable* itself (e.g. by a `netCDF4.Variable`
+                instance) is disabled, ensuring that any masking and
+                unpacking is always done by the `netcdf_indexer`
+                instance.
 
             mask: `bool`, optional
                 If True, the default, then an array returned by
@@ -168,9 +169,13 @@ class netcdf_indexer:
                 relevant to masking and unpacking are considered, with
                 all other attributes being ignored. If *attributes* is
                 `None`, the default, then the netCDF attributes stored
-                by *variable* (if any) are used. If *attributes* is
-                not `None`, then any netCDF attributes stored by
-                *variable* are ignored.
+                by *variable* (if any) are used. Attributes can be
+                accessed from a *variable* which has one of the
+                `h5py.Variable`, `netCDF4.Variable` or
+                `scipy.io.netcdf_variable` APIs. For any other API it
+                is assumed that the variable stores no attributes. If
+                *attributes* is not `None`, then any netCDF attributes
+                stored by *variable* are ignored.
 
             copy: `bool`, optional
                 If True then return a `numpy` array that is not a view
@@ -207,7 +212,7 @@ class netcdf_indexer:
         variable = self.variable
         unpack = self.unpack
         attributes = self.attributes()
-        dtype = variable.dtype
+        dtype = self.dtype
 
         # Prevent a netCDF4 variable from doing its own masking and
         # unpacking during the indexing
@@ -281,8 +286,7 @@ class netcdf_indexer:
             if kind == "O":
                 dtype = data.dtype
 
-        if dtype is str:
-            dtype = data.dtype
+        dtype = data.dtype
 
         dtype_unsigned_int = None
         if unpack:
@@ -479,7 +483,8 @@ class netcdf_indexer:
             #
             # Note: `netCDF4.Variable` natively supports orthogonal
             #       indexing; but `h5netcdf.File`, `h5py.File`,
-            #       `zarr.Array`, and `numpy.ndarray` do not.
+            #       `zarr.Array`, `scipy.io.netcdf_file`, and
+            #       `numpy.ndarray` do not.
             data = data[tuple(index0)]
         else:
             # There are two or more list/1-d array indices, and the
@@ -835,7 +840,13 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) 1.11.2.0
 
         """
-        return self.variable.dtype
+        var = self.variable
+        try:
+            # numpy, netCDF4, h5netcdf
+            return var.dtype
+        except AttributeError:
+            # scipy.io.netcdf_file
+            return var[(slice(0, 1),) * len(var.shape)].dtype
 
     @property
     def ndim(self):
@@ -844,7 +855,12 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) 1.11.2.0
 
         """
-        return self.variable.ndim
+        try:
+            # numpy, netCDF4, h5py
+            return self.variable.ndim
+        except AttributeError:
+            # netcdf_file
+            return len(self.variable.shape)
 
     @property
     def shape(self):
@@ -862,7 +878,12 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) 1.11.2.0
 
         """
-        return self.variable.size
+        try:
+            # numpy, netCDF4, h5py
+            return self.variable.size
+        except AttributeError:
+            # netcdf_file
+            return prod(self.variable.shape)
 
     def attributes(self):
         """Return the netCDF attributes for the data.
@@ -891,14 +912,18 @@ class netcdf_indexer:
             attrs = dict(variable.attrs)
         except AttributeError:
             try:
-                # netCDF4 API
+                # netCDF4
                 attrs = {
                     attr: variable.getncattr(attr)
                     for attr in variable.ncattrs()
                 }
             except AttributeError:
-                # numpy API
-                attrs = {}
+                try:
+                    # netcdf_file
+                    attrs = variable._attributes
+                except AttributeError:
+                    # numpy
+                    attrs = {}
 
         self._attributes = attrs
         return attrs

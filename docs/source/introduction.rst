@@ -86,7 +86,7 @@ The `cfdm` package can
 * create new field and domain constructs in memory,
 
 * write field and domain constructs to netCDF and Zarr datasets on
-  disk,
+  disk, with control over HDF5 internal file metadata,
 
 * read, write, and manipulate UGRID mesh topologies,
 
