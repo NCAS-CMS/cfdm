@@ -8347,9 +8347,6 @@ class NetCDFRead(IORead):
                     )
                     array = np.ma.masked_values(array, "")
 
-            case _:
-                pass
-
         # Set the dask chunking strategy
         chunks = self._dask_chunks(
             array, ncvar, compressed, construct_type=construct_type
