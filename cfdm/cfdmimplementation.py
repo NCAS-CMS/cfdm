@@ -4130,6 +4130,5 @@ def implementation():
      'Quantization': <class 'cfdm.quantization.Quantization'>,
      'ZarrArray': <class 'cfdm.data.zarrarray.ZarrArray'>}
 
-
     """
     return _implementation.copy()
