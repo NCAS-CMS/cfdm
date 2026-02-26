@@ -6344,10 +6344,6 @@ class NetCDFWrite(IOWrite):
 
         map_ncdimensions = tuple(map_ncdimensions)
 
-        #        # Write the fragment array variable to the netCDF dataset
-        #        if ncdimensions[0].startswith('time'):
-        #            chunking=(False, (f_map.shape[0], f_map.shape[1] * 85*12))
-
         feature_ncvar = self._cfa_write_fragment_array_variable(
             f_map,
             aggregated_data.get(feature, f"fragment_{feature}"),
@@ -6373,9 +6369,6 @@ class NetCDFWrite(IOWrite):
                 if cfa_ncdim not in all_dimensions:
                     # Create a new fragment array dimension
                     unlimited = ncdim in all_unlimited_dimensions
-                    # unlimited = ncdim in g[
-                    #    "unlimited_dimensions"
-                    # ] and ncdim.startswith("time")
                     self._write_dimension(
                         cfa_ncdim, None, unlimited=unlimited, size=size
                     )
@@ -6384,10 +6377,7 @@ class NetCDFWrite(IOWrite):
 
             location_ncdimensions = tuple(location_ncdimensions)
 
-            #            # Write the fragment array variable to the netCDF dataset
-            #            if ncdimensions[0].startswith('time'):
-            #                chunking = (False, ((85*12,) + f_uris.shape[1:]))
-            #            else:
+            # Write the fragment array variable to the netCDF dataset
             chunking = None
             feature_ncvar = self._cfa_write_fragment_array_variable(
                 f_uris,
@@ -6432,9 +6422,12 @@ class NetCDFWrite(IOWrite):
             unique_value_ncdimensions = []
             for ncdim, size in zip(ncdimensions, f_unique_value.shape):
                 cfa_ncdim = f"a_{ncdim}"
-                if cfa_ncdim not in g["dimensions"]:
+                if cfa_ncdim not in all_dimensions:
                     # Create a new fragment array dimension
-                    self._write_dimension(cfa_ncdim, None, size=size)
+                    unlimited = ncdim in all_unlimited_dimensions
+                    self._write_dimension(
+                        cfa_ncdim, None, unlimited=unlimited, size=size
+                    )
 
                 unique_value_ncdimensions.append(cfa_ncdim)
 
