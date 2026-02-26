@@ -4832,7 +4832,7 @@ class Data(
         if not ignore_data_type and (self_is_numeric or other_is_numeric):
             # Test the dtypes with np.issubdtype, instead of !=, so
             # that dtypes that have different endianness but are
-            # otherwise the same considered equal. E.g. '<f8' and
+            # otherwise the same are considered equal. E.g. '<f8' and
             # 'float64'.
             if not np.isdtype(self.dtype, other.dtype):
                 logger.info(

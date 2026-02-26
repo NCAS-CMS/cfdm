@@ -283,7 +283,7 @@ class NetCDFWrite(IOWrite):
             if data is not None:
                 if dtype is None:
                     raise ValueError(
-                        "Must set dtype when attribute include _FillValue or "
+                        "Must set dtype when attributes include _FillValue or "
                         "missing_value"
                     )
 

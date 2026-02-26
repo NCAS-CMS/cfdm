@@ -320,7 +320,7 @@ _docstring_substitution_definitions = {
               - The `h5netcdf` library using `pyfive` as its backend.
               - Reads local and remote (http and s3) netCDF-4
                 datasets.
-              - Allows parallised reading.
+              - Allows parallelised reading.
               - Improves the performance of active storage reductions
                 (by storing the a dataset variable's B-tree at read
                 time so that it doesn't have to be re-retrieved at
@@ -349,7 +349,7 @@ _docstring_substitution_definitions = {
                 unlimited.
 
             By default *netcdf_backend* is `None`, which is equivalent
-            to providing the ordered sequence
+            to providing the ordered sequence:
 
             ``('h5netcdf-pyfive', 'h5netcdf-h5py', 'netCDF4', 'netcdf_file')``
 

@@ -61,7 +61,7 @@ class FileArray(Array):
             variable: optional
                 An open dataset variable object. Setting *variable*
                 does not replace the need for the *filename* and
-                *address* parameters, instead it compliments them by
+                *address* parameters, instead it complements them by
                 allowing faster data access.
 
                 .. versionadded:: (cfdm) NEXTVERSION

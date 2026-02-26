@@ -195,7 +195,7 @@ The cfdm package requires:
 * `cftime <https://pypi.org/project/cftime>`_, version 1.6.4 or
   newer.
 
-* `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.8.0
+* `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.8.0 or
   newer.
 
 * `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.

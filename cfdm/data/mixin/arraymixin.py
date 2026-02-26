@@ -171,7 +171,7 @@ class ArrayMixin:
             copy: `bool`, optional
                 If True then the returned attribute dictionary is a
                 deep copy of those stored. If False (the default) then
-                the any in-place changes to dictionary or attributes
+                any in-place changes to dictionary or attributes
                 will also affect the stored attributes.
 
         :Returns:
