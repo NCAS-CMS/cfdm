@@ -8,7 +8,9 @@ class Netcdf_fileArray(IndexMixin, FileArray):
 
     * Accesses local netCDF-3 datasets.
     * Allows parallelised reading.
-    * Treats unlimited dimensions in the dataset as not unlimited.
+    
+    .. warning: Treats unlimited dimensions in the dataset as not
+                unlimited.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
