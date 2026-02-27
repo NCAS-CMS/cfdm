@@ -1384,6 +1384,15 @@ class read_writeTest(unittest.TestCase):
         for a, b in zip(f01, g01):
             self.assertTrue(b.equals(a))
 
+    def test_read_netcdf_file(self):
+        """Test cfdm.read for differing the netcdf_file backend."""
+        f = self.f0
+
+        cfdm.write(f, tmpfile, fmt="NETCDF3_CLASSIC")
+        g = cfdm.read(tmpfile, netcdf_backend="netcdf_file")[0]
+
+        self.assertTrue(g.equals(f))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

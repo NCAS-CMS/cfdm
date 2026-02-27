@@ -6838,8 +6838,10 @@ class NetCDFRead(IORead):
                 case "zarr":
                     array = self.implementation.initialise_ZarrArray(**kwargs)
                 case "netcdf_file":
-                    array = self.implementation.initialise_Netcdf_fileArray(
-                        **kwargs
+                    array = (
+                        self.implementation.initialise_ScipyNetcdfFileArray(
+                            **kwargs
+                        )
                     )
 
             return array, kwargs

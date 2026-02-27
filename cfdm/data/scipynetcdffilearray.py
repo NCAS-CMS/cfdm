@@ -3,12 +3,12 @@ from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
 
 
-class Netcdf_fileArray(IndexMixin, FileArray):
+class ScipyNetcdfFileArray(IndexMixin, FileArray):
     """A netCDF-3 array accessed with `scipy.io.netcdf_file`.
 
     * Accesses local netCDF-3 datasets.
     * Allows parallelised reading.
-    
+
     .. warning: Treats unlimited dimensions in the dataset as not
                 unlimited.
 

@@ -26,7 +26,7 @@ from .gatheredarray import GatheredArray
 from .fullarray import FullArray
 from .h5netcdfarray import H5netcdfArray
 from .netcdfarray import NetCDFArray
-from .netcdf_filearray import Netcdf_fileArray
+from .scipynetcdffilearray import ScipyNetcdfFileArray
 from .netcdf4array import NetCDF4Array
 from .netcdfindexer import netcdf_indexer
 from .numpyarray import NumpyArray
