@@ -1,14 +1,22 @@
 Version NEXTVERSION
 ----------------
 
-**2026-03-??**
+**2026-??-??**
 
+* New default backend for netCDF-4 in `cfdm.read` that allows parallel
+  reading: ``h5netcdf-pyfive``
+  (https://github.com/NCAS-CMS/cfdm/issues/375)
+* New optional backend for netCDF-3 in `cfdm.read` that allows
+  parallel reading: ``netcdf_file``
+  (https://github.com/NCAS-CMS/cfdm/issues/375)
 * Fix bug in `cfdm.write` to correctly create unlimited aggregation
   dimensions that correspond to unlimited normal dimensions
   (https://github.com/NCAS-CMS/cfdm/pull/387)
 * Fix bug in `cfdm.write` when writing identical coordinates that have
   different ``formula_terms``
   (https://github.com/NCAS-CMS/cfdm/issues/380). New unit test added.
+* New dependency: ``pyfive>=1.1.0``
+* Changed dependency: ``h5netcdf>=1.8.0``
 
 ----
 

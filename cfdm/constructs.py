@@ -1,9 +1,9 @@
 import logging
+from copy import deepcopy
 from itertools import zip_longest
 from re import Pattern
 
 from .core import Constructs as core_Constructs
-from .core.functions import deepcopy
 from .decorators import _manage_log_level_via_verbosity
 from .mixin import Container
 

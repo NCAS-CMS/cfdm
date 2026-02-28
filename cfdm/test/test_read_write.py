@@ -577,9 +577,16 @@ class read_writeTest(unittest.TestCase):
             domain_axes["domainaxis0"].nc_set_unlimited(True)
             cfdm.write(f, tmpfile, fmt=fmt, cfa=None)
 
-            f0 = cfdm.read(tmpfile)[0]
-            domain_axes = f0.domain_axes()
-            self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
+            if fmt in self.netcdf3_fmts:
+                # Note: netcdf_file backend does not support unlimited
+                #       dimensions
+                backend = "netCDF4"
+            else:
+                backend = None
+
+            g = cfdm.read(tmpfile, netcdf_backend=backend)[0]
+            domain_axes = g.domain_axes()
+            self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited(), fmt)
 
         domain_axes = f.domain_axes()
 
@@ -711,7 +718,7 @@ class read_writeTest(unittest.TestCase):
     def test_read_write_string(self):
         """Test the `string` keyword argument to `read` and `write`."""
         fN = cfdm.read(self.string_filename, netcdf_backend="netCDF4")
-        fH = cfdm.read(self.string_filename, netcdf_backend="h5netcdf")
+        fH = cfdm.read(self.string_filename, netcdf_backend="h5netcdf-pyfive")
 
         n = int(len(fN) / 2)
 
@@ -954,6 +961,7 @@ class read_writeTest(unittest.TestCase):
     def test_write_omit_data(self):
         """Test the `omit_data` parameter to `write`."""
         f = self.f1
+
         cfdm.write(f, tmpfile)
 
         cfdm.write(f, tmpfile, omit_data="all")
@@ -1033,7 +1041,7 @@ class read_writeTest(unittest.TestCase):
         """Test reading remote url."""
         for scheme in ("http", "https"):
             remote = f"{scheme}:///psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
-            f = cfdm.read(remote)
+            f = cfdm.read(remote, netcdf_backend="netCDF4")
             self.assertEqual(len(f), 1)
 
     def test_write_parametric_Z_coordinate(self):
@@ -1174,11 +1182,11 @@ class read_writeTest(unittest.TestCase):
         f = self.f0
         cfdm.write(f, tmpfile)
 
-        f = cfdm.read(tmpfile)[0]
+        f = cfdm.read(tmpfile, netcdf_backend="h5netcdf-pyfive")[0]
         for d in (f.data.todict(), f.coordinate("longitude").data.todict()):
             on_disk = False
             for v in d.values():
-                if isinstance(v, cfdm.H5netcdfArray):
+                if isinstance(v, cfdm.PyfiveArray):
                     on_disk = True
 
             self.assertTrue(on_disk)
@@ -1375,6 +1383,15 @@ class read_writeTest(unittest.TestCase):
         # written-then-read fields.
         for a, b in zip(f01, g01):
             self.assertTrue(b.equals(a))
+
+    def test_read_netcdf_file(self):
+        """Test cfdm.read for differing the netcdf_file backend."""
+        f = self.f0
+
+        cfdm.write(f, tmpfile, fmt="NETCDF3_CLASSIC")
+        g = cfdm.read(tmpfile, netcdf_backend="netcdf_file")[0]
+
+        self.assertTrue(g.equals(f))
 
 
 if __name__ == "__main__":

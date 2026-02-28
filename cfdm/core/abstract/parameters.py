@@ -1,4 +1,5 @@
-from ..functions import deepcopy
+from copy import deepcopy
+
 from .container import Container
 
 

@@ -35,9 +35,11 @@ from .data import (
     H5netcdfArray,
     NetCDF4Array,
     PointTopologyArray,
+    PyfiveArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    ScipyNetcdfFileArray,
     SubsampledArray,
     ZarrArray,
 )
@@ -2572,6 +2574,42 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("H5netcdfArray")
         return cls(**kwargs)
 
+    def initialise_ScipyNetcdfFileArray(self, **kwargs):
+        """Return a `NetCDF4Array` instance.
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `ScipyNetcdfFileArray`
+
+        """
+        cls = self.get_class("ScipyNetcdfFileArray")
+        return cls(**kwargs)
+
+    def initialise_PyfiveArray(self, **kwargs):
+        """Return a `PyfiveArray` instance.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+        :Returns:
+
+            `PyfiveArray`
+
+        """
+        cls = self.get_class("PyfiveArray")
+        return cls(**kwargs)
+
     def initialise_ZarrArray(self, **kwargs):
         """Return a `ZarrArray` instance.
 
@@ -4030,7 +4068,9 @@ _implementation = CFDMImplementation(
     GatheredArray=GatheredArray,
     H5netcdfArray=H5netcdfArray,
     NetCDF4Array=NetCDF4Array,
+    ScipyNetcdfFileArray=ScipyNetcdfFileArray,
     PointTopologyArray=PointTopologyArray,
+    PyfiveArray=PyfiveArray,
     Quantization=Quantization,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
@@ -4076,7 +4116,9 @@ def implementation():
      'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
      'H5netcdfArray': <class 'cfdm.data.h5netcdfarray.H5netcdfArray'>,
      'NetCDF4Array': <class 'cfdm.data.netcdf4array.NetCDF4Array'>,
+     'ScipyNetcdfFileArray': <class 'cfdm.data.scipynetcdffilearray.ScipyNetcdfFileArray'>,
      'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
+     'PyfiveArray': <class 'cfdm.data.pyfivearray.PyFiveArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
      'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
      'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>,

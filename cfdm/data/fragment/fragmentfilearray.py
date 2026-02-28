@@ -29,11 +29,13 @@ class FragmentFileArray(
         from . import (
             FragmentH5netcdfArray,
             FragmentNetCDF4Array,
+            FragmentPyfiveArray,
             FragmentZarrArray,
         )
 
         instance = super().__new__(cls)
         instance._FragmentArrays = (
+            FragmentPyfiveArray,
             FragmentNetCDF4Array,
             FragmentH5netcdfArray,
             FragmentZarrArray,

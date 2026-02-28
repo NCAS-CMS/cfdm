@@ -9,7 +9,10 @@ logger = logging.getLogger(__name__)
 
 
 class H5netcdfArray(IndexMixin, abstract.FileArray):
-    """A netCDF array accessed with `h5netcdf`.
+    """A netCDF array accessed with `h5netcdf` using the `h5py` backend.
+
+    * Accesses local and remote (http and s3) netCDF-4 datasets.
+    * Parallelised reading is not possible.
 
     .. versionadded:: (cfdm) 1.11.2.0
 
@@ -20,12 +23,41 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         """Return the lock used for netCDF file access.
 
         Returns a lock object that prevents concurrent reads of netCDF
-        files, which are not currently supported by `h5netcdf`.
+        files, which are not currently supported by `h5netcdf` with
+        the `h5py` backend.
 
         .. versionadded:: (cfdm) 1.11.2.0
 
         """
         return netcdf_lock
+
+    def _attributes(self, var):
+        """Get the netCDF variable attributes.
+
+        If the attributes have not been set, then they are retrieved
+        from the netCDF variable *var* and stored for fast future
+        access.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            var: `h5netcdf.Variable`
+                The netCDF variable.
+
+        :Returns:
+
+            `dict`
+                The attributes. The returned attributes are not a copy
+                of the cached dictionary.
+
+        """
+        attributes = self._get_component("attributes", None)
+        if attributes is None:
+            attributes = dict(var.attrs)
+            self._set_component("attributes", attributes, copy=False)
+
+        return attributes
 
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
@@ -70,15 +102,12 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
                 unpack=self.get_unpack(),
                 always_masked_array=False,
                 orthogonal_indexing=True,
+                attributes=self._attributes(variable),
                 copy=False,
             )
             array = array[index]
 
-            # Set the attributes, if they haven't been set already.
-            self._set_attributes(variable)
-
             self.close(dataset0)
-            del dataset, dataset0
 
         return array
 
@@ -108,30 +137,6 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
             dataset = dataset.groups[g]
 
         return dataset
-
-    def _set_attributes(self, var):
-        """Set the netCDF variable attributes.
-
-        These are set from the netCDF variable attributes, but only if
-        they have not already been defined, either during `{{class}}`
-        instantiation or by a previous call to `_set_attributes`.
-
-        .. versionadded:: (cfdm) 1.11.2.0
-
-        :Parameters:
-
-            var: `h5netcdf.Variable`
-                The netCDF variable.
-
-        :Returns:
-
-            `None`
-
-        """
-        if self._get_component("attributes", None) is not None:
-            return
-
-        self._set_component("attributes", dict(var.attrs), copy=False)
 
     def close(self, dataset):
         """Close the dataset containing the data.

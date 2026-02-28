@@ -194,8 +194,7 @@ The `cfdm.read` function has optional parameters to
 * display information and issue warnings about the mapping of the
   netCDF file contents to CF data model constructs; and
 
-* choose either `netCDF4` or `h5netcdf` backends for accessing netCDF
-  files.
+* choose from a variety of backends for accessing netCDF files.
 
 .. _CF-compliance:
 
@@ -2865,9 +2864,11 @@ All the of above examples use arrays in memory to construct the data
 instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The
 `cfdm.read` function creates data in this manner. A pointer to an
-array in a netCDF file can be stored in a `~cfdm.NetCDF4Array` or
-`~cfdm.H5netcdfAarray` instance, which is used to initialise a
-`~cfdm.Data` instance.
+array in a netCDF or Zarr dataset can be stored in a
+`~cfdm.PyfiveArray`, `~cfdm.H5netcdfAarray`, `~cfdm.NetCDF4Array`,
+`~cfdm.Netcdf_fileArray`, or `~cfdm.ZarrArray` instance, depending on
+the desired backend, which is used to initialise a `~cfdm.Data`
+instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package
