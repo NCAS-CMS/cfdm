@@ -818,7 +818,7 @@ _docstring_substitution_definitions = {
             .. note:: For a netCDF dataset, for which it is always
                       well-defined in which group a dimension is
                       defined, *group_dimension_search* may only take
-                      the default value of ``'closest_ancestor'`,
+                      the default value of ``'closest_ancestor'``,
                       which applies the behaviour defined by the CF
                       conventions (section 2.7 Groups).
 
