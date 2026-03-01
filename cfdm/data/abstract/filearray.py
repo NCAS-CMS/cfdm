@@ -481,7 +481,7 @@ class FileArray(Array):
                     create_endpoint_url=True, parsed_filename=url
                 )
                 fs = S3FileSystem(**storage_options)
-                filename = fs.open(url.path[1:], "rb")
+                filename = fs.open(url.path[1:], "rb")                
 
         try:
             dataset = func(filename, *args, **kwargs)
