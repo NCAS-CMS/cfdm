@@ -2865,7 +2865,7 @@ instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The
 `cfdm.read` function creates data in this manner. A pointer to an
 array in a netCDF or Zarr dataset can be stored in a
-`~cfdm.PyfiveArray`, `~cfdm.H5netcdfAarray`, `~cfdm.NetCDF4Array`, or
+`~cfdm.PyfiveArray`, `~cfdm.H5netcdfAarray`, `~cfdm.NetCDF4Array`,
 `~cfdm.Netcdf_fileArray`, or `~cfdm.ZarrArray` instance, depending on
 the desired backend, which is used to initialise a `~cfdm.Data`
 instance.

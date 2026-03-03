@@ -7,7 +7,7 @@ class PyfiveArray(IndexMixin, FileArray):
     """A netCDF array accessed with `pyfive`.
 
     * Accesses local and remote (http and s3) netCDF-4 datasets.
-    * Allows parallised reading.
+    * Allows parallelised reading.
     * Improves the performance of active storage reductions (by
       storing the dataset variable's B-tree at read time so that it
       doesn't have to be re-retrieved at compute time).
@@ -20,7 +20,7 @@ class PyfiveArray(IndexMixin, FileArray):
         """Get the netCDF variable attributes.
 
         If the attributes have not been set, then they are retrieved
-        from the netCDF variable *var* and stored in for fast future
+        from the netCDF variable *var* and stored for fast future
         access.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -114,7 +114,7 @@ class PyfiveArray(IndexMixin, FileArray):
 
             groups: sequence of `str`
                 The definition of which group the variable is in. For
-                instance, of the variable is in group
+                instance, if the variable is in group
                 ``/forecast/model`` then *groups* would be
                 ``['forecast', 'model']``.
 

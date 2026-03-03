@@ -124,7 +124,7 @@ class netcdf_indexer:
                 The variable to be indexed. May be any variable that
                 has one of the `numpy.ndarray`, `netCDF4.Variable`,
                 `h5py.Variable` (which includes `h5netcdf.Variable`),
-                `scipy.io.netcdf_variable`, or `zarr.Array`. APIs. Any
+                `scipy.io.netcdf_variable`, or `zarr.Array` APIs. Any
                 masking and unpacking that could be applied by
                 *variable* itself (e.g. by a `netCDF4.Variable`
                 instance) is disabled, ensuring that any masking and

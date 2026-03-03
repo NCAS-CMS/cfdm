@@ -1564,8 +1564,6 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "squeeze": bool(squeeze),
             "unsqueeze": bool(unsqueeze),
-            #            # Cache the Data objects created for netCDF variables
-            #            "cached_Data": {},
             # --------------------------------------------------------
             # Quantization
             # --------------------------------------------------------
@@ -6840,8 +6838,10 @@ class NetCDFRead(IORead):
                 case "zarr":
                     array = self.implementation.initialise_ZarrArray(**kwargs)
                 case "netcdf_file":
-                    array = self.implementation.initialise_Netcdf_fileArray(
-                        **kwargs
+                    array = (
+                        self.implementation.initialise_ScipyNetcdfFileArray(
+                            **kwargs
+                        )
                     )
 
             return array, kwargs
@@ -8301,10 +8301,6 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        #        cached_Data = g['cached_Data'].get(ncvar)
-        #        if  cached_Data is not None:
-        #            return cached_Data.copy()
-
         # Deal with strings
         match g["original_dataset_opened_with"]:
             case "h5netcdf-pyfive" | "h5netcdf-h5py" | "netCDF4":
@@ -8347,9 +8343,6 @@ class NetCDFRead(IORead):
                     )
                     array = np.ma.masked_values(array, "")
 
-            case _:
-                pass
-
         # Set the dask chunking strategy
         chunks = self._dask_chunks(
             array, ncvar, compressed, construct_type=construct_type
@@ -8389,8 +8382,6 @@ class NetCDFRead(IORead):
                 shards, shape = self._get_dataset_shards(ncvar)
                 if shards is not None and shape == data.shape:
                     self.implementation.nc_set_dataset_shards(data, shards)
-
-        #        g["cached_Data"][ncvar] = data
 
         return data
 
