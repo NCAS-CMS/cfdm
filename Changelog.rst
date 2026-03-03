@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* Write UGRID datasets with `cfdm.write`
+  (https://github.com/NCAS-CMS/cfdm/issues/271)
 * New default backend for netCDF-4 in `cfdm.read` that allows parallel
   reading: ``h5netcdf-pyfive``
   (https://github.com/NCAS-CMS/cfdm/issues/375)

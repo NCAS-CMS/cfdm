@@ -4,6 +4,7 @@ from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 
 class CellConnectivity(
     mixin.NetCDFVariable,
+    mixin.NetCDFConnectivityDimension,
     mixin.Topology,
     mixin.PropertiesData,
     mixin.Files,
