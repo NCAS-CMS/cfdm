@@ -4928,7 +4928,7 @@ class NetCDFAggregation(NetCDFMixin):
                 The netCDF aggregated_data terms in a dictionary whose
                 key/value pairs are the feature names and their
                 corresponding fragment array variable names; or else
-                an equivalent string formatted with the the CF-netCDF
+                an equivalent string formatted with the CF-netCDF
                 encoding.
 
         :Returns:

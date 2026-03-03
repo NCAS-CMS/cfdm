@@ -700,7 +700,7 @@ class DataTest(unittest.TestCase):
             self.assertFalse(d2.equals(d, verbose=2))
             self.assertTrue(
                 any(
-                    "Data: Different data types: float32 != int64" in log_msg
+                    "Data: Different data types: float32, int64" in log_msg
                     for log_msg in catch.output
                 )
             )
@@ -920,7 +920,7 @@ class DataTest(unittest.TestCase):
             self.assertFalse(s1.equals(s3, verbose=2))
             self.assertTrue(
                 any(
-                    "Data: Different data types: int64 != <U8" in log_msg
+                    "Data: Different data types: int64, <U8" in log_msg
                     for log_msg in catch.output
                 )
             )
@@ -984,8 +984,7 @@ class DataTest(unittest.TestCase):
                 self.assertFalse(d2.equals(d, verbose=verbosity_level))
                 self.assertIs(
                     any(
-                        "Data: Different data types: float32 != int64"
-                        in log_msg
+                        "Data: Different data types: float32, int64" in log_msg
                         for log_msg in catch.output
                     ),
                     expect_to_see_msg,
@@ -2081,7 +2080,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(f))
 
         # Chained subspaces reading from disk
-        f = cfdm.read(self.filename, netcdf_backend="h5netcdf")[0]
+        f = cfdm.read(self.filename)[0]
         d = f.data
 
         a = d[:1, [1, 3, 4], :][:, [True, False, True], ::-2].array

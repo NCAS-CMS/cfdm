@@ -228,7 +228,9 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         return array.flatten()
 
-    def _write_variable_attributes(self, parent, ncvar, extra=None, omit=()):
+    def _write_variable_attributes(
+        self, parent, ncvar, extra=None, omit=(), dtype=None
+    ):
         """Write variable attributes to the dataset.
 
         :Parameters:
@@ -240,6 +242,13 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             extra: `dict`, optional
 
             omit: sequence of `str`, optional
+
+            dtype: optional
+                The data type of the variable in the netCDF file. May
+                be used to ensure that fill and missing values have
+                the correct data type.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -273,7 +282,12 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
             data = self.implementation.get_data(parent, None)
             if data is not None:
-                dtype = g["datatype"].get(data.dtype, data.dtype)
+                if dtype is None:
+                    raise ValueError(
+                        "Must set dtype when attributes include _FillValue or "
+                        "missing_value"
+                    )
+
                 netcdf_attrs[attr] = np.array(netcdf_attrs[attr], dtype=dtype)
 
         skip_set_fill_value = False
@@ -3241,7 +3255,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         # Write attributes to the dataset variable
         # ------------------------------------------------------------
         attributes = self._write_variable_attributes(
-            cfvar, ncvar, extra=extra, omit=omit
+            cfvar, ncvar, extra=extra, omit=omit, dtype=datatype
         )
 
         # ------------------------------------------------------------
@@ -6388,10 +6402,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         map_ncdimensions = tuple(map_ncdimensions)
 
-        #        # Write the fragment array variable to the netCDF dataset
-        #        if ncdimensions[0].startswith('time'):
-        #            chunking=(False, (f_map.shape[0], f_map.shape[1] * 85*12))
-
         feature_ncvar = self._cfa_write_fragment_array_variable(
             f_map,
             aggregated_data.get(feature, f"fragment_{feature}"),
@@ -6417,9 +6427,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 if cfa_ncdim not in all_dimensions:
                     # Create a new fragment array dimension
                     unlimited = ncdim in all_unlimited_dimensions
-                    # unlimited = ncdim in g[
-                    #    "unlimited_dimensions"
-                    # ] and ncdim.startswith("time")
                     self._write_dimension(
                         cfa_ncdim, None, unlimited=unlimited, size=size
                     )
@@ -6428,10 +6435,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
             location_ncdimensions = tuple(location_ncdimensions)
 
-            #            # Write the fragment array variable to the netCDF dataset
-            #            if ncdimensions[0].startswith('time'):
-            #                chunking = (False, ((85*12,) + f_uris.shape[1:]))
-            #            else:
+            # Write the fragment array variable to the netCDF dataset
             chunking = None
             feature_ncvar = self._cfa_write_fragment_array_variable(
                 f_uris,
@@ -6476,9 +6480,12 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             unique_value_ncdimensions = []
             for ncdim, size in zip(ncdimensions, f_unique_value.shape):
                 cfa_ncdim = f"a_{ncdim}"
-                if cfa_ncdim not in g["dimensions"]:
+                if cfa_ncdim not in all_dimensions:
                     # Create a new fragment array dimension
-                    self._write_dimension(cfa_ncdim, None, size=size)
+                    unlimited = ncdim in all_unlimited_dimensions
+                    self._write_dimension(
+                        cfa_ncdim, None, unlimited=unlimited, size=size
+                    )
 
                 unique_value_ncdimensions.append(cfa_ncdim)
 

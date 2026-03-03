@@ -5,6 +5,9 @@ from .mixin import IndexMixin
 class ZarrArray(IndexMixin, abstract.FileArray):
     """A Zarr array accessed with `zarr`.
 
+    * Reads local and remote (http and s3) Zarr datasets.
+    * Allows parallelised reading.
+
     .. versionadded:: (cfdm) 1.12.2.0
 
     """
