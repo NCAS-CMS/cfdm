@@ -5739,13 +5739,12 @@ class NetCDFWrite(IOWrite):
         backend = self.write_vars["backend"]
         if backend is None:
             # Set default backend based on output dataset format
-        if fmt in NETCDF4_FMTS:
-            backend = "h5netcdf-h5py"
-        elif fmt in ZARR_FMTS:
-            backend = "zarr"
-        elif fmt in NETCDF3_FMTS:
-            backend = "netCDF4"
-
+            if fmt in NETCDF4_FMTS:
+                backend = "h5netcdf-h5py"
+            elif fmt in ZARR_FMTS:
+                backend = "zarr"
+            elif fmt in NETCDF3_FMTS:
+                backend = "netCDF4"
 
             self.write_vars["backend"] = backend
 
@@ -5777,8 +5776,8 @@ class NetCDFWrite(IOWrite):
                 "Can only set omit_data=True when netcdf_backend='netCDF4'"
             )
 
-        # Set dataset_fmt
-        if "ZARR3":
+        # Set dataset_type
+        if fmt in ZARR_FMTS:
             self.write_vars["dataset_type"] = "directory"
         else:
             self.write_vars["dataset_type"] = "file"
@@ -6121,7 +6120,6 @@ class NetCDFWrite(IOWrite):
         # Scalar coordinate variables
         # ------------------------------------------------------------
         g["scalar"] = scalar
-
         g["overwrite"] = overwrite
 
         # ------------------------------------------------------------

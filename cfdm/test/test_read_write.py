@@ -209,6 +209,11 @@ class read_writeTest(unittest.TestCase):
                 g, tmpfile, fmt="NETCDF4", mode="a", netcdf_backend="netCDF4"
             )
 
+        # Append isn't avaialable for some backends
+        for backend in ("h5netcdf-h5py", "zarr"):
+            with self.assertRaises(ValueError):
+                cfdm.write(self.f0, tmpfile, mode="a", netcdf_backend=backend)
+
         # Test special case #2: attempt to append fields with contradictory
         # featureType to the original file:
         g.nc_clear_variable_groups()

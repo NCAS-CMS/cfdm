@@ -28,7 +28,7 @@ tmpfiles = [
 
 
 def _remove_tmpdirs():
-    """Remove temporary files created during tests."""
+    """Remove temporary files and directories created during tests."""
     for f in tmpfiles:
         try:
             os.remove(f)
