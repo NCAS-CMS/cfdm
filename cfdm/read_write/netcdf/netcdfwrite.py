@@ -2653,7 +2653,7 @@ class NetCDFWrite(IOWrite):
     def _createVariable(self, **kwargs):
         """Create a variable in the dataset.
 
-        Each backend needs a seperate parsing the input kwargs to suit
+        Each backend needs a separate parsing of the input kwargs to suit
         its API.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -5697,7 +5697,7 @@ class NetCDFWrite(IOWrite):
             "field_ref_coord": [],
             # --------------------------------------------------------
             # Additional keyword arguments to be passed to the
-            # `h5py.FIle` file constructor. See
+            # `h5py.File` file constructor. See
             # https://h5netcdf.org/generated/h5netcdf.File.html and
             # https://docs.h5py.org/en/stable/high/file.html#h5py.File
             # --------------------------------------------------------
