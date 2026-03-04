@@ -5778,11 +5778,10 @@ class NetCDFWrite(IOWrite):
             )
 
         # Set dataset_fmt
-        match fmt:
-            case "ZARR3":
-                self.write_vars["dataset_type"] = "directory"
-            case _:
-                self.write_vars["dataset_type"] = "file"
+        if "ZARR3":
+            self.write_vars["dataset_type"] = "directory"
+        else:
+            self.write_vars["dataset_type"] = "file"
 
         # Parse the 'h5py_options' parameter
         if h5py_options is None:
