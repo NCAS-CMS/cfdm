@@ -7232,7 +7232,7 @@ class NetCDFWrite(IOWrite):
         return False
 
     def default_netCDF_fill_value(self, ncvar):
-        """The default netCDF fill value for a variable.
+        """Get the default netCDF fill value for a variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
