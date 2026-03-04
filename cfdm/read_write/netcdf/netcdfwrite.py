@@ -5785,6 +5785,13 @@ class NetCDFWrite(IOWrite):
         # Parse the 'h5py_options' parameter
         if h5py_options is None:
             self.write_vars["h5py_options"] = {}
+        elif backend != "h5netcdf-h5py":
+            raise ValueError(
+                "Can only set h5py_options when "
+                "netcdf_backend='h5netcdf-h5py'. "
+                f"Got: netcdf_backend={backend!r}, "
+                f"h5py_options={h5py_options!r}"
+            )
 
         # ------------------------------------------------------------
         # Parse the 'cfa' keyword
