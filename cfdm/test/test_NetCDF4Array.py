@@ -103,6 +103,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
         self.assertTrue(n.get_unpack())
         n = np.asanyarray(n[...])
+
         self.assertTrue((n.mask == array0.mask).all())
         self.assertTrue(np.ma.allclose(n, array0))
 
