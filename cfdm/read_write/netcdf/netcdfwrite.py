@@ -2734,7 +2734,7 @@ class NetCDFWrite(IOWrite):
                 for key in ("least_significant_digit",):
                     if kwargs.pop(key, None) is not None:
                         raise ValueError(
-                            "Can't set 'least_significant_digit' with the "
+                            f"Can't set '{key}' with the "
                             f"{g['backend']!r} backend"
                         )
 
