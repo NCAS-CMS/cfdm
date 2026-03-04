@@ -5739,13 +5739,13 @@ class NetCDFWrite(IOWrite):
         backend = self.write_vars["backend"]
         if backend is None:
             # Set default backend based on output dataset format
-            match fmt:
-                case fmt if fmt in NETCDF4_FMTS:
-                    backend = "h5netcdf-h5py"
-                case fmt if fmt in ZARR_FMTS:
-                    backend = "zarr"
-                case fmt if fmt in NETCDF3_FMTS:
-                    backend = "netCDF4"
+        if fmt in NETCDF4_FMTS:
+            backend = "h5netcdf-h5py"
+        elif fmt in ZARR_FMTS:
+            backend = "zarr"
+        elif fmt in NETCDF3_FMTS:
+            backend = "netCDF4"
+
 
             self.write_vars["backend"] = backend
 
