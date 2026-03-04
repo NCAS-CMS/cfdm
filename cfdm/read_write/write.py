@@ -825,7 +825,7 @@ class write(ReadWrite):
             keywords can be used to control the structure of the HDF5
             internal metadata (such as the file space handling
             strategy, the file space page size, the meta block size,
-            etc.). Ignored for all other backends.
+            etc.).
 
             See
             https://docs.h5py.org/en/stable/high/file.html#h5py.File
