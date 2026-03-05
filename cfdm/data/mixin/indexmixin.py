@@ -244,7 +244,7 @@ class IndexMixin:
 
         """
         return (
-            f"<CF {self.__class__.__name__}{self.shape}: "
+            f"<{self.__class__.__name__}{self.shape}: "
             f"{self}{self.original_shape}>"
         )
 

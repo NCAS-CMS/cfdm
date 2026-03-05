@@ -84,7 +84,7 @@ class FullArray(IndexMixin, Array):
         x.__repr__() <==> repr(x)
 
         """
-        return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
+        return f"<{self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
         """Called by the `str` built-in function.

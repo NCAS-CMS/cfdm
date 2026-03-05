@@ -24,6 +24,7 @@ class FileArray(Array):
         unpack=True,
         attributes=None,
         storage_options=None,
+        variable=None,
         source=None,
         copy=True,
     ):
@@ -32,15 +33,15 @@ class FileArray(Array):
         :Parameters:
 
             filename: (sequence of `str`), optional
-                The locations of datasets containing the array.
+                The location of the dataset containing the array.
 
             address: (sequence of `str`), optional
-                How to find the array in the datasets.
+                How to find the array in the dataset.
 
             dtype: `numpy.dtype`, optional
                 The data type of the array. May be `None` if is not
                 known. This may differ from the data type of the
-                array in the datasets.
+                array in the dataset.
 
             shape: `tuple`, optional
                 The shape of the dataset array.
@@ -52,10 +53,18 @@ class FileArray(Array):
             {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
-                attributes will be set during the first `__getitem__`
-                call.
+                attributes will be set from those in the dataset
+                during the first `__getitem__` call.
 
             {{init storage_options: `dict` or `None`, optional}}
+
+            variable: optional
+                An open dataset variable object. Setting *variable*
+                does not replace the need for the *filename* and
+                *address* parameters, instead it complements them by
+                allowing faster data access.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             {{init source: optional}}
 
@@ -107,6 +116,11 @@ class FileArray(Array):
             except AttributeError:
                 storage_options = None
 
+            try:
+                variable = source._get_component("variable", None)
+            except AttributeError:
+                variable = None
+
         if shape is not None:
             self._set_component("shape", shape, copy=False)
 
@@ -125,6 +139,9 @@ class FileArray(Array):
 
         if attributes is not None:
             self._set_component("attributes", attributes, copy=copy)
+
+        if variable is not None:
+            self._set_component("variable", variable, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
@@ -147,7 +164,7 @@ class FileArray(Array):
         x.__repr__() <==> repr(x)
 
         """
-        return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
+        return f"<{self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -245,8 +262,7 @@ class FileArray(Array):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if there
-                is no file.
+                Return *default* if the address has not been set.
 
                 {{default Exception}}
 
@@ -256,16 +272,7 @@ class FileArray(Array):
                 The file name.
 
         """
-        address = self._get_component("address", None)
-        if address is None:
-            if default is None:
-                return
-
-            return self._default(
-                default, f"{self.__class__.__name__} has no address"
-            )
-
-        return address
+        return self._get_component("address", default)
 
     def file_directory(self, normalise=False, default=AttributeError()):
         """The file directory.
@@ -275,6 +282,11 @@ class FileArray(Array):
         :Parameters:
 
             {{normalise: `bool`, optional}}
+
+            default: optional
+                Return *default* if the file has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -437,12 +449,27 @@ class FileArray(Array):
 
         return storage_options
 
+    def get_variable(self, default=AttributeError()):
+        """Get the open dataset variable object for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            default: optional
+                Return *default* if the variable has not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+                The open dataset variable object.
+
+        """
+        return self._get_component("variable", default)
+
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
-
-        When multiple files have been provided an attempt is made to
-        open each one, in the order stored, and a file object is
-        returned from the first file that exists.
 
         .. versionadded:: (cfdm) 1.10.1.0
 
@@ -575,6 +602,10 @@ class FileArray(Array):
                 filename = join(new, filename)
 
         a._set_component("filename", filename, copy=False)
+
+        # Remove an obsolete variable
+        a._del_component("variable", None)
+
         return a
 
     def get_missing_values(self):
@@ -608,28 +639,31 @@ class FileArray(Array):
         """
         return self.array
 
-    def _set_attributes(self, var):
-        """Set the netCDF variable attributes.
+    def _attributes(self, var):
+        """Get the netCDF variable attributes.
 
-        These are set from the netCDF variable attributes, but only if
-        they have not already been defined, either during {{class}}
-        instantiation or by a previous call to `_set_attributes`.
+        If the attributes have not been set, then they are retrieved
+        from the netCDF variable *var* and stored in `{{class}}`
+        instance for fast future access.
 
         .. versionadded:: (cfdm) 1.12.0.0
 
+        .. seealso:: `get_attributes`
+
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
+            var:
                 The netCDF variable.
 
         :Returns:
 
             `dict`
-                The attributes.
+                The attributes. The returned attributes are not a copy
+                of the cached dictionary.
 
         """
         raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}._set_attributes"
+            f"Must implement {self.__class__.__name__}._attributes"
         )  # pragma: no cover
 
     def get_unpack(self):
@@ -666,4 +700,8 @@ class FileArray(Array):
         """
         a = self.copy()
         a._set_component("filename", filename, copy=False)
+
+        # Remove an obsolete variable
+        a._del_component("variable", None)
+
         return a

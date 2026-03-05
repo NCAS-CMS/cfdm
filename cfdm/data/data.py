@@ -2383,7 +2383,7 @@ class Data(
                 "run at definition time in order to ascertain "
                 "suitability (such as data type casting, "
                 "broadcasting, etc.). Note that the exception may be "
-                "difficult to diagnose, as dask will have silently "
+                "difficult to diagnose, as dask might have silently "
                 "trapped it and returned NotImplemented (see , for "
                 "instance, dask.array.core.elemwise). Print "
                 "statements in a local copy of dask are possibly the "
@@ -4828,16 +4828,17 @@ class Data(
         # Check that each instance has the same data type
         self_is_numeric = is_numeric_dtype(self_dx)
         other_is_numeric = is_numeric_dtype(other_dx)
-        if (
-            not ignore_data_type
-            and (self_is_numeric or other_is_numeric)
-            and self.dtype != other.dtype
-        ):
-            logger.info(
-                f"{self.__class__.__name__}: Different data types: "
-                f"{self.dtype} != {other.dtype}"
-            )  # pragma: no cover
-            return False
+
+        if not ignore_data_type and (self_is_numeric or other_is_numeric):
+            # Test the dtypes with np.isdtype, instead of !=, so that
+            # dtypes that have different endianness but are otherwise
+            # the same are considered equal. E.g. '>f8' and 'float64'.
+            if not np.isdtype(self.dtype, other.dtype):
+                logger.info(
+                    f"{self.__class__.__name__}: Different data types: "
+                    f"{self.dtype}, {other.dtype}"
+                )  # pragma: no cover
+                return False
 
         # Check that each instance has the same units.
         self_Units = self.Units
@@ -4847,7 +4848,7 @@ class Data(
                 logger.info(
                     f"{self.__class__.__name__}: Different Units "
                     f"({self_Units!r}, {other_Units!r})"
-                )
+                )  # pragma: no cover
 
             return False
 
