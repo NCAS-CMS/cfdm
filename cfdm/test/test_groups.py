@@ -501,7 +501,6 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         f.nc_set_variable_groups(["forecast", "model"])
 
-        grouped_file5 = "grouped_file5.nc"
         grouped_file = grouped_file5
 
         cfdm.write(f, grouped_file5)
