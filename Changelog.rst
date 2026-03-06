@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* Support for HEALPix grids
+  (https://github.com/NCAS-CMS/cfdm/issues/370)
 * New default backend for netCDF-4 in `cfdm.write`: ``h5netcdf-h5py``,
   that allows control of the internal file metadata via the new
   ``h5py_options`` parameter
