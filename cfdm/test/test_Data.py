@@ -1660,6 +1660,14 @@ class DataTest(unittest.TestCase):
         d.compute()
         self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 2})
 
+        # Persist
+        f = cfdm.read(self.filename)[0]
+        d = f.data
+        a = d.compute()
+        b =         d.compute(persist=True) TODO
+        self.assertTrue(np.allclose(a, b))
+        
+
     def test_Data_chunks(self):
         """Test Data.chunks."""
         dx = da.empty((4, 5), chunks=(2, 4))
