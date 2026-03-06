@@ -22,6 +22,7 @@ from ..functions import (
     display_data,
     is_log_level_info,
     parse_indices,
+    persist_data,
 )
 from ..mixin.container import Container
 from ..mixin.files import Files
@@ -140,6 +141,7 @@ class Data(
         # Function for determining whether or not to display data
         # elements during `__str__`
         instance._display_data = display_data
+        instance._persist_data = persist_data
         return instance
 
     def __init__(
@@ -4102,7 +4104,9 @@ class Data(
         d._set_dask(dx, clear=self._ALL, in_memory=True)
         return d
 
-    def compute(self, _force_to_memory=True, _cache_elements=True):
+    def compute(
+        self, persist=None, _force_to_memory=True, _cache_elements=True
+    ):
         """A view of the computed data.
 
         In-place changes to the returned array *might* affect the
@@ -4124,6 +4128,23 @@ class Data(
                      `sparse_array`
 
         :Parameters:
+
+            persist: `None` or `bool`, optional
+                Persist the computed data into the Dask underlying
+                array. Persisting turns an underlying lazy dask array
+                into an equivalent chunked dask array, but now with
+                the results fully computed and in memory. This can
+                avoid the expense of re-reading the data from disk, or
+                re-computing it, when the data is accessed on multiple
+                occasions.
+
+                If *persist* is True then the data is persisted. If
+                *persist* is False then the data is not persisted. if
+                *persist* is `None` (the default) then the value of
+                *persist* will be taken from the
+                `{{package}}.persist_data` function.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             _force_to_memory: `bool`, optional
                 If True (the default) then force the data resulting
@@ -4175,6 +4196,8 @@ class Data(
         <{{repr}}NetCDF4Array(5, 8): file.nc, q(5, 8)>
 
         """
+        from scipy.sparse import issparse
+
         dx = self.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=_force_to_memory
         )
@@ -4188,12 +4211,21 @@ class Data(
 
             a.set_fill_value(self.get_fill_value(None))
 
-        if _cache_elements:
-            from scipy.sparse import issparse
+        if isinstance(a, (np.ndarray, int, float, bool, str)) or issparse(a):
+            if persist is None:
+                persist = self._persist_data()
 
-            if isinstance(a, (np.ndarray, int, float, bool, str)) or issparse(
-                a
-            ):
+            if persist:
+                import dask.array as da
+
+                dx = da.from_array(a, chunks=dx.chunks)
+                self._set_dask(
+                    dx,
+                    clear=self._ALL ^ self._ARRAY ^ self._CACHE,
+                    in_memory=True,
+                )
+
+            if _cache_elements:
                 self.cache_elements(_array=a)
 
         return a
