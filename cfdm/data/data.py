@@ -4130,19 +4130,20 @@ class Data(
         :Parameters:
 
             persist: `None` or `bool`, optional
-                Persist the computed data into the Dask underlying TODOPERSIST
-                array. Persisting turns an underlying lazy dask array
-                into an equivalent chunked dask array, but now with
-                the results fully computed and in memory. This can
+                Control the persistence of computed data. Persisting
+                turns the underlying lazy dask array into an
+                equivalent chunked dask array, but now with the
+                results fully computed and cached memory. This can
                 avoid the expense of re-reading the data from disk, or
                 re-computing it, when the data is accessed on multiple
                 occasions.
 
-                If *persist* is True then the data is persisted. If
-                *persist* is False then the data is not persisted. if
-                *persist* is `None` (the default) then the value of
+                if *persist* is `None` (the default) then the value of
                 *persist* will be taken from the
-                `{{package}}.persist_data` function.
+                `{{package}}.persist_data` function. If *persist* is
+                True (False) then the data is (not) persisted,
+                regardless of value returned by
+                `{{package}}.persist_data`.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4196,7 +4197,6 @@ class Data(
         <{{repr}}PyfiveArray(5, 8): file.nc, q(5, 8)>
 
         """
-
         dx = self.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=_force_to_memory
         )
