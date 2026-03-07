@@ -2059,8 +2059,8 @@ class persist_data(ConstantAccess):
     """Control the persistence of computed data.
 
     If True then a computed `{{package}}.Data` instance will cache the
-    entire computed array, ready for fast future access. If False then
-    computed data is not cached.
+    entire computed array (in chunks), ready for fast future
+    access. If False then computed data is not cached.
 
     This behaviour may be overridden on an indivudual basis by the
     *persist* parameter of the `{{package}}.Data.compute` method.

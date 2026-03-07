@@ -4130,7 +4130,7 @@ class Data(
         :Parameters:
 
             persist: `None` or `bool`, optional
-                Persist the computed data into the Dask underlying
+                Persist the computed data into the Dask underlying TODOPERSIST
                 array. Persisting turns an underlying lazy dask array
                 into an equivalent chunked dask array, but now with
                 the results fully computed and in memory. This can
@@ -4193,14 +4193,29 @@ class Data(
          [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
          [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
         >>> f.data.compute(_force_to_memory=False)
-        <{{repr}}NetCDF4Array(5, 8): file.nc, q(5, 8)>
+        <{{repr}}PyfiveArray(5, 8): file.nc, q(5, 8)>
 
         """
-        from scipy.sparse import issparse
 
         dx = self.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=_force_to_memory
         )
+
+        if persist is None:
+            persist = self._persist_data()
+
+        if persist:
+            dx = dx.persist()
+
+            # Note to developers: If the following `_set_dask` call is
+            #                     changed, consider making the same
+            #                     changes in `persist`.
+            self._set_dask(
+                dx,
+                clear=self._ALL ^ self._ARRAY ^ self._CACHE,
+                in_memory=True,
+            )
+
         a = dx.compute()
 
         if np.ma.isMA(a) and a is not np.ma.masked:
@@ -4211,21 +4226,17 @@ class Data(
 
             a.set_fill_value(self.get_fill_value(None))
 
-        if isinstance(a, (np.ndarray, int, float, bool, str)) or issparse(a):
-            if persist is None:
-                persist = self._persist_data()
+        if _cache_elements:
+            ok = False
+            if isinstance(a, (np.ndarray, int, float, bool, str)):
+                ok = True
+            else:
+                from scipy.sparse import issparse
 
-            if persist:
-                import dask.array as da
+                if issparse(a):
+                    ok = True
 
-                dx = da.from_array(a, chunks=dx.chunks)
-                self._set_dask(
-                    dx,
-                    clear=self._ALL ^ self._ARRAY ^ self._CACHE,
-                    in_memory=True,
-                )
-
-            if _cache_elements:
+            if ok:
                 self.cache_elements(_array=a)
 
         return a
@@ -6616,6 +6627,10 @@ class Data(
             _force_mask_hardness=False, _force_to_memory=True
         )
         dx = dx.persist()
+
+        # Note to developers: If the following `_set_dask` call is
+        #                     changed, consider making the same
+        #                     changes in `compute`.
         d._set_dask(
             dx, clear=self._ALL ^ self._ARRAY ^ self._CACHE, in_memory=True
         )
