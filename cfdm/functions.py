@@ -174,8 +174,8 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'INFO',
      'chunksize': 134217728,
-     'display_data': Tru,
-     'persist_data': Falsee}
+     'display_data': True,
+     'persist_data': False}
 
     Set a single constant without using its bespoke function:
 
@@ -2059,15 +2059,15 @@ class persist_data(ConstantAccess):
     """Control the persistence of computed data.
 
     If True then a computed `{{package}}.Data` instance will cache the
-    entire computed array (in chunks), ready for fast future
+    entire computed array (in chunks) in memory, ready for fast future
     access. If False then computed data is not cached.
 
-    This behaviour may be overridden on an indivudual basis by the
+    This behaviour may be overridden on an individual basis by the
     *persist* parameter of the `{{package}}.Data.compute` method.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
-    .. seealso:: `configuration`, `Data.compute`
+    .. seealso:: `configuration`, `Data.compute`, `Data.array`
 
     :Parameters:
 

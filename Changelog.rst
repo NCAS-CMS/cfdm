@@ -3,6 +3,10 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* New keyword parameter to `cfdm.Data.compute`: ``persist``
+  (https://github.com/NCAS-CMS/cfdm/issues/389)
+* New function to control the persistence of computed data:
+  `cfdm.persist_data` (https://github.com/NCAS-CMS/cfdm/issues/389)
 * Support for HEALPix grids
   (https://github.com/NCAS-CMS/cfdm/issues/370)
 * New default backend for netCDF-4 in `cfdm.write`: ``h5netcdf-h5py``,
@@ -20,8 +24,8 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cfdm/pull/387)
 * Fix bug in `cfdm.write` when writing identical coordinates that have
   different ``formula_terms``
-  (https://github.com/NCAS-CMS/cfdm/issues/380).
-* New dependency: ``pyfive>=1.1.0``
+  (https://github.com/NCAS-CMS/cfdm/issues/380)
+* New dependency: ``pyfive>=1.1.1``
 * Changed dependency: ``h5netcdf>=1.8.0``
 
 ----

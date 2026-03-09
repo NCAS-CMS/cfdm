@@ -141,6 +141,8 @@ class Data(
         # Function for determining whether or not to display data
         # elements during `__str__`
         instance._display_data = display_data
+        # Function for determining whether or not to persist computed
+        # data
         instance._persist_data = persist_data
         return instance
 
@@ -2723,10 +2725,16 @@ class Data(
         """A numpy array copy of the data.
 
         In-place changes to the returned numpy array do not affect the
-        underlying dask array.
+        underlying Dask array.
 
         The returned numpy array has the same mask hardness and fill
         values as the data.
+
+        .. note:: If the `{{package}}.persist_data` function returns
+                  True then calling `array` will persist the
+                  underlying lazy Dask array into an equivalent
+                  chunked Dask array, but now with the results fully
+                  computed and cached memory.
 
         Compare with `compute`.
 
@@ -2736,7 +2744,8 @@ class Data(
         returned `numpy` array is a deep copy of that returned by
         created `compute`.
 
-        .. seealso:: `datetime_array`, `compute`, `persist`
+        .. seealso:: `datetime_array`, `compute`, `persist`,
+                     `{{package}}.persist_data`
 
         **Examples**
 
@@ -4124,8 +4133,8 @@ class Data(
 
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `persist`, `array`, `datetime_array`,
-                     `sparse_array`
+        .. seealso:: `array`, `datetime_array`, `sparse_array`,
+                     `persist`, `{{package}}.persist_data`
 
         :Parameters:
 
@@ -4138,12 +4147,13 @@ class Data(
                 re-computing it, when the data is accessed on multiple
                 occasions.
 
-                if *persist* is `None` (the default) then the value of
+                If *persist* is `None` (the default) then the value of
                 *persist* will be taken from the
                 `{{package}}.persist_data` function. If *persist* is
-                True (False) then the data is (not) persisted,
-                regardless of value returned by
-                `{{package}}.persist_data`.
+                True then the data is persisted, regardless of value
+                returned by `{{package}}.persist_data`. If *persist*
+                is False then the data is not persisted, regardless of
+                value returned by `{{package}}.persist_data`.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
