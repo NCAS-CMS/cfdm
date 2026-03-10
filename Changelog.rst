@@ -24,7 +24,7 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cfdm/pull/387)
 * Fix bug in `cfdm.write` when writing identical coordinates that have
   different ``formula_terms``
-  (https://github.com/NCAS-CMS/cfdm/issues/380)
+  (https://github.com/NCAS-CMS/cfdm/issues/380).
 * New dependency: ``pyfive>=1.1.1``
 * Changed dependency: ``h5netcdf>=1.8.0``
 
