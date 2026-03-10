@@ -65,6 +65,7 @@ from .functions import (
     integer_dtype,
     log_level,
     parse_indices,
+    persist_data,
     rtol,
     unique_constructs,
     _disable_logging,
