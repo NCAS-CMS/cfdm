@@ -3,6 +3,10 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* New keyword parameter to `cfdm.Data.compute`: ``persist``
+  (https://github.com/NCAS-CMS/cfdm/issues/389)
+* New function to control the persistence of computed data:
+  `cfdm.persist_data` (https://github.com/NCAS-CMS/cfdm/issues/389)
 * Support for HEALPix grids
   (https://github.com/NCAS-CMS/cfdm/issues/370)
 * New default backend for netCDF-4 in `cfdm.write`: ``h5netcdf-h5py``,

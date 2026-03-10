@@ -505,10 +505,25 @@ class FieldDomain:
 
         return key_to_name
 
-    def _unique_domain_axis_identities(self):
+    def _unique_domain_axis_identities(self, include_size=True):
         """Return unique domain axis construct names.
 
         .. versionadded:: (cfdm) 1.7.0
+
+        :Parameters:
+
+             include_size: `bool`, optional
+                If True (the default) then include the domain axis
+                size in the identity (e.g. "time(12)". If False then
+                do not (e.g. "time").
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `dict`
+                A dictionary with keys of domain axis construct
+                identifiers, and values of the domain axis identities.
 
         **Examples**
 
@@ -528,16 +543,20 @@ class FieldDomain:
                 self.constructs.domain_axis_identity(key),
                 value.get_size(""),
             )
+            if not include_size:
+                name_size = name_size[0]
+
             name_to_keys.setdefault(name_size, []).append(key)
             key_to_name[key] = name_size
 
-        for (name, size), keys in name_to_keys.items():
-            if len(keys) == 1:
-                key_to_name[keys[0]] = f"{name}({size})"
-            else:
-                for key in keys:
-                    found = re.findall(r"\d+$", key)[0]
-                    key_to_name[key] = f"{name}{{{found}}}({size})"
+        if include_size:
+            for (name, size), keys in name_to_keys.items():
+                if len(keys) == 1:
+                    key_to_name[keys[0]] = f"{name}({size})"
+                else:
+                    for key in keys:
+                        found = re.findall(r"\d+$", key)[0]
+                        key_to_name[key] = f"{name}{{{found}}}({size})"
 
         return key_to_name
 

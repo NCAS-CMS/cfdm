@@ -1660,6 +1660,59 @@ class DataTest(unittest.TestCase):
         d.compute()
         self.assertEqual(d.get_cached_elements(), {0: 1, 1: 2, -1: 2})
 
+        # Persist
+        f = cfdm.read(self.filename, dask_chunks=3)[0]
+        d0 = f.data
+        npartitions = d0.npartitions
+        self.assertGreater(npartitions, 1)
+
+        with cfdm.persist_data(False):
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            self.assertTrue(np.allclose(a, b))
+
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute(persist=None)
+            self.assertEqual(len(d.get_filenames()), 1)
+            self.assertTrue(np.allclose(a, b))
+
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute(persist=False)
+            self.assertEqual(len(d.get_filenames()), 1)
+            self.assertTrue(np.allclose(a, b))
+
+            d = d0.copy()
+            a = d.compute()
+            self.assertEqual(len(d.get_filenames()), 1)
+            b = d.compute(persist=True)
+            self.assertEqual(len(d.get_filenames()), 0)
+            self.assertEqual(d.npartitions, npartitions)
+            self.assertTrue(np.allclose(a, b))
+
+        with cfdm.persist_data(True):
+            d = d0.copy()
+            d.compute()
+            self.assertEqual(len(d.get_filenames()), 0)
+
+            d = d0.copy()
+            d.compute(persist=None)
+            self.assertEqual(len(d.get_filenames()), 0)
+
+            d = d0.copy()
+            d.compute(persist=False)
+            self.assertEqual(len(d.get_filenames()), 1)
+
+            d = d0.copy()
+            d.compute(persist=True)
+            self.assertEqual(len(d.get_filenames()), 0)
+
     def test_Data_chunks(self):
         """Test Data.chunks."""
         dx = da.empty((4, 5), chunks=(2, 4))
