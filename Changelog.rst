@@ -19,6 +19,9 @@ Version NEXTVERSION
 * New optional backend for netCDF-3 in `cfdm.read` that allows
   parallel reading: ``netcdf_file``
   (https://github.com/NCAS-CMS/cfdm/issues/375)
+* Fix bug in `cfdm.read` that wouldn't read non-Zarr and Zarr datasets
+  from the same directory
+  (https://github.com/NCAS-CMS/cfdm/issues/391)
 * Fix bug in `cfdm.write` to correctly create unlimited aggregation
   dimensions that correspond to unlimited normal dimensions
   (https://github.com/NCAS-CMS/cfdm/pull/387)

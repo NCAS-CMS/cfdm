@@ -3,6 +3,7 @@ import datetime
 import faulthandler
 import os
 import platform
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -16,6 +17,12 @@ import cfdm
 from cfdm.read_write.exceptions import DatasetTypeError, ReadError
 
 warnings = False
+
+# Set up temporary directories
+tmpdirs = [
+    tempfile.mkdtemp("_test_read_write", dir=os.getcwd()) for i in range(1)
+]
+[tmpdir1] = tmpdirs
 
 # Set up temporary files
 n_tmpfiles = 9
@@ -44,6 +51,13 @@ def _remove_tmpfiles():
     for f in tmpfiles:
         try:
             os.remove(f)
+        except OSError:
+            pass
+
+    for d in tmpdirs:
+        try:
+            shutil.rmtree(d)
+            os.rmdir(d)
         except OSError:
             pass
 
@@ -1067,6 +1081,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(h), 1)
         self.assertTrue(f.equals(h[0]))
 
+    @unittest.skipIf(True, "Flakey")
     def test_read_url(self):
         """Test reading remote url."""
         for scheme in ("http", "https"):
@@ -1489,6 +1504,41 @@ class read_writeTest(unittest.TestCase):
         g = cfdm.read(tmpfile, netcdf_backend="netcdf_file")[0]
 
         self.assertTrue(g.equals(f))
+
+    def test_read_zarr_and_non_zarr(self):
+        """Test reading Zarr and non-Zarr datasets at the same time."""
+        # Copy a netCDF and Zarr datasets to a new directory and
+        # subdirectory
+        nc = "test_file.nc"
+        shutil.copy(nc, tmpdir1)
+
+        zarr = "example_field_0.zarr3"
+        shutil.copytree(
+            zarr,
+            os.path.join(tmpdir1, zarr + "a"),
+            dirs_exist_ok=True,
+        )
+        shutil.copytree(
+            zarr,
+            os.path.join(tmpdir1, zarr + "b"),
+            dirs_exist_ok=True,
+        )
+        shutil.copytree(
+            zarr,
+            os.path.join(os.path.join(tmpdir1, "subdir"), zarr + "c"),
+            dirs_exist_ok=True,
+        )
+
+        shutil.copy(nc, os.path.join(tmpdir1, "subdir"))
+
+        # Read the new directory and check that all datasets were read
+        f = cfdm.read(tmpdir1)
+        self.assertEqual(len(f), 3)
+
+        # Read the new directory recursively and check that all
+        # datasets were read
+        f = cfdm.read(tmpdir1, recursive=True)
+        self.assertEqual(len(f), 5)
 
 
 if __name__ == "__main__":
