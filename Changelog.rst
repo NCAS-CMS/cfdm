@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* Write UGRID datasets with `cfdm.write`
+  (https://github.com/NCAS-CMS/cfdm/issues/271)
 * New keyword parameter to `cfdm.Data.compute`: ``persist``
   (https://github.com/NCAS-CMS/cfdm/issues/389)
 * New function to control the persistence of computed data:
