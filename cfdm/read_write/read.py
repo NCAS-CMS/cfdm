@@ -83,7 +83,7 @@ class read(ReadWrite):
     the end of the Python session, at which time it is automatically
     deleted. The CDL file may omit data array values (as would be the
     case, for example, if the file was created with the ``-h`` or
-    ``-c`` option to ``ncdump``), in which case the the relevant
+    ``-c`` option to ``ncdump``), in which case the relevant
     constructs in memory will be created with data with all missing
     values.
 
@@ -390,16 +390,21 @@ class read(ReadWrite):
                         continue
 
                     # Walk through directories, possibly recursively
-                    for path, _, filenames in walk(x, followlinks=followlinks):
-                        if NetCDFRead.is_zarr(path):
-                            # This directory is a Zarr dataset, so
-                            # don't look in any subdirectories.
-                            n_datasets += 1
-                            yield path
-                            break
+                    for path, dirnames, filenames in walk(
+                        x, followlinks=followlinks
+                    ):
+                        for d in dirnames:
+                            d1 = join(path, d)
+                            if NetCDFRead.is_zarr(d1):
+                                # This directory is a Zarr dataset
+                                n_datasets += 1
+                                # Make sure we don't look at its
+                                # subdirectories or files
+                                dirnames.remove(d)
+                                yield d1
 
                         for f in filenames:
-                            # This file is a (non-Zarr) dataset
+                            # This file is a non-Zarr dataset
                             n_datasets += 1
                             yield join(path, f)
 
