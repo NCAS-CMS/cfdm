@@ -172,7 +172,6 @@ class GroupsTest(unittest.TestCase):
         # ------------------------------------------------------------
         name = "grid_latitude"
         g.construct(name).bounds.nc_set_variable_groups(["forecast"])
-        grouped_file = "grouped_file.nc"
         cfdm.write(g, grouped_file)
 
         nc = netCDF4.Dataset(grouped_file, "r")
@@ -306,7 +305,6 @@ class GroupsTest(unittest.TestCase):
         g.nc_set_component_variable("interior_ring", "interior_ring")
         g.nc_set_component_variable_groups("interior_ring", ["forecast"])
 
-        grouped_file = "grouped_file.nc"
         cfdm.write(g, grouped_file)
 
         # Check that the variable is in the right group
@@ -492,8 +490,8 @@ class GroupsTest(unittest.TestCase):
 
         # ------------------------------------------------------------
         # Move the latitude coordinate to the /forecast group. Note
-        # that this will drag its netDF dimension along with it,
-        # because it's a dimension coordinate variable
+        # that this will drag its dimension along with it, because
+        # it's a dimension coordinate variable
         # ------------------------------------------------------------
         lat = f.construct("latitude")
         lat.nc_set_variable_groups(["forecast"])
@@ -505,7 +503,7 @@ class GroupsTest(unittest.TestCase):
 
         grouped_file = grouped_file5
 
-        cfdm.write(f, grouped_file5, verbose=1)
+        cfdm.write(f, grouped_file5)
 
         h = cfdm.read(grouped_file, netcdf_backend="netCDF4")
         self.assertEqual(len(h), 1)

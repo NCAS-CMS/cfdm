@@ -1,7 +1,5 @@
 import logging
 
-import numpy as np
-
 logger = logging.getLogger(__name__)
 
 
@@ -492,13 +490,20 @@ class NetCDFWriteUgrid:
 
         # ------------------------------------------------------------
         # Populate the output mesh description
+        #
+        # Persist the node coordinates into memory, because it's
+        # possible that we'll need to compare them more than once with
+        # the node coordinates of other mesh descriptions (in
+        # `_ugrid_linked_meshes`), in addition to writing the
+        # coordinate themselves to disk.
         # ------------------------------------------------------------
         cell = domain_topology.get_cell(None)
         if cell == "point":
+            node_coordinates = parent.node_coordinates(persist=True)
             mesh.update(
                 {
                     "topology_dimension": 0,
-                    "node_coordinates": list(cell_coordinates.values()),
+                    "node_coordinates": node_coordinates,
                     "node_node_connectivity": [domain_topology],
                 }
             )
@@ -527,51 +532,7 @@ class NetCDFWriteUgrid:
                         f"{domain_topology!r}"
                     )
 
-            node_coordinates = []
-            index = None
-            for key, c in cell_coordinates.items():
-                bounds = c.get_bounds(None)
-                if bounds is None or bounds.get_data(None) is None:
-                    raise ValueError(
-                        f"Can't write a UGRID mesh of {cell!r} cells for "
-                        f"{parent!r} when {c!r} has no coordinate bounds data"
-                    )
-
-                if index is None:
-                    # Create the array index that will extract, in the
-                    # correct order, the node coordinates from the
-                    # flattened cell bounds, i.e. so that the first
-                    # node coordinate has node id 0, the second has
-                    # node id 1, etc.
-                    node_ids, index = np.unique(
-                        domain_topology, return_index=True
-                    )
-                    if node_ids[-1] is np.ma.masked:
-                        # Remove the element that corresponds to
-                        # missing data (which is always at the end of
-                        # the `np.unique` outputs)
-                        index = index[:-1]
-
-                # Create, from the cell bounds, an Auxiliary
-                # Coordinate that contains the unique node
-                # coordinates.
-                coords = self.implementation.initialise_AuxiliaryCoordinate(
-                    data=bounds.data.flatten()[index],
-                    properties=c.properties(),
-                )
-
-                # Persist the node coordinates into memory, because
-                # it's possible that we'll need to compare them more
-                # than once with the node coordinates of other mesh
-                # descriptions (in `_ugrid_linked_meshes`), in
-                # addition to writing the coordinate themselves to
-                # disk.
-                coords.persist(inplace=True)
-
-                node_coordinates.append(coords)
-
-            del index
-
+            node_coordinates = parent.node_coordinates(persist=True)
             mesh.update(
                 {
                     "topology_dimension": topology_dimension,
