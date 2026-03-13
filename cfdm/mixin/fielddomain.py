@@ -2624,3 +2624,307 @@ class FieldDomain:
             version="NEXTVERSION",
             removed_at="5.0.0",
         )  # pragma: no cover
+
+    def to_xarray(self, cf_xarray=True, uxarray=True):
+        """TODOX"""
+        from collections import Counter
+        
+        import xarray as xr
+
+        if cf_xarray:
+            import cf_xarray as cfxr
+
+            # cf_xarray works best when xarray keeps attributes by default
+            xr.set_options(keep_attrs=True)
+        
+        if uxarray:
+            import uxarray as ux
+
+           
+        # 
+        var_counter = Counter()        
+        def get_name(c, default=None):
+            if isinstance(c, str):
+                name = c
+            else:
+                try:
+                    name = c.nc_get_variable(None)
+                    if name is None:
+                        name = c.identity(None)
+                except AttributeError:
+                    name = None
+            
+                if name is None:
+                    name = default
+
+            var_counter[name] += 1
+            if var_counter[name] > 1:
+                name += f"_{var_counter[name]}"
+
+            return name
+
+        def add_coordinate(name, dims, data, properties):            
+            ds_coords[name] = (dims, data, properties)
+            if dims:
+                all_dims.update(dims)
+        
+        def add_variable(name, dims, data, properties):            
+            ds_vars[name] = (dims, data, properties)
+            if dims:
+                all_dims.update(dims)
+        
+        # ------------------------------------------------------------
+        axis_name = {}  
+        ds_vars = {}
+        ds_coords = {}     
+
+        # ------------------------------------------------------------
+        # Domain axes
+        # ------------------------------------------------------------
+        axis_counter = Counter()        
+        for axis in self.domain_axes(todict=True):
+            name =  self.constructs.domain_axis_identity(axis)
+            if name.startswith('ncdim%'):
+                name = name[6:]
+                
+            axis_counter[name] += 1
+            if axis_counter[name] > 1:
+                name += f"_{axis_counter[name]}"
+
+            axis_name[axis] = name
+
+        all_dims = set(axis_name.values())
+
+        # ------------------------------------------------------------
+        # Domain topologies
+        # ------------------------------------------------------------
+        ugrid_dim = None
+        mesh_name = None
+        location = None
+        mesh = {}
+        connectivity = {}
+        for key, c in self.domain_topologies(todict=True).items():
+            location = c.get_cell(None)
+            cell = location
+            match location:
+                case "face":
+                    topology_dimension = 2
+                case "edge":
+                    topology_dimension = 1
+                case "point":
+                    topology_dimension = 1
+                    cell = "edge"
+                case "volume":
+                    topology_dimension = 3
+                case _:
+                    continue
+
+            c = c.normalise()
+            domain_topology = c
+            
+            if location == "point":
+                # Convert point topology to edge_nodes_connectivity
+                c = c.to_edge(sort=True)
+            
+            name = get_name(c, key)
+            
+            ugrid_axis = self.get_data_axes(key)[0]
+            
+            dims = [axis_name[axis] for axis in self.get_data_axes(key)]
+            dim = f"{cell}_nodes"
+            dims += [dim]
+            add_variable(name, dims, c.data.to_dask_array(), c.properties())
+            
+            ugrid_dim = dims[0]
+
+            # Mesh
+            mesh_name = self.nc_get_mesh_variable("mesh")
+            mesh_name = get_name(mesh_name)
+
+            mesh.update(
+                {
+                    "cf_role": "mesh_topology",
+                    "topology_dimension": topology_dimension,
+                    f"{cell}_node_connectivity": name,
+                }
+            )
+
+            # Mesh cell coordinates
+            cell_coordinates = []
+            
+            # There can only be one mesh topology
+            break
+
+        # Mesh node coordinates
+        if mesh and location != "point":
+            node_coordinates = []
+            dims = None
+            for c in self.node_coordinates():
+                name = get_name(c, key)
+                if dims is None:
+                    dims= ['node']
+                    
+                add_variable(
+                    name, dims, c.data.to_dask_array(), c.properties()
+                )
+                node_coordinates.append(name)
+
+            if node_coordinates :
+                mesh['node_coordinates'] = ' '.join(node_coordinates)
+             
+        # ------------------------------------------------------------
+        # Cell connectivity
+        # ------------------------------------------------------------
+        for key, c in self.cell_connectivities(todict=True).items():
+            cell_connectivity = c.get_connectivity(None)
+            match cell_connectivity :
+                case "edge":
+                    cell = "face"
+                case "point":
+                    cell = "edge"
+                case "face":
+                    cell = "volume"
+                case _:
+                    continue
+                
+            c = c.normalise()
+            
+            # Remove the first column, which (now that the array has
+            # been normalised) just contains the index of each row (0,
+            # ..., N-1).
+            c = c[:, 1:]
+            
+            name = get_name(c, key)
+            dims = [axis_name[axis] for axis in self.get_data_axes(key)]
+            dims += [f"{cell}_links{c.data.shape[-1]}"]
+            add_variable(name, dims, c.data.to_dask_array(), c.properties())
+
+            mesh[f"{cell}_{cell}_connectivity"] = name
+                
+        # ------------------------------------------------------------
+        # Coordinates
+        # ------------------------------------------------------------
+        index = None
+        coordinates = []
+        for key, c in self.coordinates(todict=True).items():
+            c_name = get_name(c, key)
+            c_dims = [axis_name[axis] for axis in self.get_data_axes(key)]
+            c_properties = c.properties()
+    
+            # Handle Bounds for plotting libraries like easygems
+            b = c.get_bounds(None)
+            if b is not None:
+                # Create a dedicated vertex dimension for this
+                # specific coordinate
+                b_name = get_name(b, f"{c_name}_bounds")
+                b_dims = c_dims + [f"bounds{b.shape[-1]}"]
+                b_properties = b.properties()
+                b = b.get_data(None)
+                if b is not None:
+                    add_variable(
+                        b_name, b_dims, b.to_dask_array(), b_properties
+                    )
+                    # Link coordinate to bounds via CF attribute
+                    c_properties['bounds'] = b_name
+    
+            add_coordinate(
+                c_name, c_dims, c.data.to_dask_array(), c_properties
+            )
+
+            if c.construct_type == "auxiliary_coordinate":
+                coordinates.append(c_name)
+            
+            # Mesh cell coordinates
+            if mesh and c_dims == [ugrid_dim]:
+                cell_coordinates.append(c_name)
+
+        # Mesh cell coordinates
+        if mesh and cell_coordinates:
+            mesh[f"{cell}_coordinates"] = ' '.join(cell_coordinates)
+                    
+        # ------------------------------------------------------------
+        # Coordinate references
+        # ------------------------------------------------------------
+        grid_mappings = []
+        for key, c in self.coordinate_references(todict=True).items():
+            parameters = c.coordinate_conversion.parameters()
+            grid_mapping_name = parameters.get('grid_mapping_name')
+            if grid_mapping_name is None:
+                continue
+            
+            name = get_name(c.nc_get_variable(grid_mapping_name))
+            add_variable(name, [], None, parameters)
+            
+            grid_mappings.append(name)
+
+        # ------------------------------------------------------------
+        # Domain ancillaries
+        # ------------------------------------------------------------
+        for key, c in self.domain_ancillaries(todict=True).items():
+            name = get_name(c, key)
+            dims = [axis_name[axis] for axis in self.get_data_axes(key)]
+            add_variable(name, dims, c.data.to_dask_array(), c.properties())
+        # ------------------------------------------------------------
+        # Cell measures
+        # ------------------------------------------------------------
+        cell_measures = []
+        for key, c in self.cell_measures(todict=True).items():
+            name = get_name(c, key)
+            dims = [axis_name[axis] for axis in self.get_data_axes(key)]
+            ds_vars[name] = (
+                dims,
+                c.data.to_dask_array(),
+                c.properties()
+            )
+            
+            measure = c.get_measure(None)
+            if measure:
+                cell_measures.append(f"{measure}: {name}")
+
+        # ------------------------------------------------------------
+        # Field ancillaries
+        # ------------------------------------------------------------
+        ancillary_variables = []
+        for key, c in self.field_ancillaries(todict=True).items():
+            name = get_name(c, key)
+            dims = [axis_name[axis] for axis in self.get_data_axes(key)]
+            add_variable(name, dims, c.data.to_dask_array(), c.properties())
+            
+            ancillary_variables.append(name)
+
+        # ------------------------------------------------------------
+        # Field
+        # ------------------------------------------------------------
+        field_name = get_name(self, 'field')
+        field_dims = [axis_name[axis] for axis in self.get_data_axes()]
+
+        properties =  self.properties()
+        if grid_mappings:
+            properties['grid_mappings'] = " ".join(grid_mappings)
+
+        if coordinates:
+            properties['cooridnates'] = " ".join(coordinates)
+                  
+        if cell_measures:
+            properties['cell_measures'] = " ".join(cell_measures)
+
+        if ancillary_variables:
+            properties['ancillary_variables'] = " ".join(ancillary_variables)
+
+        if mesh:
+            if mesh_name is not None:
+                properties['mesh'] = name
+                
+            if location is not None:
+                properties['location'] = location
+            
+            add_variable(mesh_name, [], None, mesh)
+                
+        add_variable(
+            field_name, field_dims, self.data.to_dask_array(), properties
+        )
+       
+        # Build xarray dataset
+        from pprint import pprint
+        pprint(ds_vars)
+        return xr.Dataset(data_vars=ds_vars, coords=ds_coords)
