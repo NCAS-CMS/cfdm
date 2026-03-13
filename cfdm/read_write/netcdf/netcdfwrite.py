@@ -22,6 +22,7 @@ from .constants import (
 )
 from .netcdfread import NetCDFRead
 from .netcdfwrite_ugrid import NetCDFWriteUgrid
+from .xarray_dataset import  XarrayDataset
 
 logger = logging.getLogger(__name__)
 
@@ -391,7 +392,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                                 attributes[key] = value.astype("int32")
 
                 x.attrs.update(attributes)
-            case "netCDF4":
+            case "netCDF4" | "xarray":
                 x.setncatts(attributes)
             case "zarr":
                 # `zarr` can't encode numpy arrays in the zarr.json
@@ -590,8 +591,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 group.dimensions[ncdim] = size
             case "netCDF4":
                 group.createDimension(ncdim, size)
-            case "zarr":
-                # Dimensions are not created in Zarr datasets
+            case "zarr" | "xarray":
+                # Dimensions are not created in these datasets
                 pass
             case _:
                 raise NotImplementedError(
@@ -2668,6 +2669,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         ncvar = kwargs["varname"]
 
+        construct_type = kwargs.pop('construct_type', None)
+        
         match g["backend"]:
             case "h5netcdf-h5py":
                 kwargs["name"] = kwargs.pop("varname", None)
@@ -2851,6 +2854,18 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 }
 
                 variable = g["dataset"].create_array(**zarr_kwargs)
+
+            case "xarray":
+                xarray_kwargs = {}
+                xarray_kwargs['varname'] = ncvar
+                xarray_kwargs['dimensions'] = kwargs.get('dimensions', ())
+                xarray_kwargs['dtype'] = kwargs.get('dtype', None)
+
+                xarray_kwargs['coordinate'] = construct_type in (
+                    'dimension_coordinate', 'auxiliary_coordinate'
+                )
+            
+                variable = g["dataset"].createVariable(**xarray_kwargs)
 
             case _:
                 raise NotImplementedError(
@@ -3095,7 +3110,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 else:
                     fill_value = None
 
-            case "zarr":
+            case "zarr"  | "xarray":
                 # Set the `zarr` fill_value to the missing value of
                 # 'cfvar', defaulting to the netCDF default fill value
                 # if no missing value is available
@@ -3148,6 +3163,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             "least_significant_digit": lsd,
             "fill_value": fill_value,
             "chunk_cache": g["chunk_cache"],
+            "construct_type": construct_type
         }
 
         # ------------------------------------------------------------
@@ -3569,7 +3585,15 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         # Still here? The write a normal (non-aggregation) variable
         # ------------------------------------------------------------
         import dask.array as da
-
+        
+        if g["backend"] == "xarray":
+            # Write to an xarray variable in memory
+            g["nc"][ncvar].data = da.asanyarray(data)
+            return 
+        
+        # ------------------------------------------------------------
+        # Still here?
+        # ------------------------------------------------------------
         zarr = g["backend"] == "zarr"
         h5netcdf_h5py = g["backend"] == "h5netcdf-h5py"
 
@@ -3579,7 +3603,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         # Get the dask array
         dx = da.asanyarray(data)
-
+        
         # Convert the data type
         new_dtype = g["datatype"].get(dx.dtype)
         if new_dtype is not None:
@@ -5222,7 +5246,9 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             `netCDF.Dataset` or `zarr.Group`
 
         """
-        if fields and mode == "w":
+        g = self.write_vars        
+        
+        if fields and mode == "w" and g['write_to_disk']:
             dataset_name = os.path.abspath(dataset_name)
             for f in fields:
                 if dataset_name in self.implementation.get_original_filenames(
@@ -5233,8 +5259,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                         f"data which needs to be read: {f!r} uses "
                         f"{dataset_name}"
                     )
-
-        g = self.write_vars
 
         # mode == 'w' is safer than != 'a' in case of a typo (the
         # letters are neighbours on a QWERTY keyboard) since 'w' is
@@ -5280,6 +5304,12 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                     storage_options=g.get("storage_options"),
                 )
 
+            case "xarray":
+                try:
+                    nc = XarrayDataset()
+                except Exception as error:
+                    raise Exception(f"{error}: {dataset_name}")
+
         return nc
 
     @_manage_log_level_via_verbosity
@@ -5316,6 +5346,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         reference_datetime=None,
         netcdf_backend=None,
         h5py_options=None,
+            _xarray=False
     ):
         """Write field and domain constructs to a dataset.
 
@@ -5739,6 +5770,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             # https://docs.h5py.org/en/stable/high/file.html#h5py.File
             # --------------------------------------------------------
             "h5py_options": h5py_options,
+            # --------------------------------------------------------
+            "write_to_disk": True,
         }
 
         if mode not in ("w", "a", "r+"):
@@ -5808,6 +5841,10 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                     f"Got: {backend!r}, expected one of {valid_backends}"
                 )
 
+        if _xarray:
+            self.write_vars['backend'] = 'xarray'
+            self.write_vars['write_to_disk'] = False
+            
         if self.write_vars["omit_data"] and backend != "netCDF4":
             raise ValueError(
                 "Can only set omit_data=True when netcdf_backend='netCDF4'"
@@ -5975,6 +6012,11 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         )
 
         if mode == "w":  # only one iteration required in this simple case
+            if self.write_vars['backend'] == 'xarray':
+                # Return the xarray dataset
+                print (9999)
+                return self.write_vars['dataset'].finalise()
+            
             return
 
         if mode == "a":  # need another iteration to append after reading
