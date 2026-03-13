@@ -70,6 +70,9 @@ NETCDF4_FMTS = ("NETCDF4", "NETCDF4_CLASSIC")
 # Zarr dataset formats
 ZARR_FMTS = ("ZARR3",)
 
+# xarray dataset formats
+XARRAY_FMTS = ("XARRAY",)
+
 # --------------------------------------------------------------------
 # Quantization
 # --------------------------------------------------------------------

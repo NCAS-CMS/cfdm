@@ -4,6 +4,8 @@ import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
+import xarray as xr
+
 import cfdm
 
 
@@ -25,32 +27,34 @@ class xarrayTest(unittest.TestCase):
 
     def test_Field_to_xarray(self):
         """Test Field.to_xarray."""
-        examples = cfdm.example_fields()
+        fields = cfdm.example_fields()
 
-        for i, f in enumerate(examples):
-            if i == 6:
-                # Can't yet convert cell geometries
-                with self.assertRaises(NotImplementedError):
-                    f.to_xarray()
-            else:
-                ds = f.to_xarray()
-                str(ds)
-                self.assertIn("Conventions", ds.attrs)
+        # Write each field to a different xarray dataset
+        for f in fields:
+            ds = f.to_xarray()
+            self.assertIsInstance(ds, xr.Dataset)
+            str(ds)
+            self.assertIn("Conventions", ds.attrs)
 
+        # Write all fields to one xarray dataset
+        ds = cfdm.write(fields, fmt="XARRAY")
+        self.assertIsInstance(ds, xr.Dataset)
+        str(ds)
 
     def test_Domain_to_xarray(self):
         """Test Domain.to_xarray."""
-        examples = cfdm.example_fields()
+        domains = [f.domain for f in cfdm.example_fields()]
 
-        for i, f in enumerate(examples):
-            f = f.domain            
-            if i == 6:
-                # Can't yet convert cell geometries
-                with self.assertRaises(NotImplementedError):
-                    f.to_xarray()
-            else:
-                ds = f.to_xarray()
-                str(ds)
+        # Write each domain to a different xarray dataset
+        for d in domains:
+            ds = d.to_xarray()
+            self.assertIsInstance(ds, xr.Dataset)
+            str(ds)
+
+        # Write all domains to one xarray dataset
+        ds = cfdm.write(domains, fmt="XARRAY")
+        self.assertIsInstance(ds, xr.Dataset)
+        str(ds)
 
 
 if __name__ == "__main__":

@@ -2628,69 +2628,34 @@ class FieldDomain:
     def to_xarray(self):
         """Convert the {{class}} to an `xarray` Dataset.
 
-        To support `CoordinateReference`, `DomainAncillary`,
-        `AuxiliaryCoordinate`, `CellMeasure`, ``DomainTopology`,
-        `CellConnectivity`, `FieldAncillary`, and `CellMethod`
-        constructs, the following `xarray` attributes will be created,
-        as required:
-
-        * ``grid_mappings``
-        * ``formula_terms``
-        * ``coordinates``
-        * ``cell_measures``
-        * ``mesh``
-        * ``location`
-        * ``ancillary_variables``
-        * ``cell_methods`
-
         If the `cf_xarray` package (https://cf-xarray.readthedocs.io)
         is installed then the `cf_xarray` accessors
         (`xarray.DataArray.cf` and `xarray.Dataset.cf`) that allow
         some interpretation of CF convention attributes will be
         present on the returned `xarray` objects.
 
+        Note that multiple {{class}}s may be written to the same
+        `xarray` dataset with `{{package}}.write`, for instance::
+
+           >>> ds = {{package}}.write([f1, f2], fmt='XARRAY')
+
         .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `{{package}}.write`
 
         :Parameters:
 
             cf_xarray: `bool`, optional
                 If True (the default) then include the `cf_xarray`
                 accessor to the returned `xarray` Dataset. If False
-                then don't do this. Note that 
+                then don't do this. Note that
 
         :Returns:
 
             `xarray.Dataset`
                 The equivalent `xarray` Dataset.
 
-        **Examples:**
-
-        >>> f = cfdm.example_field(0)
-        >>> print(f)
-        Field: specific_humidity (ncvar%q)
-        ----------------------------------
-        Data            : specific_humidity(latitude(5), longitude(8)) 1
-        Cell methods    : area: mean
-        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                        : longitude(8) = [22.5, ..., 337.5] degrees_east
-                        : time(1) = [2019-01-01 00:00:00]
-        >>> ds = f.to_xarray()
-        >>> ds
-        <xarray.Dataset> Size: 640B
-        Dimensions:   (latitude: 5, bounds2: 2, longitude: 8, time: 1)
-        Coordinates:
-            lat       (latitude) float64 40B dask.array<chunksize=(5,), meta=np.ndarray>
-            lon       (longitude) float64 64B dask.array<chunksize=(8,), meta=np.ndarray>
-          * time      (time) float64 8B 31.0
-        Dimensions without coordinates: latitude, bounds2, longitude
-        Data variables:
-            lat_bnds  (latitude, bounds2) float64 80B dask.array<chunksize=(5, 2), meta=np.ndarray>
-            lon_bnds  (longitude, bounds2) float64 128B dask.array<chunksize=(8, 2), meta=np.ndarray>
-            q         (latitude, longitude) float64 320B dask.array<chunksize=(5, 8), meta=np.ndarray>
-        Attributes:
-            Conventions:  CF-1.13
-
         """
-        from cfdm.read_write.xarray_dataset import xarraywrite
+        from cfdm.read_write import write
 
-        return xarraywrite(self)
+        return write(self, fmt="XARRAY")

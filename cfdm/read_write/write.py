@@ -85,7 +85,7 @@ class write(ReadWrite):
         fields: (sequence of) `Field` or `Domain`
             The field and domain constructs to write to the dataset.
 
-        dataset_name: `str`
+        dataset_name: `str`, optional
             The output dataset name. Relative paths are allowed, and
             standard tilde and shell parameter expansions are applied
             to the string.
@@ -103,26 +103,28 @@ class write(ReadWrite):
             *fmt*                       Output dataset type
             ==========================  ==============================
             ``'NETCDF4'``               NetCDF4 format file. This is
-                                        the default.
+                                        the default on disk.
 
-            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
-                                        (see below)
+            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file on
+                                        disk. (see below)
 
             ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
                                         (limited to file sizes less
-                                        than 2GB).
+                                        than 2GB) on disk.
 
             ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
-                                        file
+                                        file on disk.
 
             ``'NETCDF3_64BIT'``         An alias for
                                         ``'NETCDF3_64BIT_OFFSET'``
 
             ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
                                         file with extensions (see
-                                        below)
+                                        below) on disk.
 
-            ``'ZARR3'``                 Zarr v3 dataset
+            ``'ZARR3'``                 Zarr v3 dataset on disk.
+
+            ``'XARRAY'``                `xarray.Dataset` in memory.
             ==========================  ==============================
 
             By default the format is ``'NETCDF4'``.
@@ -790,19 +792,25 @@ class write(ReadWrite):
             * ``'h5netcdf-h5py'``
 
               - The `h5netcdf` library using `h5py` as its backend.
-              - Writes netCDF-4 datasets.
+              - Writes netCDF-4 datasets to disk.
               - Allows control of the internal file metadata via the
                 *h5py_options* parameter.
 
             * ``'netCDF4'``
 
               - The `netCDF4` library.
-              - Writes netCDF-4 and netCDF-3 datasets.
+              - Writes netCDF-4 and netCDF-3 datasets to disk.
 
             * ``'zarr'``
 
               - The `zarr` library.
-              - Writes Zarr datasets.
+              - Writes Zarr datasets to disk.
+
+            * ``'xarray'``
+
+              - The `xarray` library.
+              - Creates `xarray` datasets in memory.
+              - No files or directories are created on disk
 
             The default backend of `None` results in a backend that
             depends on the dataset format specified with the *fmt*
@@ -815,6 +823,8 @@ class write(ReadWrite):
               ``netCDF4``.
 
             * For all Zarr formats the default backend is ``zarr``.
+
+            * For all xarray formats the default backend is ``xarray``.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -849,7 +859,10 @@ class write(ReadWrite):
 
     :Returns:
 
-        `None`
+        `None` or `xarray.Dataset`
+            When writing to disk, `None` is returned. When writing to
+            an `xarray` dataset in memory, the dataset is returned.
+
 
     **Examples**
 
@@ -868,7 +881,7 @@ class write(ReadWrite):
     def __new__(
         cls,
         fields,
-        dataset_name,
+        dataset_name=None,
         fmt="NETCDF4",
         mode="w",
         overwrite=True,
@@ -899,7 +912,6 @@ class write(ReadWrite):
         extra_write_vars=None,
         netcdf_backend=None,
         h5py_options=None,
-            _xarray=False
     ):
         """Write field and domain constructs to a dataset."""
         # Flatten the sequence of intput fields
@@ -934,9 +946,9 @@ class write(ReadWrite):
             }
 
         netcdf = NetCDFWrite(cls.implementation)
-        netcdf.write(
+        return netcdf.write(
             fields,
-            dataset_name,
+            dataset_name=dataset_name,
             fmt=fmt,
             mode=mode,
             overwrite=overwrite,
@@ -965,5 +977,4 @@ class write(ReadWrite):
             cfa=cfa,
             netcdf_backend=netcdf_backend,
             h5py_options=h5py_options,
-            _xarray=_xarray
         )
