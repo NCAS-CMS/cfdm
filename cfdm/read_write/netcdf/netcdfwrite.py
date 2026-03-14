@@ -590,10 +590,10 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         match self.write_vars["backend"]:
             case "h5netcdf-h5py":
                 group.dimensions[ncdim] = size
-            case "netCDF4":
+            case "netCDF4" | "xarray":
                 group.createDimension(ncdim, size)
-            case "zarr" | "xarray":
-                # Dimensions are not created in these datasets
+            case "zarr":
+                # Dimensions are not created in Zarr datasets
                 pass
             case _:
                 raise NotImplementedError(
@@ -635,6 +635,9 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         ncdims = [g["axis_to_ncdim"][axis] for axis in domain_axes]
 
+        if not g['write_to_disk']:
+            return tuple(ncdims)
+        
         compression_type = self.implementation.get_compression_type(construct)
         if compression_type:
             sample_dimension_position = (
@@ -1532,6 +1535,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 self.implementation.get_data_axes(f, coord_key),
                 omit=omit,
                 construct_type=self.implementation.get_construct_type(coord),
+                bounds=True,
             )
 
         extra["bounds"] = ncvar
@@ -2671,6 +2675,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         ncvar = kwargs["varname"]
 
         construct_type = kwargs.pop("construct_type", None)
+        bounds = kwargs.pop("bounds", False)
 
         match g["backend"]:
             case "h5netcdf-h5py":
@@ -2862,7 +2867,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 xarray_kwargs["dimensions"] = kwargs.get("dimensions", ())
                 xarray_kwargs["datatype"] = kwargs.get("datatype", None)
 
-                xarray_kwargs["coordinate"] = construct_type in (
+                xarray_kwargs["coordinate"] = not bounds and construct_type in (
                     "dimension_coordinate",
                     "auxiliary_coordinate",
                 )
@@ -2988,6 +2993,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         data_variable=False,
         domain_variable=False,
         construct_type=None,
+        bounds=False,
         chunking=None,
     ):
         """Creates a new netCDF variable for a construct.
@@ -3031,6 +3037,11 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 construct.
 
                 .. versionadded:: (cfdm) 1.10.1.0
+
+            bounds: `bool`, optional
+                If True then *cfvar* represents cell bounds.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             chunking: sequence, optional
                 Set `_createVariable` 'contiguous', 'chunksizes', and
@@ -3113,9 +3124,9 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                     fill_value = None
 
             case "zarr" | "xarray":
-                # Set the `zarr` fill_value to the missing value of
-                # 'cfvar', defaulting to the netCDF default fill value
-                # if no missing value is available
+                # Set the fill_value to the missing value of 'cfvar',
+                # defaulting to the netCDF default fill value if no
+                # missing value is available
                 fill_value = self._missing_value(cfvar, datatype)
 
         if data_variable:
@@ -3166,6 +3177,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             "fill_value": fill_value,
             "chunk_cache": g["chunk_cache"],
             "construct_type": construct_type,
+            "bounds": bounds,
         }
 
         # ------------------------------------------------------------
@@ -3588,9 +3600,18 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         # ------------------------------------------------------------
         import dask.array as da
 
-        if g["backend"] == "xarray":
-            # Write to an xarray variable in memory
-            g["nc"][ncvar].data = da.asanyarray(data)
+        if not g["write_to_disk"]:
+            # Write teh data to memory uncompressed
+            match g["backend"]:
+                case "xarray":
+                    g["nc"][ncvar].data = da.asanyarray(data)
+
+                case _:
+                    raise NotImplementedError(
+                        "Need to implement in-memory data assignment for "
+                        f"the {g['backend']!r} backend"
+                    )
+
             return
 
         # ------------------------------------------------------------
@@ -3923,12 +3944,17 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         g["key_to_ncdims"] = {}
 
         # Type of compression applied to the field/domain
-        compression_type = self.implementation.get_compression_type(f)
+        if g['write_to_disk']:
+            compression_type = self.implementation.get_compression_type(f)
+            logger.info(
+                f"    Compression = {g['compression_type']!r}"
+            )  # pragma: no cover
+        else:
+            # Write uncompressed when writing to memeory
+            compression_type = ""
+            
         g["compression_type"] = compression_type
-        logger.info(
-            f"    Compression = {g['compression_type']!r}"
-        )  # pragma: no cover
-
+            
         #
         g["sample_ncdim"] = {}
 

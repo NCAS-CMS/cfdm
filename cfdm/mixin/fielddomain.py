@@ -2629,26 +2629,18 @@ class FieldDomain:
         """Convert the {{class}} to an `xarray` Dataset.
 
         If the `cf_xarray` package (https://cf-xarray.readthedocs.io)
-        is installed then the `cf_xarray` accessors
-        (`xarray.DataArray.cf` and `xarray.Dataset.cf`) that allow
-        some interpretation of CF convention attributes will be
-        present on the returned `xarray` objects.
+        is installed then the `cf_xarray` accessors will be present on
+        the returned `xarray` objects (`xarray.DataArray.cf` and
+        `xarray.Dataset.cf`) that allow some interpretation of CF
+        attributes.
 
-        Note that multiple {{class}}s may be written to the same
-        `xarray` dataset with `{{package}}.write`, for instance::
-
-           >>> ds = {{package}}.write([f1, f2], fmt='XARRAY')
+        Note that multiple fields and domains may be written to the
+        same `xarray` dataset with `{{package}}.write`, e.g. `ds =
+        {{package}}.write([x, y], fmt='XARRAY')`
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `{{package}}.write`
-
-        :Parameters:
-
-            cf_xarray: `bool`, optional
-                If True (the default) then include the `cf_xarray`
-                accessor to the returned `xarray` Dataset. If False
-                then don't do this. Note that
 
         :Returns:
 

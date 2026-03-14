@@ -125,6 +125,16 @@ class write(ReadWrite):
             ``'ZARR3'``                 Zarr v3 dataset on disk.
 
             ``'XARRAY'``                `xarray.Dataset` in memory.
+                                        If the `cf_xarray` package
+                                        (https://cf-xarray.readthedocs.io)
+                                        is installed then the
+                                        `cf_xarray` accessors will be
+                                        present on the returned
+                                        `xarray` objects
+                                        (`xarray.DataArray.cf` and
+                                        `xarray.Dataset.cf`) that
+                                        allow some interpretation of
+                                        CF attributes.
             ==========================  ==============================
 
             By default the format is ``'NETCDF4'``.

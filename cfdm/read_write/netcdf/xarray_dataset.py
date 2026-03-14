@@ -1,6 +1,12 @@
 class XarrayDataset:
     """A mimic of `netCDF4.Dataset` for `xarray.Dataset`.
 
+    If the `cf_xarray` package (https://cf-xarray.readthedocs.io) is
+    installed then the `cf_xarray` accessors will be present on the
+    returned `xarray` objects (`xarray.DataArray.cf` and
+    `xarray.Dataset.cf`) that allow some interpretation of CF
+    attributes.
+
     .. versionadded:: (cfdm) NEXVERSION
 
     """
@@ -12,7 +18,7 @@ class XarrayDataset:
         try:
             import cf_xarray  # noqa: F401
         except ModuleNotFoundError:
-            raise
+            pass
         else:
             # cf_xarray works best when xarray keeps attributes by
             # default.
@@ -23,7 +29,7 @@ class XarrayDataset:
         self.coords = {}
         self.data_vars = {}
 
-    def createDimension(self, **kwargs):
+    def createDimension(self, *args, **kwargs):
         """Create a new dimension.
 
         `xarray` handles dimensions implicitly, so this method does
@@ -55,9 +61,8 @@ class XarrayDataset:
                 The dimension of the variable.
 
             coordinate: `bool`, optional
-                If True then the variable represents a dimension or
-                auxiliary coordinate construct. If False (the
-                default), then it does not.
+                If True then the variable represents coordinates (but
+                not bounds). If False (the default), then it does not.
 
         :Returns:
 
