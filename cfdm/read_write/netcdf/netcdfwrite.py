@@ -635,9 +635,11 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         ncdims = [g["axis_to_ncdim"][axis] for axis in domain_axes]
 
-        if not g['write_to_disk']:
+        if g["write_uncompressed"]:
+            # Write in uncompressed form, regardless of any actual
+            # compression-by-convention.
             return tuple(ncdims)
-        
+
         compression_type = self.implementation.get_compression_type(construct)
         if compression_type:
             sample_dimension_position = (
@@ -2674,8 +2676,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         ncvar = kwargs["varname"]
 
-        construct_type = kwargs.pop("construct_type", None)
-        bounds = kwargs.pop("bounds", False)
+        coordinate = kwargs.pop("coordinate", False)
 
         match g["backend"]:
             case "h5netcdf-h5py":
@@ -2866,11 +2867,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 xarray_kwargs["name"] = ncvar
                 xarray_kwargs["dimensions"] = kwargs.get("dimensions", ())
                 xarray_kwargs["datatype"] = kwargs.get("datatype", None)
-
-                xarray_kwargs["coordinate"] = not bounds and construct_type in (
-                    "dimension_coordinate",
-                    "auxiliary_coordinate",
-                )
+                xarray_kwargs["coordinate"] = coordinate
 
                 variable = g["dataset"].createVariable(**xarray_kwargs)
 
@@ -3094,6 +3091,14 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         if not construct_type:
             construct_type = self.implementation.get_construct_type(cfvar)
 
+        # Whether or not the variable is a coordinate variable (of any
+        # type). Bounds variables, interior rung variables, etc, are
+        # not coordinate variables.
+        coordinate = construct_type in (
+            "dimension_coordinate",
+            "auxiliary_coordinate",
+        ) and self.implementation.get_construct_type(cfvar)
+
         # Do this after the dry_run return else may attempt to transform
         # the arrays with string dtype on an append-mode read iteration (bad).
         datatype = None
@@ -3176,8 +3181,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             "least_significant_digit": lsd,
             "fill_value": fill_value,
             "chunk_cache": g["chunk_cache"],
-            "construct_type": construct_type,
-            "bounds": bounds,
+            "coordinate": coordinate,
         }
 
         # ------------------------------------------------------------
@@ -3199,7 +3203,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         if data is not None:
             compressed = self._compressed_data(ncdimensions)
-            if compressed:
+            if compressed and not g["write_uncompressed"]:
                 # Write data in its compressed form
                 shape = data.source().source().shape
             else:
@@ -3598,34 +3602,23 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         # ------------------------------------------------------------
         # Still here? The write a normal (non-aggregation) variable
         # ------------------------------------------------------------
-        import dask.array as da
 
-        if not g["write_to_disk"]:
-            # Write teh data to memory uncompressed
-            match g["backend"]:
-                case "xarray":
-                    g["nc"][ncvar].data = da.asanyarray(data)
-
-                case _:
-                    raise NotImplementedError(
-                        "Need to implement in-memory data assignment for "
-                        f"the {g['backend']!r} backend"
-                    )
-
-            return
-
-        # ------------------------------------------------------------
-        # Still here?
-        # ------------------------------------------------------------
         zarr = g["backend"] == "zarr"
         h5netcdf_h5py = g["backend"] == "h5netcdf-h5py"
+        xarray = g["backend"] == "xarray"
 
-        if compressed:
+        if compressed and not g["write_uncompressed"]:
             # Write data in its compressed form
             data = data.source().source()
 
         # Get the dask array
+        import dask.array as da
+
         dx = da.asanyarray(data)
+
+        if xarray:
+            g["nc"][ncvar].data = da.asanyarray(data)
+            return
 
         # Convert the data type
         new_dtype = g["datatype"].get(dx.dtype)
@@ -3944,17 +3937,16 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         g["key_to_ncdims"] = {}
 
         # Type of compression applied to the field/domain
-        if g['write_to_disk']:
+        if g["write_uncompressed"]:
+            compression_type = ""
+        else:
             compression_type = self.implementation.get_compression_type(f)
             logger.info(
-                f"    Compression = {g['compression_type']!r}"
+                f"    Compression = {compression_type!r}"
             )  # pragma: no cover
-        else:
-            # Write uncompressed when writing to memeory
-            compression_type = ""
-            
+
         g["compression_type"] = compression_type
-            
+
         #
         g["sample_ncdim"] = {}
 
@@ -5684,7 +5676,11 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         # ------------------------------------------------------------
         self.write_vars = {
             "dataset_name": dataset_name,
+            # Whether or not to write to disk (as oppoed to memory).
             "write_to_disk": True,
+            # Whether or not to write in uncompressed form, regardless
+            # of any actual compression-by-convention.
+            "write_uncompressed": False,
             # Format of output dataset
             "fmt": fmt,
             # Backend for writing to the dataset
@@ -5871,6 +5867,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                     )
             case "xarray":
                 self.write_vars["write_to_disk"] = False
+                self.write_vars["write_uncompressed"] = True
+
                 if fmt not in XARRAY_FMTS:
                     raise ValueError(
                         f"Backend {backend!r} can't write {fmt!r} datasets"
@@ -5891,9 +5889,9 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             # Expand dataset name
             dataset_name = os.path.expanduser(os.path.expandvars(dataset_name))
             dataset_name = abspath(dataset_name)
-            self.write_vars[" dataset_name"] = dataset_name
+            self.write_vars["dataset_name"] = dataset_name
         elif dataset_name is not None:
-            # Must not provide a dataset name when writing to memory
+            # Must not provide a dataset name when not writing to disk
             raise ValueError("TODOX")
 
         if self.write_vars["omit_data"] and backend != "netCDF4":

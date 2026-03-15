@@ -33,8 +33,8 @@ class xarrayTest(unittest.TestCase):
         for f in fields:
             ds = f.to_xarray()
             self.assertIsInstance(ds, xr.Dataset)
-            str(ds)
             self.assertIn("Conventions", ds.attrs)
+            str(ds)
 
         # Write all fields to one xarray dataset
         ds = cfdm.write(fields, fmt="XARRAY")
@@ -55,6 +55,38 @@ class xarrayTest(unittest.TestCase):
         ds = cfdm.write(domains, fmt="XARRAY")
         self.assertIsInstance(ds, xr.Dataset)
         str(ds)
+
+    def test_Field_to_xarray_from_dataset(self):
+        """Test Field.to_xarray on datasets read from disk."""
+        for dataset in (
+            "example_field_0.nc",
+            "example_field_0.zarr2",
+            "example_field_0.zarr3",
+            "gathered.nc",
+            "DSG_timeSeries_contiguous.nc",
+            "DSG_timeSeries_indexed.nc",
+            "DSG_timeSeriesProfile_indexed_contiguous.nc",
+            "parent.nc",
+            "external.nc",
+            "external_missing.nc",
+            "combined.nc",
+            "geometry_1.nc",
+            "geometry_2.nc",
+            "geometry_3.nc",
+            "geometry_4.nc",
+            "geometry_interior_ring.nc",
+            "geometry_interior_ring_2.nc",
+            "string_char.nc",
+            "subsampled_2.nc",
+            "ugrid_1.nc",
+            "ugrid_2.nc",
+            "ugrid_3.nc",
+            "test_file.nc",
+        ):
+            for f in cfdm.read(dataset):
+                ds = f.to_xarray()
+                self.assertIsInstance(ds, xr.Dataset)
+                str(ds)
 
 
 if __name__ == "__main__":

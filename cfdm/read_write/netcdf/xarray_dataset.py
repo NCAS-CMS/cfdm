@@ -13,8 +13,17 @@ class XarrayDataset:
 
     def __init__(self):
         """**Initialisation**"""
-        import xarray as xr
+        try:
+            import xarray as xr
+        except ModuleNotFoundError as error:
+            error.msg += (
+                ". Install the 'xarray' package "
+                "(https://pypi.org/project/xarray) to convert to a xarray "
+                "datasets"
+            )
+            raise
 
+        # Attempt to apply the cf_xarray accessors
         try:
             import cf_xarray  # noqa: F401
         except ModuleNotFoundError:

@@ -85,16 +85,21 @@ class write(ReadWrite):
         fields: (sequence of) `Field` or `Domain`
             The field and domain constructs to write to the dataset.
 
-        dataset_name: `str`, optional
-            The output dataset name. Relative paths are allowed, and
-            standard tilde and shell parameter expansions are applied
-            to the string.
+        dataset_name: `str` or `None`, optional
+            The output dataset name as a string. Relative paths are
+            allowed, and standard tilde and shell parameter expansions
+            are applied to the string.
 
-            *Parameter example:*
+            If the output dataset is to be an object in memory, as
+            opposed to a files or directories on disk (e.g. when *fmt*
+            is ``'XARRAY'``), then *dataset_name* must be `None` (the
+            default).
+
+            *Example:*
               The file ``file.nc`` in the user's home directory could
               be described by any of the following:
               ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
-              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
+              ``'~/file.nc'``, ``'~/tmp/../file.nc'``, etc.
 
         fmt: `str`, optional
             The format of the output dataset. One of:
@@ -124,17 +129,16 @@ class write(ReadWrite):
 
             ``'ZARR3'``                 Zarr v3 dataset on disk.
 
-            ``'XARRAY'``                `xarray.Dataset` in memory.
-                                        If the `cf_xarray` package
-                                        (https://cf-xarray.readthedocs.io)
-                                        is installed then the
-                                        `cf_xarray` accessors will be
-                                        present on the returned
-                                        `xarray` objects
+            ``'XARRAY'``                `xarray.Dataset` in memory. If
+                                        the `cf_xarray` package is
+                                        installed then the `cf_xarray`
+                                        accessors will be present on
+                                        the returned `xarray` objects
                                         (`xarray.DataArray.cf` and
                                         `xarray.Dataset.cf`) that
-                                        allow some interpretation of
-                                        CF attributes.
+                                        allow some extra
+                                        interpretation of CF
+                                        attributes.
             ==========================  ==============================
 
             By default the format is ``'NETCDF4'``.
