@@ -150,12 +150,12 @@ NetCDF
    ~cfdm.Domain.nc_set_global_attributes
    
 .. _Domain-xarray:
-   
+
 xarray
 ------
 
 .. rubric:: Methods
-	    
+
 .. autosummary::
    :nosignatures:
    :toctree: ../method/

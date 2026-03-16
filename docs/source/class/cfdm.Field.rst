@@ -256,12 +256,12 @@ NetCDF
    ~cfdm.Field.nc_set_global_attributes
 
 .. _Field-xarray:
-   
+
 xarray
 ------
 
 .. rubric:: Methods
-	    
+
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
