@@ -1569,7 +1569,7 @@ class read_writeTest(unittest.TestCase):
         result = cfdm.read(tmpfile, filesystem=mock_fs)
 
         # filesystem.open() must have been called with the dataset path
-        self.assertTrue(len(open_calls) > 0, "filesystem.open was not called")
+        self.assertIsGreater(len(open_calls), 0, "filesystem.open was not called")
         self.assertEqual(open_calls[0][0], tmpfile)
         self.assertEqual(open_calls[0][1], "rb")
 
