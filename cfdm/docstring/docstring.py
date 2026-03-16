@@ -371,7 +371,7 @@ _docstring_substitution_definitions = {
     # read filesystem
     "{{read filesystem: optional}}": """filesystem: optional
             A pre-authenticated filesystem object (for example an
-            ``fsspec`` filesystem instance) to use for opening the
+            `fsspec` filesystem instance) to use for opening the
             dataset. When provided, *datasets* values are treated as
             paths understood by *filesystem*, and local string
             pre-processing (tilde/variable expansion, globbing and
