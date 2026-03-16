@@ -544,7 +544,7 @@ class NetCDFRead(IORead):
 
         g["cdl_filename"] = cdl_filename
 
-        filesystem = g.get("filesystem")
+        filesystem = g["filesystem"]
         if filesystem is not None:
             # --------------------------------------------------------
             # A pre-authenticated filesystem was provided: open the
