@@ -368,6 +368,21 @@ _docstring_substitution_definitions = {
             *Example:*
               ``('netCDF4', 'h5netcdf-pyfive', 'netcdf_file',
               'h5netcdf-h5py')``""",
+    # read filesystem
+    "{{read filesystem: optional}}": """filesystem: optional
+            A pre-authenticated filesystem object (for example an
+            ``fsspec`` filesystem instance) to use for opening the
+            dataset. When provided, *datasets* values are treated as
+            paths understood by *filesystem*, and local string
+            pre-processing (tilde/variable expansion, globbing and
+            directory walking) is bypassed. The file is opened by
+            calling ``filesystem.open(dataset, "rb")``, which returns
+            a file-like object that is passed to the netCDF backend.
+
+            If `None` (the default) then the existing file-opening
+            logic is used.
+
+            .. versionadded:: (cfdm) NEXTVERSION""",
     # read  storage_options
     "{{read storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
             Pass parameters to the backend file system driver, such as

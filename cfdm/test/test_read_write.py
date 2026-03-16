@@ -1541,6 +1541,73 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(f), 5)
 
 
+    def test_read_filesystem(self):
+        """Test cfdm.read with a pre-authenticated filesystem object."""
+        import io
+        from unittest.mock import MagicMock
+
+        f = self.f0
+        cfdm.write(f, tmpfile)
+
+        # ------------------------------------------------------------------
+        # Build a mock filesystem whose .open() returns the real file bytes
+        # so that the netCDF backend can parse them normally.
+        # ------------------------------------------------------------------
+        with open(tmpfile, "rb") as fh:
+            file_bytes = fh.read()
+
+        open_calls = []
+
+        def fake_open(path, mode="rb"):
+            open_calls.append((path, mode))
+            return io.BytesIO(file_bytes)
+
+        mock_fs = MagicMock()
+        mock_fs.open.side_effect = fake_open
+
+        # Read using the mock filesystem
+        result = cfdm.read(tmpfile, filesystem=mock_fs)
+
+        # filesystem.open() must have been called with the dataset path
+        self.assertTrue(len(open_calls) > 0, "filesystem.open was not called")
+        self.assertEqual(open_calls[0][0], tmpfile)
+        self.assertEqual(open_calls[0][1], "rb")
+
+        # The read result must match what we get without filesystem
+        expected = cfdm.read(tmpfile)
+        self.assertEqual(len(result), len(expected))
+        self.assertTrue(result[0].equals(expected[0]))
+
+    def test_read_filesystem_bypasses_glob(self):
+        """Test that filesystem=... bypasses local glob expansion."""
+        import io
+        from unittest.mock import MagicMock
+
+        f = self.f0
+        cfdm.write(f, tmpfile)
+
+        with open(tmpfile, "rb") as fh:
+            file_bytes = fh.read()
+
+        yielded_datasets = []
+
+        def fake_open(path, mode="rb"):
+            yielded_datasets.append(path)
+            return io.BytesIO(file_bytes)
+
+        mock_fs = MagicMock()
+        mock_fs.open.side_effect = fake_open
+
+        # Pass a glob-like pattern as the dataset.  Without filesystem,
+        # this would expand to matching local files.  With filesystem, it
+        # must be passed through unchanged.
+        pattern = "/some/remote/path/*.nc"
+        cfdm.read(pattern, filesystem=mock_fs)
+
+        # The pattern must have been forwarded verbatim to filesystem.open()
+        self.assertEqual(yielded_datasets, [pattern])
+
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()
