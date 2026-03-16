@@ -1537,7 +1537,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 self.implementation.get_data_axes(f, coord_key),
                 omit=omit,
                 construct_type=self.implementation.get_construct_type(coord),
-                bounds=True,
             )
 
         extra["bounds"] = ncvar
@@ -2990,7 +2989,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         data_variable=False,
         domain_variable=False,
         construct_type=None,
-        bounds=False,
         chunking=None,
     ):
         """Creates a new netCDF variable for a construct.
@@ -3034,11 +3032,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                 construct.
 
                 .. versionadded:: (cfdm) 1.10.1.0
-
-            bounds: `bool`, optional
-                If True then *cfvar* represents cell bounds.
-
-                .. versionadded:: (cfdm) NEXTVERSION
 
             chunking: sequence, optional
                 Set `_createVariable` 'contiguous', 'chunksizes', and
@@ -3938,6 +3931,8 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         # Type of compression applied to the field/domain
         if g["write_uncompressed"]:
+            # Write in uncompressed form, regardless of any actual
+            # compression-by-convention.
             compression_type = ""
         else:
             compression_type = self.implementation.get_compression_type(f)
@@ -5866,7 +5861,11 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                         f"Backend {backend!r} can't write {fmt!r} datasets"
                     )
             case "xarray":
+                # Writing to memory, not to disk.
                 self.write_vars["write_to_disk"] = False
+
+                # Write in uncompressed form, regardless of any actual
+                # compression-by-convention.
                 self.write_vars["write_uncompressed"] = True
 
                 if fmt not in XARRAY_FMTS:

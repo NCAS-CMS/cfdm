@@ -1,5 +1,7 @@
 class XarrayDataset:
-    """A mimic of `netCDF4.Dataset` for `xarray.Dataset`.
+    """An `xarray.Dataset` constructor.
+
+    Has a similar API to `netCDF4.Dataset`.
 
     If the `cf_xarray` package (https://cf-xarray.readthedocs.io) is
     installed then the `cf_xarray` accessors will be present on the
@@ -41,6 +43,8 @@ class XarrayDataset:
     def createDimension(self, *args, **kwargs):
         """Create a new dimension.
 
+        Has a similar API to `netCDF4.createDimension`.
+
         `xarray` handles dimensions implicitly, so this method does
         nothing.
 
@@ -55,6 +59,8 @@ class XarrayDataset:
 
     def createVariable(self, name, datatype, dimensions=(), coordinate=False):
         """Create a new variable.
+
+        Has a similar API to `netCDF4.createVariable`.
 
         .. versionadded:: (cfdm) NEXVERSION
 
@@ -104,7 +110,7 @@ class XarrayDataset:
         self.ds.attrs.update(attributes)
 
     def finalise(self):
-        """Return the equivalent `xarray.Dataset`.
+        """Return the `xarray.Dataset` instance.
 
         .. versionadded:: (cfdm) NEXVERSION
 
@@ -123,7 +129,9 @@ class XarrayDataset:
 
 
 class XarrayVariable:
-    """A mimic of `netCDF4.Variable` for `xarray.DataArray`.
+    """An `xarray.DataAray` constructor.
+
+    Has a similar API to `netCDF4.Variable`.
 
     .. versionadded:: (cfdm) NEXVERSION
 
@@ -162,7 +170,7 @@ class XarrayVariable:
         self.attrs.update(attributes)
 
     def finalise(self):
-        """Return the equivalent `xarray.DataArray`.
+        """Return the `xarray.DataArray` instance.
 
         .. versionadded:: (cfdm) NEXVERSION
 

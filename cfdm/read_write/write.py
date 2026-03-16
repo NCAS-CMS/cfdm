@@ -90,10 +90,10 @@ class write(ReadWrite):
             allowed, and standard tilde and shell parameter expansions
             are applied to the string.
 
-            If the output dataset is to be an object in memory, as
-            opposed to a files or directories on disk (e.g. when *fmt*
-            is ``'XARRAY'``), then *dataset_name* must be `None` (the
-            default).
+            If the output dataset is located in memory, as opposed to
+            on disk (which is determined by the setting of the *fmt*
+            parameter, such as ``'XARRAY'``), then *dataset_name* must
+            be `None` (the default).
 
             *Example:*
               The file ``file.nc`` in the user's home directory could
@@ -102,44 +102,39 @@ class write(ReadWrite):
               ``'~/file.nc'``, ``'~/tmp/../file.nc'``, etc.
 
         fmt: `str`, optional
-            The format of the output dataset. One of:
+            The format of the output dataset, which is either located
+            on disk or in memory. One of:
 
-            ==========================  ==============================
-            *fmt*                       Output dataset type
-            ==========================  ==============================
-            ``'NETCDF4'``               NetCDF4 format file. This is
-                                        the default on disk.
+            ==========================  ========  ==========================
+            *fmt*                       Location  Output dataset type
+            ==========================  ========  ==========================
+            ``'NETCDF4'``               Disk      NetCDF4 format (see
+                                                  below). This is the
+                                                  default.
 
-            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file on
-                                        disk. (see below)
+            ``'NETCDF4_CLASSIC'``       Disk      NetCDF4 classic
+                                                  format file (see below).
 
-            ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
-                                        (limited to file sizes less
-                                        than 2GB) on disk.
+            ``'NETCDF3_CLASSIC'``       Disk      NetCDF3 classic format
+                                                  file limited to file
+                                                  sizes of less than 2GB
+                                                  (see below).
 
-            ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
-                                        file on disk.
+            ``'NETCDF3_64BIT_OFFSET'``  Disk      NetCDF3 64-bit offset
+                                                  format file.
 
-            ``'NETCDF3_64BIT'``         An alias for
-                                        ``'NETCDF3_64BIT_OFFSET'``
+            ``'NETCDF3_64BIT'``         Disk      An alias for
+                                                  ``'NETCDF3_64BIT_OFFSET'``
 
-            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
-                                        file with extensions (see
-                                        below) on disk.
+            ``'NETCDF3_64BIT_DATA'``    Disk      NetCDF3 64-bit offset
+                                                  format file with
+                                                  extensions (see below).
 
-            ``'ZARR3'``                 Zarr v3 dataset on disk.
+            ``'ZARR3'``                 Disk      Zarr v3 dataset.
 
-            ``'XARRAY'``                `xarray.Dataset` in memory. If
-                                        the `cf_xarray` package is
-                                        installed then the `cf_xarray`
-                                        accessors will be present on
-                                        the returned `xarray` objects
-                                        (`xarray.DataArray.cf` and
-                                        `xarray.Dataset.cf`) that
-                                        allow some extra
-                                        interpretation of CF
-                                        attributes.
-            ==========================  ==============================
+            ``'XARRAY'``                Memory   `xarray.Dataset` (see
+                                                  below).
+            ==========================  ========  ==========================
 
             By default the format is ``'NETCDF4'``.
 
@@ -162,6 +157,11 @@ class write(ReadWrite):
 
             ``'NETCDF4'`` files use the version 4 disk format (HDF5)
             and use the new features of the version 4 API.
+
+            ``'XARRAY'`` datasets in memory will have the `cf_xarray`
+            (https://pypi.org/project/cf-xarray) accessors that allow
+            some extra interpretation of CF attributes, but only if
+            `cf_xarray` package is installed.
 
         mode: `str`, optional
             Specify the mode of write access for the output
