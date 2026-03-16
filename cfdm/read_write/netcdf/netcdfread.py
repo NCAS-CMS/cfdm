@@ -550,7 +550,19 @@ class NetCDFRead(IORead):
             # A pre-authenticated filesystem was provided: open the
             # dataset as a file-like object and pass it to the backend.
             # --------------------------------------------------------
-            dataset = filesystem.open(dataset, "rb")
+            try:
+                dataset = filesystem.open(dataset, "rb")
+            except AttributeError:
+                raise AttributeError(
+                    f"The 'filesystem' object {filesystem!r} does not have "
+                    "an 'open' method. Please provide a valid filesystem "
+                    "object (e.g. an fsspec filesystem instance)."
+                )
+            except Exception as exc:
+                raise OSError(
+                    f"Failed to open {dataset!r} using the provided "
+                    f"'filesystem' object {filesystem!r}: {exc}"
+                ) from exc
         else:
             u = urisplit(dataset)
             storage_options = self._get_storage_options(dataset, u)

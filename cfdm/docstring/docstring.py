@@ -379,8 +379,9 @@ _docstring_substitution_definitions = {
             calling ``filesystem.open(dataset, "rb")``, which returns
             a file-like object that is passed to the netCDF backend.
 
-            If `None` (the default) then the existing file-opening
-            logic is used.
+            If `None` (the default) then files are opened using
+            built-in local file system access, or via S3-compatible
+            object store access for ``s3://`` URIs.
 
             .. versionadded:: (cfdm) NEXTVERSION""",
     # read  storage_options
