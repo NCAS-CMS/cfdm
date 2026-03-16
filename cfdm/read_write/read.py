@@ -355,6 +355,7 @@ class read(ReadWrite):
         if kwargs.get("filesystem") is not None:
             for dataset1 in datasets:
                 yield dataset1
+
             return
 
         if kwargs["cdl_string"]:
