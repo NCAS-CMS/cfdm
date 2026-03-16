@@ -56,7 +56,7 @@ class xarrayTest(unittest.TestCase):
         self.assertIsInstance(ds, xr.Dataset)
         str(ds)
 
-    def test_Field_to_xarray_from_dataset(self):
+    def test_Field_to_xarray_from_disk(self):
         """Test Field.to_xarray on datasets read from disk."""
         for dataset in (
             "example_field_0.nc",
@@ -87,6 +87,26 @@ class xarrayTest(unittest.TestCase):
                 ds = f.to_xarray()
                 self.assertIsInstance(ds, xr.Dataset)
                 str(ds)
+
+    def test_Field_to_xarray_groups(self):
+        """Test Field.to_xarray with groups."""
+        f = cfdm.example_field(0)
+        g = f.copy()
+
+        ds = f.to_xarray()
+        self.assertIsInstance(ds, xr.Dataset)
+
+        f.nc_set_variable("/forecast/model/q2")
+        ds = f.to_xarray()
+        self.assertIsInstance(ds, xr.DataTree)
+        str(ds)
+
+        ds = cfdm.write([f, g], fmt="XARRAY")
+        self.assertIsInstance(ds, xr.DataTree)
+        str(ds)
+
+        self.assertIn("q", ds)
+        self.assertIn("q2", ds["/forecast/model"])
 
 
 if __name__ == "__main__":

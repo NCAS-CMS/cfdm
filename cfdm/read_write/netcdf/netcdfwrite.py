@@ -103,7 +103,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
                 return parent.create_group(group_name)
 
-            case "netCDF4":
+            case "netCDF4" | "xarray":
                 return parent.createGroup(group_name)
 
             case "zarr":
@@ -4990,7 +4990,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         """
         match self.write_vars["backend"]:
-            case "netCDF4":
+            case "netCDF4" | "xarray":
                 for group in groups:
                     if group in parent.groups:
                         parent = parent.groups[group]

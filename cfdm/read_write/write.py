@@ -132,7 +132,7 @@ class write(ReadWrite):
 
             ``'ZARR3'``                 Disk      Zarr v3 dataset.
 
-            ``'XARRAY'``                Memory   `xarray.Dataset` (see
+            ``'XARRAY'``                Memory    `xarray` dataset (see
                                                   below).
             ==========================  ========  ==========================
 
@@ -158,10 +158,15 @@ class write(ReadWrite):
             ``'NETCDF4'`` files use the version 4 disk format (HDF5)
             and use the new features of the version 4 API.
 
-            ``'XARRAY'`` datasets in memory will have the `cf_xarray`
-            (https://pypi.org/project/cf-xarray) accessors that allow
-            some extra interpretation of CF attributes, but only if
-            `cf_xarray` package is installed.
+            ``'XARRAY'`` datasets in memory will be either
+            `xarray.Dataset` (if there are no sub-groups of the root
+            group) or else `xarray.DataTree` (if there are sub-groups
+            of the root group). If the `cf_xarray` package
+            (https://cf-xarray.readthedocs.io) is installed then the
+            `cf_xarray` accessors that allow some interpretation of CF
+            attributes will be present on the returned `xarray`
+            objects (`xarray.DataArray.cf` and `xarray.Dataset.cf`,
+            but not `xarray.DataTree`).
 
         mode: `str`, optional
             Specify the mode of write access for the output
@@ -824,7 +829,7 @@ class write(ReadWrite):
 
               - The `xarray` library.
               - Creates `xarray` datasets in memory.
-              - No files or directories are created on disk
+              - No files or directories are created on disk.
 
             The default backend of `None` results in a backend that
             depends on the dataset format specified with the *fmt*
