@@ -508,9 +508,10 @@ class write(ReadWrite):
         group: `bool`, optional
             If False then create a "flat" dataset, i.e. one with only
             the root group, regardless of any group structure
-            specified by the field constructs. By default any groups
-            defined by the netCDF interface of the field constructs
-            and its components will be created and populated.
+            specified by the field constructs. If True (the default)
+            then any sub-groups defined by the netCDF interface of the
+            field or domain constructs and their components will be
+            created and populated.
 
             .. versionadded:: (cfdm) 1.8.6
 

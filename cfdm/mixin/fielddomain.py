@@ -2625,17 +2625,13 @@ class FieldDomain:
             removed_at="5.0.0",
         )  # pragma: no cover
 
-    def to_xarray(self):
+    def to_xarray(self, group=True):
         """Convert the {{class}} to an `xarray` dataset.
 
-        If the `cf_xarray` package (https://cf-xarray.readthedocs.io)
-        is installed then the `cf_xarray` accessors that allow some
-        interpretation of CF attributes will bxe present on the
-        returned `xarray` objects (`xarray.DataArray.cf` and
-        `xarray.Dataset.cf`, but not `xarray.DataTree`).
+        {{cf_xarray description}}
 
         Note that ``ds = f.to_xarray()`` is identical to ``ds =
-        cfdm.write(f, 'fmt='XARRAY')``; and multiple fields and
+        cfdm.write(f, fmt='XARRAY')``; and multiple fields and
         domains may be written to the same `xarray` dataset with
         `cfdm.write`, e.g. ``ds = cfdm.write([f, g], fmt='XARRAY')``.
 
@@ -2643,15 +2639,21 @@ class FieldDomain:
 
         .. seealso:: `cfdm.write`
 
+        :Parameter:
+
+            group: `bool`, optional
+                If False then create a "flat" dataset, i.e. one with
+                only the root group, regardless of any group structure
+                specified by the field constructs. If True (the
+                default) then any sub-groups defined by the netCDF
+                interface of the {{class}} constructs and its
+                components will be created and populated.
+
         :Returns:
 
-            `xarray.Dataset` or `xarray.DataTree`
-                The equivalent `xarray` dataset. If there are no
-                sub-groups of the root group then an `xarray.Dataset`
-                is returned, oterwise an `xarray.DataTree` is
-                returned.
+            {{Returns xarray}}
 
         """
         from cfdm.read_write import write
 
-        return write(self, fmt="XARRAY")
+        return write(self, fmt="XARRAY", group=group)

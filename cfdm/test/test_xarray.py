@@ -99,14 +99,29 @@ class xarrayTest(unittest.TestCase):
         f.nc_set_variable("/forecast/model/q2")
         ds = f.to_xarray()
         self.assertIsInstance(ds, xr.DataTree)
+        self.assertIn("q2", ds["/forecast/model"])
         str(ds)
 
+        # group=True
         ds = cfdm.write([f, g], fmt="XARRAY")
         self.assertIsInstance(ds, xr.DataTree)
         str(ds)
 
         self.assertIn("q", ds)
         self.assertIn("q2", ds["/forecast/model"])
+
+        # group=False
+        ds = f.to_xarray(group=False)
+        self.assertIsInstance(ds, xr.Dataset)
+        self.assertIn("q2", ds)
+        str(ds)
+
+        ds = cfdm.write([f, g], fmt="XARRAY", group=False)
+        self.assertIsInstance(ds, xr.Dataset)
+        str(ds)
+
+        self.assertIn("q", ds)
+        self.assertIn("q2", ds)
 
 
 if __name__ == "__main__":
