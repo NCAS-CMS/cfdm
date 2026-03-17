@@ -123,6 +123,12 @@ class xarrayTest(unittest.TestCase):
         self.assertIn("q", ds)
         self.assertIn("q2", ds)
 
+    def test_write_xarray_external(self):
+        """Test cfdm.write with xarray and external file."""
+        f = cfdm.example_field(0)
+        with self.assertRaises(ValueError):
+            cfdm.write(f, fmt="XARRAY", external="file.nc")
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

@@ -6305,6 +6305,12 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                     f"CF-{g['output_version']}. Need CF-1.7 or later."
                 )
 
+            if not g["write_to_disk"]:
+                raise ValueError(
+                    f"For output dataset format {g['fmt']!r}, "
+                    f"must have external=None. Got external={external!r}"
+                )
+
             external = os.path.expanduser(os.path.expandvars(external))
             if os.path.realpath(external) == os.path.realpath(dataset_name):
                 raise ValueError(

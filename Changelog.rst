@@ -5,10 +5,10 @@ Version NEXTVERSION
 
 * New methods to convert to `xarray`: `cf.Field.to_xarray` and
   `cf.Domain.to_xarray`
-  (https://github.com/NCAS-CMS/cfdm/issues/???)
+  (https://github.com/NCAS-CMS/cfdm/issues/394)
 * New output format for `cfdm.write` that creates an `xarray` dataset
   in memory: ``'XARRAY'``
-  (https://github.com/NCAS-CMS/cfdm/issues/???)
+  (https://github.com/NCAS-CMS/cfdm/issues/394)
 * Write UGRID datasets with `cfdm.write`
   (https://github.com/NCAS-CMS/cfdm/issues/271)
 * New keyword parameter to `cfdm.Data.compute`: ``persist``
