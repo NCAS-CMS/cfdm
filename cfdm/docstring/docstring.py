@@ -376,7 +376,7 @@ _docstring_substitution_definitions = {
             paths understood by *filesystem*, and local string
             pre-processing (tilde/variable expansion, globbing and
             directory walking) is bypassed. The file is opened by
-            calling ``filesystem.open(dataset, "rb")``, which returns
+            calling ``filesystem.open(dataset, 'rb')``, which returns
             a file-like object that is passed to the netCDF backend.
 
             If `None` (the default) then files are opened using
