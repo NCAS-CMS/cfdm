@@ -1540,7 +1540,6 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(tmpdir1, recursive=True)
         self.assertEqual(len(f), 5)
 
-
     def test_read_filesystem(self):
         """Test cfdm.read with a pre-authenticated filesystem object."""
         import io
@@ -1569,7 +1568,9 @@ class read_writeTest(unittest.TestCase):
         result = cfdm.read(tmpfile, filesystem=mock_fs)
 
         # filesystem.open() must have been called with the dataset path
-        self.assertGreater(len(open_calls), 0, "filesystem.open was not called")
+        self.assertGreater(
+            len(open_calls), 0, "filesystem.open was not called"
+        )
         self.assertEqual(open_calls[0][0], tmpfile)
         self.assertEqual(open_calls[0][1], "rb")
 
@@ -1579,7 +1580,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(result[0].equals(expected[0]))
 
     def test_read_filesystem_bypasses_glob(self):
-        """Test that filesystem=... bypasses local glob expansion."""
+        """Test the filesystem keyword to cfdm.read."""
         import io
         from unittest.mock import MagicMock
 
@@ -1606,6 +1607,12 @@ class read_writeTest(unittest.TestCase):
 
         # The pattern must have been forwarded verbatim to filesystem.open()
         self.assertEqual(yielded_datasets, [pattern])
+
+        # Check failure with backend other than h5netcdf-pyfive
+        with self.assertRaises(ValueError):
+            cfdm.read(
+                pattern, netcdf_backend="h5netcdf-h5py", filesystem=mock_fs
+            )
 
 
 if __name__ == "__main__":

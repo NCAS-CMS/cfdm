@@ -632,6 +632,12 @@ class NetCDFRead(IORead):
                 f"{error}"
             )
 
+        if filesystem is not None and g["nc_opened_with"] != "h5netcdf-pyfive":
+            raise ValueError(
+                "Can only set the filesystem keyword when the netCDF backend "
+                f"is 'h5netcdf-pyfive'. Got {g['nc_opened_with']}"
+            )
+
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
