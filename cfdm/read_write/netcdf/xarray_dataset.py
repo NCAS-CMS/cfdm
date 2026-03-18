@@ -179,25 +179,27 @@ class XarrayDataset:
         # Return a DateaTree that has the group structure
         import xarray as xr
 
-        current_node = xr.DataTree(dataset=ds, name=self.name)
+        current_group = xr.DataTree(dataset=ds, name=self.name)
 
         # 4. Recursively finalise children and attach them
-        for group_name, group in self.groups.items():
-            child_output = group.finalise()
+        for parent_group_name, parent_group in self.groups.items():
+            child_group = parent_group.finalise()
 
-            if isinstance(child_output, xr.Dataset):
+            if isinstance(child_group, xr.Dataset):
                 # Create a node for the Dataset
-                child_node = xr.DataTree(dataset=child_output, name=group_name)
+                child_node = xr.DataTree(
+                    dataset=child_group, name=parent_group_name
+                )
             else:
                 # child_output is already a DataTree node
-                child_node = child_output
-                child_node.name = group_name
+                child_node = child_group
+                child_node.name = parent_group_name
 
             # Use the node itself as a dictionary. This is the
             # "DataTree" way to add a child.
-            current_node[group_name] = child_node
+            current_group[parent_group_name] = child_node
 
-        return current_node
+        return current_group
 
     def setncatts(self, attributes):
         """Set dataset attributes.
