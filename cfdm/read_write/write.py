@@ -161,12 +161,11 @@ class write(ReadWrite):
             ``'XARRAY'`` datasets in memory will be either
             `xarray.Dataset` (if there are no sub-groups of the root
             group) or else `xarray.DataTree` (if there are sub-groups
-            of the root group). If the `cf_xarray` package
+            of the root group).If the `cf_xarray` package
             (https://cf-xarray.readthedocs.io) is installed then the
             `cf_xarray` accessors that allow some interpretation of CF
-            attributes will be present on the returned `xarray`
-            objects (`xarray.DataArray.cf` and `xarray.Dataset.cf`,
-            but not `xarray.DataTree`).
+            attributes will be present on `xarray.DataArray` and
+            `xarray.Dataset` objects.
 
         mode: `str`, optional
             Specify the mode of write access for the output

@@ -3601,7 +3601,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         xarray = backend == "xarray"
 
         if compressed and not g["write_uncompressed"]:
-            # Write data in its compressed-by-convnetion form
+            # Write data in its compressed-by-convention form
             data = data.source().source()
 
         # Get the dask array
@@ -5211,8 +5211,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
     def dataset_remove(self):
         """Remove the dataset that is being created.
 
-        If there is not datappp
-
         .. note:: If the dataset is a directory, then it is silently
                   not removed. To do so could be very dangerous (what
                   if it were your home space?).
@@ -5380,7 +5378,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         reference_datetime=None,
         netcdf_backend=None,
         h5py_options=None,
-        #            to_xarray=False
     ):
         """Write field and domain constructs to a dataset.
 
@@ -5684,7 +5681,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         # ------------------------------------------------------------
         self.write_vars = {
             "dataset_name": dataset_name,
-            # Whether or not to write to disk (as oppoed to memory).
+            # Whether or not to write to disk (as opposed to memory)
             "write_to_disk": True,
             # Whether or not to write in uncompressed form, regardless
             # of any actual compression-by-convention.
@@ -5871,7 +5868,9 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         if self.write_vars["write_to_disk"]:
             # Must provide a dataset name when writing to disk
             if not isinstance(dataset_name, str):
-                raise ValueError("TODOX")
+                raise ValueError(
+                    "Must provide a local dataset name when writing to disk"
+                )
 
             # Expand dataset name
             dataset_name = os.path.expanduser(os.path.expandvars(dataset_name))
@@ -5879,7 +5878,10 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             self.write_vars["dataset_name"] = dataset_name
         elif dataset_name is not None:
             # Must not provide a dataset name when not writing to disk
-            raise ValueError("TODOX")
+            raise ValueError(
+                "Must not provide a local dataset name when writing to "
+                f"memory. Got dataset_name={dataset_name!r}"
+            )
 
         # -------------------------------------------------------
         # Backend
@@ -6092,7 +6094,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         if mode == "w":  # only one iteration required in this simple case
             if self.write_vars["backend"] == "xarray":
                 # Return the xarray dataset
-                return self.write_vars["dataset"].finalise()
+                return self.write_vars["dataset"].to_xarray()
 
             return
 

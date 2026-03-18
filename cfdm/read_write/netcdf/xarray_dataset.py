@@ -7,25 +7,31 @@ class XarrayDataset:
 
     If the `cf_xarray` package (https://cf-xarray.readthedocs.io) is
     installed then the `cf_xarray` accessors that allow some
-    interpretation of CF attributes will bxe present on the returned
-    `xarray` objects (`xarray.DataArray.cf` and `xarray.Dataset.cf`,
-    but not `xarray.DataTree`).
+    interpretation of CF attributes will be present on
+    `xarray.DataArray` and `xarray.Dataset` objects.
 
     Has a similar API to `netCDF4.Dataset`.
 
-    .. versionadded:: (cfdm) NEXVERSION
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
     def __init__(self, name=None):
-        """**Initialisation**"""
+        """**Initialisation**
+
+        :Parameters:
+
+            name: `str` or `None`
+                The name of the group, or `None` for the root group.
+
+        """
         try:
             import xarray as xr
         except ModuleNotFoundError as error:
             error.msg += (
                 ". Install the 'xarray' package "
-                "(https://pypi.org/project/xarray) to convert to a xarray "
-                "datasets"
+                "(https://pypi.org/project/xarray) to convert to an xarray "
+                "dataset"
             )
             raise
 
@@ -56,7 +62,7 @@ class XarrayDataset:
         `xarray` handles dimensions implicitly, so this method does
         nothing.
 
-        .. versionadded:: (cfdm) NEXVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -70,7 +76,7 @@ class XarrayDataset:
 
         Has a similar API to `netCDF4.createGroup`.
 
-        .. versionadded:: (cfdm) NEXVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -87,10 +93,10 @@ class XarrayDataset:
         if "/" in group_name:
             raise ValueError(
                 f"Cant create group {group_name!r}: Can only create "
-                "subgroups direcly inside the parent"
+                "subgroups directly inside the parent"
             )
 
-        new_group = XarrayDataset(name=group_name)
+        new_group = type(self)(name=group_name)
         self.groups[group_name] = new_group
 
         return new_group
@@ -100,7 +106,7 @@ class XarrayDataset:
 
         Has a similar API to `netCDF4.createVariable`.
 
-        .. versionadded:: (cfdm) NEXVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -155,10 +161,22 @@ class XarrayDataset:
 
         return var
 
-    def finalise(self):
+    def setncatts(self, attributes):
+        """Set dataset attributes.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `None`
+
+        """
+        self.ds.attrs.update(attributes)
+
+    def to_xarray(self):
         """Return the `xarray` dataset.
 
-        .. versionadded:: (cfdm) NEXVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -168,22 +186,27 @@ class XarrayDataset:
         ds = self.ds
 
         for name, var in self.coords.items():
-            ds.coords[name] = var.finalise()
+            ds.coords[name] = var.to_xarray()
 
         for name, var in self.data_vars.items():
-            ds[name] = var.finalise()
+            ds[name] = var.to_xarray()
 
         if not self.groups:
+            # --------------------------------------------------------
+            # Return an xr.Dataset that has no group structure
+            # --------------------------------------------------------
             return ds
 
-        # Return a DateaTree that has the group structure
+        # ------------------------------------------------------------
+        # Return an xr.DataTree that has a group structure
+        # ------------------------------------------------------------
         import xarray as xr
 
         current_group = xr.DataTree(dataset=ds, name=self.name)
 
-        # 4. Recursively finalise children and attach them
+        # Recursively convert children to xarray, and attach them.
         for parent_group_name, parent_group in self.groups.items():
-            child_group = parent_group.finalise()
+            child_group = parent_group.to_xarray()
 
             if isinstance(child_group, xr.Dataset):
                 # Create a node for the Dataset
@@ -196,30 +219,18 @@ class XarrayDataset:
                 child_node.name = parent_group_name
 
             # Use the node itself as a dictionary. This is the
-            # "DataTree" way to add a child.
+            # xr.DataTree way to add a child.
             current_group[parent_group_name] = child_node
 
         return current_group
 
-    def setncatts(self, attributes):
-        """Set dataset attributes.
-
-        .. versionadded:: (cfdm) NEXVERSION
-
-        :Returns:
-
-            `None`
-
-        """
-        self.ds.attrs.update(attributes)
-
 
 class XarrayVariable:
-    """An `xarray.DataAray` constructor.
+    """An `xarray.DataArray` constructor.
 
     Has a similar API to `netCDF4.Variable`.
 
-    .. versionadded:: (cfdm) NEXVERSION
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
@@ -235,7 +246,7 @@ class XarrayVariable:
                 Typecode or data-type of the variable.
 
             dimensions: sequence of `str`, optional
-                The dimension of the variable.
+                The names of the dimensions of the variable.
 
         """
         self.name = name
@@ -246,7 +257,7 @@ class XarrayVariable:
     def setncatts(self, attributes):
         """Set variable attributes.
 
-        .. versionadded:: (cfdm) NEXVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -255,10 +266,10 @@ class XarrayVariable:
         """
         self.attrs.update(attributes)
 
-    def finalise(self):
+    def to_xarray(self):
         """Return the `xarray` variable.
 
-        .. versionadded:: (cfdm) NEXVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 

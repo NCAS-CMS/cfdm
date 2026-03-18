@@ -840,9 +840,8 @@ _docstring_substitution_definitions = {
     # cf_xarray
     "{{cf_xarray description}}": """If the `cf_xarray` package (https://cf-xarray.readthedocs.io)
         is installed then the `cf_xarray` accessors that allow some
-        interpretation of CF attributes will be present on the
-        returned `xarray` objects (`xarray.DataArray.cf` and
-        `xarray.Dataset.cf`, but not `xarray.DataTree`).""",
+        interpretation of CF attributes will be present on
+        `xarray.DataArray` and `xarray.Dataset` objects.""",
     # sharding
     "{{sharding description}}": """
         When writing to a Zarr dataset, sharding provides a mechanism
