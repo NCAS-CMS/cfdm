@@ -633,7 +633,7 @@ class NetCDFRead(IORead):
             )
 
         if filesystem is not None and g["nc_opened_with"] != "h5netcdf-pyfive":
-            raise ValueError(
+            raise NotImplementedError(
                 "Can only set the filesystem keyword when the netCDF backend "
                 f"is 'h5netcdf-pyfive'. Got {g['nc_opened_with']}"
             )

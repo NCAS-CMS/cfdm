@@ -1609,7 +1609,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(yielded_datasets, [pattern])
 
         # Check failure with backend other than h5netcdf-pyfive
-        with self.assertRaises(ValueError):
+        with self.assertRaises(NotImplementedError):
             cfdm.read(
                 pattern, netcdf_backend="h5netcdf-h5py", filesystem=mock_fs
             )
