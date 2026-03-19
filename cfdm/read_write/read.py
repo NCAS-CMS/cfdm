@@ -154,6 +154,10 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.11.2.0
 
+        {{read filesystem: optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         {{read storage_options: `dict` or `None`, optional}}
 
             .. versionadded:: (cfdm) 1.11.2.0
@@ -243,6 +247,7 @@ class read(ReadWrite):
         domain=False,
         netcdf_backend=None,
         storage_options=None,
+        filesystem=None,
         cache=True,
         dask_chunks="storage-aligned",
         store_dataset_chunks=True,
@@ -344,6 +349,15 @@ class read(ReadWrite):
         followlinks = kwargs.get("followlinks", False)
 
         datasets = self._flat(kwargs["datasets"])
+
+        # If a filesystem object is provided, treat each dataset path
+        # as-is (no local glob/walk/expansion) and yield directly.
+        if kwargs.get("filesystem") is not None:
+            for dataset1 in datasets:
+                yield dataset1
+
+            return
+
         if kwargs["cdl_string"]:
             # Return CDL strings as they are
             for dataset1 in datasets:
@@ -580,6 +594,7 @@ class read(ReadWrite):
                         "unpack",
                         "domain",
                         "storage_options",
+                        "filesystem",
                         "netcdf_backend",
                         "cache",
                         "dask_chunks",
