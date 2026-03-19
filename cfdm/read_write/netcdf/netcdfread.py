@@ -544,35 +544,55 @@ class NetCDFRead(IORead):
 
         g["cdl_filename"] = cdl_filename
 
-        u = urisplit(dataset)
-        storage_options = self._get_storage_options(dataset, u)
-
-        if u.scheme == "s3":
+        filesystem = g["filesystem"]
+        if filesystem is not None:
             # --------------------------------------------------------
-            # A file in an S3 object store
+            # A pre-authenticated filesystem was provided: open the
+            # dataset as a file-like object and pass it to the backend.
             # --------------------------------------------------------
-            from dask.base import tokenize
+            try:
+                dataset = filesystem.open(dataset, "rb")
+            except AttributeError:
+                raise AttributeError(
+                    f"The 'filesystem' object {filesystem!r} does not have "
+                    "an 'open' method. Please provide a valid filesystem "
+                    "object (e.g. an fsspec filesystem instance)."
+                )
+            except Exception as exc:
+                raise OSError(
+                    f"Failed to open {dataset!r} using the provided "
+                    f"'filesystem' object {filesystem!r}: {exc}"
+                ) from exc
+        else:
+            u = urisplit(dataset)
+            storage_options = self._get_storage_options(dataset, u)
 
-            # Create an openable S3 file object
-            fs_key = tokenize(("s3", storage_options))
-            file_systems = g["file_systems"]
-            file_system = file_systems.get(fs_key)
-            if file_system is None:
-                # An S3 file system with these options does not exist,
-                # so create one.
-                from s3fs import S3FileSystem
+            if u.scheme == "s3":
+                # --------------------------------------------------------
+                # A file in an S3 object store
+                # --------------------------------------------------------
+                from dask.base import tokenize
 
-                file_system = S3FileSystem(**storage_options)
-                file_systems[fs_key] = file_system
+                # Create an openable S3 file object
+                fs_key = tokenize(("s3", storage_options))
+                file_systems = g["file_systems"]
+                file_system = file_systems.get(fs_key)
+                if file_system is None:
+                    # An S3 file system with these options does not exist,
+                    # so create one.
+                    from s3fs import S3FileSystem
 
-            # Reset 'dataset' to an s3fs.File object that can be
-            # passed to the netCDF backend
-            dataset = file_system.open(u.path[1:], "rb")
+                    file_system = S3FileSystem(**storage_options)
+                    file_systems[fs_key] = file_system
 
-            if is_log_level_detail(logger):
-                logger.detail(
-                    f"    S3: s3fs.S3FileSystem options: {storage_options}\n"
-                )  # pragma: no cover
+                # Reset 'dataset' to an s3fs.File object that can be
+                # passed to the netCDF backend
+                dataset = file_system.open(u.path[1:], "rb")
+
+                if is_log_level_detail(logger):
+                    logger.detail(
+                        f"    S3: s3fs.S3FileSystem options: {storage_options}\n"
+                    )  # pragma: no cover
 
         # Map backend names to dataset-open functions
         dataset_open_function = {
@@ -610,6 +630,12 @@ class NetCDFRead(IORead):
                 f"Can't interpret {dataset} as a netCDF dataset "
                 f"with any of the backends {netcdf_backend!r}:\n\n"
                 f"{error}"
+            )
+
+        if filesystem is not None and g["nc_opened_with"] != "h5netcdf-pyfive":
+            raise NotImplementedError(
+                "Can only set the filesystem keyword when the netCDF backend "
+                f"is 'h5netcdf-pyfive'. Got {g['nc_opened_with']}"
             )
 
         # ------------------------------------------------------------
@@ -1015,6 +1041,7 @@ class NetCDFRead(IORead):
         warn_valid=False,
         domain=False,
         storage_options=None,
+        filesystem=None,
         _file_systems=None,
         netcdf_backend=None,
         cache=True,
@@ -1084,6 +1111,11 @@ class NetCDFRead(IORead):
                 See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.11.2.0
+
+            filesystem: optional
+                See `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             netcdf_backend: `None` or `str`, optional
                 See `cfdm.read` for details.
@@ -1229,22 +1261,33 @@ class NetCDFRead(IORead):
         # Note that the `dataset_type` method is much faster than the
         # `dataset_open` method at returning for unrecognised types.
         # ------------------------------------------------------------
-        d_type = self.dataset_type(dataset, dataset_type)
-        if not d_type:
-            # Can't interpret the dataset as a recognised type, so
-            # either raise an exception or return an empty list.
-            if dataset_type is None:
-                raise DatasetTypeError(
-                    f"Can't interpret {dataset} as a dataset of one of the "
-                    f"valid types: {valid_dataset_types!r}"
-                )
+        if filesystem is not None:
+            # When a pre-authenticated filesystem is provided we cannot
+            # inspect the file locally, so we trust the caller.  Use
+            # the explicitly requested dataset_type if given, otherwise
+            # default to 'netCDF'.
+            if dataset_type is not None and "netCDF" not in dataset_type:
+                # The caller explicitly excluded netCDF; nothing to do.
+                return []
 
-            return []
+            d_type = "netCDF"
+        else:
+            d_type = self.dataset_type(dataset, dataset_type)
+            if not d_type:
+                # Can't interpret the dataset as a recognised type, so
+                # either raise an exception or return an empty list.
+                if dataset_type is None:
+                    raise DatasetTypeError(
+                        f"Can't interpret {dataset} as a dataset of one of the "
+                        f"valid types: {valid_dataset_types!r}"
+                    )
 
-        # Can interpret the dataset as a recognised type, but return
-        # an empty list if that type has been exlcuded.
-        if dataset_type is not None and d_type not in dataset_type:
-            return []
+                return []
+
+            # Can interpret the dataset as a recognised type, but return
+            # an empty list if that type has been exlcuded.
+            if dataset_type is not None and d_type not in dataset_type:
+                return []
 
         # ------------------------------------------------------------
         # Parse the 'netcdf_backend' keyword parameter
@@ -1532,6 +1575,8 @@ class NetCDFRead(IORead):
             "file_system_storage_options": {},
             # Cached s3fs.S3FileSystem objects
             "file_systems": _file_systems,
+            # Pre-authenticated filesystem object (e.g. fsspec)
+            "filesystem": filesystem,
             # --------------------------------------------------------
             # Array element caching
             # --------------------------------------------------------

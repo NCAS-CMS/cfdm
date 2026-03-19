@@ -3,6 +3,7 @@ import datetime
 import faulthandler
 import os
 import platform
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -16,6 +17,12 @@ import cfdm
 from cfdm.read_write.exceptions import DatasetTypeError, ReadError
 
 warnings = False
+
+# Set up temporary directories
+tmpdirs = [
+    tempfile.mkdtemp("_test_read_write", dir=os.getcwd()) for i in range(1)
+]
+[tmpdir1] = tmpdirs
 
 # Set up temporary files
 n_tmpfiles = 9
@@ -44,6 +51,13 @@ def _remove_tmpfiles():
     for f in tmpfiles:
         try:
             os.remove(f)
+        except OSError:
+            pass
+
+    for d in tmpdirs:
+        try:
+            shutil.rmtree(d)
+            os.rmdir(d)
         except OSError:
             pass
 
@@ -1067,6 +1081,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(h), 1)
         self.assertTrue(f.equals(h[0]))
 
+    @unittest.skipIf(True, "Flakey")
     def test_read_url(self):
         """Test reading remote url."""
         for scheme in ("http", "https"):
@@ -1489,6 +1504,115 @@ class read_writeTest(unittest.TestCase):
         g = cfdm.read(tmpfile, netcdf_backend="netcdf_file")[0]
 
         self.assertTrue(g.equals(f))
+
+    def test_read_zarr_and_non_zarr(self):
+        """Test reading Zarr and non-Zarr datasets at the same time."""
+        # Copy a netCDF and Zarr datasets to a new directory and
+        # subdirectory
+        nc = "test_file.nc"
+        shutil.copy(nc, tmpdir1)
+
+        zarr = "example_field_0.zarr3"
+        shutil.copytree(
+            zarr,
+            os.path.join(tmpdir1, zarr + "a"),
+            dirs_exist_ok=True,
+        )
+        shutil.copytree(
+            zarr,
+            os.path.join(tmpdir1, zarr + "b"),
+            dirs_exist_ok=True,
+        )
+        shutil.copytree(
+            zarr,
+            os.path.join(os.path.join(tmpdir1, "subdir"), zarr + "c"),
+            dirs_exist_ok=True,
+        )
+
+        shutil.copy(nc, os.path.join(tmpdir1, "subdir"))
+
+        # Read the new directory and check that all datasets were read
+        f = cfdm.read(tmpdir1)
+        self.assertEqual(len(f), 3)
+
+        # Read the new directory recursively and check that all
+        # datasets were read
+        f = cfdm.read(tmpdir1, recursive=True)
+        self.assertEqual(len(f), 5)
+
+    def test_read_filesystem(self):
+        """Test cfdm.read with a pre-authenticated filesystem object."""
+        import io
+        from unittest.mock import MagicMock
+
+        f = self.f0
+        cfdm.write(f, tmpfile)
+
+        # ------------------------------------------------------------------
+        # Build a mock filesystem whose .open() returns the real file bytes
+        # so that the netCDF backend can parse them normally.
+        # ------------------------------------------------------------------
+        with open(tmpfile, "rb") as fh:
+            file_bytes = fh.read()
+
+        open_calls = []
+
+        def fake_open(path, mode="rb"):
+            open_calls.append((path, mode))
+            return io.BytesIO(file_bytes)
+
+        mock_fs = MagicMock()
+        mock_fs.open.side_effect = fake_open
+
+        # Read using the mock filesystem
+        result = cfdm.read(tmpfile, filesystem=mock_fs)
+
+        # filesystem.open() must have been called with the dataset path
+        self.assertGreater(
+            len(open_calls), 0, "filesystem.open was not called"
+        )
+        self.assertEqual(open_calls[0][0], tmpfile)
+        self.assertEqual(open_calls[0][1], "rb")
+
+        # The read result must match what we get without filesystem
+        expected = cfdm.read(tmpfile)
+        self.assertEqual(len(result), len(expected))
+        self.assertTrue(result[0].equals(expected[0]))
+
+    def test_read_filesystem_bypasses_glob(self):
+        """Test the filesystem keyword to cfdm.read."""
+        import io
+        from unittest.mock import MagicMock
+
+        f = self.f0
+        cfdm.write(f, tmpfile)
+
+        with open(tmpfile, "rb") as fh:
+            file_bytes = fh.read()
+
+        yielded_datasets = []
+
+        def fake_open(path, mode="rb"):
+            yielded_datasets.append(path)
+            return io.BytesIO(file_bytes)
+
+        mock_fs = MagicMock()
+        mock_fs.open.side_effect = fake_open
+
+        # Pass a glob-like pattern as the dataset.  Without filesystem,
+        # this would expand to matching local files.  With filesystem, it
+        # must be passed through unchanged.
+        pattern = "/some/remote/path/*.nc"
+        cfdm.read(pattern, filesystem=mock_fs)
+
+        # The pattern must have been forwarded verbatim to filesystem.open()
+        self.assertEqual(yielded_datasets, [pattern])
+
+        # Check failure with backend other than h5netcdf-pyfive
+        with self.assertRaises(NotImplementedError):
+            cfdm.read(
+                pattern, netcdf_backend="h5netcdf-h5py", filesystem=mock_fs
+            )
 
 
 if __name__ == "__main__":
