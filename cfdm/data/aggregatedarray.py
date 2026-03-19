@@ -39,6 +39,7 @@ class AggregatedArray(abstract.FileArray):
         unpack=True,
         fragment_array=None,
         attributes=None,
+        protocol=None,
         storage_options=None,
         source=None,
         copy=True,
@@ -76,30 +77,11 @@ class AggregatedArray(abstract.FileArray):
                    {'map': <'map' fragment variable data>,
                     'unique_values': <'unique_values' fragment variable data>}
 
-            storage_options: `dict` or `None`, optional
-                Key/value pairs to be passed on to the creation of
-                `s3fs.S3FileSystem` file systems to control the
-                opening of fragment files in S3 object stores. Ignored
-                for files not in an S3 object store, i.e. those whose
-                names do not start with ``s3:``.
+            {{init protocol: `None` or `str`, optional}}
 
-                By default, or if `None`, then *storage_options* is
-                taken as ``{}``.
+                .. versionadded:: (cfdm) NEXTVERSION
 
-                If the ``'endpoint_url'`` key is not in
-                *storage_options* or is not in a dictionary defined by
-                the ``'client_kwargs`` key (which is always the case
-                when *storage_options* is `None`), then one will be
-                automatically inserted for accessing a fragment S3
-                file. For example, for a file name of
-                ``'s3://store/data/file.nc'``, an ``'endpoint_url'``
-                key with value ``'https://store'`` would be created.
-
-                *Parameter example:*
-                  ``{'key: 'scaleway-api-key...', 'secret':
-                  'scaleway-secretkey...', 'endpoint_url':
-                  'https://s3.fr-par.scw.cloud', 'client_kwargs':
-                  {'region_name': 'fr-par'}}``
+            {{init storage_options: `dict` or `None`, optional}}
 
             {{init attributes: `dict` or `None`, optional}}
 
@@ -119,6 +101,7 @@ class AggregatedArray(abstract.FileArray):
             mask=True,
             unpack=unpack,
             attributes=attributes,
+            protocol=protocol,
             storage_options=storage_options,
             source=source,
             copy=copy,

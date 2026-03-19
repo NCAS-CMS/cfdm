@@ -544,35 +544,56 @@ class NetCDFRead(IORead):
 
         g["cdl_filename"] = cdl_filename
 
-        u = urisplit(dataset)
-        storage_options = self._get_storage_options(dataset, u)
+        protocol = None
 
-        if u.scheme == "s3":
+        filesystem = g["filesystem"]
+        if filesystem is not None:
             # --------------------------------------------------------
-            # A file in an S3 object store
+            # A pre-authenticated filesystem was provided: open the
+            # dataset as a file-like object and pass it to the backend.
             # --------------------------------------------------------
-            from dask.base import tokenize
+            storage_options = filesystem.storage_options
+            protocol = filesystem.protocol
 
-            # Create an openable S3 file object
-            fs_key = tokenize(("s3", storage_options))
-            file_systems = g["file_systems"]
-            file_system = file_systems.get(fs_key)
-            if file_system is None:
-                # An S3 file system with these options does not exist,
-                # so create one.
-                from s3fs import S3FileSystem
+            try:
+                dataset = filesystem.open(dataset, "rb", **storage_options)
+            except AttributeError:
+                raise AttributeError(
+                    f"The 'filesystem' object {filesystem!r} does not have "
+                    "an 'open' method. Please provide a valid filesystem "
+                    "object (e.g. an fsspec filesystem instance)."
+                )
+            except Exception as exc:
+                raise OSError(
+                    f"Failed to open {dataset!r} using the provided "
+                    f"'filesystem' object {filesystem!r}: {exc}"
+                ) from exc
 
-                file_system = S3FileSystem(**storage_options)
-                file_systems[fs_key] = file_system
+        else:
+            u = urisplit(dataset)
+            storage_options = self._get_storage_options(dataset, u)
 
-            # Reset 'dataset' to an s3fs.File object that can be
-            # passed to the netCDF backend
-            dataset = file_system.open(u.path[1:], "rb")
+            if u.scheme == "s3":
+                import fsspec
 
-            if is_log_level_detail(logger):
-                logger.detail(
-                    f"    S3: s3fs.S3FileSystem options: {storage_options}\n"
-                )  # pragma: no cover
+                filesystem = fsspec.filesystem(
+                    protocol=u.scheme, **storage_options
+                )
+
+                protocol = filesystem.protocol
+                storage_options = filesystem.storage_options
+
+                dataset = filesystem.open(u.path[1:], "rb")
+
+        if isinstance(protocol, tuple):
+            protocol = protocol[0]
+
+        g["file_system_protocol"] = protocol
+        g["file_system_storage_options"] = storage_options
+        if protocol and is_log_level_detail(logger):
+            logger.detail(
+                f"    {protocol}: storage_options: {storage_options}\n"
+            )  # pragma: no cover
 
         # Map backend names to dataset-open functions
         dataset_open_function = {
@@ -611,6 +632,12 @@ class NetCDFRead(IORead):
                 f"with any of the backends {netcdf_backend!r}:\n\n"
                 f"{error}"
             )
+
+        #        if filesystem is not None and g["nc_opened_with"] != "h5netcdf-pyfive"#:
+        #            raise NotImplementedError(
+        #                "Can only set the filesystem keyword when the netCDF backend "
+        #                f"is 'h5netcdf-pyfive'. Got {g['nc_opened_with']}"
+        #            )
 
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
@@ -875,7 +902,7 @@ class NetCDFRead(IORead):
         return tmpfile
 
     @classmethod
-    def dataset_type(cls, dataset, allowed_dataset_types):
+    def dataset_type(cls, dataset, allowed_dataset_types, filesystem=None):
         """Return type of the dataset.
 
         The dataset type is determined by solely by inspecting the
@@ -895,6 +922,9 @@ class NetCDFRead(IORead):
             allowed_dataset_types: `None` or sequence of `str`
                 The allowed dataset types.
 
+            filesystem: file system or `None`
+                TODOF
+
         :Returns:
 
             `str` or `None`
@@ -906,35 +936,38 @@ class NetCDFRead(IORead):
                 * `None` for anything else.
 
         """
-        import re
-
         from uritools import urisplit
 
-        # Assume that non-local URIs are netCDF or zarr
-        u = urisplit(dataset)
-        if u.scheme not in (None, "file"):
-            if (
-                allowed_dataset_types
-                and len(allowed_dataset_types) == 1
-                and "Zarr" in allowed_dataset_types
-            ):
-                # Assume that a non-local URI is zarr if
-                # 'allowed_dataset_types' is ('Zarr',)
+        if filesystem is None:
+            # No file system: Assume that non-local URIs are netCDF or
+            # Zarr
+            u = urisplit(dataset)
+            if u.scheme not in (None, "file"):
+                if (
+                    allowed_dataset_types
+                    and len(allowed_dataset_types) == 1
+                    and "Zarr" in allowed_dataset_types
+                ):
+                    # Assume that a non-local URI is zarr if
+                    # 'allowed_dataset_types' is ('Zarr',)
+                    return "Zarr"
+
+                # Assume that a non-local URI is netCDF if it's not Zarr
+                return "netCDF"
+
+            # Still here? Then check for a Zarr dataset
+            if cls.is_zarr(dataset, filesystem):
                 return "Zarr"
 
-            # Assume that a non-local URI is netCDF if it's not Zarr
-            return "netCDF"
+        else:
+            # There is a file system: Check directly for Zarr
+            if cls.is_zarr(dataset, filesystem):
+                return "Zarr"
 
-        # Still here? Then check for a local Zarr dataset
-        dataset = abspath(dataset, uri=False)
-        if isdir(dataset) and cls.is_zarr(dataset):
-            return "Zarr"
-
-        # Still here? Then check for a local netCDF or CDL file
+        # Still here? Then check for a netCDF or CDL
         try:
             # Read the first 4 bytes from the file
-            fh = open(dataset, "rb")
-            magic_number = struct.unpack("=L", fh.read(4))[0]
+            magic_number, fh = cls.get_magic_number(dataset, filesystem)
         except FileNotFoundError:
             raise
         except Exception:
@@ -955,9 +988,11 @@ class NetCDFRead(IORead):
                 else:
                     netcdf = line.startswith("netcdf ")
                     if not netcdf:
+                        from re import match
+
                         # Match comment and blank lines at the top of
                         # the file
-                        while re.match(r"^\s*//|^\s*$", line):
+                        while match(r"^\s*//|^\s*$", line):
                             line = fh.readline().decode("utf-8")
                             if not line:
                                 break
@@ -969,10 +1004,10 @@ class NetCDFRead(IORead):
                     else:
                         d_type = None
 
-        try:
-            fh.close()
-        except Exception:
-            pass
+            try:
+                fh.close()
+            except Exception:
+                pass
 
         return d_type
 
@@ -1015,7 +1050,7 @@ class NetCDFRead(IORead):
         warn_valid=False,
         domain=False,
         storage_options=None,
-        _file_systems=None,
+        filesystem=None,
         netcdf_backend=None,
         cache=True,
         dask_chunks="storage-aligned",
@@ -1084,6 +1119,11 @@ class NetCDFRead(IORead):
                 See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.11.2.0
+
+            filesystem: optional
+                See `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             netcdf_backend: `None` or `str`, optional
                 See `cfdm.read` for details.
@@ -1158,11 +1198,6 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) 1.11.2.0
 
-            _file_systems: `dict`, optional
-                Provide any already-open S3 file systems.
-
-                .. versionadded:: (cfdm) 1.11.2.0
-
             group_dimension_search: `str`, optional
                 How to interpret a group dimension name that has no
                 path. See `cfdm.read` for details.
@@ -1217,10 +1252,11 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Parse the 'dataset' keyword parameter
         # ------------------------------------------------------------
-        try:
-            dataset = abspath(dataset, uri=False)
-        except ValueError:
-            dataset = abspath(dataset)
+        if filesystem is None:
+            try:
+                dataset = abspath(dataset, uri=False)
+            except ValueError:
+                dataset = abspath(dataset)
 
         # ------------------------------------------------------------
         # Check the file type, raising an exception if the type is not
@@ -1229,7 +1265,7 @@ class NetCDFRead(IORead):
         # Note that the `dataset_type` method is much faster than the
         # `dataset_open` method at returning for unrecognised types.
         # ------------------------------------------------------------
-        d_type = self.dataset_type(dataset, dataset_type)
+        d_type = self.dataset_type(dataset, dataset_type, filesystem)
         if not d_type:
             # Can't interpret the dataset as a recognised type, so
             # either raise an exception or return an empty list.
@@ -1394,12 +1430,8 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         if storage_options is None:
             storage_options = {}
-
-        # ------------------------------------------------------------
-        # Parse the '_file_systems' keyword parameter
-        # ------------------------------------------------------------
-        if _file_systems is None:
-            _file_systems = {}
+        elif filesystem is not None:
+            raise ValueError("Can't TODOF")
 
         # ------------------------------------------------------------
         # Parse the 'cdl_string' keyword parameter
@@ -1528,10 +1560,12 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Input file system storage options
             "storage_options": storage_options,
-            # File system storage options for each file
+            # File system protocol (e.g. None, 's3', ('s3', s3a',), etc.)
+            "file_system_protocol": None,
+            # File system storage options
             "file_system_storage_options": {},
-            # Cached s3fs.S3FileSystem objects
-            "file_systems": _file_systems,
+            # Pre-authenticated filesystem object (e.g. fsspec)
+            "filesystem": filesystem,
             # --------------------------------------------------------
             # Array element caching
             # --------------------------------------------------------
@@ -2720,7 +2754,7 @@ class NetCDFRead(IORead):
             external_read_vars = self.read(
                 external_file,
                 _scan_only=True,
-                _file_systems=read_vars["file_systems"],
+                filesystem=read_vars["filesystem"],
                 verbose=verbose,
             )
 
@@ -6811,7 +6845,8 @@ class NetCDFRead(IORead):
             "mask": g["mask"],
             "unpack": g["unpack"],
             "attributes": attributes,
-            "storage_options": g["file_system_storage_options"].get(dataset),
+            "protocol": g["file_system_protocol"],
+            "storage_options": g["file_system_storage_options"],
         }
 
         if not self._cfa_is_aggregation_variable(ncvar):
@@ -11459,18 +11494,19 @@ class NetCDFRead(IORead):
         g = self.read_vars
         storage_options = g["storage_options"].copy()
 
-        client_kwargs = storage_options.get("client_kwargs", {})
-        if (
-            "endpoint_url" not in storage_options
-            and "endpoint_url" not in client_kwargs
-        ):
-            authority = parsed_dataset.authority
-            if not authority:
-                authority = ""
+        if parsed_dataset.scheme not in (None, "file"):
+            client_kwargs = storage_options.get("client_kwargs", {})
+            if (
+                "endpoint_url" not in storage_options
+                and "endpoint_url" not in client_kwargs
+            ):
+                authority = parsed_dataset.authority
+                if not authority:
+                    authority = ""
 
-            storage_options["endpoint_url"] = f"https://{authority}"
+                storage_options["endpoint_url"] = f"https://{authority}"
 
-        g["file_system_storage_options"].setdefault(dataset, storage_options)
+        g["file_system_storage_options"] = storage_options
 
         return storage_options
 
@@ -12182,10 +12218,13 @@ class NetCDFRead(IORead):
         return out
 
     @classmethod
-    def is_zarr(cls, path):
+    def is_zarr(cls, path, filesystem=None):
         """Whether or not a directory contains a Zarr dataset.
 
         Zarr v2 and v3 are supported.
+
+        .. warning:: It is assumed that the *path* is local if there
+                     is no *filesystem*.
 
         .. versionadded:: (cfdm) 1.12.2.0
 
@@ -12194,6 +12233,10 @@ class NetCDFRead(IORead):
             path: `str`
                 A directory pathname.
 
+            filesytem: file system, optional
+                The file system of the path. If `None` then the path
+                is assumed to be local.
+
         :Returns:
 
             `bool`
@@ -12201,11 +12244,29 @@ class NetCDFRead(IORead):
                 `False`.
 
         """
-        return (
-            isfile(join(path, "zarr.json"))  # v3
-            or isfile(join(path, ".zgroup"))  # v2
-            or isfile(join(path, ".zarray"))  # v2
-        )
+        zarr_files = ("zarr.json", ".zgroup", ".zarray")
+        if filesystem is None:
+            if not isdir(path):
+                return False
+
+            # No file system => assuming local path
+            for zarr_file in zarr_files:
+                if isfile(join(path, zarr_file)):
+                    return True
+
+            return False
+
+        # Got a file system
+        if not filesystem.isdir(path):
+            return False
+
+        sep = filesystem.sep
+        path = f"{path.rstrip(sep)}{sep}"
+        for zarr_file in zarr_files:
+            if filesystem.exists(f"{path}{zarr_file}"):
+                return True
+
+        return False
 
     def _create_quantization(self, ncvar):
         """Create quantization metadata.
@@ -12351,3 +12412,28 @@ class NetCDFRead(IORead):
             variable = g["variables"].get(ncvar)
 
         return variable
+
+    @classmethod
+    def get_magic_number(cls, dataset, filesystem=None):
+        """TODOF."""
+        # Read the first 4 bytes from the file and unpack them
+        if filesystem is None:
+            fh = open(dataset, "rb")
+        else:
+            try:
+                fh = filesystem.open(dataset, "rb")
+            except AttributeError:
+                raise AttributeError(
+                    f"The 'filesystem' object {filesystem!r} does not have "
+                    "an 'open' method. Please provide a valid filesystem "
+                    "object (e.g. an fsspec filesystem instance)."
+                )
+            except Exception as exc:
+                raise OSError(
+                    f"Failed to open {dataset!r} using the provided "
+                    f"'filesystem' object {filesystem!r}: {exc}"
+                ) from exc
+
+        magic_number = struct.unpack("=L", fh.read(4))[0]
+
+        return magic_number, fh
