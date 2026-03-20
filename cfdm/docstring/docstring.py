@@ -379,10 +379,6 @@ _docstring_substitution_definitions = {
             calling ``filesystem.open(dataset, 'rb')``, which returns
             a file-like object that is passed to the netCDF backend.
 
-            At present, filesystem objects can only be provided when
-            the netCDF backend is ``'h5netcdf-pyfive'`` (see
-            *netcdf_backen* for details)
-
             If `None` (the default) then files are opened using
             built-in local file system access; or via OPeNDAP access
             for ``http://`` and ``https://`` URIs; or via
@@ -1250,6 +1246,11 @@ _docstring_substitution_definitions = {
     "{{init attributes: `dict` or `None`, optional}}": """attributes: `dict` or `None`, optional
                 Provide netCDF attributes for the data as a dictionary
                 of key/value pairs.""",
+    # init storage_protocol
+    "{{init storage_protocol: `None` or `str`, optional}}": """storage_protocol: `None` or `str`, optional
+                The `fsspec` file system protocol (e.g, ``'file'``,
+                ``'s3'``, ``'http'``). If `None` (the default) then a
+                local file system is assumed.""",
     # init storage_options
     "{{init storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
                 Key/value pairs to be passed on to the creation of

@@ -23,6 +23,7 @@ class FileArray(Array):
         mask=True,
         unpack=True,
         attributes=None,
+        storage_protocol=None,
         storage_options=None,
         variable=None,
         source=None,
@@ -56,7 +57,13 @@ class FileArray(Array):
                 attributes will be set from those in the dataset
                 during the first `__getitem__` call.
 
+            {{init storage_protocol: `None` or `str`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
             {{init storage_options: `dict` or `None`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             variable: optional
                 An open dataset variable object. Setting *variable*
@@ -110,6 +117,13 @@ class FileArray(Array):
                 attributes = None
 
             try:
+                storage_protocol = source._get_component(
+                    "storage_protocol", None
+                )
+            except AttributeError:
+                storage_protocol = None
+
+            try:
                 storage_options = source._get_component(
                     "storage_options", None
                 )
@@ -133,6 +147,11 @@ class FileArray(Array):
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", bool(mask), copy=False)
         self._set_component("unpack", bool(unpack), copy=False)
+
+        if storage_protocol is not None:
+            self._set_component(
+                "storage_protocol", storage_protocol, copy=False
+            )
 
         if storage_options is not None:
             self._set_component("storage_options", storage_options, copy=copy)
@@ -188,6 +207,7 @@ class FileArray(Array):
             self.get_mask(),
             self.get_unpack(),
             self.get_attributes(copy=False),
+            self.get_storage_protocol(),
             self.get_storage_options(),
         )
 
@@ -342,7 +362,7 @@ class FileArray(Array):
                 default, f"{self.__class__.__name__} has no file name"
             )
 
-        if normalise:
+        if normalise and not self.has_remote_storage_protocol():
             filename = abspath(filename)
 
         return filename
@@ -359,53 +379,55 @@ class FileArray(Array):
         """
         return self._get_component("mask")
 
-    def get_storage_options(
-        self, create_endpoint_url=True, filename=None, parsed_filename=None
-    ):
-        """Return `s3fs.S3FileSystem` options for accessing S3 files.
+    def get_storage_protocol(self):
+        """The file system protocol.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seeaslo:: `has_remote_storage_protocol`, `get_storage_options`
+
+        :Returns:
+
+            `None` or str`
+                The file system protocol. If `None` the the file
+                system is the local file system.
+
+        **Examples**
+
+        >>> a.get_storage_protocol()
+        's3'
+        >>> a.get_storage_protocol()
+        'file'
+        >>> print(a.get_storage_protocol())
+        None
+
+        """
+        return self._get_component("storage_protocol", None)
+
+    def get_storage_options(self):
+        """Return the file system options.
 
         .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
             create_endpoint_url: `bool`, optional
-                If True, the default, then create an
-                ``'endpoint_url'`` option if and only if one was not
-                set during object initialisation. In this case the
-                ``'endpoint_url'`` will be set from the file name
-                returned by `get_filename`, unless either of the
-                *filename* or *parsed_filename* parameters is also
-                set.
+                Removed at version NEXTVERSION
 
             filename: `str`, optional
-                Used to set the ``'endpoint_url'`` if it was not
-                set during object initialisation and
-                *create_endpoint_url* is True. Ignored if the
-                *parsed_filename* parameter has been set.
+                Removed at version NEXTVERSION
 
             parsed_filename: `urllib.parse.ParseResult`, optional
-                Used to set the ``'endpoint_url'`` if it was not
-                set during object initialisation and
-                *create_endpoint_url* is True. Ignored if the
-                *filename* parameter has been set.
+                Removed at versiokn NEXTVERSION
 
         :Returns:
 
-            `dict` or `None`
-                The `s3fs.S3FileSystem` options.
+            `dict`
+                The storage options.
 
         **Examples**
 
-        >>> f.get_filename()
-        's3://store/data/file.nc'
-        >>> f.get_storage_options(create_endpoint_url=False)
-        {}
         >>> f.get_storage_options()
-        {'endpoint_url': 'https://store'}
-        >>> f.get_storage_options(filename='s3://other-store/data/file.nc')
-        {'endpoint_url': 'https://other-store'}
-        >>> f.get_storage_options(create_endpoint_url=False,
-        ...                       filename='s3://other-store/data/file.nc')
         {}
 
         >>> f.get_storage_options()
@@ -420,32 +442,6 @@ class FileArray(Array):
             storage_options = {}
         else:
             storage_options = deepcopy(storage_options)
-
-        client_kwargs = storage_options.get("client_kwargs", {})
-        if (
-            create_endpoint_url
-            and "endpoint_url" not in storage_options
-            and "endpoint_url" not in client_kwargs
-        ):
-            if parsed_filename is None:
-                from urllib.parse import urlparse
-
-                if filename is None:
-
-                    try:
-                        filename = self.get_filename(normalise=False)
-                    except AttributeError:
-                        pass
-                    else:
-                        parsed_filename = urlparse(filename)
-                else:
-                    parsed_filename = urlparse(filename)
-
-            if parsed_filename is not None and parsed_filename.scheme == "s3":
-                # Derive endpoint_url from filename
-                storage_options["endpoint_url"] = (
-                    f"https://{parsed_filename.netloc}"
-                )
 
         return storage_options
 
@@ -488,22 +484,27 @@ class FileArray(Array):
                 the data within the file.
 
         """
-        from urllib.parse import urlparse
-
         filename = self.get_filename(normalise=True)
-        url = urlparse(filename)
-        if url.scheme == "file":
-            # Convert a file URI into an absolute local path
-            filename = abspath(filename, uri=False)
-        elif url.scheme == "s3":
-            # Create an openable S3 file object
-            from s3fs import S3FileSystem
 
-            storage_options = self.get_storage_options(
-                create_endpoint_url=True, parsed_filename=url
+        if self.has_remote_storage_protocol():
+            from urllib.parse import urlparse
+
+            import fsspec
+
+            url = urlparse(filename)
+            if url.scheme == "s3":
+                filename = url.path[1:]
+
+            fs = fsspec.filesystem(
+                protocol=self.get_storage_protocol(),
+                **self.get_storage_options(),
             )
-            fs = S3FileSystem(**storage_options)
-            filename = fs.open(url.path[1:], "rb")
+            filename = fs.open(filename, "rb")
+        else:
+            try:
+                filename = abspath(filename, uri=False)
+            except ValueError:
+                filename = abspath(filename)
 
         try:
             dataset = func(filename, *args, **kwargs)
@@ -678,6 +679,22 @@ class FileArray(Array):
 
         """
         return self._get_component("unpack")
+
+    def has_remote_storage_protocol(self):
+        """Whether or not there is a remote file system protocol.
+
+        .. versionadded:: (cfdm)  NEXTVERSION
+
+        .. seeaslo:: `get_storage_protocol`, `get_storage_options`
+
+        :Returns:
+
+            `bool`
+                `True` if there is a remote file system protocol,
+                otherwise `False`.
+
+        """
+        return self.get_storage_protocol() not in (None, "file", "local")
 
     def replace_filename(self, filename):
         """Replace the file location.
