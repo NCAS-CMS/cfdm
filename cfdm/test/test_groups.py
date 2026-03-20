@@ -130,7 +130,7 @@ class GroupsTest(unittest.TestCase):
 
         grouped_file = grouped_file1
 
-        h = cfdm.read(grouped_file, netcdf_backend="h5netcdf-h5py", verbose=1)
+        h = cfdm.read(grouped_file, netcdf_backend="h5netcdf-pyfive")
         self.assertEqual(len(h), 1)
 
         h = h[0]
