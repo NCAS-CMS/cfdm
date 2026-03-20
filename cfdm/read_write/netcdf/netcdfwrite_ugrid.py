@@ -498,8 +498,8 @@ class NetCDFWriteUgrid:
         # coordinate themselves to disk.
         # ------------------------------------------------------------
         cell = domain_topology.get_cell(None)
+        node_coordinates = parent.node_coordinates(persist=True)
         if cell == "point":
-            node_coordinates = parent.node_coordinates(persist=True)
             mesh.update(
                 {
                     "topology_dimension": 0,
@@ -532,7 +532,6 @@ class NetCDFWriteUgrid:
                         f"{domain_topology!r}"
                     )
 
-            node_coordinates = parent.node_coordinates(persist=True)
             mesh.update(
                 {
                     "topology_dimension": topology_dimension,
