@@ -232,15 +232,16 @@ class netcdf_indexer:
         # ------------------------------------------------------------
         try:
             data = self._index(index)
-        except (IndexError, AttributeError):
+        except (IndexError, AttributeError, ValueError):
             # Assume we are here because we have one or more
             # np.newaxis values in 'index', and the variable doesn't
             # support that type of indexing. It is known that
-            # `netCDF4` and `zarr` raise an IndexError and `h5netcdf`
-            # raises an AttributeError.
+            # `netCDF4` and `zarr` raise a ValueError or IndexError
+            # and `h5netcdf` raises an AttributeError.
 
             # Subspace the variable with the np.newaxis elements
             # removed
+            print(2222, index)
             newaxis = np.newaxis
             index1 = [i for i in index if i is not newaxis]
             data = self._index(tuple(index1))
