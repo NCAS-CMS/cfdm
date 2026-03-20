@@ -545,17 +545,17 @@ class NetCDFRead(IORead):
         protocol = None
         storage_options = g["storage_options"]
 
+        # Store the original dataset. This in case it gets replace
+        # with a file-like object, but we need still need the original
+        # dataset string for paritcular backends.
+        original_dataset = dataset
+
         filesystem = g["filesystem"]
         if filesystem is not None:
             # --------------------------------------------------------
             # Pre-authenticated filesystem: open the dataset as a
             # file-like object and pass it to the backend.
             # --------------------------------------------------------
-            storage_options = filesystem.storage_options
-            protocol = filesystem.protocol
-            if isinstance(protocol, tuple):
-                protocol = protocol[0]
-
             if is_log_level_detail(logger):
                 logger.detail(
                     f"    {protocol} storage_options: {storage_options}\n"
@@ -574,34 +574,11 @@ class NetCDFRead(IORead):
                     f"Failed to open {dataset!r} using the provided "
                     f"'filesystem' object {filesystem!r}: {exc}"
                 ) from exc
-        #        else:
-        #            u = urisplit(dataset)
-        #            if u.scheme == "s3":
-        #                # ----------------------------------------------------
-        #                # Dataset is an s3://... string.
-        #                # ----------------------------------------------------
-        #                import fsspec
-        #
-        #                client_kwargs = storage_options.get("client_kwargs", {})
-        #                if (
-        #                    "endpoint_url" not in storage_options
-        #                    and "endpoint_url" not in client_kwargs
-        #                ):
-        #                    authority = u.authority
-        #                    if not authority:
-        #                        authority = ""
-        #
-        #                    storage_options["endpoint_url"] = f"https://{authority}"
-        #
-        #                filesystem = fsspec.filesystem(
-        #                    protocol=u.scheme, **storage_options
-        #                )
-        #                g["filesystem"] = filesystem
-        #
-        #                protocol = filesystem.protocol
-        #                storage_options = filesystem.storage_options
-        #
-        #                dataset = filesystem.open(u.path[1:], "rb")
+
+            storage_options = filesystem.storage_options
+            protocol = filesystem.protocol
+            if isinstance(protocol, tuple):
+                protocol = protocol[0]
 
         if not storage_options:
             storage_options = None
@@ -623,8 +600,15 @@ class NetCDFRead(IORead):
         nc = None
         errors = []
         for backend in g["netcdf_backend"]:
+            if backend == "netCDF4":
+                # This backend can only deal with the original dataset
+                # string
+                dataset1 = original_dataset
+            else:
+                dataset1 = dataset
+
             try:
-                nc = dataset_open_function[backend](dataset)
+                nc = dataset_open_function[backend](dataset1)
             except KeyError:
                 errors.append(f"{backend}: Unknown netCDF backend name")
             except Exception as error:
@@ -946,13 +930,10 @@ class NetCDFRead(IORead):
                 * `None` for anything else.
 
         """
-        from uritools import urisplit
-
         if filesystem is None:
-            # No file system: Assume that non-local URIs are netCDF or
-            # Zarr
-            u = urisplit(dataset)
-            if u.scheme not in (None, "file"):
+            from uritools import urisplit
+
+            if urisplit(dataset).scheme not in (None, "file"):
                 if (
                     allowed_dataset_types
                     and len(allowed_dataset_types) == 1
@@ -965,14 +946,9 @@ class NetCDFRead(IORead):
                 # Assume that a non-local URI is netCDF if it's not Zarr
                 return "netCDF"
 
-            # Still here? Then check for a Zarr dataset
-            if cls.is_zarr(dataset, filesystem):
-                return "Zarr"
-
-        else:
-            # There is a file system: Check directly for Zarr
-            if cls.is_zarr(dataset, filesystem):
-                return "Zarr"
+        # Still here? Then check for a Zarr dataset
+        if cls.is_zarr(dataset, filesystem):
+            return "Zarr"
 
         # Still here? Then check for a netCDF or CDL
         try:
@@ -1302,6 +1278,16 @@ class NetCDFRead(IORead):
                 )
 
                 dataset = u.path[1:]
+
+            elif u.scheme in ("http", "https"):
+                # ----------------------------------------------------
+                # Dataset is an http://.. or https:// string.
+                # ----------------------------------------------------
+                import fsspec
+
+                filesystem = fsspec.filesystem(
+                    protocol=u.scheme, **storage_options
+                )
 
         # ------------------------------------------------------------
         # Check the file type, raising an exception if the type is not
@@ -6882,7 +6868,7 @@ class NetCDFRead(IORead):
             "mask": g["mask"],
             "unpack": g["unpack"],
             "attributes": attributes,
-            "protocol": g["file_system_protocol"],
+            "storage_protocol": g["file_system_protocol"],
             "storage_options": g["file_system_storage_options"],
         }
 
@@ -12253,9 +12239,6 @@ class NetCDFRead(IORead):
             return False
 
         # Got a file system
-        if not filesystem.isdir(path):
-            return False
-
         sep = filesystem.sep
         path = f"{path.rstrip(sep)}{sep}"
         for zarr_file in zarr_files:

@@ -350,19 +350,19 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(a.dtype, np.dtype("int32"))
         self.assertTrue((a == f.array.astype("int32")).all())
 
-    def test_NetCDF4Array_protocol(self):
-        """Test NetCDF4Array "protocol" methods."""
+    def test_NetCDF4Array_storage_protocol(self):
+        """Test NetCDF4Array "storage_protocol" methods."""
         n = cfdm.NetCDF4Array("file.nc", "tas")
-        self.assertIsNone(n.get_protocol())
-        self.assertFalse(n.has_remote_protocol())
+        self.assertIsNone(n.get_storage_protocol())
+        self.assertFalse(n.has_remote_storage_protocol())
 
-        n = cfdm.NetCDF4Array("file.nc", "tas", protocol="local")
-        self.assertEqual(n.get_protocol(), "local")
-        self.assertFalse(n.has_remote_protocol())
+        n = cfdm.NetCDF4Array("file.nc", "tas", storage_protocol="local")
+        self.assertEqual(n.get_storage_protocol(), "local")
+        self.assertFalse(n.has_remote_storage_protocol())
 
-        n = cfdm.NetCDF4Array("file.nc", "tas", protocol="s3")
-        self.assertEqual(n.get_protocol(), "s3")
-        self.assertTrue(n.has_remote_protocol())
+        n = cfdm.NetCDF4Array("file.nc", "tas", storage_protocol="s3")
+        self.assertEqual(n.get_storage_protocol(), "s3")
+        self.assertTrue(n.has_remote_storage_protocol())
 
 
 if __name__ == "__main__":

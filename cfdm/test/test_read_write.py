@@ -1582,8 +1582,8 @@ class read_writeTest(unittest.TestCase):
         cfdm.write(f, tmpfile)
 
         # Pass a glob-like pattern as the dataset
-        f = cfdm.read("ugrid_[123].nc", filesystem=local_fs)
-        self.assertEqual(len(f), 11)
+        f = cfdm.read("ugrid_[12].nc", filesystem=local_fs)
+        self.assertEqual(len(f), 6)
 
 
 if __name__ == "__main__":

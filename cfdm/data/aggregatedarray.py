@@ -39,7 +39,7 @@ class AggregatedArray(abstract.FileArray):
         unpack=True,
         fragment_array=None,
         attributes=None,
-        protocol=None,
+        storage_protocol=None,
         storage_options=None,
         source=None,
         copy=True,
@@ -77,7 +77,7 @@ class AggregatedArray(abstract.FileArray):
                    {'map': <'map' fragment variable data>,
                     'unique_values': <'unique_values' fragment variable data>}
 
-            {{init protocol: `None` or `str`, optional}}
+            {{init storage_protocol: `None` or `str`, optional}}
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -101,7 +101,7 @@ class AggregatedArray(abstract.FileArray):
             mask=True,
             unpack=unpack,
             attributes=attributes,
-            protocol=protocol,
+            storage_protocol=storage_protocol,
             storage_options=storage_options,
             source=source,
             copy=copy,

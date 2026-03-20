@@ -23,7 +23,7 @@ class FileArray(Array):
         mask=True,
         unpack=True,
         attributes=None,
-        protocol=None,
+        storage_protocol=None,
         storage_options=None,
         variable=None,
         source=None,
@@ -57,7 +57,7 @@ class FileArray(Array):
                 attributes will be set from those in the dataset
                 during the first `__getitem__` call.
 
-            {{init protocol: `None` or `str`, optional}}
+            {{init storage_protocol: `None` or `str`, optional}}
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -117,9 +117,11 @@ class FileArray(Array):
                 attributes = None
 
             try:
-                protocol = source._get_component("protocol", None)
+                storage_protocol = source._get_component(
+                    "storage_protocol", None
+                )
             except AttributeError:
-                protocol = None
+                storage_protocol = None
 
             try:
                 storage_options = source._get_component(
@@ -146,8 +148,10 @@ class FileArray(Array):
         self._set_component("mask", bool(mask), copy=False)
         self._set_component("unpack", bool(unpack), copy=False)
 
-        if protocol is not None:
-            self._set_component("protocol", protocol, copy=False)
+        if storage_protocol is not None:
+            self._set_component(
+                "storage_protocol", storage_protocol, copy=False
+            )
 
         if storage_options is not None:
             self._set_component("storage_options", storage_options, copy=copy)
@@ -203,7 +207,7 @@ class FileArray(Array):
             self.get_mask(),
             self.get_unpack(),
             self.get_attributes(copy=False),
-            self.get_protocol(),
+            self.get_storage_protocol(),
             self.get_storage_options(),
         )
 
@@ -358,7 +362,7 @@ class FileArray(Array):
                 default, f"{self.__class__.__name__} has no file name"
             )
 
-        if normalise and not self.has_remote_protocol():
+        if normalise and not self.has_remote_storage_protocol():
             filename = abspath(filename)
 
         return filename
@@ -375,12 +379,12 @@ class FileArray(Array):
         """
         return self._get_component("mask")
 
-    def get_protocol(self):
+    def get_storage_protocol(self):
         """The file system protocol.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seeaslo:: `has_remote_protocol`, `get_storage_options`
+        .. seeaslo:: `has_remote_storage_protocol`, `get_storage_options`
 
         :Returns:
 
@@ -390,15 +394,15 @@ class FileArray(Array):
 
         **Examples**
 
-        >>> a.get_protocol()
+        >>> a.get_storage_protocol()
         's3'
-        >>> a.get_protocol()
+        >>> a.get_storage_protocol()
         'file'
-        >>> print(a.get_protocol())
+        >>> print(a.get_storage_protocol())
         None
 
         """
-        return self._get_component("protocol", None)
+        return self._get_component("storage_protocol", None)
 
     def get_storage_options(self):
         """Return the file system options.
@@ -480,19 +484,20 @@ class FileArray(Array):
                 the data within the file.
 
         """
-        from urllib.parse import urlparse
-
         filename = self.get_filename(normalise=True)
-        url = urlparse(filename)
 
-        if self.has_remote_protocol():
+        if self.has_remote_storage_protocol():
+            from urllib.parse import urlparse
+
             import fsspec
 
+            url = urlparse(filename)
             if url.scheme == "s3":
                 filename = url.path[1:]
 
             fs = fsspec.filesystem(
-                protocol=self.get_protocol(), **self.get_storage_options()
+                protocol=self.get_storage_protocol(),
+                **self.get_storage_options(),
             )
             filename = fs.open(filename, "rb")
         else:
@@ -675,12 +680,12 @@ class FileArray(Array):
         """
         return self._get_component("unpack")
 
-    def has_remote_protocol(self):
+    def has_remote_storage_protocol(self):
         """Whether or not there is a remote file system protocol.
 
         .. versionadded:: (cfdm)  NEXTVERSION
 
-        .. seeaslo:: `get_protocol`, `get_storage_options`
+        .. seeaslo:: `get_storage_protocol`, `get_storage_options`
 
         :Returns:
 
@@ -689,7 +694,7 @@ class FileArray(Array):
                 otherwise `False`.
 
         """
-        return self.get_protocol() not in (None, "file", "local")
+        return self.get_storage_protocol() not in (None, "file", "local")
 
     def replace_filename(self, filename):
         """Replace the file location.
