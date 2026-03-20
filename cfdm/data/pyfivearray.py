@@ -210,7 +210,7 @@ class PyfiveArray(IndexMixin, FileArray):
             h5netcdf.File,
             mode="r",
             decode_vlen_strings=True,
-            netcdf_backend="pyfive",
+            backend="pyfive",
             phony_dims="sort",
             **kwargs
         )

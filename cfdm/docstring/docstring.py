@@ -368,6 +368,23 @@ _docstring_substitution_definitions = {
             *Example:*
               ``('netCDF4', 'h5netcdf-pyfive', 'netcdf_file',
               'h5netcdf-h5py')``""",
+    # read filesystem
+    "{{read filesystem: optional}}": """filesystem: optional
+            A pre-authenticated filesystem object (for example an
+            `fsspec` filesystem instance) to use for opening the
+            dataset. When provided, *datasets* values are treated as
+            paths understood by *filesystem*, and local string
+            pre-processing (tilde/variable expansion, globbing and
+            directory walking) is bypassed. The file is opened by
+            calling ``filesystem.open(dataset, 'rb')``, which returns
+            a file-like object that is passed to the netCDF backend.
+
+            If `None` (the default) then files are opened using
+            built-in local file system access; or via OPeNDAP access
+            for ``http://`` and ``https://`` URIs; or via
+            S3-compatible object store access for ``s3://`` URIs.
+
+            .. versionadded:: (cfdm) NEXTVERSION""",
     # read  storage_options
     "{{read storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
             Pass parameters to the backend file system driver, such as
@@ -1229,6 +1246,11 @@ _docstring_substitution_definitions = {
     "{{init attributes: `dict` or `None`, optional}}": """attributes: `dict` or `None`, optional
                 Provide netCDF attributes for the data as a dictionary
                 of key/value pairs.""",
+    # init storage_protocol
+    "{{init storage_protocol: `None` or `str`, optional}}": """storage_protocol: `None` or `str`, optional
+                The `fsspec` file system protocol (e.g, ``'file'``,
+                ``'s3'``, ``'http'``). If `None` (the default) then a
+                local file system is assumed.""",
     # init storage_options
     "{{init storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
                 Key/value pairs to be passed on to the creation of

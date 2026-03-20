@@ -4,7 +4,6 @@ import faulthandler
 import os
 import tempfile
 import unittest
-from urllib.parse import urlparse
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -125,30 +124,12 @@ class NetCDF4ArrayTest(unittest.TestCase):
         )
         self.assertEqual(n.get_storage_options(), {"anon": True})
 
-        n = cfdm.NetCDF4Array(filename="s3://store/filename.nc")
-        self.assertEqual(
-            n.get_storage_options(), {"endpoint_url": "https://store"}
-        )
-        self.assertEqual(n.get_storage_options(create_endpoint_url=False), {})
-
         n = cfdm.NetCDF4Array(
             filename="s3://store/filename.nc", storage_options={"anon": True}
         )
         self.assertEqual(
             n.get_storage_options(),
-            {"anon": True, "endpoint_url": "https://store"},
-        )
-        self.assertEqual(
-            n.get_storage_options(create_endpoint_url=False), {"anon": True}
-        )
-        other_file = "s3://other/file.nc"
-        self.assertEqual(
-            n.get_storage_options(filename=other_file),
-            {"anon": True, "endpoint_url": "https://other"},
-        )
-        self.assertEqual(
-            n.get_storage_options(parsed_filename=urlparse(other_file)),
-            {"anon": True, "endpoint_url": "https://other"},
+            {"anon": True},
         )
 
         n = cfdm.NetCDF4Array(
@@ -368,6 +349,20 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertIsInstance(a, np.ndarray)
         self.assertEqual(a.dtype, np.dtype("int32"))
         self.assertTrue((a == f.array.astype("int32")).all())
+
+    def test_NetCDF4Array_storage_protocol(self):
+        """Test NetCDF4Array "storage_protocol" methods."""
+        n = cfdm.NetCDF4Array("file.nc", "tas")
+        self.assertIsNone(n.get_storage_protocol())
+        self.assertFalse(n.has_remote_storage_protocol())
+
+        n = cfdm.NetCDF4Array("file.nc", "tas", storage_protocol="local")
+        self.assertEqual(n.get_storage_protocol(), "local")
+        self.assertFalse(n.has_remote_storage_protocol())
+
+        n = cfdm.NetCDF4Array("file.nc", "tas", storage_protocol="s3")
+        self.assertEqual(n.get_storage_protocol(), "s3")
+        self.assertTrue(n.has_remote_storage_protocol())
 
 
 if __name__ == "__main__":
