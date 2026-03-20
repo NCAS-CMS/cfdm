@@ -526,8 +526,6 @@ class NetCDFRead(IORead):
         >>> r.dataset_open('file.nc')
 
         """
-        from uritools import urisplit
-
         g = self.read_vars
 
         netcdf_backend = g["netcdf_backend"]
@@ -545,18 +543,26 @@ class NetCDFRead(IORead):
         g["cdl_filename"] = cdl_filename
 
         protocol = None
+        storage_options = g["storage_options"]
 
         filesystem = g["filesystem"]
         if filesystem is not None:
             # --------------------------------------------------------
-            # A pre-authenticated filesystem was provided: open the
-            # dataset as a file-like object and pass it to the backend.
+            # Pre-authenticated filesystem: open the dataset as a
+            # file-like object and pass it to the backend.
             # --------------------------------------------------------
             storage_options = filesystem.storage_options
             protocol = filesystem.protocol
+            if isinstance(protocol, tuple):
+                protocol = protocol[0]
+
+            if is_log_level_detail(logger):
+                logger.detail(
+                    f"    {protocol} storage_options: {storage_options}\n"
+                )  # pragma: no cover
 
             try:
-                dataset = filesystem.open(dataset, "rb", **storage_options)
+                dataset = filesystem.open(dataset, "rb")
             except AttributeError:
                 raise AttributeError(
                     f"The 'filesystem' object {filesystem!r} does not have "
@@ -568,32 +574,40 @@ class NetCDFRead(IORead):
                     f"Failed to open {dataset!r} using the provided "
                     f"'filesystem' object {filesystem!r}: {exc}"
                 ) from exc
+        #        else:
+        #            u = urisplit(dataset)
+        #            if u.scheme == "s3":
+        #                # ----------------------------------------------------
+        #                # Dataset is an s3://... string.
+        #                # ----------------------------------------------------
+        #                import fsspec
+        #
+        #                client_kwargs = storage_options.get("client_kwargs", {})
+        #                if (
+        #                    "endpoint_url" not in storage_options
+        #                    and "endpoint_url" not in client_kwargs
+        #                ):
+        #                    authority = u.authority
+        #                    if not authority:
+        #                        authority = ""
+        #
+        #                    storage_options["endpoint_url"] = f"https://{authority}"
+        #
+        #                filesystem = fsspec.filesystem(
+        #                    protocol=u.scheme, **storage_options
+        #                )
+        #                g["filesystem"] = filesystem
+        #
+        #                protocol = filesystem.protocol
+        #                storage_options = filesystem.storage_options
+        #
+        #                dataset = filesystem.open(u.path[1:], "rb")
 
-        else:
-            u = urisplit(dataset)
-            storage_options = self._get_storage_options(dataset, u)
+        if not storage_options:
+            storage_options = None
 
-            if u.scheme == "s3":
-                import fsspec
-
-                filesystem = fsspec.filesystem(
-                    protocol=u.scheme, **storage_options
-                )
-
-                protocol = filesystem.protocol
-                storage_options = filesystem.storage_options
-
-                dataset = filesystem.open(u.path[1:], "rb")
-
-        if isinstance(protocol, tuple):
-            protocol = protocol[0]
-
-        g["file_system_protocol"] = protocol
         g["file_system_storage_options"] = storage_options
-        if protocol and is_log_level_detail(logger):
-            logger.detail(
-                f"    {protocol}: storage_options: {storage_options}\n"
-            )  # pragma: no cover
+        g["file_system_protocol"] = protocol
 
         # Map backend names to dataset-open functions
         dataset_open_function = {
@@ -632,12 +646,6 @@ class NetCDFRead(IORead):
                 f"with any of the backends {netcdf_backend!r}:\n\n"
                 f"{error}"
             )
-
-        #        if filesystem is not None and g["nc_opened_with"] != "h5netcdf-pyfive"#:
-        #            raise NotImplementedError(
-        #                "Can only set the filesystem keyword when the netCDF backend "
-        #                f"is 'h5netcdf-pyfive'. Got {g['nc_opened_with']}"
-        #            )
 
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
@@ -923,7 +931,9 @@ class NetCDFRead(IORead):
                 The allowed dataset types.
 
             filesystem: file system or `None`
-                TODOF
+                The file system that contains the dataset. If `None`
+                (the default) then the file system is as defined by
+                the URI schema of the *dataset*.
 
         :Returns:
 
@@ -1213,6 +1223,7 @@ class NetCDFRead(IORead):
         import re
 
         from packaging.version import Version
+        from uritools import urisplit
 
         debug = is_log_level_debug(logger)
 
@@ -1250,6 +1261,16 @@ class NetCDFRead(IORead):
             dataset = self.string_to_cdl(dataset)
 
         # ------------------------------------------------------------
+        # Parse the 'storage_options' keyword parameter
+        # ------------------------------------------------------------
+        if storage_options is None:
+            storage_options = {}
+        elif filesystem is not None:
+            raise ValueError(
+                "Can't set both storage_options and filesystem keywords"
+            )
+
+        # ------------------------------------------------------------
         # Parse the 'dataset' keyword parameter
         # ------------------------------------------------------------
         if filesystem is None:
@@ -1257,6 +1278,30 @@ class NetCDFRead(IORead):
                 dataset = abspath(dataset, uri=False)
             except ValueError:
                 dataset = abspath(dataset)
+
+            u = urisplit(dataset)
+            if u.scheme == "s3":
+                # ----------------------------------------------------
+                # Dataset is an s3://... string.
+                # ----------------------------------------------------
+                import fsspec
+
+                client_kwargs = storage_options.get("client_kwargs", {})
+                if (
+                    "endpoint_url" not in storage_options
+                    and "endpoint_url" not in client_kwargs
+                ):
+                    authority = u.authority
+                    if not authority:
+                        authority = ""
+
+                    storage_options["endpoint_url"] = f"https://{authority}"
+
+                filesystem = fsspec.filesystem(
+                    protocol=u.scheme, **storage_options
+                )
+
+                dataset = u.path[1:]
 
         # ------------------------------------------------------------
         # Check the file type, raising an exception if the type is not
@@ -1424,14 +1469,6 @@ class NetCDFRead(IORead):
                 to_memory.remove("metadata")
         else:
             to_memory = ()
-
-        # ------------------------------------------------------------
-        # Parse the 'storage_options' keyword parameter
-        # ------------------------------------------------------------
-        if storage_options is None:
-            storage_options = {}
-        elif filesystem is not None:
-            raise ValueError("Can't TODOF")
 
         # ------------------------------------------------------------
         # Parse the 'cdl_string' keyword parameter
@@ -11468,47 +11505,6 @@ class NetCDFRead(IORead):
             array = array.copy()
 
         return array
-
-    def _get_storage_options(self, dataset, parsed_dataset):
-        """Get the storage options for accessing a file.
-
-        If returned storage options will always include an
-        ``'endpoint_url'`` key.
-
-        .. versionadded:: (cfdm) 1.11.2.0
-
-        :Parameters:
-
-            dataset: `str`
-                The name of the dataset.
-
-            parsed_dataset: `uritools.SplitResultString`
-                The parsed dataset name.
-
-        :Returns:
-
-            `dict`
-                The storage options for accessing the file.
-
-        """
-        g = self.read_vars
-        storage_options = g["storage_options"].copy()
-
-        if parsed_dataset.scheme not in (None, "file"):
-            client_kwargs = storage_options.get("client_kwargs", {})
-            if (
-                "endpoint_url" not in storage_options
-                and "endpoint_url" not in client_kwargs
-            ):
-                authority = parsed_dataset.authority
-                if not authority:
-                    authority = ""
-
-                storage_options["endpoint_url"] = f"https://{authority}"
-
-        g["file_system_storage_options"] = storage_options
-
-        return storage_options
 
     def _get_dataset_chunks(self, ncvar):
         """Return a netCDF variable's dataset storage chunks.
