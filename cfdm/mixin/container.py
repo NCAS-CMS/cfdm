@@ -204,7 +204,7 @@ class Container:
 
         * If ignore_type=True and the LHS operand is not of exactly
           the same type as the RHS operand then instantiate a new
-          instance based on the the RHS class and return it.
+          instance based on the RHS class and return it.
 
         .. versionadded:: (cfdm) 1.7.0
 

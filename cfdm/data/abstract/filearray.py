@@ -23,7 +23,9 @@ class FileArray(Array):
         mask=True,
         unpack=True,
         attributes=None,
+        storage_protocol=None,
         storage_options=None,
+        variable=None,
         source=None,
         copy=True,
     ):
@@ -32,15 +34,15 @@ class FileArray(Array):
         :Parameters:
 
             filename: (sequence of `str`), optional
-                The locations of datasets containing the array.
+                The location of the dataset containing the array.
 
             address: (sequence of `str`), optional
-                How to find the array in the datasets.
+                How to find the array in the dataset.
 
             dtype: `numpy.dtype`, optional
                 The data type of the array. May be `None` if is not
                 known. This may differ from the data type of the
-                array in the datasets.
+                array in the dataset.
 
             shape: `tuple`, optional
                 The shape of the dataset array.
@@ -52,10 +54,24 @@ class FileArray(Array):
             {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
-                attributes will be set during the first `__getitem__`
-                call.
+                attributes will be set from those in the dataset
+                during the first `__getitem__` call.
+
+            {{init storage_protocol: `None` or `str`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             {{init storage_options: `dict` or `None`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            variable: optional
+                An open dataset variable object. Setting *variable*
+                does not replace the need for the *filename* and
+                *address* parameters, instead it complements them by
+                allowing faster data access.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             {{init source: optional}}
 
@@ -101,11 +117,23 @@ class FileArray(Array):
                 attributes = None
 
             try:
+                storage_protocol = source._get_component(
+                    "storage_protocol", None
+                )
+            except AttributeError:
+                storage_protocol = None
+
+            try:
                 storage_options = source._get_component(
                     "storage_options", None
                 )
             except AttributeError:
                 storage_options = None
+
+            try:
+                variable = source._get_component("variable", None)
+            except AttributeError:
+                variable = None
 
         if shape is not None:
             self._set_component("shape", shape, copy=False)
@@ -120,11 +148,19 @@ class FileArray(Array):
         self._set_component("mask", bool(mask), copy=False)
         self._set_component("unpack", bool(unpack), copy=False)
 
+        if storage_protocol is not None:
+            self._set_component(
+                "storage_protocol", storage_protocol, copy=False
+            )
+
         if storage_options is not None:
             self._set_component("storage_options", storage_options, copy=copy)
 
         if attributes is not None:
             self._set_component("attributes", attributes, copy=copy)
+
+        if variable is not None:
+            self._set_component("variable", variable, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
@@ -147,7 +183,7 @@ class FileArray(Array):
         x.__repr__() <==> repr(x)
 
         """
-        return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
+        return f"<{self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -171,6 +207,7 @@ class FileArray(Array):
             self.get_mask(),
             self.get_unpack(),
             self.get_attributes(copy=False),
+            self.get_storage_protocol(),
             self.get_storage_options(),
         )
 
@@ -245,8 +282,7 @@ class FileArray(Array):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if there
-                is no file.
+                Return *default* if the address has not been set.
 
                 {{default Exception}}
 
@@ -256,16 +292,7 @@ class FileArray(Array):
                 The file name.
 
         """
-        address = self._get_component("address", None)
-        if address is None:
-            if default is None:
-                return
-
-            return self._default(
-                default, f"{self.__class__.__name__} has no address"
-            )
-
-        return address
+        return self._get_component("address", default)
 
     def file_directory(self, normalise=False, default=AttributeError()):
         """The file directory.
@@ -275,6 +302,11 @@ class FileArray(Array):
         :Parameters:
 
             {{normalise: `bool`, optional}}
+
+            default: optional
+                Return *default* if the file has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -330,7 +362,7 @@ class FileArray(Array):
                 default, f"{self.__class__.__name__} has no file name"
             )
 
-        if normalise:
+        if normalise and not self.has_remote_storage_protocol():
             try:
                 filename = abspath(filename)
             except TypeError:
@@ -351,53 +383,55 @@ class FileArray(Array):
         """
         return self._get_component("mask")
 
-    def get_storage_options(
-        self, create_endpoint_url=True, filename=None, parsed_filename=None
-    ):
-        """Return `s3fs.S3FileSystem` options for accessing S3 files.
+    def get_storage_protocol(self):
+        """The file system protocol.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seeaslo:: `has_remote_storage_protocol`, `get_storage_options`
+
+        :Returns:
+
+            `None` or str`
+                The file system protocol. If `None` the the file
+                system is the local file system.
+
+        **Examples**
+
+        >>> a.get_storage_protocol()
+        's3'
+        >>> a.get_storage_protocol()
+        'file'
+        >>> print(a.get_storage_protocol())
+        None
+
+        """
+        return self._get_component("storage_protocol", None)
+
+    def get_storage_options(self):
+        """Return the file system options.
 
         .. versionadded:: (cfdm) 1.12.0.0
 
         :Parameters:
 
             create_endpoint_url: `bool`, optional
-                If True, the default, then create an
-                ``'endpoint_url'`` option if and only if one was not
-                set during object initialisation. In this case the
-                ``'endpoint_url'`` will be set from the file name
-                returned by `get_filename`, unless either of the
-                *filename* or *parsed_filename* parameters is also
-                set.
+                Removed at version NEXTVERSION
 
             filename: `str`, optional
-                Used to set the ``'endpoint_url'`` if it was not
-                set during object initialisation and
-                *create_endpoint_url* is True. Ignored if the
-                *parsed_filename* parameter has been set.
+                Removed at version NEXTVERSION
 
             parsed_filename: `urllib.parse.ParseResult`, optional
-                Used to set the ``'endpoint_url'`` if it was not
-                set during object initialisation and
-                *create_endpoint_url* is True. Ignored if the
-                *filename* parameter has been set.
+                Removed at versiokn NEXTVERSION
 
         :Returns:
 
-            `dict` or `None`
-                The `s3fs.S3FileSystem` options.
+            `dict`
+                The storage options.
 
         **Examples**
 
-        >>> f.get_filename()
-        's3://store/data/file.nc'
-        >>> f.get_storage_options(create_endpoint_url=False)
-        {}
         >>> f.get_storage_options()
-        {'endpoint_url': 'https://store'}
-        >>> f.get_storage_options(filename='s3://other-store/data/file.nc')
-        {'endpoint_url': 'https://other-store'}
-        >>> f.get_storage_options(create_endpoint_url=False,
-        ...                       filename='s3://other-store/data/file.nc')
         {}
 
         >>> f.get_storage_options()
@@ -413,40 +447,29 @@ class FileArray(Array):
         else:
             storage_options = deepcopy(storage_options)
 
-        client_kwargs = storage_options.get("client_kwargs", {})
-        if (
-            create_endpoint_url
-            and "endpoint_url" not in storage_options
-            and "endpoint_url" not in client_kwargs
-        ):
-            if parsed_filename is None:
-                from urllib.parse import urlparse
-
-                if filename is None:
-
-                    try:
-                        filename = self.get_filename(normalise=False)
-                    except AttributeError:
-                        pass
-                    else:
-                        parsed_filename = urlparse(filename)
-                else:
-                    parsed_filename = urlparse(filename)
-
-            if parsed_filename is not None and parsed_filename.scheme == "s3":
-                # Derive endpoint_url from filename
-                storage_options["endpoint_url"] = (
-                    f"https://{parsed_filename.netloc}"
-                )
-
         return storage_options
+
+    def get_variable(self, default=AttributeError()):
+        """Get the open dataset variable object for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            default: optional
+                Return *default* if the variable has not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+                The open dataset variable object.
+
+        """
+        return self._get_component("variable", default)
 
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
-
-        When multiple files have been provided an attempt is made to
-        open each one, in the order stored, and a file object is
-        returned from the first file that exists.
 
         .. versionadded:: (cfdm) 1.10.1.0
 
@@ -465,23 +488,26 @@ class FileArray(Array):
                 the data within the file.
 
         """
-        from urllib.parse import urlparse
-
         filename = self.get_filename(normalise=True)
-        if isinstance(filename, str):
-            url = urlparse(filename)
-            if url.scheme == "file":
-                # Convert a file URI into an absolute local path
-                filename = abspath(filename, uri=False)
-            elif url.scheme == "s3":
-                # Create an openable S3 file object
-                from s3fs import S3FileSystem
+        if self.has_remote_storage_protocol():
+            from urllib.parse import urlparse
 
-                storage_options = self.get_storage_options(
-                    create_endpoint_url=True, parsed_filename=url
-                )
-                fs = S3FileSystem(**storage_options)
-                filename = fs.open(url.path[1:], "rb")                
+            import fsspec
+
+            url = urlparse(filename)
+            if url.scheme == "s3":
+                filename = url.path[1:]
+
+            fs = fsspec.filesystem(
+                protocol=self.get_storage_protocol(),
+                **self.get_storage_options(),
+            )
+            filename = fs.open(filename, "rb")
+        else:
+            try:
+                filename = abspath(filename, uri=False)
+            except ValueError:
+                filename = abspath(filename)
 
         try:
             dataset = func(filename, *args, **kwargs)
@@ -580,6 +606,10 @@ class FileArray(Array):
                 filename = join(new, filename)
 
         a._set_component("filename", filename, copy=False)
+
+        # Remove an obsolete variable
+        a._del_component("variable", None)
+
         return a
 
     def get_missing_values(self):
@@ -613,28 +643,31 @@ class FileArray(Array):
         """
         return self.array
 
-    def _set_attributes(self, var):
-        """Set the netCDF variable attributes.
+    def _attributes(self, var):
+        """Get the netCDF variable attributes.
 
-        These are set from the netCDF variable attributes, but only if
-        they have not already been defined, either during {{class}}
-        instantiation or by a previous call to `_set_attributes`.
+        If the attributes have not been set, then they are retrieved
+        from the netCDF variable *var* and stored in `{{class}}`
+        instance for fast future access.
 
         .. versionadded:: (cfdm) 1.12.0.0
 
+        .. seealso:: `get_attributes`
+
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
+            var:
                 The netCDF variable.
 
         :Returns:
 
             `dict`
-                The attributes.
+                The attributes. The returned attributes are not a copy
+                of the cached dictionary.
 
         """
         raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}._set_attributes"
+            f"Must implement {self.__class__.__name__}._attributes"
         )  # pragma: no cover
 
     def get_unpack(self):
@@ -649,6 +682,22 @@ class FileArray(Array):
 
         """
         return self._get_component("unpack")
+
+    def has_remote_storage_protocol(self):
+        """Whether or not there is a remote file system protocol.
+
+        .. versionadded:: (cfdm)  NEXTVERSION
+
+        .. seeaslo:: `get_storage_protocol`, `get_storage_options`
+
+        :Returns:
+
+            `bool`
+                `True` if there is a remote file system protocol,
+                otherwise `False`.
+
+        """
+        return self.get_storage_protocol() not in (None, "file", "local")
 
     def replace_filename(self, filename):
         """Replace the file location.
@@ -671,4 +720,8 @@ class FileArray(Array):
         """
         a = self.copy()
         a._set_component("filename", filename, copy=False)
+
+        # Remove an obsolete variable
+        a._del_component("variable", None)
+
         return a

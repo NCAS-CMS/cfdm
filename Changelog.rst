@@ -1,14 +1,43 @@
 Version NEXTVERSION
 ----------------
 
-**2026-03-??**
+**2026-??-??**
 
 * Read Kerchunk datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/385)
 * Fix bug in `cfdm.write` when writing identical coordinates that have
   different ``formula_terms``
   (https://github.com/NCAS-CMS/cfdm/issues/380)
+* New keyword to `cfdm.read`: ``filesystem``
+  (https://github.com/NCAS-CMS/cfdm/issues/397)
+* New keyword parameter to `cfdm.Data.compute`: ``persist``
+  (https://github.com/NCAS-CMS/cfdm/issues/389)
+* New function to control the persistence of computed data:
+  `cfdm.persist_data` (https://github.com/NCAS-CMS/cfdm/issues/389)
+* Support for HEALPix grids
+  (https://github.com/NCAS-CMS/cfdm/issues/370)
+* New default backend for netCDF-4 in `cfdm.write`: ``h5netcdf-h5py``,
+  that allows control of the internal file metadata via the new
+  ``h5py_options`` parameter
+  (https://github.com/NCAS-CMS/cfdm/issues/386)
+* New default backend for netCDF-4 in `cfdm.read` that allows parallel
+  reading: ``h5netcdf-pyfive``
+  (https://github.com/NCAS-CMS/cfdm/issues/375)
+* New optional backend for netCDF-3 in `cfdm.read` that allows
+  parallel reading: ``netcdf_file``
+  (https://github.com/NCAS-CMS/cfdm/issues/375)
+* Fix bug in `cfdm.read` that wouldn't read non-Zarr and Zarr datasets
+  from the same directory
+  (https://github.com/NCAS-CMS/cfdm/issues/391)
+* Fix bug in `cfdm.write` to correctly create unlimited aggregation
+  dimensions that correspond to unlimited normal dimensions
+  (https://github.com/NCAS-CMS/cfdm/pull/387)
+* Fix bug in `cfdm.write` when writing identical coordinates that have
+  different ``formula_terms``
+  (https://github.com/NCAS-CMS/cfdm/issues/380).
+* New dependency: ``pyfive>=1.1.1``
 * New optional dependency: ``fsspec>=2026.2.0``
+* Changed dependency: ``h5netcdf>=1.8.0``
 
 ----
 

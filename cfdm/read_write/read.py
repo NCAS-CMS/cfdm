@@ -83,7 +83,7 @@ class read(ReadWrite):
     the end of the Python session, at which time it is automatically
     deleted. The CDL file may omit data array values (as would be the
     case, for example, if the file was created with the ``-h`` or
-    ``-c`` option to ``ncdump``), in which case the the relevant
+    ``-c`` option to ``ncdump``), in which case the relevant
     constructs in memory will be created with data with all missing
     values.
 
@@ -154,6 +154,10 @@ class read(ReadWrite):
         {{read netcdf_backend: `None` or (sequence of) `str`, optional}}
 
             .. versionadded:: (cfdm) 1.11.2.0
+
+        {{read filesystem: optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
         {{read storage_options: `dict` or `None`, optional}}
 
@@ -244,6 +248,7 @@ class read(ReadWrite):
         domain=False,
         netcdf_backend=None,
         storage_options=None,
+        filesystem=None,
         cache=True,
         dask_chunks="storage-aligned",
         store_dataset_chunks=True,
@@ -345,6 +350,20 @@ class read(ReadWrite):
         followlinks = kwargs.get("followlinks", False)
 
         datasets = self._flat(kwargs["datasets"])
+
+        # If a filesystem object is provided, treat each dataset path
+        # as-is (no local glob/walk/expansion) and yield directly.
+        filesystem = kwargs.get("filesystem")
+        if filesystem is None:
+            d_glob = iglob
+            d_isdir = isdir
+            d_walk = walk
+
+        else:
+            d_glob = filesystem.glob
+            d_isdir = filesystem.isdir
+            d_walk = filesystem.walk
+
         if kwargs["cdl_string"]:
             # Return CDL strings as they are
             for dataset1 in datasets:
@@ -361,25 +380,26 @@ class read(ReadWrite):
                 f"recursive={True}. Got recursive={recursive!r}"
             )
 
-        is_zarr = NetCDFRead.is_zarr
+        is_zarr = partial(NetCDFRead.is_zarr, filesystem=filesystem)
 
         for datasets1 in datasets:
-            # Apply tilde and environment variable expansions
-            datasets1 = expanduser(expandvars(datasets1))
+            if filesystem is None:
+                # Apply tilde and environment variable expansions
+                datasets1 = expanduser(expandvars(datasets1))
 
-            u = urisplit(datasets1)
-            if u.scheme not in (None, "file"):
-                # Do not glob a remote URI, and assume that it defines
-                # a single dataset.
-                yield datasets1
-                continue
+                u = urisplit(datasets1)
+                if u.scheme not in (None, "file"):
+                    # Do not glob a remote URI, and assume that it defines
+                    # a single dataset.
+                    yield datasets1
+                    continue
 
-            # Glob files/directories on disk
-            datasets1 = abspath(datasets1, uri=False)
+                # Glob files/directories on disk
+                datasets1 = abspath(datasets1, uri=False)
 
             n_datasets = 0
-            for x in iglob(datasets1):
-                if isdir(x):
+            for x in d_glob(datasets1):
+                if d_isdir(x):
                     if is_zarr(x):
                         # This directory is a Zarr dataset, so don't
                         # look in any subdirectories, which contain
@@ -391,16 +411,21 @@ class read(ReadWrite):
                         continue
 
                     # Walk through directories, possibly recursively
-                    for path, _, filenames in walk(x, followlinks=followlinks):
-                        if NetCDFRead.is_zarr(path):
-                            # This directory is a Zarr dataset, so
-                            # don't look in any subdirectories.
-                            n_datasets += 1
-                            yield path
-                            break
+                    for path, dirnames, filenames in d_walk(
+                        x, followlinks=followlinks
+                    ):
+                        for d in dirnames:
+                            d1 = join(path, d)
+                            if NetCDFRead.is_zarr(d1):
+                                # This directory is a Zarr dataset
+                                n_datasets += 1
+                                # Make sure we don't look at its
+                                # subdirectories or files
+                                dirnames.remove(d)
+                                yield d1
 
                         for f in filenames:
-                            # This file is a (non-Zarr) dataset
+                            # This file is a non-Zarr dataset
                             n_datasets += 1
                             yield join(path, f)
 
@@ -576,6 +601,7 @@ class read(ReadWrite):
                         "unpack",
                         "domain",
                         "storage_options",
+                        "filesystem",
                         "netcdf_backend",
                         "cache",
                         "dask_chunks",
