@@ -395,8 +395,12 @@ _docstring_substitution_definitions = {
             * **Local File System**: Storage options are ignored for
               local files.
 
-            * **HTTP(S)**: Storage options are ignored for files
-              available across the network via OPeNDAP.
+            * **HTTP(S)**: Storage options are passed to
+              `fsspec.filesystem`. If the file cannot be opened via
+              this file system, then OpenDAP is attempted.
+              
+              *Parameter example:*
+                ``{'cache_type': 'readahead', 'block_size': 1048576}``
 
             * **S3-compatible services**: The backend used is `s3fs`,
               and the storage options are used to initialise an
