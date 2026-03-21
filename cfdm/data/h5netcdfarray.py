@@ -105,7 +105,6 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
                 attributes=self._attributes(variable),
                 copy=False,
             )
-            print('h5py', variable.shape, address, index)
             array = array[index]
 
             self.close(dataset0)
