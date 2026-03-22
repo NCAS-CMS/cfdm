@@ -2486,6 +2486,53 @@ def indices_shape(indices, full_shape, keepdims=True):
     return shape
 
 
+def axis_dropping_index(index):
+    """Whether a `numpy` index is axis-dropping.
+
+    An axis-dropping index is typicall integer-like.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    :Parameters:
+
+        i: index
+            The `numpy` index.
+
+    :Returns:
+
+        `bool`
+            `True` if the index would drop an axis during `numpy`
+             slicing, otherwise `False`.
+
+    **Examples**
+
+    >>> axis_dropping_index(2)
+    True
+    >>> axis_dropping_index(np.array(2))
+    True
+    >>> axis_dropping_index(np.int64(2))
+    True
+    >>> axis_dropping_index([2])
+    False
+    >>> axis_dropping_index(np.array([2]))
+    False
+    >>> axis_dropping_index(slice(None))
+    False
+    >>> axis_dropping_index([True, False])
+    False
+
+    """
+    # Standard Python integer and numpy integer scalar
+    if isinstance(index, (Integral, np.integer)):
+        return True
+
+    # 0-d numpy array
+    if isinstance(index, np.ndarray) and not index.ndim:
+        return np.issubdtype(index.dtype, np.integer)
+
+    return False
+
+
 def parse_indices(shape, indices, keepdims=True, newaxis=False):
     """Parse indices for array access and assignment.
 
@@ -2581,12 +2628,13 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
                 "New axis indices are not allowed"
             )
 
-        # Check that any integer indices are in range for the dimension sizes
-        # before integral indices are converted to slices below, for (one for)
-        # consistent behaviour between setitem and getitem. Note out-of-range
-        # slicing works in Python generally (slices are allowed to extend past
-        # end points with clipping applied) so we allow those.
-        integral_index = isinstance(index, Integral)
+        # Check that any integer indices are in range for the
+        # dimension sizes before integral indices are converted to
+        # slices below, for (one for) consistent behaviour between
+        # setitem and getitem. Note out-of-range slicing works in
+        # Python generally (slices are allowed to extend past end
+        # points with clipping applied) so we allow those.
+        integral_index = axis_dropping_index(index)
         if integral_index and not -size <= index < size:  # could be negative
             raise IndexError(
                 f"Index {index!r} is out of bounds for axis {i} with "

@@ -3,7 +3,6 @@ import math
 import operator
 from itertools import product, zip_longest
 from math import prod
-from numbers import Integral
 from os.path import commonprefix
 
 import numpy as np
@@ -19,6 +18,7 @@ from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
     _numpy_allclose,
+    axis_dropping_index,
     display_data,
     is_log_level_info,
     parse_indices,
@@ -783,7 +783,7 @@ class Data(
             new_axes = [
                 axis
                 for axis, x in zip(self._axes, indices)
-                if not isinstance(x, Integral) and getattr(x, "shape", True)
+                if not axis_dropping_index(x) and getattr(x, "shape", True)
             ]
             new._axes = new_axes
 

@@ -240,6 +240,15 @@ class netcdf_indexerTest(unittest.TestCase):
 
     def test_netcdf_indexer_newaxis(self):
         """Test netcdf_indexer with np.newaxis indices."""
+        a = np.arange(12).reshape(3, 4)
+        v = cfdm.netcdf_indexer(a)
+        self.assertEqual(v[...].shape, (3, 4))
+        self.assertEqual(v[:2, :3].shape, (2, 3))
+        self.assertEqual(v[:2, np.newaxis, :3].shape, (2, 1, 3))
+        self.assertEqual(v[1, :3].shape, (3,))
+        self.assertEqual(v[1, np.newaxis, :3].shape, (1, 3))
+
+        # Test with netCDF backends
         for klass in (cfdm.H5netcdfArray, cfdm.NetCDF4Array, cfdm.PyfiveArray):
             k = klass("example_field_0.nc", "time", shape=())
             dataset, address = k.open()
