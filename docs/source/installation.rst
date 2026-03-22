@@ -202,7 +202,7 @@ The cfdm package requires:
 
 * `pyive <https://pypi.org/project/pyfive>`_, version 1.1.1 or newer.
 
-* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
+* `fsspec <https://pypi.org/project/fsspec>`_, version 2026.2.0 or newer.
 
 * `dask <https://pypi.org/project/dask>`_, version 2025.5.1 or newer.
 
