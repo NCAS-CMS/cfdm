@@ -31,7 +31,9 @@ Version NEXTVERSION
   different ``formula_terms``
   (https://github.com/NCAS-CMS/cfdm/issues/380).
 * New dependency: ``pyfive>=1.1.1``
+* New dependency: ``fsspec>=2026.2.0``
 * Changed dependency: ``h5netcdf>=1.8.0``
+* Removed dependency: ``s3fs``
 
 ----
 
@@ -63,7 +65,7 @@ Version 1.13.0.0
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
 * New optional dependency: ``zarr>=3.1.3``
-* Removed dependency (now optional): ``zarr>=3.0.8``
+* Removed dependency (now optional): ``zarr``
 
 ----
 
