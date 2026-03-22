@@ -858,6 +858,25 @@ _docstring_substitution_definitions = {
         computed and cached in memory. This can avoid the expense of
         re-reading the data from disk, or re-computing it, when the
         data is accessed on multiple occasions.""",
+    # cf_xarray
+    "{{cf_xarray description}}": """If the `cf_xarray` package (https://cf-xarray.readthedocs.io)
+        is installed then the `cf_xarray` accessors that allow some
+        interpretation of CF attributes will be present on
+        `xarray.DataArray` and `xarray.Dataset` objects.""",
+    # sharding
+    "{{sharding description}}": """
+        When writing to a Zarr dataset, sharding provides a mechanism
+        to store multiple dataset chunks in a single storage object or
+        file. Without sharding, each dataset chunk is written to its
+        own file. Traditional file systems and object storage systems
+        may have performance issues storing and accessing large number
+        of files, and small files can be inefficient to store if they
+        are smaller than the block size of the file system. Sharding
+        can improve performance by creating fewer, and larger, files
+        for storing the dataset chunks.
+
+        The sharding strategy is ignored when writing to a non-Zarr
+        dataset.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ------------------------1----------------------------------------
@@ -1485,20 +1504,16 @@ _docstring_substitution_definitions = {
 
                 Note that whenever data elements are displayed, they
                 are cached for fast future retrieval.""",
-    # sharding
-    "{{sharding description}}": """
-        When writing to a Zarr dataset, sharding provides a mechanism
-        to store multiple dataset chunks in a single storage object or
-        file. Without sharding, each dataset chunk is written to its
-        own file. Traditional file systems and object storage systems
-        may have performance issues storing and accessing large number
-        of files, and small files can be inefficient to store if they
-        are smaller than the block size of the file system. Sharding
-        can improve performance by creating fewer, and larger, files
-        for storing the dataset chunks.
+    # xarray
+    "{{Returns xarray}}": """`xarray.Dataset` or `xarray.DataTree`
+                The equivalent `xarray` dataset.
 
-        The sharding strategy is ignored when writing to a non-Zarr
-        dataset.""",
+                If there are no sub-groups of the root group, or if
+                *group* is False, then an `xarray.Dataset` is
+                returned.
+
+                If there are sub-groups of the root group and *group*
+                is True, then an `xarray.DataTree` is returned.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

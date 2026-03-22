@@ -18,6 +18,7 @@ class Domain(
     mixin.NetCDFGroupAttributes,
     mixin.NetCDFComponents,
     mixin.NetCDFUnreferenced,
+    mixin.NetCDFMeshVariable,
     mixin.Properties,
     mixin.Files,
     core.Domain,

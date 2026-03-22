@@ -85,45 +85,56 @@ class write(ReadWrite):
         fields: (sequence of) `Field` or `Domain`
             The field and domain constructs to write to the dataset.
 
-        dataset_name: `str`
-            The output dataset name. Relative paths are allowed, and
-            standard tilde and shell parameter expansions are applied
-            to the string.
+        dataset_name: `str` or `None`, optional
+            The output dataset name as a string. Relative paths are
+            allowed, and standard tilde and shell parameter expansions
+            are applied to the string.
 
-            *Parameter example:*
+            If the output dataset is located in memory, as opposed to
+            on disk (which is determined by the setting of the *fmt*
+            parameter, such as ``'XARRAY'``), then *dataset_name* must
+            be `None` (the default).
+
+            *Example:*
               The file ``file.nc`` in the user's home directory could
               be described by any of the following:
               ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
-              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
+              ``'~/file.nc'``, ``'~/tmp/../file.nc'``, etc.
 
         fmt: `str`, optional
-            The format of the output dataset. One of:
+            The format of the output dataset, which is either located
+            on disk or in memory. One of:
 
-            ==========================  ==============================
-            *fmt*                       Output dataset type
-            ==========================  ==============================
-            ``'NETCDF4'``               NetCDF4 format file. This is
-                                        the default.
+            ==========================  ========  ==========================
+            *fmt*                       Location  Output dataset type
+            ==========================  ========  ==========================
+            ``'NETCDF4'``               Disk      NetCDF4 format (see
+                                                  below). This is the
+                                                  default.
 
-            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
-                                        (see below)
+            ``'NETCDF4_CLASSIC'``       Disk      NetCDF4 classic
+                                                  format file (see below).
 
-            ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
-                                        (limited to file sizes less
-                                        than 2GB).
+            ``'NETCDF3_CLASSIC'``       Disk      NetCDF3 classic format
+                                                  file limited to file
+                                                  sizes of less than 2GB
+                                                  (see below).
 
-            ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
-                                        file
+            ``'NETCDF3_64BIT_OFFSET'``  Disk      NetCDF3 64-bit offset
+                                                  format file.
 
-            ``'NETCDF3_64BIT'``         An alias for
-                                        ``'NETCDF3_64BIT_OFFSET'``
+            ``'NETCDF3_64BIT'``         Disk      An alias for
+                                                  ``'NETCDF3_64BIT_OFFSET'``
 
-            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
-                                        file with extensions (see
-                                        below)
+            ``'NETCDF3_64BIT_DATA'``    Disk      NetCDF3 64-bit offset
+                                                  format file with
+                                                  extensions (see below).
 
-            ``'ZARR3'``                 Zarr v3 dataset
-            ==========================  ==============================
+            ``'ZARR3'``                 Disk      Zarr v3 dataset.
+
+            ``'XARRAY'``                Memory    `xarray` dataset (see
+                                                  below).
+            ==========================  ========  ==========================
 
             By default the format is ``'NETCDF4'``.
 
@@ -146,6 +157,15 @@ class write(ReadWrite):
 
             ``'NETCDF4'`` files use the version 4 disk format (HDF5)
             and use the new features of the version 4 API.
+
+            ``'XARRAY'`` datasets in memory will be either
+            `xarray.Dataset` (if there are no sub-groups of the root
+            group) or else `xarray.DataTree` (if there are sub-groups
+            of the root group).If the `cf_xarray` package
+            (https://cf-xarray.readthedocs.io) is installed then the
+            `cf_xarray` accessors that allow some interpretation of CF
+            attributes will be present on `xarray.DataArray` and
+            `xarray.Dataset` objects.
 
         mode: `str`, optional
             Specify the mode of write access for the output
@@ -487,9 +507,9 @@ class write(ReadWrite):
         group: `bool`, optional
             If False then create a "flat" dataset, i.e. one with only
             the root group, regardless of any group structure
-            specified by the field constructs. By default any groups
-            defined by the netCDF interface of the field constructs
-            and its components will be created and populated.
+            specified by the netCDF interfaces of the fields or domain
+            and their components. If True (the default) then any
+            sub-groups will be created and populated.
 
             .. versionadded:: (cfdm) 1.8.6
 
@@ -790,19 +810,25 @@ class write(ReadWrite):
             * ``'h5netcdf-h5py'``
 
               - The `h5netcdf` library using `h5py` as its backend.
-              - Writes netCDF-4 datasets.
+              - Writes netCDF-4 datasets to disk.
               - Allows control of the internal file metadata via the
                 *h5py_options* parameter.
 
             * ``'netCDF4'``
 
               - The `netCDF4` library.
-              - Writes netCDF-4 and netCDF-3 datasets.
+              - Writes netCDF-4 and netCDF-3 datasets to disk.
 
             * ``'zarr'``
 
               - The `zarr` library.
-              - Writes Zarr datasets.
+              - Writes Zarr datasets to disk.
+
+            * ``'xarray'``
+
+              - The `xarray` library.
+              - Creates `xarray` datasets in memory.
+              - No files or directories are created on disk.
 
             The default backend of `None` results in a backend that
             depends on the dataset format specified with the *fmt*
@@ -815,6 +841,8 @@ class write(ReadWrite):
               ``netCDF4``.
 
             * For all Zarr formats the default backend is ``zarr``.
+
+            * For all xarray formats the default backend is ``xarray``.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -849,7 +877,10 @@ class write(ReadWrite):
 
     :Returns:
 
-        `None`
+        `None` or `xarray.Dataset`
+            When writing to disk, `None` is returned. When writing to
+            an `xarray` dataset in memory, the dataset is returned.
+
 
     **Examples**
 
@@ -868,7 +899,7 @@ class write(ReadWrite):
     def __new__(
         cls,
         fields,
-        dataset_name,
+        dataset_name=None,
         fmt="NETCDF4",
         mode="w",
         overwrite=True,
@@ -933,9 +964,9 @@ class write(ReadWrite):
             }
 
         netcdf = NetCDFWrite(cls.implementation)
-        netcdf.write(
+        return netcdf.write(
             fields,
-            dataset_name,
+            dataset_name=dataset_name,
             fmt=fmt,
             mode=mode,
             overwrite=overwrite,

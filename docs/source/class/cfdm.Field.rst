@@ -255,6 +255,20 @@ NetCDF
    ~cfdm.Field.nc_set_global_attribute
    ~cfdm.Field.nc_set_global_attributes
 
+.. _Field-xarray:
+
+xarray
+------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.to_xarray
+
 Groups
 ^^^^^^
 
