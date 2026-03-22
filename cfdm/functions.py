@@ -2495,7 +2495,7 @@ def axis_dropping_index(index):
 
     :Parameters:
 
-        i: index
+        index:
             The `numpy` index.
 
     :Returns:

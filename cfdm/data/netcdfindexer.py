@@ -232,8 +232,10 @@ class netcdf_indexer:
         # Index the variable
         # ------------------------------------------------------------
 
-        # Create the index without any new-axis elements - we'll
-        # reinstate them later.
+        # Create the index without any new-axis elements. We'll first
+        # subsapce the variable without new axes (given that some
+        # variables don't like them, such as `h5py.Variable`), and
+        # reinstate them (if any) on the `numpy` array later.
         #
         # E.g.    index : (1, np.newaxis, slice(1, 5))
         #      => index1: (1, slice(1, 5))
@@ -248,13 +250,11 @@ class netcdf_indexer:
             new_axes = len(index1) < len(index)
 
         try:
-            # Subspacae the variable with any new-axis elements
-            # removed
+            # Subspace with any new-axis elements removed
             data = self._index(index1)
         except Exception:
             # Something went wrong. Therefore we'll just get the
-            # entire array as a numpy array, and then try indexing
-            # that.
+            # entire array as a numpy array, and try subspacing that.
             data = self._index(Ellipsis)
             data = self._index(index, data=data)
         else:
@@ -264,7 +264,7 @@ class netcdf_indexer:
                 #
                 # E.g.    index : (1, np.newaxis, slice(1, 5))
                 #      => index1: (1, slice(1, 5))
-                #      => index2: (slice(None), np.newaxis, slice(None))
+                #      => index2: (np.newaxis, slice(None))
                 index2 = []
                 for i in index:
                     if axis_dropping_index(i):
@@ -284,7 +284,7 @@ class netcdf_indexer:
         if netCDF4_mask:
             variable.set_auto_mask(True)
 
-        # Convert str, char, and object data to byte strings
+        # Convert str, char, and object data to byte strings1
         if isinstance(data, str):
             data = np.array(data, dtype="S")
         elif data.dtype.kind in "OSU":
