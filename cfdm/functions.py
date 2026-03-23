@@ -448,7 +448,7 @@ def environment(display=True, paths=True):
         "h5py": _get_module_info("h5py", try_except=True),
         "pyfive": _get_module_info("pyfive", try_except=True),
         "zarr": _get_module_info("zarr", try_except=True),
-        "s3fs": _get_module_info("s3fs", try_except=True),
+        "fsspec": _get_module_info("fsspec", try_except=True),
         "scipy": _get_module_info("scipy", try_except=True),
         "dask": _get_module_info("dask"),
         "distributed": _get_module_info("distributed"),

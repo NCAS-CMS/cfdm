@@ -398,7 +398,7 @@ _docstring_substitution_definitions = {
             * **HTTP(S)**: Storage options are passed to
               `fsspec.filesystem`. If the file cannot be opened via
               this file system, then OpenDAP is attempted.
-              
+
               *Parameter example:*
                 ``{'cache_type': 'readahead', 'block_size': 1048576}``
 
