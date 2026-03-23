@@ -5,9 +5,8 @@ Version NEXTVERSION
 
 * Read Kerchunk datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/385)
-* Fix bug in `cfdm.write` when writing identical coordinates that have
-  different ``formula_terms``
-  (https://github.com/NCAS-CMS/cfdm/issues/380)
+* Read open file handle datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/401)
 * New keyword to `cfdm.read`: ``filesystem``
   (https://github.com/NCAS-CMS/cfdm/issues/397)
 * New keyword parameter to `cfdm.Data.compute`: ``persist``

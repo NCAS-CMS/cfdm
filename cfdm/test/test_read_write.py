@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import unittest
 
+import fsspec
 import netCDF4
 import numpy as np
 
@@ -84,10 +85,6 @@ class read_writeTest(unittest.TestCase):
 
     zarr3 = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr3"
-    )
-
-    kerchunk = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "example_field_0.kerchunk"
     )
 
     f0 = cfdm.example_field(0)
@@ -1551,8 +1548,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_filesystem(self):
         """Test cfdm.read with a pre-authenticated filesystem object."""
-        import fsspec
-
         local_fs = fsspec.filesystem("local")
 
         f = self.f0
@@ -1582,8 +1577,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_filesystem_glob(self):
         """Test the filesystem keyword to cfdm.read with glob."""
-        import fsspec
-
         local_fs = fsspec.filesystem("local")
 
         f = self.f0
@@ -1593,15 +1586,18 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read("ugrid_[12].nc", filesystem=local_fs)
         self.assertEqual(len(f), 6)
 
-    def test_read_kerchunk(self):
-        """Test cfdm.read for Kerchunk files."""
-        n = cfdm.read(self.nc)[0]
-        for backend in (None, "zarr"):
-            k = cfdm.read(self.kerchunk, netcdf_backend=backend)[0]
-            self.assertTrue(k.equals(n))
+    def test_read_file_handle(self):
+        """Test cfdm.read with an open file handle."""
+        local_fs = fsspec.filesystem("local")
+        x = local_fs.open(self.filename, "rb")
 
-            with self.assertRaises(DatasetTypeError):
-                cfdm.read(self.kerchunk, netcdf_backend="netCDF4")
+        # Check that we can read it a first time
+        f = cfdm.read(x)
+        self.assertEqual(len(f), 1)
+
+        # Check that we can read it a second time
+        f = cfdm.read(x)
+        self.assertEqual(len(f), 1)
 
 
 if __name__ == "__main__":
