@@ -780,7 +780,7 @@ class FunctionsTest(unittest.TestCase):
             "/data",
         )
 
-    def test_axis_dropping_axis(self):
+    def test_axis_dropping_index(self):
         """Test cfdm.axis_dropping_index."""
         for i in (2, np.array(2), np.int64(2), np.int32(2)):
             self.assertTrue(cfdm.axis_dropping_index(i))
