@@ -284,7 +284,7 @@ class netcdf_indexer:
         if netCDF4_mask:
             variable.set_auto_mask(True)
 
-        # Convert str, char, and object data to byte strings1
+        # Convert str, char, and object data to byte strings
         if isinstance(data, str):
             data = np.array(data, dtype="S")
         elif data.dtype.kind in "OSU":
