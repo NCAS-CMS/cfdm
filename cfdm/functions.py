@@ -2489,7 +2489,7 @@ def indices_shape(indices, full_shape, keepdims=True):
 def axis_dropping_index(index):
     """Whether a `numpy` index is axis-dropping.
 
-    An axis-dropping index is typicall integer-like.
+    An axis-dropping index is typically integer-like.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
