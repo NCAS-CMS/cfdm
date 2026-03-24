@@ -253,7 +253,7 @@ environments for which these features are not required.
 
 * `zarr <https://pypi.org/project/zarr>`_, version 3.1.3 or newer.
 
-  For reading and writing Zarr datasets, and reading Kershunk
+  For reading and writing Zarr datasets, and reading Kerchunk
   datasets.
 
 .. rubric:: Kerchunk

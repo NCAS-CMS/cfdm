@@ -127,7 +127,7 @@ _docstring_substitution_definitions = {
 
                >>> fs = fsspec.filesystem('reference', fo='kerchunk.json')
                >>> kerchunk = fs.get_mapper())
-               >>> f = {{package}.read(kerchunk)
+               >>> f = {{package}}.read(kerchunk)
 
             Local names may be relative paths and will have tilde and
             shell environment variables expansions applied to them,

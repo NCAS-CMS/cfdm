@@ -514,7 +514,7 @@ class NetCDFRead(IORead):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        :Paramters:
+        :Parameters:
 
             dataset:
                 The dataset. May be a string-valued path, a file-like
@@ -943,7 +943,7 @@ class NetCDFRead(IORead):
             representation: `str` or `None`, optional
                 The dataset representation, i.e. the general type of
                 the *dataset* object. If `None` (the default), then it
-                wil be determined by `dataset_representation`.
+                will be determined by `dataset_representation`.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -956,7 +956,7 @@ class NetCDFRead(IORead):
                 * ``'CDL'`` for a text CDL file,
                 * ``'Zarr'`` for a Zarr dataset directory,
                 * ``'Kerchunk'`` for a Kerchunk file,
-                * `None` for anything elsse.
+                * `None` for anything else.
 
         """
         if representation is None:
@@ -1273,6 +1273,9 @@ class NetCDFRead(IORead):
 
             dataset = self.string_to_cdl(dataset)
 
+        # ------------------------------------------------------------
+        # Dataset representation
+        # ------------------------------------------------------------
         representation = self.dataset_representation(dataset)
         if representation in ("kerchunk_dict", "kerchunk_bytes"):
             raise NotImplementedError(
@@ -1280,28 +1283,24 @@ class NetCDFRead(IORead):
             )
 
         if representation == "unknown":
-            raise NotImplementedError(
-                f"Unknown dataset representation: {dataset!r}"
+            raise ValueError(f"Unknown dataset representation: {dataset!r}")
+
+        if filesystem is not None and representation != "path":
+            raise ValueError(
+                "Can only set filesystem for datasets represented by "
+                f"a string-valued path. Got {representation!r} dataset: "
+                f"{dataset!r}"
             )
-
-        if filesystem is not None:
-            if storage_options is not None:
-                raise ValueError(
-                    "Can't set both storage_options and filesystem keywords"
-                )
-
-            if representation != "path":
-                raise ValueError(
-                    "Can only set filesystem for datasets represented by "
-                    f"a string-valued path. Got {representation!r} dataset: "
-                    f"{dataset!r}"
-                )
 
         # ------------------------------------------------------------
         # Parse the 'storage_options' keyword parameter
         # ------------------------------------------------------------
         if storage_options is None:
             storage_options = {}
+        elif filesystem is not None:
+            raise ValueError(
+                "Can't set both storage_options and filesystem keywords"
+            )
 
         # ------------------------------------------------------------
         # Parse the 'dataset' keyword parameter
@@ -12276,11 +12275,11 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-           dataset:
+            dataset:
                 The dataset. May be a string-valued path, a file-like
                 object, or a directory-like object.
 
-            filesytem: file system, optional
+            filesystem: file system, optional
                 The file system of the dataset. If `None` then the
                 path is assumed to be local. Ignored if *dataset* is
                 not string-valued.
@@ -12290,7 +12289,7 @@ class NetCDFRead(IORead):
             representation: `str` or `None`, optional
                 The dataset representation, i.e. the general type of
                 the *dataset* object. If `None` (the default), then it
-                wil be determined by `dataset_representation`.
+                will be determined by `dataset_representation`.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -12341,7 +12340,7 @@ class NetCDFRead(IORead):
                 The dataset. May be a string-valued path, a file-like
                 object, or a directory-like object.
 
-            filesytem: file system, optional
+            filesystem: file system, optional
                 The file system of the dataset. If `None` then the
                 path is assumed to be local. Ignored if *dataset* is
                 not string-valued.
@@ -12349,7 +12348,7 @@ class NetCDFRead(IORead):
             representation: `str` or `None`, optional
                 The dataset representation, i.e. the general type of
                 the *dataset* object. If `None` (the default), then it
-                wil be determined by `dataset_representation`.
+                will be determined by `dataset_representation`.
 
         :Returns:
 
@@ -12520,7 +12519,7 @@ class NetCDFRead(IORead):
                 The dataset. May be a string-valued path, a file-like
                 object, or a directory-like object.
 
-            filesytem: file system, optional
+            filesystem: file system, optional
                 The file system of the dataset. If `None` then the
                 path is assumed to be local. Ignored if *dataset* is
                 not string-valued.
@@ -12528,7 +12527,7 @@ class NetCDFRead(IORead):
             representation: `str` or `None`, optional
                 The dataset representation, i.e. the general type of
                 the *dataset* object. If `None` (the default), then it
-                wil be determined by `dataset_representation`.
+                will be determined by `dataset_representation`.
 
         :Returns:
 
@@ -12564,7 +12563,8 @@ class NetCDFRead(IORead):
 
         else:
             raise ValueError(
-                f"Can't get a magic number from {representation!r} dataset"
+                f"Can't get a magic number from {representation!r} dataset: "
+                f"{dataset!r}"
             )
 
         # Read the first 4 bytes from the file and unpack them
@@ -12601,10 +12601,10 @@ class NetCDFRead(IORead):
                   returned by `fsspec.filesystem.open`)
 
                 * ``'kerchunk_dict'``: A `dict` (parsed JSON)
-                  representaton of a Kerchunk file.
+                  representation of a Kerchunk file.
 
                 * ``'kerchunk_bytes'``: A `bytes` (raw unparsed JSON)
-                  representaton of a Kerchunk file.
+                  representation of a Kerchunk file.
 
                 * ``'unknown'``: Anything else.
 

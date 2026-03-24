@@ -1,5 +1,6 @@
 import datetime
 import faulthandler
+import json
 import os
 import unittest
 
@@ -62,6 +63,14 @@ class read_writeTest(unittest.TestCase):
         """Test original_filenames with Kerchunk."""
         k = cfdm.read(self.kerchunk)[0]
         self.assertEqual(k.get_original_filenames(), set())
+
+    def test_read_dict(self):
+        """Test cfdm.read with an Kerchunk dictionary."""
+        with open(kerchunk_file, "r") as fh:
+            d = json.loads(fh.read())
+
+        with self.assertRaises(NotImplementedError):
+            cfdm.read(d)
 
 
 if __name__ == "__main__":
