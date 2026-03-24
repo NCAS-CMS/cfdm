@@ -233,7 +233,7 @@ class netcdf_indexer:
         # ------------------------------------------------------------
 
         # Create the index without any new-axis elements. We'll first
-        # subsapce the variable without new axes (given that some
+        # subspace the variable without new axes (given that some
         # variables don't like them, such as `h5py.Variable`), and
         # reinstate them (if any) on the `numpy` array later.
         #
