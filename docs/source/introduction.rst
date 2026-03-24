@@ -77,7 +77,7 @@ The `cfdm` package can
 
 * read :term:`field constructs <field construct>` and :term:`domain
   constructs <domain construct>` from netCDF, CDL, Zarr, and
-  Kerchunked datasets with a choice of netCDF and Zarr backends,
+  Kerchunk datasets with a choice of netCDF and Zarr backends,
 
 * read files from OPeNDAP servers and S3 object stores,
  

@@ -140,9 +140,6 @@ extras_require = {
     "zarr": [
         "zarr>=3.1.3",
     ],
-    "kerchunk": [
-        "fsspec>=2026.2.0",
-    ],
 }
 
 setup(

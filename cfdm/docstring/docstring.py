@@ -118,12 +118,13 @@ _docstring_substitution_definitions = {
             The dataset, or datasets, from which to read field or
             domain constructs.
 
-            May be a string-valued path, a file-like object, or a
-            directory-like object (such as `fsspec.mapping.FSMap`); or
-            a sequence of any combination of these types.
+            May be a string-valued path, a file-like object (such as
+            `io.BufferedReader`, or a directory-like object (such as
+            `fsspec.mapping.FSMap`); or a sequence of any combination
+            of these types.
 
-            Note that Kerchunk files may be only read from 'reference'
-            file system `fsspec.mapping.FSMap` objects::
+            Note that a Kerchunk dataset may be only read from a
+            directory-like object. For instance::
 
                >>> fs = fsspec.filesystem('reference', fo='kerchunk.json')
                >>> kerchunk = fs.get_mapper())

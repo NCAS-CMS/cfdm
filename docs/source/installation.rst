@@ -202,12 +202,13 @@ The cfdm package requires:
 
 * `pyive <https://pypi.org/project/pyfive>`_, version 1.1.1 or newer.
 
-* `fsspec <https://pypi.org/project/fsspec>`_, version 2026.2.0 or newer.
+* `fsspec <https://pypi.org/project/fsspec>`_, version 2026.2.0 or
+  newer.
 
 * `dask <https://pypi.org/project/dask>`_, version 2025.5.1 or newer.
 
-* `distributed <https://pypi.org/project/distributed>`_, version 2025.5.1
-  or newer.
+* `distributed <https://pypi.org/project/distributed>`_, version
+  2025.5.1 or newer.
 
 * `packaging <https://pypi.org/project/packaging>`_, version 20.0 or
   newer.
@@ -255,13 +256,6 @@ environments for which these features are not required.
 
   For reading and writing Zarr datasets, and reading Kerchunk
   datasets.
-
-.. rubric:: Kerchunk
-
-* `fsspec <https://pypi.org/project/fsspec>`_, version 2026.2.0 or
-  newer.
-
-  For reading Kerchunk datasets.
 
 ----
 

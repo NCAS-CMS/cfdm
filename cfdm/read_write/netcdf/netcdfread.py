@@ -1277,9 +1277,23 @@ class NetCDFRead(IORead):
         # Dataset representation
         # ------------------------------------------------------------
         representation = self.dataset_representation(dataset)
-        if representation in ("kerchunk_dict", "kerchunk_bytes"):
-            raise NotImplementedError(
-                f"Can't yet read a {representation!r} dataset"
+        if representation == "kerchunk_dict":
+            raise ValueError(
+                f"Can't read a {representation!r} dataset. Convert it to a "
+                "Kerchunk mapper and read that instead:\n\n"
+                ">>> fs = fsspec.filesystem('reference', fo=kerchunk_dict, "
+                "<options>)\n"
+                ">>> kerchunk_mapper = fs.get_mapper()"
+            )
+
+        if representation == "kerchunk_bytes":
+            raise ValueError(
+                f"Can't read a {representation!r} dataset. Convert it to a "
+                "Kerchunk mapper and read that instead:\n\n"
+                ">>> kerchunk_dict = json.loads(kerchunk_bytes)\n"
+                "fs = fsspec.filesystem('reference', fo=kerchunk_dict, "
+                "<options>)\n"
+                ">>> kerchunk_mapper = fs.get_mapper()"
             )
 
         if representation == "unknown":
@@ -12268,8 +12282,8 @@ class NetCDFRead(IORead):
 
         Zarr v2 and v3 are supported.
 
-        .. warning:: It is assumed that a string-valued *dataset* is
-                     local if there is no *filesystem*.
+        .. note:: It is assumed that a string-valued *dataset* is
+                  local if there is no *filesystem*.
 
         .. versionadded:: (cfdm) 1.12.2.0
 

@@ -46,15 +46,18 @@ class read_writeTest(unittest.TestCase):
         """Test cfdm.read with Kerchunk."""
         f = cfdm.read(self.netcdf)[0]
 
-        k = cfdm.read(self.kerchunk)
+        k = cfdm.read(self.kerchunk, dask_chunks=3)
         self.assertEqual(len(k), 1)
         self.assertTrue(k[0].equals(f))
+        self.assertGreater(k[0].data.npartitions, 1)
 
-        k = cfdm.read([self.kerchunk, self.kerchunk])
+        k = cfdm.read([self.kerchunk, self.kerchunk], dask_chunks=3)
         self.assertEqual(len(k), 2)
         self.assertTrue(k[0].equals(k[-1]))
 
-        k = cfdm.read([self.kerchunk, self.kerchunk, self.netcdf])
+        k = cfdm.read(
+            [self.kerchunk, self.kerchunk, self.netcdf], dask_chunks=3
+        )
         self.assertEqual(len(k), 3)
         self.assertTrue(k[0].equals(k[-1]))
         self.assertTrue(k[1].equals(k[-1]))
@@ -67,10 +70,28 @@ class read_writeTest(unittest.TestCase):
     def test_read_dict(self):
         """Test cfdm.read with an Kerchunk dictionary."""
         with open(kerchunk_file, "r") as fh:
-            d = json.loads(fh.read())
+            d = json.load(fh)
 
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(ValueError):
             cfdm.read(d)
+
+        fs = fsspec.filesystem("reference", fo=d)
+        kerchunk = fs.get_mapper()
+        self.assertEqual(len(cfdm.read(kerchunk)), 1)
+
+    def test_read_bytes(self):
+        """Test cfdm.read with an Kerchunk dictionary."""
+        with open(kerchunk_file, "r") as fh:
+            d = json.load(fh)
+
+        b = json.dumps(d).encode("utf-8")
+        with self.assertRaises(ValueError):
+            cfdm.read(b)
+
+        d = json.loads(b)
+        fs = fsspec.filesystem("reference", fo=d)
+        kerchunk = fs.get_mapper()
+        self.assertEqual(len(cfdm.read(kerchunk)), 1)
 
 
 if __name__ == "__main__":
