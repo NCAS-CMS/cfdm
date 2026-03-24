@@ -631,6 +631,11 @@ class NetCDFRead(IORead):
                 break
 
         if nc is None:
+            if g["dataset_representation"] == "file_handle":
+                # Rewind a file-like object that couldn't be read
+                # (ready for something else to have a go it).
+                dataset.seek(0)
+
             if cdl_filename is not None:
                 dataset = f"{dataset} (created from CDL file {cdl_filename})"
 
@@ -1003,7 +1008,6 @@ class NetCDFRead(IORead):
                 d_type = "netCDF"
             else:
                 # Is it a CDL text file?
-                fh.seek(0)
                 try:
                     line = fh.readline().decode("utf-8")
                 except Exception:
@@ -1026,6 +1030,9 @@ class NetCDFRead(IORead):
                         d_type = "CDL"
                     else:
                         d_type = None
+
+                if representation == "file_handle":
+                    fh.seek(0)
 
             if representation == "path":
                 try:
@@ -1369,6 +1376,7 @@ class NetCDFRead(IORead):
         d_type = self.dataset_type(
             dataset, dataset_type, filesystem, representation
         )
+
         if not d_type:
             # Can't interpret the dataset as a recognised type, so
             # either raise an exception or return an empty list.
@@ -12583,6 +12591,9 @@ class NetCDFRead(IORead):
 
         # Read the first 4 bytes from the file and unpack them
         magic_number = struct.unpack("=L", fh.read(4))[0]
+
+        # Rewind the file
+        fh.seek(0)
 
         return magic_number, fh
 
