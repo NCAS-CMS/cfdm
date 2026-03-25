@@ -82,9 +82,6 @@ class PyfiveArray(IndexMixin, FileArray):
             # Cache the variable
             self._set_component("variable", variable, copy=False)
 
-            self.close(dataset0)
-            del dataset, dataset0
-
         # Get the data, applying masking and scaling as required.
         array = netcdf_indexer(
             variable,

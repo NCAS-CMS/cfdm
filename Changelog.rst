@@ -25,6 +25,9 @@ Version NEXTVERSION
 * New optional backend for netCDF-3 in `cfdm.read` that allows
   parallel reading: ``netcdf_file``
   (https://github.com/NCAS-CMS/cfdm/issues/375)
+* Fix bug in `cfdm.netcdf_indexer` that sometimes caused a failure
+  with a `np.newaxis` index
+  (https://github.com/NCAS-CMS/cfdm/issues/395)
 * Fix bug in `cfdm.read` that wouldn't read non-Zarr and Zarr datasets
   from the same directory
   (https://github.com/NCAS-CMS/cfdm/issues/391)
