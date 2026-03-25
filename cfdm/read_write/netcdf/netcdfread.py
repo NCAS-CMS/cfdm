@@ -570,19 +570,7 @@ class NetCDFRead(IORead):
                     f"    {protocol} storage_options: {storage_options}\n"
                 )  # pragma: no cover
 
-            try:
-                dataset = filesystem.open(dataset, "rb")
-            except AttributeError:
-                raise AttributeError(
-                    f"The 'filesystem' object {filesystem!r} does not have "
-                    "an 'open' method. Please provide a valid filesystem "
-                    "object (e.g. an fsspec.filesystem instance)."
-                )
-            except Exception as exc:
-                raise OSError(
-                    f"Failed to open {dataset!r} using the provided "
-                    f"'filesystem' object {filesystem!r}: {exc}"
-                ) from exc
+            dataset = self.filesystem_open(filesystem, dataset)
 
             storage_options = filesystem.storage_options
             protocol = filesystem.protocol
@@ -1243,7 +1231,6 @@ class NetCDFRead(IORead):
         import re
 
         from packaging.version import Version
-        from uritools import urisplit
 
         debug = is_log_level_debug(logger)
 
@@ -1316,9 +1303,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Parse the 'storage_options' keyword parameter
         # ------------------------------------------------------------
-        if storage_options is None:
-            storage_options = {}
-        elif filesystem is not None:
+        if storage_options is not None and filesystem is not None:
             raise ValueError(
                 "Can't set both storage_options and filesystem keywords"
             )
@@ -1332,39 +1317,9 @@ class NetCDFRead(IORead):
             except ValueError:
                 dataset = abspath(dataset)
 
-            u = urisplit(dataset)
-            if u.scheme == "s3":
-                # ----------------------------------------------------
-                # Dataset is an s3://... string.
-                # ----------------------------------------------------
-                import fsspec
-
-                client_kwargs = storage_options.get("client_kwargs", {})
-                if (
-                    "endpoint_url" not in storage_options
-                    and "endpoint_url" not in client_kwargs
-                ):
-                    authority = u.authority
-                    if not authority:
-                        authority = ""
-
-                    storage_options["endpoint_url"] = f"https://{authority}"
-
-                filesystem = fsspec.filesystem(
-                    protocol=u.scheme, **storage_options
-                )
-
-                dataset = u.path[1:]
-
-            elif u.scheme in ("http", "https"):
-                # ----------------------------------------------------
-                # Dataset is an http://.. or https:// string.
-                # ----------------------------------------------------
-                import fsspec
-
-                filesystem = fsspec.filesystem(
-                    protocol=u.scheme, **storage_options
-                )
+            dataset, filesystem = self.create_filesystem(
+                dataset, storage_options
+            )
 
         # ------------------------------------------------------------
         # Check the file type, raising an exception if the type is not
@@ -12565,20 +12520,7 @@ class NetCDFRead(IORead):
             if filesystem is None:
                 fh = open(dataset, "rb")
             else:
-                try:
-                    fh = filesystem.open(dataset, "rb")
-                except AttributeError:
-                    raise AttributeError(
-                        f"The 'filesystem' object {filesystem!r} does not "
-                        "have an 'open' method. Please provide a valid "
-                        "filesystem object (e.g. an fsspec filesystem "
-                        "instance)."
-                    )
-                except Exception as exc:
-                    raise OSError(
-                        f"Failed to open {dataset!r} using the provided "
-                        f"'filesystem' object {filesystem!r}: {exc}"
-                    ) from exc
+                fh = cls.filesystem_open(filesystem, dataset)
 
         elif representation == "file_handle":
             fh = dataset
