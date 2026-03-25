@@ -22,9 +22,10 @@ which carries the following MIT License:
 
 import logging
 from math import prod
-from numbers import Integral
 
 import numpy as np
+
+from cfdm.functions import axis_dropping_index
 
 logger = logging.getLogger(__name__)
 
@@ -230,39 +231,51 @@ class netcdf_indexer:
         # ------------------------------------------------------------
         # Index the variable
         # ------------------------------------------------------------
-        try:
-            data = self._index(index)
-        except (IndexError, AttributeError):
-            # Assume we are here because we have one or more
-            # np.newaxis values in 'index', and the variable doesn't
-            # support that type of indexing. It is known that
-            # `netCDF4` and `zarr` raise an IndexError and `h5netcdf`
-            # raises an AttributeError.
 
-            # Subspace the variable with the np.newaxis elements
-            # removed
+        # Create the index without any new-axis elements. We'll first
+        # subspace the variable without new axes (given that some
+        # variables don't like them, such as `h5py.Variable`), and
+        # reinstate them (if any) on the `numpy` array later.
+        #
+        # E.g.    index : (1, np.newaxis, slice(1, 5))
+        #      => index1: (1, slice(1, 5))
+        index1 = index
+        new_axes = False
+        if index1 is not Ellipsis:
+            if not isinstance(index, tuple):
+                index = (index,)
+
             newaxis = np.newaxis
-            index1 = [i for i in index if i is not newaxis]
-            data = self._index(tuple(index1))
+            index1 = tuple([i for i in index if i is not newaxis])
+            new_axes = len(index1) < len(index)
 
-            # Now subspace the result (which we're assuming is
-            # something that likes np.newaxis indices) with the
-            # np.newaxis elements reinstated.
-            index2 = [i if i is newaxis else slice(None) for i in index]
-            data = self._index(tuple(index2), data=data)
-
-            # E.g.     index : (1, np.newaxis, slice(1, 5))
-            #      =>  index1: (1, slice(1, 5))
-            #      and index2: (slice(None), np.newaxis, slice(None))
-        except ValueError:
-            # Something went wrong, which is indicative of the
-            # variable not supporting the appropriate slicing method
-            # (e.g. `h5netcdf` might have returned "ValueError: Step
-            # must be >= 1 (got -2)"). Therefore we'll just get the
-            # entire array as a numpy array, and then try indexing
-            # that.
+        try:
+            # Subspace with any new-axis elements removed
+            data = self._index(index1)
+        except Exception:
+            # Something went wrong. Therefore we'll just get the
+            # entire array as a numpy array, and try subspacing that.
             data = self._index(Ellipsis)
             data = self._index(index, data=data)
+        else:
+            if new_axes:
+                # There were new-axis elements in the original index,
+                # so apply them to the data.
+                #
+                # E.g.    index : (1, np.newaxis, slice(1, 5))
+                #      => index1: (1, slice(1, 5))
+                #      => index2: (np.newaxis, slice(None))
+                index2 = []
+                for i in index:
+                    if axis_dropping_index(i):
+                        continue
+
+                    if i is not newaxis:
+                        i = slice(None)
+
+                    index2.append(i)
+
+                data = self._index(tuple(index2), data=data)
 
         # Reset a netCDF4 variable's scale and mask behaviour
         if netCDF4_scale:
@@ -474,7 +487,7 @@ class netcdf_indexer:
         # so that their axes are not dropped yet (they will be dropped
         # later).
         index0 = [
-            slice(i, i + 1) if isinstance(i, Integral) else i for i in index
+            slice(i, i + 1) if axis_dropping_index(i) else i for i in index
         ]
 
         if data_orthogonal_indexing or len(axes_with_list_indices) <= 1:
@@ -532,7 +545,7 @@ class netcdf_indexer:
                 data = data[tuple(index2)]
 
         # Apply any integer indices that will drop axes
-        index3 = [0 if isinstance(i, Integral) else slice(None) for i in index]
+        index3 = [0 if axis_dropping_index(i) else slice(None) for i in index]
         if index3:
             data = data[tuple(index3)]
 
@@ -1013,7 +1026,7 @@ class netcdf_indexer:
                         # List of int
                         size = len(ind)
             else:
-                # Index is Integral
+                # Index is axis-dropping
                 continue
 
             implied_shape.append(size)
