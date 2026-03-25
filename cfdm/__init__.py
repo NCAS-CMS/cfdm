@@ -57,6 +57,7 @@ from .functions import (
     RTOL,
     abspath,
     atol,
+    axis_dropping_index,
     chunksize,
     configuration,
     dirname,
