@@ -12548,9 +12548,7 @@ class NetCDFRead(IORead):
         :Parameters:
 
             dataset:
-                The dataset. May be a string-valued path, a file-like
-                object, a directory-like object, or a `Mapping` object
-                or or a `bytes` object.
+                The dataset representation.
 
         :Returns:
 

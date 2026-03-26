@@ -1599,6 +1599,28 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(x)
         self.assertEqual(len(f), 1)
 
+        # Check that we can read it a first time
+        f = cfdm.read(x)
+        self.assertEqual(len(f), 1)
+
+        # Check that we can read it from a list
+        f = cfdm.read([x])
+        self.assertEqual(len(f), 1)
+
+        # Check that we can read two of it from a list
+        f = cfdm.read([x, x])
+        self.assertEqual(len(f), 2)
+
+        # Check that we can read it from a generator
+        def gen(i):
+            for a in i:
+                yield (a)
+
+        f = cfdm.read(gen([x]))
+        self.assertEqual(len(f), 1)
+        f = cfdm.read(gen([x, x]))
+        self.assertEqual(len(f), 2)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

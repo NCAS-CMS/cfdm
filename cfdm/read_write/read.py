@@ -347,6 +347,7 @@ class read(ReadWrite):
         followlinks = kwargs.get("followlinks", False)
 
         datasets = kwargs["datasets"]
+
         representation = NetCDFRead.dataset_representation(datasets)
         if representation != "unknown":
             datasets = (datasets,)
@@ -398,8 +399,8 @@ class read(ReadWrite):
                     # Glob files/directories on disk
                     datasets1 = abspath(datasets1, uri=False)
             else:
-                # dataset is kerchunk_mapper, general_mapper,
-                # file_handle, unknown, etc.
+                # dataset is file_handle, kerchunk_mapper,
+                # general_mapper, unknown, etc.
                 yield datasets1
                 continue
 
