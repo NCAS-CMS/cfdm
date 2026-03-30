@@ -23,6 +23,9 @@ Version NEXTVERSION
 * New optional backend for netCDF-3 in `cfdm.read` that allows
   parallel reading: ``netcdf_file``
   (https://github.com/NCAS-CMS/cfdm/issues/375)
+* Fix bug in `cfdm.netcdf_indexer` that sometimes caused a failure
+  with a `np.newaxis` index
+  (https://github.com/NCAS-CMS/cfdm/issues/395)
 * Fix bug in `cfdm.read` that wouldn't read non-Zarr and Zarr datasets
   from the same directory
   (https://github.com/NCAS-CMS/cfdm/issues/391)
@@ -33,7 +36,9 @@ Version NEXTVERSION
   different ``formula_terms``
   (https://github.com/NCAS-CMS/cfdm/issues/380).
 * New dependency: ``pyfive>=1.1.1``
+* New dependency: ``fsspec>=2026.2.0``
 * Changed dependency: ``h5netcdf>=1.8.0``
+* Removed dependency: ``s3fs``
 
 ----
 
@@ -65,7 +70,7 @@ Version 1.13.0.0
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
 * New optional dependency: ``zarr>=3.1.3``
-* Removed dependency (now optional): ``zarr>=3.0.8``
+* Removed dependency (now optional): ``zarr``
 
 ----
 
