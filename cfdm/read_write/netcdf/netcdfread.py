@@ -2408,10 +2408,13 @@ class NetCDFRead(IORead):
                         domain=domain,
                         location=location,
                     )
+
                     if mesh_domain is None:
                         continue
 
-                    all_fields_or_domains[f"{ncvar} {location}"] = mesh_domain
+                    all_fields_or_domains[f"{mesh_ncvar} {location}"] = (
+                        mesh_domain
+                    )
 
         # ------------------------------------------------------------
         # Check for unreferenced external variables (CF>=1.7)
@@ -4264,7 +4267,6 @@ class NetCDFRead(IORead):
                 logger.info(
                     f"        {field_ncvar} is not a domain variable"
                 )  # pragma: no cover
-
                 return None
 
             # --------------------------------------------------------
