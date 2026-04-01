@@ -584,10 +584,10 @@ class NetCDFWriteUgrid:
         :Parameters:
 
             mesh: `dict`
-                The two mesh dictionaries to be compared.
+                The first mesh dictionary to be compared.
 
             mesh1: `dict`
-                The two mesh dictionaries to be compared.
+                The second mesh dictionary to be compared.
 
         :Returns:
 
