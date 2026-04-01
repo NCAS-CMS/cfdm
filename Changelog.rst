@@ -7,6 +7,8 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cfdm/issues/385)
 * Read open file handle datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/401)
+* Write UGRID datasets with `cfdm.write`
+  (https://github.com/NCAS-CMS/cfdm/issues/271)
 * New keyword to `cfdm.read`: ``filesystem``
   (https://github.com/NCAS-CMS/cfdm/issues/397)
 * New keyword parameter to `cfdm.Data.compute`: ``persist``
