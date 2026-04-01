@@ -248,7 +248,7 @@ class NetCDFWriteUgrid:
         :Returns:
 
             `str`
-                The netCDF variable name of the dateset node
+                The netCDF variable name of the dataset node
                 coordinates variable.
 
         """
@@ -317,7 +317,7 @@ class NetCDFWriteUgrid:
                 return ncvar
 
         # Still here? Then this parent's UGRID mesh is not the same
-        # as, nor linked to, any other parent's mesh, so we save save
+        # as, nor linked to, any other parent's mesh, so we save
         # it as a new mesh.
         g["meshes"][ncvar_new] = mesh_new
 
