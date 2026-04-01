@@ -382,7 +382,7 @@ class NetCDFWriteUgrid:
            }
 
         For instance, consider the mesh description for the UGRID mesh
-        topology of edge cells taken from ``cfdm.example_field(9). In
+        topology of edge cells taken from ``cfdm.example_field(9)``. In
         this case the 'node_coordinates' Auxiliary Coordinates are
         derived from the edge cell bounds::
 
@@ -407,7 +407,7 @@ class NetCDFWriteUgrid:
            }
 
         For instance, consider the mesh description for the UGRID mesh
-        topology of node cells taken from ``cfdm.example_field(10). In
+        topology of node cells taken from ``cfdm.example_field(10)``. In
         this case the 'node_coordinates' Auxiliary Coordinates are
         explicitly defined by the point cell locations::
 
@@ -719,7 +719,7 @@ class NetCDFWriteUgrid:
             edges = edge["edge_node_connectivity"][0].sort()
             edge["sorted_edges"]["edge_node_connectivity"] = edges
 
-        # Return True if the unique edges of the faces are identical
+        # Return True if the unique edges of the nodes are identical
         # to the given edges
         if node_edges.data.shape != edges.data.shape:
             return False
