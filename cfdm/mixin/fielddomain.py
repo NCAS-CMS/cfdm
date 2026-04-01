@@ -1,6 +1,7 @@
 import logging
 
 from ..decorators import _manage_log_level_via_verbosity
+from ..functions import _DEPRECATION_ERROR_METHOD
 
 logger = logging.getLogger(__name__)
 
@@ -11,39 +12,6 @@ class FieldDomain:
     .. versionadded:: (cfdm) 1.9.0.0
 
     """
-
-    def __initialise_from_source(self, source, copy=True):
-        """Initialise mesh_id information from a source.
-
-        This method is called by
-        `_Container__parent_initialise_from_source`, which in turn is
-        called by `cfdm.core.Container.__init__`.
-
-        .. versionadded:: (cfdm) 1.12.2.0
-
-        :Parameters:
-
-            source:
-                The object from which to extract the initialisation
-                information. Typically, but not necessarily, a
-                `{{class}}` object.
-
-            copy: `bool`, optional
-                If True (the default) then deep copy the
-                initialisation information.
-
-        :Returns:
-
-            `None`
-
-        """
-        try:
-            mesh_id = source.get_mesh_id(None)
-        except AttributeError:
-            pass
-        else:
-            if mesh_id is not None:
-                self.set_mesh_id(mesh_id)
 
     def _apply_masking_constructs(self):
         """Apply masking to metadata constructs in-place.
@@ -725,7 +693,12 @@ class FieldDomain:
         None
 
         """
-        return self._del_component("mesh_id", default=default)
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "del_mesh_id",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def domain_topology(
         self,
@@ -2334,7 +2307,12 @@ class FieldDomain:
         None
 
         """
-        return self._get_component("mesh_id", default=default)
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "get_mesh_id",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def has_construct(self, *identity, **filter_kwargs):
         """Whether a unique metadata construct exists.
@@ -2453,7 +2431,154 @@ class FieldDomain:
         None
 
         """
-        return self._has_component("mesh_id")
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "has_mesh_id",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def node_coordinates(self, persist=False):
+        """Create the node coordinates for a UGRID mesh topology.
+
+        For face and edge cells, the nodes are the cell vertices. For
+        point cells, the nodes are the same points.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: (cfdm) `domain_topology`
+
+        :Parameters:
+
+            persist: `bool`, optional
+                If True then persist into memory the data of the
+                returned node coordinates. If False (the default) then
+                don't do this.
+
+        :Returns:
+
+            `list`
+                The node coordinates, stored in zero or more
+                `{{package}}.AuxiliaryCoordinate` contructs.
+
+        **Examples:**
+
+        Face cells:
+
+        >>> f = {{package}}.example_field(8)
+        >>> print(f)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(time(2), ncdim%nMesh2_face(3)) K
+        Cell methods    : time(2): point (interval: 3600 s)
+        Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+        Auxiliary coords: longitude(ncdim%nMesh2_face(3)) = [-44.0, -44.0, -42.0] degrees_east
+                        : latitude(ncdim%nMesh2_face(3)) = [34.0, 32.0, 34.0] degrees_north
+        Topologies      : cell:face(ncdim%nMesh2_face(3), 4) = [[2, ..., --]]
+        Connectivities  : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]
+        >>> f.node_coordinates()
+        [<{{repr}}AuxiliaryCoordinate: longitude(7) degrees_east>,
+         <{{repr}}AuxiliaryCoordinate: latitude(7) degrees_north>]
+
+        Point cells:
+
+        >>> f = {{package}}.example_field(10)
+        >>> print(f)
+        Field: air_pressure (ncvar%pa)
+        ------------------------------
+        Data            : air_pressure(time(2), ncdim%nMesh2_node(7)) hPa
+        Cell methods    : time(2): point (interval: 3600 s)
+        Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+        Auxiliary coords: longitude(ncdim%nMesh2_node(7)) = [-45.0, ..., -40.0] degrees_east
+                        : latitude(ncdim%nMesh2_node(7)) = [35.0, ..., 34.0] degrees_north
+        Topologies      : cell:point(ncdim%nMesh2_node(7), 5) = [[0, ..., --]]
+        >>> f.node_coordinates()
+        [<{{repr}}AuxiliaryCoordinate: longitude(7) degrees_east>,
+         <{{repr}}AuxiliaryCoordinate: latitude(7) degrees_north>]
+
+        """
+        key, domain_topology = self.domain_topology(
+            item=True, default=(None, None)
+        )
+        if key is None:
+            raise ValueError(
+                "Can't get node coordinates for a UGRID mesh of "
+                f"{self!r} when there is no unique "
+                "domain topology construct"
+            )
+
+        cell = domain_topology.get_cell(None)
+        if cell is None:
+            raise ValueError(
+                "Can't get node coordinates for a UGRID mesh of "
+                f"{self!r} when the domain topology construct has no "
+                "'cell' type"
+            )
+
+        ugrid_axis = self.get_data_axes(key)[0]
+        cell_coordinates = self.auxiliary_coordinates(
+            filter_by_axis=(ugrid_axis,), axis_mode="exact"
+        )
+
+        match cell:
+            case "point":
+                nodes = [c.copy() for c in cell_coordinates.values()]
+
+            case "face" | "edge":
+                nodes = []
+
+                index = None
+                for key, c in cell_coordinates.items():
+                    bounds = c.get_bounds(None)
+                    if bounds is None or bounds.get_data(None) is None:
+                        raise ValueError(
+                            "Can't get node coordinates for a UGRID mesh of "
+                            f"{cell!r} cells for {self!r} when {c!r} has no "
+                            "coordinate bounds data"
+                        )
+
+                    if index is None:
+                        import numpy as np
+
+                        # Create the array index that will extract, in
+                        # the correct order, the node coordinates from
+                        # the flattened cell bounds, i.e. so that the
+                        # first node coordinate has node id 0, the
+                        # second has node id 1, etc.
+                        node_ids, index = np.unique(
+                            domain_topology, return_index=True
+                        )
+                        if node_ids[-1] is np.ma.masked:
+                            # Remove the element that corresponds to
+                            # missing data (which is always at the end
+                            # of the `np.unique` outputs)
+                            index = index[:-1]
+
+                        del node_ids
+
+                    # Create, from the cell bounds, an Auxiliary
+                    # Coordinate that contains the unique node
+                    # coordinates.
+                    coord = self._AuxiliaryCoordinate(
+                        data=bounds.data.flatten()[index],
+                        properties=c.properties(),
+                    )
+
+                    nodes.append(coord)
+
+                del index
+
+            case _:
+                raise ValueError(
+                    "Can't get node coordinates for a UGRID mesh of "
+                    f"{cell!r} cells for {self!r}"
+                )
+
+        if persist:
+            for c in nodes:
+                c.persist(inplace=True)
+
+        return nodes
 
     def set_mesh_id(self, mesh_id):
         """Set a UGRID mesh topology identifier.
@@ -2493,4 +2618,9 @@ class FieldDomain:
         None
 
         """
-        return self._set_component("mesh_id", mesh_id, copy=False)
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "set_mesh_id",
+            version="NEXTVERSION",
+            removed_at="5.0.0",
+        )  # pragma: no cover
