@@ -5471,7 +5471,7 @@ class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
         None
 
         """
-        return self._nc_set("mesh_variable", value)
+        self._nc_set("mesh_variable", value)
 
     def nc_mesh_variable_groups(self):
         """Return the netCDF mesh variable group hierarchy.
