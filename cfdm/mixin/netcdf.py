@@ -5851,7 +5851,7 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
         characters then an empty sequence is returned, signifying the
         root group.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_clear_connectivity_dimension_groups`,
                      `nc_set_connectivity_dimension_groups`
@@ -5902,7 +5902,7 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
         `nc_set_connectivity_dimension`, with the group structure
         delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_clear_connectivity_dimension_groups`,
                      `nc_connectivity_dimension_groups`
