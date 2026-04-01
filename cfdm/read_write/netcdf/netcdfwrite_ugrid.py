@@ -49,7 +49,6 @@ class NetCDFWriteUgrid:
         g = self.write_vars
 
         # Normalise the array, so that its N node ids are 0, ..., N-1
-
         domain_topology.normalise(inplace=True)
         if key is not None:
             g["normalised_domain_topologies"][key] = domain_topology
