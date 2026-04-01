@@ -448,7 +448,7 @@ class DomainTopology(
         Only edge and point domain topologies can be sorted.
 
         Sorting is across both array dimensions. In general, dimension
-        1 is sorted first, and then dimension 0 is sort by the values
+        1 is sorted first, and then dimension 0 is sorted by the values
         in the first column.
 
         For an edge domain topology, the second column is also sorted
@@ -480,7 +480,7 @@ class DomainTopology(
 
         **Examples**
 
-        >>> f= {{package}}.example_field(9)
+        >>> f = {{package}}.example_field(9)
         >>> print(f)
         Field: northward_wind (ncvar%v)
         -------------------------------
@@ -513,7 +513,7 @@ class DomainTopology(
          [3 6]
          [4 5]]
 
-        >>> f= {{package}}.example_field(10)
+        >>> f = {{package}}.example_field(10)
         >>> print(f)
         Field: air_pressure (ncvar%pa)
         ------------------------------
@@ -571,7 +571,7 @@ class DomainTopology(
     def to_edge(self, sort=False, face_nodes=None):
         """Create a new domain topology of edges.
 
-        The edges will defined from the original domain topology,
+        The edges are defined from the original domain topology,
         either as sides of faces, or the links between nodes, or
         copied from the existing edges.
 
@@ -607,7 +607,7 @@ class DomainTopology(
 
         **Examples**
 
-        >>> f= {{package}}.example_field(8)
+        >>> f = {{package}}.example_field(8)
         >>> print(f)
         Field: air_temperature (ncvar%ta)
         ---------------------------------
@@ -647,7 +647,7 @@ class DomainTopology(
          [3 6]
          [4 5]]
 
-        >>> f= {{package}}.example_field(10)
+        >>> f = {{package}}.example_field(10)
         >>> print(f)
         Field: air_pressure (ncvar%pa)
         ------------------------------
@@ -686,7 +686,7 @@ class DomainTopology(
         cell = self.get_cell(None)
         if face_nodes is not None and cell != "face":
             raise ValueError(
-                "Can't set 'face_nodes' for {self!r} with {cell} cells"
+                f"Can't set 'face_nodes' for {self!r} with {cell} cells"
             )
 
         # Deal with simple "edge" case first

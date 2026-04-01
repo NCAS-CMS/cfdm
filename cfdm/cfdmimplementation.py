@@ -1034,7 +1034,7 @@ class CFDMImplementation(Implementation):
         return field.domain_axes(todict=True)[axis].get_size()
 
     def get_domain_topologies(self, parent):
-        """Return the domain topologies from  a parent.
+        """Return the domain topologies from a parent.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -2029,7 +2029,7 @@ class CFDMImplementation(Implementation):
         :Parameters:
 
             kwargs: optional
-                Parameters with which to intialising the object.
+                Parameters with which to initialise the object.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 

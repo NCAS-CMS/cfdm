@@ -2362,7 +2362,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
                     )
                 else:
                     # There is no data (although there might be
-                    # bounds, though), so there can't be an auxiliary
+                    # bounds), so there can't be an auxiliary
                     # coordinate variable.
                     ncvar = None
 
