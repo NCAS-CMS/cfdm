@@ -346,8 +346,7 @@ class NetCDFWriteUgrid:
            'face_face_connectivity'
            'volume_volume_connectivity'
 
-        After the mesh description is a dictionary has been created
-        with this method:
+        After the mesh description has been created with this method:
 
         * More of the optional keys might get added by
           `_ugrid_update_mesh`.
