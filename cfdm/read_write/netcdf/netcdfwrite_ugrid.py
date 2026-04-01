@@ -553,11 +553,11 @@ class NetCDFWriteUgrid:
             "normalised_cell_connectivities"
         ].items():
             connectivity = cell_connectivity.get_connectivity(None)
-            if not (
-                (connectivity, cell) == ("edge", "face")
-                or (connectivity, cell) == ("node", "edge")
-                or (connectivity, cell) == ("face", "volume")
-            ):
+            if (connectivity, cell) not in {
+                ("edge", "face"),
+                ("node", "edge"),
+                ("face", "volume"),
+            }:
                 raise ValueError(
                     f"{parent!r} has invalid UGRID cell connectivity type "
                     f"for {cell!r} cells: {cell_connectivity!r}"
