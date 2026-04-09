@@ -423,7 +423,7 @@ class FileArray(Array):
                 Removed at version 1.13.1.0
 
             parsed_filename: `urllib.parse.ParseResult`, optional
-                Removed at versiokn 1.13.1.0
+                Removed at version 1.13.1.0
 
         :Returns:
 

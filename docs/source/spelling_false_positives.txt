@@ -95,6 +95,7 @@ getinitargs
 getitem
 getstate
 GiB
+globbing
 Hankin
 hardmask
 Hartnett
@@ -102,6 +103,7 @@ hashable
 Hassell
 hdf
 indexable
+inf
 init
 Initialize
 initio
@@ -114,8 +116,10 @@ iter
 iterable
 Iwi
 Juckes
-keepdims
 kB
+keepdims
+Kerchunk
+Kerchunked
 kwargs
 lat
 len
@@ -152,6 +156,7 @@ nsd
 numblocks
 numpy
 NumpyArray
+nuniq
 occassions
 optimize
 orography

@@ -355,7 +355,7 @@ _docstring_substitution_definitions = {
 
               - The `scipy.io.netcdf_file` library.
               - Reads local netCDF-3 datasets.
-              - Allows parallised reading.
+              - Allows parallelised reading.
               - Treats unlimited dimensions in the dataset as not
                 unlimited.
 
