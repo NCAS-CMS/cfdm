@@ -254,6 +254,13 @@ NetCDF
    ~cfdm.Field.nc_clear_global_attributes
    ~cfdm.Field.nc_set_global_attribute
    ~cfdm.Field.nc_set_global_attributes
+   ~cfdm.Field.nc_clear_mesh_variable_groups
+   ~cfdm.Field.nc_del_mesh_variable
+   ~cfdm.Field.nc_get_mesh_variable
+   ~cfdm.Field.nc_has_mesh_variable
+   ~cfdm.Field.nc_mesh_variable_groups
+   ~cfdm.Field.nc_set_mesh_variable
+   ~cfdm.Field.nc_set_mesh_variable_groups
 
 Groups
 ^^^^^^
@@ -340,6 +347,7 @@ UGRID
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Field.node_coordinates
    ~cfdm.Field.del_mesh_id
    ~cfdm.Field.get_mesh_id
    ~cfdm.Field.has_mesh_id
