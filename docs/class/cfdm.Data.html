@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/documentation_options.js?v=c432c498"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Data.array" href="../attribute/cfdm.Data.array.html" />
-    <link rel="prev" title="cfdm.InteriorRing._docstring_method_exclusions" href="../method/cfdm.InteriorRing._docstring_method_exclusions.html" />
+    <link rel="prev" title="cfdm.InteriorRing.nc_set_hdf5_chunksizes" href="../method/cfdm.InteriorRing.nc_set_hdf5_chunksizes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -84,7 +84,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.InteriorRing._docstring_method_exclusions.html" title="previous chapter">cfdm.InteriorRing._docstring_method_exclusions</a></li>
+      <li>Previous: <a href="../method/cfdm.InteriorRing.nc_set_hdf5_chunksizes.html" title="previous chapter">cfdm.InteriorRing.nc_set_hdf5_chunksizes</a></li>
       <li>Next: <a href="../attribute/cfdm.Data.array.html" title="next chapter">cfdm.Data.array</a></li>
   </ul></li>
   </ul></li>
@@ -123,7 +123,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data<a class="headerlink" href="#cfdm-data" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.Data">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/data/data.py#L55-L7647"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Data" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/data/data.py#L56-L7701"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Data" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFAggregation</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFChunks</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFShards</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Files</span></code>, <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.data.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a></p>
 <p>An N-dimensional data array with units and masked values.</p>
 <ul class="simple">
@@ -199,7 +199,7 @@ array, <code class="xref py py-obj docutils literal notranslate"><span class="pr
 </dd>
 </dl>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code>, optional</dt><dd><p>The physical units of the data. if a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code> object is
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../attribute/cfdm.Data.Units.html#cfdm.Data.Units" title="cfdm.Data.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The physical units of the data. if a <a class="reference internal" href="../attribute/cfdm.Data.Units.html#cfdm.Data.Units" title="cfdm.Data.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object is
 provided then this an also set the calendar.</p>
 <p>The units (without the calendar) may also be set after
 initialisation with the <a class="reference internal" href="../method/cfdm.Data.set_units.html#cfdm.Data.set_units" title="cfdm.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a> method.</p>
@@ -325,7 +325,7 @@ downstream performance by avoiding the need for
 independent reads for every dask chunk, each time the
 data are computed.</p>
 <p>In general, setting <em>to_memory</em> to True is not the same
-as calling the <code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code> of the newly created <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+as calling the <a class="reference internal" href="../method/cfdm.Data.persist.html#cfdm.Data.persist" title="cfdm.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a> of the newly created <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 object, which also decompresses data compressed by
 convention and computes any data type, mask and
 date-time modifications.</p>
@@ -399,10 +399,10 @@ performance.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.Data.size.html#cfdm.Data.size" title="cfdm.Data.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
 <td><p>Number of elements in the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nbytes</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.nbytes.html#cfdm.Data.nbytes" title="cfdm.Data.nbytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nbytes</span></code></a></p></td>
 <td><p>Total number of bytes consumed by the elements of the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cached_elements</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.get_cached_elements.html#cfdm.Data.get_cached_elements" title="cfdm.Data.get_cached_elements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cached_elements</span></code></a></p></td>
 <td><p>Get the cache of selected array elements.</p></td>
 </tr>
 </tbody>
@@ -429,7 +429,7 @@ performance.</p></li>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.Units.html#cfdm.Data.Units" title="cfdm.Data.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
 <td><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code> object containing the units of the data array.</p></td>
 </tr>
 </tbody>
@@ -459,7 +459,7 @@ performance.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.datetime_array.html#cfdm.Data.datetime_array" title="cfdm.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
 <td><p>An independent numpy array of date-time objects.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtarray</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.Data.dtarray.html#cfdm.Data.dtarray" title="cfdm.Data.dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtarray</span></code></a></p></td>
 <td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.datetime_as_string.html#cfdm.Data.datetime_as_string" title="cfdm.Data.datetime_as_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_as_string</span></code></a></p></td>
@@ -472,34 +472,34 @@ performance.</p></li>
 <h2>Dask<a class="headerlink" href="#dask" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.compute.html#cfdm.Data.compute" title="cfdm.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a></p></td>
 <td><p>A view of the computed data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.persist.html#cfdm.Data.persist" title="cfdm.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
 <td><p>Persist data into memory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cull_graph</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.cull_graph.html#cfdm.Data.cull_graph" title="cfdm.Data.cull_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cull_graph</span></code></a></p></td>
 <td><p>Remove unnecessary tasks from the dask graph in-place.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask_compressed_array</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.Data.dask_compressed_array.html#cfdm.Data.dask_compressed_array" title="cfdm.Data.dask_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask_compressed_array</span></code></a></p></td>
 <td><p>Returns a dask array of the compressed data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.rechunk.html#cfdm.Data.rechunk" title="cfdm.Data.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a></p></td>
 <td><p>Change the chunk structure of the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk_indices</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.chunk_indices.html#cfdm.Data.chunk_indices" title="cfdm.Data.chunk_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk_indices</span></code></a></p></td>
 <td><p>Return indices of the data that define each dask chunk.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.todict.html#cfdm.Data.todict" title="cfdm.Data.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a></p></td>
 <td><p>Return a dictionary of the dask graph key/value pairs.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.to_dask_array.html#cfdm.Data.to_dask_array" title="cfdm.Data.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a></p></td>
 <td><p>Convert the data to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_deterministic_name</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.get_deterministic_name.html#cfdm.Data.get_deterministic_name" title="cfdm.Data.get_deterministic_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_deterministic_name</span></code></a></p></td>
 <td><p>Get the deterministic name for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_deterministic_name</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.has_deterministic_name.html#cfdm.Data.has_deterministic_name" title="cfdm.Data.has_deterministic_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_deterministic_name</span></code></a></p></td>
 <td><p>Whether there is a deterministic name for the data.</p></td>
 </tr>
 </tbody>
@@ -507,19 +507,19 @@ performance.</p></li>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.chunks.html#cfdm.Data.chunks" title="cfdm.Data.chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></a></p></td>
 <td><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> chunk sizes for each dimension.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.Data.chunksize.html#cfdm.Data.chunksize" title="cfdm.Data.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a></p></td>
 <td><p>The largest <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> chunk size for each dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk_positions</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.chunk_positions.html#cfdm.Data.chunk_positions" title="cfdm.Data.chunk_positions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk_positions</span></code></a></p></td>
 <td><p>Find the position of each chunk.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">npartitions</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.Data.npartitions.html#cfdm.Data.npartitions" title="cfdm.Data.npartitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">npartitions</span></code></a></p></td>
 <td><p>The total number of chunks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">numblocks</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.numblocks.html#cfdm.Data.numblocks" title="cfdm.Data.numblocks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numblocks</span></code></a></p></td>
 <td><p>The number of chunks along each dimension.</p></td>
 </tr>
 </tbody>
@@ -534,13 +534,13 @@ performance.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.empty.html#cfdm.Data.empty" title="cfdm.Data.empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">empty</span></code></a></p></td>
 <td><p>Return a new array, without initialising entries.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ones</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.ones.html#cfdm.Data.ones" title="cfdm.Data.ones"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ones</span></code></a></p></td>
 <td><p>Returns a new array filled with ones of set shape and type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">zeros</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.zeros.html#cfdm.Data.zeros" title="cfdm.Data.zeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zeros</span></code></a></p></td>
 <td><p>Returns a new array filled with zeros of set shape and type.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">full</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.full.html#cfdm.Data.full" title="cfdm.Data.full"><code class="xref py py-obj docutils literal notranslate"><span class="pre">full</span></code></a></p></td>
 <td><p>Return new data filled with a fill value.</p></td>
 </tr>
 </tbody>
@@ -550,7 +550,7 @@ performance.</p></li>
 <h3>From existing data<a class="headerlink" href="#from-existing-data" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdata</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.asdata.html#cfdm.Data.asdata" title="cfdm.Data.asdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdata</span></code></a></p></td>
 <td><p>Convert the input to a <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.copy.html#cfdm.Data.copy" title="cfdm.Data.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
@@ -569,7 +569,7 @@ performance.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.flatten.html#cfdm.Data.flatten" title="cfdm.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p></td>
 <td><p>Flatten specified axes of the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reshape</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.reshape.html#cfdm.Data.reshape" title="cfdm.Data.reshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reshape</span></code></a></p></td>
 <td><p>Change the shape of the data without changing its values.</p></td>
 </tr>
 </tbody>
@@ -602,7 +602,7 @@ performance.</p></li>
 <h3>Joining data<a class="headerlink" href="#joining-data" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.concatenate.html#cfdm.Data.concatenate" title="cfdm.Data.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
 <td><p>Join a sequence of data arrays together.</p></td>
 </tr>
 </tbody>
@@ -612,7 +612,7 @@ performance.</p></li>
 <h3>Expanding the data<a class="headerlink" href="#expanding-the-data" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pad_missing</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.pad_missing.html#cfdm.Data.pad_missing" title="cfdm.Data.pad_missing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pad_missing</span></code></a></p></td>
 <td><p>Pad an axis with missing data.</p></td>
 </tr>
 </tbody>
@@ -644,7 +644,7 @@ performance.</p></li>
 <h3>Truth value testing<a class="headerlink" href="#truth-value-testing" title="Link to this heading">¶</a></h3>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.all.html#cfdm.Data.all" title="cfdm.Data.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a></p></td>
 <td><p>Test whether all data array elements evaluate to True.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.any.html#cfdm.Data.any" title="cfdm.Data.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a></p></td>
@@ -668,16 +668,16 @@ performance.</p></li>
 <h2>Mask support<a class="headerlink" href="#mask-support" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">harden_mask</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.harden_mask.html#cfdm.Data.harden_mask" title="cfdm.Data.harden_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">harden_mask</span></code></a></p></td>
 <td><p>Force the mask to hard.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">soften_mask</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.soften_mask.html#cfdm.Data.soften_mask" title="cfdm.Data.soften_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">soften_mask</span></code></a></p></td>
 <td><p>Force the mask to soft.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.apply_masking.html#cfdm.Data.apply_masking" title="cfdm.Data.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
 <td><p>Apply masking.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_where</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.masked_where.html#cfdm.Data.masked_where" title="cfdm.Data.masked_where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_where</span></code></a></p></td>
 <td><p>Mask the data where a condition is met.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.filled.html#cfdm.Data.filled" title="cfdm.Data.filled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filled</span></code></a></p></td>
@@ -703,13 +703,13 @@ performance.</p></li>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.hardmask.html#cfdm.Data.hardmask" title="cfdm.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></p></td>
 <td><p>Hardness of the mask.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.Data.mask.html#cfdm.Data.mask" title="cfdm.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
 <td><p>The Boolean missing data mask of the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.fill_value.html#cfdm.Data.fill_value" title="cfdm.Data.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
 <td><p>The data array missing data value.</p></td>
 </tr>
 </tbody>
@@ -845,13 +845,13 @@ performance.</p></li>
 <h2>Performance<a class="headerlink" href="#performance" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_clear_dataset_chunksizes.html#cfdm.Data.nc_clear_dataset_chunksizes" title="cfdm.Data.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a></p></td>
 <td><p>Clear the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_dataset_chunksizes.html#cfdm.Data.nc_dataset_chunksizes" title="cfdm.Data.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a></p></td>
 <td><p>Get the dataset chunking strategy for the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_set_dataset_chunksizes.html#cfdm.Data.nc_set_dataset_chunksizes" title="cfdm.Data.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p></td>
 <td><p>Set the dataset chunking strategy for the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_clear_dataset_shards.html#cfdm.Data.nc_clear_dataset_shards" title="cfdm.Data.nc_clear_dataset_shards"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_shards</span></code></a></p></td>
@@ -870,37 +870,37 @@ performance.</p></li>
 <h2>Aggregation<a class="headerlink" href="#aggregation" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.file_directories.html#cfdm.Data.file_directories" title="cfdm.Data.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
 <td><p>The directories of files containing parts of the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.replace_directory.html#cfdm.Data.replace_directory" title="cfdm.Data.replace_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></a></p></td>
 <td><p>Replace file directories in-place.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_filenames</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.replace_filenames.html#cfdm.Data.replace_filenames" title="cfdm.Data.replace_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_filenames</span></code></a></p></td>
 <td><p>Replace file locations in-place.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_aggregated_data</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_del_aggregated_data.html#cfdm.Data.nc_del_aggregated_data" title="cfdm.Data.nc_del_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_aggregated_data</span></code></a></p></td>
 <td><p>Remove the netCDF aggregated_data terms.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_aggregation_write_status</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_del_aggregation_write_status.html#cfdm.Data.nc_del_aggregation_write_status" title="cfdm.Data.nc_del_aggregation_write_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_aggregation_write_status</span></code></a></p></td>
 <td><p>Set the netCDF aggregation write status to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_aggregated_data</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_get_aggregated_data.html#cfdm.Data.nc_get_aggregated_data" title="cfdm.Data.nc_get_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_aggregated_data</span></code></a></p></td>
 <td><p>Return the netCDF aggregated data terms.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_aggregation_fragment_type</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_get_aggregation_fragment_type.html#cfdm.Data.nc_get_aggregation_fragment_type" title="cfdm.Data.nc_get_aggregation_fragment_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_aggregation_fragment_type</span></code></a></p></td>
 <td><p>The type of fragments in the aggregated data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_aggregation_write_status</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_get_aggregation_write_status.html#cfdm.Data.nc_get_aggregation_write_status" title="cfdm.Data.nc_get_aggregation_write_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_aggregation_write_status</span></code></a></p></td>
 <td><p>Get the netCDF aggregation write status.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_aggregated_data</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_has_aggregated_data.html#cfdm.Data.nc_has_aggregated_data" title="cfdm.Data.nc_has_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_aggregated_data</span></code></a></p></td>
 <td><p>Whether any netCDF aggregated_data terms have been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_aggregated_data</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_set_aggregated_data.html#cfdm.Data.nc_set_aggregated_data" title="cfdm.Data.nc_set_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_aggregated_data</span></code></a></p></td>
 <td><p>Set the netCDF aggregated_data elements.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_aggregation_write_status</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_set_aggregation_write_status.html#cfdm.Data.nc_set_aggregation_write_status" title="cfdm.Data.nc_set_aggregation_write_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_aggregation_write_status</span></code></a></p></td>
 <td><p>Set the netCDF aggregation write status.</p></td>
 </tr>
 </tbody>
@@ -913,25 +913,25 @@ performance.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.__array__.html#cfdm.Data.__array__" title="cfdm.Data.__array__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__array__</span></code></a></p></td>
 <td><p>The numpy array interface.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.__deepcopy__.html#cfdm.Data.__deepcopy__" title="cfdm.Data.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.__getitem__.html#cfdm.Data.__getitem__" title="cfdm.Data.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></p></td>
 <td><p>Return a subspace of the data defined by indices.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.__int__.html#cfdm.Data.__int__" title="cfdm.Data.__int__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__int__</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__int__</span></code></p></td>
 <td><p>Called to implement the built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.__iter__.html#cfdm.Data.__iter__" title="cfdm.Data.__iter__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iter__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iter__</span></code></p></td>
 <td><p>Called when an iterator is required.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.__repr__.html#cfdm.Data.__repr__" title="cfdm.Data.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.__setitem__.html#cfdm.Data.__setitem__" title="cfdm.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></p></td>
 <td><p>Implement indexed assignment.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.__str__.html#cfdm.Data.__str__" title="cfdm.Data.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
@@ -942,16 +942,16 @@ performance.</p></li>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data._docstring_special_substitutions.html#cfdm.Data._docstring_special_substitutions" title="cfdm.Data._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></p></td>
 <td><p>Return the special docstring substitutions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data._docstring_substitutions.html#cfdm.Data._docstring_substitutions" title="cfdm.Data._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></p></td>
 <td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data._docstring_package_depth.html#cfdm.Data._docstring_package_depth" title="cfdm.Data._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></p></td>
 <td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data._docstring_method_exclusions.html#cfdm.Data._docstring_method_exclusions" title="cfdm.Data._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></p></td>
 <td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
@@ -985,7 +985,7 @@ performance.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/documentation_options.js?v=c432c498"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -128,17 +128,26 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <span class="sig-prename descclassname"><span class="pre">Data.</span></span><span class="sig-name descname"><span class="pre">array</span></span><a class="headerlink" href="#cfdm.Data.array" title="Link to this definition">¶</a></dt>
 <dd><p>A numpy array copy of the data.</p>
 <p>In-place changes to the returned numpy array do not affect the
-underlying dask array.</p>
+underlying Dask array.</p>
 <p>The returned numpy array has the same mask hardness and fill
 values as the data.</p>
-<p>Compare with <code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the <a class="reference internal" href="../function/cfdm.persist_data.html#cfdm.persist_data" title="cfdm.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.persist_data</span></code></a> function returns
+True then calling <a class="reference internal" href="#cfdm.Data.array" title="cfdm.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> will persist the
+underlying lazy Dask array into an equivalent
+chunked Dask array, but now with the results fully
+computed and cached memory.</p>
+</div>
+<p>Compare with <a class="reference internal" href="../method/cfdm.Data.compute.html#cfdm.Data.compute" title="cfdm.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>.</p>
 <p><strong>Performance</strong></p>
 <p><a class="reference internal" href="#cfdm.Data.array" title="cfdm.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> causes all delayed operations to be computed. The
 returned <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array is a deep copy of that returned by
-created <code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code>.</p>
+created <a class="reference internal" href="../method/cfdm.Data.compute.html#cfdm.Data.compute" title="cfdm.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cfdm.Data.datetime_array.html#cfdm.Data.datetime_array" title="cfdm.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></p>
+<p><a class="reference internal" href="cfdm.Data.datetime_array.html#cfdm.Data.datetime_array" title="cfdm.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a>, <a class="reference internal" href="../method/cfdm.Data.compute.html#cfdm.Data.compute" title="cfdm.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a>, <a class="reference internal" href="../method/cfdm.Data.persist.html#cfdm.Data.persist" title="cfdm.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a>,
+<a class="reference internal" href="../function/cfdm.persist_data.html#cfdm.persist_data" title="cfdm.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.persist_data</span></code></a></p>
 </div>
 <p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="s1">&#39;km&#39;</span><span class="p">)</span>
@@ -175,7 +184,7 @@ created <code class="xref py py-obj docutils literal notranslate"><span class="p
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

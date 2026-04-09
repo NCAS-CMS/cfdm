@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/documentation_options.js?v=c432c498"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -19,8 +19,8 @@
     <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Constant.value" href="../attribute/cfdm.Constant.value.html" />
-    <link rel="prev" title="cfdm.Quantization" href="cfdm.Quantization.html" />
+    <link rel="next" title="cfdm.Constant.copy" href="../method/cfdm.Constant.copy.html" />
+    <link rel="prev" title="cfdm.Quantization.nc_clear_variable_groups" href="../method/cfdm.Quantization.nc_clear_variable_groups.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -84,8 +84,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="cfdm.Quantization.html" title="previous chapter">cfdm.Quantization</a></li>
-      <li>Next: <a href="../attribute/cfdm.Constant.value.html" title="next chapter">cfdm.Constant.value</a></li>
+      <li>Previous: <a href="../method/cfdm.Quantization.nc_clear_variable_groups.html" title="previous chapter">cfdm.Quantization.nc_clear_variable_groups</a></li>
+      <li>Next: <a href="../method/cfdm.Constant.copy.html" title="next chapter">cfdm.Constant.copy</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -124,10 +124,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.Constant">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/__init__.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Constant" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/__init__.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Constant" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A container for a constant with context manager support.</p>
-<p>The constant value is accessed via the <a class="reference internal" href="../attribute/cfdm.Constant.value.html#cfdm.Constant.value" title="cfdm.Constant.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a> attribute:</p>
+<p>The constant value is accessed via the <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> attribute:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="mf">1.2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">value</span>
 <span class="go">1.2</span>
@@ -165,7 +165,7 @@ built-in functions:</p>
 </div>
 <p>Binary arithmetic operations (<code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">/</span></code>, <code class="docutils literal notranslate"><span class="pre">//</span></code>)
 are equivalent to the operation acting on the <a class="reference internal" href="#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> object’s
-<a class="reference internal" href="../attribute/cfdm.Constant.value.html#cfdm.Constant.value" title="cfdm.Constant.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a> attribute:</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> attribute:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">value</span>
 <span class="go">20</span>
@@ -194,7 +194,7 @@ array</p>
 </pre></div>
 </div>
 <p>Unary arithmetic operations (<code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#abs" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">abs</span></code></a>) are equivalent
-to the operation acting on the <a class="reference internal" href="#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> object’s <a class="reference internal" href="../attribute/cfdm.Constant.value.html#cfdm.Constant.value" title="cfdm.Constant.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a>
+to the operation acting on the <a class="reference internal" href="#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> object’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code>
 attribute:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">value</span>
@@ -208,7 +208,7 @@ attribute:</p>
 </pre></div>
 </div>
 <p>Rich comparison operations are equivalent to the operation acting
-on the <a class="reference internal" href="#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> object’s <a class="reference internal" href="../attribute/cfdm.Constant.value.html#cfdm.Constant.value" title="cfdm.Constant.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a> attribute:</p>
+on the <a class="reference internal" href="#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> object’s <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> attribute:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">value</span>
@@ -245,8 +245,8 @@ on the <a class="reference internal" href="#cfdm.Constant" title="cfdm.Constant"
 <p><a class="reference internal" href="#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> instances are hashable.</p>
 <p><strong>Context manager</strong></p>
 <p>The <a class="reference internal" href="#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> instance can be used as a context manager that
-upon exit executes the function defined by the <a class="reference internal" href="../attribute/cfdm.Constant._func.html#cfdm.Constant._func" title="cfdm.Constant._func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_func</span></code></a> attribute,
-with the <a class="reference internal" href="../attribute/cfdm.Constant.value.html#cfdm.Constant.value" title="cfdm.Constant.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a> attribute as an argument. For example, the
+upon exit executes the function defined by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">_func</span></code> attribute,
+with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> attribute as an argument. For example, the
 <a class="reference internal" href="#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> instance <code class="docutils literal notranslate"><span class="pre">c</span></code> would execute <code class="docutils literal notranslate"><span class="pre">c._func(c.value)</span></code> upon
 exit.</p>
 <div class="versionadded">
@@ -272,7 +272,7 @@ its argument.</p>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Constant.value.html#cfdm.Constant.value" title="cfdm.Constant.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -291,7 +291,7 @@ its argument.</p>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Constant._func.html#cfdm.Constant._func" title="cfdm.Constant._func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_func</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_func</span></code></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -302,19 +302,19 @@ its argument.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Constant.__deepcopy__.html#cfdm.Constant.__deepcopy__" title="cfdm.Constant.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Constant.__enter__.html#cfdm.Constant.__enter__" title="cfdm.Constant.__enter__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__enter__</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__enter__</span></code></p></td>
 <td><p>Enter the runtime context.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Constant.__exit__.html#cfdm.Constant.__exit__" title="cfdm.Constant.__exit__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__exit__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__exit__</span></code></p></td>
 <td><p>Exit the runtime context.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Constant.__repr__.html#cfdm.Constant.__repr__" title="cfdm.Constant.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Constant.__str__.html#cfdm.Constant.__str__" title="cfdm.Constant.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
@@ -331,7 +331,7 @@ its argument.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

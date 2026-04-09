@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=056948bf" />
-    <script src="_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="_static/documentation_options.js?v=c432c498"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -120,7 +120,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="cfdm-functions">
 <span id="function"></span><h1><strong>cfdm functions</strong><a class="headerlink" href="#cfdm-functions" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.13.0.0 for version 1.13 of the CF conventions.</p>
+<p>Version 1.13.1.0 for version 1.13 of the CF conventions.</p>
 <section id="reading-and-writing">
 <h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
@@ -163,6 +163,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a></p></td>
 <td><p>Set the default chunksize used by <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> arrays.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.display_data.html#cfdm.display_data" title="cfdm.display_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.display_data</span></code></a></p></td>
+<td><p>Control the display of data elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.persist_data.html#cfdm.persist_data" title="cfdm.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.persist_data</span></code></a></p></td>
+<td><p>Control the persistence of computed data.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -179,31 +185,28 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.dirname.html#cfdm.dirname" title="cfdm.dirname"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.dirname</span></code></a></p></td>
 <td><p>Return the directory of a path.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.display_data.html#cfdm.display_data" title="cfdm.display_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.display_data</span></code></a></p></td>
-<td><p>Control the display of data elements.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a></p></td>
 <td><p>Return the names, versions and paths of all dependencies.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.example_field.html#cfdm.example_field" title="cfdm.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_field</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.example_field.html#cfdm.example_field" title="cfdm.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_field</span></code></a></p></td>
 <td><p>Return an example field construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.example_fields.html#cfdm.example_fields" title="cfdm.example_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_fields</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.example_fields.html#cfdm.example_fields" title="cfdm.example_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_fields</span></code></a></p></td>
 <td><p>Return example field constructs.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.example_domain.html#cfdm.example_domain" title="cfdm.example_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_domain</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.example_domain.html#cfdm.example_domain" title="cfdm.example_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_domain</span></code></a></p></td>
 <td><p>Return an example domain construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.implementation.html#cfdm.implementation" title="cfdm.implementation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.implementation</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.implementation.html#cfdm.implementation" title="cfdm.implementation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.implementation</span></code></a></p></td>
 <td><p>Return a container for the CF data model implementation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.integer_dtype.html#cfdm.integer_dtype" title="cfdm.integer_dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.integer_dtype</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.integer_dtype.html#cfdm.integer_dtype" title="cfdm.integer_dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.integer_dtype</span></code></a></p></td>
 <td><p>Return the smallest data type that can store the given integer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a></p></td>
 <td><p>The minimal level of seriousness of log messages which are shown.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a></p></td>
 <td><p>Return the unique constructs from a sequence.</p></td>
 </tr>
 </tbody>
@@ -220,7 +223,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

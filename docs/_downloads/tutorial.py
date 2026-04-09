@@ -599,7 +599,7 @@ cfdm.write(g, 'append-example-file.nc')
 cfdm.read('append-example-file.nc')
 h = cfdm.example_field(0)
 h
-cfdm.write(h, 'append-example-file.nc', mode='a')
+cfdm.write(h, 'append-example-file.nc', mode='a', netcdf_backend='netCDF4')
 cfdm.read('append-example-file.nc')
 f = cfdm.read('q_file.nc')[0]
 q.equals(f)
@@ -826,7 +826,7 @@ d.get_tie_point_indices()
 d.get_computational_precision()
 q, t = cfdm.read('file.nc')
 t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
-cfdm.write(t, 'quantized.nc')
+cfdm.write(t, 'quantized.nc', netcdf_backend='netCDF4')
 quantized = cfdm.read('quantized.nc')[0]
 c = quantized.get_quantization()
 c
