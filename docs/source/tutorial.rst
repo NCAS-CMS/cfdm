@@ -3580,7 +3580,7 @@ in that file:
    >>> h = cfdm.example_field(0)
    >>> h
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> cfdm.write(h, 'append-example-file.nc', mode='a')
+   >>> cfdm.write(h, 'append-example-file.nc', mode='a', netcdf_backend='netCDF4')
    >>> cfdm.read('append-example-file.nc')
    [<Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
     <Field: specific_humidity(latitude(5), longitude(8)) 1>]
