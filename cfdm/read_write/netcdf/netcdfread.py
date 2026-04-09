@@ -949,7 +949,7 @@ class NetCDFRead(IORead):
                 * ``'netCDF'`` for a netCDF-3 or netCDF-4 file,
                 * ``'CDL'`` for a text CDL file,
                 * ``'Zarr'`` for a Zarr dataset directory,
-                * ``'Kerchunk'`` for a Kerchunk file,
+                * ``'Kerchunk'`` for a Kerchunk virtual directory,
                 * `None` for anything else.
 
         """
