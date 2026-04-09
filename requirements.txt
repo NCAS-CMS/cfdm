@@ -11,3 +11,4 @@ dask>=2025.5.1
 distributed>=2025.5.1
 uritools>=4.0.3
 cfunits>=3.3.7
+fsspec>=2026.2.0
