@@ -1,7 +1,7 @@
-Version NEXTVERSION
+Version 1.13.1.0
 ----------------
 
-**2026-??-??**
+**2026-04-09**
 
 * Read Kerchunk datasets with `cfdm.read`
   (https://github.com/NCAS-CMS/cfdm/issues/385)
