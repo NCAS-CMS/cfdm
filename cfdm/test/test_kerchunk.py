@@ -80,7 +80,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(cfdm.read(kerchunk)), 1)
 
     def test_read_bytes(self):
-        """Test cfdm.read with an Kerchunk dictionary."""
+        """Test cfdm.read with a Kerchunk raw bytes representation."""
         with open(kerchunk_file, "r") as fh:
             d = json.load(fh)
 

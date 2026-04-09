@@ -119,7 +119,7 @@ _docstring_substitution_definitions = {
             domain constructs.
 
             May be a string-valued path, a file-like object (such as
-            `io.BufferedReader`, or a directory-like object (such as
+            `io.BufferedReader`), or a directory-like object (such as
             `fsspec.mapping.FSMap`); or a sequence of any combination
             of these types.
 
@@ -127,7 +127,7 @@ _docstring_substitution_definitions = {
             directory-like object. For instance::
 
                >>> fs = fsspec.filesystem('reference', fo='kerchunk.json')
-               >>> kerchunk = fs.get_mapper())
+               >>> kerchunk = fs.get_mapper()
                >>> f = {{package}}.read(kerchunk)
 
             Local names may be relative paths and will have tilde and

@@ -173,7 +173,7 @@ class IORead(IO, metaclass=abc.ABCMeta):
             )
         except Exception as error:
             raise RuntimeError(
-                f"Failed to open {dataset!r} using the file system object "
+                f"Failed to open {dataset!r} using the file system "
                 f" object {filesystem!r}: {error}"
             ) from error
 

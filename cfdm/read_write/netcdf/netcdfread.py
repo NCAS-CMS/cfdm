@@ -622,7 +622,7 @@ class NetCDFRead(IORead):
         if nc is None:
             if g["dataset_representation"] == "file_handle":
                 # Rewind a file-like object that couldn't be read
-                # (ready for something else to have a go it).
+                # (ready for something else to have a go at it).
                 dataset.seek(0)
 
             if cdl_filename is not None:
@@ -937,7 +937,7 @@ class NetCDFRead(IORead):
             representation: `str` or `None`, optional
                 The dataset representation, i.e. the general type of
                 the *dataset* object. If `None` (the default), then it
-                will be determined by `dataset_representation`.
+                will be determined by calling `dataset_representation`.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
