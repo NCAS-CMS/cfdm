@@ -12543,7 +12543,8 @@ class NetCDFRead(IORead):
             representation: `str` or `None`, optional
                 The dataset representation, i.e. the general type of
                 the *dataset* object. If `None` (the default), then it
-                will be determined by `dataset_representation`.
+                will be determined by calling
+                `dataset_representation`.
 
         :Returns:
 
