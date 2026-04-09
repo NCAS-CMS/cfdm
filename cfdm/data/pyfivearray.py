@@ -12,7 +12,7 @@ class PyfiveArray(IndexMixin, FileArray):
       storing the dataset variable's B-tree at read time so that it
       doesn't have to be re-retrieved at compute time).
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.1.0
 
     """
 
@@ -23,7 +23,7 @@ class PyfiveArray(IndexMixin, FileArray):
         from the netCDF variable *var* and stored for fast future
         access.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -47,7 +47,7 @@ class PyfiveArray(IndexMixin, FileArray):
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `__array__`, `index`
 
@@ -102,7 +102,7 @@ class PyfiveArray(IndexMixin, FileArray):
     def _group(self, dataset, groups):
         """Return the group object containing a variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -129,7 +129,7 @@ class PyfiveArray(IndexMixin, FileArray):
     def close(self, dataset):
         """Close the dataset containing the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -147,7 +147,7 @@ class PyfiveArray(IndexMixin, FileArray):
     def get_groups(self, address):
         """The netCDF4 group structure of a netCDF variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 

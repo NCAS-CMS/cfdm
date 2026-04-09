@@ -33,7 +33,7 @@ class IORead(IO, metaclass=abc.ABCMeta):
     def create_filesystem(cls, path, storage_options=None):
         """Create a file system for a path.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -133,7 +133,7 @@ class IORead(IO, metaclass=abc.ABCMeta):
     def filesystem_open(cls, filesystem, dataset, open_options=None):
         """Open a dataset on a file system.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 

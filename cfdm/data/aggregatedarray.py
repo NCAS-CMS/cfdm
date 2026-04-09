@@ -79,7 +79,7 @@ class AggregatedArray(abstract.FileArray):
 
             {{init storage_protocol: `None` or `str`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             {{init storage_options: `dict` or `None`, optional}}
 

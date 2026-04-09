@@ -469,7 +469,7 @@ class DomainTopology(
                   bounds. For this reason, `sort` is not allowed to
                   occur in-place.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `normalise`, `to_edge`
 
@@ -575,7 +575,7 @@ class DomainTopology(
         either as sides of faces, or the links between nodes, or
         copied from the existing edges.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `normalise`, `sort`
 

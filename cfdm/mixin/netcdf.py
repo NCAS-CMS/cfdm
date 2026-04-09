@@ -5312,14 +5312,14 @@ class NetCDFShards(NetCDFMixin):
 class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
     """Mixin for accessing the netCDF mesh variable name.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.1.0
 
     """
 
     def nc_del_mesh_variable(self, default=ValueError()):
         """Remove the netCDF mesh variable name.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_get_mesh_variable`, `nc_has_mesh_variable`,
                      `nc_set_mesh_variable`
@@ -5359,7 +5359,7 @@ class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
     def nc_get_mesh_variable(self, default=ValueError()):
         """Return the netCDF mesh variable name.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_del_mesh_variable`, `nc_has_mesh_variable`,
                      `nc_set_mesh_variable`
@@ -5400,7 +5400,7 @@ class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
     def nc_has_mesh_variable(self):
         """Whether the netCDF mesh variable name is set.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_get_mesh_variable`, `nc_del_mesh_variable`,
                      `nc_set_mesh_variable`
@@ -5439,7 +5439,7 @@ class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
         contains no others, the name is assumed to be in the root
         group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_get_mesh_variable`, `nc_has_mesh_variable`,
                      `nc_del_mesh_variable`
@@ -5483,7 +5483,7 @@ class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
         characters then an empty sequence is returned, signifying the
         root group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_clear_mesh_variable_groups`,
                      `nc_set_mesh_variable_groups`
@@ -5534,7 +5534,7 @@ class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
         `nc_set_mesh_variable`, with the group structure
         delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_clear_mesh_variable_groups`,
                      `nc_mesh_variable_groups`
@@ -5594,7 +5594,7 @@ class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
         to set the netCDF mesh variable name, with
         `nc_set_mesh_variable`, with no ``/`` characters.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_mesh_variable_groups`,
                      `nc_set_mesh_variable_groups`
@@ -5638,14 +5638,14 @@ class NetCDFMeshVariable(NetCDFMixin, NetCDFGroupsMixin):
 class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF connectivity dimension name.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.1.0
 
     """
 
     def nc_del_connectivity_dimension(self, default=ValueError()):
         """Remove the netCDF connectivity dimension name.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_get_connectivity_dimension`,
                      `nc_has_connectivity_dimension`,
@@ -5696,7 +5696,7 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
     def nc_get_connectivity_dimension(self, default=ValueError()):
         """Return the netCDF connectivity dimension name.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_del_connectivity_dimension`,
                      `nc_has_connectivity_dimension`,
@@ -5747,7 +5747,7 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
     def nc_has_connectivity_dimension(self):
         """Whether the netCDF connectivity dimension name has been set.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_del_connectivity_dimension`,
                      `nc_get_connectivity_dimension`,
@@ -5787,7 +5787,7 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
         contains no others, the name is assumed to be in the root
         group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_del_connectivity_dimension`,
                      `nc_get_connectivity_dimension`,
@@ -5851,7 +5851,7 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
         characters then an empty sequence is returned, signifying the
         root group.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_clear_connectivity_dimension_groups`,
                      `nc_set_connectivity_dimension_groups`
@@ -5902,7 +5902,7 @@ class NetCDFConnectivityDimension(NetCDFMixin, NetCDFGroupsMixin):
         `nc_set_connectivity_dimension`, with the group structure
         delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `nc_clear_connectivity_dimension_groups`,
                      `nc_connectivity_dimension_groups`

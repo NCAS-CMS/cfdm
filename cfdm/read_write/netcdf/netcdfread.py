@@ -686,7 +686,7 @@ class NetCDFRead(IORead):
     def _open_netcdf_file(self, filename):
         """Return an open `scipy.io.netcdf_file`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -763,7 +763,7 @@ class NetCDFRead(IORead):
     def _open_h5netcdf_pyfive(self, filename):
         """Return an open `h5netcdf.File` with the `pyfive` backend.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -927,7 +927,7 @@ class NetCDFRead(IORead):
             allowed_dataset_types: `None` or sequence of `str`
                 The allowed dataset types.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             filesystem: file system or `None`
                 The file system that contains the dataset. If `None`
@@ -939,7 +939,7 @@ class NetCDFRead(IORead):
                 the *dataset* object. If `None` (the default), then it
                 will be determined by calling `dataset_representation`.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 
@@ -1142,7 +1142,7 @@ class NetCDFRead(IORead):
             filesystem: optional
                 See `cfdm.read` for details.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             netcdf_backend: `None` or `str`, optional
                 See `cfdm.read` for details.
@@ -11486,7 +11486,7 @@ class NetCDFRead(IORead):
     def _ndim(self, var):
         """Return the size of a variable's array.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -11511,7 +11511,7 @@ class NetCDFRead(IORead):
     def _dtype(self, var):
         """Return the data type of a dataset variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -11544,7 +11544,7 @@ class NetCDFRead(IORead):
     def _index(self, var, index):
         """Return a subspace of the array of a dataset variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -12300,14 +12300,14 @@ class NetCDFRead(IORead):
                 path is assumed to be local. Ignored if *dataset* is
                 not string-valued.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             representation: `str` or `None`, optional
                 The dataset representation, i.e. the general type of
                 the *dataset* object. If `None` (the default), then it
                 will be determined by `dataset_representation`.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 
@@ -12348,7 +12348,7 @@ class NetCDFRead(IORead):
     def is_kerchunk(cls, dataset, filesystem=None, representation=None):
         """Whether or not a dataset contains a Kerchunk dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -12499,7 +12499,7 @@ class NetCDFRead(IORead):
     def _original_dataset_variable(self, ncvar):
         """Return a variable object from the origin dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -12527,7 +12527,7 @@ class NetCDFRead(IORead):
     def get_magic_number(cls, dataset, filesystem=None, representation=None):
         """Get the magic number of a dataset in a file.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -12583,7 +12583,7 @@ class NetCDFRead(IORead):
     def dataset_representation(cls, dataset):
         """Return the logical representation type of the input dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 

@@ -485,7 +485,7 @@ class FieldDomain:
                 size in the identity (e.g. "time(12)". If False then
                 do not (e.g. "time").
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 
@@ -696,7 +696,7 @@ class FieldDomain:
         _DEPRECATION_ERROR_METHOD(
             self,
             "del_mesh_id",
-            version="NEXTVERSION",
+            version="1.13.1.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -2310,7 +2310,7 @@ class FieldDomain:
         _DEPRECATION_ERROR_METHOD(
             self,
             "get_mesh_id",
-            version="NEXTVERSION",
+            version="1.13.1.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -2434,7 +2434,7 @@ class FieldDomain:
         _DEPRECATION_ERROR_METHOD(
             self,
             "has_mesh_id",
-            version="NEXTVERSION",
+            version="1.13.1.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -2444,7 +2444,7 @@ class FieldDomain:
         For face and edge cells, the nodes are the cell vertices. For
         point cells, the nodes are the same points.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: (cfdm) `domain_topology`
 
@@ -2621,6 +2621,6 @@ class FieldDomain:
         _DEPRECATION_ERROR_METHOD(
             self,
             "set_mesh_id",
-            version="NEXTVERSION",
+            version="1.13.1.0",
             removed_at="5.0.0",
         )  # pragma: no cover

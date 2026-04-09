@@ -111,7 +111,7 @@ def configuration(
             The new persist data option. The default is to not change
             the current behaviour.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.13.1.0
 
     :Returns:
 
@@ -2065,7 +2065,7 @@ class persist_data(ConstantAccess):
     This behaviour may be overridden on an individual basis by the
     *persist* parameter of the `{{package}}.Data.compute` method.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.1.0
 
     .. seealso:: `configuration`, `Data.compute`, `Data.array`
 
@@ -2119,7 +2119,7 @@ class persist_data(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        .. versionaddedd:: (cfdm) NEXTVERSION
+        .. versionaddedd:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -2491,7 +2491,7 @@ def axis_dropping_index(index):
 
     An axis-dropping index is typically integer-like.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.1.0
 
     :Parameters:
 

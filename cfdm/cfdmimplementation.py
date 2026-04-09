@@ -424,7 +424,7 @@ class CFDMImplementation(Implementation):
     def get_cell_connectivities(self, parent):
         """Return the cell connectivities from a parent.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -1036,7 +1036,7 @@ class CFDMImplementation(Implementation):
     def get_domain_topologies(self, parent):
         """Return the domain topologies from a parent.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -2031,7 +2031,7 @@ class CFDMImplementation(Implementation):
             kwargs: optional
                 Parameters with which to initialise the object.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 
@@ -2627,7 +2627,7 @@ class CFDMImplementation(Implementation):
             kwargs: optional
                 Initialisation parameters to pass to the new instance.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 
@@ -2640,7 +2640,7 @@ class CFDMImplementation(Implementation):
     def initialise_PyfiveArray(self, **kwargs):
         """Return a `PyfiveArray` instance.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 

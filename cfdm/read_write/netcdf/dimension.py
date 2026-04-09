@@ -1,7 +1,7 @@
 class Dimension:
     """A named dimension.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.1.0
 
     """
 
@@ -29,7 +29,7 @@ class Dimension:
 
         x.__len__() <==> len(x)
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         """
         return self.size
@@ -37,7 +37,7 @@ class Dimension:
     def group(self):
         """Return the group that the dimension is a member of.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 
@@ -49,7 +49,7 @@ class Dimension:
     def isunlimited(self):
         """Whether or not the dimension is unlimited.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 

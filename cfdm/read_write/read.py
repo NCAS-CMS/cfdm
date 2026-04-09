@@ -154,7 +154,7 @@ class read(ReadWrite):
 
         {{read filesystem: optional}}
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.13.1.0
 
         {{read storage_options: `dict` or `None`, optional}}
 

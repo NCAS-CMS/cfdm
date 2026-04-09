@@ -395,7 +395,7 @@ _docstring_substitution_definitions = {
             for ``http://`` and ``https://`` URIs; or via
             S3-compatible object store access for ``s3://`` URIs.
 
-            .. versionadded:: (cfdm) NEXTVERSION""",
+            .. versionadded:: (cfdm) 1.13.1.0""",
     # read  storage_options
     "{{read storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
             Pass parameters to the backend file system driver, such as

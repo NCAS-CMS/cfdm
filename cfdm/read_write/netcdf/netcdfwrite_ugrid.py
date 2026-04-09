@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 class NetCDFWriteUgrid:
     """Mixin class for writing UGRID meshes to a dataset.
 
-    .. versionadded: (cfdm) NEXTVERSION
+    .. versionadded: (cfdm) 1.13.1.0
 
     """
 
@@ -16,7 +16,7 @@ class NetCDFWriteUgrid:
         If an equal domain topology has already been written to the
         dataset then it is not re-written.
 
-        .. versionadded: (cfdm) NEXTVERSION
+        .. versionadded: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -143,7 +143,7 @@ class NetCDFWriteUgrid:
         If an equal cell connectivity has already been written to the
         dataset then it is not re-written.
 
-        .. versionadded: (cfdm) NEXTVERSION
+        .. versionadded: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -233,7 +233,7 @@ class NetCDFWriteUgrid:
     def _ugrid_write_node_coordinate(self, node_coord, ncdimensions):
         """Write UGRID node coordinates to the dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -276,7 +276,7 @@ class NetCDFWriteUgrid:
     def _ugrid_get_mesh_ncvar(self, parent):
         """Get the name of the netCDF mesh variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -424,7 +424,7 @@ class NetCDFWriteUgrid:
                 0
            }
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -577,7 +577,7 @@ class NetCDFWriteUgrid:
         Meshes are linked if they represent different locations of the
         same UGRID mesh.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -689,7 +689,7 @@ class NetCDFWriteUgrid:
     def _ugrid_check_node_edge(self, node, edge):
         """Whether or not the nodes imply the edges, and vice versa.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -727,7 +727,7 @@ class NetCDFWriteUgrid:
     def _ugrid_check_edge_face(self, edge, face):
         """Whether or not the edges imply the faces, and vice versa.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -783,7 +783,7 @@ class NetCDFWriteUgrid:
     def _ugrid_check_node_face(self, node, face):
         """Whether or not the nodes imply the faces, and vice versa.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -832,7 +832,7 @@ class NetCDFWriteUgrid:
         The `_ugrid_linked_meshes` method is used to ascertain if two
         meshes are linked.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -893,7 +893,7 @@ class NetCDFWriteUgrid:
 
         The mesh variables are defined by `self.write_vars['meshes']`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 

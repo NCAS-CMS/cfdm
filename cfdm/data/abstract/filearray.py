@@ -59,11 +59,11 @@ class FileArray(Array):
 
             {{init storage_protocol: `None` or `str`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             {{init storage_options: `dict` or `None`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             variable: optional
                 An open dataset variable object. Setting *variable*
@@ -71,7 +71,7 @@ class FileArray(Array):
                 *address* parameters, instead it complements them by
                 allowing faster data access.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             {{init source: optional}}
 
@@ -387,7 +387,7 @@ class FileArray(Array):
     def get_storage_protocol(self):
         """The file system protocol.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seeaslo:: `has_remote_storage_protocol`, `get_storage_options`
 
@@ -417,13 +417,13 @@ class FileArray(Array):
         :Parameters:
 
             create_endpoint_url: `bool`, optional
-                Removed at version NEXTVERSION
+                Removed at version 1.13.1.0
 
             filename: `str`, optional
-                Removed at version NEXTVERSION
+                Removed at version 1.13.1.0
 
             parsed_filename: `urllib.parse.ParseResult`, optional
-                Removed at versiokn NEXTVERSION
+                Removed at versiokn 1.13.1.0
 
         :Returns:
 
@@ -453,7 +453,7 @@ class FileArray(Array):
     def get_variable(self, default=AttributeError()):
         """Get the open dataset variable object for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -688,7 +688,7 @@ class FileArray(Array):
     def has_remote_storage_protocol(self):
         """Whether or not there is a remote file system protocol.
 
-        .. versionadded:: (cfdm)  NEXTVERSION
+        .. versionadded:: (cfdm)  1.13.1.0
 
         .. seeaslo:: `get_storage_protocol`, `get_storage_options`
 

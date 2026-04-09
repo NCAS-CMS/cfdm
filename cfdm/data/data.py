@@ -4149,7 +4149,7 @@ class Data(
                 is False then the data is not persisted, regardless of
                 value returned by `{{package}}.persist_data`.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             _force_to_memory: `bool`, optional
                 If True (the default) then force the data resulting
