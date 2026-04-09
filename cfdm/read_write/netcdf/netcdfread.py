@@ -12369,7 +12369,7 @@ class NetCDFRead(IORead):
         :Returns:
 
             `bool`
-                `True` if *dataset* is contains Kerchunk dataset,
+                `True` if *dataset* contains a Kerchunk dataset,
                 otherwise `False`.
 
         """
