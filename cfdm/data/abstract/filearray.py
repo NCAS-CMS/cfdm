@@ -393,7 +393,7 @@ class FileArray(Array):
 
         :Returns:
 
-            `None` or str`
+            `None` or `str`
                 The file system protocol. If `None` the the file
                 system is the local file system.
 
