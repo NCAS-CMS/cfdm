@@ -3661,7 +3661,7 @@ class CFDMImplementation(Implementation):
             if data is not None:
                 filenames += tuple(data._original_filenames())
 
-        parent._original_filenames(define=set(filenames))
+        parent._original_filenames(define=filenames)
 
     def set_parameter(self, parent, parameter, value, copy=True):
         """Set a parameter on a component.

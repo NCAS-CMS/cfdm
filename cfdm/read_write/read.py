@@ -17,13 +17,10 @@ logger = getLogger(__name__)
 class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
-    The following dataset formats are supported: netCDF, CDL, and
-    Zarr.
+    The following dataset formats are supported: netCDF, CDL, Zarr,
+    and Kerchunk.
 
-    NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
-    server, or in an S3 object store.
-
-    CDL files must be on local disk.
+    Datasets may be on local disk or in remote storage.
 
     Any amount of files of any combination of file types may be read.
 
@@ -100,7 +97,7 @@ class read(ReadWrite):
 
     :Parameters:
 
-        {{read datasets: (arbitrarily nested sequence of) `str`}}
+        {{read datasets:}}
 
         {{read recursive: `bool`, optional}}
 
@@ -122,6 +119,7 @@ class read(ReadWrite):
             ``'netCDF'``    A netCDF-3 or netCDF-4 dataset
             ``'CDL'``       A text CDL file of a netCDF dataset
             ``'Zarr'``      A Zarr v2 (xarray) or Zarr v3 dataset
+            ``'Kerchunk'``  A Kerchunked dataset
             ==============  ==========================================
 
             .. versionadded:: (cfdm) 1.12.2.0
@@ -348,7 +346,11 @@ class read(ReadWrite):
         recursive = kwargs.get("recursive", False)
         followlinks = kwargs.get("followlinks", False)
 
-        datasets = self._flat(kwargs["datasets"])
+        datasets = kwargs["datasets"]
+
+        representation = NetCDFRead.dataset_representation(datasets)
+        if representation != "unknown":
+            datasets = (datasets,)
 
         # If a filesystem object is provided, treat each dataset path
         # as-is (no local glob/walk/expansion) and yield directly.
@@ -357,7 +359,6 @@ class read(ReadWrite):
             d_glob = iglob
             d_isdir = isdir
             d_walk = walk
-
         else:
             d_glob = filesystem.glob
             d_isdir = filesystem.isdir
@@ -382,19 +383,26 @@ class read(ReadWrite):
         is_zarr = partial(NetCDFRead.is_zarr, filesystem=filesystem)
 
         for datasets1 in datasets:
-            if filesystem is None:
-                # Apply tilde and environment variable expansions
-                datasets1 = expanduser(expandvars(datasets1))
+            representation = NetCDFRead.dataset_representation(datasets1)
+            if representation == "path":
+                if filesystem is None:
+                    # Apply tilde and environment variable expansions
+                    datasets1 = expanduser(expandvars(datasets1))
 
-                u = urisplit(datasets1)
-                if u.scheme not in (None, "file"):
-                    # Do not glob a remote URI, and assume that it defines
-                    # a single dataset.
-                    yield datasets1
-                    continue
+                    u = urisplit(datasets1)
+                    if u.scheme not in (None, "file"):
+                        # Do not glob a remote URI, and assume that it defines
+                        # a single dataset.
+                        yield datasets1
+                        continue
 
-                # Glob files/directories on disk
-                datasets1 = abspath(datasets1, uri=False)
+                    # Glob files/directories on disk
+                    datasets1 = abspath(datasets1, uri=False)
+            else:
+                # dataset is file_handle, kerchunk_mapper,
+                # general_mapper, unknown, etc.
+                yield datasets1
+                continue
 
             n_datasets = 0
             for x in d_glob(datasets1):
@@ -484,7 +492,7 @@ class read(ReadWrite):
         self.dataset_type = dataset_type
 
         # Recognised netCDF dataset formats
-        self.netCDF_dataset_types = set(("netCDF", "CDL", "Zarr"))
+        self.netCDF_dataset_types = set(("netCDF", "CDL", "Zarr", "Kerchunk"))
 
         # Allowed dataset formats
         self.allowed_dataset_types = self.netCDF_dataset_types.copy()
@@ -512,8 +520,9 @@ class read(ReadWrite):
 
         :Parameters:
 
-            dataset: `str`
-                The pathname of the dataset that has just been read.
+            dataset:
+                The dataset to be read. May be a string-valued path,
+                or a file-like or directory-like object.
 
         :Returns:
 
@@ -537,8 +546,9 @@ class read(ReadWrite):
 
         :Parameters:
 
-            dataset: `str`
-                The pathname of the dataset to be read.
+            dataset:
+                The dataset to be read. May be a string-valued path,
+                or a file-like or directory-like object.
 
         :Returns:
 
@@ -570,8 +580,9 @@ class read(ReadWrite):
 
         :Parameters:
 
-            dataset: `str`
-                The pathname of the dataset to be read.
+            dataset:
+                The dataset to be read. May be a string-valued path,
+                or a file-like or directory-like object.
 
         :Returns:
 

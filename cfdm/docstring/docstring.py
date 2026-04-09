@@ -114,10 +114,21 @@ _docstring_substitution_definitions = {
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
     # read datasets
-    "{{read datasets: (arbitrarily nested sequence of) `str`}}": """dataset: (arbitrarily nested sequence of) `str`
-            A string, or arbitrarily nested sequence of strings,
-            giving the dataset names, or directory names, from which
-            to read field or domain constructs.
+    "{{read datasets:}}": """datasets:
+            The dataset, or datasets, from which to read field or
+            domain constructs.
+
+            May be a string-valued path, a file-like object (such as
+            `io.BufferedReader`), or a directory-like object (such as
+            `fsspec.mapping.FSMap`); or a sequence of any combination
+            of these types.
+
+            Note that a Kerchunk dataset may be only read from a
+            directory-like object. For instance::
+
+               >>> fs = fsspec.filesystem('reference', fo='kerchunk.json')
+               >>> kerchunk = fs.get_mapper()
+               >>> f = {{package}}.read(kerchunk)
 
             Local names may be relative paths and will have tilde and
             shell environment variables expansions applied to them,

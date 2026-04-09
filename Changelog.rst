@@ -3,6 +3,10 @@ Version NEXTVERSION
 
 **2026-??-??**
 
+* Read Kerchunk datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/385)
+* Read open file handle datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/401)
 * Write UGRID datasets with `cfdm.write`
   (https://github.com/NCAS-CMS/cfdm/issues/271)
 * New keyword to `cfdm.read`: ``filesystem``

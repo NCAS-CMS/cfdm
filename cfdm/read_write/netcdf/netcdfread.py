@@ -4,6 +4,7 @@ import struct
 import subprocess
 import tempfile
 from ast import literal_eval
+from collections.abc import Mapping
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
@@ -465,6 +466,13 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
+        if g["dataset_representation"] == "file_handle":
+            try:
+                # Rewind an open file handle
+                g["dataset"].seek(0)
+            except AttributeError:
+                pass
+
         for nc in g["datasets"]:
             if g["netcdf_backend"] == "netcdf_file":
                 # We can't close a scipy.io.netcdf_file instance
@@ -507,10 +515,11 @@ class NetCDFRead(IORead):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        :Paramters:
+        :Parameters:
 
-            dataset: `str`
-                The name of the dataset to be opened.
+            dataset:
+                The dataset. May be a string-valued path, a file-like
+                object, or a directory-like object.
 
             flatten: `bool`, optional
                 If True (the default) then flatten a grouped file.
@@ -562,19 +571,7 @@ class NetCDFRead(IORead):
                     f"    {protocol} storage_options: {storage_options}\n"
                 )  # pragma: no cover
 
-            try:
-                dataset = filesystem.open(dataset, "rb")
-            except AttributeError:
-                raise AttributeError(
-                    f"The 'filesystem' object {filesystem!r} does not have "
-                    "an 'open' method. Please provide a valid filesystem "
-                    "object (e.g. an fsspec filesystem instance)."
-                )
-            except Exception as exc:
-                raise OSError(
-                    f"Failed to open {dataset!r} using the provided "
-                    f"'filesystem' object {filesystem!r}: {exc}"
-                ) from exc
+            dataset = self.filesystem_open(filesystem, dataset)
 
             storage_options = filesystem.storage_options
             protocol = filesystem.protocol
@@ -594,6 +591,7 @@ class NetCDFRead(IORead):
             "netCDF4": self._open_netCDF4,
             "netcdf_file": self._open_netcdf_file,
             "zarr": self._open_zarr,
+            "Kerchunk": self._open_zarr,
         }
 
         # Loop around the netCDF backends until we successfully open
@@ -622,6 +620,11 @@ class NetCDFRead(IORead):
                 break
 
         if nc is None:
+            if g["dataset_representation"] == "file_handle":
+                # Rewind a file-like object that couldn't be read
+                # (ready for something else to have a go at it).
+                dataset.seek(0)
+
             if cdl_filename is not None:
                 dataset = f"{dataset} (created from CDL file {cdl_filename})"
 
@@ -791,8 +794,9 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            dataset: `str`
-                The dataset to open.
+            dataset:
+                The dataset. May be a string-valued path, a file-like
+                object, or a directory-like object.
 
         :Returns:
 
@@ -804,7 +808,8 @@ class NetCDFRead(IORead):
         except ModuleNotFoundError as error:
             error.msg += (
                 ". Install the 'zarr' package "
-                "(https://pypi.org/project/zarr) to read Zarr datasets"
+                "(https://pypi.org/project/zarr) to read "
+                f"{self.read_vars['d_type']} datasets"
             )
             raise
 
@@ -895,7 +900,13 @@ class NetCDFRead(IORead):
         return tmpfile
 
     @classmethod
-    def dataset_type(cls, dataset, allowed_dataset_types, filesystem=None):
+    def dataset_type(
+        cls,
+        dataset,
+        allowed_dataset_types,
+        filesystem=None,
+        representation=None,
+    ):
         """Return type of the dataset.
 
         The dataset type is determined by solely by inspecting the
@@ -909,16 +920,26 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            dataset: `str`
-                The name of the dataset.
+            dataset:
+                The dataset. May be a string-valued path, a file-like
+                object, or a directory-like object.
 
             allowed_dataset_types: `None` or sequence of `str`
                 The allowed dataset types.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             filesystem: file system or `None`
                 The file system that contains the dataset. If `None`
                 (the default) then the file system is as defined by
                 the URI schema of the *dataset*.
+
+            representation: `str` or `None`, optional
+                The dataset representation, i.e. the general type of
+                the *dataset* object. If `None` (the default), then it
+                will be determined by calling `dataset_representation`.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -928,10 +949,17 @@ class NetCDFRead(IORead):
                 * ``'netCDF'`` for a netCDF-3 or netCDF-4 file,
                 * ``'CDL'`` for a text CDL file,
                 * ``'Zarr'`` for a Zarr dataset directory,
+                * ``'Kerchunk'`` for a Kerchunk virtual directory,
                 * `None` for anything else.
 
         """
-        if filesystem is None:
+        if representation is None:
+            representation = cls.dataset_representation(dataset)
+
+        if cls.is_kerchunk(dataset, filesystem, representation):
+            return "Kerchunk"
+
+        if representation == "path" and filesystem is None:
             from uritools import urisplit
 
             if urisplit(dataset).scheme not in (None, "file"):
@@ -948,13 +976,15 @@ class NetCDFRead(IORead):
                 return "netCDF"
 
         # Still here? Then check for a Zarr dataset
-        if cls.is_zarr(dataset, filesystem):
+        if cls.is_zarr(dataset, filesystem, representation):
             return "Zarr"
 
         # Still here? Then check for a netCDF or CDL
         try:
             # Read the first 4 bytes from the file
-            magic_number, fh = cls.get_magic_number(dataset, filesystem)
+            magic_number, fh = cls.get_magic_number(
+                dataset, filesystem, representation
+            )
         except FileNotFoundError:
             raise
         except Exception:
@@ -967,7 +997,6 @@ class NetCDFRead(IORead):
                 d_type = "netCDF"
             else:
                 # Is it a CDL text file?
-                fh.seek(0)
                 try:
                     line = fh.readline().decode("utf-8")
                 except Exception:
@@ -991,10 +1020,14 @@ class NetCDFRead(IORead):
                     else:
                         d_type = None
 
-            try:
-                fh.close()
-            except Exception:
-                pass
+                if representation == "file_handle":
+                    fh.seek(0)
+
+            if representation == "path":
+                try:
+                    fh.close()
+                except Exception:
+                    pass
 
         return d_type
 
@@ -1068,9 +1101,8 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            dataset: `str`
-                The name of the datasetset to be read. See `cfdm.read`
-                for details.
+            dataset:
+                The dataset to be read. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) 1.7.0
 
@@ -1200,14 +1232,13 @@ class NetCDFRead(IORead):
         import re
 
         from packaging.version import Version
-        from uritools import urisplit
 
         debug = is_log_level_debug(logger)
 
         # ------------------------------------------------------------
         # Parse the 'dataset_type' keyword parameter
         # ------------------------------------------------------------
-        valid_dataset_types = ("netCDF", "CDL", "Zarr")
+        valid_dataset_types = ("netCDF", "CDL", "Zarr", "Kerchunk")
         if dataset_type is not None:
             if isinstance(dataset_type, str):
                 dataset_type = (dataset_type,)
@@ -1238,11 +1269,42 @@ class NetCDFRead(IORead):
             dataset = self.string_to_cdl(dataset)
 
         # ------------------------------------------------------------
+        # Dataset representation
+        # ------------------------------------------------------------
+        representation = self.dataset_representation(dataset)
+        if representation == "kerchunk_dict":
+            raise ValueError(
+                f"Can't read a {representation!r} dataset. Convert it to a "
+                "Kerchunk mapper and read that instead:\n\n"
+                ">>> fs = fsspec.filesystem('reference', fo=kerchunk_dict, "
+                "<options>)\n"
+                ">>> kerchunk_mapper = fs.get_mapper()"
+            )
+
+        if representation == "kerchunk_bytes":
+            raise ValueError(
+                f"Can't read a {representation!r} dataset. Convert it to a "
+                "Kerchunk mapper and read that instead:\n\n"
+                ">>> kerchunk_dict = json.loads(kerchunk_bytes)\n"
+                "fs = fsspec.filesystem('reference', fo=kerchunk_dict, "
+                "<options>)\n"
+                ">>> kerchunk_mapper = fs.get_mapper()"
+            )
+
+        if representation == "unknown":
+            raise ValueError(f"Unknown dataset representation: {dataset!r}")
+
+        if filesystem is not None and representation != "path":
+            raise ValueError(
+                "Can only set filesystem for datasets represented by "
+                f"a string-valued path. Got {representation!r} dataset: "
+                f"{dataset!r}"
+            )
+
+        # ------------------------------------------------------------
         # Parse the 'storage_options' keyword parameter
         # ------------------------------------------------------------
-        if storage_options is None:
-            storage_options = {}
-        elif filesystem is not None:
+        if storage_options is not None and filesystem is not None:
             raise ValueError(
                 "Can't set both storage_options and filesystem keywords"
             )
@@ -1250,45 +1312,15 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Parse the 'dataset' keyword parameter
         # ------------------------------------------------------------
-        if filesystem is None:
+        if representation == "path" and filesystem is None:
             try:
                 dataset = abspath(dataset, uri=False)
             except ValueError:
                 dataset = abspath(dataset)
 
-            u = urisplit(dataset)
-            if u.scheme == "s3":
-                # ----------------------------------------------------
-                # Dataset is an s3://... string.
-                # ----------------------------------------------------
-                import fsspec
-
-                client_kwargs = storage_options.get("client_kwargs", {})
-                if (
-                    "endpoint_url" not in storage_options
-                    and "endpoint_url" not in client_kwargs
-                ):
-                    authority = u.authority
-                    if not authority:
-                        authority = ""
-
-                    storage_options["endpoint_url"] = f"https://{authority}"
-
-                filesystem = fsspec.filesystem(
-                    protocol=u.scheme, **storage_options
-                )
-
-                dataset = u.path[1:]
-
-            elif u.scheme in ("http", "https"):
-                # ----------------------------------------------------
-                # Dataset is an http://.. or https:// string.
-                # ----------------------------------------------------
-                import fsspec
-
-                filesystem = fsspec.filesystem(
-                    protocol=u.scheme, **storage_options
-                )
+            dataset, filesystem = self.create_filesystem(
+                dataset, storage_options
+            )
 
         # ------------------------------------------------------------
         # Check the file type, raising an exception if the type is not
@@ -1297,7 +1329,10 @@ class NetCDFRead(IORead):
         # Note that the `dataset_type` method is much faster than the
         # `dataset_open` method at returning for unrecognised types.
         # ------------------------------------------------------------
-        d_type = self.dataset_type(dataset, dataset_type, filesystem)
+        d_type = self.dataset_type(
+            dataset, dataset_type, filesystem, representation
+        )
+
         if not d_type:
             # Can't interpret the dataset as a recognised type, so
             # either raise an exception or return an empty list.
@@ -1317,8 +1352,8 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Parse the 'netcdf_backend' keyword parameter
         # ------------------------------------------------------------
-        if d_type == "Zarr":
-            netcdf_backend = ("zarr",)  # Zarr
+        if d_type in ("Zarr", "Kerchunk"):
+            netcdf_backend = ("zarr",)  # Zarr, Kerchunk
         elif netcdf_backend is None:
             # By default, try netCDF backends in the following order.
             #
@@ -1473,7 +1508,10 @@ class NetCDFRead(IORead):
             # Dataset
             # --------------------------------------------------------
             "dataset": dataset,
+            # Store the dataset type ("netCDF", "Zarr", "Kerchunk", etc.)
             "d_type": d_type,
+            # Representation ("path", "kerchunk_mapper", etc)
+            "dataset_representation": representation,
             "cdl_string": bool(cdl_string),
             "ignore_unknown_type": bool(ignore_unknown_type),
             # --------------------------------------------------------
@@ -1631,6 +1669,7 @@ class NetCDFRead(IORead):
             # Maps variable names to their quantization container
             # variable names
             "quantization": {},
+            # --------------------------------------------------------
             # Cached data elements, keyed by variable names.
             # --------------------------------------------------------
             "cached_data_elements": {},
@@ -7284,6 +7323,7 @@ class NetCDFRead(IORead):
             compressed=compressed,
             construct_type=construct_type,
         )
+
         data._original_filenames(define=dataset)
 
         # ------------------------------------------------------------
@@ -12239,52 +12279,104 @@ class NetCDFRead(IORead):
         return out
 
     @classmethod
-    def is_zarr(cls, path, filesystem=None):
-        """Whether or not a directory contains a Zarr dataset.
+    def is_zarr(cls, dataset, filesystem=None, representation=None):
+        """Whether or not a dataset is a Zarr dataset.
 
         Zarr v2 and v3 are supported.
 
-        .. warning:: It is assumed that the *path* is local if there
-                     is no *filesystem*.
+        .. note:: It is assumed that a string-valued *dataset* is
+                  local if there is no *filesystem*.
 
         .. versionadded:: (cfdm) 1.12.2.0
 
         :Parameters:
 
-            path: `str`
-                A directory pathname.
+            dataset:
+                The dataset. May be a string-valued path, a file-like
+                object, or a directory-like object.
 
-            filesytem: file system, optional
-                The file system of the path. If `None` then the path
-                is assumed to be local.
+            filesystem: file system, optional
+                The file system of the dataset. If `None` then the
+                path is assumed to be local. Ignored if *dataset* is
+                not string-valued.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            representation: `str` or `None`, optional
+                The dataset representation, i.e. the general type of
+                the *dataset* object. If `None` (the default), then it
+                will be determined by `dataset_representation`.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
             `bool`
-                `True` if *path* contains a Zarr dataset, otherwise
+                `True` if *dataset* contains a Zarr dataset, otherwise
                 `False`.
 
         """
-        zarr_files = ("zarr.json", ".zgroup", ".zarray")
-        if filesystem is None:
-            if not isdir(path):
+        if representation is None:
+            representation = cls.dataset_representation(dataset)
+
+        if representation == "path":
+            zarr_files = ("zarr.json", ".zgroup", ".zarray")
+            if filesystem is None:
+                if not isdir(dataset):
+                    return False
+
+                # No file system => assuming local path
+                for zarr_file in zarr_files:
+                    if isfile(join(dataset, zarr_file)):
+                        return True
+
                 return False
 
-            # No file system => assuming local path
+            # Got a file system
+            sep = filesystem.sep
+            dataset = f"{dataset.rstrip(sep)}{sep}"
             for zarr_file in zarr_files:
-                if isfile(join(path, zarr_file)):
+                if filesystem.exists(f"{dataset}{zarr_file}"):
                     return True
 
-            return False
-
-        # Got a file system
-        sep = filesystem.sep
-        path = f"{path.rstrip(sep)}{sep}"
-        for zarr_file in zarr_files:
-            if filesystem.exists(f"{path}{zarr_file}"):
-                return True
+        elif representation == "general_mapper":
+            return True
 
         return False
+
+    @classmethod
+    def is_kerchunk(cls, dataset, filesystem=None, representation=None):
+        """Whether or not a dataset contains a Kerchunk dataset.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset:
+                The dataset. May be a string-valued path, a file-like
+                object, or a directory-like object.
+
+            filesystem: file system, optional
+                The file system of the dataset. If `None` then the
+                path is assumed to be local. Ignored if *dataset* is
+                not string-valued.
+
+            representation: `str` or `None`, optional
+                The dataset representation, i.e. the general type of
+                the *dataset* object. If `None` (the default), then it
+                will be determined by `dataset_representation`.
+
+        :Returns:
+
+            `bool`
+                `True` if *dataset* contains a Kerchunk dataset,
+                otherwise `False`.
+
+        """
+        if representation is None:
+            representation = cls.dataset_representation(dataset)
+
+        return representation == "kerchunk_mapper"
 
     def _create_quantization(self, ncvar):
         """Create quantization metadata.
@@ -12432,26 +12524,123 @@ class NetCDFRead(IORead):
         return variable
 
     @classmethod
-    def get_magic_number(cls, dataset, filesystem=None):
-        """TODOF."""
-        # Read the first 4 bytes from the file and unpack them
-        if filesystem is None:
-            fh = open(dataset, "rb")
-        else:
-            try:
-                fh = filesystem.open(dataset, "rb")
-            except AttributeError:
-                raise AttributeError(
-                    f"The 'filesystem' object {filesystem!r} does not have "
-                    "an 'open' method. Please provide a valid filesystem "
-                    "object (e.g. an fsspec filesystem instance)."
-                )
-            except Exception as exc:
-                raise OSError(
-                    f"Failed to open {dataset!r} using the provided "
-                    f"'filesystem' object {filesystem!r}: {exc}"
-                ) from exc
+    def get_magic_number(cls, dataset, filesystem=None, representation=None):
+        """Get the magic number of a dataset in a file.
 
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset:
+                The dataset. May be a string-valued path, a file-like
+                object, or a directory-like object.
+
+            filesystem: file system, optional
+                The file system of the dataset. If `None` then the
+                path is assumed to be local. Ignored if *dataset* is
+                not string-valued.
+
+            representation: `str` or `None`, optional
+                The dataset representation, i.e. the general type of
+                the *dataset* object. If `None` (the default), then it
+                will be determined by calling
+                `dataset_representation`.
+
+        :Returns:
+
+            (number, file handle)
+                The magic number, and the open file handle.
+
+        """
+        if representation is None:
+            representation = cls.dataset_representation(dataset)
+
+        # Get the open file handle
+        if representation == "path":
+            if filesystem is None:
+                fh = open(dataset, "rb")
+            else:
+                fh = cls.filesystem_open(filesystem, dataset)
+
+        elif representation == "file_handle":
+            fh = dataset
+
+        else:
+            raise ValueError(
+                f"Can't get a magic number from {representation!r} dataset: "
+                f"{dataset!r}"
+            )
+
+        # Read the first 4 bytes from the file and unpack them
         magic_number = struct.unpack("=L", fh.read(4))[0]
 
+        # Rewind the file
+        fh.seek(0)
+
         return magic_number, fh
+
+    @classmethod
+    def dataset_representation(cls, dataset):
+        """Return the logical representation type of the input dataset.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset:
+                The dataset representation.
+
+        :Returns:
+
+            `str`
+                The dataset representation:
+
+                * ``'path'``: A string-valued path.
+
+                * ``'kerchunk_mapper'``: A Kerchunk virtual directory.
+
+                * ``'general_mapper'``: A general Zarr virtual
+                  directory.
+
+                * ``'file_handle'``: An open file handle (such as
+                  returned by `fsspec.filesystem.open`)
+
+                * ``'kerchunk_dict'``: A `dict` (parsed JSON)
+                  representation of a Kerchunk file.
+
+                * ``'kerchunk_bytes'``: A `bytes` (raw unparsed JSON)
+                  representation of a Kerchunk file.
+
+                * ``'unknown'``: Anything else.
+
+        """
+        # Strings (Paths)
+        if isinstance(dataset, str):
+            return "path"
+
+        # Check for a "virtual directory" (Mapper)
+        if isinstance(dataset, Mapping):
+            # If it has a '.fs' attribute then it's a live fsspec
+            # mapper
+            if hasattr(dataset, "fs"):
+                protocol = str(getattr(dataset.fs, "protocol", ""))
+                if "reference" in protocol:
+                    return "kerchunk_mapper"
+
+                return "general_mapper"
+
+            # If it has no '.fs' attribute then it's a raw reference
+            # (`dict`, `OrderedDict`, etc.)
+            #
+            # Can't be passed to zarr.open
+            return "kerchunk_dict"
+
+        # Check for a "binary stream" (file handle)
+        if hasattr(dataset, "read") and hasattr(dataset, "seek"):
+            return "file_handle"
+
+        if isinstance(dataset, bytes):
+            # Can't be passed to zarr.open
+            return "kerchunk_bytes"
+
+        return "unknown"

@@ -363,7 +363,12 @@ class FileArray(Array):
             )
 
         if normalise and not self.has_remote_storage_protocol():
-            filename = abspath(filename)
+            try:
+                filename = abspath(filename)
+            except TypeError:
+                # filename is not a string (e.g. file handle, kerchunk
+                # mapper, etc.)
+                pass
 
         return filename
 
@@ -485,26 +490,26 @@ class FileArray(Array):
 
         """
         filename = self.get_filename(normalise=True)
+        if isinstance(filename, str):
+            if self.has_remote_storage_protocol():
+                from urllib.parse import urlparse
 
-        if self.has_remote_storage_protocol():
-            from urllib.parse import urlparse
+                import fsspec
 
-            import fsspec
+                url = urlparse(filename)
+                if url.scheme == "s3":
+                    filename = url.path[1:]
 
-            url = urlparse(filename)
-            if url.scheme == "s3":
-                filename = url.path[1:]
-
-            fs = fsspec.filesystem(
-                protocol=self.get_storage_protocol(),
-                **self.get_storage_options(),
-            )
-            filename = fs.open(filename, "rb")
-        else:
-            try:
-                filename = abspath(filename, uri=False)
-            except ValueError:
-                filename = abspath(filename)
+                fs = fsspec.filesystem(
+                    protocol=self.get_storage_protocol(),
+                    **self.get_storage_options(),
+                )
+                filename = fs.open(filename, "rb")
+            else:
+                try:
+                    filename = abspath(filename, uri=False)
+                except ValueError:
+                    filename = abspath(filename)
 
         try:
             dataset = func(filename, *args, **kwargs)
