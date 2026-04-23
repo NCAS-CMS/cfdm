@@ -9,6 +9,8 @@ import numpy as np
 from ..read_write.netcdf.constants import CF_QUANTIZATION_PARAMETERS
 from .reporting import Report
 from .standardnames import get_all_current_standard_names
+from .functions import is_log_level_debug
+
 
 
 # NOTE SLB: this Mesh object doesn't really belong in the conformance module
@@ -212,7 +214,10 @@ class Checker(Report):
                 (computed_)standard_name was found.
 
         """
-        logger.debug(f"Running _check_standard_names() for: {ncvar}")
+        debug = is_log_level_debug(logger)
+        
+        if debug:
+            logger.debug(f"Running _check_standard_names() for: {ncvar}")
 
         if check_is_in_custom_list and check_is_in_table:
             raise ValueError(
@@ -228,7 +233,8 @@ class Checker(Report):
             # 1. Check if there is a (computed_)standard_name property
             sn_value = ncvar_attrs.get(sn_attr)
             attribute_value = {f"{ncvar}:{sn_attr}": sn_value}
-            logger.debug(f"Found a {sn_attr} of '{sn_value}' on {ncvar}")
+            if debug:
+                logger.debug(f"Found a {sn_attr} of '{sn_value}' on {ncvar}")
 
             if not sn_value:
                 continue
