@@ -1,8 +1,6 @@
-from numbers import Integral
-
 import numpy as np
 
-from cfdm.functions import indices_shape, parse_indices
+from cfdm.functions import axis_dropping_index, indices_shape, parse_indices
 
 
 class IndexMixin:
@@ -127,7 +125,7 @@ class IndexMixin:
         i = 0
         j = 0
         for ind0, reference_size in zip(index0, reference_shape[:]):
-            if isinstance(ind0, Integral):
+            if axis_dropping_index(ind0):
                 # The previous call to __getitem__ resulted in a
                 # dimension being removed (i.e. 'ind0' is
                 # integer-valued). Therefore 'index1' must have fewer
@@ -142,7 +140,7 @@ class IndexMixin:
 
             i += 1
             if ind0 is newaxis:
-                if isinstance(ind1, Integral):
+                if axis_dropping_index(ind1):
                     # A previously introduced new axis is being
                     # removed by an integer index
                     if ind1 not in (0, -1):
@@ -244,7 +242,7 @@ class IndexMixin:
 
         """
         return (
-            f"<CF {self.__class__.__name__}{self.shape}: "
+            f"<{self.__class__.__name__}{self.shape}: "
             f"{self}{self.original_shape}>"
         )
 

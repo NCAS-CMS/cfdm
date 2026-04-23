@@ -17,13 +17,10 @@ logger = getLogger(__name__)
 class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
-    The following dataset formats are supported: netCDF, CDL, and
-    Zarr.
+    The following dataset formats are supported: netCDF, CDL, Zarr,
+    and Kerchunk.
 
-    NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
-    server, or in an S3 object store.
-
-    CDL files must be on local disk.
+    Datasets may be on local disk or in remote storage.
 
     Any amount of files of any combination of file types may be read.
 
@@ -83,7 +80,7 @@ class read(ReadWrite):
     the end of the Python session, at which time it is automatically
     deleted. The CDL file may omit data array values (as would be the
     case, for example, if the file was created with the ``-h`` or
-    ``-c`` option to ``ncdump``), in which case the the relevant
+    ``-c`` option to ``ncdump``), in which case the relevant
     constructs in memory will be created with data with all missing
     values.
 
@@ -100,7 +97,7 @@ class read(ReadWrite):
 
     :Parameters:
 
-        {{read datasets: (arbitrarily nested sequence of) `str`}}
+        {{read datasets:}}
 
         {{read recursive: `bool`, optional}}
 
@@ -122,6 +119,7 @@ class read(ReadWrite):
             ``'netCDF'``    A netCDF-3 or netCDF-4 dataset
             ``'CDL'``       A text CDL file of a netCDF dataset
             ``'Zarr'``      A Zarr v2 (xarray) or Zarr v3 dataset
+            ``'Kerchunk'``  A Kerchunked dataset
             ==============  ==========================================
 
             .. versionadded:: (cfdm) 1.12.2.0
@@ -153,6 +151,10 @@ class read(ReadWrite):
         {{read netcdf_backend: `None` or (sequence of) `str`, optional}}
 
             .. versionadded:: (cfdm) 1.11.2.0
+
+        {{read filesystem: optional}}
+
+            .. versionadded:: (cfdm) 1.13.1.0
 
         {{read storage_options: `dict` or `None`, optional}}
 
@@ -272,6 +274,7 @@ class read(ReadWrite):
         domain=False,
         netcdf_backend=None,
         storage_options=None,
+        filesystem=None,
         cache=True,
         dask_chunks="storage-aligned",
         store_dataset_chunks=True,
@@ -373,7 +376,24 @@ class read(ReadWrite):
         recursive = kwargs.get("recursive", False)
         followlinks = kwargs.get("followlinks", False)
 
-        datasets = self._flat(kwargs["datasets"])
+        datasets = kwargs["datasets"]
+
+        representation = NetCDFRead.dataset_representation(datasets)
+        if representation != "unknown":
+            datasets = (datasets,)
+
+        # If a filesystem object is provided, treat each dataset path
+        # as-is (no local glob/walk/expansion) and yield directly.
+        filesystem = kwargs.get("filesystem")
+        if filesystem is None:
+            d_glob = iglob
+            d_isdir = isdir
+            d_walk = walk
+        else:
+            d_glob = filesystem.glob
+            d_isdir = filesystem.isdir
+            d_walk = filesystem.walk
+
         if kwargs["cdl_string"]:
             # Return CDL strings as they are
             for dataset1 in datasets:
@@ -390,25 +410,33 @@ class read(ReadWrite):
                 f"recursive={True}. Got recursive={recursive!r}"
             )
 
-        is_zarr = NetCDFRead.is_zarr
+        is_zarr = partial(NetCDFRead.is_zarr, filesystem=filesystem)
 
         for datasets1 in datasets:
-            # Apply tilde and environment variable expansions
-            datasets1 = expanduser(expandvars(datasets1))
+            representation = NetCDFRead.dataset_representation(datasets1)
+            if representation == "path":
+                if filesystem is None:
+                    # Apply tilde and environment variable expansions
+                    datasets1 = expanduser(expandvars(datasets1))
 
-            u = urisplit(datasets1)
-            if u.scheme not in (None, "file"):
-                # Do not glob a remote URI, and assume that it defines
-                # a single dataset.
+                    u = urisplit(datasets1)
+                    if u.scheme not in (None, "file"):
+                        # Do not glob a remote URI, and assume that it defines
+                        # a single dataset.
+                        yield datasets1
+                        continue
+
+                    # Glob files/directories on disk
+                    datasets1 = abspath(datasets1, uri=False)
+            else:
+                # dataset is file_handle, kerchunk_mapper,
+                # general_mapper, unknown, etc.
                 yield datasets1
                 continue
 
-            # Glob files/directories on disk
-            datasets1 = abspath(datasets1, uri=False)
-
             n_datasets = 0
-            for x in iglob(datasets1):
-                if isdir(x):
+            for x in d_glob(datasets1):
+                if d_isdir(x):
                     if is_zarr(x):
                         # This directory is a Zarr dataset, so don't
                         # look in any subdirectories, which contain
@@ -420,16 +448,21 @@ class read(ReadWrite):
                         continue
 
                     # Walk through directories, possibly recursively
-                    for path, _, filenames in walk(x, followlinks=followlinks):
-                        if NetCDFRead.is_zarr(path):
-                            # This directory is a Zarr dataset, so
-                            # don't look in any subdirectories.
-                            n_datasets += 1
-                            yield path
-                            break
+                    for path, dirnames, filenames in d_walk(
+                        x, followlinks=followlinks
+                    ):
+                        for d in dirnames:
+                            d1 = join(path, d)
+                            if NetCDFRead.is_zarr(d1):
+                                # This directory is a Zarr dataset
+                                n_datasets += 1
+                                # Make sure we don't look at its
+                                # subdirectories or files
+                                dirnames.remove(d)
+                                yield d1
 
                         for f in filenames:
-                            # This file is a (non-Zarr) dataset
+                            # This file is a non-Zarr dataset
                             n_datasets += 1
                             yield join(path, f)
 
@@ -489,7 +522,7 @@ class read(ReadWrite):
         self.dataset_type = dataset_type
 
         # Recognised netCDF dataset formats
-        self.netCDF_dataset_types = set(("netCDF", "CDL", "Zarr"))
+        self.netCDF_dataset_types = set(("netCDF", "CDL", "Zarr", "Kerchunk"))
 
         # Allowed dataset formats
         self.allowed_dataset_types = self.netCDF_dataset_types.copy()
@@ -517,8 +550,9 @@ class read(ReadWrite):
 
         :Parameters:
 
-            dataset: `str`
-                The pathname of the dataset that has just been read.
+            dataset:
+                The dataset to be read. May be a string-valued path,
+                or a file-like or directory-like object.
 
         :Returns:
 
@@ -542,8 +576,9 @@ class read(ReadWrite):
 
         :Parameters:
 
-            dataset: `str`
-                The pathname of the dataset to be read.
+            dataset:
+                The dataset to be read. May be a string-valued path,
+                or a file-like or directory-like object.
 
         :Returns:
 
@@ -575,8 +610,9 @@ class read(ReadWrite):
 
         :Parameters:
 
-            dataset: `str`
-                The pathname of the dataset to be read.
+            dataset:
+                The dataset to be read. May be a string-valued path,
+                or a file-like or directory-like object.
 
         :Returns:
 
@@ -605,6 +641,7 @@ class read(ReadWrite):
                         "unpack",
                         "domain",
                         "storage_options",
+                        "filesystem",
                         "netcdf_backend",
                         "cache",
                         "dask_chunks",

@@ -160,6 +160,8 @@ datasets <Sample-datasets>`), which contains two field constructs:
   <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
   formats.
 
+* Datasets in `Kerchunk <https://fsspec.github.io/kerchunk>`_ format.
+
 Descriptive properties are always read into memory, but `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
 data arrays, which means that no data is read into memory until the
@@ -194,8 +196,7 @@ The `cfdm.read` function has optional parameters to
 * display information and issue warnings about the mapping of the
   netCDF file contents to CF data model constructs; and
 
-* choose either `netCDF4` or `h5netcdf` backends for accessing netCDF
-  files.
+* choose from a variety of backends for accessing netCDF files.
 
 .. _CF-compliance:
 
@@ -2865,9 +2866,11 @@ All the of above examples use arrays in memory to construct the data
 instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The
 `cfdm.read` function creates data in this manner. A pointer to an
-array in a netCDF file can be stored in a `~cfdm.NetCDF4Array` or
-`~cfdm.H5netcdfAarray` instance, which is used to initialise a
-`~cfdm.Data` instance.
+array in a netCDF or Zarr dataset can be stored in a
+`~cfdm.PyfiveArray`, `~cfdm.H5netcdfAarray`, `~cfdm.NetCDF4Array`,
+`~cfdm.Netcdf_fileArray`, or `~cfdm.ZarrArray` instance, depending on
+the desired backend, which is used to initialise a `~cfdm.Data`
+instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package
@@ -3577,7 +3580,7 @@ in that file:
    >>> h = cfdm.example_field(0)
    >>> h
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> cfdm.write(h, 'append-example-file.nc', mode='a')
+   >>> cfdm.write(h, 'append-example-file.nc', mode='a', netcdf_backend='netCDF4')
    >>> cfdm.read('append-example-file.nc')
    [<Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
     <Field: specific_humidity(latitude(5), longitude(8)) 1>]
@@ -4969,7 +4972,7 @@ method:
 
    >>> q, t = cfdm.read('file.nc')
    >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
-   >>> cfdm.write(t, 'quantized.nc')
+   >>> cfdm.write(t, 'quantized.nc', netcdf_backend='netCDF4')
    >>> quantized = cfdm.read('quantized.nc')[0]
    >>> c = quantized.get_quantization()
    >>> c

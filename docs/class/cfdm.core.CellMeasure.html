@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/documentation_options.js?v=c432c498"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -19,7 +19,7 @@
     <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.CellMeasure.construct_type" href="../attribute/cfdm.core.CellMeasure.construct_type.html" />
+    <link rel="next" title="cfdm.core.CellMethod" href="cfdm.core.CellMethod.html" />
     <link rel="prev" title="cfdm.core.CellConnectivity" href="cfdm.core.CellConnectivity.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -85,7 +85,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="cfdm.core.CellConnectivity.html" title="previous chapter">cfdm.core.CellConnectivity</a></li>
-      <li>Next: <a href="../attribute/cfdm.core.CellMeasure.construct_type.html" title="next chapter">cfdm.core.CellMeasure.construct_type</a></li>
+      <li>Next: <a href="cfdm.core.CellMethod.html" title="next chapter">cfdm.core.CellMethod</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -124,7 +124,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.core.CellMeasure">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.core.</span></span><span class="sig-name descname"><span class="pre">CellMeasure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/core/cellmeasure.py#L4-L245"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.core.CellMeasure" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.core.</span></span><span class="sig-name descname"><span class="pre">CellMeasure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/core/cellmeasure.py#L4-L245"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.core.CellMeasure" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="cfdm.core.PropertiesData.html#cfdm.core.PropertiesData" title="cfdm.core.abstract.propertiesdata.PropertiesData"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertiesData</span></code></a></p>
 <p>A cell measure construct of the CF data model.</p>
 <p>A cell measure construct provides information that is needed about
@@ -153,7 +153,7 @@ to cell measure constructs.</p>
 <dt>measure: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the measure that indicates the metric given by
 the data array.</p>
 <p>The measure may also be set after initialisation with
-the <a class="reference internal" href="../method/cfdm.core.CellMeasure.set_measure.html#cfdm.core.CellMeasure.set_measure" title="cfdm.core.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a> method.</p>
+the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code> method.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">measure='area'</span></code></p>
 </dd>
@@ -162,7 +162,7 @@ the <a class="reference internal" href="../method/cfdm.core.CellMeasure.set_meas
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
-the <a class="reference internal" href="../method/cfdm.core.CellMeasure.set_properties.html#cfdm.core.CellMeasure.set_properties" title="cfdm.core.CellMeasure.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.CellMeasure.set_property.html#cfdm.core.CellMeasure.set_property" title="cfdm.core.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> methods.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'units':</span> <span class="pre">'metres</span> <span class="pre">2'}</span></code></p>
 </dd>
@@ -174,7 +174,7 @@ to a <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" tit
 <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm.core instances that contain
 <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.CellMeasure.set_data.html#cfdm.core.CellMeasure.set_data" title="cfdm.core.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code> method.</p>
 </dd>
 <dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
 a <a class="reference internal" href="#cfdm.core.CellMeasure" title="cfdm.core.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a> instance.</p>
@@ -201,7 +201,7 @@ parameters are not deep copied.</p>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.CellMeasure.construct_type.html#cfdm.core.CellMeasure.construct_type" title="cfdm.core.CellMeasure.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></p></td>
 <td><p>Return a description of the construct type.</p></td>
 </tr>
 </tbody>
@@ -212,40 +212,40 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.del_measure.html#cfdm.core.CellMeasure.del_measure" title="cfdm.core.CellMeasure.del_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_measure</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_measure</span></code></p></td>
 <td><p>Remove the measure.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.get_measure.html#cfdm.core.CellMeasure.get_measure" title="cfdm.core.CellMeasure.get_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_measure</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_measure</span></code></p></td>
 <td><p>Return the measure.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.has_measure.html#cfdm.core.CellMeasure.has_measure" title="cfdm.core.CellMeasure.has_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_measure</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_measure</span></code></p></td>
 <td><p>Whether the measure has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.set_measure.html#cfdm.core.CellMeasure.set_measure" title="cfdm.core.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></p></td>
 <td><p>Set the measure.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.del_property.html#cfdm.core.CellMeasure.del_property" title="cfdm.core.CellMeasure.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></p></td>
 <td><p>Remove a property.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.get_property.html#cfdm.core.CellMeasure.get_property" title="cfdm.core.CellMeasure.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></p></td>
 <td><p>Return a property.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.has_property.html#cfdm.core.CellMeasure.has_property" title="cfdm.core.CellMeasure.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></p></td>
 <td><p>Whether a property has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.set_property.html#cfdm.core.CellMeasure.set_property" title="cfdm.core.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></p></td>
 <td><p>Set a property.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.properties.html#cfdm.core.CellMeasure.properties" title="cfdm.core.CellMeasure.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></p></td>
 <td><p>Return all properties.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.clear_properties.html#cfdm.core.CellMeasure.clear_properties" title="cfdm.core.CellMeasure.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></p></td>
 <td><p>Remove all properties.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.del_properties.html#cfdm.core.CellMeasure.del_properties" title="cfdm.core.CellMeasure.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></p></td>
 <td><p>Remove properties.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.set_properties.html#cfdm.core.CellMeasure.set_properties" title="cfdm.core.CellMeasure.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></p></td>
 <td><p>Set properties.</p></td>
 </tr>
 </tbody>
@@ -256,16 +256,16 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.del_data.html#cfdm.core.CellMeasure.del_data" title="cfdm.core.CellMeasure.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></p></td>
 <td><p>Remove the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.get_data.html#cfdm.core.CellMeasure.get_data" title="cfdm.core.CellMeasure.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></p></td>
 <td><p>Return the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.has_data.html#cfdm.core.CellMeasure.has_data" title="cfdm.core.CellMeasure.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></p></td>
 <td><p>Whether or not the construct has data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.set_data.html#cfdm.core.CellMeasure.set_data" title="cfdm.core.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></p></td>
 <td><p>Set the data.</p></td>
 </tr>
 </tbody>
@@ -273,19 +273,19 @@ parameters are not deep copied.</p>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.CellMeasure.data.html#cfdm.core.CellMeasure.data" title="cfdm.core.CellMeasure.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></p></td>
 <td><p>The data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.core.CellMeasure.dtype.html#cfdm.core.CellMeasure.dtype" title="cfdm.core.CellMeasure.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></p></td>
 <td><p>Data-type of the data elements.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.CellMeasure.ndim.html#cfdm.core.CellMeasure.ndim" title="cfdm.core.CellMeasure.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></p></td>
 <td><p>The number of data dimensions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.core.CellMeasure.shape.html#cfdm.core.CellMeasure.shape" title="cfdm.core.CellMeasure.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></td>
 <td><p>A tuple of the data array's dimension sizes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.CellMeasure.size.html#cfdm.core.CellMeasure.size" title="cfdm.core.CellMeasure.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></p></td>
 <td><p>The number elements in the data.</p></td>
 </tr>
 </tbody>
@@ -296,10 +296,10 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.copy.html#cfdm.core.CellMeasure.copy" title="cfdm.core.CellMeasure.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></p></td>
 <td><p>Return a deep copy.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.has_bounds.html#cfdm.core.CellMeasure.has_bounds" title="cfdm.core.CellMeasure.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></p></td>
 <td><p>Whether or not there are cell bounds.</p></td>
 </tr>
 </tbody>
@@ -310,7 +310,7 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure.__deepcopy__.html#cfdm.core.CellMeasure.__deepcopy__" title="cfdm.core.CellMeasure.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 </tbody>
@@ -321,16 +321,16 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure._docstring_special_substitutions.html#cfdm.core.CellMeasure._docstring_special_substitutions" title="cfdm.core.CellMeasure._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></p></td>
 <td><p>Return the special docstring substitutions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure._docstring_substitutions.html#cfdm.core.CellMeasure._docstring_substitutions" title="cfdm.core.CellMeasure._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></p></td>
 <td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure._docstring_package_depth.html#cfdm.core.CellMeasure._docstring_package_depth" title="cfdm.core.CellMeasure._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></p></td>
 <td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.CellMeasure._docstring_method_exclusions.html#cfdm.core.CellMeasure._docstring_method_exclusions" title="cfdm.core.CellMeasure._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></p></td>
 <td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
@@ -347,7 +347,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

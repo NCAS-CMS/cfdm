@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/documentation_options.js?v=c432c498"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Domain.dump" href="../method/cfdm.Domain.dump.html" />
-    <link rel="prev" title="cfdm.Field._docstring_method_exclusions" href="../method/cfdm.Field._docstring_method_exclusions.html" />
+    <link rel="prev" title="cfdm.Field.nc_set_hdf5_chunksizes" href="../method/cfdm.Field.nc_set_hdf5_chunksizes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -84,7 +84,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.Field._docstring_method_exclusions.html" title="previous chapter">cfdm.Field._docstring_method_exclusions</a></li>
+      <li>Previous: <a href="../method/cfdm.Field.nc_set_hdf5_chunksizes.html" title="previous chapter">cfdm.Field.nc_set_hdf5_chunksizes</a></li>
       <li>Next: <a href="../method/cfdm.Domain.dump.html" title="next chapter">cfdm.Domain.dump</a></li>
   </ul></li>
   </ul></li>
@@ -124,8 +124,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.Domain">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/domain.py#L13-L1125"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Domain" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFComponents</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFUnreferenced</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Properties</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Files</span></code>, <a class="reference internal" href="cfdm.core.Domain.html#cfdm.core.Domain" title="cfdm.core.domain.Domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">Domain</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/domain.py#L13-L1126"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Domain" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFComponents</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFUnreferenced</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFMeshVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Properties</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Files</span></code>, <a class="reference internal" href="cfdm.core.Domain.html#cfdm.core.Domain" title="cfdm.core.domain.Domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">Domain</span></code></a></p>
 <p>A domain construct of the CF data model.</p>
 <p>The domain represents a set of discrete “locations” in what
 generally would be a multi-dimensional space, either in the real
@@ -412,7 +412,7 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain.uncompress.html#cfdm.Domain.uncompress" title="cfdm.Domain.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
 <td><p>Uncompress the domain construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Domain.persist.html#cfdm.Domain.persist" title="cfdm.Domain.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
 <td><p>Persist data into memory.</p></td>
 </tr>
 </tbody>
@@ -446,6 +446,27 @@ parameters are not deep copied.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Domain.nc_set_global_attributes.html#cfdm.Domain.nc_set_global_attributes" title="cfdm.Domain.nc_set_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attributes</span></code></a></p></td>
 <td><p>Set properties to be written as netCDF global attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain.nc_clear_mesh_variable_groups.html#cfdm.Domain.nc_clear_mesh_variable_groups" title="cfdm.Domain.nc_clear_mesh_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_mesh_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF mesh variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Domain.nc_del_mesh_variable.html#cfdm.Domain.nc_del_mesh_variable" title="cfdm.Domain.nc_del_mesh_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_mesh_variable</span></code></a></p></td>
+<td><p>Remove the netCDF mesh variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain.nc_get_mesh_variable.html#cfdm.Domain.nc_get_mesh_variable" title="cfdm.Domain.nc_get_mesh_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_mesh_variable</span></code></a></p></td>
+<td><p>Return the netCDF mesh variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Domain.nc_has_mesh_variable.html#cfdm.Domain.nc_has_mesh_variable" title="cfdm.Domain.nc_has_mesh_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_mesh_variable</span></code></a></p></td>
+<td><p>Whether the netCDF mesh variable name is set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain.nc_mesh_variable_groups.html#cfdm.Domain.nc_mesh_variable_groups" title="cfdm.Domain.nc_mesh_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_mesh_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF mesh variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Domain.nc_set_mesh_variable.html#cfdm.Domain.nc_set_mesh_variable" title="cfdm.Domain.nc_set_mesh_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_mesh_variable</span></code></a></p></td>
+<td><p>Set the netCDF mesh variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain.nc_set_mesh_variable_groups.html#cfdm.Domain.nc_set_mesh_variable_groups" title="cfdm.Domain.nc_set_mesh_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_mesh_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF mesh_variable group hierarchy.</p></td>
 </tr>
 </tbody>
 </table>
@@ -556,16 +577,19 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_mesh_id</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain.node_coordinates.html#cfdm.Domain.node_coordinates" title="cfdm.Domain.node_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">node_coordinates</span></code></a></p></td>
+<td><p>Create the node coordinates for a UGRID mesh topology.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Domain.del_mesh_id.html#cfdm.Domain.del_mesh_id" title="cfdm.Domain.del_mesh_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_mesh_id</span></code></a></p></td>
 <td><p>Remove the UGRID mesh topology identifier.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mesh_id</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain.get_mesh_id.html#cfdm.Domain.get_mesh_id" title="cfdm.Domain.get_mesh_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mesh_id</span></code></a></p></td>
 <td><p>Return the UGRID mesh topology identifier.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_mesh_id</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Domain.has_mesh_id.html#cfdm.Domain.has_mesh_id" title="cfdm.Domain.has_mesh_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_mesh_id</span></code></a></p></td>
 <td><p>Whether the UGRID mesh topology identifier has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_mesh_id</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain.set_mesh_id.html#cfdm.Domain.set_mesh_id" title="cfdm.Domain.set_mesh_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_mesh_id</span></code></a></p></td>
 <td><p>Set a UGRID mesh topology identifier.</p></td>
 </tr>
 </tbody>
@@ -588,13 +612,13 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain.__deepcopy__.html#cfdm.Domain.__deepcopy__" title="cfdm.Domain.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Domain.__repr__.html#cfdm.Domain.__repr__" title="cfdm.Domain.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain.__str__.html#cfdm.Domain.__str__" title="cfdm.Domain.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
@@ -605,16 +629,16 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain._docstring_special_substitutions.html#cfdm.Domain._docstring_special_substitutions" title="cfdm.Domain._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></p></td>
 <td><p>Return the special docstring substitutions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Domain._docstring_substitutions.html#cfdm.Domain._docstring_substitutions" title="cfdm.Domain._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></p></td>
 <td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Domain._docstring_package_depth.html#cfdm.Domain._docstring_package_depth" title="cfdm.Domain._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></p></td>
 <td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Domain._docstring_method_exclusions.html#cfdm.Domain._docstring_method_exclusions" title="cfdm.Domain._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></p></td>
 <td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
@@ -631,7 +655,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

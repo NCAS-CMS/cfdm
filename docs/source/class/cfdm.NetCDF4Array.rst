@@ -85,6 +85,9 @@ File
    ~cfdm.NetCDF4Array.get_storage_options
    ~cfdm.NetCDF4Array.replace_directory
    ~cfdm.NetCDF4Array.replace_filename
+   ~cfdm.NetCDF4Array.get_storage_protocol
+   ~cfdm.NetCDF4Array.get_variable
+   ~cfdm.NetCDF4Array.has_remote_storage_protocol
 
 Miscellaneous
 -------------

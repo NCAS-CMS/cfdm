@@ -195,17 +195,20 @@ The cfdm package requires:
 * `cftime <https://pypi.org/project/cftime>`_, version 1.6.4 or
   newer.
 
-* `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
+* `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.8.0 or
   newer.
 
 * `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.
 
-* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
+* `pyive <https://pypi.org/project/pyfive>`_, version 1.1.1 or newer.
+
+* `fsspec <https://pypi.org/project/fsspec>`_, version 2026.2.0 or
+  newer.
 
 * `dask <https://pypi.org/project/dask>`_, version 2025.5.1 or newer.
 
-* `distributed <https://pypi.org/project/distributed>`_, version 2025.5.1
-  or newer.
+* `distributed <https://pypi.org/project/distributed>`_, version
+  2025.5.1 or newer.
 
 * `packaging <https://pypi.org/project/packaging>`_, version 20.0 or
   newer.
@@ -251,7 +254,8 @@ environments for which these features are not required.
 
 * `zarr <https://pypi.org/project/zarr>`_, version 3.1.3 or newer.
 
-  For reading and writing Zarr datasets.
+  For reading and writing Zarr datasets, and reading Kerchunk
+  datasets.
 
 ----
 

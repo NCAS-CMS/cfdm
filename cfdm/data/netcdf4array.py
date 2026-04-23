@@ -7,6 +7,9 @@ from .netcdfindexer import netcdf_indexer
 class NetCDF4Array(IndexMixin, abstract.FileArray):
     """A netCDF array accessed with `netCDF4`.
 
+    * Accesses local and remote (http) netCDF-3 and netCDF-4 datasets.
+    * Parallelised reading is not possible.
+
     .. versionadded:: (cfdm) 1.7.0
 
     """
@@ -22,6 +25,34 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
 
         """
         return netcdf_lock
+
+    def _attributes(self, var):
+        """Get the netCDF variable attributes.
+
+        If the attributes have not been set, then they are retrieved
+        from the netCDF variable *var* and stored for fast future
+        access.
+
+        .. versionadded:: (cfdm) 1.13.1.0
+
+        :Parameters:
+
+            var: `netCDF4.Variable`
+                The netCDF variable.
+
+        :Returns:
+
+            `dict`
+                The attributes. The returned attributes are not a copy
+                of the cached dictionary.
+
+        """
+        attributes = self._get_component("attributes", None)
+        if attributes is None:
+            attributes = {attr: var.getncattr(attr) for attr in var.ncattrs()}
+            self._set_component("attributes", attributes, copy=False)
+
+        return attributes
 
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
@@ -73,12 +104,10 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
                 unpack=self.get_unpack(),
                 always_masked_array=False,
                 orthogonal_indexing=True,
+                attributes=self._attributes(variable),
                 copy=False,
             )
             array = array[index]
-
-            # Set the attributes, if they haven't been set already.
-            self._set_attributes(variable)
 
             self.close(dataset)
             del netcdf, dataset
@@ -115,33 +144,6 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
             dataset = dataset.groups[g]
 
         return dataset
-
-    def _set_attributes(self, var):
-        """Set the netCDF variable attributes.
-
-        These are set from the netCDF variable attributes, but only if
-        they have not already been defined, either during `{{class}}`
-        instantiation or by a previous call to `_set_attributes`.
-
-        .. versionadded:: (cfdm) 1.11.2.0
-
-        :Parameters:
-
-            var: `netCDF4.Variable`
-                The netCDF variable.
-
-        :Returns:
-
-            `dict`
-                The attributes.
-
-        """
-        attributes = self._get_component("attributes", None)
-        if attributes is not None:
-            return
-
-        attributes = {attr: var.getncattr(attr) for attr in var.ncattrs()}
-        self._set_component("attributes", attributes, copy=False)
 
     def close(self, dataset):
         """Close the dataset containing the data.

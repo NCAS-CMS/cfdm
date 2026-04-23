@@ -9,6 +9,52 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cfdm/issues/365,
    https://github.com/NCAS-CMS/cfdm/issues/366)
 
+Version 1.13.1.0
+----------------
+
+**2026-04-09**
+
+* Read Kerchunk datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/385)
+* Read open file handle datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/401)
+* Write UGRID datasets with `cfdm.write`
+  (https://github.com/NCAS-CMS/cfdm/issues/271)
+* New keyword to `cfdm.read`: ``filesystem``
+  (https://github.com/NCAS-CMS/cfdm/issues/397)
+* New keyword parameter to `cfdm.Data.compute`: ``persist``
+  (https://github.com/NCAS-CMS/cfdm/issues/389)
+* New function to control the persistence of computed data:
+  `cfdm.persist_data` (https://github.com/NCAS-CMS/cfdm/issues/389)
+* Support for HEALPix grids
+  (https://github.com/NCAS-CMS/cfdm/issues/370)
+* New default backend for netCDF-4 in `cfdm.write`: ``h5netcdf-h5py``,
+  that allows control of the internal file metadata via the new
+  ``h5py_options`` parameter
+  (https://github.com/NCAS-CMS/cfdm/issues/386)
+* New default backend for netCDF-4 in `cfdm.read` that allows parallel
+  reading: ``h5netcdf-pyfive``
+  (https://github.com/NCAS-CMS/cfdm/issues/375)
+* New optional backend for netCDF-3 in `cfdm.read` that allows
+  parallel reading: ``netcdf_file``
+  (https://github.com/NCAS-CMS/cfdm/issues/375)
+* Fix bug in `cfdm.netcdf_indexer` that sometimes caused a failure
+  with a `np.newaxis` index
+  (https://github.com/NCAS-CMS/cfdm/issues/395)
+* Fix bug in `cfdm.read` that wouldn't read non-Zarr and Zarr datasets
+  from the same directory
+  (https://github.com/NCAS-CMS/cfdm/issues/391)
+* Fix bug in `cfdm.write` to correctly create unlimited aggregation
+  dimensions that correspond to unlimited normal dimensions
+  (https://github.com/NCAS-CMS/cfdm/pull/387)
+* Fix bug in `cfdm.write` when writing identical coordinates that have
+  different ``formula_terms``
+  (https://github.com/NCAS-CMS/cfdm/issues/380).
+* New dependency: ``pyfive>=1.1.1``
+* New dependency: ``fsspec>=2026.2.0``
+* Changed dependency: ``h5netcdf>=1.8.0``
+* Removed dependency: ``s3fs``
+
 ----
 
 Version 1.13.0.0
@@ -39,7 +85,7 @@ Version 1.13.0.0
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
 * New optional dependency: ``zarr>=3.1.3``
-* Removed dependency (now optional): ``zarr>=3.0.8``
+* Removed dependency (now optional): ``zarr``
 
 ----
 

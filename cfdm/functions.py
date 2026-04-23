@@ -36,7 +36,12 @@ class DeprecationError(Exception):
 
 
 def configuration(
-    atol=None, rtol=None, log_level=None, chunksize=None, display_data=None
+    atol=None,
+    rtol=None,
+    log_level=None,
+    chunksize=None,
+    display_data=None,
+    persist_data=None,
 ):
     """Views and sets constants in the project-wide configuration.
 
@@ -48,6 +53,7 @@ def configuration(
     * `log_level`
     * `chunksize`
     * `display_data`
+    * `persist_data`
 
     These are all constants that apply throughout `cfdm`, except for
     in specific functions only if overridden by the corresponding
@@ -65,7 +71,7 @@ def configuration(
     .. versionadded:: (cfdm) 1.8.6
 
     .. seealso:: `atol`, `rtol`, `log_level`, `chunksize`,
-                 `display_data`
+                 `display_data`, `persist_data`
 
     :Parameters:
 
@@ -95,11 +101,17 @@ def configuration(
 
             .. versionadded:: (cfdm) 1.11.2.0
 
-        display_data `bool` or `Constant`, optional
+        display_data: `bool` or `Constant`, optional
             The new display data option. The default is to not change
             the current behaviour.
 
             .. versionadded:: (cfdm) 1.13.0.0
+
+        persist_data: `bool` or `Constant`, optional
+            The new persist data option. The default is to not change
+            the current behaviour.
+
+            .. versionadded:: (cfdm) 1.13.1.0
 
     :Returns:
 
@@ -117,13 +129,15 @@ def configuration(
                      'rtol': 2.220446049250313e-16,
                      'log_level': 'WARNING',
                      'chunksize': 134217728,
-                     'display_data': True}>
+                     'display_data': True,
+                     'persist_data': False}>
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
      'chunksize': 134217728,
-     'display_data': True}
+     'display_data': True,
+     'persist_data': False}
 
     Make a change to one constant and see that it is reflected in the
     configuration:
@@ -135,7 +149,8 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG',
      'chunksize': 134217728,
-     'display_data': True}
+     'display_data': True,
+     'persist_data': False}
 
     Access specific values by key querying, noting the equivalency to
     using its bespoke function:
@@ -152,13 +167,15 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'DEBUG',
      'chunksize': 134217728,
-     'display_data': True}
+     'display_data': True,
+     'persist_data': False}
     >>> print(cfdm.configuration())
     {'atol': 5e-14,
      'rtol': 2.220446049250313e-16,
      'log_level': 'INFO',
      'chunksize': 134217728,
-     'display_data': True}
+     'display_data': True,
+     'persist_data': False}
 
     Set a single constant without using its bespoke function:
 
@@ -167,13 +184,15 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'INFO',
      'chunksize': 134217728,
-     'display_data': True}
+     'display_data': True,
+     'persist_data': False}
     >>> cfdm.configuration()
     {'atol': 5e-14,
      'rtol': 1e-17,
      'log_level': 'INFO',
      'chunksize': 134217728,
-     'display_data': True}
+     'display_data': True,
+     'persist_data': False}
 
     Use as a context manager:
 
@@ -182,7 +201,8 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
      'chunksize': 134217728,
-     'display_data': True}
+     'display_data': True,
+     'persist_data': False}
     >>> with cfdm.configuration(atol=9, rtol=10):
     ...     print(cfdm.configuration())
     ...
@@ -192,7 +212,8 @@ def configuration(
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING',
      'chunksize': 134217728,
-     'display_data': True}
+     'display_data': True,
+     'persist_data': False}
 
     """
     return _configuration(
@@ -202,6 +223,7 @@ def configuration(
         new_log_level=log_level,
         new_chunksize=chunksize,
         new_display_data=display_data,
+        new_persist_data=persist_data,
     )
 
 
@@ -241,6 +263,7 @@ def _configuration(_Configuration, **kwargs):
         "new_log_level": log_level,
         "new_chunksize": chunksize,
         "new_display_data": display_data,
+        "new_persist_data": persist_data,
     }
 
     # Make sure that the constants dictionary is fully populated
@@ -406,50 +429,7 @@ def environment(display=True, paths=True):
         `None` or `list`
             If *display* is True then the description of the
             environment is printed and `None` is returned. Otherwise
-            the description is returned as in a `list`.
-
-    **Examples**
-
-    >>> cfdm.environment()
-    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
-    Python: 3.12.8 /home/miniconda3/bin/python
-    packaging: 24.2 /home/miniconda3/lib/python3.12/site-packages/packaging/__init__.py
-    numpy: 2.2.6 /home/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
-    cfdm.core: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/core/__init__.py
-    udunits2 library: libudunits2.so.0
-    HDF5 library: 1.14.2
-    netcdf library: 4.9.4-development
-    netCDF4: 1.7.2 /home/miniconda3/lib/python3.12/site-packages/netCDF4/__init__.py
-    h5netcdf: 1.3.0 /home/miniconda3/lib/python3.12/site-packages/h5netcdf/__init__.py
-    h5py: 3.12.1 /home/miniconda3/lib/python3.12/site-packages/h5py/__init__.py
-    zarr: 3.1.3 /home/miniconda3/lib/python3.12/site-packages/zarr/__init__.py
-    s3fs: 2024.12.0 /home/miniconda3/lib/python3.12/site-packages/s3fs/__init__.py
-    scipy: 1.15.1 /home/miniconda3/lib/python3.12/site-packages/scipy/__init__.py
-    dask: 2025.5.1 /home/miniconda3/lib/python3.12/site-packages/dask/__init__.py
-    cftime: 1.6.4.post1 /home/miniconda3/lib/python3.12/site-packages/cftime/__init__.py
-    cfunits: 3.3.7 /home/miniconda3/lib/python3.12/site-packages/cfunits/__init__.py
-    cfdm: 1.12.2.0 /home/miniconda3/lib/python3.12/site-packages/cfdm/cfdm/__init__.py
-
-    >>> cfdm.environment(paths=False)
-    Platform: Linux-6.8.0-60-generic-x86_64-with-glibc2.39
-    Python: 3.12.8
-    packaging: 24.2
-    numpy: 2.2.6
-    cfdm.core: 1.12.2.0
-    udunits2 library: libudunits2.so.0
-    HDF5 library: 1.14.2
-    netcdf library: 4.9.4-development
-    netCDF4: 1.7.2
-    h5netcdf: 1.3.0
-    h5py: 3.12.1
-    zarr: 3.1.3
-    s3fs: 2024.12.0
-    scipy: 1.15.1
-    dask: 2025.5.1
-    distributed: 2025.5.1
-    cftime: 1.6.4.post1
-    cfunits: 3.3.7
-    cfdm: 1.12.2.0
+            the descriptions is returned in a `list`.
 
     """
     import ctypes
@@ -463,12 +443,13 @@ def environment(display=True, paths=True):
         "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
         "HDF5 library": (netCDF4.__hdf5libversion__, ""),
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
-        "netCDF4": _get_module_info("netCDF4"),
-        "h5netcdf": _get_module_info("h5netcdf"),
-        "h5py": _get_module_info("h5py"),
-        "zarr": _get_module_info("zarr"),
-        "s3fs": _get_module_info("s3fs"),
-        "scipy": _get_module_info("scipy"),
+        "netCDF4": _get_module_info("netCDF4", try_except=True),
+        "h5netcdf": _get_module_info("h5netcdf", try_except=True),
+        "h5py": _get_module_info("h5py", try_except=True),
+        "pyfive": _get_module_info("pyfive", try_except=True),
+        "zarr": _get_module_info("zarr", try_except=True),
+        "fsspec": _get_module_info("fsspec", try_except=True),
+        "scipy": _get_module_info("scipy", try_except=True),
         "dask": _get_module_info("dask"),
         "distributed": _get_module_info("distributed"),
         "cftime": _get_module_info("cftime"),
@@ -2074,6 +2055,89 @@ class display_data(ConstantAccess):
         return bool(arg)
 
 
+class persist_data(ConstantAccess):
+    """Control the persistence of computed data.
+
+    If True then a computed `{{package}}.Data` instance will cache the
+    entire computed array (in chunks) in memory, ready for fast future
+    access. If False then computed data is not cached.
+
+    This behaviour may be overridden on an individual basis by the
+    *persist* parameter of the `{{package}}.Data.compute` method.
+
+    .. versionadded:: (cfdm) 1.13.1.0
+
+    .. seealso:: `configuration`, `Data.compute`, `Data.array`
+
+    :Parameters:
+
+        arg: `bool` or `Constant`, optional
+            The new data display option. The default is to not change
+            the current value.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> {{package}}.persist_data()
+    <{{repr}}Constant: False>
+    >>> print({{package}}.persist_data())
+    False
+    >>> bool({{package}}.persist_data())
+    False
+    >>> {{package}}.persist_data().value
+    False
+
+    >>> old = {{package}}.persist_data(True)
+    >>> {{package}}.persist_data()
+    <{{repr}}Constant: True>
+    >>> {{package}}.persist_data(old)
+    <{{repr}}Constant: False>
+    >>> {{package}}.persist_data()
+    <{{repr}}Constant: False>
+
+    Use as a context manager:
+
+    >>> print({{package}}.persist_data())
+    False
+    >>> with {{package}}.persist_data(True):
+    ...     print({{package}}.persist_data())
+    ...
+    True
+    >>> print({{package}}.persist_data())
+    False
+
+    """
+
+    _name = "persist_data"
+    _default = False
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: (cfdm) 1.13.1.0
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `_constants` dictionary.
+
+        """
+        return bool(arg)
+
+
 def ATOL(*new_atol):
     """Alias for `cfdm.atol`."""
     return atol(*new_atol)
@@ -2422,6 +2486,53 @@ def indices_shape(indices, full_shape, keepdims=True):
     return shape
 
 
+def axis_dropping_index(index):
+    """Whether a `numpy` index is axis-dropping.
+
+    An axis-dropping index is typically integer-like.
+
+    .. versionadded:: (cfdm) 1.13.1.0
+
+    :Parameters:
+
+        index:
+            The `numpy` index.
+
+    :Returns:
+
+        `bool`
+            `True` if the index would drop an axis during `numpy`
+             slicing, otherwise `False`.
+
+    **Examples**
+
+    >>> axis_dropping_index(2)
+    True
+    >>> axis_dropping_index(np.array(2))
+    True
+    >>> axis_dropping_index(np.int64(2))
+    True
+    >>> axis_dropping_index([2])
+    False
+    >>> axis_dropping_index(np.array([2]))
+    False
+    >>> axis_dropping_index(slice(None))
+    False
+    >>> axis_dropping_index([True, False])
+    False
+
+    """
+    # Standard Python integer and numpy integer scalar
+    if isinstance(index, (Integral, np.integer)):
+        return True
+
+    # 0-d numpy array
+    if isinstance(index, np.ndarray) and not index.ndim:
+        return np.issubdtype(index.dtype, np.integer)
+
+    return False
+
+
 def parse_indices(shape, indices, keepdims=True, newaxis=False):
     """Parse indices for array access and assignment.
 
@@ -2517,12 +2628,13 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
                 "New axis indices are not allowed"
             )
 
-        # Check that any integer indices are in range for the dimension sizes
-        # before integral indices are converted to slices below, for (one for)
-        # consistent behaviour between setitem and getitem. Note out-of-range
-        # slicing works in Python generally (slices are allowed to extend past
-        # end points with clipping applied) so we allow those.
-        integral_index = isinstance(index, Integral)
+        # Check that any integer indices are in range for the
+        # dimension sizes before integral indices are converted to
+        # slices below, for (one for) consistent behaviour between
+        # setitem and getitem. Note out-of-range slicing works in
+        # Python generally (slices are allowed to extend past end
+        # points with clipping applied) so we allow those.
+        integral_index = axis_dropping_index(index)
         if integral_index and not -size <= index < size:  # could be negative
             raise IndexError(
                 f"Index {index!r} is out of bounds for axis {i} with "

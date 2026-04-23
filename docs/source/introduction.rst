@@ -76,8 +76,8 @@ to add more sophisticated methods.
 The `cfdm` package can
 
 * read :term:`field constructs <field construct>` and :term:`domain
-  constructs <domain construct>` from netCDF, CDL, and Zarr datasets
-  with a choice of netCDF backends,
+  constructs <domain construct>` from netCDF, CDL, Zarr, and
+  Kerchunk datasets with a choice of netCDF and Zarr backends,
 
 * read files from OPeNDAP servers and S3 object stores,
  
@@ -86,7 +86,7 @@ The `cfdm` package can
 * create new field and domain constructs in memory,
 
 * write field and domain constructs to netCDF and Zarr datasets on
-  disk,
+  disk, with control over HDF5 internal file metadata,
 
 * read, write, and manipulate UGRID mesh topologies,
 

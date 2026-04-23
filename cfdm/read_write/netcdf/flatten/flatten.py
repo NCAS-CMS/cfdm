@@ -87,9 +87,9 @@ def dataset_flatten(
     :Parameters:
 
         input_ds:
-            The dataset to be flattened. Must be an open dataet object
-            with the same API as `netCDF4.Dataset`, `h5netcdf.File`,
-            or `zarr.Group`.
+            The dataset to be flattened. Must be an open dataset
+            object with the same API as `netCDF4.Dataset`,
+            `h5netcdf.File`, or `zarr.Group`.
 
         output_ds: `netCDF4.Dataset`
             A container for the flattened dataset that will get
@@ -690,10 +690,15 @@ class _Flattener:
         """
         match self._backend():
             case "h5netcdf" | "zarr":
-                return x.attrs[attr]
+                value = x.attrs[attr]
 
             case "netCDF4":
-                return getattr(x, attr)
+                value = getattr(x, attr)
+
+        if isinstance(value, bytes):
+            value = value.decode()
+
+        return value
 
     def group(self, x):
         """Return the group that a variable or dimension belongs to.

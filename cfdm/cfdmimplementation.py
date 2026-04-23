@@ -35,9 +35,11 @@ from .data import (
     H5netcdfArray,
     NetCDF4Array,
     PointTopologyArray,
+    PyfiveArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    ScipyNetcdfFileArray,
     SubsampledArray,
     ZarrArray,
 )
@@ -418,6 +420,25 @@ class CFDMImplementation(Implementation):
             return default
 
         return self.nc_get_variable(bounds, default=default)
+
+    def get_cell_connectivities(self, parent):
+        """Return the cell connectivities from a parent.
+
+        .. versionadded:: (cfdm) 1.13.1.0
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+                The parent object.
+
+        :Returns:
+
+            `dict`
+                A dictionary whose values are cell connectivity
+                objects, keyed by unique identifiers.
+
+        """
+        return parent.cell_connectivities(todict=True)
 
     def get_cell_measures(self, field):
         """Return all of the cell measure constructs of a field.
@@ -1011,6 +1032,25 @@ class CFDMImplementation(Implementation):
 
         """
         return field.domain_axes(todict=True)[axis].get_size()
+
+    def get_domain_topologies(self, parent):
+        """Return the domain topologies from a parent.
+
+        .. versionadded:: (cfdm) 1.13.1.0
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+                The parent object.
+
+        :Returns:
+
+            `dict`
+                A dictionary whose values are domain topology objects,
+                keyed by unique identifiers.
+
+        """
+        return parent.domain_topologies(todict=True)
 
     def get_sample_dimension_position(self, construct):
         """Returns the position of the compressed data sample dimension.
@@ -1983,8 +2023,15 @@ class CFDMImplementation(Implementation):
 
         return data.source(default)
 
-    def initialise_AuxiliaryCoordinate(self):
+    def initialise_AuxiliaryCoordinate(self, **kwargs):
         """Return an auxiliary coordinate construct.
+
+        :Parameters:
+
+            kwargs: optional
+                Parameters with which to initialise the object.
+
+                .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 
@@ -1992,7 +2039,7 @@ class CFDMImplementation(Implementation):
 
         """
         cls = self.get_class("AuxiliaryCoordinate")
-        return cls()
+        return cls(**kwargs)
 
     def initialise_Bounds(self):
         """Return a bounds component.
@@ -2570,6 +2617,42 @@ class CFDMImplementation(Implementation):
 
         """
         cls = self.get_class("H5netcdfArray")
+        return cls(**kwargs)
+
+    def initialise_ScipyNetcdfFileArray(self, **kwargs):
+        """Return a `NetCDF4Array` instance.
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+                .. versionadded:: (cfdm) 1.13.1.0
+
+        :Returns:
+
+            `ScipyNetcdfFileArray`
+
+        """
+        cls = self.get_class("ScipyNetcdfFileArray")
+        return cls(**kwargs)
+
+    def initialise_PyfiveArray(self, **kwargs):
+        """Return a `PyfiveArray` instance.
+
+        .. versionadded:: (cfdm) 1.13.1.0
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+        :Returns:
+
+            `PyfiveArray`
+
+        """
+        cls = self.get_class("PyfiveArray")
         return cls(**kwargs)
 
     def initialise_ZarrArray(self, **kwargs):
@@ -3421,26 +3504,6 @@ class CFDMImplementation(Implementation):
         )
         construct.set_data(data)
 
-    def set_mesh_id(self, parent, mesh_id):
-        """Set a mesh identifier.
-
-        .. versionadded:: (cfdm)  1.11.0.0
-
-        :Parameters:
-
-            parent: construct
-                The construct on which to set the mesh id
-
-            mesh_id:
-                The mesh identifier.
-
-        :Returns:
-
-            `None`
-
-        """
-        parent.set_mesh_id(mesh_id)
-
     def nc_set_external(self, construct):
         """Set the external status of a construct.
 
@@ -3598,7 +3661,7 @@ class CFDMImplementation(Implementation):
             if data is not None:
                 filenames += tuple(data._original_filenames())
 
-        parent._original_filenames(define=set(filenames))
+        parent._original_filenames(define=filenames)
 
     def set_parameter(self, parent, parameter, value, copy=True):
         """Set a parameter on a component.
@@ -4030,7 +4093,9 @@ _implementation = CFDMImplementation(
     GatheredArray=GatheredArray,
     H5netcdfArray=H5netcdfArray,
     NetCDF4Array=NetCDF4Array,
+    ScipyNetcdfFileArray=ScipyNetcdfFileArray,
     PointTopologyArray=PointTopologyArray,
+    PyfiveArray=PyfiveArray,
     Quantization=Quantization,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
@@ -4076,7 +4141,9 @@ def implementation():
      'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
      'H5netcdfArray': <class 'cfdm.data.h5netcdfarray.H5netcdfArray'>,
      'NetCDF4Array': <class 'cfdm.data.netcdf4array.NetCDF4Array'>,
+     'ScipyNetcdfFileArray': <class 'cfdm.data.scipynetcdffilearray.ScipyNetcdfFileArray'>,
      'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
+     'PyfiveArray': <class 'cfdm.data.pyfivearray.PyFiveArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
      'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
      'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>,

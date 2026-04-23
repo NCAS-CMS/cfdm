@@ -31,7 +31,12 @@ def _remove_tmpfiles():
 
 atexit.register(_remove_tmpfiles)
 
-netcdf_backends = ("netCDF4", "h5netcdf")
+netcdf_backends = (
+    "netCDF4",
+    "h5netcdf-pyfive",
+    "h5netcdf-h5py",
+    "netcdf_file",
+)
 
 
 class netcdf_indexerTest(unittest.TestCase):
@@ -80,13 +85,19 @@ class netcdf_indexerTest(unittest.TestCase):
         f.set_property("valid_range", [valid_min, valid_max])
         fields.append(f)
 
-        cfdm.write(fields, tmpfile, warn_valid=False)
-
         # Check against netCDF4 with set_auto_maskandscale(True)
-        nc = netCDF4.Dataset(tmpfile, "r")
-        nc.set_auto_maskandscale(True)
-        nc.set_always_mask(True)
         for backend in netcdf_backends:
+            if backend == "netcdf_file":
+                fmt = "NETCDF3_CLASSIC"
+            else:
+                fmt = "NETCDF4"
+
+            cfdm.write(fields, tmpfile, fmt=fmt, warn_valid=False)
+
+            nc = netCDF4.Dataset(tmpfile, "r")
+            nc.set_auto_maskandscale(True)
+            nc.set_always_mask(True)
+
             f = cfdm.read(tmpfile, netcdf_backend=backend)
             for g in f:
                 ncvar = g.nc_get_variable()
@@ -112,15 +123,20 @@ class netcdf_indexerTest(unittest.TestCase):
         f.set_property("add_offset", add_offset)
         f.set_property("missing_value", 999)
 
-        cfdm.write(f, tmpfile)
-
         # Check against netCDF4 with set_auto_maskandscale(True)
-        nc = netCDF4.Dataset(tmpfile, "r")
-        nc.set_auto_maskandscale(True)
-        nc.set_always_mask(True)
         for backend in netcdf_backends:
-            f = cfdm.read(tmpfile, netcdf_backend=backend)
-            for g in f:
+            if backend == "netcdf_file":
+                fmt = "NETCDF3_CLASSIC"
+            else:
+                fmt = "NETCDF4"
+
+            cfdm.write(f, tmpfile, fmt=fmt)
+
+            nc = netCDF4.Dataset(tmpfile, "r")
+            nc.set_auto_maskandscale(True)
+            nc.set_always_mask(True)
+
+            for g in cfdm.read(tmpfile, netcdf_backend=backend):
                 ncvar = g.nc_get_variable()
                 n = nc.variables[ncvar]
                 na = n[...]
@@ -221,6 +237,27 @@ class netcdf_indexerTest(unittest.TestCase):
             x.index_shape((slice(5, 1, 3), [3]), (10, 20)), [0, 1]
         )
         self.assertEqual(x.index_shape((slice(1, 5, -3), 3), (10, 20)), [0])
+
+    def test_netcdf_indexer_newaxis(self):
+        """Test netcdf_indexer with np.newaxis indices."""
+        a = np.arange(12).reshape(3, 4)
+        v = cfdm.netcdf_indexer(a)
+        self.assertEqual(v[...].shape, (3, 4))
+        self.assertEqual(v[:2, :3].shape, (2, 3))
+        self.assertEqual(v[:2, np.newaxis, :3].shape, (2, 1, 3))
+        self.assertEqual(v[1, :3].shape, (3,))
+        self.assertEqual(v[1, np.newaxis, :3].shape, (1, 3))
+
+        # Test with netCDF backends
+        for klass in (cfdm.H5netcdfArray, cfdm.NetCDF4Array, cfdm.PyfiveArray):
+            k = klass("example_field_0.nc", "time", shape=())
+            dataset, address = k.open()
+            variable = dataset[address]
+            v = cfdm.netcdf_indexer(variable)
+            a = v[...]
+            self.assertEqual(a.ndim, 0)
+            b = v[(np.newaxis,)]
+            self.assertEqual(b.ndim, 1)
 
 
 if __name__ == "__main__":

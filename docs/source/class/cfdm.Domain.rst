@@ -148,6 +148,13 @@ NetCDF
    ~cfdm.Domain.nc_clear_global_attributes
    ~cfdm.Domain.nc_set_global_attribute
    ~cfdm.Domain.nc_set_global_attributes
+   ~cfdm.Domain.nc_clear_mesh_variable_groups
+   ~cfdm.Domain.nc_del_mesh_variable
+   ~cfdm.Domain.nc_get_mesh_variable
+   ~cfdm.Domain.nc_has_mesh_variable
+   ~cfdm.Domain.nc_mesh_variable_groups
+   ~cfdm.Domain.nc_set_mesh_variable
+   ~cfdm.Domain.nc_set_mesh_variable_groups
    
 Groups
 ^^^^^^
@@ -214,12 +221,12 @@ UGRID
 
 .. rubric:: Methods
 
-
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.Domain.node_coordinates
    ~cfdm.Domain.del_mesh_id
    ~cfdm.Domain.get_mesh_id
    ~cfdm.Domain.has_mesh_id

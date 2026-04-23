@@ -3,7 +3,6 @@ import math
 import operator
 from itertools import product, zip_longest
 from math import prod
-from numbers import Integral
 from os.path import commonprefix
 
 import numpy as np
@@ -19,9 +18,11 @@ from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
     _numpy_allclose,
+    axis_dropping_index,
     display_data,
     is_log_level_info,
     parse_indices,
+    persist_data,
 )
 from ..mixin.container import Container
 from ..mixin.files import Files
@@ -140,6 +141,9 @@ class Data(
         # Function for determining whether or not to display data
         # elements during `__str__`
         instance._display_data = display_data
+        # Function for determining whether or not to persist computed
+        # data
+        instance._persist_data = persist_data
         return instance
 
     def __init__(
@@ -766,12 +770,6 @@ class Data(
         # ------------------------------------------------------------
         new._set_dask(dx, clear=self._ALL ^ self._CFA, in_memory=None)
 
-        if 0 in new.shape:
-            raise IndexError(
-                f"Index [{original_indices}] selects no elements from "
-                f"data with shape {original_shape}"
-            )
-
         # ------------------------------------------------------------
         # Get the axis identifiers for the subspace
         # ------------------------------------------------------------
@@ -779,7 +777,7 @@ class Data(
             new_axes = [
                 axis
                 for axis, x in zip(self._axes, indices)
-                if not isinstance(x, Integral) and getattr(x, "shape", True)
+                if not axis_dropping_index(x) and getattr(x, "shape", True)
             ]
             new._axes = new_axes
 
@@ -2383,7 +2381,7 @@ class Data(
                 "run at definition time in order to ascertain "
                 "suitability (such as data type casting, "
                 "broadcasting, etc.). Note that the exception may be "
-                "difficult to diagnose, as dask will have silently "
+                "difficult to diagnose, as dask might have silently "
                 "trapped it and returned NotImplemented (see , for "
                 "instance, dask.array.core.elemwise). Print "
                 "statements in a local copy of dask are possibly the "
@@ -2721,10 +2719,16 @@ class Data(
         """A numpy array copy of the data.
 
         In-place changes to the returned numpy array do not affect the
-        underlying dask array.
+        underlying Dask array.
 
         The returned numpy array has the same mask hardness and fill
         values as the data.
+
+        .. note:: If the `{{package}}.persist_data` function returns
+                  True then calling `array` will persist the
+                  underlying lazy Dask array into an equivalent
+                  chunked Dask array, but now with the results fully
+                  computed and cached memory.
 
         Compare with `compute`.
 
@@ -2734,7 +2738,8 @@ class Data(
         returned `numpy` array is a deep copy of that returned by
         created `compute`.
 
-        .. seealso:: `datetime_array`, `compute`, `persist`
+        .. seealso:: `datetime_array`, `compute`, `persist`,
+                     `{{package}}.persist_data`
 
         **Examples**
 
@@ -4102,7 +4107,9 @@ class Data(
         d._set_dask(dx, clear=self._ALL, in_memory=True)
         return d
 
-    def compute(self, _force_to_memory=True, _cache_elements=True):
+    def compute(
+        self, persist=None, _force_to_memory=True, _cache_elements=True
+    ):
         """A view of the computed data.
 
         In-place changes to the returned array *might* affect the
@@ -4120,10 +4127,29 @@ class Data(
 
         .. versionadded:: (cfdm) 1.11.2.0
 
-        .. seealso:: `persist`, `array`, `datetime_array`,
-                     `sparse_array`
+        .. seealso:: `array`, `datetime_array`, `sparse_array`,
+                     `persist`, `{{package}}.persist_data`
 
         :Parameters:
+
+            persist: `None` or `bool`, optional
+                Control the persistence of computed data. Persisting
+                turns the underlying lazy dask array into an
+                equivalent chunked dask array, but now with the
+                results fully computed and cached memory. This can
+                avoid the expense of re-reading the data from disk, or
+                re-computing it, when the data is accessed on multiple
+                occasions.
+
+                If *persist* is `None` (the default) then the value of
+                *persist* will be taken from the
+                `{{package}}.persist_data` function. If *persist* is
+                True then the data is persisted, regardless of value
+                returned by `{{package}}.persist_data`. If *persist*
+                is False then the data is not persisted, regardless of
+                value returned by `{{package}}.persist_data`.
+
+                .. versionadded:: (cfdm) 1.13.1.0
 
             _force_to_memory: `bool`, optional
                 If True (the default) then force the data resulting
@@ -4172,12 +4198,28 @@ class Data(
          [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
          [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
         >>> f.data.compute(_force_to_memory=False)
-        <{{repr}}NetCDF4Array(5, 8): file.nc, q(5, 8)>
+        <{{repr}}PyfiveArray(5, 8): file.nc, q(5, 8)>
 
         """
         dx = self.to_dask_array(
             _force_mask_hardness=False, _force_to_memory=_force_to_memory
         )
+
+        if persist is None:
+            persist = self._persist_data()
+
+        if persist:
+            dx = dx.persist()
+
+            # Note to developers: If the following `_set_dask` call is
+            #                     changed, consider making the same
+            #                     changes in `persist`.
+            self._set_dask(
+                dx,
+                clear=self._ALL ^ self._ARRAY ^ self._CACHE,
+                in_memory=True,
+            )
+
         a = dx.compute()
 
         if np.ma.isMA(a) and a is not np.ma.masked:
@@ -4189,11 +4231,16 @@ class Data(
             a.set_fill_value(self.get_fill_value(None))
 
         if _cache_elements:
-            from scipy.sparse import issparse
+            ok = False
+            if isinstance(a, (np.ndarray, int, float, bool, str)):
+                ok = True
+            else:
+                from scipy.sparse import issparse
 
-            if isinstance(a, (np.ndarray, int, float, bool, str)) or issparse(
-                a
-            ):
+                if issparse(a):
+                    ok = True
+
+            if ok:
                 self.cache_elements(_array=a)
 
         return a
@@ -4828,16 +4875,17 @@ class Data(
         # Check that each instance has the same data type
         self_is_numeric = is_numeric_dtype(self_dx)
         other_is_numeric = is_numeric_dtype(other_dx)
-        if (
-            not ignore_data_type
-            and (self_is_numeric or other_is_numeric)
-            and self.dtype != other.dtype
-        ):
-            logger.info(
-                f"{self.__class__.__name__}: Different data types: "
-                f"{self.dtype} != {other.dtype}"
-            )  # pragma: no cover
-            return False
+
+        if not ignore_data_type and (self_is_numeric or other_is_numeric):
+            # Test the dtypes with np.isdtype, instead of !=, so that
+            # dtypes that have different endianness but are otherwise
+            # the same are considered equal. E.g. '>f8' and 'float64'.
+            if not np.isdtype(self.dtype, other.dtype):
+                logger.info(
+                    f"{self.__class__.__name__}: Different data types: "
+                    f"{self.dtype}, {other.dtype}"
+                )  # pragma: no cover
+                return False
 
         # Check that each instance has the same units.
         self_Units = self.Units
@@ -4847,7 +4895,7 @@ class Data(
                 logger.info(
                     f"{self.__class__.__name__}: Different Units "
                     f"({self_Units!r}, {other_Units!r})"
-                )
+                )  # pragma: no cover
 
             return False
 
@@ -6583,6 +6631,10 @@ class Data(
             _force_mask_hardness=False, _force_to_memory=True
         )
         dx = dx.persist()
+
+        # Note to developers: If the following `_set_dask` call is
+        #                     changed, consider making the same
+        #                     changes in `compute`.
         d._set_dask(
             dx, clear=self._ALL ^ self._ARRAY ^ self._CACHE, in_memory=True
         )
@@ -6620,6 +6672,8 @@ class Data(
             {{block_size_limit: `int`, optional}}
 
             {{balance: `bool`, optional}}
+
+            {{inplace: `bool`, optional}}
 
         :Returns:
 
@@ -6833,8 +6887,8 @@ class Data(
         """Change the shape of the data without changing its values.
 
         It assumes that the array is stored in row-major order, and
-        only allows for reshapings that collapse or merge dimensions
-        like ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
+        only allows for reshapings that collapse or merge dimensions,
+        e.g. ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
 
         .. versionadded:: (cfdm) 1.11.2.0
 

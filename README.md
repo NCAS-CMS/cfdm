@@ -79,14 +79,15 @@ inspecting it:
 
 The ``cfdm`` package can:
 
-* read field and domain constructs from netCDF, CDL, and Zarr datasets
-  with a choice of netCDF backends, and in local, http, and s3
-  locations,
+* read field and domain constructs from netCDF, CDL, Zarr, and
+  Kerchunk datasets with a choice of netCDF backends, and in local,
+  http, and s3 locations,
 * be fully flexible with respect to dataset storage chunking,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF and Zarr v3
-  datasets on disk,
+  datasets on disk, with control over HDF5 internal metadata,
 * read, write, and manipulate UGRID mesh topologies,
+* read, write, and manipulate HEALPix grids,
 * read, write, and create coordinates defined by geometry cells,
 * read and write netCDF4 string data-type variables,
 * read, write, and create netCDF and CDL datasets containing

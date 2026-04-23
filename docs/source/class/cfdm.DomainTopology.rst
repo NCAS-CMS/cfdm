@@ -148,6 +148,8 @@ Miscellaneous
    ~cfdm.DomainTopology.get_filenames
    ~cfdm.DomainTopology.get_original_filenames
    ~cfdm.DomainTopology.to_memory
+   ~cfdm.DomainTopology.sort
+   ~cfdm.DomainTopology.to_edge
 
 Aggregation
 -----------
@@ -176,6 +178,10 @@ NetCDF
    ~cfdm.DomainTopology.nc_get_variable
    ~cfdm.DomainTopology.nc_has_variable
    ~cfdm.DomainTopology.nc_set_variable
+   ~cfdm.DomainTopology.nc_del_connectivity_dimension
+   ~cfdm.DomainTopology.nc_get_connectivity_dimension
+   ~cfdm.DomainTopology.nc_has_connectivity_dimension
+   ~cfdm.DomainTopology.nc_set_connectivity_dimension
 
 Groups
 ^^^^^^
@@ -190,6 +196,9 @@ Groups
    ~cfdm.DomainTopology.nc_variable_groups
    ~cfdm.DomainTopology.nc_clear_variable_groups
    ~cfdm.DomainTopology.nc_set_variable_groups
+   ~cfdm.DomainTopology.nc_clear_connectivity_dimension_groups
+   ~cfdm.DomainTopology.nc_connectivity_dimension_groups
+   ~cfdm.DomainTopology.nc_set_connectivity_dimension_groups
 
 Dataset chunks
 ^^^^^^^^^^^^^^

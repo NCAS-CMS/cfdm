@@ -16,6 +16,7 @@ Documentation for all versions of cfdm.
 **CF-1.13**
 -----------
 
+* `Version 1.13.1.0 <https://ncas-cms.github.io/cfdm-docs/1.13.1.0>`_ (2026-04-09)
 * `Version 1.13.0.0 <https://ncas-cms.github.io/cfdm-docs/1.13.0.0>`_ (2026-01-15)
 
 **CF-1.12**
