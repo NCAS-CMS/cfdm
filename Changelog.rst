@@ -3,7 +3,7 @@ Version NEXTVERSION
 
 **2026-??-??**
 
-* Improved output of `Field.dataset_compliance` for (at present,
+* Improved output of `cfdm.Field.dataset_compliance` for (at present,
   preliminary) CF compliance checking, also available through a new
   keyword parameter to `cfdm.read`: ``_noncompliance_report``
   (https://github.com/NCAS-CMS/cfdm/issues/365,
