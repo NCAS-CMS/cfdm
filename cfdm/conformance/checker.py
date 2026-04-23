@@ -9,7 +9,7 @@ import numpy as np
 from ..read_write.netcdf.constants import CF_QUANTIZATION_PARAMETERS
 from .reporting import Report
 from .standardnames import get_all_current_standard_names
-from .functions import is_log_level_debug
+from ..functions import is_log_level_debug
 
 
 
