@@ -122,20 +122,20 @@ class AttributeNonConformance:
 
         return fragment
 
-        def __repr__(self):
-            """Called by the `repr` built-in function.
+    def __repr__(self):
+        """Called by the `repr` built-in function.
 
-            x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-            """
-            return str(
-                {
-                    "value": self.value,
-                    "variables": self.variables,
-                    "dimensions": self.dimensions,
-                    "non-conformance": self.non_conformances,
-                }
-            )
+        """
+        return str(
+            {
+                "value": self.value,
+                "variables": self.variables,
+                "dimensions": self.dimensions,
+                "non-conformance": self.non_conformances,
+            }
+        )
 
     def equals(self, other):
         """Equality checking between same class."""

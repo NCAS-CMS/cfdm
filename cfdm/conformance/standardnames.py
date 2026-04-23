@@ -1,7 +1,5 @@
 import logging
 
-# To parse the XML - better than using manual regex parsing!
-import xml.etree.ElementTree as ET
 from functools import lru_cache
 
 # Prefer using built-in urllib to extract XML from cf-convention.github.io repo
@@ -56,6 +54,9 @@ def _extract_names_from_xml(snames_xml, include_aliases):
              requested.
 
     """
+    # To parse the XML - much better than using manual regex parsing
+    import xml.etree.ElementTree as ET
+
     root = ET.fromstring(snames_xml)
     # Want all <entry id="..."> elements. Note the regex this corresponds
     # to, from SLB older code, is 're.compile(r"<entry id=\"(.+)\">")' but
