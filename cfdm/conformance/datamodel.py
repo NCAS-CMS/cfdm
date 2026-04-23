@@ -15,7 +15,7 @@ class NonConformanceCase:
         self.reason = reason
         self.code = code
 
-    def as_report_fragment(self):
+    def todict(self):
         """Report the non-conformance in dictionary fragment form."""
         return {
             "reason": self.reason,
@@ -28,7 +28,7 @@ class NonConformanceCase:
         x.__repr__() <==> repr(x)
 
         """
-        return str(self.as_report_fragment())
+        return str(self.todict())
 
 
 class AttributeNonConformance:
@@ -95,7 +95,7 @@ class AttributeNonConformance:
         compliance."""
         self.dimensions.append(dim)
 
-    def as_report_fragment(self):
+    def todict(self):
         """Report the attribute non-compliance in dictionary form.
 
         For a more concise dict with class-based value representation,
@@ -107,17 +107,17 @@ class AttributeNonConformance:
         }
         if self.variables:
             fragment["variables"] = {
-                var_nc.name: var_nc.as_report_fragment()
+                var_nc.name: var_nc.todict()
                 for var_nc in self.variables
             }
         if self.dimensions:
             fragment["dimensions"] = {
-                dim_nc.name: dim_nc.as_report_fragment()
+                dim_nc.name: dim_nc.todict()
                 for dim_nc in self.dimensions
             }
         if self.non_conformances:
             fragment["non-conformance"] = [
-                nc.as_report_fragment() for nc in self.non_conformances
+                nc.todict() for nc in self.non_conformances
             ]
 
         return fragment
@@ -182,7 +182,7 @@ class DimensionNonConformance:
         self.variables.append(var)
         return var
 
-    def as_report_fragment(self):
+    def todict(self):
         """Report the dimension non-compliance in dictionary form.
 
         For a more concise dict with class-based value representation,
@@ -194,12 +194,12 @@ class DimensionNonConformance:
         }
         if self.variables:
             fragment["variables"] = {
-                var_nc.name: var_nc.as_report_fragment()
+                var_nc.name: var_nc.todict()
                 for var_nc in self.variables
             }
         if self.non_conformances:
             fragment["non-conformance"] = [
-                nc.as_report_fragment() for nc in self.non_conformances
+                nc.todict() for nc in self.non_conformances
             ]
 
         return fragment
@@ -275,7 +275,7 @@ class VariableNonConformance:
         compliance."""
         self.dimensions.append(dim)
 
-    def as_report_fragment(self):
+    def todict(self):
         """Report the variable non-compliance in dictionary fragment
         form.
 
@@ -286,17 +286,17 @@ class VariableNonConformance:
         fragment = {}
         if self.attributes:
             fragment["attributes"] = {
-                attr_nc.name: attr_nc.as_report_fragment()
+                attr_nc.name: attr_nc.todict()
                 for attr_nc in self.attributes
             }
         if self.dimensions:
             fragment["dimensions"] = {
-                dim_nc.name: dim_nc.as_report_fragment()
+                dim_nc.name: dim_nc.todict()
                 for dim_nc in self.dimensions
             }
         if self.non_conformances:
             fragment["non-conformance"] = [
-                nc.as_report_fragment() for nc in self.non_conformances
+                nc.todict() for nc in self.non_conformances
             ]
 
         return fragment

@@ -4790,7 +4790,7 @@ class NetCDFRead(IORead, Checker):
         self._check_field_ncvar(field_ncvar)
 
         # Add the structural read report to the field/domain
-        dataset_compliance = self.dataset_compliance.as_report_fragment()
+        dataset_compliance = self.dataset_compliance.todict()
 
         # At top (field) level, always include the CF Conventions version at
         # which the compliance/conformance was checked against
