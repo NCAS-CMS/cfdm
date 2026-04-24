@@ -1567,18 +1567,21 @@ class NetCDFRead(IORead, FieldChecker, NetCDFChecker):
             "dataset_representation": representation,
             "cdl_string": bool(cdl_string),
             "ignore_unknown_type": bool(ignore_unknown_type),
+            # Compression
+            "compression": {},
+            # Conformance (CF-compliance)
+            "_noncompliance_report": {},
             # --------------------------------------------------------
             # Verbosity
             # --------------------------------------------------------
+            "verbose": verbose,
             "debug": debug,
-            #
+            "warnings": warnings,
+            # --------------------------------------------------------
+            # Data model components
+            # --------------------------------------------------------
             "new_dimension_sizes": {},
             "formula_terms": {},
-            "compression": {},
-            # Verbose?
-            "verbose": verbose,
-            # Warnings?
-            "warnings": warnings,
             "auxiliary_coordinate": {},
             "cell_measure": {},
             "dimension_coordinate": {},
