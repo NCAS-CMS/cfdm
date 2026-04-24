@@ -6,6 +6,7 @@ import tempfile
 from ast import literal_eval
 from collections.abc import Mapping
 from copy import deepcopy
+from dataclasses import dataclass, field
 from functools import reduce
 from math import log, nan, prod
 from numbers import Integral
@@ -16,7 +17,7 @@ from typing import Any
 
 import numpy as np
 
-from ...conformance import Checker, Mesh, VariableNonConformance
+from ...conformance import Checker, VariableNonConformance
 from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail

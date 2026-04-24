@@ -1,5 +1,4 @@
 import logging
-from dataclasses import dataclass, field
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -10,55 +9,6 @@ from ..read_write.netcdf.constants import CF_QUANTIZATION_PARAMETERS
 from .reporting import Report
 from .standardnames import get_all_current_standard_names
 from ..functions import is_log_level_debug
-
-
-
-# NOTE SLB: this Mesh object doesn't really belong in the conformance module
-# according to context, but it is only usde by the UGRID checker methods
-# therefore it should be accessible for this module. (Can't put it in the
-# netcdfread module since then we will have circular importing.)
-@dataclass()
-class Mesh:
-    """A UGRID mesh defintion.
-
-    .. versionadded:: (cfdm) 1.11.0.0
-
-    """
-
-    # The netCDF name of the mesh topology variable. E.g. 'Mesh2d'
-    mesh_ncvar: Any = None
-    # The attributes of the netCDF mesh topology variable.
-    # E.g. {'cf_role': 'mesh_topology'}
-    mesh_attributes: dict = field(default_factory=dict)
-    # The netCDF variable names of the coordinates for each location
-    # E.g. {'node': ['node_lat', 'node_lon']}
-    coordinates_ncvar: dict = field(default_factory=dict)
-    # The netCDF name of the location index set variable.
-    # E.g. 'Mesh1_set'
-    location_index_set_ncvar: Any = None
-    # The attributes of the location index set variable.
-    # E.g. {'location': 'node'}
-    location_index_set_attributes: dict = field(default_factory=dict)
-    # The location of the location index set. E.g. 'edge'
-    location: Any = None
-    # The zero-based indices of the location index set.
-    # E.g. <CF Data(13243): >
-    index_set: Any = None
-    # The domain topology construct for each location.
-    # E.g. {'face': <CF DomainTopology(13243, 4) >}
-    domain_topologies: dict = field(default_factory=dict)
-    # Cell connectivity constructs for each location.
-    # E.g. {'face': [<CF CellConnectivity(13243, 4) >]}
-    cell_connectivities: dict = field(default_factory=dict)
-    # Auxiliary coordinate constructs for each location.
-    # E.g. {'face': [<CF AxuxiliaryCoordinate(13243) >,
-    #                <CF AxuxiliaryCoordinate(13243) >]}
-    auxiliary_coordinates: dict = field(default_factory=dict)
-    # The netCDF dimension spanned by the cells for each
-    # location. E.g. {'node': 'nNodes', 'edge': 'nEdges'}
-    ncdim: dict = field(default_factory=dict)
-    # A unique identifier for the mesh. E.g. 'df10184d806ef1a10f5035e'
-    mesh_id: Any = None
 
 
 class Checker(Report):

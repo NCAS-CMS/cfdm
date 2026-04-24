@@ -1,4 +1,4 @@
-from .checker import Checker, Report, Mesh
+from .checker import Checker, Report
 from .datamodel import (
     AttributeNonConformance,
     DimensionNonConformance,
