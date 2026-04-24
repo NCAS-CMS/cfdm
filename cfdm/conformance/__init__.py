@@ -1,4 +1,4 @@
-from .checker import Checker, Report
+from .checker import FieldChecker, Report
 from .datamodel import (
     AttributeNonConformance,
     DimensionNonConformance,

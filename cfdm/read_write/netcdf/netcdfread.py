@@ -17,7 +17,7 @@ from typing import Any
 
 import numpy as np
 
-from ...conformance import Checker, VariableNonConformance
+from ...conformance import FieldChecker, VariableNonConformance
 from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
@@ -28,6 +28,7 @@ from .constants import (
     NETCDF_MAGIC_NUMBERS,
     NETCDF_QUANTIZATION_PARAMETERS,
 )
+from .checker import NetCDFChecker
 from .dimension import Dimension
 from .flatten import dataset_flatten
 from .flatten.config import (
@@ -85,7 +86,7 @@ class Mesh:
     ncdim: dict = field(default_factory=dict)
 
 
-class NetCDFRead(IORead, Checker):
+class NetCDFRead(IORead, FieldChecker, NetCDFChecker):
     """A container for instantiating Fields from a netCDF dataset."""
 
     _code0 = {
@@ -160,7 +161,7 @@ class NetCDFRead(IORead, Checker):
     }
 
     def __init__(self, implementation=None):
-        Checker.__init__(self)
+        FieldChecker.__init__(self)
         self.implementation = implementation  # from IORead
 
     def cf_datum_parameters(self):
