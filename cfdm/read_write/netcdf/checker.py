@@ -1,13 +1,9 @@
 import logging
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
-import numpy as np
-
 from .constants import CF_QUANTIZATION_PARAMETERS
 from ...conformance.reporting import Report
-from ...functions import is_log_level_debug
 
 
 class NetCDFChecker(Report):

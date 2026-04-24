@@ -1,11 +1,9 @@
 import logging
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
 import numpy as np
 
-from ..read_write.netcdf.constants import CF_QUANTIZATION_PARAMETERS
 from .reporting import Report
 from .standardnames import get_all_current_standard_names
 from ..functions import is_log_level_debug
@@ -164,7 +162,7 @@ class FieldChecker(Report):
 
         """
         debug = is_log_level_debug(logger)
-        
+
         if debug:
             logger.debug(f"Running _check_standard_names() for: {ncvar}")
 
