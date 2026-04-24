@@ -2630,7 +2630,7 @@ class NetCDFRead(IORead, FieldChecker, NetCDFChecker):
                     logger.warning(
                         f"\nWARNING: {x.__class__.__name__} incomplete or "
                         "non-standard due to non-CF-compliant dataset. "
-                        "Report:\n"
+                        f"Report:\n{pformat(noncompliance)}"
                     )  # pragma: no cover
 
         if warn_valid and not g["domain"]:
