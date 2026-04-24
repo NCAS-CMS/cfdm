@@ -249,10 +249,11 @@ class FieldChecker(Report):
                 and sn_value not in get_all_current_standard_names()
             ):
                 invalid_sn_found = True
-                logger.warning(
-                    f"Detected invalid standard name: '{sn_attr}' of "
-                    f"'{sn_value}' for {ncvar}"
-                )
+                if self.read_vars["_noncompliance_report"]:
+                    logger.warning(
+                        f"Detected invalid standard name: '{sn_attr}' of "
+                        f"'{sn_value}' for {ncvar}"
+                    )
                 self._add_message(
                     top_ancestor_ncvar,
                     ncvar,

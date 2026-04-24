@@ -1731,6 +1731,10 @@ class NetCDFRead(IORead, FieldChecker, NetCDFChecker):
 
         g = self.read_vars
 
+        # Process the _noncompliance_report, if any specified
+        if _noncompliance_report:
+            g["_noncompliance_report"] = _noncompliance_report
+
         # Set versions
         for version in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11", "1.12"):
             g["version"][version] = Version(version)
@@ -2618,7 +2622,8 @@ class NetCDFRead(IORead, FieldChecker, NetCDFChecker):
         # ------------------------------------------------------------
         # Provide requested warnings e.g. about non-compliance
         # ------------------------------------------------------------
-        if warnings or _noncompliance_report:
+        noncompliance = g["_noncompliance_report"]
+        if warnings or noncompliance:
             for x in out:
                 noncompliance_dict = x.dataset_compliance()
                 if noncompliance_dict:
