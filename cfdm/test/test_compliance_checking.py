@@ -70,6 +70,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         good_snames_general_field, tmpfile0
     )
 
+    # Add a bad cell method name too
+    c = bad_snames_general_field.cell_methods()["cellmethod0"]
+    c.set_axes(['domainaxis1', 'badname_cellmethod'])
+
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
     ugrid_file_path = os.path.join(
