@@ -1967,12 +1967,16 @@ def _make_subsampled_2(filename):
 def _make_ugrid_1(filename, standard_names):
     """Create a UGRID file with a 2-d mesh topology.
 
-    Standard names to set are input as a dicionary parameter to facilitate
-    testing on CF compliance checking for a UGRID dataset in the
-    test_compliance_checking module. This should either be 6 names long
-    or TODO names long where in the latter case extra standard names will
+    Standard names to set, if different to the default valid names, are
+    input as a dicionary parameter - this is supported to facilitate
+    testing on CF compliance checking for a UGRID dataset with
+    non-compliant names in the test_compliance_checking module.
+
+    The `standard_names` dict should either be 6 names long else 13
+    names long where in the latter case extra standard names will
     be set on all other variables which have no standard name in
-    ugrid_1, namely on:
+    ugrid_1 by default, namely on the following extra variables:
+
     * Mesh2
     * Mesh2_face_nodes
     * Mesh2_edge_nodes
@@ -1982,9 +1986,19 @@ def _make_ugrid_1(filename, standard_names):
     * time_bounds
 
     """
-
+    # Process standard names
+    set_standard_names = [
+        "longitude",
+        "latitude",
+        "time",
+        "air_temperature",
+        "northward_wind",
+        "air_pressure",
+    ]
+    if standard_names:
+        set_standard_names = standard_names  # override defaults
     extra_sn_setting = False
-    if len(standard_names) == 13:
+    if len(set_standard_names) == 13:
         extra_sn_setting = True
 
     n = netCDF4.Dataset(filename, "w")
@@ -2519,39 +2533,33 @@ string_char_file = _make_string_char_file("string_char.nc")
 subsampled_file_1 = _make_subsampled_1("subsampled_1.nc")
 subsampled_file_1 = _make_subsampled_2("subsampled_2.nc")
 
-# To facilitate testing UGRID file for test_compliance_checking module,
-# we need a UGRID dataset with invalid standard names but can't create one
-# from a temp_file edit to 'ugrid_1.nc' because we can't yet write UGRID. So
-# have a standard names input dictionary here, for now, to create
-# a pair of files, one with good and one with bad names.
-ugrid_1_valid_standard_names = [
-    "longitude",
-    "latitude",
-    "time",
-    "air_temperature",
-    "northward_wind",
-    "air_pressure",
-]
-ugrid_1 = _make_ugrid_1("ugrid_1.nc", ugrid_1_valid_standard_names)
+
+ugrid_1 = _make_ugrid_1("ugrid_1.nc")
+ugrid_2 = _make_ugrid_2("ugrid_2.nc")
+ugrid_3 = _make_ugrid_3("ugrid_3.nc")
+
+# For dataset compliance testing purposes, create UGRID file with invalid
+# standard names on all fields
 ugrid_1_bad_standard_names = [
-    "badname_" + name for name in ugrid_1_valid_standard_names
-]
-ugrid_1_bad_standard_names += [
-    "badname_Mesh2",  # index 6
+    "badname_longitude",
+    "badname_latitude",
+    "badname_time",
+    "badname_air_temperature",
+    "badname_northward_wind",
+    "badname_air_pressure",
+    "badname_Mesh2",
     "badname_Mesh2_face_nodes",
     "badname_Mesh2_edge_nodes",
     "badname_Mesh2_face_edges",
     "badname_Mesh2_face_links",
     "badname_Mesh2_edge_face_links",
-    "badname_time_bounds",  # index 12
-]
+    "badname_time_bounds",
 
+]
 ugrid_1_bad_names = _make_ugrid_1(
     "ugrid_1_bad_names.nc",
     ugrid_1_bad_standard_names,
 )
-ugrid_2 = _make_ugrid_2("ugrid_2.nc")
-ugrid_3 = _make_ugrid_3("ugrid_3.nc")
 
 aggregation_value = _make_aggregation_value("aggregation_value.nc")
 
