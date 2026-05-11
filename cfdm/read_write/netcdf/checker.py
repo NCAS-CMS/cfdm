@@ -34,20 +34,6 @@ class NetCDFChecker(Report):
             self.read_vars["variable_attributes"][field_ncvar],
         )
 
-    def _check_cell_methods(self, field_ncvar, cell_method):
-        """Check the cell methods.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        # TODO SLB unclear how to check on cell methods, will leave
-        # for now.
-        # self._check_standard_names(
-        #     field_ncvar,
-        #     field_ncvar,
-        #     # self.read_vars["variable_attributes"][field_ncvar]["cell_methods"],
-        # )
-
     # -------- Non-UGRID checking methods (old relative to #373) ------------
 
     def _check_bounds(
@@ -460,7 +446,7 @@ class NetCDFChecker(Report):
             self._check_standard_names(
                 field_ncvar,
                 ncvar,
-                ncvar_attrs=ncvar_attrs,
+                ncvar_attrs,
             )
             self._include_component_report(
                 field_ncvar,

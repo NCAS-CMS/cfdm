@@ -203,7 +203,8 @@ class Report:
         )  # pragma: no cover
 
     def _include_component_report(
-        self, parent_ncvar, ncvar, attribute, dimensions=None
+            self, parent_ncvar, ncvar, attribute, dimensions=None,
+            no_var_case=False,
     ):
         """Include a component in the dataset compliance report.
 
@@ -241,8 +242,9 @@ class Report:
         component_report = self._get_variable_non_compliance_report(
             parent_ncvar
         )
+
         if component_report:
-            # Ensure canonical Variable for ncvar
+            # Ensure canonical variable for ncvar
             ncvar_nc = self._get_variable_non_compliance(ncvar)
 
             attr_name = attribute

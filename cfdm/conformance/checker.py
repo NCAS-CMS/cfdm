@@ -12,8 +12,8 @@ from ..functions import is_log_level_debug
 class FieldChecker(Report):
     """Contains checks of CF Compliance of Fields.
 
-    Holds methods for checking CF compliance. These methods (whose names
-    all start with "_check") check the minimum required for mapping the
+    Holds methods for checking CF compliance. These methods, whose names
+    all start with "_check", check the minimum required for mapping the
     file to CFDM structural elements.
 
     General CF compliance is only partially checked (e.g. whether or
@@ -69,6 +69,7 @@ class FieldChecker(Report):
         ncvar,
         ncvar_attrs,
         direct_parent_ncvar=None,
+        no_var_case=False,   # edge cases like cell methods
         check_is_string=True,
         check_is_in_table=True,
         check_is_in_custom_list=False,
@@ -178,8 +179,12 @@ class FieldChecker(Report):
         invalid_sn_found = False
         for sn_attr in ("standard_name", "computed_standard_name"):
             # 1. Check if there is a (computed_)standard_name property
-            sn_value = ncvar_attrs.get(sn_attr)
-            attribute_value = {f"{ncvar}:{sn_attr}": sn_value}
+            if no_var_case:
+                sn_value = no_var_case[1]
+                attribute_value = {f"{ncvar}:{no_var_case[0]}": sn_value}
+            else:
+                sn_value = ncvar_attrs.get(sn_attr)
+                attribute_value = {f"{ncvar}:{sn_attr}": sn_value}
             if debug:
                 logger.debug(f"Found a {sn_attr} of '{sn_value}' on {ncvar}")
 

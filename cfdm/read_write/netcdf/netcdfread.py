@@ -4967,6 +4967,24 @@ class NetCDFRead(IORead, FieldChecker, NetCDFChecker):
 
             for properties in cell_methods:
                 axes = properties.pop("axes")
+                for axis in axes:
+                    # As per CF Conventions 7.3. Cell Methods, cell methods may
+                    # have a standard name stored in this component 'axis'.
+                    # "In the specification of this attribute, name [from the
+                    # form "name: method"] can be a dimension of the variable,
+                    # a scalar coordinate variable, *a valid standard name*,
+                    # or the word "area"."
+
+                    # So if the 'axis' is not in name_to_axis, and isn't
+                    # "area", it must not be an axis at all but a standard
+                    # name, and should therefore be checked for validity.
+                    if axis != "area" and axis not in name_to_axis:
+                        self._check_standard_names(
+                            field_ncvar,
+                            field_ncvar,
+                            None,  # special case
+                            no_var_case=["cell_methods", axis],
+                        )
 
                 if g["has_groups"]:
                     # Replace flattened names with absolute names
@@ -4990,9 +5008,6 @@ class NetCDFRead(IORead, FieldChecker, NetCDFChecker):
                     f"{cell_method.__class__.__name__}"
                 )  # pragma: no cover
 
-                # TODO at present this check does nothing, need to find
-                # approach for checking cell methods
-                self._check_cell_methods(field_ncvar, cell_methods_string)
                 self.implementation.set_cell_method(
                     f, construct=cell_method, copy=False
                 )
@@ -6386,7 +6401,7 @@ class NetCDFRead(IORead, FieldChecker, NetCDFChecker):
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
-
+s
             axes: `tuple`
 
             method: 'str`
