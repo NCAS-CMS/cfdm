@@ -292,6 +292,7 @@ class ComplianceCheckingTest(unittest.TestCase):
                 "standard_name",
                 "ancillary_variables",
                 "cell_measures",
+                "cell_methods",
                 "coordinates",
             ],
         )
@@ -382,6 +383,31 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(cell_sn["value"], "badname_cell_measure")
         self.assertEqual(
             cell_sn["non-conformance"],
+            [
+                {
+                    "code": self.bad_sn_expected_code,
+                    "reason": self.bad_sn_expected_reason,
+                }
+            ],
+        )
+
+        # =======================================================
+        # ta.attributes.cell_methods
+        # =======================================================
+        cell_methods = ta_attributes["cell_methods"]
+        self.assertIsInstance(cell_methods, dict)
+        self.assertCountEqual(
+            cell_methods.keys(),
+            ["value", "non-conformance"],
+        )
+
+        self.assertEqual(
+            cell_methods["value"],
+            "badname_cellmethod",
+        )
+
+        self.assertEqual(
+            cell_methods["non-conformance"],
             [
                 {
                     "code": self.bad_sn_expected_code,
