@@ -65,14 +65,15 @@ class ComplianceCheckingTest(unittest.TestCase):
     cfdm.write(good_snames_f, tmpfile1)
     good_snames_general_field = cfdm.read(tmpfile1)[0]
 
-    # Set bad names and then write to tempfile and read back in
-    bad_snames_general_field = _create_noncompliant_names_field(
-        good_snames_general_field, tmpfile0
-    )
-
-    # Add a bad cell method name too
+    bad_snames_general_field = good_snames_general_field.copy()
+    # Add a cell method name to this field only
     c = bad_snames_general_field.cell_methods()["cellmethod0"]
     c.set_axes(['domainaxis1', 'badname_cellmethod'])
+
+    # Set bad names and then write to tempfile and read back in
+    bad_snames_general_field = _create_noncompliant_names_field(
+        bad_snames_general_field, tmpfile0
+    )
 
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
