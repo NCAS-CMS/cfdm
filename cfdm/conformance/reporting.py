@@ -204,7 +204,6 @@ class Report:
 
     def _include_component_report(
             self, parent_ncvar, ncvar, attribute, dimensions=None,
-            no_var_case=False,
     ):
         """Include a component in the dataset compliance report.
 

@@ -125,18 +125,34 @@ class FieldChecker(Report):
                 is not not registered for any further (parent)
                 variable than `top_ancestor_ncvar`.
 
-            check_is_string: `bool`
+            no_var_case: `tuple` or `bool`, optional
+                Replaces the input for ncvar_attrs, whose value is then
+                ignored, when there is a special case whereby there is
+                a standard name defined but not attached directly to a
+                variable, for example when a standard name is set in the
+                string value of a cell method (an attribute).
+
+                By default this is False and is ignored. If set to a
+                value other than False it should be a two-tuple with
+                the component to which the name is stored on as a string
+                identifier in the first position followed by the
+                standard name value stored on it in the second position.
+
+                *Parameter example:*
+                  ``["cell_methods", cell_method_name]``
+
+            check_is_string: `bool`, optional
                 Whether or not to check if the type of the attribute
                 value is a string type. By default this is checked.
 
-            check_is_in_table: `bool`
+            check_is_in_table: `bool`, optional
                 Whether or not to check if the attribute value is
                 identical to one of the names contained in the
                 current version of the CF Conventions standard name
                 table (as processed from the canonical XML). By
                 default this is checked.
 
-            check_is_in_custom_list: `list`
+            check_is_in_custom_list: `list`, optional
                 Whether or not to check if the attribute value is
                 identical to one of the names contained in a list
                 of custom values specified. Set to `False` to
@@ -178,11 +194,14 @@ class FieldChecker(Report):
         any_sn_found = False
         invalid_sn_found = False
         for sn_attr in ("standard_name", "computed_standard_name"):
-            # 1. Check if there is a (computed_)standard_name property
             if no_var_case:
+                # 1. Special case whereby we know there's a standard name
+                #    but it isn't attached via a variable - notably a cell
+                #    method string which contains a bad name.
                 sn_value = no_var_case[1]
                 attribute_value = {f"{ncvar}:{no_var_case[0]}": sn_value}
             else:
+                # 1. Check if there is a (computed_)standard_name property
                 sn_value = ncvar_attrs.get(sn_attr)
                 attribute_value = {f"{ncvar}:{sn_attr}": sn_value}
             if debug:
