@@ -59,11 +59,11 @@ class FileArray(Array):
 
             {{init storage_protocol: `None` or `str`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             {{init storage_options: `dict` or `None`, optional}}
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             variable: optional
                 An open dataset variable object. Setting *variable*
@@ -71,7 +71,7 @@ class FileArray(Array):
                 *address* parameters, instead it complements them by
                 allowing faster data access.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
             {{init source: optional}}
 
@@ -363,7 +363,12 @@ class FileArray(Array):
             )
 
         if normalise and not self.has_remote_storage_protocol():
-            filename = abspath(filename)
+            try:
+                filename = abspath(filename)
+            except TypeError:
+                # filename is not a string (e.g. file handle, kerchunk
+                # mapper, etc.)
+                pass
 
         return filename
 
@@ -382,13 +387,13 @@ class FileArray(Array):
     def get_storage_protocol(self):
         """The file system protocol.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seeaslo:: `has_remote_storage_protocol`, `get_storage_options`
 
         :Returns:
 
-            `None` or str`
+            `None` or `str`
                 The file system protocol. If `None` the the file
                 system is the local file system.
 
@@ -412,13 +417,13 @@ class FileArray(Array):
         :Parameters:
 
             create_endpoint_url: `bool`, optional
-                Removed at version NEXTVERSION
+                Removed at version 1.13.1.0
 
             filename: `str`, optional
-                Removed at version NEXTVERSION
+                Removed at version 1.13.1.0
 
             parsed_filename: `urllib.parse.ParseResult`, optional
-                Removed at versiokn NEXTVERSION
+                Removed at version 1.13.1.0
 
         :Returns:
 
@@ -448,7 +453,7 @@ class FileArray(Array):
     def get_variable(self, default=AttributeError()):
         """Get the open dataset variable object for the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -485,26 +490,26 @@ class FileArray(Array):
 
         """
         filename = self.get_filename(normalise=True)
+        if isinstance(filename, str):
+            if self.has_remote_storage_protocol():
+                from urllib.parse import urlparse
 
-        if self.has_remote_storage_protocol():
-            from urllib.parse import urlparse
+                import fsspec
 
-            import fsspec
+                url = urlparse(filename)
+                if url.scheme == "s3":
+                    filename = url.path[1:]
 
-            url = urlparse(filename)
-            if url.scheme == "s3":
-                filename = url.path[1:]
-
-            fs = fsspec.filesystem(
-                protocol=self.get_storage_protocol(),
-                **self.get_storage_options(),
-            )
-            filename = fs.open(filename, "rb")
-        else:
-            try:
-                filename = abspath(filename, uri=False)
-            except ValueError:
-                filename = abspath(filename)
+                fs = fsspec.filesystem(
+                    protocol=self.get_storage_protocol(),
+                    **self.get_storage_options(),
+                )
+                filename = fs.open(filename, "rb")
+            else:
+                try:
+                    filename = abspath(filename, uri=False)
+                except ValueError:
+                    filename = abspath(filename)
 
         try:
             dataset = func(filename, *args, **kwargs)
@@ -683,7 +688,7 @@ class FileArray(Array):
     def has_remote_storage_protocol(self):
         """Whether or not there is a remote file system protocol.
 
-        .. versionadded:: (cfdm)  NEXTVERSION
+        .. versionadded:: (cfdm)  1.13.1.0
 
         .. seeaslo:: `get_storage_protocol`, `get_storage_options`
 

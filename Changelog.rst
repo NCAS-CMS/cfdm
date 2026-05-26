@@ -1,7 +1,7 @@
 Version NEXTVERSION
 ----------------
 
-**2026-??-??**
+**2026-??-??
 
 * New methods to convert to `xarray`: `cf.Field.to_xarray` and
   `cf.Domain.to_xarray`
@@ -9,6 +9,19 @@ Version NEXTVERSION
 * New output format for `cfdm.write` that creates an `xarray` dataset
   in memory: ``'XARRAY'``
   (https://github.com/NCAS-CMS/cfdm/issues/394)
+* New optional dependency: ``xarray>=2026.2.0``
+
+----
+  
+Version 1.13.1.0
+----------------
+
+**2026-04-09**
+
+* Read Kerchunk datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/385)
+* Read open file handle datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/401)
 * Write UGRID datasets with `cfdm.write`
   (https://github.com/NCAS-CMS/cfdm/issues/271)
 * New keyword to `cfdm.read`: ``filesystem``
@@ -29,6 +42,9 @@ Version NEXTVERSION
 * New optional backend for netCDF-3 in `cfdm.read` that allows
   parallel reading: ``netcdf_file``
   (https://github.com/NCAS-CMS/cfdm/issues/375)
+* Fix bug in `cfdm.netcdf_indexer` that sometimes caused a failure
+  with a `np.newaxis` index
+  (https://github.com/NCAS-CMS/cfdm/issues/395)
 * Fix bug in `cfdm.read` that wouldn't read non-Zarr and Zarr datasets
   from the same directory
   (https://github.com/NCAS-CMS/cfdm/issues/391)
@@ -39,8 +55,9 @@ Version NEXTVERSION
   different ``formula_terms``
   (https://github.com/NCAS-CMS/cfdm/issues/380).
 * New dependency: ``pyfive>=1.1.1``
-* New optional dependency: ``xarray>=2026.2.0``
+* New dependency: ``fsspec>=2026.2.0``
 * Changed dependency: ``h5netcdf>=1.8.0``
+* Removed dependency: ``s3fs``
 
 ----
 
@@ -72,7 +89,7 @@ Version 1.13.0.0
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
 * New optional dependency: ``zarr>=3.1.3``
-* Removed dependency (now optional): ``zarr>=3.0.8``
+* Removed dependency (now optional): ``zarr``
 
 ----
 

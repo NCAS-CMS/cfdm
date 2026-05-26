@@ -780,6 +780,14 @@ class FunctionsTest(unittest.TestCase):
             "/data",
         )
 
+    def test_axis_dropping_index(self):
+        """Test cfdm.axis_dropping_index."""
+        for i in (2, np.array(2), np.int64(2), np.int32(2)):
+            self.assertTrue(cfdm.axis_dropping_index(i))
+
+        for i in ([2], np.array([2]), slice(None), [True, False]):
+            self.assertFalse(cfdm.axis_dropping_index(i))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

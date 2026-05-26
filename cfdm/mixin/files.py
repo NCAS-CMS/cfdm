@@ -96,8 +96,12 @@ class Files:
             # Replace the existing collection of original file names
             if isinstance(define, str):
                 define = (define,)
+            elif not isinstance(define, (list, tuple, set)):
+                define = ()
 
-            filenames = tuple([abspath(name) for name in define])
+            filenames = [
+                abspath(name) for name in define if isinstance(name, str)
+            ]
 
         if update:
             # Add new original file names to the existing collection
@@ -107,14 +111,21 @@ class Files:
                     "at the same time"
                 )
 
-            filenames = self._get_component("original_filenames", ())
+            filenames = list(self._get_component("original_filenames", ()))
+
             if isinstance(update, str):
                 update = (update,)
+            elif not isinstance(update, (list, tuple, set)):
+                update = ()
 
-            filenames += tuple([abspath(name) for name in update])
+            filenames += [
+                abspath(name) for name in update if isinstance(name, str)
+            ]
 
-        if filenames:
-            if len(filenames) > 1:
+        if filenames is not None:
+            if len(filenames) <= 1:
+                filenames = tuple(filenames)
+            else:
                 filenames = tuple(set(filenames))
 
             self._set_component("original_filenames", filenames, copy=False)
@@ -131,9 +142,11 @@ class Files:
 
         # Still here? Then return the existing original file names
         if clear:
-            return set(self._del_component("original_filenames", ()))
+            filenames = self._del_component("original_filenames", ())
+        else:
+            filenames = self._get_component("original_filenames", ())
 
-        return set(self._get_component("original_filenames", ()))
+        return set(filenames)
 
     def get_original_filenames(self):
         """The names of files containing the original data and metadata.

@@ -160,6 +160,8 @@ datasets <Sample-datasets>`), which contains two field constructs:
   <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
   formats.
 
+* Datasets in `Kerchunk <https://fsspec.github.io/kerchunk>`_ format.
+
 Descriptive properties are always read into memory, but `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
 data arrays, which means that no data is read into memory until the
@@ -3578,7 +3580,7 @@ in that file:
    >>> h = cfdm.example_field(0)
    >>> h
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> cfdm.write(h, 'append-example-file.nc', mode='a')
+   >>> cfdm.write(h, 'append-example-file.nc', mode='a', netcdf_backend='netCDF4')
    >>> cfdm.read('append-example-file.nc')
    [<Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
     <Field: specific_humidity(latitude(5), longitude(8)) 1>]
@@ -4970,7 +4972,7 @@ method:
 
    >>> q, t = cfdm.read('file.nc')
    >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
-   >>> cfdm.write(t, 'quantized.nc')
+   >>> cfdm.write(t, 'quantized.nc', netcdf_backend='netCDF4')
    >>> quantized = cfdm.read('quantized.nc')[0]
    >>> c = quantized.get_quantization()
    >>> c

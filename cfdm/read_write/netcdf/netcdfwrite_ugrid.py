@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 class NetCDFWriteUgrid:
     """Mixin class for writing UGRID meshes to a dataset.
 
-    .. versionadded: (cfdm) NEXTVERSION
+    .. versionadded: (cfdm) 1.13.1.0
 
     """
 
@@ -16,7 +16,7 @@ class NetCDFWriteUgrid:
         If an equal domain topology has already been written to the
         dataset then it is not re-written.
 
-        .. versionadded: (cfdm) NEXTVERSION
+        .. versionadded: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -49,7 +49,6 @@ class NetCDFWriteUgrid:
         g = self.write_vars
 
         # Normalise the array, so that its N node ids are 0, ..., N-1
-
         domain_topology.normalise(inplace=True)
         if key is not None:
             g["normalised_domain_topologies"][key] = domain_topology
@@ -144,7 +143,7 @@ class NetCDFWriteUgrid:
         If an equal cell connectivity has already been written to the
         dataset then it is not re-written.
 
-        .. versionadded: (cfdm) NEXTVERSION
+        .. versionadded: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -234,7 +233,7 @@ class NetCDFWriteUgrid:
     def _ugrid_write_node_coordinate(self, node_coord, ncdimensions):
         """Write UGRID node coordinates to the dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -248,7 +247,7 @@ class NetCDFWriteUgrid:
         :Returns:
 
             `str`
-                The netCDF variable name of the dateset node
+                The netCDF variable name of the dataset node
                 coordinates variable.
 
         """
@@ -277,7 +276,7 @@ class NetCDFWriteUgrid:
     def _ugrid_get_mesh_ncvar(self, parent):
         """Get the name of the netCDF mesh variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -317,7 +316,7 @@ class NetCDFWriteUgrid:
                 return ncvar
 
         # Still here? Then this parent's UGRID mesh is not the same
-        # as, nor linked to, any other parent's mesh, so we save save
+        # as, nor linked to, any other parent's mesh, so we save
         # it as a new mesh.
         g["meshes"][ncvar_new] = mesh_new
 
@@ -346,8 +345,7 @@ class NetCDFWriteUgrid:
            'face_face_connectivity'
            'volume_volume_connectivity'
 
-        After the mesh description is a dictionary has been created
-        with this method:
+        After the mesh description has been created with this method:
 
         * More of the optional keys might get added by
           `_ugrid_update_mesh`.
@@ -382,7 +380,7 @@ class NetCDFWriteUgrid:
            }
 
         For instance, consider the mesh description for the UGRID mesh
-        topology of edge cells taken from ``cfdm.example_field(9). In
+        topology of edge cells taken from ``cfdm.example_field(9)``. In
         this case the 'node_coordinates' Auxiliary Coordinates are
         derived from the edge cell bounds::
 
@@ -407,7 +405,7 @@ class NetCDFWriteUgrid:
            }
 
         For instance, consider the mesh description for the UGRID mesh
-        topology of node cells taken from ``cfdm.example_field(10). In
+        topology of node cells taken from ``cfdm.example_field(10)``. In
         this case the 'node_coordinates' Auxiliary Coordinates are
         explicitly defined by the point cell locations::
 
@@ -426,7 +424,7 @@ class NetCDFWriteUgrid:
                 0
            }
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -498,8 +496,8 @@ class NetCDFWriteUgrid:
         # coordinate themselves to disk.
         # ------------------------------------------------------------
         cell = domain_topology.get_cell(None)
+        node_coordinates = parent.node_coordinates(persist=True)
         if cell == "point":
-            node_coordinates = parent.node_coordinates(persist=True)
             mesh.update(
                 {
                     "topology_dimension": 0,
@@ -532,7 +530,6 @@ class NetCDFWriteUgrid:
                         f"{domain_topology!r}"
                     )
 
-            node_coordinates = parent.node_coordinates(persist=True)
             mesh.update(
                 {
                     "topology_dimension": topology_dimension,
@@ -554,10 +551,10 @@ class NetCDFWriteUgrid:
             "normalised_cell_connectivities"
         ].items():
             connectivity = cell_connectivity.get_connectivity(None)
-            if not (
-                (connectivity, cell) == ("edge", "face")
-                or (connectivity, cell) == ("node", "edge")
-                or (connectivity, cell) == ("face", "volume")
+            if (connectivity, cell) not in (
+                ("edge", "face"),
+                ("node", "edge"),
+                ("face", "volume"),
             ):
                 raise ValueError(
                     f"{parent!r} has invalid UGRID cell connectivity type "
@@ -580,15 +577,15 @@ class NetCDFWriteUgrid:
         Meshes are linked if they represent different locations of the
         same UGRID mesh.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
             mesh: `dict`
-                The two mesh dictionaries to be compared.
+                The first mesh dictionary to be compared.
 
             mesh1: `dict`
-                The two mesh dictionaries to be compared.
+                The second mesh dictionary to be compared.
 
         :Returns:
 
@@ -692,7 +689,7 @@ class NetCDFWriteUgrid:
     def _ugrid_check_node_edge(self, node, edge):
         """Whether or not the nodes imply the edges, and vice versa.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -720,7 +717,7 @@ class NetCDFWriteUgrid:
             edges = edge["edge_node_connectivity"][0].sort()
             edge["sorted_edges"]["edge_node_connectivity"] = edges
 
-        # Return True if the unique edges of the faces are identical
+        # Return True if the unique edges of the nodes are identical
         # to the given edges
         if node_edges.data.shape != edges.data.shape:
             return False
@@ -730,7 +727,7 @@ class NetCDFWriteUgrid:
     def _ugrid_check_edge_face(self, edge, face):
         """Whether or not the edges imply the faces, and vice versa.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -786,7 +783,7 @@ class NetCDFWriteUgrid:
     def _ugrid_check_node_face(self, node, face):
         """Whether or not the nodes imply the faces, and vice versa.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -835,7 +832,7 @@ class NetCDFWriteUgrid:
         The `_ugrid_linked_meshes` method is used to ascertain if two
         meshes are linked.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -896,7 +893,7 @@ class NetCDFWriteUgrid:
 
         The mesh variables are defined by `self.write_vars['meshes']`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 

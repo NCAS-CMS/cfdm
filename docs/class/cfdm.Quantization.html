@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/documentation_options.js?v=c432c498"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -19,8 +19,8 @@
     <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Constant" href="cfdm.Constant.html" />
-    <link rel="prev" title="cfdm.CompressedArray._docstring_method_exclusions" href="../method/cfdm.CompressedArray._docstring_method_exclusions.html" />
+    <link rel="next" title="cfdm.Quantization.dump" href="../method/cfdm.Quantization.dump.html" />
+    <link rel="prev" title="cfdm.CompressedArray.__array__" href="../method/cfdm.CompressedArray.__array__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -84,8 +84,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.CompressedArray._docstring_method_exclusions.html" title="previous chapter">cfdm.CompressedArray._docstring_method_exclusions</a></li>
-      <li>Next: <a href="cfdm.Constant.html" title="next chapter">cfdm.Constant</a></li>
+      <li>Previous: <a href="../method/cfdm.CompressedArray.__array__.html" title="previous chapter">cfdm.CompressedArray.__array__</a></li>
+      <li>Next: <a href="../method/cfdm.Quantization.dump.html" title="next chapter">cfdm.Quantization.dump</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -124,7 +124,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.Quantization">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Quantization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/quantization.py#L4-L88"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Quantization" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Quantization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/quantization.py#L4-L88"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Quantization" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code>, <a class="reference internal" href="cfdm.core.Parameters.html#cfdm.core.Parameters" title="cfdm.core.abstract.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code></a></p>
 <p>A quantization variable.</p>
 <p>Quantization eliminates false precision, usually by rounding the
@@ -133,7 +133,7 @@ that a subsequent compression on disk is more efficient.</p>
 <p>A quantization variable describes a quantization algorithm via a
 collection of parameters.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter names a specific quantization
-algorithm via one of the keys in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">algorithm_parameters</span></code>
+algorithm via one of the keys in the <a class="reference internal" href="../method/cfdm.Quantization.algorithm_parameters.html#cfdm.Quantization.algorithm_parameters" title="cfdm.Quantization.algorithm_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">algorithm_parameters</span></code></a>
 dictionary.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">implementation</span></code> parameter contains unstandardised text that
 concisely conveys the algorithm provenance including the name of
@@ -161,15 +161,15 @@ implemented by libnetcdf:</p>
 <p>See CF section 8.4. “Lossy Compression via Quantization”.</p>
 <p><strong>NetCDF interface</strong></p>
 <p>The netCDF variable name may be accessed with the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code>, and
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code> methods.</p>
+<a class="reference internal" href="../method/cfdm.Quantization.nc_set_variable.html#cfdm.Quantization.nc_set_variable" title="cfdm.Quantization.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Quantization.nc_get_variable.html#cfdm.Quantization.nc_get_variable" title="cfdm.Quantization.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Quantization.nc_del_variable.html#cfdm.Quantization.nc_del_variable" title="cfdm.Quantization.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a>, and
+<a class="reference internal" href="../method/cfdm.Quantization.nc_has_variable.html#cfdm.Quantization.nc_has_variable" title="cfdm.Quantization.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
 <p>The netCDF variable group structure may be accessed with the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code>
+<a class="reference internal" href="../method/cfdm.Quantization.nc_set_variable.html#cfdm.Quantization.nc_set_variable" title="cfdm.Quantization.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Quantization.nc_get_variable.html#cfdm.Quantization.nc_get_variable" title="cfdm.Quantization.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Quantization.nc_variable_groups.html#cfdm.Quantization.nc_variable_groups" title="cfdm.Quantization.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
+<a class="reference internal" href="../method/cfdm.Quantization.nc_clear_variable_groups.html#cfdm.Quantization.nc_clear_variable_groups" title="cfdm.Quantization.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a>, and <a class="reference internal" href="../method/cfdm.Quantization.nc_set_variable_groups.html#cfdm.Quantization.nc_set_variable_groups" title="cfdm.Quantization.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
 methods.</p>
 <p>The netCDF group attributes may be accessed with the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_group_attributes</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_group_attributes</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attribute</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code> methods.</p>
+<a class="reference internal" href="../method/cfdm.Quantization.nc_group_attributes.html#cfdm.Quantization.nc_group_attributes" title="cfdm.Quantization.nc_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_group_attributes</span></code></a>, <a class="reference internal" href="../method/cfdm.Quantization.nc_clear_group_attributes.html#cfdm.Quantization.nc_clear_group_attributes" title="cfdm.Quantization.nc_clear_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_group_attributes</span></code></a>,
+<a class="reference internal" href="../method/cfdm.Quantization.nc_set_group_attribute.html#cfdm.Quantization.nc_set_group_attribute" title="cfdm.Quantization.nc_set_group_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attribute</span></code></a>, and <a class="reference internal" href="../method/cfdm.Quantization.nc_set_group_attributes.html#cfdm.Quantization.nc_set_group_attributes" title="cfdm.Quantization.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></a> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.2.0</p>
 </div>
@@ -180,7 +180,7 @@ methods.</p>
 <dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set parameters. The dictionary keys are parameter
 names, with corresponding values.</p>
 <p>Parameters may also be set after initialisation with
-the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code> methods.</p>
+the <a class="reference internal" href="../method/cfdm.Quantization.set_parameters.html#cfdm.Quantization.set_parameters" title="cfdm.Quantization.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a> and <a class="reference internal" href="../method/cfdm.Quantization.set_parameter.html#cfdm.Quantization.set_parameter" title="cfdm.Quantization.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
 </dd>
@@ -211,7 +211,7 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.dump.html#cfdm.Quantization.dump" title="cfdm.Quantization.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
 <td><p>A full description.</p></td>
 </tr>
 </tbody>
@@ -222,25 +222,25 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.del_parameter.html#cfdm.Quantization.del_parameter" title="cfdm.Quantization.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></p></td>
 <td><p>Delete a parameter.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Quantization.get_parameter.html#cfdm.Quantization.get_parameter" title="cfdm.Quantization.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></p></td>
 <td><p>Get a parameter value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_parameter</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.has_parameter.html#cfdm.Quantization.has_parameter" title="cfdm.Quantization.has_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_parameter</span></code></a></p></td>
 <td><p>Whether a parameter has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Quantization.set_parameter.html#cfdm.Quantization.set_parameter" title="cfdm.Quantization.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></p></td>
 <td><p>Set a parameter-valued term.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.parameters.html#cfdm.Quantization.parameters" title="cfdm.Quantization.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
 <td><p>Return all parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Quantization.set_parameters.html#cfdm.Quantization.set_parameters" title="cfdm.Quantization.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a></p></td>
 <td><p>Set parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_parameters</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.clear_parameters.html#cfdm.Quantization.clear_parameters" title="cfdm.Quantization.clear_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_parameters</span></code></a></p></td>
 <td><p>Remove all parameters.</p></td>
 </tr>
 </tbody>
@@ -251,19 +251,19 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">algorithm_parameters</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.algorithm_parameters.html#cfdm.Quantization.algorithm_parameters" title="cfdm.Quantization.algorithm_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">algorithm_parameters</span></code></a></p></td>
 <td><p>Map CF quantization algorithms to CF algorithm parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Quantization.copy.html#cfdm.Quantization.copy" title="cfdm.Quantization.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.equals.html#cfdm.Quantization.equals" title="cfdm.Quantization.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two instances are the same.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Quantization.get_original_filenames.html#cfdm.Quantization.get_original_filenames" title="cfdm.Quantization.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
 <td><p>The names of files containing the original data and metadata.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.creation_commands.html#cfdm.Quantization.creation_commands" title="cfdm.Quantization.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
 <td><p>Return the commands that would create the component.</p></td>
 </tr>
 </tbody>
@@ -274,28 +274,28 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_del_variable.html#cfdm.Quantization.nc_del_variable" title="cfdm.Quantization.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
 <td><p>Remove the netCDF variable name.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_get_variable.html#cfdm.Quantization.nc_get_variable" title="cfdm.Quantization.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
 <td><p>Return the netCDF variable name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_has_variable.html#cfdm.Quantization.nc_has_variable" title="cfdm.Quantization.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
 <td><p>Whether the netCDF variable name has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_set_variable.html#cfdm.Quantization.nc_set_variable" title="cfdm.Quantization.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
 <td><p>Set the netCDF variable name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_group_attributes</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_group_attributes.html#cfdm.Quantization.nc_group_attributes" title="cfdm.Quantization.nc_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_group_attributes</span></code></a></p></td>
 <td><p>Returns properties to write as netCDF group attributes.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_group_attributes</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_clear_group_attributes.html#cfdm.Quantization.nc_clear_group_attributes" title="cfdm.Quantization.nc_clear_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_group_attributes</span></code></a></p></td>
 <td><p>Removes properties to write as netCDF group attributes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attribute</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_set_group_attribute.html#cfdm.Quantization.nc_set_group_attribute" title="cfdm.Quantization.nc_set_group_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attribute</span></code></a></p></td>
 <td><p>Select a property to be written as a netCDF group attribute.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_set_group_attributes.html#cfdm.Quantization.nc_set_group_attributes" title="cfdm.Quantization.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></a></p></td>
 <td><p>Set properties to be written as netCDF group attributes.</p></td>
 </tr>
 </tbody>
@@ -305,13 +305,13 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_variable_groups.html#cfdm.Quantization.nc_variable_groups" title="cfdm.Quantization.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
 <td><p>Return the netCDF variable group hierarchy.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_set_variable_groups.html#cfdm.Quantization.nc_set_variable_groups" title="cfdm.Quantization.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
 <td><p>Set the netCDF variable group hierarchy.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Quantization.nc_clear_variable_groups.html#cfdm.Quantization.nc_clear_variable_groups" title="cfdm.Quantization.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a></p></td>
 <td><p>Remove the netCDF variable group hierarchy.</p></td>
 </tr>
 </tbody>
@@ -369,7 +369,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

@@ -85,6 +85,9 @@ File
    ~cfdm.H5netcdfArray.get_storage_options
    ~cfdm.H5netcdfArray.replace_directory
    ~cfdm.H5netcdfArray.replace_filename
+   ~cfdm.H5netcdfArray.get_storage_protocol
+   ~cfdm.H5netcdfArray.get_variable
+   ~cfdm.H5netcdfArray.has_remote_storage_protocol
 
 Miscellaneous
 -------------

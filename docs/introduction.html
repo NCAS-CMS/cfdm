@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=056948bf" />
-    <script src="_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="_static/documentation_options.js?v=c432c498"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -118,7 +118,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <style> .small {font-size:small} </style><section id="introduction">
 <h1><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.13.0.0 for version 1.13 of the CF conventions.</p>
+<p>Version 1.13.1.0 for version 1.13 of the CF conventions.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#functionality" id="id3"><strong>Functionality</strong></a></p></li>
@@ -181,13 +181,13 @@ file and inspecting it.</em></span><a class="headerlink" href="#id1" title="Link
 <p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code> package can</p>
 <ul class="simple">
 <li><p>read <a class="reference internal" href="cf_data_model.html#term-field-construct"><span class="xref std std-term">field constructs</span></a> and <a class="reference internal" href="cf_data_model.html#term-domain-construct"><span class="xref std std-term">domain
-constructs</span></a> from netCDF, CDL, and Zarr datasets
-with a choice of netCDF backends,</p></li>
+constructs</span></a> from netCDF, CDL, Zarr, and
+Kerchunk datasets with a choice of netCDF and Zarr backends,</p></li>
 <li><p>read files from OPeNDAP servers and S3 object stores,</p></li>
 <li><p>be fully flexible with respect to dataset chunking,</p></li>
 <li><p>create new field and domain constructs in memory,</p></li>
 <li><p>write field and domain constructs to netCDF and Zarr datasets on
-disk,</p></li>
+disk, with control over HDF5 internal file metadata,</p></li>
 <li><p>read, write, and manipulate UGRID mesh topologies,</p></li>
 <li><p>read, write, and create coordinates defined by geometry cells,</p></li>
 <li><p>read and write netCDF4 string data-type variables,</p></li>
@@ -313,7 +313,7 @@ Hydrology. AMS. Retrieved from
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

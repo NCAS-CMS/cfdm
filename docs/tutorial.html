@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=056948bf" />
-    <script src="_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="_static/documentation_options.js?v=c432c498"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -119,7 +119,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.13.0.0 for version 1.13 of the CF conventions.</p>
+<p>Version 1.13.1.0 for version 1.13 of the CF conventions.</p>
 <p>All of the Python code in this tutorial is available in an executable
 script (<a class="reference download internal" download="" href="_downloads/tutorial.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 12kB).</p>
 <nav class="contents local" id="contents">
@@ -370,6 +370,7 @@ list.</em></span><a class="headerlink" href="#id73" title="Link to this code">¶
 <li><p>Datasets in <a class="reference external" href="https://docs.xarray.dev/en/latest/internals/zarr-encoding-spec.html">Zarr v2 (xarray-style)</a>
 and <a class="reference external" href="https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html">Zarr v3</a>
 formats.</p></li>
+<li><p>Datasets in <a class="reference external" href="https://fsspec.github.io/kerchunk">Kerchunk</a> format.</p></li>
 </ul>
 <p>Descriptive properties are always read into memory, but <a class="reference external" href="https://en.wikipedia.org/wiki/Lazy_loading">lazy loading</a> is employed for all
 data arrays, which means that no data is read into memory until the
@@ -396,8 +397,7 @@ variables;</p></li>
 attributes are present (see <a class="reference internal" href="#data-mask"><span class="std std-ref">data masking</span></a>); and</p></li>
 <li><p>display information and issue warnings about the mapping of the
 netCDF file contents to CF data model constructs; and</p></li>
-<li><p>choose either <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">h5netcdf</span></code> backends for accessing netCDF
-files.</p></li>
+<li><p>choose from a variety of backends for accessing netCDF files.</p></li>
 </ul>
 <section id="cf-compliance">
 <span id="id7"></span><h3><a class="toc-backref" href="#id226" role="doc-backlink">CF-compliance</a><a class="headerlink" href="#cf-compliance" title="Link to this heading">¶</a></h3>
@@ -3031,9 +3031,11 @@ function.</p>
 instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The
 <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function creates data in this manner. A pointer to an
-array in a netCDF file can be stored in a <a class="reference internal" href="class/cfdm.NetCDF4Array.html#cfdm.NetCDF4Array" title="cfdm.NetCDF4Array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDF4Array</span></code></a> or
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">H5netcdfAarray</span></code> instance, which is used to initialise a
-<a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
+array in a netCDF or Zarr dataset can be stored in a
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">PyfiveArray</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">H5netcdfAarray</span></code>, <a class="reference internal" href="class/cfdm.NetCDF4Array.html#cfdm.NetCDF4Array" title="cfdm.NetCDF4Array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDF4Array</span></code></a>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Netcdf_fileArray</span></code>, or <a class="reference internal" href="class/cfdm.ZarrArray.html#cfdm.ZarrArray" title="cfdm.ZarrArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZarrArray</span></code></a> instance, depending on
+the desired backend, which is used to initialise a <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+instance.</p>
 <div class="literal-block-wrapper docutils container" id="id158">
 <div class="code-block-caption"><span class="caption-text"><em>Define a variable from a dataset with the netCDF package
 and use it to create a NetCDF4Array instance with which to
@@ -3844,7 +3846,7 @@ disk.</em></span><a class="headerlink" href="#id176" title="Link to this code">�
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span>
 <span class="go">&lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="s1">&#39;append-example-file.nc&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="s1">&#39;append-example-file.nc&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">netcdf_backend</span><span class="o">=</span><span class="s1">&#39;netCDF4&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;append-example-file.nc&#39;</span><span class="p">)</span>
 <span class="go">[&lt;Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K&gt;,</span>
 <span class="go"> &lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;]</span>
@@ -5159,7 +5161,7 @@ method:</p>
 <div class="code-block-caption"><span class="caption-text"><em>Lossy compression via quantization.</em></span><a class="headerlink" href="#id220" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">set_quantize_on_write</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;bitgroom&#39;</span><span class="p">,</span> <span class="n">quantization_nsd</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s1">&#39;quantized.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s1">&#39;quantized.nc&#39;</span><span class="p">,</span> <span class="n">netcdf_backend</span><span class="o">=</span><span class="s1">&#39;netCDF4&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">quantized</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;quantized.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">quantized</span><span class="o">.</span><span class="n">get_quantization</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
@@ -5326,7 +5328,7 @@ OPeNDAP support enabled. See
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

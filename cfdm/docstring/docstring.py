@@ -114,10 +114,21 @@ _docstring_substitution_definitions = {
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
     # read datasets
-    "{{read datasets: (arbitrarily nested sequence of) `str`}}": """dataset: (arbitrarily nested sequence of) `str`
-            A string, or arbitrarily nested sequence of strings,
-            giving the dataset names, or directory names, from which
-            to read field or domain constructs.
+    "{{read datasets:}}": """datasets:
+            The dataset, or datasets, from which to read field or
+            domain constructs.
+
+            May be a string-valued path, a file-like object (such as
+            `io.BufferedReader`), or a directory-like object (such as
+            `fsspec.mapping.FSMap`); or a sequence of any combination
+            of these types.
+
+            Note that a Kerchunk dataset may be only read from a
+            directory-like object. For instance::
+
+               >>> fs = fsspec.filesystem('reference', fo='kerchunk.json')
+               >>> kerchunk = fs.get_mapper()
+               >>> f = {{package}}.read(kerchunk)
 
             Local names may be relative paths and will have tilde and
             shell environment variables expansions applied to them,
@@ -344,7 +355,7 @@ _docstring_substitution_definitions = {
 
               - The `scipy.io.netcdf_file` library.
               - Reads local netCDF-3 datasets.
-              - Allows parallised reading.
+              - Allows parallelised reading.
               - Treats unlimited dimensions in the dataset as not
                 unlimited.
 
@@ -384,7 +395,7 @@ _docstring_substitution_definitions = {
             for ``http://`` and ``https://`` URIs; or via
             S3-compatible object store access for ``s3://`` URIs.
 
-            .. versionadded:: (cfdm) NEXTVERSION""",
+            .. versionadded:: (cfdm) 1.13.1.0""",
     # read  storage_options
     "{{read storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
             Pass parameters to the backend file system driver, such as
@@ -395,8 +406,12 @@ _docstring_substitution_definitions = {
             * **Local File System**: Storage options are ignored for
               local files.
 
-            * **HTTP(S)**: Storage options are ignored for files
-              available across the network via OPeNDAP.
+            * **HTTP(S)**: Storage options are passed to
+              `fsspec.filesystem`. If the file cannot be opened via
+              this file system, then OpenDAP is attempted.
+
+              *Parameter example:*
+                ``{'cache_type': 'readahead', 'block_size': 1048576}``
 
             * **S3-compatible services**: The backend used is `s3fs`,
               and the storage options are used to initialise an

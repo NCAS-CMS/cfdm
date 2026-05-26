@@ -87,9 +87,9 @@ def dataset_flatten(
     :Parameters:
 
         input_ds:
-            The dataset to be flattened. Must be an open dataet object
-            with the same API as `netCDF4.Dataset`, `h5netcdf.File`,
-            or `zarr.Group`.
+            The dataset to be flattened. Must be an open dataset
+            object with the same API as `netCDF4.Dataset`,
+            `h5netcdf.File`, or `zarr.Group`.
 
         output_ds: `netCDF4.Dataset`
             A container for the flattened dataset that will get

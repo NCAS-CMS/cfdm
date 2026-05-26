@@ -40,7 +40,7 @@ class PointTopologyFromFacesSubarray(PointTopology, MeshSubarray):
                 True then a list of edge definitions (i.e. a list of
                 ordered 2-tuples of nodes) is returned instead.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 

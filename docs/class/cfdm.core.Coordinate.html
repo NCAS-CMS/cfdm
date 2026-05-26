@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/documentation_options.js?v=c432c498"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -19,8 +19,8 @@
     <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.Coordinate.del_property" href="../method/cfdm.core.Coordinate.del_property.html" />
-    <link rel="prev" title="cfdm.core.PropertiesDataBounds._docstring_method_exclusions" href="../method/cfdm.core.PropertiesDataBounds._docstring_method_exclusions.html" />
+    <link rel="next" title="cfdm.core.Parameters" href="cfdm.core.Parameters.html" />
+    <link rel="prev" title="cfdm.core.PropertiesDataBounds" href="cfdm.core.PropertiesDataBounds.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -84,8 +84,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.core.PropertiesDataBounds._docstring_method_exclusions.html" title="previous chapter">cfdm.core.PropertiesDataBounds._docstring_method_exclusions</a></li>
-      <li>Next: <a href="../method/cfdm.core.Coordinate.del_property.html" title="next chapter">cfdm.core.Coordinate.del_property</a></li>
+      <li>Previous: <a href="cfdm.core.PropertiesDataBounds.html" title="previous chapter">cfdm.core.PropertiesDataBounds</a></li>
+      <li>Next: <a href="cfdm.core.Parameters.html" title="next chapter">cfdm.core.Parameters</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -124,7 +124,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.core.Coordinate">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.core.</span></span><span class="sig-name descname"><span class="pre">Coordinate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/core/abstract/coordinate.py#L4-L204"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.core.Coordinate" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.core.</span></span><span class="sig-name descname"><span class="pre">Coordinate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/core/abstract/coordinate.py#L4-L204"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.core.Coordinate" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="cfdm.core.PropertiesDataBounds.html#cfdm.core.PropertiesDataBounds" title="cfdm.core.abstract.propertiesdatabounds.PropertiesDataBounds"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertiesDataBounds</span></code></a></p>
 <p>Mixin for CF data model dimension and auxiliary coordinates.</p>
 <div class="versionadded">
@@ -137,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
-the <a class="reference internal" href="../method/cfdm.core.Coordinate.set_properties.html#cfdm.core.Coordinate.set_properties" title="cfdm.core.Coordinate.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.Coordinate.set_property.html#cfdm.core.Coordinate.set_property" title="cfdm.core.Coordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> methods.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'longitude'}</span></code></p>
 </dd>
@@ -149,15 +149,15 @@ to a <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" tit
 <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm.core instances that contain
 <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.Coordinate.set_data.html#cfdm.core.Coordinate.set_data" title="cfdm.core.Coordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code> method.</p>
 </dd>
 <dt>bounds: <a class="reference internal" href="cfdm.core.Bounds.html#cfdm.core.Bounds" title="cfdm.core.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>, optional</dt><dd><p>Set the bounds array.</p>
 <p>The bounds array may also be set after initialisation
-with the <a class="reference internal" href="../method/cfdm.core.Coordinate.set_bounds.html#cfdm.core.Coordinate.set_bounds" title="cfdm.core.Coordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
+with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code> method.</p>
 </dd>
 <dt>geometry: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the geometry type.</p>
 <p>The geometry type may also be set after initialisation
-with the <a class="reference internal" href="../method/cfdm.core.Coordinate.set_geometry.html#cfdm.core.Coordinate.set_geometry" title="cfdm.core.Coordinate.set_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code></a> method.</p>
+with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code> method.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">geometry='polygon'</span></code></p>
 </dd>
@@ -165,7 +165,7 @@ with the <a class="reference internal" href="../method/cfdm.core.Coordinate.set_
 </dd>
 <dt>interior_ring: <a class="reference internal" href="cfdm.core.InteriorRing.html#cfdm.core.InteriorRing" title="cfdm.core.InteriorRing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InteriorRing</span></code></a>, optional</dt><dd><p>Set the interior ring variable.</p>
 <p>The interior ring variable may also be set after
-initialisation with the <a class="reference internal" href="../method/cfdm.core.Coordinate.set_interior_ring.html#cfdm.core.Coordinate.set_interior_ring" title="cfdm.core.Coordinate.set_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_interior_ring</span></code></a> method.</p>
+initialisation with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_interior_ring</span></code> method.</p>
 </dd>
 <dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
 a <a class="reference internal" href="#cfdm.core.Coordinate" title="cfdm.core.Coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Coordinate</span></code></a> instance.</p>
@@ -192,28 +192,28 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.del_property.html#cfdm.core.Coordinate.del_property" title="cfdm.core.Coordinate.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></p></td>
 <td><p>Remove a property.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.get_property.html#cfdm.core.Coordinate.get_property" title="cfdm.core.Coordinate.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></p></td>
 <td><p>Return a property.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.has_property.html#cfdm.core.Coordinate.has_property" title="cfdm.core.Coordinate.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></p></td>
 <td><p>Whether a property has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.set_property.html#cfdm.core.Coordinate.set_property" title="cfdm.core.Coordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></p></td>
 <td><p>Set a property.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.properties.html#cfdm.core.Coordinate.properties" title="cfdm.core.Coordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></p></td>
 <td><p>Return all properties.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.clear_properties.html#cfdm.core.Coordinate.clear_properties" title="cfdm.core.Coordinate.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></p></td>
 <td><p>Remove all properties.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.del_properties.html#cfdm.core.Coordinate.del_properties" title="cfdm.core.Coordinate.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></p></td>
 <td><p>Remove properties.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.set_properties.html#cfdm.core.Coordinate.set_properties" title="cfdm.core.Coordinate.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></p></td>
 <td><p>Set properties.</p></td>
 </tr>
 </tbody>
@@ -224,16 +224,16 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.del_data.html#cfdm.core.Coordinate.del_data" title="cfdm.core.Coordinate.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></p></td>
 <td><p>Remove the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.get_data.html#cfdm.core.Coordinate.get_data" title="cfdm.core.Coordinate.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></p></td>
 <td><p>Return the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.has_data.html#cfdm.core.Coordinate.has_data" title="cfdm.core.Coordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></p></td>
 <td><p>Whether or not the construct has data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.set_data.html#cfdm.core.Coordinate.set_data" title="cfdm.core.Coordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></p></td>
 <td><p>Set the data.</p></td>
 </tr>
 </tbody>
@@ -241,19 +241,19 @@ parameters are not deep copied.</p>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.Coordinate.data.html#cfdm.core.Coordinate.data" title="cfdm.core.Coordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></p></td>
 <td><p>The data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.core.Coordinate.dtype.html#cfdm.core.Coordinate.dtype" title="cfdm.core.Coordinate.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></p></td>
 <td><p>Data-type of the data elements.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.Coordinate.ndim.html#cfdm.core.Coordinate.ndim" title="cfdm.core.Coordinate.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></p></td>
 <td><p>The number of data dimensions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.core.Coordinate.shape.html#cfdm.core.Coordinate.shape" title="cfdm.core.Coordinate.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></td>
 <td><p>A tuple of the data array's dimension sizes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.Coordinate.size.html#cfdm.core.Coordinate.size" title="cfdm.core.Coordinate.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></p></td>
 <td><p>The number of elements in the data.</p></td>
 </tr>
 </tbody>
@@ -264,16 +264,16 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.del_bounds.html#cfdm.core.Coordinate.del_bounds" title="cfdm.core.Coordinate.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></p></td>
 <td><p>Remove the bounds.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.get_bounds.html#cfdm.core.Coordinate.get_bounds" title="cfdm.core.Coordinate.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></p></td>
 <td><p>Return the bounds.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.has_bounds.html#cfdm.core.Coordinate.has_bounds" title="cfdm.core.Coordinate.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></p></td>
 <td><p>Whether or not there are bounds.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.set_bounds.html#cfdm.core.Coordinate.set_bounds" title="cfdm.core.Coordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></p></td>
 <td><p>Set the bounds.</p></td>
 </tr>
 </tbody>
@@ -281,7 +281,7 @@ parameters are not deep copied.</p>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.Coordinate.bounds.html#cfdm.core.Coordinate.bounds" title="cfdm.core.Coordinate.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></p></td>
 <td><p>Return the bounds.</p></td>
 </tr>
 </tbody>
@@ -291,28 +291,28 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.del_geometry.html#cfdm.core.Coordinate.del_geometry" title="cfdm.core.Coordinate.del_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_geometry</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_geometry</span></code></p></td>
 <td><p>Remove the geometry type.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.get_geometry.html#cfdm.core.Coordinate.get_geometry" title="cfdm.core.Coordinate.get_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geometry</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geometry</span></code></p></td>
 <td><p>Return the geometry type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.has_geometry.html#cfdm.core.Coordinate.has_geometry" title="cfdm.core.Coordinate.has_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_geometry</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_geometry</span></code></p></td>
 <td><p>True if there is a geometry type.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.set_geometry.html#cfdm.core.Coordinate.set_geometry" title="cfdm.core.Coordinate.set_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code></p></td>
 <td><p>Set the geometry type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.del_interior_ring.html#cfdm.core.Coordinate.del_interior_ring" title="cfdm.core.Coordinate.del_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_interior_ring</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_interior_ring</span></code></p></td>
 <td><p>Remove the geometry type.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.get_interior_ring.html#cfdm.core.Coordinate.get_interior_ring" title="cfdm.core.Coordinate.get_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interior_ring</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interior_ring</span></code></p></td>
 <td><p>Return the interior ring variable for polygon geometries.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.has_interior_ring.html#cfdm.core.Coordinate.has_interior_ring" title="cfdm.core.Coordinate.has_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_interior_ring</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_interior_ring</span></code></p></td>
 <td><p>Whether or not there is an interior ring variable.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.set_interior_ring.html#cfdm.core.Coordinate.set_interior_ring" title="cfdm.core.Coordinate.set_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_interior_ring</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_interior_ring</span></code></p></td>
 <td><p>Set the interior_ring.</p></td>
 </tr>
 </tbody>
@@ -320,7 +320,7 @@ parameters are not deep copied.</p>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.Coordinate.interior_ring.html#cfdm.core.Coordinate.interior_ring" title="cfdm.core.Coordinate.interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interior_ring</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">interior_ring</span></code></p></td>
 <td><p>Return the interior ring variable for polygon geometries.</p></td>
 </tr>
 </tbody>
@@ -331,16 +331,16 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.del_climatology.html#cfdm.core.Coordinate.del_climatology" title="cfdm.core.Coordinate.del_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_climatology</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_climatology</span></code></p></td>
 <td><p>Remove the climatology setting.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.get_climatology.html#cfdm.core.Coordinate.get_climatology" title="cfdm.core.Coordinate.get_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_climatology</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_climatology</span></code></p></td>
 <td><p>Return the climatology setting.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.is_climatology.html#cfdm.core.Coordinate.is_climatology" title="cfdm.core.Coordinate.is_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_climatology</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_climatology</span></code></p></td>
 <td><p>True if the coordinates are climatological.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.set_climatology.html#cfdm.core.Coordinate.set_climatology" title="cfdm.core.Coordinate.set_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_climatology</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_climatology</span></code></p></td>
 <td><p>Set whether or not coordinates are climatological.</p></td>
 </tr>
 </tbody>
@@ -352,7 +352,7 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.copy.html#cfdm.core.Coordinate.copy" title="cfdm.core.Coordinate.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></p></td>
 <td><p>Return a deep copy.</p></td>
 </tr>
 </tbody>
@@ -363,7 +363,7 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate.__deepcopy__.html#cfdm.core.Coordinate.__deepcopy__" title="cfdm.core.Coordinate.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 </tbody>
@@ -374,16 +374,16 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate._docstring_special_substitutions.html#cfdm.core.Coordinate._docstring_special_substitutions" title="cfdm.core.Coordinate._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></p></td>
 <td><p>Return the special docstring substitutions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate._docstring_substitutions.html#cfdm.core.Coordinate._docstring_substitutions" title="cfdm.core.Coordinate._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></p></td>
 <td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate._docstring_package_depth.html#cfdm.core.Coordinate._docstring_package_depth" title="cfdm.core.Coordinate._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></p></td>
 <td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Coordinate._docstring_method_exclusions.html#cfdm.core.Coordinate._docstring_method_exclusions" title="cfdm.core.Coordinate._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></p></td>
 <td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
@@ -400,7 +400,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

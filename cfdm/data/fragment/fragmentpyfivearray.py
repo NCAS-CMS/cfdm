@@ -5,6 +5,6 @@ from .mixin import FragmentFileArrayMixin
 class FragmentPyfiveArray(FragmentFileArrayMixin, PyfiveArray):
     """A fragment of aggregated data in a file accessed with `pyfive`.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.1.0
 
     """

@@ -286,13 +286,25 @@ class UGRIDTest(unittest.TestCase):
                 self.assertEqual(n_mesh_variables(tmpfile1), 1)
 
                 f = cfdm.read(tmpfile1, domain=True)
+
                 self.assertEqual(len(f), len(e))
                 for i, j in zip(f, e):
                     self.assertTrue(i.equals(j))
 
             # Set up for the 'file' iteration
             ugrid = cfdm.read(self.filename3, domain=True)
-            face, edge, point = (2, 1, 0)
+
+            # Get the new face, edge, point order indices for the
+            # domains read from disk (don't hard-wire these, as
+            # implementation choices in netcdfread.py might change the
+            # order :))
+            for i, u in enumerate(ugrid):
+                if u.domain_topology().get_cell() == "point":
+                    point = i
+                elif u.domain_topology().get_cell() == "edge":
+                    edge = i
+                elif u.domain_topology().get_cell() == "face":
+                    face = i
 
 
 if __name__ == "__main__":

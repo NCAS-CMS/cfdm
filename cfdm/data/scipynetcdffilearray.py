@@ -12,7 +12,7 @@ class ScipyNetcdfFileArray(IndexMixin, FileArray):
     .. warning: Treats unlimited dimensions in the dataset as not
                 unlimited.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.1.0
 
     """
 
@@ -23,7 +23,7 @@ class ScipyNetcdfFileArray(IndexMixin, FileArray):
         from the netCDF variable *var* and stored for fast future
         access.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
@@ -47,7 +47,7 @@ class ScipyNetcdfFileArray(IndexMixin, FileArray):
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         .. seealso:: `__array__`, `index`
 
@@ -98,7 +98,7 @@ class ScipyNetcdfFileArray(IndexMixin, FileArray):
     def close(self, dataset):
         """Close the dataset containing the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 

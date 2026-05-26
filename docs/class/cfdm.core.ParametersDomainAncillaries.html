@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/documentation_options.js?v=c432c498"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -19,8 +19,8 @@
     <script src="../_static/toggleprompt.js?v=1b41717f"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.ParametersDomainAncillaries.del_parameter" href="../method/cfdm.core.ParametersDomainAncillaries.del_parameter.html" />
-    <link rel="prev" title="cfdm.core.Parameters._docstring_method_exclusions" href="../method/cfdm.core.Parameters._docstring_method_exclusions.html" />
+    <link rel="next" title="cfdm.core.DocstringRewriteMeta" href="cfdm.core.DocstringRewriteMeta.html" />
+    <link rel="prev" title="cfdm.core.Parameters" href="cfdm.core.Parameters.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -84,8 +84,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.core.Parameters._docstring_method_exclusions.html" title="previous chapter">cfdm.core.Parameters._docstring_method_exclusions</a></li>
-      <li>Next: <a href="../method/cfdm.core.ParametersDomainAncillaries.del_parameter.html" title="next chapter">cfdm.core.ParametersDomainAncillaries.del_parameter</a></li>
+      <li>Previous: <a href="cfdm.core.Parameters.html" title="previous chapter">cfdm.core.Parameters</a></li>
+      <li>Next: <a href="cfdm.core.DocstringRewriteMeta.html" title="next chapter">cfdm.core.DocstringRewriteMeta</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -124,7 +124,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.core.ParametersDomainAncillaries">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.core.</span></span><span class="sig-name descname"><span class="pre">ParametersDomainAncillaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_ancillaries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/core/abstract/parametersdomainancillaries.py#L4-L376"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.core.ParametersDomainAncillaries" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.core.</span></span><span class="sig-name descname"><span class="pre">ParametersDomainAncillaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_ancillaries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/core/abstract/parametersdomainancillaries.py#L4-L376"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.core.ParametersDomainAncillaries" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="cfdm.core.Parameters.html#cfdm.core.Parameters" title="cfdm.core.abstract.parameters.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code></a></p>
 <p>Mixin to collect named parameters and domain ancillaries.</p>
 <div class="versionadded">
@@ -137,7 +137,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set parameters. The dictionary keys are term names,
 with corresponding parameter values.</p>
 <p>Parameters may also be set after initialisation with
-the <a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.set_parameters.html#cfdm.core.ParametersDomainAncillaries.set_parameters" title="cfdm.core.ParametersDomainAncillaries.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a> and <a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.set_parameter.html#cfdm.core.ParametersDomainAncillaries.set_parameter" title="cfdm.core.ParametersDomainAncillaries.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
+the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code> methods.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
 </dd>
@@ -147,8 +147,8 @@ the <a class="reference internal" href="../method/cfdm.core.ParametersDomainAnci
 dictionary keys are term names, with corresponding
 domain ancillary construct keys.</p>
 <p>Domain ancillaries may also be set after initialisation
-with the <a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.set_domain_ancillaries.html#cfdm.core.ParametersDomainAncillaries.set_domain_ancillaries" title="cfdm.core.ParametersDomainAncillaries.set_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code></a> and
-<a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.set_domain_ancillary.html#cfdm.core.ParametersDomainAncillaries.set_domain_ancillary" title="cfdm.core.ParametersDomainAncillaries.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a> methods.</p>
+with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code> methods.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">domain_ancillaries={'orog':</span> <span class="pre">'domainancillary2'}</span></code></p>
 </dd>
@@ -179,25 +179,25 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.del_parameter.html#cfdm.core.ParametersDomainAncillaries.del_parameter" title="cfdm.core.ParametersDomainAncillaries.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></p></td>
 <td><p>Delete a parameter.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.get_parameter.html#cfdm.core.ParametersDomainAncillaries.get_parameter" title="cfdm.core.ParametersDomainAncillaries.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></p></td>
 <td><p>Get a parameter value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.has_parameter.html#cfdm.core.ParametersDomainAncillaries.has_parameter" title="cfdm.core.ParametersDomainAncillaries.has_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_parameter</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_parameter</span></code></p></td>
 <td><p>Whether a parameter has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.set_parameter.html#cfdm.core.ParametersDomainAncillaries.set_parameter" title="cfdm.core.ParametersDomainAncillaries.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></p></td>
 <td><p>Set a parameter-valued term.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.parameters.html#cfdm.core.ParametersDomainAncillaries.parameters" title="cfdm.core.ParametersDomainAncillaries.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></p></td>
 <td><p>Return all parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.clear_parameters.html#cfdm.core.ParametersDomainAncillaries.clear_parameters" title="cfdm.core.ParametersDomainAncillaries.clear_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_parameters</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_parameters</span></code></p></td>
 <td><p>Remove all parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.set_parameters.html#cfdm.core.ParametersDomainAncillaries.set_parameters" title="cfdm.core.ParametersDomainAncillaries.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></p></td>
 <td><p>Set parameters.</p></td>
 </tr>
 </tbody>
@@ -208,25 +208,25 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.del_domain_ancillary.html#cfdm.core.ParametersDomainAncillaries.del_domain_ancillary" title="cfdm.core.ParametersDomainAncillaries.del_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_domain_ancillary</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_domain_ancillary</span></code></p></td>
 <td><p>Delete a domain ancillary.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.get_domain_ancillary.html#cfdm.core.ParametersDomainAncillaries.get_domain_ancillary" title="cfdm.core.ParametersDomainAncillaries.get_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_ancillary</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_ancillary</span></code></p></td>
 <td><p>Return a domain ancillary term.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.has_domain_ancillary.html#cfdm.core.ParametersDomainAncillaries.has_domain_ancillary" title="cfdm.core.ParametersDomainAncillaries.has_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_domain_ancillary</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_domain_ancillary</span></code></p></td>
 <td><p>Whether a domain ancillary has been set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.set_domain_ancillary.html#cfdm.core.ParametersDomainAncillaries.set_domain_ancillary" title="cfdm.core.ParametersDomainAncillaries.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></p></td>
 <td><p>Set an domain ancillary-valued term.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.domain_ancillaries.html#cfdm.core.ParametersDomainAncillaries.domain_ancillaries" title="cfdm.core.ParametersDomainAncillaries.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></p></td>
 <td><p>Return all domain_ancillaries.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.clear_domain_ancillaries.html#cfdm.core.ParametersDomainAncillaries.clear_domain_ancillaries" title="cfdm.core.ParametersDomainAncillaries.clear_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_domain_ancillaries</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_domain_ancillaries</span></code></p></td>
 <td><p>Remove all domain_ancillaries.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.set_domain_ancillaries.html#cfdm.core.ParametersDomainAncillaries.set_domain_ancillaries" title="cfdm.core.ParametersDomainAncillaries.set_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code></p></td>
 <td><p>Set domain_ancillaries.</p></td>
 </tr>
 </tbody>
@@ -237,7 +237,7 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.copy.html#cfdm.core.ParametersDomainAncillaries.copy" title="cfdm.core.ParametersDomainAncillaries.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></p></td>
 <td><p>Return a deep copy.</p></td>
 </tr>
 </tbody>
@@ -248,7 +248,7 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.ParametersDomainAncillaries.__deepcopy__.html#cfdm.core.ParametersDomainAncillaries.__deepcopy__" title="cfdm.core.ParametersDomainAncillaries.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 </tbody>
@@ -273,7 +273,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

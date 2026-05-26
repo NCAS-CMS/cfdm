@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import unittest
 
+import fsspec
 import netCDF4
 import numpy as np
 
@@ -73,6 +74,10 @@ class read_writeTest(unittest.TestCase):
     """Test the reading and writing of field constructs from/to disk."""
 
     filename = filename
+
+    nc = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "example_field_0.nc"
+    )
 
     zarr2 = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "example_field_0.zarr2"
@@ -1542,8 +1547,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_filesystem(self):
         """Test cfdm.read with a pre-authenticated filesystem object."""
-        import fsspec
-
         local_fs = fsspec.filesystem("local")
 
         f = self.f0
@@ -1573,8 +1576,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_filesystem_glob(self):
         """Test the filesystem keyword to cfdm.read with glob."""
-        import fsspec
-
         local_fs = fsspec.filesystem("local")
 
         f = self.f0
@@ -1583,6 +1584,41 @@ class read_writeTest(unittest.TestCase):
         # Pass a glob-like pattern as the dataset
         f = cfdm.read("ugrid_[12].nc", filesystem=local_fs)
         self.assertEqual(len(f), 6)
+
+    def test_read_file_handle(self):
+        """Test cfdm.read with an open file handle."""
+        local_fs = fsspec.filesystem("local")
+        x = local_fs.open(self.filename, "rb")
+
+        # Check that we can read it a first time
+        f = cfdm.read(x)
+        self.assertEqual(len(f), 1)
+
+        # Check that we can read it a second time
+        f = cfdm.read(x)
+        self.assertEqual(len(f), 1)
+
+        # Check that we can read it a first time
+        f = cfdm.read(x)
+        self.assertEqual(len(f), 1)
+
+        # Check that we can read it from a list
+        f = cfdm.read([x])
+        self.assertEqual(len(f), 1)
+
+        # Check that we can read two of it from a list
+        f = cfdm.read([x, x])
+        self.assertEqual(len(f), 2)
+
+        # Check that we can read it from a generator
+        def gen(i):
+            for a in i:
+                yield (a)
+
+        f = cfdm.read(gen([x]))
+        self.assertEqual(len(f), 1)
+        f = cfdm.read(gen([x, x]))
+        self.assertEqual(len(f), 2)
 
 
 if __name__ == "__main__":

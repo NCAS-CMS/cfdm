@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
+    <script src="../_static/documentation_options.js?v=c432c498"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.1.0</a></h1>
 
 
 
@@ -123,7 +123,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.configuration<a class="headerlink" href="#cfdm-configuration" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cfdm.configuration">
-<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/functions.py#L38-L205"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.configuration" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persist_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/functions.py#L38-L227"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.configuration" title="Link to this definition">¶</a></dt>
 <dd><p>Views and sets constants in the project-wide configuration.</p>
 <p>The full list of global constants that are provided in a
 dictionary to view, and can be set in any combination, are:</p>
@@ -133,6 +133,7 @@ dictionary to view, and can be set in any combination, are:</p>
 <li><p><a class="reference internal" href="cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_level</span></code></a></p></li>
 <li><p><a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a></p></li>
 <li><p><a class="reference internal" href="cfdm.display_data.html#cfdm.display_data" title="cfdm.display_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_data</span></code></a></p></li>
+<li><p><a class="reference internal" href="cfdm.persist_data.html#cfdm.persist_data" title="cfdm.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist_data</span></code></a></p></li>
 </ul>
 <p>These are all constants that apply throughout <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code>, except for
 in specific functions only if overridden by the corresponding
@@ -150,7 +151,7 @@ set at once.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atol</span></code></a>, <a class="reference internal" href="cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rtol</span></code></a>, <a class="reference internal" href="cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_level</span></code></a>, <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a>,
-<a class="reference internal" href="cfdm.display_data.html#cfdm.display_data" title="cfdm.display_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_data</span></code></a></p>
+<a class="reference internal" href="cfdm.display_data.html#cfdm.display_data" title="cfdm.display_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_data</span></code></a>, <a class="reference internal" href="cfdm.persist_data.html#cfdm.persist_data" title="cfdm.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist_data</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -179,10 +180,16 @@ the current behaviour.</p>
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
 </dd>
-<dt>display_data <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference internal" href="../class/cfdm.Constant.html#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new display data option. The default is to not change
+<dt>display_data: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference internal" href="../class/cfdm.Constant.html#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new display data option. The default is to not change
 the current behaviour.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.13.0.0</p>
+</div>
+</dd>
+<dt>persist_data: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference internal" href="../class/cfdm.Constant.html#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new persist data option. The default is to not change
+the current behaviour.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.1.0</p>
 </div>
 </dd>
 </dl>
@@ -203,13 +210,15 @@ current names and values if no new values are specified.</p>
 <span class="go">                 &#39;rtol&#39;: 2.220446049250313e-16,</span>
 <span class="go">                 &#39;log_level&#39;: &#39;WARNING&#39;,</span>
 <span class="go">                 &#39;chunksize&#39;: 134217728,</span>
-<span class="go">                 &#39;display_data&#39;: True}&gt;</span>
+<span class="go">                 &#39;display_data&#39;: True,</span>
+<span class="go">                 &#39;persist_data&#39;: False}&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">configuration</span><span class="p">())</span>
 <span class="go">{&#39;atol&#39;: 2.220446049250313e-16,</span>
 <span class="go"> &#39;rtol&#39;: 2.220446049250313e-16,</span>
 <span class="go"> &#39;log_level&#39;: &#39;WARNING&#39;,</span>
 <span class="go"> &#39;chunksize&#39;: 134217728,</span>
-<span class="go"> &#39;display_data&#39;: True}</span>
+<span class="go"> &#39;display_data&#39;: True,</span>
+<span class="go"> &#39;persist_data&#39;: False}</span>
 </pre></div>
 </div>
 <p>Make a change to one constant and see that it is reflected in the
@@ -221,7 +230,8 @@ configuration:</p>
 <span class="go"> &#39;rtol&#39;: 2.220446049250313e-16,</span>
 <span class="go"> &#39;log_level&#39;: &#39;DEBUG&#39;,</span>
 <span class="go"> &#39;chunksize&#39;: 134217728,</span>
-<span class="go"> &#39;display_data&#39;: True}</span>
+<span class="go"> &#39;display_data&#39;: True,</span>
+<span class="go"> &#39;persist_data&#39;: False}</span>
 </pre></div>
 </div>
 <p>Access specific values by key querying, noting the equivalency to
@@ -238,13 +248,15 @@ using its bespoke function:</p>
 <span class="go"> &#39;rtol&#39;: 2.220446049250313e-16,</span>
 <span class="go"> &#39;log_level&#39;: &#39;DEBUG&#39;,</span>
 <span class="go"> &#39;chunksize&#39;: 134217728,</span>
-<span class="go"> &#39;display_data&#39;: True}</span>
+<span class="go"> &#39;display_data&#39;: True,</span>
+<span class="go"> &#39;persist_data&#39;: False}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">configuration</span><span class="p">())</span>
 <span class="go">{&#39;atol&#39;: 5e-14,</span>
 <span class="go"> &#39;rtol&#39;: 2.220446049250313e-16,</span>
 <span class="go"> &#39;log_level&#39;: &#39;INFO&#39;,</span>
 <span class="go"> &#39;chunksize&#39;: 134217728,</span>
-<span class="go"> &#39;display_data&#39;: True}</span>
+<span class="go"> &#39;display_data&#39;: True,</span>
+<span class="go"> &#39;persist_data&#39;: False}</span>
 </pre></div>
 </div>
 <p>Set a single constant without using its bespoke function:</p>
@@ -253,13 +265,15 @@ using its bespoke function:</p>
 <span class="go"> &#39;rtol&#39;: 2.220446049250313e-16,</span>
 <span class="go"> &#39;log_level&#39;: &#39;INFO&#39;,</span>
 <span class="go"> &#39;chunksize&#39;: 134217728,</span>
-<span class="go"> &#39;display_data&#39;: True}</span>
+<span class="go"> &#39;display_data&#39;: True,</span>
+<span class="go"> &#39;persist_data&#39;: False}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">configuration</span><span class="p">()</span>
 <span class="go">{&#39;atol&#39;: 5e-14,</span>
 <span class="go"> &#39;rtol&#39;: 1e-17,</span>
 <span class="go"> &#39;log_level&#39;: &#39;INFO&#39;,</span>
 <span class="go"> &#39;chunksize&#39;: 134217728,</span>
-<span class="go"> &#39;display_data&#39;: True}</span>
+<span class="go"> &#39;display_data&#39;: True,</span>
+<span class="go"> &#39;persist_data&#39;: False}</span>
 </pre></div>
 </div>
 <p>Use as a context manager:</p>
@@ -268,7 +282,8 @@ using its bespoke function:</p>
 <span class="go"> &#39;rtol&#39;: 2.220446049250313e-16,</span>
 <span class="go"> &#39;log_level&#39;: &#39;WARNING&#39;,</span>
 <span class="go"> &#39;chunksize&#39;: 134217728,</span>
-<span class="go"> &#39;display_data&#39;: True}</span>
+<span class="go"> &#39;display_data&#39;: True,</span>
+<span class="go"> &#39;persist_data&#39;: False}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">configuration</span><span class="p">(</span><span class="n">atol</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">configuration</span><span class="p">())</span>
 <span class="gp">...</span>
@@ -278,7 +293,8 @@ using its bespoke function:</p>
 <span class="go"> &#39;rtol&#39;: 2.220446049250313e-16,</span>
 <span class="go"> &#39;log_level&#39;: &#39;WARNING&#39;,</span>
 <span class="go"> &#39;chunksize&#39;: 134217728,</span>
-<span class="go"> &#39;display_data&#39;: True}</span>
+<span class="go"> &#39;display_data&#39;: True,</span>
+<span class="go"> &#39;persist_data&#39;: False}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -294,7 +310,7 @@ using its bespoke function:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-04-09.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>

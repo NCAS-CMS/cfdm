@@ -844,7 +844,7 @@ class write(ReadWrite):
 
             * For all xarray formats the default backend is ``xarray``.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.13.1.0
 
         h5py_options: `dict` or `None`, optional
             When the *netcdf_backend* is ``h5netcdf-h5py``, provide
@@ -866,7 +866,7 @@ class write(ReadWrite):
             *Example:*
               ``h5py_options={'meta_block_size': 500000}``
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.13.1.0
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field

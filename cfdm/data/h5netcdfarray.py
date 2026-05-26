@@ -38,7 +38,7 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         from the netCDF variable *var* and stored for fast future
         access.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.1.0
 
         :Parameters:
 
