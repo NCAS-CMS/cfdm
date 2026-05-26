@@ -91,7 +91,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         :Returns:
 
-            `netCDF4.Group` or `Zarr.Group`
                 The new group object.
 
         """

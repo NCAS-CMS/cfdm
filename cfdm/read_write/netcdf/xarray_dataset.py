@@ -72,9 +72,11 @@ class XarrayDataset:
         pass
 
     def createGroup(self, group_name):
-        """Creates a new group with the given group name.
+        """Creates a new sub-group with the given group name.
 
-        Has a similar API to `netCDF4.createGroup`.
+        Has a similar API to `netCDF4.createGroup`. If the sub-group
+        already exists then it is returned, without it being
+        recreated.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -96,9 +98,13 @@ class XarrayDataset:
                 "subgroups directly inside the parent"
             )
 
+        if group_name in self.groups:
+            # Return an existing sub-group
+            return self.groups[group_name]
+
+        # Create a new sub-group and return it
         new_group = type(self)(name=group_name)
         self.groups[group_name] = new_group
-
         return new_group
 
     def createVariable(self, name, datatype, dimensions=(), coordinate=False):
@@ -286,7 +292,7 @@ class XarrayVariable:
         data = getattr(self, "data", None)
         if data is None:
             raise ValueError(
-                "Must set 'XarrayVariable.data' to return an xr.DataArray"
+                "Must set 'XarrayVariable.data' to return an xarray.DataArray"
             )
 
         return xr.DataArray(
