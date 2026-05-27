@@ -561,7 +561,6 @@ class NetCDFRead(IORead):
         original_dataset = dataset
 
         filesystem = g["filesystem"]
-        print(filesystem)
         if filesystem is not None:
             # --------------------------------------------------------
             # Pre-authenticated filesystem: open the dataset as a
@@ -572,7 +571,18 @@ class NetCDFRead(IORead):
                     f"    {protocol} storage_options: {storage_options}\n"
                 )  # pragma: no cover
 
-            dataset = self.filesystem_open(filesystem, dataset)
+            try:
+                dataset = self.filesystem_open(filesystem, dataset)
+            except Exception:
+                # Something went wrong with the filesystem open
+                if not g["internally_created_filesystem"]:
+                    # The filesystem was provided by the user, so
+                    # raise the exception.
+                    raise
+
+                # The filesystem was created internally (so could be
+                # inappropriate), so we'll just try using the string
+                # 'dataset' in the open functions.
 
             storage_options = filesystem.storage_options
             protocol = filesystem.protocol
@@ -1268,7 +1278,7 @@ class NetCDFRead(IORead):
                 )
 
             dataset = self.string_to_cdl(dataset)
-        
+
         # ------------------------------------------------------------
         # Dataset representation
         # ------------------------------------------------------------
@@ -1322,6 +1332,9 @@ class NetCDFRead(IORead):
             dataset, filesystem = self.create_filesystem(
                 dataset, storage_options
             )
+            internally_created_filesystem = True
+        else:
+            internally_created_filesystem = False
 
         # ------------------------------------------------------------
         # Check the file type, raising an exception if the type is not
@@ -1329,25 +1342,24 @@ class NetCDFRead(IORead):
         #
         # Note that the `dataset_type` method is much faster than the
         # `dataset_open` method at returning for unrecognised types.
+        #
+        # If 'd_type' is `None` then it means that we haven't been
+        # able to work out the dataset type, so we'll just let
+        # `dataset_open` work it out. (In the past (<= 1.13.1.0) we
+        # would either raise an exception or return an empty list in
+        # this case.)
         # ------------------------------------------------------------
         d_type = self.dataset_type(
             dataset, dataset_type, filesystem, representation
         )
-        print (representation, d_type)
-        if not d_type:
-            # Can't interpret the dataset as a recognised type, so
-            # either raise an exception or return an empty list.
-            if dataset_type is None:
-                raise DatasetTypeError(
-                    f"Can't interpret {dataset} as a dataset of one of the "
-                    f"valid types: {valid_dataset_types!r}"
-                )
-
-            return []
 
         # Can interpret the dataset as a recognised type, but return
         # an empty list if that type has been exlcuded.
-        if dataset_type is not None and d_type not in dataset_type:
+        if (
+            dataset_type is not None
+            and d_type is not None
+            and d_type not in dataset_type
+        ):
             return []
 
         # ------------------------------------------------------------
@@ -1629,6 +1641,7 @@ class NetCDFRead(IORead):
             "file_system_storage_options": {},
             # Pre-authenticated filesystem object (e.g. fsspec)
             "filesystem": filesystem,
+            "internally_created_filesystem": internally_created_filesystem,
             # --------------------------------------------------------
             # Array element caching
             # --------------------------------------------------------
