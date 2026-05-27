@@ -561,6 +561,7 @@ class NetCDFRead(IORead):
         original_dataset = dataset
 
         filesystem = g["filesystem"]
+        print(filesystem)
         if filesystem is not None:
             # --------------------------------------------------------
             # Pre-authenticated filesystem: open the dataset as a
@@ -1267,7 +1268,7 @@ class NetCDFRead(IORead):
                 )
 
             dataset = self.string_to_cdl(dataset)
-
+        
         # ------------------------------------------------------------
         # Dataset representation
         # ------------------------------------------------------------
@@ -1332,7 +1333,7 @@ class NetCDFRead(IORead):
         d_type = self.dataset_type(
             dataset, dataset_type, filesystem, representation
         )
-
+        print (representation, d_type)
         if not d_type:
             # Can't interpret the dataset as a recognised type, so
             # either raise an exception or return an empty list.
