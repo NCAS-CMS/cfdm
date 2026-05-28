@@ -12,12 +12,12 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
-n_tmpfiles = 2
+n_tmpfiles = 3
 tmpfiles = [
     tempfile.mkstemp("_test_compliance_check.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-(tmpfile0, tmpfile1) = tmpfiles
+(tmpfile0, tmpfile1, tmpfile2) = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -32,25 +32,42 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-def _create_noncompliant_names_field(compliant_field, temp_file):
+def _create_noncompliant_names_fields(
+        compliant_field, temp_file, ugrid_case=False):
     """Create a copy of a field with bad standard names on all
     variables."""
     cfdm.write(compliant_field, temp_file)
 
     with Dataset(temp_file, "r+") as nc:
         field_all_varnames = list(nc.variables.keys())
-        # Store a bad name which is the variable name prepended with 'badname_'
+
+        # Store a bad name which is some identifier prepended with 'badname_'
         # - this makes it a certain invalid name and one we can identify as
         # being tied to the original variable, for testing purposes.
-        bad_name_mapping = {
-            varname: "badname_" + varname for varname in field_all_varnames
-        }
+        if ugrid_case:
+            # For any UGRID variables, there can be multiple fields all
+            # referencing the same mesh variable, which will likely be
+            # named differently, but for the UGRID logic to recognise them
+            # as being connected we need them to have the same name, so in
+            # this special case we don't prepend 'badname_' to the variable
+            # name but instead to a consistent identifier across all UGRID
+            # fields.
+            bad_name_mapping = {
+                varname: "badname_DUMMY" for varname in field_all_varnames
+            }
+        else:
+            # Use the variable name to prepend with 'badname_'  helps with
+            # identification and validation in testing
+            bad_name_mapping = {
+                varname: "badname_" + varname for varname in field_all_varnames
+            }
+        print("bad name mapping is", bad_name_mapping)
 
         for var_name, bad_std_name in bad_name_mapping.items():
             var = nc.variables[var_name]
             var.standard_name = bad_std_name
 
-    return cfdm.read(temp_file)[0]
+    return cfdm.read(temp_file)
 
 
 class ComplianceCheckingTest(unittest.TestCase):
@@ -62,8 +79,8 @@ class ComplianceCheckingTest(unittest.TestCase):
     # TODO is that (necessary read-write of example fields in this context)
     # a sign of badness?
     good_snames_f = cfdm.example_field(1)
-    cfdm.write(good_snames_f, tmpfile1)
-    good_snames_general_field = cfdm.read(tmpfile1)[0]
+    cfdm.write(good_snames_f, tmpfile0)
+    good_snames_general_field = cfdm.read(tmpfile0)[0]
 
     bad_snames_general_field = good_snames_general_field.copy()
     # Add a cell method name to this field only
@@ -71,24 +88,32 @@ class ComplianceCheckingTest(unittest.TestCase):
     c.set_axes(['domainaxis1', 'badname_cellmethod'])
 
     # Set bad names and then write to tempfile and read back in
-    bad_snames_general_field = _create_noncompliant_names_field(
-        bad_snames_general_field, tmpfile0
-    )
+    bad_snames_general_field = _create_noncompliant_names_fields(
+        bad_snames_general_field, tmpfile1
+    )[0]
 
     # 1. Create a file with a UGRID field with invalid standard names
     # on UGRID components, using our core 'UGRID 1' field as a basis
     ugrid_file_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "ugrid_1.nc"
     )
-    good_ugrid_sn_f = cfdm.read(ugrid_file_path)[0]
-    # Note we can't write UGRID files using cf at the moment, so needed
-    # another way to create UGRID dataset with bad names to test on
-    # and the simplest is to write extra 'bad names' file alongside
-    # 'ugrid_1.nc' in create_test_files module.
-    bad_names_ugrid_file_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "ugrid_1_bad_names.nc"
+    # good_ugrid_sn_f = cfdm.read(ugrid_file_path)[0]
+    # # Note we can't write UGRID files using cf at the moment, so needed
+    # # another way to create UGRID dataset with bad names to test on
+    # # and the simplest is to write extra 'bad names' file alongside
+    # # 'ugrid_1.nc' in create_test_files module.
+    # bad_names_ugrid_file_path = os.path.join(
+    #     os.path.dirname(os.path.abspath(__file__)), "ugrid_1_bad_names.nc"
+    # )
+    # bad_ugrid_sn_fields = cfdm.read(bad_names_ugrid_file_path)
+    good_ugrid_sn_fields = cfdm.read(ugrid_file_path)
+
+    # Need to apply ugrid_case=True to allow mesh variables to have their
+    # standard names changed in a way which keeps the UGRID nodes
+    # connected - UGRID is a particular special case.
+    bad_ugrid_sn_fields = _create_noncompliant_names_fields(
+        good_ugrid_sn_fields, tmpfile2, ugrid_case=True
     )
-    bad_ugrid_sn_fields = cfdm.read(bad_names_ugrid_file_path)
 
     bad_sn_expected_reason = (
         "standard_name attribute has a value that is not a "
@@ -464,18 +489,29 @@ class ComplianceCheckingTest(unittest.TestCase):
             )
 
     def test_standard_names_validation_compliant_ugrid_field(self):
-        """Test compliance checking on a compliant UGRID field."""
-        f = self.good_ugrid_sn_f
-        dc_output = f.dataset_compliance()
-        self.assertEqual(dc_output, {"CF version": self.expected_cf_version})
+        """Test compliance checking on compliant UGRID fields."""
+        fl = self.good_ugrid_sn_fields
+        for field in fl:
+            dc_output = field.dataset_compliance()
+            self.assertEqual(
+                dc_output, {"CF version": self.expected_cf_version})
 
     def test_standard_names_validation_noncompliant_ugrid_fields(self):
         """Test compliance checking on non-compliant UGRID fields."""
         # Fields for testing on: those in ugrid_1 with bad names pre-set
+        print("HAVE UGRID CASE", self.bad_ugrid_sn_fields)
         f1, f2, f3 = self.bad_ugrid_sn_fields  # unpack to shorter names
         dc1 = f1.dataset_compliance()
         dc2 = f2.dataset_compliance()
         dc3 = f3.dataset_compliance()
+
+        from pprint import pprint
+        print("UGRID 1:")
+        pprint(dc1)
+        print("UGRID 2:")
+        pprint(dc2)
+        print("UGRID 3:")
+        pprint(dc3)
 
         # Since all three outputs have largely the same dataset
         # compliance output (TODO SLB is this right?), there's only need
