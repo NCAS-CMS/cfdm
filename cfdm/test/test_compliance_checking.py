@@ -541,30 +541,33 @@ class ComplianceCheckingTest(unittest.TestCase):
         pprint(dc3)
 
         # Since all three outputs have largely the same dataset
-        # compliance output (TODO SLB is this right?), there's only need
-        # to test one for the precise expected form and values (see 1) and
-        # then check the other two are equivalent except for the few small
-        # differences due to the top-level field variable name and its
-        # standard name (see 2).
+        # compliance output, only test one in full and then compare
+        # the others after normalising the differing field-specific
+        # standard_name values.
 
         # 1. Test first output field fully
         # =======================================================
         # Top-level structure
         # =======================================================
+        self.assertEqual(dc1["CF version"], "1.13")
+
         pa = dc1["pa"]
         self.assertIsInstance(pa, dict)
         self.assertIn("attributes", pa)
 
         pa_attributes = pa["attributes"]
         self.assertIsInstance(pa_attributes, dict)
-        self.assertCountEqual(pa_attributes.keys(), ["mesh", "standard_name"])
+        self.assertCountEqual(
+            pa_attributes.keys(),
+            ["mesh", "standard_name"],
+        )
 
         # pa.attributes.standard_name
         pa_standard_name = pa_attributes["standard_name"]
         self.assertIsInstance(pa_standard_name, dict)
         self.assertIn("value", pa_standard_name)
         self.assertIn("non-conformance", pa_standard_name)
-        self.assertEqual(pa_standard_name["value"], "badname_air_pressure")
+        self.assertEqual(pa_standard_name["value"], "badname_pa")
         self.assertEqual(
             pa_standard_name["non-conformance"][0],
             {
@@ -578,22 +581,22 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertIsInstance(mesh, dict)
         self.assertIn("value", mesh)
         self.assertIn("variables", mesh)
-        self.assertEqual(mesh["value"], "Mesh2")
+        self.assertEqual(mesh["value"], "mesh")
 
         # mesh.variables
         mesh_vars = mesh["variables"]
         self.assertIsInstance(mesh_vars, dict)
-        self.assertCountEqual(mesh_vars.keys(), ["Mesh2"])
+        self.assertCountEqual(mesh_vars.keys(), ["mesh"])
 
-        mesh2 = mesh_vars["Mesh2"]
-        self.assertIsInstance(mesh2, dict)
-        self.assertIn("attributes", mesh2)
+        mesh_var = mesh_vars["mesh"]
+        self.assertIsInstance(mesh_var, dict)
+        self.assertIn("attributes", mesh_var)
 
-        # mesh2.attributes
-        mesh2_attrs = mesh2["attributes"]
-        self.assertIsInstance(mesh2_attrs, dict)
+        # mesh.attributes
+        mesh_attrs = mesh_var["attributes"]
+        self.assertIsInstance(mesh_attrs, dict)
         self.assertCountEqual(
-            mesh2_attrs.keys(),
+            mesh_attrs.keys(),
             [
                 "standard_name",
                 "edge_node_connectivity",
@@ -603,15 +606,15 @@ class ComplianceCheckingTest(unittest.TestCase):
         )
 
         # =======================================================
-        # standard_name attribute for Mesh2
+        # standard_name attribute for (top-level) mesh variable
         # =======================================================
-        mesh2_standard_name = mesh2_attrs["standard_name"]
-        self.assertIsInstance(mesh2_standard_name, dict)
-        self.assertIn("value", mesh2_standard_name)
-        self.assertIn("non-conformance", mesh2_standard_name)
-        self.assertEqual(mesh2_standard_name["value"], "badname_Mesh2")
+        mesh_standard_name = mesh_attrs["standard_name"]
+        self.assertIsInstance(mesh_standard_name, dict)
+        self.assertIn("value", mesh_standard_name)
+        self.assertIn("non-conformance", mesh_standard_name)
+        self.assertEqual(mesh_standard_name["value"], "badname_dummy")
         self.assertEqual(
-            mesh2_standard_name["non-conformance"][0],
+            mesh_standard_name["non-conformance"][0],
             {
                 "code": self.bad_sn_expected_code,
                 "reason": self.bad_sn_expected_reason,
@@ -621,7 +624,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # =======================================================
         # edge_node_connectivity
         # =======================================================
-        edge_node = mesh2_attrs["edge_node_connectivity"]
+        edge_node = mesh_attrs["edge_node_connectivity"]
         self.assertIsInstance(edge_node, dict)
         self.assertIn("value", edge_node)
         self.assertIn("variables", edge_node)
@@ -629,7 +632,10 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         edge_node_vars = edge_node["variables"]
         self.assertIsInstance(edge_node_vars, dict)
-        self.assertCountEqual(edge_node_vars.keys(), ["Mesh2_edge_nodes"])
+        self.assertCountEqual(
+            edge_node_vars.keys(),
+            ["Mesh2_edge_nodes"],
+        )
 
         edge_nodes = edge_node_vars["Mesh2_edge_nodes"]
         self.assertIsInstance(edge_nodes, dict)
@@ -638,9 +644,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         edge_nodes_attrs = edge_nodes["attributes"]
         self.assertIsInstance(edge_nodes_attrs, dict)
         self.assertCountEqual(edge_nodes_attrs.keys(), ["standard_name"])
+
         edge_sn = edge_nodes_attrs["standard_name"]
         self.assertIsInstance(edge_sn, dict)
-        self.assertEqual(edge_sn["value"], "badname_Mesh2_edge_nodes")
+        self.assertEqual(edge_sn["value"], "badname_dummy")
         self.assertEqual(
             edge_sn["non-conformance"][0],
             {
@@ -652,7 +659,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # =======================================================
         # face_face_connectivity
         # =======================================================
-        face_face = mesh2_attrs["face_face_connectivity"]
+        face_face = mesh_attrs["face_face_connectivity"]
         self.assertIsInstance(face_face, dict)
         self.assertIn("value", face_face)
         self.assertIn("variables", face_face)
@@ -660,7 +667,10 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         face_face_vars = face_face["variables"]
         self.assertIsInstance(face_face_vars, dict)
-        self.assertCountEqual(face_face_vars.keys(), ["Mesh2_face_links"])
+        self.assertCountEqual(
+            face_face_vars.keys(),
+            ["Mesh2_face_links"],
+        )
 
         face_links = face_face_vars["Mesh2_face_links"]
         self.assertIsInstance(face_links, dict)
@@ -669,9 +679,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         face_links_attrs = face_links["attributes"]
         self.assertIsInstance(face_links_attrs, dict)
         self.assertCountEqual(face_links_attrs.keys(), ["standard_name"])
+
         face_sn = face_links_attrs["standard_name"]
         self.assertIsInstance(face_sn, dict)
-        self.assertEqual(face_sn["value"], "badname_Mesh2_face_links")
+        self.assertEqual(face_sn["value"], "badname_dummy")
         self.assertEqual(
             face_sn["non-conformance"][0],
             {
@@ -683,7 +694,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # =======================================================
         # face_node_connectivity
         # =======================================================
-        face_node = mesh2_attrs["face_node_connectivity"]
+        face_node = mesh_attrs["face_node_connectivity"]
         self.assertIsInstance(face_node, dict)
         self.assertIn("value", face_node)
         self.assertIn("variables", face_node)
@@ -691,7 +702,10 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         face_node_vars = face_node["variables"]
         self.assertIsInstance(face_node_vars, dict)
-        self.assertCountEqual(face_node_vars.keys(), ["Mesh2_face_nodes"])
+        self.assertCountEqual(
+            face_node_vars.keys(),
+            ["Mesh2_face_nodes"],
+        )
 
         face_nodes = face_node_vars["Mesh2_face_nodes"]
         self.assertIsInstance(face_nodes, dict)
@@ -700,9 +714,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         face_nodes_attrs = face_nodes["attributes"]
         self.assertIsInstance(face_nodes_attrs, dict)
         self.assertCountEqual(face_nodes_attrs.keys(), ["standard_name"])
+
         face_node_sn = face_nodes_attrs["standard_name"]
         self.assertIsInstance(face_node_sn, dict)
-        self.assertEqual(face_node_sn["value"], "badname_Mesh2_face_nodes")
+        self.assertEqual(face_node_sn["value"], "badname_dummy")
         self.assertEqual(
             face_node_sn["non-conformance"][0],
             {
@@ -712,6 +727,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         )
 
         # 2. Check dc2 and dc3 are same as dc1 except top-level key
+        # and field-specific standard_name values.
         # Do this by first extracting the actual content below the top-level
         # key, then setting the one key that should differ to be the same
         # dummy key, before comparing.
@@ -725,7 +741,6 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         self.assertEqual(dc1_content, dc2_content)
         self.assertEqual(dc1_content, dc3_content)
-
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
