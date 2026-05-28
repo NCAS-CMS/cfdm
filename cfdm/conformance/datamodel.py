@@ -86,6 +86,7 @@ class AttributeNonConformance:
         # Ensure attribute has a list to store objects
         if not hasattr(self, "variables"):
             self.variables = []
+
         # Use identity to avoid duplicate objects
         if not any(v is var for v in self.variables):
             self.variables.append(var)

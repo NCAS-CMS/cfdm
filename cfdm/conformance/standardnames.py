@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 # form under 'https://raw.githubusercontent.com/' for raw XML content only.
 # Note: the raw XML is also made available at:
 # 'cfconventions.org/Data/cf-standard-names/current/src/cf-standard-name-'
-# 'table.xml', is that a better location to grab from (may be more stable)?
+# 'table.xml', but that is less reliable (hit in the past by domain issues).
 _STD_NAME_CURRENT_XML_URL = (
     "https://raw.githubusercontent.com/"
     "cf-convention/cf-convention.github.io/refs/heads/main/Data/"

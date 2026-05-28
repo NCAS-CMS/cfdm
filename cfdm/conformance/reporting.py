@@ -130,10 +130,7 @@ class Report:
         lower_attr_value, attribute_name = attribute_key.split(":")
         attribute_value = attribute[attribute_key]
 
-        # Potentially still a dict from init a dict so set here for now -
-        # ugrid cases only seemingly hit this. How to avoid, and ensure that
-        # the top-most Variable is the one corresponding to the field? May
-        # at present be subject to _add_message call order which is bad.
+        # Potentially still a dict from init a dict - for UGRID cases only.
         if self.dataset_compliance == {}:
             self.dataset_compliance = VariableNonConformance(
                 top_ancestor_ncvar
@@ -167,7 +164,7 @@ class Report:
                 direct_parent_ncvar
             )
 
-            # Dicts are optimised for key-value lookup, but this requires
+            # TODO dicts are optimised for key-value lookup, but this requires
             # value-key lookup - find a better way to get relevant attr using
             # functionality in this module
             varattrs = g["variable_attributes"][direct_parent_ncvar]

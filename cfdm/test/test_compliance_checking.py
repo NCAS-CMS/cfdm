@@ -102,8 +102,7 @@ class ComplianceCheckingTest(unittest.TestCase):
     # 1. Create a file with field with invalid standard names generally
     # using our 'kitchen sink' field as a basis. Need to write it out and
     # read it back in so that the dataset_compliance is set by the new logic!
-    # TODO is that (necessary read-write of example fields in this context)
-    # a sign of badness?
+
     good_snames_f = cfdm.example_field(1)
     cfdm.write(good_snames_f, tmpfile0)
     good_snames_general_field = cfdm.read(tmpfile0)[0]
@@ -260,7 +259,7 @@ class ComplianceCheckingTest(unittest.TestCase):
                 "Standard name XML inaccesible: unexpected status code "
                 f"{response.status} for reference URL of: {sn_xml_url}",
             )  # 200 == OK
-        # SLB-DH discuss TODO: what behaviour do we want for the (v. rare)
+        # TODO: what behaviour do we want for the (v. rare)
         # case that the URL isn't accessible? Ideally we can skip standard
         # name validation with a warning, in these cases.
 
@@ -526,19 +525,10 @@ class ComplianceCheckingTest(unittest.TestCase):
     def test_standard_names_validation_noncompliant_ugrid_fields(self):
         """Test compliance checking on non-compliant UGRID fields."""
         # Fields for testing on: those in ugrid_1 with bad names pre-set
-        print("HAVE UGRID CASE", self.bad_ugrid_sn_fields)
         f1, f2, f3 = self.bad_ugrid_sn_fields  # unpack to shorter names
         dc1 = f1.dataset_compliance()
         dc2 = f2.dataset_compliance()
         dc3 = f3.dataset_compliance()
-
-        from pprint import pprint
-        print("UGRID 1:")
-        pprint(dc1)
-        print("UGRID 2:")
-        pprint(dc2)
-        print("UGRID 3:")
-        pprint(dc3)
 
         # Since all three outputs have largely the same dataset
         # compliance output, only test one in full and then compare
@@ -727,7 +717,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         )
 
         # 2. Check dc2 and dc3 are same as dc1 except top-level key
-        # and field-specific standard_name values.
+        #    and field-specific standard_name values.
+
         # Do this by first extracting the actual content below the top-level
         # key, then setting the one key that should differ to be the same
         # dummy key, before comparing.
