@@ -41,27 +41,53 @@ def _create_noncompliant_names_fields(
     with Dataset(temp_file, "r+") as nc:
         field_all_varnames = list(nc.variables.keys())
 
-        # Store a bad name which is some identifier prepended with 'badname_'
-        # - this makes it a certain invalid name and one we can identify as
-        # being tied to the original variable, for testing purposes.
-        if ugrid_case:
-            # For any UGRID variables, there can be multiple fields all
-            # referencing the same mesh variable, which will likely be
-            # named differently, but for the UGRID logic to recognise them
-            # as being connected we need them to have the same name, so in
-            # this special case we don't prepend 'badname_' to the variable
-            # name but instead to a consistent identifier across all UGRID
-            # fields.
-            bad_name_mapping = {
-                varname: "badname_DUMMY" for varname in field_all_varnames
-            }
-        else:
-            # Use the variable name to prepend with 'badname_'  helps with
-            # identification and validation in testing
-            bad_name_mapping = {
-                varname: "badname_" + varname for varname in field_all_varnames
-            }
-        print("bad name mapping is", bad_name_mapping)
+        # Process mesh-related variables for UGRID special case (see below)
+        mesh_related = set()
+        if "mesh" in nc.variables:
+            mesh = nc.variables["mesh"]
+
+            # Collect all variables referenced by the mesh variable
+            vars_collection = ["mesh"]
+
+            while vars_collection:
+                varname = vars_collection.pop()
+                if varname in mesh_related:
+                    continue
+
+                mesh_related.add(varname)
+
+                var = nc.variables[varname]
+                for attr in var.ncattrs():
+                    value = var.getncattr(attr)
+
+                    # Only string attributes can contain references
+                    # to other variable names
+                    if not isinstance(value, str):
+                        continue
+
+                    # For CF attributes that store multiple variable
+                    # references as a single space-dlimited string
+                    for token in value.split():
+                        if token in nc.variables:
+                            # Sets up recursive traversal, e.g. processing
+                            # mesh -> Mesh2_face_x -> Mesh2_face_x_bounds
+                            vars_collection.append(token)
+
+        # For any UGRID variables, there can be multiple fields all
+        # referencing the same mesh variable, which will likely be named
+        # differently, but for the UGRID logic to recognise them as being
+        # connected we need them to have the same attributes including name,
+        # so in this special case we don't prepend 'badname_' to the
+        # variable name but instead to some keyword consistent for the fields
+        # (see https://github.com/NCAS-CMS/cfdm/issues/404 for more info).
+        bad_name_mapping = {
+            varname: (
+                "badname_dummy"  # use any consistent keywords for a bad name
+                if varname in mesh_related
+                else "badname_" + varname
+            )
+            for varname in field_all_varnames
+        }
 
         for var_name, bad_std_name in bad_name_mapping.items():
             var = nc.variables[var_name]
@@ -114,6 +140,7 @@ class ComplianceCheckingTest(unittest.TestCase):
     bad_ugrid_sn_fields = _create_noncompliant_names_fields(
         good_ugrid_sn_fields, tmpfile2, ugrid_case=True
     )
+    cfdm.write(bad_ugrid_sn_fields, "bad_ugrid_field2_SOLVED.nc")
 
     bad_sn_expected_reason = (
         "standard_name attribute has a value that is not a "
