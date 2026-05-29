@@ -582,12 +582,16 @@ class NetCDFRead(IORead):
 
                 # The filesystem was created internally (so could be
                 # inappropriate), so we'll just try using the string
-                # 'dataset' in the open functions.
-
-            storage_options = filesystem.storage_options
-            protocol = filesystem.protocol
-            if isinstance(protocol, tuple):
-                protocol = protocol[0]
+                # 'dataset' in the open functions (i.e. do nothin,
+                # because 'dataset' hasn't changed from its original
+                # string).
+            else:
+                # We successfully replaced the dataset string with a
+                # file-like object.
+                storage_options = filesystem.storage_options
+                protocol = filesystem.protocol
+                if isinstance(protocol, tuple):
+                    protocol = protocol[0]
 
         if not storage_options:
             storage_options = None
