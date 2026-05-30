@@ -582,7 +582,7 @@ class NetCDFRead(IORead):
 
                 # The filesystem was created internally (so could be
                 # inappropriate), so we'll just try using the string
-                # 'dataset' in the open functions (i.e. do nothin,
+                # 'dataset' in the open functions (i.e. do nothing,
                 # because 'dataset' hasn't changed from its original
                 # string).
             else:
