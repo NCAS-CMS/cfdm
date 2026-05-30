@@ -1,3 +1,11 @@
+Version NEXTVERSION
+----------------
+
+**2026-06-??**
+
+* Fix bug in `cfdm.read` that prevented some OPeNDAP URLS being read
+  (https://github.com/NCAS-CMS/cfdm/issues/406)
+
 Version 1.13.1.0
 ----------------
 
