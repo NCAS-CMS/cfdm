@@ -504,7 +504,12 @@ class FileArray(Array):
                     protocol=self.get_storage_protocol(),
                     **self.get_storage_options(),
                 )
-                filename = fs.open(filename, "rb")
+                try:
+                    filename = fs.open(filename, "rb")
+                except Exception:
+                    # Something went wrong with the filesystem open
+                    raise
+
             else:
                 try:
                     filename = abspath(filename, uri=False)

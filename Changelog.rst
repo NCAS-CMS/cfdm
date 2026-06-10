@@ -8,6 +8,8 @@ Version NEXTVERSION
   through a new keyword parameter to `cfdm.read`: ``_noncompliance_report``
   (https://github.com/NCAS-CMS/cfdm/issues/365,
    https://github.com/NCAS-CMS/cfdm/issues/366)
+* Fix bug in `cfdm.read` that prevented some OPeNDAP URLS being read
+  (https://github.com/NCAS-CMS/cfdm/issues/406)
 
 Version 1.13.1.0
 ----------------
