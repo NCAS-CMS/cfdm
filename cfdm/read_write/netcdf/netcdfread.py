@@ -2659,13 +2659,13 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
             # --------------------------------------------------------
             for f in out:
                 # Check field constructs
-                self._check_valid(f, f)
+                self._warn_valid(f, f)
 
                 # Check constructs with data
                 for c in self.implementation.get_constructs(
                     f, data=True
                 ).values():
-                    self._check_valid(f, c)
+                    self._warn_valid(f, c)
 
         # ------------------------------------------------------------
         # Close all opened netCDF datasets
@@ -2687,6 +2687,54 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
         # Return the fields/domains
         # ------------------------------------------------------------
         return out
+
+    def _warn_valid(self, field, construct):
+        """Warns when valid_[min|max|range] properties exist on data.
+
+        Issue a warning if a construct with data has
+        valid_[min|max|range] properties.
+
+        .. versionadded:: (cfdm) 1.8.3
+
+        :Parameters:
+
+            field: `Field`
+                The parent field construct.
+
+            construct: Construct or Bounds
+                The construct that may have valid_[min|max|range]
+                properties. May also be the parent field construct or
+                Bounds.
+
+        :Returns:
+
+            `None`
+
+        """
+        # Check the bounds, if any.
+        if self.implementation.has_bounds(construct):
+            bounds = self.implementation.get_bounds(construct)
+            self._warn_valid(field, bounds)
+
+        x = sorted(
+            self.read_vars["valid_properties"].intersection(
+                self.implementation.get_properties(construct)
+            )
+        )
+        if not x:
+            return
+
+        # Still here?
+        if self.implementation.is_field(construct):
+            construct = ""
+        else:
+            construct = f" {construct!r} with"
+
+        message = (
+            f"WARNING: {field!r} has {construct} {', '.join(x)} "
+            "{self._plural(x, 'property')}. "
+        )
+        print(message)
 
     def _plural(self, x, singular):
         """Pluralises a singular word if *x* is not of length one.
