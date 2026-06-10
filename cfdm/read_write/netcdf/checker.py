@@ -6,8 +6,8 @@ from .constants import CF_QUANTIZATION_PARAMETERS
 from ...conformance.reporting import Report
 
 
-class NetCDFChecker(Report):
-    """Contains checks of (attempted) Field instantiation from netCDF.
+class NetCDFCheckerMixin(Report):
+    """Mixin class to compliance check Field instantiation from netCDF.
 
     Holds methods for checking CF compliance. These methods (whose names
     all start with "_check") check the minimum required for mapping the

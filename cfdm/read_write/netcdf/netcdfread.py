@@ -27,7 +27,7 @@ from .constants import (
     NETCDF_MAGIC_NUMBERS,
     NETCDF_QUANTIZATION_PARAMETERS,
 )
-from .checker import NetCDFChecker
+from .checker import NetCDFCheckerMixin
 from .dimension import Dimension
 from .flatten import dataset_flatten
 from .flatten.config import (
@@ -85,7 +85,7 @@ class Mesh:
     ncdim: dict = field(default_factory=dict)
 
 
-class NetCDFRead(IORead, FieldChecker, NetCDFChecker):
+class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
     """A container for instantiating Fields from a netCDF dataset."""
 
     _code0 = {
