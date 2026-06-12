@@ -334,7 +334,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(f2), 1)
         self.assertTrue(f2[0].equals(f3[0]))
 
-    def test_zarr_write_np_attribute(self):
+    def test_zarr_write_numpy_attributes(self):
         """Test writing numpy attributes to Zarr."""
         f = self.f0.copy()
 
