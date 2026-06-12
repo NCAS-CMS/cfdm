@@ -340,7 +340,7 @@ class read_writeTest(unittest.TestCase):
 
         # Scalars
         x = 9
-        scalars =  (np.int32(x), np.int64(x), np.float32(x), np.float64(x))
+        scalars = (np.int32(x), np.int64(x), np.float32(x), np.float64(x))
         for i, scalar in enumerate(scalars):
             f.set_property(f"np_generic_{i}", scalar)
 
@@ -348,8 +348,7 @@ class read_writeTest(unittest.TestCase):
         y = [1, 2, 3]
         f.set_property("np_ndarray", np.array(y))
 
-#        tmpdir1 = 'tmpdir1.delme'
-        cfdm.write(f, tmpdir1)
+        cfdm.write(f, tmpdir1, fmt="ZARR3")
         f = cfdm.read(tmpdir1)
         self.assertEqual(len(f), 1)
 
