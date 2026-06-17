@@ -9567,7 +9567,7 @@ s
                 location. May be an empty list.
 
         """
-        if location != "face":
+        if location not in ("face", "edge"):
             return []
 
         attributes = mesh.mesh_attributes
