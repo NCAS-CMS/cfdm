@@ -1628,18 +1628,16 @@ class NetCDFCheckerMixin(Report):
         """
         g = self.read_vars
 
-        mesh_ncvar_attrs = g["variable_attributes"][mesh_ncvar]
+        attributes = g["variable_attributes"][mesh_ncvar]
 
-        # TODO: not sure if this should be included. It reports a bad
-        # standard name which can also be reported on the field variable
-        # as an overall issues, so effectively is duplicated!
         self._check_standard_names(
             mesh_ncvar,
             mesh_ncvar,
-            mesh_ncvar_attrs,
+            attributes,
         )
 
         ok = True
+
         if mesh_ncvar not in g["internal_variables"]:
             mesh_ncvar, message = self._missing_variable(
                 mesh_ncvar, "Mesh topology variable"
@@ -1652,8 +1650,6 @@ class NetCDFCheckerMixin(Report):
             )
             ok = False
             return ok
-
-        attributes = g["variable_attributes"][mesh_ncvar]
 
         node_coordinates = attributes.get("node_coordinates")
         if node_coordinates is None:
@@ -1877,6 +1873,7 @@ class NetCDFCheckerMixin(Report):
         g = self.read_vars
 
         ok = True
+
         if location_index_set_ncvar not in g["internal_variables"]:
             location_index_set_ncvar, message = self._missing_variable(
                 location_index_set_ncvar, "Location index set variable"
@@ -1979,14 +1976,8 @@ class NetCDFCheckerMixin(Report):
         """
         g = self.read_vars
 
-        ncvar_attrs = g["variable_attributes"][location_index_set_ncvar]
-        self._check_standard_names(
-            parent_ncvar,
-            location_index_set_ncvar,
-            ncvar_attrs,
-        )
-
         ok = True
+
         if "mesh" in g["variable_attributes"][parent_ncvar]:
             self._add_message(
                 parent_ncvar,
@@ -2067,6 +2058,8 @@ class NetCDFCheckerMixin(Report):
 
         parent_ncdims = self._ncdimensions(parent_ncvar)
         lis_ncdims = self._ncdimensions(location_index_set_ncvar)
+
+        loc_index_dims = g["variable_dimensions"][location_index_set_ncvar]
         if not set(lis_ncdims).issubset(parent_ncdims):
             self._add_message(
                 parent_ncvar,
@@ -2076,7 +2069,7 @@ class NetCDFCheckerMixin(Report):
                     "spans incorrect dimensions",
                 ),
                 attribute="location_index_set",
-                dimensions=g["variable_dimensions"][location_index_set_ncvar],
+                dimensions=loc_index_dims,
             )
             ok = False
 
@@ -2084,7 +2077,7 @@ class NetCDFCheckerMixin(Report):
             parent_ncvar,
             location_index_set_ncvar,
             "location_index_set",
-            dimensions=g["variable_dimensions"][location_index_set_ncvar],
+            dimensions=loc_index_dims,
         )
         return ok
 
