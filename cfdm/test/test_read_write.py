@@ -1620,6 +1620,17 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(gen([x, x]))
         self.assertEqual(len(f), 2)
 
+    def test_read_opendap(self):
+        """Test cfdm.read with an opendap file."""
+        # Shouldn't fail. This file comes from
+        # https://github.com/NCAS-CMS/cfdm/issues/406
+        f = cfdm.read(
+            "https://data.pmel.noaa.gov/aclim/thredds/dodsC/B10K-K20_Level2_CORECFS_integrated_collection.nc",
+            cache=False,
+        )
+        # Check that we can read data after the initial scan
+        self.assertEqual(f[0].coordinate("axis=T")[2].array, 2.2117104e09)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

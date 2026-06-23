@@ -395,11 +395,13 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             case "netCDF4" | "xarray":
                 x.setncatts(attributes)
             case "zarr":
-                # `zarr` can't encode numpy arrays in the zarr.json
-                # file
+                # `zarr` can't encode numpy arrays nor numpy scalars
+                # in the zarr.json file
                 for attr, value in attributes.items():
                     if isinstance(value, np.ndarray):
                         attributes[attr] = value.tolist()
+                    elif isinstance(value, np.generic):
+                        attributes[attr] = value.item()
 
                 x.update_attributes(attributes)
 
