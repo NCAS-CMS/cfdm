@@ -3086,7 +3086,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
             construct_type = self.implementation.get_construct_type(cfvar)
 
         # Whether or not the variable is a coordinate variable (of any
-        # type). Bounds variables, interior rung variables, etc, are
+        # type). Bounds variables, interior ring variables, etc., are
         # not coordinate variables.
         coordinate = construct_type in (
             "dimension_coordinate",
@@ -5657,9 +5657,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         logger.info(f"Writing to {fmt}")  # pragma: no cover
 
-        #        # Expand dataset name
-        #        dataset_name = os.path.expanduser(os.path.expandvars(dataset_name))
-        #        dataset_name = abspath(dataset_name)
 
         # Parse the 'omit_data' parameter
         if omit_data is None:
@@ -5865,7 +5862,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         else:
             self.write_vars["dataset_type"] = "file"
 
-        # Parse the data set name
+        # Parse the dataset name
         if self.write_vars["write_to_disk"]:
             # Must provide a dataset name when writing to disk
             if not isinstance(dataset_name, str):
@@ -5880,7 +5877,7 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
         elif dataset_name is not None:
             # Must not provide a dataset name when not writing to disk
             raise ValueError(
-                "Must not provide a local dataset name when writing to "
+                "A local dataset name must not be provided when writing to "
                 f"memory. Got dataset_name={dataset_name!r}"
             )
 
