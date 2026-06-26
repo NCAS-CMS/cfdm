@@ -1,5 +1,5 @@
 class XarrayDataset:
-    """An `xarray` dataset` constructor.
+    """An `xarray` dataset constructor.
 
     Constructs either `xarray.Dataset` (if there are no sub-groups of
     the root group) or else `xarray.DataTree` (if there are sub-groups
