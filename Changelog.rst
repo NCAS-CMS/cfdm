@@ -1,7 +1,7 @@
 Version NEXTVERSION
-----------------
+-------------------
 
-**2026-06-??**
+**2026-??-??**
 
 * New methods to convert to `xarray`: `cf.Field.to_xarray` and
   `cf.Domain.to_xarray`
@@ -9,6 +9,11 @@ Version NEXTVERSION
 * New output format for `cfdm.write` that creates an `xarray` dataset
   in memory: ``'XARRAY'``
   (https://github.com/NCAS-CMS/cfdm/issues/394)
+* Improved and restructured output of `cfdm.Field.dataset_compliance` for
+  (at present, preliminary) CF compliance checking, also available
+  through a new keyword parameter to `cfdm.read`: ``_noncompliance_report``
+  (https://github.com/NCAS-CMS/cfdm/issues/365,
+   https://github.com/NCAS-CMS/cfdm/issues/366)
 * Fix bug in `cfdm.read` that prevented some OPeNDAP URLS being read
   (https://github.com/NCAS-CMS/cfdm/issues/406)
 * Fix bug in `cfdm.write` when writing numpy scalars as Zarr
