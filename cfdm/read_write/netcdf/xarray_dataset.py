@@ -110,6 +110,9 @@ class XarrayDataset:
     def createVariable(self, name, datatype, dimensions=(), coordinate=False):
         """Create a new variable.
 
+        Time coordinates will have decoded times (see
+        `xarray.decode_cf` for details).
+
         Has a similar API to `netCDF4.createVariable`.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -158,6 +161,7 @@ class XarrayDataset:
             name=name,
             datatype=datatype,
             dimensions=dimensions,
+            decode_times=coordinate
         )
 
         if coordinate:
@@ -240,7 +244,7 @@ class XarrayVariable:
 
     """
 
-    def __init__(self, name, datatype, dimensions=()):
+    def __init__(self, name, datatype, dimensions=(), decode_times=False):
         """**Initialisation**
 
         :Parameters:
@@ -254,11 +258,17 @@ class XarrayVariable:
             dimensions: sequence of `str`, optional
                 The names of the dimensions of the variable.
 
+            decode_times: `bool`, optional
+               Decode cf times (e.g., integers since "hours since
+               2000-01-01" to `np.datetime64`). See `xarray.decode_cf`
+               for details.
+
         """
         self.name = name
         self.datatype = datatype
         self.dimensions = dimensions
         self.attrs = {}
+        self._decode_times = bool(decode_times)
 
     def setncatts(self, attributes):
         """Set variable attributes.
@@ -295,6 +305,19 @@ class XarrayVariable:
                 "Must set 'XarrayVariable.data' to return an xarray.DataArray"
             )
 
-        return xr.DataArray(
+        var = xr.DataArray(
             data=data, dims=self.dimensions, name=self.name, attrs=self.attrs
         )
+
+        # Decode times, if requested and if possible.
+        if self._decode_times:
+            var = xr.decode_cf(
+                var.to_dataset(name=self.name),
+                concat_characters=False,
+                mask_and_scale=False,
+                decode_times=True,
+                decode_coords=False,
+                drop_variables=None,
+            )[self.name]
+
+        return var
