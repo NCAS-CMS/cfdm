@@ -70,7 +70,7 @@ The **cfdm** package can
   uncompressed form,
 * read and write that data that are quantized to eliminate false
   precision.
-* Convert field and domain constructs to `xarray` datasets in memory,
+* convert field and domain constructs to `xarray` datasets in memory,
 * inspect field and domain constructs,
 * test whether two constructs are the same,
 * modify field and domain construct metadata and data,
