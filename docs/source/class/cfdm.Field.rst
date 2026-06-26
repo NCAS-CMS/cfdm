@@ -262,6 +262,20 @@ NetCDF
    ~cfdm.Field.nc_set_mesh_variable
    ~cfdm.Field.nc_set_mesh_variable_groups
 
+.. _Field-xarray:
+
+xarray
+------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.to_xarray
+
 Groups
 ^^^^^^
 

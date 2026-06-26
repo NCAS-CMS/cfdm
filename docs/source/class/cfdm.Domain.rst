@@ -156,6 +156,20 @@ NetCDF
    ~cfdm.Domain.nc_set_mesh_variable
    ~cfdm.Domain.nc_set_mesh_variable_groups
    
+.. _Domain-xarray:
+
+xarray
+------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Domain.to_xarray
+
 Groups
 ^^^^^^
 
