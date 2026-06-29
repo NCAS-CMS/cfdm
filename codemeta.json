@@ -19,12 +19,12 @@
   ],
   "identifier": "",
   "codeRepository": "https://github.com/NCAS-CMS/cfdm",
-  "datePublished": "2026-04-09",
-  "dateModified": "2026-04-09",
-  "dateCreated": "2026-04-09",
+  "datePublished": "2026-06-29",
+  "dateModified": "2026-06-29",
+  "dateCreated": "2026-06-29",
   "description": "A Python reference implementation of the CF data model.",
   "keywords": "cf, metadata, netcdf, python",
   "license": "MIT",
   "title": "cfdm",
-  "version": "1.13.1.0"
+  "version": "1.13.2.0"
 }

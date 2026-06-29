@@ -1,7 +1,7 @@
-Version NEXTVERSION
--------------------
+Version 1.13.2.0
+----------------
 
-**2026-??-??**
+**2026-06-29**
 
 * New methods to convert to `xarray`: `cf.Field.to_xarray` and
   `cf.Domain.to_xarray`
