@@ -11,7 +11,6 @@ from functools import reduce
 from math import log, nan, prod
 from numbers import Integral
 from os.path import isdir, isfile, join
-from pprint import pformat
 from typing import Any
 
 import numpy as np
@@ -2645,6 +2644,8 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
             for x in out:
                 noncompliance_dict = x.dataset_compliance()
                 if noncompliance_dict:
+                    from pprint import pformat
+
                     logger.warning(
                         f"\nWARNING: {x.__class__.__name__} incomplete or "
                         "non-standard due to non-CF-compliant dataset. "
@@ -4246,6 +4247,8 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
                         f"for {field_ncvar!r}."
                     )
                     if is_log_level_debug(logger):
+                        from pprint import pformat
+
                         logger.debug(
                             f"Mesh dictionary is: {pformat(g['mesh'])}"
                         )
