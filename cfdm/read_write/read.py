@@ -227,7 +227,7 @@ class read(ReadWrite):
                          but for now it is only available pretty-printed
                          from the nested machine-parsable structure.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. versionadded:: (cfdm) 1.13.2.0
 
         ignore_unknown_type: Deprecated at version 1.12.2.0
             Use *dataset_type* instead.

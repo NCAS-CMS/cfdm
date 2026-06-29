@@ -2637,7 +2637,7 @@ class FieldDomain:
         `cfdm.write` allows a mixture a mixture of fields and domains
         to be written to the same `xarray` dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.2.0
 
         .. seealso:: `cfdm.write`
 

@@ -12,7 +12,7 @@ class XarrayDataset:
 
     Has a similar API to `netCDF4.Dataset`.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.2.0
 
     """
 
@@ -62,7 +62,7 @@ class XarrayDataset:
         `xarray` handles dimensions implicitly, so this method does
         nothing.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.2.0
 
         :Returns:
 
@@ -78,7 +78,7 @@ class XarrayDataset:
         already exists then it is returned, without it being
         recreated.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.2.0
 
         :Parameters:
 
@@ -115,7 +115,7 @@ class XarrayDataset:
 
         Has a similar API to `netCDF4.createVariable`.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.2.0
 
         :Parameters:
 
@@ -174,7 +174,7 @@ class XarrayDataset:
     def setncatts(self, attributes):
         """Set dataset attributes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.2.0
 
         :Returns:
 
@@ -186,7 +186,7 @@ class XarrayDataset:
     def to_xarray(self):
         """Return the `xarray` dataset.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.2.0
 
         :Returns:
 
@@ -240,7 +240,7 @@ class XarrayVariable:
 
     Has a similar API to `netCDF4.Variable`.
 
-    .. versionadded:: (cfdm) NEXTVERSION
+    .. versionadded:: (cfdm) 1.13.2.0
 
     """
 
@@ -273,7 +273,7 @@ class XarrayVariable:
     def setncatts(self, attributes):
         """Set variable attributes.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.2.0
 
         :Returns:
 
@@ -285,7 +285,7 @@ class XarrayVariable:
     def to_xarray(self):
         """Return the `xarray` variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.2.0
 
         :Returns:
 

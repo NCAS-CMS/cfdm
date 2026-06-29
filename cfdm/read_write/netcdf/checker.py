@@ -25,7 +25,7 @@ class NetCDFCheckerMixin(Report):
     def _check_field_ncvar(self, field_ncvar):
         """Check (properties of) the top-level field variable.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. versionadded:: (cfdm) 1.13.2.0
 
         """
         self._check_standard_names(

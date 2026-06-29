@@ -30,7 +30,7 @@ def _extract_names_from_xml(snames_xml, include_aliases):
     Whether or not to include registered aliases is dependent on the value
     of the `include_aliases` flag.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.13.2.0
 
      :Parameters:
 
@@ -80,7 +80,7 @@ def get_all_current_standard_names(include_aliases=False):
     are not included in the output but can also be included by setting the
     `include_aliases` flag to `True`.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.13.2.0
 
      :Parameters:
 

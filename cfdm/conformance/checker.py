@@ -34,7 +34,7 @@ class FieldChecker(Report):
         Also return the standard name with modifiers stripped, as the second
         tuple item.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.13.2.0
 
         """
         # From Appendix C of the Conventions document:
@@ -87,7 +87,7 @@ class FieldChecker(Report):
         one parent variable (though the parent can be set at the variable
         itself should no parent exist or be relevant).
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: 1.13.2.0
 
         :Parameters:
 

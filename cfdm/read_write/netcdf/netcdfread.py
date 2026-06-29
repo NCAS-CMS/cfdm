@@ -1278,7 +1278,7 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
                              but for now it is only available pretty-printed
                              from the nested machine-parsable structure.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+                .. versionadded:: (cfdm) 1.13.2.0
 
             _file_systems: `dict`, optional
                 Provide any already-open S3 file systems.
