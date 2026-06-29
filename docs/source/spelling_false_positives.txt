@@ -1,5 +1,6 @@
 absolutised
 abspath
+accessors
 al
 Allyn
 arg
@@ -79,6 +80,7 @@ et
 etc
 fieldancillary
 FieldAncillary
+filesystem
 FillValue
 fletcher
 fmt
@@ -161,6 +163,7 @@ occassions
 optimize
 orography
 ParametersDomainAncillaries
+parsable
 performant
 piecewise
 popitem

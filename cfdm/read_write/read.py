@@ -382,7 +382,7 @@ class read(ReadWrite):
         if representation != "unknown":
             datasets = (datasets,)
 
-        # If a filesystem object is provided, treat each dataset path
+        # If a file system object is provided, treat each dataset path
         # as-is (no local glob/walk/expansion) and yield directly.
         filesystem = kwargs.get("filesystem")
         if filesystem is None:
