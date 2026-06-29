@@ -161,7 +161,7 @@ class XarrayDataset:
             name=name,
             datatype=datatype,
             dimensions=dimensions,
-            decode_times=coordinate
+            decode_times=coordinate,
         )
 
         if coordinate:

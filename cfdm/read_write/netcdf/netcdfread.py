@@ -22,12 +22,12 @@ from ...decorators import _manage_log_level_via_verbosity
 from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
 from ..exceptions import DatasetTypeError, ReadError
+from .checker import NetCDFCheckerMixin
 from .constants import (
     CF_QUANTIZATION_PARAMETERS,
     NETCDF_MAGIC_NUMBERS,
     NETCDF_QUANTIZATION_PARAMETERS,
 )
-from .checker import NetCDFCheckerMixin
 from .dimension import Dimension
 from .flatten import dataset_flatten
 from .flatten.config import (
@@ -6464,19 +6464,19 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
     def _create_cell_method(self, axes, method, qualifiers):
         """Create a cell method object.
 
-        .. versionadded:: (cfdm) 1.7.0
+                .. versionadded:: (cfdm) 1.7.0
 
-        :Parameters:
-s
-            axes: `tuple`
+                :Parameters:
+        s
+                    axes: `tuple`
 
-            method: 'str`
+                    method: 'str`
 
-            properties: `dict`
+                    properties: `dict`
 
-        :Returns:
+                :Returns:
 
-            `CellMethod`
+                    `CellMethod`
 
         """
         return self.implementation.initialise_CellMethod(

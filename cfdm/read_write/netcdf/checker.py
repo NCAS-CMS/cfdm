@@ -2,8 +2,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from .constants import CF_QUANTIZATION_PARAMETERS
 from ...conformance.reporting import Report
+from .constants import CF_QUANTIZATION_PARAMETERS
 
 
 class NetCDFCheckerMixin(Report):

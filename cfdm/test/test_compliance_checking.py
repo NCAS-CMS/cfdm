@@ -33,7 +33,8 @@ atexit.register(_remove_tmpfiles)
 
 
 def _create_noncompliant_names_fields(
-        compliant_field, temp_file, ugrid_case=False):
+    compliant_field, temp_file, ugrid_case=False
+):
     """Create a copy of a field with bad standard names on all
     variables."""
     cfdm.write(compliant_field, temp_file)
@@ -110,7 +111,7 @@ class ComplianceCheckingTest(unittest.TestCase):
     bad_snames_general_field = good_snames_general_field.copy()
     # Add a cell method name to this field only
     c = bad_snames_general_field.cell_methods()["cellmethod0"]
-    c.set_axes(['domainaxis1', 'badname_cellmethod'])
+    c.set_axes(["domainaxis1", "badname_cellmethod"])
 
     # Set bad names and then write to tempfile and read back in
     bad_snames_general_field = _create_noncompliant_names_fields(
@@ -520,7 +521,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         for field in fl:
             dc_output = field.dataset_compliance()
             self.assertEqual(
-                dc_output, {"CF version": self.expected_cf_version})
+                dc_output, {"CF version": self.expected_cf_version}
+            )
 
     def test_standard_names_validation_noncompliant_ugrid_fields(self):
         """Test compliance checking on non-compliant UGRID fields."""
@@ -732,6 +734,7 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         self.assertEqual(dc1_content, dc2_content)
         self.assertEqual(dc1_content, dc3_content)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

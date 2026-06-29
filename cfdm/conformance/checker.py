@@ -4,9 +4,9 @@ logger = logging.getLogger(__name__)
 
 import numpy as np
 
+from ..functions import is_log_level_debug
 from .reporting import Report
 from .standardnames import get_all_current_standard_names
-from ..functions import is_log_level_debug
 
 
 class FieldChecker(Report):
@@ -69,7 +69,7 @@ class FieldChecker(Report):
         ncvar,
         ncvar_attrs,
         direct_parent_ncvar=None,
-        no_var_case=False,   # edge cases like cell methods
+        no_var_case=False,  # edge cases like cell methods
         check_is_string=True,
         check_is_in_table=True,
         check_is_in_custom_list=False,

@@ -1,5 +1,4 @@
 import logging
-
 from functools import lru_cache
 
 # Prefer using built-in urllib to extract XML from cf-convention.github.io repo

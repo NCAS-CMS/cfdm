@@ -200,7 +200,11 @@ class Report:
         )  # pragma: no cover
 
     def _include_component_report(
-            self, parent_ncvar, ncvar, attribute, dimensions=None,
+        self,
+        parent_ncvar,
+        ncvar,
+        attribute,
+        dimensions=None,
     ):
         """Include a component in the dataset compliance report.
 

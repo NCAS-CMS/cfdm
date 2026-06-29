@@ -108,13 +108,11 @@ class AttributeNonConformance:
         }
         if self.variables:
             fragment["variables"] = {
-                var_nc.name: var_nc.todict()
-                for var_nc in self.variables
+                var_nc.name: var_nc.todict() for var_nc in self.variables
             }
         if self.dimensions:
             fragment["dimensions"] = {
-                dim_nc.name: dim_nc.todict()
-                for dim_nc in self.dimensions
+                dim_nc.name: dim_nc.todict() for dim_nc in self.dimensions
             }
         if self.non_conformances:
             fragment["non-conformance"] = [
@@ -195,8 +193,7 @@ class DimensionNonConformance:
         }
         if self.variables:
             fragment["variables"] = {
-                var_nc.name: var_nc.todict()
-                for var_nc in self.variables
+                var_nc.name: var_nc.todict() for var_nc in self.variables
             }
         if self.non_conformances:
             fragment["non-conformance"] = [
@@ -287,13 +284,11 @@ class VariableNonConformance:
         fragment = {}
         if self.attributes:
             fragment["attributes"] = {
-                attr_nc.name: attr_nc.todict()
-                for attr_nc in self.attributes
+                attr_nc.name: attr_nc.todict() for attr_nc in self.attributes
             }
         if self.dimensions:
             fragment["dimensions"] = {
-                dim_nc.name: dim_nc.todict()
-                for dim_nc in self.dimensions
+                dim_nc.name: dim_nc.todict() for dim_nc in self.dimensions
             }
         if self.non_conformances:
             fragment["non-conformance"] = [

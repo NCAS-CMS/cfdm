@@ -5657,7 +5657,6 @@ class NetCDFWrite(NetCDFWriteUgrid, IOWrite):
 
         logger.info(f"Writing to {fmt}")  # pragma: no cover
 
-
         # Parse the 'omit_data' parameter
         if omit_data is None:
             omit_data = ()
