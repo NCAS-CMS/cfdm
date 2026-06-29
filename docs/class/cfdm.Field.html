@@ -7,16 +7,17 @@
 
     <title>cfdm.Field &#8212; Documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=c432c498"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/documentation_options.js?v=564d1a73"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=a56c686a"></script>
-    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Field.dump" href="../method/cfdm.Field.dump.html" />
@@ -31,12 +32,12 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.2.0</a></h1>
 
 
 
@@ -124,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.Field">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.1.0/cfdm/field.py#L35-L3418"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Field" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.0/cfdm/field.py#L35-L3418"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Field" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QuantizationMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFComponents</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFUnreferenced</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFMeshVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Files</span></code>, <a class="reference internal" href="cfdm.core.Field.html#cfdm.core.Field" title="cfdm.core.field.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
@@ -603,26 +604,37 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_set_global_attributes.html#cfdm.Field.nc_set_global_attributes" title="cfdm.Field.nc_set_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attributes</span></code></a></p></td>
 <td><p>Set properties to be written as netCDF global attributes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_clear_mesh_variable_groups.html#cfdm.Field.nc_clear_mesh_variable_groups" title="cfdm.Field.nc_clear_mesh_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_mesh_variable_groups</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_mesh_variable_groups</span></code></p></td>
 <td><p>Remove the netCDF mesh variable group hierarchy.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_del_mesh_variable.html#cfdm.Field.nc_del_mesh_variable" title="cfdm.Field.nc_del_mesh_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_mesh_variable</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_mesh_variable</span></code></p></td>
 <td><p>Remove the netCDF mesh variable name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_get_mesh_variable.html#cfdm.Field.nc_get_mesh_variable" title="cfdm.Field.nc_get_mesh_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_mesh_variable</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_mesh_variable</span></code></p></td>
 <td><p>Return the netCDF mesh variable name.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_has_mesh_variable.html#cfdm.Field.nc_has_mesh_variable" title="cfdm.Field.nc_has_mesh_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_mesh_variable</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_mesh_variable</span></code></p></td>
 <td><p>Whether the netCDF mesh variable name is set.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_mesh_variable_groups.html#cfdm.Field.nc_mesh_variable_groups" title="cfdm.Field.nc_mesh_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_mesh_variable_groups</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_mesh_variable_groups</span></code></p></td>
 <td><p>Return the netCDF mesh variable group hierarchy.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_set_mesh_variable.html#cfdm.Field.nc_set_mesh_variable" title="cfdm.Field.nc_set_mesh_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_mesh_variable</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_mesh_variable</span></code></p></td>
 <td><p>Set the netCDF mesh variable name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.nc_set_mesh_variable_groups.html#cfdm.Field.nc_set_mesh_variable_groups" title="cfdm.Field.nc_set_mesh_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_mesh_variable_groups</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_mesh_variable_groups</span></code></p></td>
 <td><p>Set the netCDF mesh_variable group hierarchy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="xarray">
+<span id="field-xarray"></span><h2>xarray<a class="headerlink" href="#xarray" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_xarray</span></code></p></td>
+<td><p>Convert the Field to an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset.</p></td>
 </tr>
 </tbody>
 </table>
@@ -750,19 +762,19 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.node_coordinates.html#cfdm.Field.node_coordinates" title="cfdm.Field.node_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">node_coordinates</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">node_coordinates</span></code></p></td>
 <td><p>Create the node coordinates for a UGRID mesh topology.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.del_mesh_id.html#cfdm.Field.del_mesh_id" title="cfdm.Field.del_mesh_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_mesh_id</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_mesh_id</span></code></p></td>
 <td><p>Remove the UGRID mesh topology identifier.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.get_mesh_id.html#cfdm.Field.get_mesh_id" title="cfdm.Field.get_mesh_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mesh_id</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mesh_id</span></code></p></td>
 <td><p>Return the UGRID mesh topology identifier.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.has_mesh_id.html#cfdm.Field.has_mesh_id" title="cfdm.Field.has_mesh_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_mesh_id</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_mesh_id</span></code></p></td>
 <td><p>Whether the UGRID mesh topology identifier has been set.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.set_mesh_id.html#cfdm.Field.set_mesh_id" title="cfdm.Field.set_mesh_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_mesh_id</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_mesh_id</span></code></p></td>
 <td><p>Set a UGRID mesh topology identifier.</p></td>
 </tr>
 </tbody>
@@ -785,16 +797,16 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.__deepcopy__.html#cfdm.Field.__deepcopy__" title="cfdm.Field.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.__getitem__.html#cfdm.Field.__getitem__" title="cfdm.Field.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the field defined by indices.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.__repr__.html#cfdm.Field.__repr__" title="cfdm.Field.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.__str__.html#cfdm.Field.__str__" title="cfdm.Field.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
@@ -805,16 +817,16 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field._docstring_special_substitutions.html#cfdm.Field._docstring_special_substitutions" title="cfdm.Field._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
 <td><p>Return the special docstring substitutions.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field._docstring_substitutions.html#cfdm.Field._docstring_substitutions" title="cfdm.Field._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
 <td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field._docstring_package_depth.html#cfdm.Field._docstring_package_depth" title="cfdm.Field._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
 <td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field._docstring_method_exclusions.html#cfdm.Field._docstring_method_exclusions" title="cfdm.Field._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
 <td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
@@ -848,11 +860,11 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-04-09.
+      &#169;2026, NCAS | Page built on 2026-06-29.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
     </div>
 
