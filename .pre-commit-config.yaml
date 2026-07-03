@@ -28,22 +28,22 @@ repos:
       - id: black
         language_version: python3
 
-  # Also format docstrings in a consistent way, on top of 'black' requirements
-  # with the aim to auto-correct towards the Google docstring format (see
-  # https://google.github.io/styleguide/pyguide.html#381-docstrings) as much
-  # as possible (see https://github.com/myint/docformatter for docs, with
-  # configuration as below)
-#  - repo: https://github.com/myint/docformatter
-  - repo: https://github.com/PyCQA/docformatter
-    rev: v1.7.8
-    hooks:
-      - id: docformatter
-        # These arguments act as the configuration for docformatter. They:
-        # * make docformatter auto-format in-place if not compliant;
-        # * ensure there is a blank line after the final non-empty line;
-        # * wraps both summary and description at 72 characters (the latter
-        #   by default).
-        args: [--in-place, --blank, --wrap-summaries=72]
+  # # Also format docstrings in a consistent way, on top of 'black' requirements
+  # # with the aim to auto-correct towards the Google docstring format (see
+  # # https://google.github.io/styleguide/pyguide.html#381-docstrings) as much
+  # # as possible (see https://github.com/myint/docformatter for docs, with
+  # # configuration as below)
+  # #  - repo: https://github.com/myint/docformatter
+  # - repo: https://github.com/PyCQA/docformatter
+  #   rev: v1.7.8
+  #   hooks:
+  #     - id: docformatter
+  #       # These arguments act as the configuration for docformatter. They:
+  #       # * make docformatter auto-format in-place if not compliant;
+  #       # * ensure there is a blank line after the final non-empty line;
+  #       # * wraps both summary and description at 72 characters (the latter
+  #       #   by default).
+  #       args: [--black, --in-place, --blank, --wrap-summaries=72]
 
   # Check the docstrings conforms to Google docstring format as much as can
   # be detected by the 'pydocstyle' checker
