@@ -35,7 +35,7 @@ repos:
   # configuration as below)
 #  - repo: https://github.com/myint/docformatter
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.7.6
+    rev: v1.7.8
     hooks:
       - id: docformatter
         # These arguments act as the configuration for docformatter. They:
