@@ -24,8 +24,7 @@ _STD_NAME_CURRENT_XML_URL = (
 
 
 def _extract_names_from_xml(snames_xml, include_aliases):
-    """Extract standard names from a valid Standard Name Table XML
-    document.
+    """Extract all names from a valid Standard Name Table XML document.
 
     Whether or not to include registered aliases is dependent on the value
     of the `include_aliases` flag.
@@ -73,8 +72,7 @@ def _extract_names_from_xml(snames_xml, include_aliases):
 
 @lru_cache
 def get_all_current_standard_names(include_aliases=False):
-    """Get a list of all CF Standard Names from the current version
-    table.
+    """Get list of all CF Standard Names from the current table.
 
     Entries are always returned from the current table. By default aliases
     are not included in the output but can also be included by setting the
