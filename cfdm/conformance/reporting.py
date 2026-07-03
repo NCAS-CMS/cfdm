@@ -24,6 +24,7 @@ class Report:
     """
 
     def __init__(self):
+        """**Initialisation**"""
         self.read_vars = {}  # intended to be overloaded by NetCDFRead
 
         # Reporting stores

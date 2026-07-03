@@ -2,6 +2,7 @@ class NonConformanceCase:
     """Describes a case of CF Conventions non-conformance."""
 
     def __init__(self, reason, code):
+        """**Initialisation**"""
         if (
             not reason
             or not code
@@ -42,6 +43,7 @@ class AttributeNonConformance:
         variables=None,
         dimensions=None,
     ):
+        """**Initialisation**"""
         if not name and not isinstance(name, str):
             raise ValueError("Attribute name (a string) is required.")
 
@@ -145,6 +147,7 @@ class DimensionNonConformance:
     """Non-conformances related to a netCDF dimension."""
 
     def __init__(self, name, size=None, non_conformances=None, variables=None):
+        """**Initialisation**"""
         if not name and not isinstance(name, str):
             raise ValueError("Dimension name (a string) is required.")
 
@@ -231,6 +234,7 @@ class VariableNonConformance:
         attributes=None,
         dimensions=None,
     ):
+        """**Initialisation**"""
         if not name and not isinstance(name, str):
             raise ValueError("Variable name (a string) is required.")
 

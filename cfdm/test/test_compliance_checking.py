@@ -45,8 +45,6 @@ def _create_noncompliant_names_fields(
         # Process mesh-related variables for UGRID special case (see below)
         mesh_related = set()
         if "mesh" in nc.variables:
-            mesh = nc.variables["mesh"]
-
             # Collect all variables referenced by the mesh variable
             vars_collection = ["mesh"]
 
