@@ -1,3 +1,14 @@
+Version 1.13.2.1
+----------------
+
+**2026-07-06**
+
+* Fix bug that prevented some datasets being read due to `cfdm.read`
+  hitting a `TypeError`
+  (https://github.com/NCAS-CMS/cfdm/pull/410)
+
+----
+
 Version 1.13.2.0
 ----------------
 
