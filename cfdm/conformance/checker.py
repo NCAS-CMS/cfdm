@@ -28,8 +28,7 @@ class FieldChecker(Report):
     # --------------------- New methods from PR #373 ------------------------
 
     def _check_standard_name_modifier(self, standard_name):
-        """True if a (computed) standard name has a valid modifier, or
-        none.
+        """True if a valid modifier or none for a (computed) standard name.
 
         Also return the standard name with modifiers stripped, as the second
         tuple item.

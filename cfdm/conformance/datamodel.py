@@ -2,6 +2,7 @@ class NonConformanceCase:
     """Describes a case of CF Conventions non-conformance."""
 
     def __init__(self, reason, code):
+        """**Initialisation**"""
         if (
             not reason
             or not code
@@ -42,6 +43,7 @@ class AttributeNonConformance:
         variables=None,
         dimensions=None,
     ):
+        """**Initialisation**"""
         if not name and not isinstance(name, str):
             raise ValueError("Attribute name (a string) is required.")
 
@@ -71,18 +73,15 @@ class AttributeNonConformance:
         self.dimensions = dimensions or []
 
     def set_variables(self, variables):
-        """Set variables associated with the attribute's non-
-        compliance."""
+        """Set variables associated with attribute's non-compliance."""
         self.variables = variables
 
     def set_dimensions(self, dimensions):
-        """Set dimensions associated with the attribute's non-
-        compliance."""
+        """Set dimensions associated with attribute's non-compliance."""
         self.dimensions = dimensions
 
     def add_variable(self, var):
-        """Append a variable relating to the attribute's non-
-        compliance."""
+        """Append a variable relating to attribute's non-compliance."""
         # Ensure attribute has a list to store objects
         if not hasattr(self, "variables"):
             self.variables = []
@@ -92,8 +91,7 @@ class AttributeNonConformance:
             self.variables.append(var)
 
     def add_dimension(self, dim):
-        """Append a dimension relating to the attribute's non-
-        compliance."""
+        """Append a dimension relating to attribute's non-compliance."""
         self.dimensions.append(dim)
 
     def todict(self):
@@ -145,6 +143,7 @@ class DimensionNonConformance:
     """Non-conformances related to a netCDF dimension."""
 
     def __init__(self, name, size=None, non_conformances=None, variables=None):
+        """**Initialisation**"""
         if not name and not isinstance(name, str):
             raise ValueError("Dimension name (a string) is required.")
 
@@ -171,13 +170,11 @@ class DimensionNonConformance:
         self.variables = variables or []
 
     def set_variables(self, variables):
-        """Set variables associated with the dimension's non-
-        compliance."""
+        """Set variables associated with dimension's non-compliance."""
         self.variables = variables
 
     def add_variable(self, var):
-        """Append a variable relating to the dimension's non-
-        compliance."""
+        """Append a variable relating to dimension's non-compliance."""
         self.variables.append(var)
         return var
 
@@ -231,6 +228,7 @@ class VariableNonConformance:
         attributes=None,
         dimensions=None,
     ):
+        """**Initialisation**"""
         if not name and not isinstance(name, str):
             raise ValueError("Variable name (a string) is required.")
 
@@ -248,18 +246,15 @@ class VariableNonConformance:
         return None
 
     def set_attributes(self, attributes):
-        """Set attributes associated with the variable's non-
-        compliance."""
+        """Set attributes associated with variable's non-compliance."""
         self.attributes = attributes
 
     def set_dimensions(self, dimensions):
-        """Set dimensions associated with the variable's non-
-        compliance."""
+        """Set dimensions associated with variable's non-compliance."""
         self.dimensions = dimensions
 
     def add_attribute(self, attr):
-        """Append an attribute relating to the variable's non-
-        compliance."""
+        """Append an attribute relating to variable's non-compliance."""
         # Check if already there first
         for attrib in self.attributes:
             if attrib.equals(attr):
@@ -269,13 +264,11 @@ class VariableNonConformance:
         return attr
 
     def add_dimension(self, dim):
-        """Append a dimension relating to the variable's non-
-        compliance."""
+        """Append a dimension relating to variable's non-compliance."""
         self.dimensions.append(dim)
 
     def todict(self):
-        """Report the variable non-compliance in dictionary fragment
-        form.
+        """Report the variable non-compliance in dictionary form.
 
         For a more concise dict with class-based value representation,
         see repr().

@@ -16,14 +16,14 @@ logger = logging.getLogger(__name__)
 
 
 class Report:
-    """Reporting of CF Compliance non-conformance for field creation
-    from netCDF.
+    """CF Conventions conformance report for field creation from netCDF.
 
     Holds methods for reporting about non-compliance.
 
     """
 
     def __init__(self):
+        """**Initialisation**"""
         self.read_vars = {}  # intended to be overloaded by NetCDFRead
 
         # Reporting stores
@@ -31,8 +31,7 @@ class Report:
         self.variable_report = []
 
     def _process_dimension_sizes(self, ncvar):
-        """Process dimension sizes to report in issues with
-        dimensions."""
+        """Process dimension sizes to report in issues with dimensions."""
         # NOTE: not actually used yet, but will be when issues with Dimensions
         # are incorporated into the new Conformance Data Model.
         g = self.read_vars
@@ -261,8 +260,7 @@ class Report:
                 existing_attr.add_variable(ncvar_nc)
 
     def _get_variable_non_compliance_report(self, var):
-        """Return if present a Variable NonCompliance from the
-        report."""
+        """Return if present a Variable NonCompliance from the report."""
         for variable in self.variable_report:
             if variable.name == var:
                 return variable
@@ -270,8 +268,7 @@ class Report:
         return False
 
     def _get_variable_non_compliance(self, var):
-        """Return an existing else new Variable NonCompliance for a
-        variable."""
+        """Return the Variable NonCompliance for a variable."""
         var_nc = self._get_variable_non_compliance_report(var)
 
         if not var_nc:

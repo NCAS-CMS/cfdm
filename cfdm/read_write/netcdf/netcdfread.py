@@ -159,6 +159,7 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
     }
 
     def __init__(self, implementation=None):
+        """**Initialisation**"""
         FieldChecker.__init__(self)
         self.implementation = implementation  # from IORead
 

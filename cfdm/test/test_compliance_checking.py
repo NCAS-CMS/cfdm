@@ -35,8 +35,7 @@ atexit.register(_remove_tmpfiles)
 def _create_noncompliant_names_fields(
     compliant_field, temp_file, ugrid_case=False
 ):
-    """Create a copy of a field with bad standard names on all
-    variables."""
+    """Create a field copy with bad standard names across variables."""
     cfdm.write(compliant_field, temp_file)
 
     with Dataset(temp_file, "r+") as nc:
@@ -45,8 +44,6 @@ def _create_noncompliant_names_fields(
         # Process mesh-related variables for UGRID special case (see below)
         mesh_related = set()
         if "mesh" in nc.variables:
-            mesh = nc.variables["mesh"]
-
             # Collect all variables referenced by the mesh variable
             vars_collection = ["mesh"]
 
@@ -248,8 +245,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         )
 
     def test_get_all_current_standard_names(self):
-        """Test the `conformance.get_all_current_standard_names`
-        function."""
+        """Test `conformance.get_all_current_standard_names` function."""
         # First check the URL used is actually available in case of issues
         # arising in case GitHub endpoints go down
         sn_xml_url = cfdm.conformance._STD_NAME_CURRENT_XML_URL
@@ -317,8 +313,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertEqual(dc_output, {"CF version": self.expected_cf_version})
 
     def test_standard_names_validation_noncompliant_field(self):
-        """Test compliance checking on a non-compliant non-UGRID
-        field."""
+        """Test non-compliant non-UGRID field compliance checking."""
         f = self.bad_snames_general_field
         dc_output = f.dataset_compliance()
 
