@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cfdm.index &#8212; Documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=541523b4" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=61cd365c" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=dae86f6c"></script>
+    <script src="../_static/documentation_options.js?v=f2359e6a"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -22,18 +22,19 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.2.1</a></h1>
 
 
 
@@ -122,7 +123,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.index.Index">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.index.</span></span><span class="sig-name descname"><span class="pre">Index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/index.py#L4-L97"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.index.</span></span><span class="sig-name descname"><span class="pre">Index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/index.py#L4-L103"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFSampleDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Files</span></code>, <a class="reference internal" href="cfdm.core.PropertiesData.html#cfdm.core.PropertiesData" title="cfdm.core.abstract.propertiesdata.PropertiesData"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertiesData</span></code></a></p>
 <p>An index variable required to uncompress a ragged array.</p>
 <p>A collection of features stored using an indexed ragged array
@@ -209,7 +210,7 @@ parameters are not deep copied.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.apply_masking">
-<span class="sig-name descname"><span class="pre">apply_masking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.apply_masking" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">apply_masking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.apply_masking" title="Link to this definition">¶</a></dt>
 <dd><p>Apply masking as defined by the CF conventions.</p>
 <p>Masking is applied according to any of the following criteria that
 are applicable:</p>
@@ -280,7 +281,7 @@ operation was in-place.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.clear_properties">
-<span class="sig-name descname"><span class="pre">clear_properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/properties.py#L43-L81"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.clear_properties" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">clear_properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/properties.py#L44-L82"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.clear_properties" title="Link to this definition">¶</a></dt>
 <dd><p>Remove all properties.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -324,7 +325,7 @@ operation was in-place.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.concatenate">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">concatenate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cull_graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relaxed_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L347-L399"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.concatenate" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">concatenate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cull_graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relaxed_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L356-L408"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.concatenate" title="Link to this definition">¶</a></dt>
 <dd><p>Join a together sequence of <cite>Index</cite>.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
@@ -376,7 +377,7 @@ faster.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/propertiesdata.py#L329-L360"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.copy" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/propertiesdata.py#L329-L360"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.copy" title="Link to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
 <p>Arrays within <cite>Data</cite> instances are copied with a
@@ -412,7 +413,7 @@ data is not copied.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.creation_commands">
-<span class="sig-name descname"><span class="pre">creation_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">representative_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'c'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantization_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'q'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L401-L521"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.creation_commands" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">creation_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">representative_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'c'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantization_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'q'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L410-L530"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.creation_commands" title="Link to this definition">¶</a></dt>
 <dd><p>Return the commands that would create the construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.8.7.0</p>
@@ -498,7 +499,7 @@ separate commands are returned as each element of a
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.del_data">
-<span class="sig-name descname"><span class="pre">del_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/propertiesdata.py#L362-L405"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.del_data" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">del_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/propertiesdata.py#L362-L405"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.del_data" title="Link to this definition">¶</a></dt>
 <dd><p>Remove the data.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -550,7 +551,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.del_properties">
-<span class="sig-name descname"><span class="pre">del_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">properties</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/properties.py#L138-L191"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.del_properties" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">del_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">properties</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/properties.py#L139-L192"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.del_properties" title="Link to this definition">¶</a></dt>
 <dd><p>Remove properties.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.10.0.3</p>
@@ -602,7 +603,7 @@ that property is ignored. No properties are removed if
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.del_property">
-<span class="sig-name descname"><span class="pre">del_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/properties.py#L83-L136"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.del_property" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">del_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/properties.py#L84-L137"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.del_property" title="Link to this definition">¶</a></dt>
 <dd><p>Remove a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -653,16 +654,33 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.dump">
-<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">display</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_create_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_omit_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_axis_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/index.py#L54-L97"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.dump" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_create_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_omit_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_axis_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/index.py#L54-L103"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.dump" title="Link to this definition">¶</a></dt>
 <dd><p>A full description of the index variable.</p>
 <p>Returns a description of all properties, including those of
 components, and provides selected values of all data arrays.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
 </div>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
+<dd class="field-odd"><dl>
+<dt>data: <cite>bool</cite> or <cite>None</cite>, optional</dt><dd><p>If True then show the first and last data elements
+(and possibly others, depending on the data shape)
+when displaying data. This can take a long time if
+getting these data elements needs an expensive
+computation, possibly including a slow read from local
+or remote disk.</p>
+<p>If False then do not show such data elements, <em>unless
+data elements have been previously cached</em>, thereby
+avoiding a potentially high computational cost.</p>
+<p>If <cite>None</cite> (the default) then the value of <em>data</em> will
+be taken from the <cite>cfdm.display_data</cite> function.</p>
+<p>Note that whenever data elements are displayed, they
+are cached for fast future retrieval.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.0.0</p>
+</div>
+</dd>
 <dt>display: <cite>bool</cite>, optional</dt><dd><p>If False then return the description as a string. By
 default the description is printed.</p>
 </dd>
@@ -682,7 +700,7 @@ string.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.equals">
-<span class="sig-name descname"><span class="pre">equals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/decorators.py#L117-L190"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.equals" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">equals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/decorators.py#L117-L190"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.equals" title="Link to this definition">¶</a></dt>
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -766,8 +784,8 @@ are within the tolerance for equality.</p>
 <dt>ignore_compression: <cite>bool</cite>, optional</dt><dd><p>If False then the compression type and, if applicable,
 the underlying compressed arrays must be the same, as
 well as the arrays in their uncompressed forms. By
-default only the the arrays in their uncompressed
-forms are compared.</p>
+default only the arrays in their uncompressed forms
+are compared.</p>
 </dd>
 <dt>ignore_type: <cite>bool</cite>, optional</dt><dd><p>Any type of object may be tested but, in general,
 equality is only possible with another <cite>Index</cite>
@@ -798,7 +816,7 @@ tested, rather than the <code class="docutils literal notranslate"><span class="
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.file_directories">
-<span class="sig-name descname"><span class="pre">file_directories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L752-L776"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.file_directories" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">file_directories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L768-L792"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.file_directories" title="Link to this definition">¶</a></dt>
 <dd><p>The directories of files containing parts of the data.</p>
 <p>Returns the locations of any files referenced by the data.</p>
 <div class="versionadded">
@@ -825,7 +843,7 @@ tested, rather than the <code class="docutils literal notranslate"><span class="
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.get_data">
-<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/propertiesdata.py#L407-L490"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_data" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/propertiesdata.py#L407-L490"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_data" title="Link to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
 <p>Note that a <cite>Data</cite> instance is returned. Use its <cite>array</cite> attribute
 to return the data as an independent <cite>numpy</cite> array.</p>
@@ -882,7 +900,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.get_filenames">
-<span class="sig-name descname"><span class="pre">get_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L778-L797"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_filenames" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L794-L813"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_filenames" title="Link to this definition">¶</a></dt>
 <dd><p>Return the name of the file or files containing the data.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -906,7 +924,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.get_original_filenames">
-<span class="sig-name descname"><span class="pre">get_original_filenames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/files.py#L138-L151"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_original_filenames" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_original_filenames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/files.py#L151-L164"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_original_filenames" title="Link to this definition">¶</a></dt>
 <dd><p>The names of files containing the original data and metadata.</p>
 <p>The original files are those that contain some or all of the
 data and metadata when it was first instantiated, and are
@@ -938,7 +956,7 @@ form. If there are no original files then an empty
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.get_property">
-<span class="sig-name descname"><span class="pre">get_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/properties.py#L193-L246"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_property" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/properties.py#L194-L247"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_property" title="Link to this definition">¶</a></dt>
 <dd><p>Return a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -989,7 +1007,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.get_quantization">
-<span class="sig-name descname"><span class="pre">get_quantization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L799-L835"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_quantization" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_quantization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L815-L851"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_quantization" title="Link to this definition">¶</a></dt>
 <dd><p>Get quantization metadata.</p>
 <p>Quantization eliminates false precision, usually by rounding
 the least significant bits of floating-point mantissas to
@@ -1024,7 +1042,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.get_quantize_on_write">
-<span class="sig-name descname"><span class="pre">get_quantize_on_write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L837-L874"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_quantize_on_write" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_quantize_on_write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L853-L890"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.get_quantize_on_write" title="Link to this definition">¶</a></dt>
 <dd><p>Get a quantize-on-write instruction.</p>
 <p>Quantization eliminates false precision, usually by rounding
 the least significant bits of floating-point mantissas to
@@ -1059,7 +1077,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.has_bounds">
-<span class="sig-name descname"><span class="pre">has_bounds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/propertiesdata.py#L492-L513"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.has_bounds" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">has_bounds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/propertiesdata.py#L492-L513"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.has_bounds" title="Link to this definition">¶</a></dt>
 <dd><p>Whether or not there are cell bounds.</p>
 <p>This is always False.</p>
 <div class="versionadded">
@@ -1087,7 +1105,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.has_data">
-<span class="sig-name descname"><span class="pre">has_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/propertiesdata.py#L515-L550"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.has_data" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">has_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/propertiesdata.py#L515-L550"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.has_data" title="Link to this definition">¶</a></dt>
 <dd><p>Whether or not the construct has data.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1130,7 +1148,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.has_property">
-<span class="sig-name descname"><span class="pre">has_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/properties.py#L290-L329"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.has_property" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">has_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/properties.py#L291-L330"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.has_property" title="Link to this definition">¶</a></dt>
 <dd><p>Whether a property has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1179,7 +1197,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.identities">
-<span class="sig-name descname"><span class="pre">identities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/properties.py#L437-L498"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.identities" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">identities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/properties.py#L437-L498"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.identities" title="Link to this definition">¶</a></dt>
 <dd><p>Return all possible identities.</p>
 <p>The identities comprise:</p>
 <ul class="simple">
@@ -1246,7 +1264,7 @@ by subclasses.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.identity">
-<span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/properties.py#L368-L435"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.identity" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/properties.py#L368-L435"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.identity" title="Link to this definition">¶</a></dt>
 <dd><p>Return the canonical identity.</p>
 <p>By default the identity is the first found of the following:</p>
 <ul class="simple">
@@ -1307,7 +1325,7 @@ default parameter.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.insert_dimension">
-<span class="sig-name descname"><span class="pre">insert_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.insert_dimension" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">insert_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.insert_dimension" title="Link to this definition">¶</a></dt>
 <dd><p>Expand the shape of the data array.</p>
 <p>Inserts a new size 1 axis into the data array.</p>
 <div class="versionadded">
@@ -1357,7 +1375,7 @@ operation was in-place then <cite>None</cite> is returned.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_clear_dataset_chunksizes">
-<span class="sig-name descname"><span class="pre">nc_clear_dataset_chunksizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L926-L944"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_clear_dataset_chunksizes" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_clear_dataset_chunksizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L942-L960"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_clear_dataset_chunksizes" title="Link to this definition">¶</a></dt>
 <dd><p>Clear the dataset chunking strategy for the data.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.2.0</p>
@@ -1381,7 +1399,7 @@ be returned by <cite>nc_dataset_chunksizes</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_clear_dimension_groups">
-<span class="sig-name descname"><span class="pre">nc_clear_dimension_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L731-L782"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_clear_dimension_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_clear_dimension_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L729-L780"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_clear_dimension_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Remove the netCDF dimension group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -1435,7 +1453,7 @@ with no <code class="docutils literal notranslate"><span class="pre">/</span></c
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_clear_hdf5_chunksizes">
-<span class="sig-name descname"><span class="pre">nc_clear_hdf5_chunksizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L946-L961"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_clear_hdf5_chunksizes" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_clear_hdf5_chunksizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L962-L977"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_clear_hdf5_chunksizes" title="Link to this definition">¶</a></dt>
 <dd><p>Clear the HDF5 chunking strategy for the data.</p>
 <p>Deprecated at version 1.12.2.0 and is no longer
 available. Use <cite>nc_clear_dataset_chunksizes</cite> instead.</p>
@@ -1446,7 +1464,7 @@ available. Use <cite>nc_clear_dataset_chunksizes</cite> instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_clear_sample_dimension_groups">
-<span class="sig-name descname"><span class="pre">nc_clear_sample_dimension_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L1411-L1462"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_clear_sample_dimension_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_clear_sample_dimension_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L1409-L1460"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_clear_sample_dimension_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Remove the netCDF sample dimension group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -1500,7 +1518,7 @@ with no <code class="docutils literal notranslate"><span class="pre">/</span></c
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_clear_variable_groups">
-<span class="sig-name descname"><span class="pre">nc_clear_variable_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L1051-L1102"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_clear_variable_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_clear_variable_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L1049-L1100"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_clear_variable_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Remove the netCDF variable group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -1554,7 +1572,7 @@ no <code class="docutils literal notranslate"><span class="pre">/</span></code> 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_dataset_chunksizes">
-<span class="sig-name descname"><span class="pre">nc_dataset_chunksizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L980-L1000"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_dataset_chunksizes" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_dataset_chunksizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L996-L1016"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_dataset_chunksizes" title="Link to this definition">¶</a></dt>
 <dd><p>Get the dataset chunking strategy for the data.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.2.0</p>
@@ -1617,7 +1635,7 @@ methods that change the data shape (such as
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_del_dimension">
-<span class="sig-name descname"><span class="pre">nc_del_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L473-L510"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_del_dimension" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_del_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L471-L508"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_del_dimension" title="Link to this definition">¶</a></dt>
 <dd><p>Remove the netCDF dimension name.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1663,7 +1681,7 @@ netCDF dimension name has not been set. If set to an
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_del_sample_dimension">
-<span class="sig-name descname"><span class="pre">nc_del_sample_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L1112-L1160"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_del_sample_dimension" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_del_sample_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L1110-L1158"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_del_sample_dimension" title="Link to this definition">¶</a></dt>
 <dd><p>Remove the netCDF sample dimension name.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1711,7 +1729,7 @@ instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_del_variable">
-<span class="sig-name descname"><span class="pre">nc_del_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L792-L829"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_del_variable" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_del_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L790-L827"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_del_variable" title="Link to this definition">¶</a></dt>
 <dd><p>Remove the netCDF variable name.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1757,7 +1775,7 @@ netCDF variable name has not been set. If set to an
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_dimension_groups">
-<span class="sig-name descname"><span class="pre">nc_dimension_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L626-L670"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_dimension_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_dimension_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L624-L668"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_dimension_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Return the netCDF dimension group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -1809,7 +1827,7 @@ root group.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_get_dimension">
-<span class="sig-name descname"><span class="pre">nc_get_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L512-L549"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_get_dimension" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_get_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L510-L547"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_get_dimension" title="Link to this definition">¶</a></dt>
 <dd><p>Return the netCDF dimension name.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1855,7 +1873,7 @@ netCDF dimension name has not been set. If set to an
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_get_sample_dimension">
-<span class="sig-name descname"><span class="pre">nc_get_sample_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L1162-L1209"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_get_sample_dimension" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_get_sample_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L1160-L1207"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_get_sample_dimension" title="Link to this definition">¶</a></dt>
 <dd><p>Return the netCDF sample dimension name.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1902,7 +1920,7 @@ instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_get_variable">
-<span class="sig-name descname"><span class="pre">nc_get_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L831-L869"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_get_variable" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_get_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L829-L867"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_get_variable" title="Link to this definition">¶</a></dt>
 <dd><p>Return the netCDF variable name.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1949,7 +1967,7 @@ returned, if provided.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_has_dimension">
-<span class="sig-name descname"><span class="pre">nc_has_dimension</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L551-L582"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_has_dimension" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_has_dimension</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L549-L580"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_has_dimension" title="Link to this definition">¶</a></dt>
 <dd><p>Whether the netCDF dimension name has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1988,7 +2006,7 @@ otherwise <cite>False</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_has_sample_dimension">
-<span class="sig-name descname"><span class="pre">nc_has_sample_dimension</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L1211-L1242"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_has_sample_dimension" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_has_sample_dimension</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L1209-L1240"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_has_sample_dimension" title="Link to this definition">¶</a></dt>
 <dd><p>Whether the netCDF sample dimension name has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -2027,7 +2045,7 @@ otherwise <cite>False</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_has_variable">
-<span class="sig-name descname"><span class="pre">nc_has_variable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L871-L902"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_has_variable" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_has_variable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L869-L900"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_has_variable" title="Link to this definition">¶</a></dt>
 <dd><p>Whether the netCDF variable name has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -2066,7 +2084,7 @@ otherwise <cite>False</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_hdf5_chunksizes">
-<span class="sig-name descname"><span class="pre">nc_hdf5_chunksizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L963-L978"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_hdf5_chunksizes" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_hdf5_chunksizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">todict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L979-L994"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_hdf5_chunksizes" title="Link to this definition">¶</a></dt>
 <dd><p>Get the HDF5 chunking strategy for the data.</p>
 <p>Deprecated at version 1.12.2.0 and is no longer
 available. Use <cite>nc_dataset_chunksizes</cite> instead.</p>
@@ -2077,7 +2095,7 @@ available. Use <cite>nc_dataset_chunksizes</cite> instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_sample_dimension_groups">
-<span class="sig-name descname"><span class="pre">nc_sample_dimension_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L1306-L1350"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_sample_dimension_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_sample_dimension_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L1304-L1348"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_sample_dimension_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Return the netCDF sample dimension group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -2129,7 +2147,7 @@ root group.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_set_dataset_chunksizes">
-<span class="sig-name descname"><span class="pre">nc_set_dataset_chunksizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chunksizes</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L1002-L1025"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_dataset_chunksizes" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_set_dataset_chunksizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chunksizes</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L1018-L1041"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_dataset_chunksizes" title="Link to this definition">¶</a></dt>
 <dd><p>Set the dataset chunking strategy.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.2.0</p>
@@ -2206,7 +2224,7 @@ axis by its position in the data array.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_set_dimension">
-<span class="sig-name descname"><span class="pre">nc_set_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L584-L624"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_dimension" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_set_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L582-L622"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_dimension" title="Link to this definition">¶</a></dt>
 <dd><p>Set the netCDF dimension name.</p>
 <p>If there are any <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name
 then these act as delimiters for a group hierarchy. By
@@ -2252,7 +2270,7 @@ group.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_set_dimension_groups">
-<span class="sig-name descname"><span class="pre">nc_set_dimension_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L672-L729"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_dimension_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_set_dimension_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L670-L727"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_dimension_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Set the netCDF dimension group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -2312,7 +2330,7 @@ the group structure delimited by <code class="docutils literal notranslate"><spa
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_set_hdf5_chunksizes">
-<span class="sig-name descname"><span class="pre">nc_set_hdf5_chunksizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chunksizes</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L1027-L1042"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_hdf5_chunksizes" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_set_hdf5_chunksizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chunksizes</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L1043-L1058"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_hdf5_chunksizes" title="Link to this definition">¶</a></dt>
 <dd><p>Set the HDF5 chunking strategy.</p>
 <p>Deprecated at version 1.12.2.0 and is no longer
 available. Use <cite>nc_set_dataset_chunksizes</cite> instead.</p>
@@ -2323,7 +2341,7 @@ available. Use <cite>nc_set_dataset_chunksizes</cite> instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_set_sample_dimension">
-<span class="sig-name descname"><span class="pre">nc_set_sample_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L1244-L1304"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_sample_dimension" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_set_sample_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L1242-L1302"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_sample_dimension" title="Link to this definition">¶</a></dt>
 <dd><p>Set the netCDF sample dimension name.</p>
 <p>If there are any <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name
 then these act as delimiters for a group hierarchy. By
@@ -2369,7 +2387,7 @@ group.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_set_sample_dimension_groups">
-<span class="sig-name descname"><span class="pre">nc_set_sample_dimension_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L1352-L1409"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_sample_dimension_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_set_sample_dimension_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L1350-L1407"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_sample_dimension_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Set the netCDF sample dimension group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -2429,7 +2447,7 @@ the group structure delimited by <code class="docutils literal notranslate"><spa
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_set_variable">
-<span class="sig-name descname"><span class="pre">nc_set_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L904-L944"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_variable" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_set_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L902-L942"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_variable" title="Link to this definition">¶</a></dt>
 <dd><p>Set the netCDF variable name.</p>
 <p>If there are any <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name
 then these act as delimiters for a group hierarchy. By
@@ -2475,7 +2493,7 @@ group.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_set_variable_groups">
-<span class="sig-name descname"><span class="pre">nc_set_variable_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L992-L1049"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_variable_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_set_variable_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L990-L1047"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_set_variable_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Set the netCDF variable group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -2535,7 +2553,7 @@ group structure delimited by <code class="docutils literal notranslate"><span cl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.nc_variable_groups">
-<span class="sig-name descname"><span class="pre">nc_variable_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/netcdf.py#L946-L990"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_variable_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_variable_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/netcdf.py#L944-L988"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.nc_variable_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Return the netCDF variable group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -2587,11 +2605,11 @@ root group.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.persist">
-<span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.persist" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.persist" title="Link to this definition">¶</a></dt>
 <dd><p>Persist data into memory.</p>
 <p>Persisting turns an underlying lazy dask array into an
 equivalent chunked dask array, but now with the results fully
-computed and in memory. This can avoid the expense of
+computed and cached in memory. This can avoid the expense of
 re-reading the data from disk, or re-computing it, when the
 data is accessed on multiple occasions.</p>
 <p><strong>Performance</strong></p>
@@ -2624,7 +2642,7 @@ was in-place then <cite>None</cite> is returned.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.properties">
-<span class="sig-name descname"><span class="pre">properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/properties.py#L331-L367"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.properties" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/properties.py#L332-L368"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.properties" title="Link to this definition">¶</a></dt>
 <dd><p>Return all properties.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -2668,7 +2686,7 @@ was in-place then <cite>None</cite> is returned.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.replace_directory">
-<span class="sig-name descname"><span class="pre">replace_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/mixin/propertiesdata.py#L1078-L1112"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.replace_directory" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">replace_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/mixin/propertiesdata.py#L1094-L1128"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.replace_directory" title="Link to this definition">¶</a></dt>
 <dd><p>Replace a file directory in-place.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
@@ -2708,7 +2726,7 @@ all files with <em>new</em>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.set_data">
-<span class="sig-name descname"><span class="pre">set_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/propertiesdata.py#L552-L624"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.set_data" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/propertiesdata.py#L552-L624"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.set_data" title="Link to this definition">¶</a></dt>
 <dd><p>Set the data.</p>
 <p>The units, calendar and fill value of the incoming <cite>Data</cite> instance
 are removed prior to insertion.</p>
@@ -2775,7 +2793,7 @@ new data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.set_properties">
-<span class="sig-name descname"><span class="pre">set_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">properties</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/properties.py#L369-L421"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.set_properties" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">properties</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/properties.py#L370-L422"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.set_properties" title="Link to this definition">¶</a></dt>
 <dd><p>Set properties.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -2829,7 +2847,7 @@ default they are deep copied.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.set_property">
-<span class="sig-name descname"><span class="pre">set_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/core/abstract/properties.py#L423-L467"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.set_property" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/core/abstract/properties.py#L424-L468"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.set_property" title="Link to this definition">¶</a></dt>
 <dd><p>Set a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -2875,7 +2893,7 @@ default they are deep copied.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.squeeze">
-<span class="sig-name descname"><span class="pre">squeeze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.squeeze" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">squeeze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.squeeze" title="Link to this definition">¶</a></dt>
 <dd><p>Remove size one axes from the data array.</p>
 <p>By default all size one axes are removed, but particular size
 one axes may be selected for removal.</p>
@@ -2934,7 +2952,7 @@ the operation was in-place then <cite>None</cite> is returned.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.to_memory">
-<span class="sig-name descname"><span class="pre">to_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.to_memory" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.to_memory" title="Link to this definition">¶</a></dt>
 <dd><p>Bring data on disk into memory.</p>
 <p>There is no change to data that is already in memory.</p>
 <dl class="field-list simple">
@@ -2956,7 +2974,7 @@ operation was in-place.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.transpose">
-<span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.transpose" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.transpose" title="Link to this definition">¶</a></dt>
 <dd><p>Permute the axes of the data array.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -3007,7 +3025,7 @@ was in-place then <cite>None</cite> is returned.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.index.Index.uncompress">
-<span class="sig-name descname"><span class="pre">uncompress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.uncompress" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">uncompress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.2.1/cfdm/decorators.py#L36-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.index.Index.uncompress" title="Link to this definition">¶</a></dt>
 <dd><p>Uncompress the construct.</p>
 <p>Whether or not the construct is compressed does not alter its
 functionality nor external appearance.</p>
@@ -3319,11 +3337,11 @@ constructs.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-08-18.
+      &#169;2026, NCAS | Page built on 2026-07-07.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
-      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
     </div>
 
