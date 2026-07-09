@@ -4,7 +4,9 @@ import faulthandler
 import os
 import tempfile
 import unittest
+from unittest.mock import patch  # not included as standard with module
 from urllib import request
+from urllib.error import URLError
 
 from netCDF4 import Dataset
 
@@ -312,6 +314,21 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         # This time the alias should be included
         self.assertIn("moles_of_cfc113_in_atmosphere", aliases_inc_output)
+
+    @patch("cfdm.conformance.standardnames.request.urlopen")
+    def test_get_all_current_standard_names_network_failure(
+        self, mock_urlopen
+    ):
+        """Test `get_all_current_standard_names` when resource unavailable."""
+        # Mock to represent the network going down so that the standard names
+        # table is not accessible
+        mock_urlopen.side_effect = URLError("Connection failed")
+
+        # Avoid previous tests populating the cache
+        get_all_current_standard_names.cache_clear()
+
+        output = get_all_current_standard_names()
+        self.assertEqual(output, frozenset())
 
     def test_standard_names_validation_compliant_field(self):
         """Test compliance checking on a compliant non-UGRID field."""

@@ -128,4 +128,4 @@ def get_all_current_standard_names(include_aliases=False):
             "Unable to retrieve CF standard names so skipping validation "
             f"against standard name table. Reason: {exc}",
         )
-        return {}
+        return frozenset()
