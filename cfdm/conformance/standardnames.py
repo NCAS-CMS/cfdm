@@ -1,10 +1,11 @@
 import logging
+import xml.etree.ElementTree as ET
 from functools import lru_cache
 
 # Prefer using built-in urllib to extract XML from cf-convention.github.io repo
 # over the 'github' module to use the GitHub API directly, because it avoids
 # the need for another dependency to the CF Data Tools.
-from urllib import request
+from urllib import error, request
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ _STD_NAME_CURRENT_XML_URL = (
     "cf-convention/cf-convention.github.io/refs/heads/main/Data/"
     "cf-standard-names/current/src/cf-standard-name-table.xml"
 )
+DEFAULT_TIMEOUT = 10  # seconds
 
 
 def _extract_names_from_xml(snames_xml, include_aliases):
@@ -52,9 +54,6 @@ def _extract_names_from_xml(snames_xml, include_aliases):
              requested.
 
     """
-    # To parse the XML - much better than using manual regex parsing
-    import xml.etree.ElementTree as ET
-
     root = ET.fromstring(snames_xml)
     # Want all <entry id="..."> elements. Note the regex this corresponds
     # to, from SLB older code, is 're.compile(r"<entry id=\"(.+)\">")' but
@@ -99,13 +98,32 @@ def get_all_current_standard_names(include_aliases=False):
         "Retrieving XML for set of current standard names from: ",
         _STD_NAME_CURRENT_XML_URL,
     )  # pragma: no cover
-    with request.urlopen(_STD_NAME_CURRENT_XML_URL) as response:
-        all_snames_xml = response.read()
 
-    logger.debug(
-        f"Successfully retrieved list of {len(all_snames_xml)} standard names"
-    )  # pragma: no cover
+    try:
+        with request.urlopen(
+            _STD_NAME_CURRENT_XML_URL,
+            timeout=DEFAULT_TIMEOUT,
+        ) as response:
+            all_snames_xml = response.read()
 
-    return _extract_names_from_xml(
-        all_snames_xml, include_aliases=include_aliases
-    )
+        logger.debug(
+            f"Successfully retrieved list of {len(all_snames_xml)} "
+            "standard names"
+        )  # pragma: no cover
+
+        return _extract_names_from_xml(
+            all_snames_xml,
+            include_aliases=include_aliases,
+        )
+
+    except (
+        error.URLError,
+        error.HTTPError,
+        TimeoutError,
+        ET.ParseError,
+    ) as exc:
+        logger.warning(
+            "Unable to retrieve CF standard names so skipping validation "
+            f"against standard name table. Reason: {exc}",
+        )
+        return []
