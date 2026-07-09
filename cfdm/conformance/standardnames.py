@@ -5,7 +5,7 @@ from functools import lru_cache
 # Prefer using built-in urllib to extract XML from cf-convention.github.io repo
 # over the 'github' module to use the GitHub API directly, because it avoids
 # the need for another dependency to the CF Data Tools.
-from urllib import error, request
+from urllib import request
 
 logger = logging.getLogger(__name__)
 
@@ -119,10 +119,10 @@ def get_all_current_standard_names(include_aliases=False):
         )
 
     except (
-        error.URLError,
-        error.HTTPError,
+        # urllib failures surface as OSError subclasses e.g. error.URLError
+        OSError,
         TimeoutError,
-        ET.ParseError,
+        ET.ParseError,  # TODO need care with this, could mask bugs in above
     ) as exc:
         logger.warning(
             "Unable to retrieve CF standard names so skipping validation "
