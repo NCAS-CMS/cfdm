@@ -201,7 +201,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         two_name_output = cfdm.conformance._extract_names_from_xml(
             two_name_table_start + table_end, include_aliases=False
         )
-        self.assertIsInstance(two_name_output, list)
+        self.assertIsInstance(two_name_output, frozenset)
         self.assertEqual(len(two_name_output), 2)
         self.assertIn(
             "acoustic_area_backscattering_strength_in_sea_water",
@@ -222,7 +222,7 @@ class ComplianceCheckingTest(unittest.TestCase):
             two_name_table_start + include_two_aliases + table_end,
             include_aliases=True,
         )
-        self.assertIsInstance(aliases_inc_output, list)
+        self.assertIsInstance(aliases_inc_output, frozenset)
         self.assertEqual(len(aliases_inc_output), 4)
         # Check all non-aliases are there, as per above output
         self.assertTrue(set(two_name_output).issubset(aliases_inc_output))
@@ -261,7 +261,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # name validation with a warning, in these cases.
 
         output = cfdm.conformance.get_all_current_standard_names()
-        self.assertIsInstance(output, list)
+        self.assertIsInstance(output, frozenset)
 
         # The function gets the current table so we can't know exactly how
         # many names there will be there going forward, but given there are
@@ -291,7 +291,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         aliases_inc_output = cfdm.conformance.get_all_current_standard_names(
             include_aliases=True
         )
-        self.assertIsInstance(aliases_inc_output, list)
+        self.assertIsInstance(aliases_inc_output, frozenset)
 
         # As with above length check, can't be sure of eact amount as it
         # changes but we can safely put a lower limit on it. At time of

@@ -48,8 +48,8 @@ def _extract_names_from_xml(snames_xml, include_aliases):
 
      :Returns:
 
-         `list`
-             A list of all CF Conventions standard names in the
+         `frozenset`
+             A set of all CF Conventions standard names in the
              given version of the table, including aliases if
              requested.
 
@@ -58,15 +58,17 @@ def _extract_names_from_xml(snames_xml, include_aliases):
     # Want all <entry id="..."> elements. Note the regex this corresponds
     # to, from SLB older code, is 're.compile(r"<entry id=\"(.+)\">")' but
     # using the ElementTree is a much more robust means to extract
-    all_standard_names = [
+    all_standard_names = {
         entry.attrib["id"] for entry in root.findall(".//entry")
-    ]
+    }
     if include_aliases:
-        all_standard_names += [
+        all_standard_names.update(
             entry.attrib["id"] for entry in root.findall(".//alias")
-        ]
+        )
 
-    return all_standard_names
+    # Set is more performant than a list for membership testing, so convert.
+    # Use a frozen set form so users can't edit it (by mistake or otherwise!).
+    return frozenset(all_standard_names)
 
 
 @lru_cache
@@ -88,8 +90,8 @@ def get_all_current_standard_names(include_aliases=False):
 
      :Returns:
 
-         `list`
-             A list of all CF Conventions standard names in the
+         `frozenset`
+             A set of all CF Conventions standard names in the
              current version of the table, including aliases if
              requested.
 
@@ -126,4 +128,4 @@ def get_all_current_standard_names(include_aliases=False):
             "Unable to retrieve CF standard names so skipping validation "
             f"against standard name table. Reason: {exc}",
         )
-        return []
+        return {}
