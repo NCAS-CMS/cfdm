@@ -22,7 +22,7 @@ _STD_NAME_CURRENT_XML_URL = (
     "cf-convention/cf-convention.github.io/refs/heads/main/Data/"
     "cf-standard-names/current/src/cf-standard-name-table.xml"
 )
-DEFAULT_TIMEOUT = 10  # seconds
+DEFAULT_TIMEOUT = 5  # seconds
 
 
 def _extract_names_from_xml(snames_xml, include_aliases):
