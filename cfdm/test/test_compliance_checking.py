@@ -12,6 +12,13 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
+# Not exposed in public API so these need importing directly from sub-module
+from cfdm.conformance.standardnames import (
+    _STD_NAME_CURRENT_XML_URL,
+    _extract_names_from_xml,
+    get_all_current_standard_names,
+)
+
 n_tmpfiles = 3
 tmpfiles = [
     tempfile.mkstemp("_test_compliance_check.nc", dir=os.getcwd())[1]
@@ -198,7 +205,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         """
         table_end = "</standard_name_table>"
 
-        two_name_output = cfdm.conformance._extract_names_from_xml(
+        two_name_output = _extract_names_from_xml(
             two_name_table_start + table_end, include_aliases=False
         )
         self.assertIsInstance(two_name_output, frozenset)
@@ -212,13 +219,13 @@ class ComplianceCheckingTest(unittest.TestCase):
         # No aliases in this table therefore expect same output as before
         # when setting 'include_aliases=True'
         self.assertEqual(
-            cfdm.conformance._extract_names_from_xml(
+            _extract_names_from_xml(
                 two_name_table_start + table_end, include_aliases=True
             ),
             two_name_output,
         )
 
-        aliases_inc_output = cfdm.conformance._extract_names_from_xml(
+        aliases_inc_output = _extract_names_from_xml(
             two_name_table_start + include_two_aliases + table_end,
             include_aliases=True,
         )
@@ -237,7 +244,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # When setting 'include_aliases=True' should ignore the two aliases
         # in table so expect same as two_name_output
         self.assertEqual(
-            cfdm.conformance._extract_names_from_xml(
+            _extract_names_from_xml(
                 two_name_table_start + include_two_aliases + table_end,
                 include_aliases=False,
             ),
@@ -248,7 +255,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         """Test `conformance.get_all_current_standard_names` function."""
         # First check the URL used is actually available in case of issues
         # arising in case GitHub endpoints go down
-        sn_xml_url = cfdm.conformance._STD_NAME_CURRENT_XML_URL
+        sn_xml_url = _STD_NAME_CURRENT_XML_URL
         with request.urlopen(sn_xml_url) as response:
             self.assertEqual(
                 response.status,
@@ -260,7 +267,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # case that the URL isn't accessible? Ideally we can skip standard
         # name validation with a warning, in these cases.
 
-        output = cfdm.conformance.get_all_current_standard_names()
+        output = get_all_current_standard_names()
         self.assertIsInstance(output, frozenset)
 
         # The function gets the current table so we can't know exactly how
@@ -288,7 +295,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # of the above should not be in the list
         self.assertNotIn("moles_of_cfc113_in_atmosphere", output)
 
-        aliases_inc_output = cfdm.conformance.get_all_current_standard_names(
+        aliases_inc_output = get_all_current_standard_names(
             include_aliases=True
         )
         self.assertIsInstance(aliases_inc_output, frozenset)
