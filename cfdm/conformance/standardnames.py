@@ -1,4 +1,6 @@
 import logging
+import os
+import pickle
 import xml.etree.ElementTree as ET
 from functools import lru_cache
 
@@ -23,6 +25,10 @@ _STD_NAME_CURRENT_XML_URL = (
     "cf-standard-names/current/src/cf-standard-name-table.xml"
 )
 DEFAULT_TIMEOUT = 5  # seconds
+
+# Cache config.
+CACHE_DIR = ".cf"
+CACHE_PICKLE_FILENAME = "standard_names.pickle"
 
 
 class StandardNameTableUnavailableError(Exception):
@@ -86,6 +92,27 @@ def _extract_names_from_xml(snames_xml, include_aliases):
     return frozenset(all_standard_names)
 
 
+def _get_cache_file_path():
+    """TODO."""
+    cache_dir = os.path.join(os.path.expanduser("~"), CACHE_DIR)
+    if not os.path.isdir(cache_dir):
+        os.makedirs(cache_dir)
+
+    return os.path.join(cache_dir, CACHE_PICKLE_FILENAME)
+
+
+def _dotfile_cache_fetched_standard_names(
+    standard_names, include_aliases=False
+):
+    """Create a pickle cache of the frozenset of fetched names."""
+    cache_file = _get_cache_file_path()
+
+    with open(cache_file, "wb") as f:
+        pickle.dump(standard_names, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+    return cache_file
+
+
 @lru_cache
 def get_all_current_standard_names(include_aliases=False):
     """Get list of all CF Standard Names from the current table.
@@ -122,6 +149,16 @@ def get_all_current_standard_names(include_aliases=False):
         _STD_NAME_CURRENT_XML_URL,
     )  # pragma: no cover
 
+    # First attempt to get a cached version from a pickle of the frozenset
+    # of names that may have been fetched and stored at an earlier time
+    cache_file = _get_cache_file_path()
+    try:
+        with open(cache_file, "rb") as f:
+            return pickle.load(f)
+    except (IOError, EOFError, pickle.UnpicklingError):
+        # Cache doesn't exist or is corrupt
+        pass
+
     try:
         with request.urlopen(
             _STD_NAME_CURRENT_XML_URL,
@@ -133,17 +170,10 @@ def get_all_current_standard_names(include_aliases=False):
             f"Successfully retrieved list of {len(all_snames_xml)} "
             "standard names"
         )  # pragma: no cover
-
-        return _extract_names_from_xml(
-            all_snames_xml,
-            include_aliases=include_aliases,
-        )
-
     except (
         # urllib failures surface as OSError subclasses e.g. error.URLError
         OSError,
         TimeoutError,
-        ET.ParseError,  # TODO need care with this, could mask bugs in above
     ) as exc:
         logger.warning(
             "Unable to retrieve CF standard names so skipping validation "
@@ -152,3 +182,17 @@ def get_all_current_standard_names(include_aliases=False):
         # Note that lru_cache doesn't cache exceptions, so best return this here
         # but it can be caught later to prevent erroring for bypassing validation
         raise StandardNameTableUnavailableError from exc
+
+    # Be careful even with parsing since there's a small chance the XML could be bad
+    try:
+        names_set = _extract_names_from_xml(
+            all_snames_xml,
+            include_aliases=include_aliases,
+        )
+    except ET.ParseError as exc:
+        raise StandardNameTableUnavailableError(
+            "Downloaded CF standard name table is not valid XML."
+        ) from exc
+
+    _dotfile_cache_fetched_standard_names(names_set, include_aliases=False)
+    return names_set
