@@ -1,3 +1,4 @@
+import datetime
 import logging
 import os
 import pickle
@@ -30,6 +31,8 @@ DEFAULT_TIMEOUT = 5  # seconds
 CACHE_DIR = ".cf"
 CACHE_PICKLE_FILENAME_NOALIASES = "standard_names.pickle"
 CACHE_PICKLE_FILENAME_WITHALIASES = "standard_names_with_aliases.pickle"
+CACHE_FORMAT_VERSION = 1
+CACHE_MAX_AGE_DAYS = 30
 
 
 class StandardNameTableUnavailableError(Exception):
@@ -93,6 +96,12 @@ def _extract_names_from_xml(snames_xml, include_aliases):
     return frozenset(all_standard_names)
 
 
+def _extract_table_version_from_xml(snames_xml):
+    """TODO."""
+    root = ET.fromstring(snames_xml)
+    return root.findtext("version_number")
+
+
 def _get_cache_file_path(include_aliases=False):
     """TODO."""
     cache_dir = os.path.join(
@@ -111,12 +120,26 @@ def _get_cache_file_path(include_aliases=False):
     return os.path.join(cache_dir, filename)
 
 
-def _cache_standard_names_to_dotfile(standard_names, include_aliases=False):
+def _cache_standard_names_to_dotfile(
+    standard_names,
+    include_aliases=False,
+    table_version=None,
+):
     """Create a pickle cache of the frozenset of fetched names."""
     cache_file = _get_cache_file_path(include_aliases=include_aliases)
 
+    # Include some metadata with the frozen set of names, to allow us to detect if
+    # the dotfile is stale or of an old version
+    cache = {
+        "cache_format_version": CACHE_FORMAT_VERSION,
+        "standard_names": standard_names,
+        "include_aliases": include_aliases,
+        "table_version": table_version,
+        "cached_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+
     with open(cache_file, "wb") as f:
-        pickle.dump(standard_names, f, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(cache, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     logger.info(
         f"Cached set of fetched standard names to dotfile at {cache_file}"
@@ -126,20 +149,38 @@ def _cache_standard_names_to_dotfile(standard_names, include_aliases=False):
 
 
 def _load_standard_names_from_dotfile(include_aliases=False):
-    """Load a pickle cache of the frozenset of fetched names, or None on failure."""
+    """Load a pickled dotfile cache of standard names, or None if unavailable/stale."""
     cache_file = _get_cache_file_path(include_aliases=include_aliases)
 
     try:
         with open(cache_file, "rb") as f:
-            names = pickle.load(f)
-    except (IOError, EOFError, pickle.UnpicklingError):
-        # Cache doesn't exist or is corrupt
-        return None
+            cache = pickle.load(f)
+    except (
+        IOError,
+        EOFError,
+        pickle.UnpicklingError,
+    ):
+        return
+
+    if cache.get("cache_format_version") != CACHE_FORMAT_VERSION:
+        return
+
+    if cache.get("include_aliases") != include_aliases:
+        return
+
+    cached_at = datetime.datetime.fromisoformat(cache["cached_at"])
+
+    age = datetime.datetime.now(datetime.timezone.utc) - cached_at
+
+    if age > datetime.timedelta(days=CACHE_MAX_AGE_DAYS):
+        logger.info("Ignoring stale CF standard name cache.")
+        return
 
     logger.info(
         f"Loaded set of fetched standard names from dotfile at {cache_file}"
     )  # pragma: no cover
-    return names
+
+    return cache["standard_names"]
 
 
 @lru_cache
@@ -221,7 +262,12 @@ def get_all_current_standard_names(include_aliases=False):
             "Downloaded CF standard name table is not valid XML and cannot be parsed."
         ) from exc
 
+    # Successfully extracted set of all current names. Cache to dotfile for future use.
+    table_version = _extract_table_version_from_xml(all_snames_xml)
     _cache_standard_names_to_dotfile(
-        names_set, include_aliases=include_aliases
+        names_set,
+        include_aliases=include_aliases,
+        table_version=table_version,
     )
+
     return names_set
