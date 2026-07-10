@@ -101,7 +101,7 @@ def _get_cache_file_path():
     return os.path.join(cache_dir, CACHE_PICKLE_FILENAME)
 
 
-def _cache_to_dotfile_standard_names(standard_names, include_aliases=False):
+def _cache_standard_names_to_dotfile(standard_names, include_aliases=False):
     """Create a pickle cache of the frozenset of fetched names."""
     cache_file = _get_cache_file_path()
 
@@ -111,8 +111,8 @@ def _cache_to_dotfile_standard_names(standard_names, include_aliases=False):
     return cache_file
 
 
-def _load_from_dotfile_with_standard_names(include_aliases=False):
-    """Load a pickle cache of the frozenset of fetched names."""
+def _load_standard_names_from_dotfile(include_aliases=False):
+    """Load a pickle cache of the frozenset of fetched names, or None on failure."""
     cache_file = _get_cache_file_path()
     print("CACHE IS AT:", cache_file)
     try:
@@ -120,7 +120,7 @@ def _load_from_dotfile_with_standard_names(include_aliases=False):
             return pickle.load(f)
     except (IOError, EOFError, pickle.UnpicklingError):
         # Cache doesn't exist or is corrupt
-        return False
+        return None
 
 
 @lru_cache
@@ -161,9 +161,7 @@ def get_all_current_standard_names(include_aliases=False):
 
     # First attempt to get a cached version from a pickle of the frozenset
     # of names that may have been fetched and stored at an earlier time
-    pickled_names = _load_from_dotfile_with_standard_names(
-        include_aliases=False
-    )
+    pickled_names = _load_standard_names_from_dotfile(include_aliases=False)
     if pickled_names:
         return pickled_names
 
@@ -202,5 +200,5 @@ def get_all_current_standard_names(include_aliases=False):
             "Downloaded CF standard name table is not valid XML and cannot be parsed."
         ) from exc
 
-    _cache_to_dotfile_standard_names(names_set, include_aliases=False)
+    _cache_standard_names_to_dotfile(names_set, include_aliases=False)
     return names_set

@@ -317,8 +317,11 @@ class ComplianceCheckingTest(unittest.TestCase):
         self.assertIn("moles_of_cfc113_in_atmosphere", aliases_inc_output)
 
     @patch("cfdm.conformance.standardnames.request.urlopen")
+    @patch("cfdm.conformance.standardnames._load_standard_names_from_dotfile")
     def test_get_all_current_standard_names_network_failure(
-        self, mock_urlopen
+        self,
+        mock_load_dotfile,
+        mock_urlopen,
     ):
         """Test `get_all_current_standard_names` when resource unavailable."""
         exceptions = [
@@ -334,13 +337,15 @@ class ComplianceCheckingTest(unittest.TestCase):
             TimeoutError("Request timed out"),
         ]
 
+        # No cached copy available
+        mock_load_dotfile.return_value = None
+
         for exc in exceptions:
             with self.subTest(exception=type(exc).__name__):
-                # Avoid previous tests populating the cache
+                # Avoid previous successful calls being returned from lru_cache
                 get_all_current_standard_names.cache_clear()
 
-                # Mock to represent cases whereby the standard names table is
-                # not accessible that we catch in the function
+                # Remote resource unavailable
                 mock_urlopen.side_effect = exc
 
                 with self.assertRaises(StandardNameTableUnavailableError):
