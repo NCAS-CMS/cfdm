@@ -25,7 +25,7 @@ _STD_NAME_CURRENT_XML_URL = (
     "cf-convention/cf-convention.github.io/refs/heads/main/Data/"
     "cf-standard-names/current/src/cf-standard-name-table.xml"
 )
-DEFAULT_TIMEOUT = 5  # seconds
+DEFAULT_TIMEOUT_SECONDS = 5
 
 # Cache config.
 CACHE_DIR = ".cf"
@@ -230,7 +230,7 @@ def get_all_current_standard_names(include_aliases=False):
     try:
         with request.urlopen(
             _STD_NAME_CURRENT_XML_URL,
-            timeout=DEFAULT_TIMEOUT,
+            timeout=DEFAULT_TIMEOUT_SECONDS,
         ) as response:
             all_snames_xml = response.read()
 
