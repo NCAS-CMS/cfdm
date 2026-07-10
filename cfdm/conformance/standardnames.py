@@ -28,7 +28,8 @@ DEFAULT_TIMEOUT = 5  # seconds
 
 # Cache config.
 CACHE_DIR = ".cf"
-CACHE_PICKLE_FILENAME = "standard_names.pickle"
+CACHE_PICKLE_FILENAME_NOALIASES = "standard_names.pickle"
+CACHE_PICKLE_FILENAME_WITHALIASES = "standard_names_with_aliases.pickle"
 
 
 class StandardNameTableUnavailableError(Exception):
@@ -92,35 +93,53 @@ def _extract_names_from_xml(snames_xml, include_aliases):
     return frozenset(all_standard_names)
 
 
-def _get_cache_file_path():
+def _get_cache_file_path(include_aliases=False):
     """TODO."""
-    cache_dir = os.path.join(os.path.expanduser("~"), CACHE_DIR)
+    cache_dir = os.path.join(
+        os.path.expanduser("~"),
+        CACHE_DIR,
+    )
+
     if not os.path.isdir(cache_dir):
         os.makedirs(cache_dir)
 
-    return os.path.join(cache_dir, CACHE_PICKLE_FILENAME)
+    if include_aliases:
+        filename = CACHE_PICKLE_FILENAME_WITHALIASES
+    else:
+        filename = CACHE_PICKLE_FILENAME_NOALIASES
+
+    return os.path.join(cache_dir, filename)
 
 
 def _cache_standard_names_to_dotfile(standard_names, include_aliases=False):
     """Create a pickle cache of the frozenset of fetched names."""
-    cache_file = _get_cache_file_path()
+    cache_file = _get_cache_file_path(include_aliases=include_aliases)
 
     with open(cache_file, "wb") as f:
         pickle.dump(standard_names, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+    logger.info(
+        f"Cached set of fetched standard names to dotfile at {cache_file}"
+    )  # pragma: no cover
 
     return cache_file
 
 
 def _load_standard_names_from_dotfile(include_aliases=False):
     """Load a pickle cache of the frozenset of fetched names, or None on failure."""
-    cache_file = _get_cache_file_path()
-    print("CACHE IS AT:", cache_file)
+    cache_file = _get_cache_file_path(include_aliases=include_aliases)
+
     try:
         with open(cache_file, "rb") as f:
-            return pickle.load(f)
+            names = pickle.load(f)
     except (IOError, EOFError, pickle.UnpicklingError):
         # Cache doesn't exist or is corrupt
         return None
+
+    logger.info(
+        f"Loaded set of fetched standard names from dotfile at {cache_file}"
+    )  # pragma: no cover
+    return names
 
 
 @lru_cache
@@ -161,7 +180,9 @@ def get_all_current_standard_names(include_aliases=False):
 
     # First attempt to get a cached version from a pickle of the frozenset
     # of names that may have been fetched and stored at an earlier time
-    pickled_names = _load_standard_names_from_dotfile(include_aliases=False)
+    pickled_names = _load_standard_names_from_dotfile(
+        include_aliases=include_aliases
+    )
     if pickled_names:
         return pickled_names
 
