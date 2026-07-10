@@ -221,5 +221,7 @@ def get_all_current_standard_names(include_aliases=False):
             "Downloaded CF standard name table is not valid XML and cannot be parsed."
         ) from exc
 
-    _cache_standard_names_to_dotfile(names_set, include_aliases=False)
+    _cache_standard_names_to_dotfile(
+        names_set, include_aliases=include_aliases
+    )
     return names_set
