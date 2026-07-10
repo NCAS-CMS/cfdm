@@ -89,6 +89,11 @@ class FieldChecker(Report):
         one parent variable (though the parent can be set at the variable
         itself should no parent exist or be relevant).
 
+        The checks will only run if the XML which encodes the table of
+        names is accessible, else the exception
+        `StandardNameTableUnavailableError` will be caught and all
+        validation logic bypassing, returning `None`.
+
         .. versionadded:: 1.13.2.0
 
         :Parameters:
@@ -178,9 +183,9 @@ class FieldChecker(Report):
                 name(s) exist but at least one is invalid
                 according to those checks, and `None` means that
                 either no (computed_)standard_name was found,
-                or that the checking has been skipped (only in
-                cases where the Standard Names Table cannot be
-                accessed).
+                or that the checking has been skipped (the latter
+                only in cases where the Standard Names Table
+                cannot be accessed).
 
         """
         if check_is_in_custom_list and check_is_in_table:

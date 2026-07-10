@@ -36,6 +36,7 @@ class StandardNameTableUnavailableError(Exception):
         )
         if reason is not None:
             message += f" Reason: {reason}"
+
         super().__init__(message)
 
 
@@ -92,6 +93,12 @@ def get_all_current_standard_names(include_aliases=False):
     Entries are always returned from the current table. By default aliases
     are not included in the output but can also be included by setting the
     `include_aliases` flag to `True`.
+
+    Relies on access to the XML which encodes the table of names from the
+    canonical location stored under the repository
+    `github.com/cf-convention/cf-convention.github.io/`, and
+    raises the exception `StandardNameTableUnavailableError` if it is
+    not accessible until timeout.
 
     .. versionadded:: 1.13.2.0
 
