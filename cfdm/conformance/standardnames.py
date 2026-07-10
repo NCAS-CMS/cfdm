@@ -25,6 +25,20 @@ _STD_NAME_CURRENT_XML_URL = (
 DEFAULT_TIMEOUT = 5  # seconds
 
 
+class StandardNameTableUnavailableError(Exception):
+    """Raise when the standard names table cannot be accessed."""
+
+    def __init__(self, reason=None):
+        """**Initialisation**"""
+        message = (
+            "Unable to retrieve the CF standard name table. Skipping "
+            "validation of any encoded (computed)_standard_names."
+        )
+        if reason is not None:
+            message += f" Reason: {reason}"
+        super().__init__(message)
+
+
 def _extract_names_from_xml(snames_xml, include_aliases):
     """Extract all names from a valid Standard Name Table XML document.
 
@@ -128,4 +142,6 @@ def get_all_current_standard_names(include_aliases=False):
             "Unable to retrieve CF standard names so skipping validation "
             f"against standard name table. Reason: {exc}",
         )
-        return frozenset()
+        # Note that lru_cache doesn't cache exceptions, so best return this here
+        # but it can be caught later to prevent erroring for bypassing validation
+        raise StandardNameTableUnavailableError from exc

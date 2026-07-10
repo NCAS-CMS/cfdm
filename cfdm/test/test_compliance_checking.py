@@ -17,6 +17,7 @@ import cfdm
 # Not exposed in public API so these need importing directly from sub-module
 from cfdm.conformance.standardnames import (
     _STD_NAME_CURRENT_XML_URL,
+    StandardNameTableUnavailableError,
     _extract_names_from_xml,
     get_all_current_standard_names,
 )
@@ -342,10 +343,8 @@ class ComplianceCheckingTest(unittest.TestCase):
                 # not accessible that we catch in the function
                 mock_urlopen.side_effect = exc
 
-                output = get_all_current_standard_names()
-
-                self.assertIsInstance(output, frozenset)
-                self.assertEqual(output, frozenset())
+                with self.assertRaises(StandardNameTableUnavailableError):
+                    get_all_current_standard_names()
 
     def test_standard_names_validation_compliant_field(self):
         """Test compliance checking on a compliant non-UGRID field."""
