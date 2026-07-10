@@ -1659,8 +1659,7 @@ class NetCDFCheckerMixin(Report):
                 message=message,
                 attribute={f"{mesh_ncvar}:mesh": mesh_ncvar},
             )
-            ok = False
-            return ok
+            return False
 
         self._check_standard_names(
             mesh_ncvar,
@@ -2233,8 +2232,7 @@ class NetCDFCheckerMixin(Report):
                 message=(f"{connectivity_attr} attribute", "is missing"),
                 direct_parent_ncvar=mesh_ncvar,
             )
-            ok = False
-            return ok
+            return False
 
         if connectivity_ncvar not in g["internal_variables"]:
             connectivity_ncvar, message = self._missing_variable(
@@ -2249,8 +2247,7 @@ class NetCDFCheckerMixin(Report):
                 },
                 direct_parent_ncvar=mesh_ncvar,
             )
-            ok = False
-            return ok
+            return False
 
         self._check_standard_names(
             parent_ncvar,
