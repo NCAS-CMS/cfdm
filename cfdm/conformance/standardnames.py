@@ -155,8 +155,8 @@ def _get_cache_file_path(include_aliases=False):
 
 def _cache_standard_names_to_dotfile(
     standard_names,
+    table_version,
     include_aliases=False,
-    table_version=None,
 ):
     """Create a pickle cache of the frozenset of fetched standard names.
 
@@ -169,16 +169,15 @@ def _cache_standard_names_to_dotfile(
              given version of the table, including aliases if
              requested, to save to a new cache file.
 
+         table_version: `str`
+             The version of the standard names table of the XML
+             document, to register as metadata for the cache file.
+
          include_aliases: `bool`, optional
              Set to `True` if the file will cache standard names
              inclusive of standard name aliases, else and by
              default the cache file name is chosen to reflect
              that it does not include aliases.
-
-         table_version: `str` or `None`, optional
-             The version of the standard names table of the XML
-             document, to register as metadata for the cache file.
-             If `None`, as default, then do not register a version.
 
      :Returns:
 
@@ -345,8 +344,8 @@ def get_all_current_standard_names(include_aliases=False):
     table_version = _extract_table_version_from_xml(all_snames_xml)
     _cache_standard_names_to_dotfile(
         names_set,
+        table_version,
         include_aliases=include_aliases,
-        table_version=table_version,
     )
 
     return names_set
