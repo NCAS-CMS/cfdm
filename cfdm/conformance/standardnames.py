@@ -97,13 +97,46 @@ def _extract_names_from_xml(snames_xml, include_aliases):
 
 
 def _extract_table_version_from_xml(snames_xml):
-    """TODO."""
+    """Extract table version from a valid Standard Name Table XML document.
+
+    .. versionadded:: NEXTVERSION
+
+     :Parameters:
+
+         snames_xml: `bytes`
+             Bytes representing an XML file of any
+             valid Standard Name Table XML document, or mocked-up
+             equivalent form. 'version_number' is extracted.
+
+     :Returns:
+
+         `str`
+             The version of the standard names table of the XML document.
+
+    """
     root = ET.fromstring(snames_xml)
     return root.findtext("version_number")
 
 
 def _get_cache_file_path(include_aliases=False):
-    """TODO."""
+    """Return the filesystem path to the standard names pickle cache file.
+
+    .. versionadded:: NEXTVERSION
+
+     :Parameters:
+
+         include_aliases: `bool`
+             If `True`, return the path of the file which caches
+             standard names inclusive of standard name aliases, else
+             and by default return the path for the cache file which
+             does not include aliases.
+
+     :Returns:
+
+         `str`
+             The filesystem path to the cache file.
+
+    """
     cache_dir = os.path.join(
         os.path.expanduser("~"),
         CACHE_DIR,
@@ -125,7 +158,7 @@ def _cache_standard_names_to_dotfile(
     include_aliases=False,
     table_version=None,
 ):
-    """Create a pickle cache of the frozenset of fetched names."""
+    """Create a pickle cache of the frozenset of fetched standard names."""
     cache_file = _get_cache_file_path(include_aliases=include_aliases)
 
     # Include some metadata with the frozen set of names, to allow us to detect if
