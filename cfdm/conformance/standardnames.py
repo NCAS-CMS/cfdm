@@ -125,7 +125,7 @@ def _get_cache_file_path(include_aliases=False):
 
      :Parameters:
 
-         include_aliases: `bool`
+         include_aliases: `bool`, optional
              If `True`, return the path of the file which caches
              standard names inclusive of standard name aliases, else
              and by default return the path for the cache file which
@@ -158,7 +158,34 @@ def _cache_standard_names_to_dotfile(
     include_aliases=False,
     table_version=None,
 ):
-    """Create a pickle cache of the frozenset of fetched standard names."""
+    """Create a pickle cache of the frozenset of fetched standard names.
+
+    .. versionadded:: NEXTVERSION
+
+     :Parameters:
+
+         standard_names: `frozenset`
+             The set of all CF Conventions standard names in the
+             given version of the table, including aliases if
+             requested, to save to a new cache file.
+
+         include_aliases: `bool`, optional
+             Set to `True` if the file will cache standard names
+             inclusive of standard name aliases, else and by
+             default the cache file name is chosen to reflect
+             that it does not include aliases.
+
+         table_version: `str` or `None`, optional
+             The version of the standard names table of the XML
+             document, to register as metadata for the cache file.
+             If `None`, as default, then do not register a version.
+
+     :Returns:
+
+         `str`
+             The filesystem path to the newly-created cache file.
+
+    """
     cache_file = _get_cache_file_path(include_aliases=include_aliases)
 
     # Include some metadata with the frozen set of names, to allow us to detect if
@@ -182,7 +209,26 @@ def _cache_standard_names_to_dotfile(
 
 
 def _load_standard_names_from_dotfile(include_aliases=False):
-    """Load a pickled dotfile cache of standard names, or None if unavailable/stale."""
+    """Attempt to load and open a pickled dotfile cache of standard names.
+
+    .. versionadded:: NEXTVERSION
+
+     :Parameters:
+
+         include_aliases: `bool`, optional
+             If `True`, try to load and open the file which caches
+             standard names inclusive of standard name aliases, else
+             and by default load and open the path for the cache file
+             which does not include aliases.
+
+     :Returns:
+
+         `frozenset` or `None`
+             The set of all CF Conventions standard names taken from
+             the pickled dotfile cache or `None` if a valid cache
+             file could not be opened.
+
+    """
     cache_file = _get_cache_file_path(include_aliases=include_aliases)
 
     try:
