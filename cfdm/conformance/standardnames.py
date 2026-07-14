@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 import pickle
+import sys
 import xml.etree.ElementTree as ET
 from functools import lru_cache
 
@@ -29,8 +30,10 @@ DEFAULT_TIMEOUT_SECONDS = 5
 
 # Cache config.
 CACHE_DIR = ".cf"
-CACHE_PICKLE_FILENAME_NOALIASES = "standard_names.pickle"
-CACHE_PICKLE_FILENAME_WITHALIASES = "standard_names_with_aliases.pickle"
+# Filenames exclude the ".pickle" extension which is added later
+CACHE_PICKLE_FILENAME_NOALIASES = "standard_names"
+CACHE_PICKLE_FILENAME_WITHALIASES = "standard_names_with_aliases"
+
 CACHE_FORMAT_VERSION = 1
 CACHE_MAX_AGE_DAYS = 30
 
@@ -150,6 +153,12 @@ def _get_cache_file_path(include_aliases=False):
     else:
         filename = CACHE_PICKLE_FILENAME_NOALIASES
 
+    # Add Python version before extension in form without dots e.g. '39', '312'
+    # where there won't be ambiguity as to what part is major and minor given
+    # unlikely to get to double-digit major version any time soon!
+    python_version = f"{sys.version_info.major}{sys.version_info.minor}"
+    filename += f"_{python_version}.pickle"
+
     return os.path.join(cache_dir, filename)
 
 
@@ -263,7 +272,7 @@ def _load_standard_names_from_dotfile(include_aliases=False):
 
 @lru_cache
 def get_all_current_standard_names(include_aliases=False):
-    """Get list of all CF Standard Names from the current table.
+    """Get the set of all CF Standard Names from the current table.
 
     Entries are always returned from the current table. By default aliases
     are not included in the output but can also be included by setting the
@@ -273,7 +282,7 @@ def get_all_current_standard_names(include_aliases=False):
     canonical location stored under the repository
     `github.com/cf-convention/cf-convention.github.io/`, and
     raises the exception `StandardNameTableUnavailableError` if it is
-    not accessible until timeout.
+    not accessible by timeout.
 
     .. versionadded:: 1.13.2.0
 
