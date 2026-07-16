@@ -6,7 +6,10 @@ import numpy as np
 
 from ..functions import is_log_level_debug
 from .reporting import Report
-from .standardnames import get_all_current_standard_names
+from .standardnames import (
+    StandardNameTableUnavailableError,
+    get_all_current_standard_names,
+)
 
 
 class FieldChecker(Report):
@@ -85,6 +88,11 @@ class FieldChecker(Report):
         These checks are in the context of the variable and at least
         one parent variable (though the parent can be set at the variable
         itself should no parent exist or be relevant).
+
+        The checks will only run if the XML which encodes the table of
+        names is accessible, else the exception
+        `StandardNameTableUnavailableError` will be caught and all
+        validation logic bypassing, returning `None`.
 
         .. versionadded:: 1.13.2.0
 
@@ -173,15 +181,13 @@ class FieldChecker(Report):
                 standard name(s) exist and are (all) valid against
                 the configured checks, `False` means standard
                 name(s) exist but at least one is invalid
-                according to those checks, and `None` means no
-                (computed_)standard_name was found.
+                according to those checks, and `None` means that
+                either no (computed_)standard_name was found,
+                or that the checking has been skipped (the latter
+                only in cases where the Standard Names Table
+                cannot be accessed).
 
         """
-        debug = is_log_level_debug(logger)
-
-        if debug:
-            logger.debug(f"Running _check_standard_names() for: {ncvar}")
-
         if check_is_in_custom_list and check_is_in_table:
             raise ValueError(
                 "Can't set both 'check_is_in_custom_list' and "
@@ -189,6 +195,18 @@ class FieldChecker(Report):
                 "to check a subset of the full table hence renders the "
                 "latter redundant - set it to False with a custom list."
             )
+
+        # To short circuit checking early when the table can't be accessed
+        if check_is_in_table:
+            try:
+                all_current_standard_names = get_all_current_standard_names()
+            except StandardNameTableUnavailableError:
+                return
+
+        debug = is_log_level_debug(logger)
+
+        if debug:
+            logger.debug(f"Running _check_standard_names() for: {ncvar}")
 
         any_sn_found = False
         invalid_sn_found = False
@@ -269,7 +287,7 @@ class FieldChecker(Report):
             # 5. Check, if requested, if string is in the list of valid names
             elif (
                 check_is_in_table
-                and sn_value not in get_all_current_standard_names()
+                and sn_value not in all_current_standard_names
             ):
                 invalid_sn_found = True
                 if self.read_vars["_noncompliance_report"]:
@@ -291,7 +309,9 @@ class FieldChecker(Report):
                 )
 
         # Three possible return signatures to cover existence and validity:
-        if not any_sn_found:  # no (computed_)standard_name found
+        if (
+            not any_sn_found
+        ):  # no (computed_)standard_name found (or checks bypassed)
             return
         elif invalid_sn_found:  # found at least one invalid standard name
             return False

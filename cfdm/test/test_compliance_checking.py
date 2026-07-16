@@ -4,13 +4,23 @@ import faulthandler
 import os
 import tempfile
 import unittest
+from unittest.mock import patch  # not included as standard with module
 from urllib import request
+from urllib.error import HTTPError, URLError
 
 from netCDF4 import Dataset
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
+
+# Not exposed in public API so these need importing directly from sub-module
+from cfdm.conformance.standardnames import (
+    _STD_NAME_CURRENT_XML_URL,
+    StandardNameTableUnavailableError,
+    _extract_names_from_xml,
+    get_all_current_standard_names,
+)
 
 n_tmpfiles = 3
 tmpfiles = [
@@ -198,10 +208,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         """
         table_end = "</standard_name_table>"
 
-        two_name_output = cfdm.conformance._extract_names_from_xml(
+        two_name_output = _extract_names_from_xml(
             two_name_table_start + table_end, include_aliases=False
         )
-        self.assertIsInstance(two_name_output, list)
+        self.assertIsInstance(two_name_output, frozenset)
         self.assertEqual(len(two_name_output), 2)
         self.assertIn(
             "acoustic_area_backscattering_strength_in_sea_water",
@@ -212,17 +222,17 @@ class ComplianceCheckingTest(unittest.TestCase):
         # No aliases in this table therefore expect same output as before
         # when setting 'include_aliases=True'
         self.assertEqual(
-            cfdm.conformance._extract_names_from_xml(
+            _extract_names_from_xml(
                 two_name_table_start + table_end, include_aliases=True
             ),
             two_name_output,
         )
 
-        aliases_inc_output = cfdm.conformance._extract_names_from_xml(
+        aliases_inc_output = _extract_names_from_xml(
             two_name_table_start + include_two_aliases + table_end,
             include_aliases=True,
         )
-        self.assertIsInstance(aliases_inc_output, list)
+        self.assertIsInstance(aliases_inc_output, frozenset)
         self.assertEqual(len(aliases_inc_output), 4)
         # Check all non-aliases are there, as per above output
         self.assertTrue(set(two_name_output).issubset(aliases_inc_output))
@@ -237,7 +247,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         # When setting 'include_aliases=True' should ignore the two aliases
         # in table so expect same as two_name_output
         self.assertEqual(
-            cfdm.conformance._extract_names_from_xml(
+            _extract_names_from_xml(
                 two_name_table_start + include_two_aliases + table_end,
                 include_aliases=False,
             ),
@@ -248,7 +258,7 @@ class ComplianceCheckingTest(unittest.TestCase):
         """Test `conformance.get_all_current_standard_names` function."""
         # First check the URL used is actually available in case of issues
         # arising in case GitHub endpoints go down
-        sn_xml_url = cfdm.conformance._STD_NAME_CURRENT_XML_URL
+        sn_xml_url = _STD_NAME_CURRENT_XML_URL
         with request.urlopen(sn_xml_url) as response:
             self.assertEqual(
                 response.status,
@@ -260,8 +270,8 @@ class ComplianceCheckingTest(unittest.TestCase):
         # case that the URL isn't accessible? Ideally we can skip standard
         # name validation with a warning, in these cases.
 
-        output = cfdm.conformance.get_all_current_standard_names()
-        self.assertIsInstance(output, list)
+        output = get_all_current_standard_names()
+        self.assertIsInstance(output, frozenset)
 
         # The function gets the current table so we can't know exactly how
         # many names there will be there going forward, but given there are
@@ -288,10 +298,10 @@ class ComplianceCheckingTest(unittest.TestCase):
         # of the above should not be in the list
         self.assertNotIn("moles_of_cfc113_in_atmosphere", output)
 
-        aliases_inc_output = cfdm.conformance.get_all_current_standard_names(
+        aliases_inc_output = get_all_current_standard_names(
             include_aliases=True
         )
-        self.assertIsInstance(aliases_inc_output, list)
+        self.assertIsInstance(aliases_inc_output, frozenset)
 
         # As with above length check, can't be sure of eact amount as it
         # changes but we can safely put a lower limit on it. At time of
@@ -305,6 +315,41 @@ class ComplianceCheckingTest(unittest.TestCase):
 
         # This time the alias should be included
         self.assertIn("moles_of_cfc113_in_atmosphere", aliases_inc_output)
+
+    @patch("cfdm.conformance.standardnames.request.urlopen")
+    @patch("cfdm.conformance.standardnames._load_standard_names_from_dotfile")
+    def test_get_all_current_standard_names_network_failure(
+        self,
+        mock_load_dotfile,
+        mock_urlopen,
+    ):
+        """Test `get_all_current_standard_names` when resource unavailable."""
+        exceptions = [
+            URLError("Connection failed"),
+            HTTPError(
+                _STD_NAME_CURRENT_XML_URL,
+                503,
+                "Service unavailable",
+                hdrs=None,
+                fp=None,
+            ),
+            OSError("Underlying network error"),
+            TimeoutError("Request timed out"),
+        ]
+
+        # No cached copy available
+        mock_load_dotfile.return_value = None
+
+        for exc in exceptions:
+            with self.subTest(exception=type(exc).__name__):
+                # Avoid previous successful calls being returned from lru_cache
+                get_all_current_standard_names.cache_clear()
+
+                # Remote resource unavailable
+                mock_urlopen.side_effect = exc
+
+                with self.assertRaises(StandardNameTableUnavailableError):
+                    get_all_current_standard_names()
 
     def test_standard_names_validation_compliant_field(self):
         """Test compliance checking on a compliant non-UGRID field."""

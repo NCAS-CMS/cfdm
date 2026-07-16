@@ -1,3 +1,16 @@
+Version ???
+-----------
+
+**2026-??-??**
+
+* Introduce use of cache files stored as `~/.cf/standard_names*.pickle`
+  to improve performance of CF compliance checking
+  (https://github.com/NCAS-CMS/cfdm/pull/411)
+* Stop inaccessiblity of standard names table resource from causing
+  `cfdm.read` to error (https://github.com/NCAS-CMS/cfdm/pull/411)
+
+----
+
 Version 1.13.2.1
 ----------------
 
