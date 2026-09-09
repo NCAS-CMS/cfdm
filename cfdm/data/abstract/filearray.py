@@ -416,7 +416,7 @@ class FileArray(Array):
                 if isinstance(protocol, tuple):
                     protocol = protocol[0]
 
-            # Only a normalise local name
+            # Only normalise a local name
             if protocol in (None, "file", "local"):
                 filename = abspath(filename)
 

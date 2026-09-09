@@ -8,8 +8,10 @@ import platform
 import sys
 import tempfile
 import unittest
+from importlib.metadata import requires
 
 import numpy as np
+from packaging.requirements import Requirement
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -205,6 +207,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertIsInstance(e, list)
         self.assertIsInstance(ep, list)
 
+        # Test some specific components including their paths
         components = ["Platform: ", "netCDF4: ", "numpy: ", "cftime: "]
         for component in components:
             self.assertTrue(any(s.startswith(component) for s in e))
@@ -220,6 +223,22 @@ class FunctionsTest(unittest.TestCase):
             f"Python: {platform.python_version()}",
         ]:
             self.assertIn(component, ep)
+
+        # Ensure all hard dependencies are reported on, to help keep
+        # the environment function output up to date
+        cfdm_hard_dependencies = {
+            req.name
+            for req in map(Requirement, requires("cfdm") or [])
+            if not req.marker or "extra" not in str(req.marker)
+        }  # get as a set for subset comparison later
+        for output in (e, ep):
+            dep_names = set()
+            for entry in output:
+                dep_names.add(entry.split(":")[0])
+            self.assertTrue(
+                cfdm_hard_dependencies.issubset(dep_names),
+                f"Missing dependencies: {cfdm_hard_dependencies - dep_names}",
+            )
 
     def test_example_field(self):
         """Test the `example_field` function."""

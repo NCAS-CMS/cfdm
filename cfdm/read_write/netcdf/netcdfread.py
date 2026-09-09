@@ -5829,14 +5829,14 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
 
             return_kwargs_only: `bool`, optional
                 Only return the kwargs dictionary, without
-                instantiating a new `NetCDF4Array` or `H5netcdfArray`.
+                instantiating a new `XnetcdfArray`.
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
         :Returns:
 
             (array, `dict`) or (`None`, `dict`) or `dict`
-                The new `NetCDF4Array` or `H5netcdfArray` instance and
+                The new `XnetcdfArray` instance and
                 a dictionary of the kwargs used to create it. If the
                 array could not be created then `None` is returned in
                 its place. If *return_kwargs_only* then only the
@@ -5909,7 +5909,7 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
 
             if backend == "xarray":
                 # For xarray, we don't want to create an `XnetcdfArray`
-                # instance, because 'variable' will wither contain its
+                # instance, because 'variable' will either contain its
                 # own Dask array (if the xarray 'chunks' argument was
                 # not `None`), or a `numpy` array (or similar).
                 array = variable.backend_accessor.data

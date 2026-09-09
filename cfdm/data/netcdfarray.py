@@ -8,7 +8,7 @@ class NetCDFArray:
     """A netCDF array accessed with `netCDF4`.
 
     Deprecated at version 1.11.2.0 and is no longer available. Use
-    `cfdm.NetCDF4Array` instead.
+    `cfdm.XnetcdfArray` instead.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -101,5 +101,5 @@ class NetCDFArray:
         """
         raise DeprecationError(
             f"{self.__class__.__name__} was deprecated at version 1.11.2.0 "
-            "and is no longer available. Use cfdm.NetCDF4Array instead."
+            "and is no longer available. Use cfdm.XnetcdfArray instead."
         )

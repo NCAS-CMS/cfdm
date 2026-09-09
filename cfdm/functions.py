@@ -458,6 +458,7 @@ def environment(display=True, paths=True):
         "cftime": _get_module_info("cftime"),
         "cfunits": _get_module_info("cfunits"),
         "cfdm": (__version__, os.path.abspath(__file__)),
+        "uritools": _get_module_info("uritools", try_except=True),
     }
     string = "{0}: {1!s}"
     if paths:
@@ -470,6 +471,12 @@ def environment(display=True, paths=True):
             for dep, info in dependency_version_paths_mapping.items()
         ]
     )
+
+    # There are a lot of dependencies (compulsory + optional) to print so
+    # show them in asciibetical order, with the happy coincidence that the
+    # 'cf*' libraries, 'Platform' and 'Python' still come near the top (the
+    # (latter because of the capitalisation) so are easy to pick out.
+    out.sort()
 
     if display:
         print("\n".join(out))  # pragma: no cover

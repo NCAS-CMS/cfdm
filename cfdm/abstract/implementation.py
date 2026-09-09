@@ -35,8 +35,12 @@ class Implementation(metaclass=abc.ABCMeta):
 
         >>> i = cfdm.implementation()  # child CF data model implementation
         >>> sorted(i.classes())
-        ['AuxiliaryCoordinate',
+        ['AggregatedArray',
+         'AuxiliaryCoordinate',
          'Bounds',
+         'BoundsFromNodesArray',
+         'CellConnectivity',
+         'CellConnectivityArray',
          'CellMeasure',
          'CellMethod',
          'CoordinateConversion',
@@ -48,18 +52,24 @@ class Implementation(metaclass=abc.ABCMeta):
          'Domain',
          'DomainAncillary',
          'DomainAxis',
+         'DomainTopology',
          'Field',
          'FieldAncillary',
          'GatheredArray',
          'Index',
          'InteriorRing',
+         'InterpolationParameter',
          'List',
-         'NetCDF4Array',
          'NodeCountProperties',
          'PartNodeCountProperties',
+         'PointTopologyArray',
+         'Quantization',
          'RaggedContiguousArray',
          'RaggedIndexedArray',
-         'RaggedIndexedContiguousArray']
+         'RaggedIndexedContiguousArray',
+         'SubsampledArray',
+         'TiePointIndex',
+         'XnetcdfArray']
 
         """
         return self._class.copy()
