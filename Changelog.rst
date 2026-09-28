@@ -33,9 +33,6 @@ Version 1.13.3.0
 * In `cfdm.write`, set sensible dataset chunksizes by default for 1-d
   data, controlled by the new ``one_d_chunks`` keyword
   (https://github.com/NCAS-CMS/cfdm/issues/414)
-* Introduce use of cache files stored as `~/.cf/standard_names*.pickle`
-  to improve performance of CF compliance checking
-  (https://github.com/NCAS-CMS/cfdm/pull/411)
 * Allow `cfdm.write` to write Unicode characters in attribute values
   when using the ``h5netcdf-h5py`` backend
   (https://github.com/NCAS-CMS/cfdm/issues/423)
