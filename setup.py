@@ -26,7 +26,7 @@ packages = ["cfdm"]
 
 long_description = """The **cfdm** Python package is a complete reference implementation
 of the `CF data model
-<https://www.geosci-model-dev.net/10/4619/2017>`_ for CF-1.11, that
+<https://www.geosci-model-dev.net/10/4619/2017>`_ for CF-1.13, that
 identifies the fundamental elements of the `CF conventions
 <http://cfconventions.org/>`_ and shows how they relate to each other,
 independently of the `netCDF
