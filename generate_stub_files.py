@@ -9,7 +9,6 @@ needed.
 
 import re
 import sys
-
 from pathlib import Path
 
 if len(sys.argv) > 1:
@@ -19,7 +18,9 @@ else:
 
 OUT_DIR = SOURCE_DIR.parent
 
+
 def generate_stub_files(rst_path: Path):
+    """Generate method and attribute stubs for sphinx."""
     content = rst_path.read_text(encoding="utf-8")
 
     # Regular expression to match rubric sections and their
@@ -54,7 +55,7 @@ def generate_stub_files(rst_path: Path):
                 out_dir = OUT_DIR / "method"
             else:
                 out_dir = OUT_DIR / "attribute"
-                
+
             out_dir.mkdir(parents=True, exist_ok=True)
 
             out_file = out_dir / f"{entry}.rst"

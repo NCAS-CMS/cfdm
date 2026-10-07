@@ -1,3 +1,13 @@
+Version NEXTVERSION
+----------------
+
+**2026-10-??**
+
+* Fix providing a sequence of strings to the ``cfa`` keyword of
+  `cfdm.write` (https://github.com/NCAS-CMS/cfdm/issues/435)
+
+----
+
 Version 1.13.3.0
 ----------------
 

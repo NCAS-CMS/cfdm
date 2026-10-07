@@ -3470,7 +3470,10 @@ class NetCDFWrite(NetCDFMetaBlockSize, NetCDFWriteUgrid, IOWrite):
                 if g["cfa"].get("strict", True):
                     # Raise the exception in 'strict' mode
                     if g["mode"] == "w":
-                        self.dataset_remove()
+                        try:
+                            self.dataset_remove()
+                        except Exception:
+                            pass
 
                     raise
 
@@ -6180,10 +6183,15 @@ class NetCDFWrite(NetCDFMetaBlockSize, NetCDFWriteUgrid, IOWrite):
 
             cfa = cfa.copy()
         else:
-            raise ValueError(
-                f"Invalid value for the 'cfa' keyword: {cfa!r}. "
-                "Should be a string, a dictionary, or None"
-            )
+            try:
+                # Try for a sequence of strings
+                cfa = {"constructs": tuple(cfa)}
+            except Exception:
+                raise ValueError(
+                    f"Invalid value for the 'cfa' keyword: {cfa!r}. "
+                    "Should be a string, a sequence of strings,
+                    a dictionary, or None"
+                )
 
         cfa.setdefault("constructs", "auto")
         cfa.setdefault("uri", "default")
