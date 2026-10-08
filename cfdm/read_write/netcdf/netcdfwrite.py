@@ -6189,8 +6189,8 @@ class NetCDFWrite(NetCDFMetaBlockSize, NetCDFWriteUgrid, IOWrite):
             except Exception:
                 raise ValueError(
                     f"Invalid value for the 'cfa' keyword: {cfa!r}. "
-                    "Should be a string, a sequence of strings,
-                    a dictionary, or None"
+                    "Should be a string, a sequence of strings, "
+                    "a dictionary, or None"
                 )
 
         cfa.setdefault("constructs", "auto")
