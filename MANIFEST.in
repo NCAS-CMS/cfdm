@@ -6,4 +6,7 @@ include CONTRIBUTING.md
 include CODE_OF_CONDUCT.md
 include cfdm/test/create_test_files.npz
 include cfdm/test/example_field_0.nc
+include cfdm/test/example_field_0.kerchunk
+include cfdm/test/wgdos_packed.pp
+include cfdm/test/extra_data.pp
 recursive-include cfdm/test/example_field_0.zarr[23] *

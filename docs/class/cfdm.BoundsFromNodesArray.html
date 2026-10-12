@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>cfdm.BoundsFromNodesArray &#8212; Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
+    <script src="../_static/documentation_options.js?v=2798502a"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=a56c686a"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.BoundsFromNodesArray.Units" href="../method/cfdm.BoundsFromNodesArray.Units.html" />
+    <link rel="prev" title="cfdm.SubsampledSubarray.subarea_indices" href="../method/cfdm.SubsampledSubarray.subarea_indices.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cfdm 1.13.3.0</a></h1>
+
+
+
+<p class="blurb">A Python reference implementation of the CF data model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cfdm&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
+      <li>Previous: <a href="../method/cfdm.SubsampledSubarray.subarea_indices.html" title="previous chapter">cfdm.SubsampledSubarray.subarea_indices</a></li>
+      <li>Next: <a href="../method/cfdm.BoundsFromNodesArray.Units.html" title="next chapter">cfdm.BoundsFromNodesArray.Units</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="cfdm-boundsfromnodesarray">
+<h1>cfdm.BoundsFromNodesArray<a class="headerlink" href="#cfdm-boundsfromnodesarray" title="Link to this heading">¶</a></h1>
+<hr class="docutils" />
+<dl class="py class">
+<dt class="sig sig-object py" id="cfdm.BoundsFromNodesArray">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">BoundsFromNodesArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/data/boundsfromnodesarray.py#L6-L173"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.BoundsFromNodesArray" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CompressedArrayMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MeshArray</span></code></p>
+<p>An array of cell bounds defined by UGRID node coordinates.</p>
+<p>The UGRID node coordinates contain the locations of the nodes of
+the domain topology. In UGRID, the bounds of edge or face cells
+may be defined by the these locations in conjunction with a
+mapping from from each cell boundary vertex to its corresponding
+coordinate value.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cfdm.BoundsFromNodesSubarray.html#cfdm.BoundsFromNodesSubarray" title="cfdm.BoundsFromNodesSubarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoundsFromNodesSubarray</span></code></a></p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>node_connectivity: array_like</dt><dd><p>A 2-d integer array that contains indices which map
+each cell boundary vertex to its corresponding
+position in the 1-d <em>node_coordinates</em> array, as found
+in a UGRID “edge_node_connectivity” or
+“face_node_connectivity” variable.</p>
+</dd>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The shape of the bounds array.</p>
+</dd>
+<dt>start_index: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The base of the indices provided by the integer index
+array. Must be <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">1</span></code> for zero- or one-based
+indices respectively.</p>
+</dd>
+<dt>cell_dimension: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The position of the <em>data</em> dimension that indexes the
+cells, either <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+</dd>
+<dt>node_coordinates: array_like</dt><dd><p>A 1-d array that contains a coordinate location for
+each mesh node, as found in a UGRID “node_coordinates”
+variable.</p>
+</dd>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cfdm.BoundsFromNodesArray" title="cfdm.BoundsFromNodesArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoundsFromNodesArray</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cfdm.BoundsFromNodesArray" title="cfdm.BoundsFromNodesArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoundsFromNodesArray</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cfdm.BoundsFromNodesArray" title="cfdm.BoundsFromNodesArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoundsFromNodesArray</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cfdm.BoundsFromNodesArray(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+parameters prior to initialisation. By default the
+parameters are not deep copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.Units.html#cfdm.BoundsFromNodesArray.Units" title="cfdm.BoundsFromNodesArray.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cfdm.Units.html#cfdm.Units" title="cfdm.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object containing the units of the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.array.html#cfdm.BoundsFromNodesArray.array" title="cfdm.BoundsFromNodesArray.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
+<td><p>Returns a numpy array containing the uncompressed data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.astype.html#cfdm.BoundsFromNodesArray.astype" title="cfdm.BoundsFromNodesArray.astype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astype</span></code></a></p></td>
+<td><p>Cast the data to a specified type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.compressed_array.html#cfdm.BoundsFromNodesArray.compressed_array" title="cfdm.BoundsFromNodesArray.compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compressed_array</span></code></a></p></td>
+<td><p>Returns an independent numpy array with the compressed data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.compressed_dimensions.html#cfdm.BoundsFromNodesArray.compressed_dimensions" title="cfdm.BoundsFromNodesArray.compressed_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compressed_dimensions</span></code></a></p></td>
+<td><p>Mapping of compressed to uncompressed dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.conformed_data.html#cfdm.BoundsFromNodesArray.conformed_data" title="cfdm.BoundsFromNodesArray.conformed_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conformed_data</span></code></a></p></td>
+<td><p>The conformed node connectivity and node coordinate data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.copy.html#cfdm.BoundsFromNodesArray.copy" title="cfdm.BoundsFromNodesArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy of the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.dtype.html#cfdm.BoundsFromNodesArray.dtype" title="cfdm.BoundsFromNodesArray.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>The data-type of the uncompressed data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_Subarray.html#cfdm.BoundsFromNodesArray.get_Subarray" title="cfdm.BoundsFromNodesArray.get_Subarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_Subarray</span></code></a></p></td>
+<td><p>Return the Subarray class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_attributes.html#cfdm.BoundsFromNodesArray.get_attributes" title="cfdm.BoundsFromNodesArray.get_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attributes</span></code></a></p></td>
+<td><p>The attributes of the array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_calendar.html#cfdm.BoundsFromNodesArray.get_calendar" title="cfdm.BoundsFromNodesArray.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a></p></td>
+<td><p>The calendar of the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_cell_dimension.html#cfdm.BoundsFromNodesArray.get_cell_dimension" title="cfdm.BoundsFromNodesArray.get_cell_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cell_dimension</span></code></a></p></td>
+<td><p>Return the position of the cell dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_compressed_axes.html#cfdm.BoundsFromNodesArray.get_compressed_axes" title="cfdm.BoundsFromNodesArray.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></p></td>
+<td><p>Return axes that are compressed in the underlying array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_compressed_dimension.html#cfdm.BoundsFromNodesArray.get_compressed_dimension" title="cfdm.BoundsFromNodesArray.get_compressed_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_dimension</span></code></a></p></td>
+<td><p>Returns the compressed dimension's position in the array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_compression_type.html#cfdm.BoundsFromNodesArray.get_compression_type" title="cfdm.BoundsFromNodesArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></p></td>
+<td><p>Returns the array's compression type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_filename.html#cfdm.BoundsFromNodesArray.get_filename" title="cfdm.BoundsFromNodesArray.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a></p></td>
+<td><p>Return the name of the file containing the compressed data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_node_coordinates.html#cfdm.BoundsFromNodesArray.get_node_coordinates" title="cfdm.BoundsFromNodesArray.get_node_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_node_coordinates</span></code></a></p></td>
+<td><p>The coordinates representing the node locations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_start_index.html#cfdm.BoundsFromNodesArray.get_start_index" title="cfdm.BoundsFromNodesArray.get_start_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_start_index</span></code></a></p></td>
+<td><p>Return the start index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.get_units.html#cfdm.BoundsFromNodesArray.get_units" title="cfdm.BoundsFromNodesArray.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a></p></td>
+<td><p>The units of the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.ndim.html#cfdm.BoundsFromNodesArray.ndim" title="cfdm.BoundsFromNodesArray.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<td><p>Number of array dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.shape.html#cfdm.BoundsFromNodesArray.shape" title="cfdm.BoundsFromNodesArray.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>Shape of the uncompressed data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.size.html#cfdm.BoundsFromNodesArray.size" title="cfdm.BoundsFromNodesArray.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>Number of elements in the array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.source.html#cfdm.BoundsFromNodesArray.source" title="cfdm.BoundsFromNodesArray.source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code></a></p></td>
+<td><p>Return the underlying array object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.subarray_parameters.html#cfdm.BoundsFromNodesArray.subarray_parameters" title="cfdm.BoundsFromNodesArray.subarray_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarray_parameters</span></code></a></p></td>
+<td><p>Non-data parameters required by the <a class="reference internal" href="cfdm.Subarray.html#cfdm.Subarray" title="cfdm.Subarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Subarray</span></code></a> class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.subarray_shapes.html#cfdm.BoundsFromNodesArray.subarray_shapes" title="cfdm.BoundsFromNodesArray.subarray_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarray_shapes</span></code></a></p></td>
+<td><p>Create the subarray shapes along each uncompressed dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.subarrays.html#cfdm.BoundsFromNodesArray.subarrays" title="cfdm.BoundsFromNodesArray.subarrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarrays</span></code></a></p></td>
+<td><p>Return descriptors for every subarray.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.to_dask_array.html#cfdm.BoundsFromNodesArray.to_dask_array" title="cfdm.BoundsFromNodesArray.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a></p></td>
+<td><p>Convert the data to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.BoundsFromNodesArray.to_memory.html#cfdm.BoundsFromNodesArray.to_memory" title="cfdm.BoundsFromNodesArray.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<td><p>Bring data on disk into memory.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &#169;2026, NCAS | Page built on 2026-08-26.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

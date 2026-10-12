@@ -85,6 +85,9 @@ File
    ~cfdm.ZarrArray.get_storage_options
    ~cfdm.ZarrArray.replace_directory
    ~cfdm.ZarrArray.replace_filename
+   ~cfdm.ZarrArray.get_storage_protocol
+   ~cfdm.ZarrArray.get_variable
+   ~cfdm.ZarrArray.has_remote_storage_protocol
 
 Miscellaneous
 -------------

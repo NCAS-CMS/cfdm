@@ -4,6 +4,7 @@ from cfdm.functions import abspath
 
 from ..abstract import FileArray
 from ..mixin import IndexMixin
+from .fragmentxnetcdfarray import FragmentXnetcdfArray
 from .mixin import FragmentArrayMixin
 
 
@@ -18,27 +19,8 @@ class FragmentFileArray(
 
     """
 
-    def __new__(cls, *args, **kwargs):
-        """Store fragment classes.
-
-        .. versionadded:: (cfdm) 1.12.0.0
-
-        """
-        # Import fragment classes. Do this here (as opposed to outside
-        # the class) to aid subclassing.
-        from . import (
-            FragmentH5netcdfArray,
-            FragmentNetCDF4Array,
-            FragmentZarrArray,
-        )
-
-        instance = super().__new__(cls)
-        instance._FragmentArrays = (
-            FragmentNetCDF4Array,
-            FragmentH5netcdfArray,
-            FragmentZarrArray,
-        )
-        return instance
+    # Store fragment classes
+    __FragmentArrays = (FragmentXnetcdfArray,)
 
     def __init__(
         self,
@@ -46,7 +28,9 @@ class FragmentFileArray(
         address=None,
         dtype=None,
         shape=None,
-        storage_options=None,
+        filesystem=None,
+        backend=None,
+        backend_options=None,
         unpack_aggregated_data=True,
         aggregated_attributes=None,
         aggregation_file_directory=None,
@@ -84,6 +68,18 @@ class FragmentFileArray(
 
             {{init storage_options: `dict` or `None`, optional}}
 
+            {{init filesystem: optional}}
+
+                .. versionadded:: (cfdm) 1.13.3.0
+
+            {{init backend: `None` or (sequence of) `str`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.3.0
+
+            {{init backend_options: `None` or `dict`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.3.0
+
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
@@ -97,7 +93,9 @@ class FragmentFileArray(
             mask=True,
             unpack=True,
             attributes=None,
-            storage_options=storage_options,
+            filesystem=filesystem,
+            backend=backend,
+            backend_options=backend_options,
             source=source,
             copy=copy,
         )
@@ -142,15 +140,9 @@ class FragmentFileArray(
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        The method acts as a factory for either a
-        `NetCDF4FragmentArray`, `H5netcdfFragmentArray`, or
-        `UMFragmentArray` class, and it is the result of calling
-        `!_get_array` on the newly created instance that is returned.
-
-        `H5netcdfFragmentArray` will only be used if
-        `NetCDF4FragmentArray` returns a `FileNotFoundError`
-        exception; and `UMFragmentArray` will only be used
-        if `H5netcdfFragmentArray` returns an `Exception`.
+        The method acts as a factory for an `XnetcdfFragmentArray`
+        instance and it is the result of calling `!_get_array` on the
+        newly created instance that is returned.
 
         .. versionadded:: (cfdm) 1.12.0.0
 
@@ -160,8 +152,8 @@ class FragmentFileArray(
 
             {{index: `tuple` or `None`, optional}}
 
-               When a `tuple`, there must be a distinct entry for each
-               fragment dimension.
+                When a `tuple`, there must be a distinct entry for
+                each fragment dimension.
 
         :Returns:
 
@@ -169,15 +161,14 @@ class FragmentFileArray(
                 The subspace.
 
         """
-        # Loop round the fragment array backends, in the order
-        # given by the `_FragmentArrays` attribute (which is
-        # defined in `__new__`), until we find one that can open
-        # the file.
+        # Loop round the fragment array backends, in the order given
+        # by the `__FragmentArrays` attribute, until we find one that
+        # can open the file.
         if index is None:
             index = self.index()
 
         errors = []
-        for FragmentArray in self._FragmentArrays:
+        for FragmentArray in self.__FragmentArrays:
             try:
                 array = FragmentArray(source=self, copy=False)._get_array(
                     index

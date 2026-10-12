@@ -14,7 +14,9 @@ class FragmentFileArrayMixin(FragmentArrayMixin):
         address=None,
         dtype=None,
         shape=None,
-        storage_options=None,
+        filesystem=None,
+        backend=None,
+        backend_options=None,
         unpack_aggregated_data=True,
         aggregated_attributes=None,
         source=None,
@@ -49,11 +51,24 @@ class FragmentFileArrayMixin(FragmentArrayMixin):
 
             {{aggregated_calendar: `str` or `None`, optional}}
 
-            {{init storage_options: `dict` or `None`, optional}}
+            {{init filesystem: optional}}
+
+                .. versionadded:: (cfdm) 1.13.3.0
+
+            {{init backend: `None` or (sequence of) `str`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.3.0
+
+            {{init backend_options: `None` or `dict`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.3.0
 
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
+
+            storage_options: Deprecated at version 1.13.3.0
+                Use *filesystem* intesad.
 
         """
         super().__init__(
@@ -64,7 +79,9 @@ class FragmentFileArrayMixin(FragmentArrayMixin):
             mask=True,
             unpack=True,
             attributes=None,
-            storage_options=storage_options,
+            filesystem=filesystem,
+            backend=backend,
+            backend_options=backend_options,
             source=source,
             copy=copy,
         )

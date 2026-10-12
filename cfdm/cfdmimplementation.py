@@ -32,14 +32,12 @@ from .data import (
     CellConnectivityArray,
     Data,
     GatheredArray,
-    H5netcdfArray,
-    NetCDF4Array,
     PointTopologyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
-    ZarrArray,
+    XnetcdfArray,
 )
 
 
@@ -419,6 +417,25 @@ class CFDMImplementation(Implementation):
 
         return self.nc_get_variable(bounds, default=default)
 
+    def get_cell_connectivities(self, parent):
+        """Return the cell connectivities from a parent.
+
+        .. versionadded:: (cfdm) 1.13.1.0
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+                The parent object.
+
+        :Returns:
+
+            `dict`
+                A dictionary whose values are cell connectivity
+                objects, keyed by unique identifiers.
+
+        """
+        return parent.cell_connectivities(todict=True)
+
     def get_cell_measures(self, field):
         """Return all of the cell measure constructs of a field.
 
@@ -532,7 +549,7 @@ class CFDMImplementation(Implementation):
             return [data_axes[i] for i in self.get_data_compressed_axes(data)]
 
         # For a domain construct, work out the compression axes from
-        # its metadata constucts.
+        # its metadata constructs.
         domain = field_or_domain
 
         compression_types = (
@@ -595,7 +612,7 @@ class CFDMImplementation(Implementation):
             return data.get_compression_type()
 
         # For a domain construct, work out the compression type from
-        # its metadata constucts.
+        # its metadata constructs.
         constructs = self.get_constructs(construct, data=True)
 
         compression_types = set()
@@ -999,7 +1016,7 @@ class CFDMImplementation(Implementation):
         return field.domain_axes()
 
     def get_domain_axis_size(self, field, axis):
-        """Return the size a of domrain axis construct.
+        """Return the size a of domain axis construct.
 
         :Parameters:
 
@@ -1011,6 +1028,25 @@ class CFDMImplementation(Implementation):
 
         """
         return field.domain_axes(todict=True)[axis].get_size()
+
+    def get_domain_topologies(self, parent):
+        """Return the domain topologies from a parent.
+
+        .. versionadded:: (cfdm) 1.13.1.0
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+                The parent object.
+
+        :Returns:
+
+            `dict`
+                A dictionary whose values are domain topology objects,
+                keyed by unique identifiers.
+
+        """
+        return parent.domain_topologies(todict=True)
 
     def get_sample_dimension_position(self, construct):
         """Returns the position of the compressed data sample dimension.
@@ -1041,7 +1077,7 @@ class CFDMImplementation(Implementation):
         return field.nc_get_geometry_variable(default)
 
     def nc_get_group_attributes(self, field):
-        """Returns the netCDF sub-group attribtues for the field.
+        """Returns the netCDF sub-group attributes for the field.
 
         .. versionadded:: (cfdm) 1.8.6
 
@@ -1532,7 +1568,7 @@ class CFDMImplementation(Implementation):
             return construct.get_data().get_count(default=None)
 
         # For a domain construct, get the count variable from its
-        # metadata constucts.
+        # metadata constructs.
         return self._get_domain_compression_variable("count", construct)
 
     def get_index(self, construct):
@@ -1551,7 +1587,7 @@ class CFDMImplementation(Implementation):
             return construct.get_data().get_index(default=None)
 
         # For a domain construct, get the index variable from its
-        # metadata constucts.
+        # metadata constructs.
         return self._get_domain_compression_variable("index", construct)
 
     def get_inherited_properties(self, parent):
@@ -1625,7 +1661,7 @@ class CFDMImplementation(Implementation):
             return construct.get_data().get_list(default=None)
 
         # For a domain construct, get the list variable from its
-        # metadata constucts.
+        # metadata constructs.
         return self._get_domain_compression_variable("list", construct)
 
     def get_measure(self, cell_measure):
@@ -1849,7 +1885,7 @@ class CFDMImplementation(Implementation):
 
             default: optional
                 Return the value of the *default* parameter if a
-                uantize-on-write instruction has not been set.
+                quantize-on-write instruction has not been set.
 
         :Returns:
 
@@ -1927,7 +1963,7 @@ class CFDMImplementation(Implementation):
             parent: `Field` or `Domain`
 
             key: `str` or `None`
-                The identifier of the constuct, or `None` to get
+                The identifier of the construct, or `None` to get
                 `Field` axes.
 
         :Returns:
@@ -1983,8 +2019,15 @@ class CFDMImplementation(Implementation):
 
         return data.source(default)
 
-    def initialise_AuxiliaryCoordinate(self):
+    def initialise_AuxiliaryCoordinate(self, **kwargs):
         """Return an auxiliary coordinate construct.
+
+        :Parameters:
+
+            kwargs: optional
+                Parameters with which to initialise the object.
+
+                .. versionadded:: (cfdm) 1.13.1.0
 
         :Returns:
 
@@ -1992,7 +2035,7 @@ class CFDMImplementation(Implementation):
 
         """
         cls = self.get_class("AuxiliaryCoordinate")
-        return cls()
+        return cls(**kwargs)
 
     def initialise_Bounds(self):
         """Return a bounds component.
@@ -2013,7 +2056,7 @@ class CFDMImplementation(Implementation):
         :Parameters:
 
             kwargs: optional
-                Parameters for intialising the node connectivity
+                Parameters for initialising the node connectivity
                 array, which are passed to
                 `CellConnectivityArray.__init__`.
 
@@ -2086,7 +2129,7 @@ class CFDMImplementation(Implementation):
 
             domain_ancillaries: optional
 
-            parameters: optioanl
+            parameters: optional
 
         :Returns:
 
@@ -2161,7 +2204,7 @@ class CFDMImplementation(Implementation):
 
         :Parameters:
 
-            parameters: optioanl
+            parameters: optional
 
         :Returns:
 
@@ -2213,7 +2256,7 @@ class CFDMImplementation(Implementation):
         """Returns a dimension coordinate from an auxiliary coordinate.
 
         Specifically, returns a dimension coordinate construct
-        insitialised from an auxiliary coordinate construct.
+        initialised from an auxiliary coordinate construct.
 
         :Parameters:
 
@@ -2270,7 +2313,7 @@ class CFDMImplementation(Implementation):
         :Parameters:
 
             kwargs: optional
-                Parameters for intialising the domain topology
+                Parameters for initialising the domain topology
                 construct, which are passed to
                 `DomainTopology.__init__`.
 
@@ -2291,7 +2334,7 @@ class CFDMImplementation(Implementation):
         :Parameters:
 
             kwargs: optional
-                Parameters for intialising the cell connectivity
+                Parameters for initialising the cell connectivity
                 construct, which are passed to
                 `CellConnectivity.__init__`.
 
@@ -2305,7 +2348,7 @@ class CFDMImplementation(Implementation):
         return cls(**kwargs)
 
     def initialise_Field(self):
-        """Return a field qconstruct.
+        """Return a field construct.
 
         :Returns:
 
@@ -2495,7 +2538,7 @@ class CFDMImplementation(Implementation):
         :Parameters:
 
             kwargs: optional
-                Parameters for intialising the point topology array.
+                Parameters for initialising the point topology array.
                 which are passed to `PointTopologyArray.__init__`.
 
         :Returns:
@@ -2514,7 +2557,7 @@ class CFDMImplementation(Implementation):
         :Parameters:
 
             kwargs: optional
-                Parameters for intialising the quantization metadata,
+                Parameters for initialising the quantization metadata,
                 which are passed to `Quantization.__init__`.
 
         :Returns:
@@ -2536,28 +2579,10 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("TiePointIndex")
         return cls()
 
-    def initialise_NetCDF4Array(self, **kwargs):
-        """Return a `NetCDF4Array` instance.
+    def initialise_XnetcdfArray(self, **kwargs):
+        """Return a `XnetcdfArray` instance.
 
-        :Parameters:
-
-            kwargs: optional
-                Initialisation parameters to pass to the new instance.
-
-                .. versionadded:: (cfdm) 1.11.2.0
-
-        :Returns:
-
-            `NetCDF4Array`
-
-        """
-        cls = self.get_class("NetCDF4Array")
-        return cls(**kwargs)
-
-    def initialise_H5netcdfArray(self, **kwargs):
-        """Return a `H5netcdfArray` instance.
-
-        .. versionadded:: (cfdm) 1.11.2.0
+        .. versionadded:: (cfdm) 1.13.3.0
 
         :Parameters:
 
@@ -2566,28 +2591,10 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            `H5netcdfArray`
+            `XnetcdfArray`
 
         """
-        cls = self.get_class("H5netcdfArray")
-        return cls(**kwargs)
-
-    def initialise_ZarrArray(self, **kwargs):
-        """Return a `ZarrArray` instance.
-
-        .. versionadded:: (cfdm) 1.12.2.0
-
-        :Parameters:
-
-            kwargs: optional
-                Initialisation parameters to pass to the new instance.
-
-        :Returns:
-
-            `ZarrArray`
-
-        """
-        cls = self.get_class("ZarrArray")
+        cls = self.get_class("XnetcdfArray")
         return cls(**kwargs)
 
     def initialise_BoundsFromNodesArray(self, **kwargs):
@@ -2598,7 +2605,7 @@ class CFDMImplementation(Implementation):
         :Parameters:
 
             kwargs: optional
-                Parameters for intialising the node bounds array.
+                Parameters for initialising the node bounds array.
                 which are passed to `BoundsFromNodesArray.__init__`.
 
         :Returns:
@@ -2614,7 +2621,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-        Node count properties bariable
+        Node count properties variable
 
         """
         cls = self.get_class("NodeCountProperties")
@@ -2639,7 +2646,7 @@ class CFDMImplementation(Implementation):
         size=None,
         count_variable=None,
     ):
-        """Return a ragged contigous array instance.
+        """Return a ragged contiguous array instance.
 
         :Parameters:
 
@@ -2657,7 +2664,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            `RaggedContigousArray`
+            `RaggedContiguousArray`
 
         """
         cls = self.get_class("RaggedContiguousArray")
@@ -3247,7 +3254,7 @@ class CFDMImplementation(Implementation):
 
         :Parameters:
 
-            coordinate_referece: coordinate reference construct
+            coordinate_reference: coordinate reference construct
 
             datum: datum component
 
@@ -3387,7 +3394,7 @@ class CFDMImplementation(Implementation):
         :Parameters:
 
             construct:
-                The construct containing the ccompressed data. Will be
+                The construct containing the compressed data. Will be
                 changed in-place.
 
             tie_points: `dict`
@@ -3395,7 +3402,7 @@ class CFDMImplementation(Implementation):
                 identities.
 
             dimensions: `dict`
-                The dimensions spanned by the tie point ararys, keyed
+                The dimensions spanned by the tie point arrays, keyed
                 by their identities.
 
         :Returns:
@@ -3420,26 +3427,6 @@ class CFDMImplementation(Implementation):
             calendar=data.get_calendar(None),
         )
         construct.set_data(data)
-
-    def set_mesh_id(self, parent, mesh_id):
-        """Set a mesh identifier.
-
-        .. versionadded:: (cfdm)  1.11.0.0
-
-        :Parameters:
-
-            parent: construct
-                The construct on which to set the mesh id
-
-            mesh_id:
-                The mesh identifier.
-
-        :Returns:
-
-            `None`
-
-        """
-        parent.set_mesh_id(mesh_id)
 
     def nc_set_external(self, construct):
         """Set the external status of a construct.
@@ -3598,7 +3585,7 @@ class CFDMImplementation(Implementation):
             if data is not None:
                 filenames += tuple(data._original_filenames())
 
-        parent._original_filenames(define=set(filenames))
+        parent._original_filenames(define=filenames)
 
     def set_parameter(self, parent, parameter, value, copy=True):
         """Set a parameter on a component.
@@ -3681,7 +3668,7 @@ class CFDMImplementation(Implementation):
 
             parent:
 
-            interior_ring: interiot ring variable
+            interior_ring: interior ring variable
 
             copy: `bool`, optional
 
@@ -3832,7 +3819,7 @@ class CFDMImplementation(Implementation):
             ref.nc_set_datum_variable(ncvar)
 
     def set_properties(self, construct, properties, copy=True):
-        """Set construct proporties.
+        """Set construct properties.
 
         :Parameters:
 
@@ -4028,8 +4015,6 @@ _implementation = CFDMImplementation(
     Data=Data,
     BoundsFromNodesArray=BoundsFromNodesArray,
     GatheredArray=GatheredArray,
-    H5netcdfArray=H5netcdfArray,
-    NetCDF4Array=NetCDF4Array,
     PointTopologyArray=PointTopologyArray,
     Quantization=Quantization,
     RaggedContiguousArray=RaggedContiguousArray,
@@ -4037,7 +4022,7 @@ _implementation = CFDMImplementation(
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
     SubsampledArray=SubsampledArray,
     TiePointIndex=TiePointIndex,
-    ZarrArray=ZarrArray,
+    XnetcdfArray=XnetcdfArray,
 )
 
 
@@ -4052,42 +4037,6 @@ def implementation():
 
         `CFDMImplementation`
             A container for the CF data model implementation.
-
-    **Examples**
-
-    >>> i = cfdm.implementation()
-    >>> i
-    <CFDMImplementation: >
-    >>> i.classes()
-    {'AuxiliaryCoordinate': <class 'cfdm.auxiliarycoordinate.AuxiliaryCoordinate'>,
-     'CellMeasure': <class 'cfdm.cellmeasure.CellMeasure'>,
-     'CellMethod': <class 'cfdm.cellmethod.CellMethod'>,
-     'CoordinateReference': <class 'cfdm.coordinatereference.CoordinateReference'>,
-     'DimensionCoordinate': <class 'cfdm.dimensioncoordinate.DimensionCoordinate'>,
-     'DomainAncillary': <class 'cfdm.domainancillary.DomainAncillary'>,
-     'DomainAxis': <class 'cfdm.domainaxis.DomainAxis'>,
-     'Field': <class 'cfdm.field.Field'>,
-     'FieldAncillary': <class 'cfdm.fieldancillary.FieldAncillary'>,
-     'Bounds': <class 'cfdm.bounds.Bounds'>,
-     'InteriorRing': <class 'cfdm.interiorring.InteriorRing'>,
-     'CoordinateConversion': <class 'cfdm.coordinateconversion.CoordinateConversion'>,
-     'Datum': <class 'cfdm.datum.Datum'>,
-     'Data': <class 'cfdm.data.data.Data'>,
-     'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
-     'H5netcdfArray': <class 'cfdm.data.h5netcdfarray.H5netcdfArray'>,
-     'NetCDF4Array': <class 'cfdm.data.netcdf4array.NetCDF4Array'>,
-     'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
-     'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
-     'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
-     'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>,
-     'SubsampledArray': <class 'cfdm.data.subsampledrray.SubsampledArray'>,
-     'List': <class 'cfdm.list.List'>,
-     'Count': <class 'cfdm.count.Count'>,
-     'Index': <class 'cfdm.index.Index'>,
-     'NodeCountProperties': <class 'cfdm.nodecountproperties.NodeCountProperties'>,
-     'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>,
-     'Quantization': <class 'cfdm.quantization.Quantization'>,
-     'ZarrArray': <class 'cfdm.data.zarrarray.ZarrArray'>}
 
     """
     return _implementation.copy()

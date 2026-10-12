@@ -113,6 +113,7 @@ ideas, code, and documentation to the cfdm library:
 * Bryan Lawrence
 * David Hassell
 * Jonathan Gregory
+* Jonny Williams
 * Martin Juckes
 * Riley Brady  
 * Sadie Bartholomew  

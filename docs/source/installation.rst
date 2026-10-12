@@ -115,7 +115,7 @@ To install from source:
 1. Download the cfdm package from https://pypi.org/project/cfdm
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``1.13.0.0``):
+   you want to install, e.g. ``1.13.2.0``):
 
    .. code:: console
 	 
@@ -195,17 +195,20 @@ The cfdm package requires:
 * `cftime <https://pypi.org/project/cftime>`_, version 1.6.4 or
   newer.
 
-* `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.3.0
+* `h5netcdf <https://pypi.org/project/h5netcdf>`_, version 1.8.0 or
   newer.
 
 * `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.
 
-* `s3fs <https://pypi.org/project/s3fs>`_, version 2024.6.0 or newer.
+* `xnetcdf <https://pypi.org/project/xnetcdf>`_, version 0.1.0 or newer.
+
+* `fsspec <https://pypi.org/project/fsspec>`_, version 2026.2.0 or
+  newer.
 
 * `dask <https://pypi.org/project/dask>`_, version 2025.5.1 or newer.
 
-* `distributed <https://pypi.org/project/distributed>`_, version 2025.5.1
-  or newer.
+* `distributed <https://pypi.org/project/distributed>`_, version
+  2025.5.1 or newer.
 
 * `packaging <https://pypi.org/project/packaging>`_, version 20.0 or
   newer.
@@ -251,7 +254,21 @@ environments for which these features are not required.
 
 * `zarr <https://pypi.org/project/zarr>`_, version 3.1.3 or newer.
 
-  For reading and writing Zarr datasets.
+  For reading and writing Zarr datasets, and reading Kerchunk
+  datasets.
+
+.. rubric:: UM
+
+* `umfive <https://pypi.org/project/umfive>`_, version 0.3.0 or newer.
+
+  For reading PP and UM fields file datasets.
+
+.. rubric:: xarray
+
+* `xarray <https://pypi.org/project/xarray>`_, version 2026.7.0 or newer.
+
+  For converting fields and domains to `xarray` datasets, and
+  converting `xarray` datasets to fields and domains.
 
 ----
 

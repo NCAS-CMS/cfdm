@@ -96,6 +96,7 @@ construct components.
    cfdm.core.Coordinate
    cfdm.core.Parameters
    cfdm.core.ParametersDomainAncillaries
+   cfdm.core.Topology
 
 Miscellaneous
 -------------
@@ -105,4 +106,3 @@ Miscellaneous
    :toctree: class/
 
    cfdm.core.DocstringRewriteMeta
-   

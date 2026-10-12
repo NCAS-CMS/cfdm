@@ -22,9 +22,10 @@ which carries the following MIT License:
 
 import logging
 from math import prod
-from numbers import Integral
 
 import numpy as np
+
+from cfdm.functions import axis_dropping_index
 
 logger = logging.getLogger(__name__)
 
@@ -122,13 +123,14 @@ class netcdf_indexer:
 
             variable:
                 The variable to be indexed. May be any variable that
-                has the same API as one of `numpy.ndarray`,
-                `netCDF4.Variable`, `h5py.Variable`,
-                `h5netcdf.Variable`, or `zarr.Array`. Any masking and
-                unpacking that could be applied by *variable* itself
-                (e.g. by a `netCDF4.Variable` instance) is disabled,
-                ensuring that any masking and unpacking is always done
-                by the `netcdf_indexer` instance.
+                has one of the `numpy.ndarray`, `netCDF4.Variable`,
+                `h5py.Variable` (which includes `h5netcdf.Variable`),
+                `scipy.io.netcdf_variable`, or `zarr.Array` APIs. Any
+                masking and unpacking that could be applied by
+                *variable* itself (e.g. by a `netCDF4.Variable`
+                instance) is disabled, ensuring that any masking and
+                unpacking is always done by the `netcdf_indexer`
+                instance.
 
             mask: `bool`, optional
                 If True, the default, then an array returned by
@@ -168,9 +170,13 @@ class netcdf_indexer:
                 relevant to masking and unpacking are considered, with
                 all other attributes being ignored. If *attributes* is
                 `None`, the default, then the netCDF attributes stored
-                by *variable* (if any) are used. If *attributes* is
-                not `None`, then any netCDF attributes stored by
-                *variable* are ignored.
+                by *variable* (if any) are used. Attributes can be
+                accessed from a *variable* which has one of the
+                `h5py.Variable`, `netCDF4.Variable` or
+                `scipy.io.netcdf_variable` APIs. For any other API it
+                is assumed that the variable stores no attributes. If
+                *attributes* is not `None`, then any netCDF attributes
+                stored by *variable* are ignored.
 
             copy: `bool`, optional
                 If True then return a `numpy` array that is not a view
@@ -207,7 +213,7 @@ class netcdf_indexer:
         variable = self.variable
         unpack = self.unpack
         attributes = self.attributes()
-        dtype = variable.dtype
+        dtype = self.dtype
 
         # Prevent a netCDF4 variable from doing its own masking and
         # unpacking during the indexing
@@ -225,39 +231,51 @@ class netcdf_indexer:
         # ------------------------------------------------------------
         # Index the variable
         # ------------------------------------------------------------
-        try:
-            data = self._index(index)
-        except (IndexError, AttributeError):
-            # Assume we are here because we have one or more
-            # np.newaxis values in 'index', and the variable doesn't
-            # support that type of indexing. It is known that
-            # `netCDF4` and `zarr` raise an IndexError and `h5netcdf`
-            # raises an AttributeError.
 
-            # Subspace the variable with the np.newaxis elements
-            # removed
+        # Create the index without any new-axis elements. We'll first
+        # subspace the variable without new axes (given that some
+        # variables don't like them, such as `h5py.Variable`), and
+        # reinstate them (if any) on the `numpy` array later.
+        #
+        # E.g.    index : (1, np.newaxis, slice(1, 5))
+        #      => index1: (1, slice(1, 5))
+        index1 = index
+        new_axes = False
+        if index1 is not Ellipsis:
+            if not isinstance(index, tuple):
+                index = (index,)
+
             newaxis = np.newaxis
-            index1 = [i for i in index if i is not newaxis]
-            data = self._index(tuple(index1))
+            index1 = tuple([i for i in index if i is not newaxis])
+            new_axes = len(index1) < len(index)
 
-            # Now subspace the result (which we're assuming is
-            # something that likes np.newaxis indices) with the
-            # np.newaxis elements reinstated.
-            index2 = [i if i is newaxis else slice(None) for i in index]
-            data = self._index(tuple(index2), data=data)
-
-            # E.g.     index : (1, np.newaxis, slice(1, 5))
-            #      =>  index1: (1, slice(1, 5))
-            #      and index2: (slice(None), np.newaxis, slice(None))
-        except ValueError:
-            # Something went wrong, which is indicative of the
-            # variable not supporting the appropriate slicing method
-            # (e.g. `h5netcdf` might have returned "ValueError: Step
-            # must be >= 1 (got -2)"). Therefore we'll just get the
-            # entire array as a numpy array, and then try indexing
-            # that.
+        try:
+            # Subspace with any new-axis elements removed
+            data = self._index(index1)
+        except Exception:
+            # Something went wrong. Therefore we'll just get the
+            # entire array as a numpy array, and try subspacing that.
             data = self._index(Ellipsis)
             data = self._index(index, data=data)
+        else:
+            if new_axes:
+                # There were new-axis elements in the original index,
+                # so apply them to the data.
+                #
+                # E.g.    index : (1, np.newaxis, slice(1, 5))
+                #      => index1: (1, slice(1, 5))
+                #      => index2: (np.newaxis, slice(None))
+                index2 = []
+                for i in index:
+                    if axis_dropping_index(i):
+                        continue
+
+                    if i is not newaxis:
+                        i = slice(None)
+
+                    index2.append(i)
+
+                data = self._index(tuple(index2), data=data)
 
         # Reset a netCDF4 variable's scale and mask behaviour
         if netCDF4_scale:
@@ -281,8 +299,7 @@ class netcdf_indexer:
             if kind == "O":
                 dtype = data.dtype
 
-        if dtype is str:
-            dtype = data.dtype
+        dtype = data.dtype
 
         dtype_unsigned_int = None
         if unpack:
@@ -470,7 +487,7 @@ class netcdf_indexer:
         # so that their axes are not dropped yet (they will be dropped
         # later).
         index0 = [
-            slice(i, i + 1) if isinstance(i, Integral) else i for i in index
+            slice(i, i + 1) if axis_dropping_index(i) else i for i in index
         ]
 
         if data_orthogonal_indexing or len(axes_with_list_indices) <= 1:
@@ -479,7 +496,8 @@ class netcdf_indexer:
             #
             # Note: `netCDF4.Variable` natively supports orthogonal
             #       indexing; but `h5netcdf.File`, `h5py.File`,
-            #       `zarr.Array`, and `numpy.ndarray` do not.
+            #       `zarr.Array`, `scipy.io.netcdf_file`, and
+            #       `numpy.ndarray` do not.
             data = data[tuple(index0)]
         else:
             # There are two or more list/1-d array indices, and the
@@ -527,7 +545,7 @@ class netcdf_indexer:
                 data = data[tuple(index2)]
 
         # Apply any integer indices that will drop axes
-        index3 = [0 if isinstance(i, Integral) else slice(None) for i in index]
+        index3 = [0 if axis_dropping_index(i) else slice(None) for i in index]
         if index3:
             data = data[tuple(index3)]
 
@@ -835,7 +853,13 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) 1.11.2.0
 
         """
-        return self.variable.dtype
+        var = self.variable
+        try:
+            # numpy, netCDF4, h5netcdf
+            return var.dtype
+        except AttributeError:
+            # scipy.io.netcdf_file
+            return var[(slice(0, 1),) * len(var.shape)].dtype
 
     @property
     def ndim(self):
@@ -844,7 +868,12 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) 1.11.2.0
 
         """
-        return self.variable.ndim
+        try:
+            # numpy, netCDF4, h5py
+            return self.variable.ndim
+        except AttributeError:
+            # netcdf_file
+            return len(self.variable.shape)
 
     @property
     def shape(self):
@@ -862,7 +891,12 @@ class netcdf_indexer:
         .. versionadded:: (cfdm) 1.11.2.0
 
         """
-        return self.variable.size
+        try:
+            # numpy, netCDF4, h5py
+            return self.variable.size
+        except AttributeError:
+            # netcdf_file
+            return prod(self.variable.shape)
 
     def attributes(self):
         """Return the netCDF attributes for the data.
@@ -891,14 +925,18 @@ class netcdf_indexer:
             attrs = dict(variable.attrs)
         except AttributeError:
             try:
-                # netCDF4 API
+                # netCDF4
                 attrs = {
                     attr: variable.getncattr(attr)
                     for attr in variable.ncattrs()
                 }
             except AttributeError:
-                # numpy API
-                attrs = {}
+                try:
+                    # netcdf_file
+                    attrs = variable._attributes
+                except AttributeError:
+                    # numpy
+                    attrs = {}
 
         self._attributes = attrs
         return attrs
@@ -988,7 +1026,7 @@ class netcdf_indexer:
                         # List of int
                         size = len(ind)
             else:
-                # Index is Integral
+                # Index is axis-dropping
                 continue
 
             implied_shape.append(size)

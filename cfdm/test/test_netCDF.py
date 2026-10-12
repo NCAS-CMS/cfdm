@@ -229,8 +229,8 @@ class NetCDFTest(unittest.TestCase):
             self.assertEqual(
                 x.nc_global_attributes(), y.nc_global_attributes()
             )
-            self.assertTrue(x.equals(y, verbose=3))
-            self.assertTrue(y.equals(x, verbose=3))
+            self.assertTrue(x.equals(y))
+            self.assertTrue(y.equals(x))
 
         g[1].nc_set_global_attribute("comment", "different comment")
         cfdm.write(g, tempfile3)
@@ -241,8 +241,8 @@ class NetCDFTest(unittest.TestCase):
                 x.nc_global_attributes(),
                 {"comment": None, "qwerty": None, "Conventions": None},
             )
-            self.assertTrue(x.equals(y, verbose=3))
-            self.assertTrue(y.equals(x, verbose=3))
+            self.assertTrue(x.equals(y))
+            self.assertTrue(y.equals(x))
 
     def test_netCDF_geometry_variable(self):
         """Test geometry variable access and (un)setting methods."""

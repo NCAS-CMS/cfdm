@@ -176,6 +176,10 @@ NetCDF
    ~cfdm.CellConnectivity.nc_get_variable
    ~cfdm.CellConnectivity.nc_has_variable
    ~cfdm.CellConnectivity.nc_set_variable
+   ~cfdm.CellConnectivity.nc_del_connectivity_dimension
+   ~cfdm.CellConnectivity.nc_get_connectivity_dimension
+   ~cfdm.CellConnectivity.nc_has_connectivity_dimension
+   ~cfdm.CellConnectivity.nc_set_connectivity_dimension
 
 Groups
 ^^^^^^
@@ -190,6 +194,9 @@ Groups
    ~cfdm.CellConnectivity.nc_variable_groups
    ~cfdm.CellConnectivity.nc_clear_variable_groups
    ~cfdm.CellConnectivity.nc_set_variable_groups
+   ~cfdm.CellConnectivity.nc_clear_connectivity_dimension_groups
+   ~cfdm.CellConnectivity.nc_connectivity_dimension_groups
+   ~cfdm.CellConnectivity.nc_set_connectivity_dimension_groups
 
 Dataset chunks
 ^^^^^^^^^^^^^^

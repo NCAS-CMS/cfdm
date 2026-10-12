@@ -538,7 +538,7 @@ print(q.creation_commands())
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
 v = nc.variables['ta']
-netcdf_array = cfdm.NetCDF4Array(filename='file.nc', address='ta',
+netcdf_array = cfdm.XnetcdfArray(filename='file.nc', address='ta',
                                 dtype=v.dtype, shape=v.shape)
 data_disk = cfdm.Data(netcdf_array)
 numpy_array = v[...]
@@ -599,7 +599,7 @@ cfdm.write(g, 'append-example-file.nc')
 cfdm.read('append-example-file.nc')
 h = cfdm.example_field(0)
 h
-cfdm.write(h, 'append-example-file.nc', mode='a')
+cfdm.write(h, 'append-example-file.nc', mode='a', backend='netCDF4')
 cfdm.read('append-example-file.nc')
 f = cfdm.read('q_file.nc')[0]
 q.equals(f)
@@ -826,10 +826,17 @@ d.get_tie_point_indices()
 d.get_computational_precision()
 q, t = cfdm.read('file.nc')
 t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
-cfdm.write(t, 'quantized.nc')
+cfdm.write(t, 'quantized.nc', backend='netCDF4')
 quantized = cfdm.read('quantized.nc')[0]
 c = quantized.get_quantization()
 c
 c.parameters()
 t[0, 0, 0].array
 quantized[0, 0, 0].array
+pp = cfdm.read('umfile.pp')
+pp
+print(pp[0])
+pp = cfdm.read('umfile.pp')
+cfdm.write(pp, 'umfile1.nc')
+pp = cfdm.read('umfile.pp', cfa_write='field')
+cfdm.write(pp, 'umfile2.nc', cfa='field')

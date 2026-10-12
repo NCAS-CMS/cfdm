@@ -74,11 +74,9 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertFalse(cell_measure.has_data())
 
         # External file contains only the cell measure variable
-        f = cfdm.read(
-            self.parent_file, external=[self.external_file], verbose=False
-        )
+        f = cfdm.read(self.parent_file, external=[self.external_file])
 
-        c = cfdm.read(self.combined_file, verbose=False)
+        c = cfdm.read(self.combined_file)
 
         for i in c + f:
             _ = repr(i)
@@ -93,12 +91,10 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertEqual(len(c), 1)
 
         for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], verbose=3))
+            self.assertTrue(c[i].equals(f[i]))
 
         # External file contains other variables
-        f = cfdm.read(
-            self.parent_file, external=self.combined_file, verbose=False
-        )
+        f = cfdm.read(self.parent_file, external=self.combined_file)
 
         for i in f:
             _ = repr(i)
@@ -109,13 +105,12 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertEqual(len(c), 1)
 
         for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], verbose=3))
+            self.assertTrue(c[i].equals(f[i]))
 
         # Two external files
         f = cfdm.read(
             self.parent_file,
             external=[self.external_file, self.external_missing_file],
-            verbose=False,
         )
 
         for i in f:
@@ -127,7 +122,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertEqual(len(c), 1)
 
         for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], verbose=3))
+            self.assertTrue(c[i].equals(f[i]))
 
     def test_EXTERNAL_WRITE(self):
         """Test write function writing of external netCDF variables."""
@@ -143,7 +138,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertEqual(len(g), len(combined))
 
         for i in range(len(g)):
-            self.assertTrue(combined[i].equals(g[i], verbose=3))
+            self.assertTrue(combined[i].equals(g[i]))
 
         cell_measure = g[0].constructs("measure:area").value()
 
@@ -160,16 +155,14 @@ class ExternalVariableTest(unittest.TestCase):
             .nc_get_external()
         )
 
-        cfdm.write(
-            g, tempfile_parent, external=tempfile_external, verbose=False
-        )
+        cfdm.write(g, tempfile_parent, external=tempfile_external)
 
-        h = cfdm.read(tempfile_parent, verbose=False)
+        h = cfdm.read(tempfile_parent)
 
         self.assertEqual(len(h), len(parent))
 
         for i in range(len(h)):
-            self.assertTrue(parent[i].equals(h[i], verbose=3))
+            self.assertTrue(parent[i].equals(h[i]))
 
         h = cfdm.read(tempfile_external)
         external = cfdm.read(self.external_file)
@@ -177,7 +170,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertEqual(len(h), len(external))
 
         for i in range(len(h)):
-            self.assertTrue(external[i].equals(h[i], verbose=3))
+            self.assertTrue(external[i].equals(h[i]))
 
 
 if __name__ == "__main__":

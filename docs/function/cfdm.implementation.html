@@ -7,16 +7,17 @@
 
     <title>cfdm.implementation &#8212; Documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/documentation_options.js?v=2798502a"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=a56c686a"></script>
-    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.integer_dtype" href="cfdm.integer_dtype.html" />
@@ -31,12 +32,12 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.3.0</a></h1>
 
 
 
@@ -123,7 +124,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.implementation<a class="headerlink" href="#cfdm-implementation" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cfdm.implementation">
-<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">implementation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/cfdmimplementation.py#L4044-L4093"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.implementation" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">implementation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/cfdmimplementation.py#L4029-L4042"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.implementation" title="Link to this definition">¶</a></dt>
 <dd><p>Return a container for the CF data model implementation.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -135,47 +136,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code></dt><dd><p>A container for the CF data model implementation.</p>
+<dt><a class="reference internal" href="../class/cfdm.CFDMImplementation.html#cfdm.CFDMImplementation" title="cfdm.CFDMImplementation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code></a></dt><dd><p>A container for the CF data model implementation.</p>
 </dd>
 </dl>
 </dd>
 </dl>
-<p><strong>Examples</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">implementation</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span>
-<span class="go">&lt;CFDMImplementation: &gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span><span class="o">.</span><span class="n">classes</span><span class="p">()</span>
-<span class="go">{&#39;AuxiliaryCoordinate&#39;: &lt;class &#39;cfdm.auxiliarycoordinate.AuxiliaryCoordinate&#39;&gt;,</span>
-<span class="go"> &#39;CellMeasure&#39;: &lt;class &#39;cfdm.cellmeasure.CellMeasure&#39;&gt;,</span>
-<span class="go"> &#39;CellMethod&#39;: &lt;class &#39;cfdm.cellmethod.CellMethod&#39;&gt;,</span>
-<span class="go"> &#39;CoordinateReference&#39;: &lt;class &#39;cfdm.coordinatereference.CoordinateReference&#39;&gt;,</span>
-<span class="go"> &#39;DimensionCoordinate&#39;: &lt;class &#39;cfdm.dimensioncoordinate.DimensionCoordinate&#39;&gt;,</span>
-<span class="go"> &#39;DomainAncillary&#39;: &lt;class &#39;cfdm.domainancillary.DomainAncillary&#39;&gt;,</span>
-<span class="go"> &#39;DomainAxis&#39;: &lt;class &#39;cfdm.domainaxis.DomainAxis&#39;&gt;,</span>
-<span class="go"> &#39;Field&#39;: &lt;class &#39;cfdm.field.Field&#39;&gt;,</span>
-<span class="go"> &#39;FieldAncillary&#39;: &lt;class &#39;cfdm.fieldancillary.FieldAncillary&#39;&gt;,</span>
-<span class="go"> &#39;Bounds&#39;: &lt;class &#39;cfdm.bounds.Bounds&#39;&gt;,</span>
-<span class="go"> &#39;InteriorRing&#39;: &lt;class &#39;cfdm.interiorring.InteriorRing&#39;&gt;,</span>
-<span class="go"> &#39;CoordinateConversion&#39;: &lt;class &#39;cfdm.coordinateconversion.CoordinateConversion&#39;&gt;,</span>
-<span class="go"> &#39;Datum&#39;: &lt;class &#39;cfdm.datum.Datum&#39;&gt;,</span>
-<span class="go"> &#39;Data&#39;: &lt;class &#39;cfdm.data.data.Data&#39;&gt;,</span>
-<span class="go"> &#39;GatheredArray&#39;: &lt;class &#39;cfdm.data.gatheredarray.GatheredArray&#39;&gt;,</span>
-<span class="go"> &#39;H5netcdfArray&#39;: &lt;class &#39;cfdm.data.h5netcdfarray.H5netcdfArray&#39;&gt;,</span>
-<span class="go"> &#39;NetCDF4Array&#39;: &lt;class &#39;cfdm.data.netcdf4array.NetCDF4Array&#39;&gt;,</span>
-<span class="go"> &#39;PointTopologyArray&#39;: &lt;class &#39;cfdm.data.pointtopologyarray.PointTopologyArray&#39;&gt;,</span>
-<span class="go"> &#39;RaggedContiguousArray&#39;: &lt;class &#39;cfdm.data.raggedcontiguousarray.RaggedContiguousArray&#39;&gt;,</span>
-<span class="go"> &#39;RaggedIndexedArray&#39;: &lt;class &#39;cfdm.data.raggedindexedarray.RaggedIndexedArray&#39;&gt;,</span>
-<span class="go"> &#39;RaggedIndexedContiguousArray&#39;: &lt;class &#39;cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray&#39;&gt;,</span>
-<span class="go"> &#39;SubsampledArray&#39;: &lt;class &#39;cfdm.data.subsampledrray.SubsampledArray&#39;&gt;,</span>
-<span class="go"> &#39;List&#39;: &lt;class &#39;cfdm.list.List&#39;&gt;,</span>
-<span class="go"> &#39;Count&#39;: &lt;class &#39;cfdm.count.Count&#39;&gt;,</span>
-<span class="go"> &#39;Index&#39;: &lt;class &#39;cfdm.index.Index&#39;&gt;,</span>
-<span class="go"> &#39;NodeCountProperties&#39;: &lt;class &#39;cfdm.nodecountproperties.NodeCountProperties&#39;&gt;,</span>
-<span class="go"> &#39;PartNodeCountProperties&#39;: &lt;class &#39;cfdm.partnodecountproperties.PartNodeCountProperties&#39;&gt;,</span>
-<span class="go"> &#39;Quantization&#39;: &lt;class &#39;cfdm.quantization.Quantization&#39;&gt;,</span>
-<span class="go"> &#39;ZarrArray&#39;: &lt;class &#39;cfdm.data.zarrarray.ZarrArray&#39;&gt;}</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </section>
@@ -189,11 +154,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-08-26.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
     </div>
 

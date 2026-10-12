@@ -45,7 +45,7 @@ CODE1 = {
 }
 
 # --------------------------------------------------------------------
-# NetCDF formats
+# Dataset formats
 # --------------------------------------------------------------------
 # NetCDF file magic numbers
 NETCDF_MAGIC_NUMBERS = (
@@ -69,6 +69,22 @@ NETCDF4_FMTS = ("NETCDF4", "NETCDF4_CLASSIC")
 
 # Zarr dataset formats
 ZARR_FMTS = ("ZARR3",)
+
+# xarray dataset formats
+XARRAY_FMTS = ("XARRAY",)
+
+# PP/UM file magic numbers
+PP_UM_MAGIC_NUMBERS = (
+    0,  # UM little/big endian
+    1,  # UM little endian
+    16777216,  # UM big endian
+    2,  # UM little endian
+    33554432,  # UM big endian
+    256,  # PP little endian
+    65536,  # PP big endian
+    512,  # PP little endian
+    131072,  # PP big endian
+)
 
 # --------------------------------------------------------------------
 # Quantization

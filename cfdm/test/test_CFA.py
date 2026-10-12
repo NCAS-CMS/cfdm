@@ -181,7 +181,7 @@ class CFATest(unittest.TestCase):
         f = cfdm.read(tmpfile1, cfa_write="all")[0]
 
         # No constructs
-        cfdm.write(f, tmpfile2, cfa={"constructs": []})
+        cfdm.write(f, tmpfile2, cfa=[])
         nc = netCDF4.Dataset(tmpfile2, "r")
         for var in nc.variables.values():
             attrs = var.ncattrs()
@@ -287,8 +287,8 @@ class CFATest(unittest.TestCase):
             self.assertEqual(
                 fa.data.nc_get_aggregated_data(),
                 {
-                    "map": "fragment_map_uid",
-                    "unique_values": "fragment_value_uid",
+                    "map": "/fragment_map_uid",
+                    "unique_values": "/fragment_value_uid",
                 },
             )
 
@@ -309,6 +309,9 @@ class CFATest(unittest.TestCase):
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1, cfa_write="field")[0]
         cfdm.write(f, tmpfile2, cfa="field")
+        g = cfdm.read(tmpfile2, cfa_write="field")[0]
+
+        cfdm.write(f, tmpfile2, cfa=["field"])
         g = cfdm.read(tmpfile2, cfa_write="field")[0]
 
         # Default of cfa="auto" - check that aggregation variable
@@ -345,7 +348,7 @@ class CFATest(unittest.TestCase):
         nc.close()
 
         # Check bad values of cfa
-        for cfa in (False, True, (), []):
+        for cfa in (False, True):
             with self.assertRaises(ValueError):
                 cfdm.write(g, cfa_file, cfa=cfa)
 
@@ -374,6 +377,70 @@ class CFATest(unittest.TestCase):
         # Can't straddle Dask chunks
         with self.assertRaises(AggregationError):
             cfdm.write(f[1:3], cfa_file2, cfa="field")
+
+    def test_CFA_unlimited_dimension(self):
+        """Test aggregation with an unlimited aggregation dimension."""
+        # Check that the 'a_time' CFA dimension is unlimited when it's
+        # originally created via a fragment-URIs CFA variable.
+        f = cfdm.example_field(2)
+
+        cfdm.write(f, tmpfile1)
+        f = cfdm.read(tmpfile1, cfa_write="field")[0]
+
+        axis, t = f.domain_axis("time", item=True)
+        t.nc_set_unlimited(True)
+
+        cfdm.write(f, tmpfile2, cfa="field")
+
+        with netCDF4.Dataset(tmpfile2, "r") as nc:
+            self.assertTrue(nc.dimensions["a_time"].isunlimited)
+
+        # Check that the 'a_time' CFA dimension is unlimited when it's
+        # originally created via a unique-values CFA variable.
+        fa = cfdm.FieldAncillary(
+            data=cfdm.Data.zeros((t.get_size(),), chunks=-1)
+        )
+        fa.data._nc_set_aggregation_write_status(True)
+        f.set_construct(fa, axes=axis)
+
+        cfdm.write(
+            f, tmpfile2, cfa={"constructs": ("field", "field_ancillary")}
+        )
+
+        with netCDF4.Dataset(tmpfile2, "r") as nc:
+            self.assertTrue(nc.dimensions["a_time"].isunlimited)
+
+    def test_CFA_unique_value(self):
+        """Test the unique value fragment array variable."""
+        write = True
+        for aggregation_value_file in (self.aggregation_value, cfa_file):
+            f = cfdm.read(aggregation_value_file, cfa_write="all")
+            self.assertEqual(len(f), 1)
+            f = f[0]
+            fa = f.field_ancillary()
+            self.assertEqual(fa.shape, (12,))
+            self.assertEqual(fa.data.chunks, ((3, 9),))
+            self.assertEqual(
+                fa.data.nc_get_aggregation_fragment_type(), "unique_value"
+            )
+            self.assertEqual(
+                fa.data.nc_get_aggregated_data(),
+                {
+                    "map": "/fragment_map_uid",
+                    "unique_values": "/fragment_value_uid",
+                },
+            )
+
+            nc = netCDF4.Dataset(aggregation_value_file, "r")
+            fragment_value_uid = nc.variables["fragment_value_uid"][...]
+            nc.close()
+
+            self.assertTrue((fa[:3].array == fragment_value_uid[0]).all())
+            self.assertTrue((fa[3:].array == fragment_value_uid[1]).all())
+
+            if write:
+                cfdm.write(f, cfa_file)
+                write = False
 
 
 if __name__ == "__main__":

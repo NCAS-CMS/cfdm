@@ -1,6 +1,7 @@
 import numpy as np
 
 from ..cfdmimplementation import implementation
+from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from .abstract import ReadWrite
 from .netcdf import NetCDFWrite
 
@@ -85,45 +86,56 @@ class write(ReadWrite):
         fields: (sequence of) `Field` or `Domain`
             The field and domain constructs to write to the dataset.
 
-        dataset_name: `str`
-            The output dataset name. Relative paths are allowed, and
-            standard tilde and shell parameter expansions are applied
-            to the string.
+        dataset_name: `str` or `None`, optional
+            The output dataset name as a string. Relative paths are
+            allowed, and standard tilde and shell parameter expansions
+            are applied to the string.
 
-            *Parameter example:*
+            If the output dataset is located in memory, as opposed to
+            on disk (which is determined by the setting of the *fmt*
+            parameter, such as ``'XARRAY'``), then *dataset_name* must
+            be `None` (the default).
+
+            *Example:*
               The file ``file.nc`` in the user's home directory could
               be described by any of the following:
               ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
-              ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
+              ``'~/file.nc'``, ``'~/tmp/../file.nc'``, etc.
 
         fmt: `str`, optional
-            The format of the output dataset. One of:
+            The format of the output dataset, which is either located
+            on disk or in memory. One of:
 
-            ==========================  ==============================
-            *fmt*                       Output dataset type
-            ==========================  ==============================
-            ``'NETCDF4'``               NetCDF4 format file. This is
-                                        the default.
+            ==========================  ========  ==========================
+            *fmt*                       Location  Output dataset type
+            ==========================  ========  ==========================
+            ``'NETCDF4'``               Disk      NetCDF4 format (see
+                                                  below). This is the
+                                                  default.
 
-            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
-                                        (see below)
+            ``'NETCDF4_CLASSIC'``       Disk      NetCDF4 classic
+                                                  format file (see below).
 
-            ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
-                                        (limited to file sizes less
-                                        than 2GB).
+            ``'NETCDF3_CLASSIC'``       Disk      NetCDF3 classic format
+                                                  file limited to file
+                                                  sizes of less than 2GB
+                                                  (see below).
 
-            ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
-                                        file
+            ``'NETCDF3_64BIT_OFFSET'``  Disk      NetCDF3 64-bit offset
+                                                  format file.
 
-            ``'NETCDF3_64BIT'``         An alias for
-                                        ``'NETCDF3_64BIT_OFFSET'``
+            ``'NETCDF3_64BIT'``         Disk      An alias for
+                                                  ``'NETCDF3_64BIT_OFFSET'``
 
-            ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
-                                        file with extensions (see
-                                        below)
+            ``'NETCDF3_64BIT_DATA'``    Disk      NetCDF3 64-bit offset
+                                                  format file with
+                                                  extensions (see below).
 
-            ``'ZARR3'``                 Zarr v3 dataset
-            ==========================  ==============================
+            ``'ZARR3'``                 Disk      Zarr v3 dataset.
+
+            ``'XARRAY'``                Memory    `xarray` dataset (see
+                                                  below).
+            ==========================  ========  ==========================
 
             By default the format is ``'NETCDF4'``.
 
@@ -146,6 +158,15 @@ class write(ReadWrite):
 
             ``'NETCDF4'`` files use the version 4 disk format (HDF5)
             and use the new features of the version 4 API.
+
+            ``'XARRAY'`` datasets in memory will be either
+            `xarray.Dataset` (if there are no sub-groups of the root
+            group) or else `xarray.DataTree` (if there are sub-groups
+            of the root group). If the `cf_xarray` package
+            (https://cf-xarray.readthedocs.io) is installed then the
+            `cf_xarray` accessors that allow some interpretation of CF
+            attributes will be present on `xarray.DataArray` and
+            `xarray.Dataset` objects.
 
         mode: `str`, optional
             Specify the mode of write access for the output
@@ -487,9 +508,9 @@ class write(ReadWrite):
         group: `bool`, optional
             If False then create a "flat" dataset, i.e. one with only
             the root group, regardless of any group structure
-            specified by the field constructs. By default any groups
-            defined by the netCDF interface of the field constructs
-            and its components will be created and populated.
+            specified by the netCDF interfaces of the fields or domain
+            and their components. If True (the default) then any
+            sub-groups will be created and populated.
 
             .. versionadded:: (cfdm) 1.8.6
 
@@ -555,6 +576,9 @@ class write(ReadWrite):
             Ignored for netCDF3 output formats, for which all data is
             always written out contiguously.
 
+            See the *one_d_chunks* parameter for how 1-d arrays may be
+            given special treatment.
+
             .. note:: By default, a data array returned by
                       `{{package}}.read` stores its dataset chunking
                       strategy from the dataset being read. When this
@@ -578,18 +602,22 @@ class write(ReadWrite):
 
             * `int` or `float` or `str`
 
-              The size in bytes of the dataset chunks. A floating
-              point value is rounded down to the nearest integer, and
-              a string represents a quantity of byte
-              units. "Square-like" chunk shapes are preferred,
-              maximising the amount of chunks that are completely
-              filled with data values. For instance a chunksize of
-              1024 bytes may be specified with any of ``1024``,
-              ``1024.9``, ``'1024'``, ``'1024.9'``, ``'1024 B'``, ``'1
-              KiB'``, ``'0.001024 MB'``, etc. Recognised byte units
-              are (case insensitive): ``B``, ``KiB``, ``MiB``,
-              ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
-              ``TB``, and ``PB``. Spaces in strings are optional.
+              The size in bytes of the dataset chunks. "Square-like"
+              chunk shapes are preferred, maximising the amount of
+              chunks that are completely filled with data values.
+
+              Values are parsed as bytes with optional units as
+              accepted by `dask.utils.parse_bytes`, where a string
+              represents a quantity of byte units and a floating point
+              value is rounded down to the nearest integer.
+
+              For instance a chunksize of 1024 bytes may be specified
+              with any of ``1024``, ``1024.9``, ``'1024'``,
+              ``'1024.9'``, ``'1024 B'``, ``'1 KiB'``, ``'0.001024
+              MB'``, etc. Recognised byte units are (case
+              insensitive): ``B``, ``KiB``, ``MiB``, ``GiB``, ``TiB``,
+              ``PiB``, ``KB``, ``MB``, ``GB``, ``TB``, and
+              ``PB``. Spaces in strings are optional.
 
             .. note:: When the dataset chunk size is defined by a
                       number of bytes (taken either from the
@@ -656,6 +684,49 @@ class write(ReadWrite):
               For two-dimensional data, ``dataset_shards=9`` will
               result in shards that span 3 chunks along each
               dimension.
+
+        one_d_chunks: `str`, `int`, `float`, or `None`, optional
+            Set the chunking strategy for 1-d data arrays, and the
+            bounds arrays of 1-d coordinates.
+
+            By default, *one_d_chunks* is ``'4 MiB'``, i.e. 4194304
+            bytes.
+
+            The *one_d_chunks* parameter may be one of:
+
+            * `int` or `float` or `str`
+
+              The minimum size in bytes of the dataset chunks for a
+              1-d array and the bounds array of 1-d coordinates.
+
+              If a 1-d data array, or the bounds array of 1-d
+              coordinates, is smaller than the minimum size then a
+              single dataset chunk of that array size will be created.
+
+              If the chunking behaviour as described by
+              *dataset_chunks* implies chunks that are larger than the
+              minimum size, then these larger chunks will be used.
+
+              Values are parsed as bytes with optional units as
+              accepted by `dask.utils.parse_bytes`, where a string
+              represents a quantity of byte units and a floating point
+              value is rounded down to the nearest integer.
+
+              For instance a chunksize of 1024 bytes may be specified
+              with any of ``1024``, ``1024.9``, ``'1024'``,
+              ``'1024.9'``, ``'1024 B'``, ``'1 KiB'``, ``'0.001024
+              MB'``, etc. Recognised byte units are (case
+              insensitive): ``B``, ``KiB``, ``MiB``, ``GiB``, ``TiB``,
+              ``PiB``, ``KB``, ``MB``, ``GB``, ``TB``, and
+              ``PB``. Spaces in strings are optional.
+
+            * `None`
+
+              No special treatment. The dataset chunking behaviour for
+              a 1-d data array, and the bounds array of 1-d
+              coordinates, is as described by *dataset_chunks*.
+
+            .. versionadded:: (cfdm) 1.13.3.0
 
         cfa: `str` or `dict` or `None`, optional
             Specify which netCDF variables, if any, should be written
@@ -782,6 +853,123 @@ class write(ReadWrite):
 
             .. versionadded:: (cfdm) 1.11.2.0
 
+        backend: `str` or `None`, optional
+            Which backend library to use for creating the dataset.
+
+            The allowed backends are:
+
+            * ``'h5netcdf-h5py'``
+
+              - The `h5netcdf` library using `h5py` as its backend.
+              - Writes netCDF-4 datasets to disk.
+              - Allows control of the internal file metadata via the
+                *h5py_options* parameter.
+
+            * ``'netCDF4'``
+
+              - The `netCDF4` library.
+              - Writes netCDF-4 and netCDF-3 datasets to disk.
+
+            * ``'zarr'``
+
+              - The `zarr` library.
+              - Writes Zarr datasets to disk.
+
+            * ``'xarray'``
+
+              - The `xarray` library.
+              - Creates `xarray` datasets in memory.
+              - No files or directories are created on disk.
+
+            The default backend of `None` results in a backend that
+            depends on the dataset format specified with the *fmt*
+            parameter, as follows:
+
+            * For all netCDF-4 formats the default backend is
+              ``h5netcdf-h5py``.
+
+            * For all netCDF-3 formats the default backend is
+              ``netCDF4``.
+
+            * For all Zarr formats the default backend is ``zarr``.
+
+            * For all xarray formats the default backend is ``xarray``.
+
+            .. versionadded:: (cfdm) 1.13.1.0
+
+        h5py_options: `dict` or `None`, optional
+            When the *backend* is ``h5netcdf-h5py``, provide
+            additional keyword arguments to be passed to the
+            `h5py.File` file constructor. In particular, these
+            keywords can be used to control the structure of the HDF5
+            internal metadata (such as the file space handling
+            strategy, the file space page size, the meta block size,
+            etc.).
+
+            See
+            https://docs.h5py.org/en/stable/high/file.html#h5py.File
+            for details on which keywords are available.
+
+            .. note:: If the ``'meta_block_size'`` is not provided by
+                      *h5py_options*, then it will automatically set
+                      to a value that
+
+            *Example:*
+              ``h5py_options=dict(fs_strategy='page',
+              fs_page_size=2**20)``
+
+            *Example:*
+              ``h5py_options={'meta_block_size': 500000}``
+
+            .. versionadded:: (cfdm) 1.13.1.0
+
+        hdf5_consolidated_metadata: `bool`, optional
+            If True (the default) then create a single consolidated
+            metadata block in an output HDF5 dataset that should be
+            large enough for the entire B-tree. Such a consolidated
+            HDF5 metadata block gives significant performance benefits when
+            reading the dataset. Ignored unless the *backend* is
+            ``h5netcdf-h5py`` and ``'meta_block_size'`` has not been
+            provided in the *h5py_options*.
+
+            See *hdf5_expansion_factor* for information on the
+            algorithm used to estimate the required metadata block
+            size, and how it can be modified.
+
+            .. versionadded:: (cfdm) 1.13.3.0
+
+        hdf5_expansion_factor: number, optional
+            Configure the algorithm for calculating the size of the
+            metadata block in an output HDF5 dataset that should be
+            large enough for the entire B-tree. Ignored unless
+            *hdf5_consolidated_metadata* is True, the *backend* is
+            ``h5netcdf-h5py`` and ``'meta_block_size'`` has not been
+            provided in the *h5py_options*.
+
+            Such a consolidated HDF5 metadata block gives significant
+            performance benefits when reading the dataset. The
+            algorithm that determines this size does so by calculating
+            an approximate amount of bytes based on the actual groups,
+            attributes, variables, and dimension that are going to be
+            written to the dataset; and then multiplying this amount
+            by the *hdf5_expansion_factor* to account for the HDF5's
+            dynamic, non-linear memory allocation behaviours, which
+            are not known in advance. The default value is ``2.25``.
+
+            Due to the approximate nature of the algorithm, it may be
+            that the calculated HDF5 metadata block size is too small
+            to contain the entire B-tree (in which more than one HDF5
+            metadata block will be created in the dataset).
+            Alternatively, the estimated HDF5 metadata block size may
+            be larger than is actually required (in which case there
+            will be some unused space in the dataset). In both cases
+            the HDF5 metadata block size may be adjusted by setting a
+            different value for the *hdf5_expansion_factor* (or
+            bypassing the automatic calculation by explicitly setting
+            ``'meta_block_size'`` in the *h5py_options*).
+
+            .. versionadded:: (cfdm) 1.13.3.0
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
@@ -789,9 +977,15 @@ class write(ReadWrite):
         filename: Deprecated at version 1.13.0.0
             Use *dataset_name* instead.
 
+        netcdf_backend: Deprecated at version 1.13.3.0
+            Use *backend* instead.
+
     :Returns:
 
-        `None`
+        `None` or `xarray.Dataset`
+            When writing to disk, `None` is returned. When writing to
+            an `xarray` dataset in memory, the dataset is returned.
+
 
     **Examples**
 
@@ -810,7 +1004,7 @@ class write(ReadWrite):
     def __new__(
         cls,
         fields,
-        dataset_name,
+        dataset_name=None,
         fmt="NETCDF4",
         mode="w",
         overwrite=True,
@@ -839,8 +1033,23 @@ class write(ReadWrite):
         dataset_shards=None,
         cfa="auto",
         extra_write_vars=None,
+        backend=None,
+        h5py_options=None,
+        hdf5_consolidated_metadata=True,
+        hdf5_expansion_factor=2.25,
+        one_d_chunks="4 MiB",
+        netcdf_backend=None,
     ):
         """Write field and domain constructs to a dataset."""
+        if netcdf_backend is not None:
+            _DEPRECATION_ERROR_FUNCTION_KWARGS(
+                "cfdm.write",
+                {"netcdf_backend": netcdf_backend},
+                "Use keyword 'backend' instead",
+                version="1.13.3.0",
+                removed_at="1.15.0.0",
+            )  # pragma: no cover
+
         # Flatten the sequence of intput fields
         fields = tuple(cls._flat(fields))
         if not fields:
@@ -873,9 +1082,9 @@ class write(ReadWrite):
             }
 
         netcdf = NetCDFWrite(cls.implementation)
-        netcdf.write(
+        return netcdf.write(
             fields,
-            dataset_name,
+            dataset_name=dataset_name,
             fmt=fmt,
             mode=mode,
             overwrite=overwrite,
@@ -901,5 +1110,10 @@ class write(ReadWrite):
             omit_data=omit_data,
             dataset_chunks=dataset_chunks,
             dataset_shards=dataset_shards,
+            one_d_chunks=one_d_chunks,
             cfa=cfa,
+            backend=backend,
+            h5py_options=h5py_options,
+            hdf5_consolidated_metadata=hdf5_consolidated_metadata,
+            hdf5_expansion_factor=hdf5_expansion_factor,
         )

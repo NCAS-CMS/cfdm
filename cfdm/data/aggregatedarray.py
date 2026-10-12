@@ -17,18 +17,11 @@ class AggregatedArray(abstract.FileArray):
 
     """
 
-    def __new__(cls, *args, **kwargs):
-        """Store fragment array classes.
-
-        .. versionadded:: (cfdm) 1.12.0.0
-
-        """
-        instance = super().__new__(cls)
-        instance._FragmentArray = {
-            "uri": FragmentFileArray,
-            "unique_value": FragmentUniqueValueArray,
-        }
-        return instance
+    # Store fragment array classes.
+    __FragmentArray = {
+        "uri": FragmentFileArray,
+        "unique_value": FragmentUniqueValueArray,
+    }
 
     def __init__(
         self,
@@ -39,7 +32,12 @@ class AggregatedArray(abstract.FileArray):
         unpack=True,
         fragment_array=None,
         attributes=None,
-        storage_options=None,
+        filesystem=None,
+        backend=None,
+        backend_options=None,
+        fragment_filesystem=None,
+        fragment_backend=None,
+        fragment_backend_options=None,
         source=None,
         copy=True,
     ):
@@ -49,7 +47,7 @@ class AggregatedArray(abstract.FileArray):
 
             filename: `str`, optional
                 The name of the aggregation file containing the
-                aaggregation variable.
+                aggregation variable.
 
             address: `str`, optional
                 The name of the aggregation variable for the array.
@@ -76,30 +74,17 @@ class AggregatedArray(abstract.FileArray):
                    {'map': <'map' fragment variable data>,
                     'unique_values': <'unique_values' fragment variable data>}
 
-            storage_options: `dict` or `None`, optional
-                Key/value pairs to be passed on to the creation of
-                `s3fs.S3FileSystem` file systems to control the
-                opening of fragment files in S3 object stores. Ignored
-                for files not in an S3 object store, i.e. those whose
-                names do not start with ``s3:``.
+            {{init filesystem: optional}}
 
-                By default, or if `None`, then *storage_options* is
-                taken as ``{}``.
+                .. versionadded:: (cfdm) 1.13.1.0
 
-                If the ``'endpoint_url'`` key is not in
-                *storage_options* or is not in a dictionary defined by
-                the ``'client_kwargs`` key (which is always the case
-                when *storage_options* is `None`), then one will be
-                automatically inserted for accessing a fragment S3
-                file. For example, for a file name of
-                ``'s3://store/data/file.nc'``, an ``'endpoint_url'``
-                key with value ``'https://store'`` would be created.
+            {{read backend: `None` or (sequence of) `str`, optional}}
 
-                *Parameter example:*
-                  ``{'key: 'scaleway-api-key...', 'secret':
-                  'scaleway-secretkey...', 'endpoint_url':
-                  'https://s3.fr-par.scw.cloud', 'client_kwargs':
-                  {'region_name': 'fr-par'}}``
+                .. versionadded:: (cfdm) 1.13.3.0
+
+            {{init backend_options: `None` or `dict`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.3.0
 
             {{init attributes: `dict` or `None`, optional}}
 
@@ -107,9 +92,51 @@ class AggregatedArray(abstract.FileArray):
                 attributes will be set from the netCDF variable during
                 the first `__getitem__` call.
 
+            fragment_filesystem: optional
+                A pre-authenticated filesystem object (for example an
+                `fsspec` filesystem instance) to use for opening the
+                fragment.
+
+                If `None` (the default) then a fragment path is passed
+                unchanged to the backends defined by the
+                *fragament_backend* parameter.
+
+                When provided, a fragment path (``fragment``) is
+                treated as the file-like object
+                ``filesytem.open(fragment, 'rb')`` which is passed to
+                the backends (see the *fragment_backend* parameter).
+
+                .. versionadded:: (cfdm) 1.13.3.0
+
+            fragment_backend: `None` or (sequence of) `str`, optional
+                Which library or libraries to use for reading the
+                fragment. When the fragment is accessed, an attempt to
+                open each fragment dataset is made by the given
+                backends in order, stopping after the first successful
+                read. The available backends are those allowed by
+                `xnetcdf`.
+
+                By default *fragment_backend* is `None`, which is
+                equivalent to providing the ordered sequence of the
+                default backends for `xnetcdf`.
+
+                .. versionadded:: (cfdm) 1.13.3.0
+
+            fragment_backend_options: `None` or `dict`, optional
+                The options to use with each backend when opening a
+                fragment dataset.
+
+                .. versionadded:: (cfdm) 1.13.3.0
+
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
+
+            storage_options: Deprecated at version NEXTERSION
+                Use *filesystem* instead.
+
+            storage_protocol: Deprecated at version NEXTERSION
+                Use *filesystem* instead.
 
         """
         super().__init__(
@@ -119,7 +146,9 @@ class AggregatedArray(abstract.FileArray):
             mask=True,
             unpack=unpack,
             attributes=attributes,
-            storage_options=storage_options,
+            filesystem=filesystem,
+            backend=backend,
+            backend_options=backend_options,
             source=source,
             copy=copy,
         )
@@ -144,6 +173,23 @@ class AggregatedArray(abstract.FileArray):
                 fragment_type = source.get_fragment_type()
             except AttributeError:
                 fragment_type = None
+
+            try:
+                fragment_filesystem = source.get_fragment_filesystem()
+            except AttributeError:
+                fragment_filesystem = None
+
+            try:
+                fragment_backend = source.get_fragment_backend()
+            except AttributeError:
+                fragment_backend = None
+
+            try:
+                fragment_backend_options = (
+                    source.get_fragment_backend_options()
+                )
+            except AttributeError:
+                fragment_backend_options = None
         else:
             if filename is not None:
                 (
@@ -164,6 +210,14 @@ class AggregatedArray(abstract.FileArray):
         )
         self._set_component("fragment_array", fragment_array, copy=False)
         self._set_component("fragment_type", fragment_type, copy=False)
+
+        self._set_component(
+            "fragment_filesystem", fragment_filesystem, copy=False
+        )
+        self._set_component("fragment_backend", fragment_backend, copy=False)
+        self._set_component(
+            "fragment_backend_options", fragment_backend_options, copy=False
+        )
 
     def __getitem__(self, index):
         """Return a subspace.
@@ -428,10 +482,57 @@ class AggregatedArray(abstract.FileArray):
             if size > 1
         ]
 
+    def get_fragment_backend(self):
+        """The names of the packages for accessing the fragment dataset.
+
+        .. versionadded:: (cfdm) 1.13.3.0
+
+        :Returns:
+
+            `None` or sequence of `str`
+                The backend name or names, or `None` if none have not
+                been provided. When accessing the fragment dataset,
+                the backends are tried in order until one
+                successfully reads the dataset. If no backends have
+                been provided then the default backends for `xnetcdf`
+                are used.
+
+        """
+        return self._get_component("fragment_backend", None)
+
+    def get_fragment_backend_options(self):
+        """Backend options when opening a fragment dataset.
+
+        .. versionadded:: (cfdm) 1.13.3.0
+
+        :Returns:
+
+            `dict`
+                The options to use with each backend when opening the
+                fragment dataset.
+
+        """
+        return self._get_component("fragment_backend_options", {})
+
+    def get_fragment_filesystem(self):
+        """Return the file system which contains the fragment dataset.
+
+        .. versionadded:: (cfdm) 1.13.3.0
+
+        :Returns:
+
+            filesystem or `None`
+                The file system object. If the file system is the local
+                file system, then `None` may be returned or a file
+                system object.
+
+        """
+        return self._get_component("fragment_filesystem", None)
+
     def subarray_shapes(self, shapes):
         """Create the subarray shapes.
 
-        A fragmented dimenion (i.e. one spanned by two or fragments)
+        A fragmented dimension (i.e. one spanned by two or fragments)
         will always have a subarray size equal to the size of each of
         its fragments, overriding any other size implied by the
         *shapes* parameter.
@@ -493,6 +594,7 @@ class AggregatedArray(abstract.FileArray):
         # Create the base chunks.
         chunks = []
         ndim = self.ndim
+
         for dim, (n_fragments, size) in enumerate(
             zip(self.get_fragment_array_shape(), self.shape)
         ):
@@ -711,13 +813,15 @@ class AggregatedArray(abstract.FileArray):
         import dask.array as da
         from dask.array.core import getter
         from dask.base import tokenize
-        from uritools import isuri, uricompose
+        from uritools import isuri, uricompose, urisplit
 
         name = (f"{self.__class__.__name__}-{tokenize(self)}",)
 
         dtype = self.dtype
         fragment_array = self.get_fragment_array(copy=False)
-        storage_options = self.get_storage_options()
+        fragment_filesystem = self.get_fragment_filesystem()
+        fragment_backend = self.get_fragment_backend()
+        fragment_backend_options = self.get_fragment_backend_options()
         fragment_type = self.get_fragment_type()
         aggregated_attributes = self.get_attributes()
         unpack = self.get_unpack()
@@ -737,7 +841,7 @@ class AggregatedArray(abstract.FileArray):
         chunks = self.subarray_shapes(chunks)
 
         try:
-            FragmentArray = self._FragmentArray[fragment_type]
+            FragmentArray = self.__FragmentArray[fragment_type]
         except KeyError:
             raise ValueError(
                 "Can't get fragment array class for unknown "
@@ -757,9 +861,16 @@ class AggregatedArray(abstract.FileArray):
             kwargs.pop("map", None)
 
             if fragment_type == "uri":
-                kwargs["filename"] = kwargs.pop("uri")
+                filename = kwargs.pop("uri")
+                protocol = urisplit(filename).scheme
+                if isinstance(protocol, tuple):
+                    protocol = protocol[0]
+
+                kwargs["filename"] = filename
                 kwargs["address"] = kwargs.pop("identifier")
-                kwargs["storage_options"] = storage_options
+                kwargs["filesystem"] = fragment_filesystem
+                kwargs["backend"] = fragment_backend
+                kwargs["backend_options"] = fragment_backend_options
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory
                 )

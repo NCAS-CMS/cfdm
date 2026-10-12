@@ -1,8 +1,7 @@
-from copy import deepcopy
 from os import sep
 from os.path import join
 
-from cfdm.functions import abspath, dirname
+from cfdm.functions import _DEPRECATION_ERROR_METHOD, abspath, dirname
 
 from . import Array
 
@@ -23,7 +22,10 @@ class FileArray(Array):
         mask=True,
         unpack=True,
         attributes=None,
-        storage_options=None,
+        filesystem=None,
+        backend=None,
+        backend_options=None,
+        variable=None,
         source=None,
         copy=True,
     ):
@@ -32,15 +34,15 @@ class FileArray(Array):
         :Parameters:
 
             filename: (sequence of `str`), optional
-                The locations of datasets containing the array.
+                The location of the dataset containing the array.
 
             address: (sequence of `str`), optional
-                How to find the array in the datasets.
+                How to find the array in the dataset.
 
             dtype: `numpy.dtype`, optional
                 The data type of the array. May be `None` if is not
                 known. This may differ from the data type of the
-                array in the datasets.
+                array in the dataset.
 
             shape: `tuple`, optional
                 The shape of the dataset array.
@@ -52,14 +54,38 @@ class FileArray(Array):
             {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
-                attributes will be set during the first `__getitem__`
-                call.
+                attributes will be set from those in the dataset
+                during the first `__getitem__` call.
 
-            {{init storage_options: `dict` or `None`, optional}}
+            {{init filesystem: optional}}
+
+                .. versionadded:: (cfdm) 1.13.1.0
+
+            {{init backend: `None` or (sequence of) `str`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.3.0
+
+            {{init backend_options: `None` or `dict`, optional}}
+
+                .. versionadded:: (cfdm) 1.13.1.0
+
+            variable: optional
+                An open dataset variable object. Setting *variable*
+                does not replace the need for the *filename* and
+                *address* parameters, instead it complements them by
+                allowing faster data access.
+
+                .. versionadded:: (cfdm) 1.13.1.0
 
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
+
+            storage_options: Deprecated at version (cfdm) 1.13.3.0
+                Use *filesystem* instead.
+
+            storage_protocol: Deprecated at version (cfdm) 1.13.3.0
+                Use *filesystem* instead.
 
         """
         super().__init__(source=source, copy=copy)
@@ -101,11 +127,26 @@ class FileArray(Array):
                 attributes = None
 
             try:
-                storage_options = source._get_component(
-                    "storage_options", None
+                filesystem = source._get_component("filesystem", None)
+            except AttributeError:
+                filesystem = None
+
+            try:
+                backend = source._get_component("backend", None)
+            except AttributeError:
+                backend = None
+
+            try:
+                backend_options = source._get_component(
+                    "backend_options", None
                 )
             except AttributeError:
-                storage_options = None
+                backend_options = None
+
+            try:
+                variable = source._get_component("variable", None)
+            except AttributeError:
+                variable = None
 
         if shape is not None:
             self._set_component("shape", shape, copy=False)
@@ -120,11 +161,20 @@ class FileArray(Array):
         self._set_component("mask", bool(mask), copy=False)
         self._set_component("unpack", bool(unpack), copy=False)
 
-        if storage_options is not None:
-            self._set_component("storage_options", storage_options, copy=copy)
-
         if attributes is not None:
             self._set_component("attributes", attributes, copy=copy)
+
+        if variable is not None:
+            self._set_component("variable", variable, copy=False)
+
+        if filesystem is not None:
+            self._set_component("filesystem", filesystem, copy=False)
+
+        if backend is not None:
+            self._set_component("backend", backend, copy=False)
+
+        if backend_options is not None:
+            self._set_component("backend_options", backend_options, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
@@ -147,7 +197,7 @@ class FileArray(Array):
         x.__repr__() <==> repr(x)
 
         """
-        return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
+        return f"<{self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -171,7 +221,9 @@ class FileArray(Array):
             self.get_mask(),
             self.get_unpack(),
             self.get_attributes(copy=False),
-            self.get_storage_options(),
+            self.get_filesystem(),
+            self.get_backend(),
+            self.get_backend_options(),
         )
 
     def _get_array(self, index=None):
@@ -245,8 +297,7 @@ class FileArray(Array):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if there
-                is no file.
+                Return *default* if the address has not been set.
 
                 {{default Exception}}
 
@@ -256,16 +307,38 @@ class FileArray(Array):
                 The file name.
 
         """
-        address = self._get_component("address", None)
-        if address is None:
-            if default is None:
-                return
+        return self._get_component("address", default)
 
-            return self._default(
-                default, f"{self.__class__.__name__} has no address"
-            )
+    def get_backend(self):
+        """The names of the packages for accessing the dataset.
 
-        return address
+        .. versionadded:: (cfdm) 1.13.3.0
+
+        :Returns:
+
+            `None` or (sequence of) `str`
+                The backend name or names, or `None` if none have been
+                provided, in which case the default backends for
+                `xnetcdf` are assumed. When accessing the dataset, the
+                backends are tried in order until one successfully
+                reads the dataset.
+
+        """
+        return self._get_component("backend", None)
+
+    def get_backend_options(self):
+        """Backend options when opening a dataset.
+
+        .. versionadded:: (cfdm) 1.13.3.0
+
+        :Returns:
+
+            `dict`
+                The options to use with each backend when opening the
+                dataset.
+
+        """
+        return self._get_component("backend_options", {})
 
     def file_directory(self, normalise=False, default=AttributeError()):
         """The file directory.
@@ -275,6 +348,11 @@ class FileArray(Array):
         :Parameters:
 
             {{normalise: `bool`, optional}}
+
+            default: optional
+                Return *default* if the file has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -330,8 +408,17 @@ class FileArray(Array):
                 default, f"{self.__class__.__name__} has no file name"
             )
 
-        if normalise:
-            filename = abspath(filename)
+        if normalise and isinstance(filename, str):
+            protocol = None
+            filesystem = self.get_filesystem()
+            if filesystem is not None:
+                protocol = getattr(filesystem, "protocol", "")
+                if isinstance(protocol, tuple):
+                    protocol = protocol[0]
+
+            # Only normalise a local name
+            if protocol in (None, "file", "local"):
+                filename = abspath(filename)
 
         return filename
 
@@ -347,53 +434,64 @@ class FileArray(Array):
         """
         return self._get_component("mask")
 
-    def get_storage_options(
-        self, create_endpoint_url=True, filename=None, parsed_filename=None
-    ):
-        """Return `s3fs.S3FileSystem` options for accessing S3 files.
+    def get_storage_protocol(self):
+        """The file system protocol.
 
-        .. versionadded:: (cfdm) 1.12.0.0
+        .. versionadded:: (cfdm) 1.13.1.0
 
-        :Parameters:
-
-            create_endpoint_url: `bool`, optional
-                If True, the default, then create an
-                ``'endpoint_url'`` option if and only if one was not
-                set during object initialisation. In this case the
-                ``'endpoint_url'`` will be set from the file name
-                returned by `get_filename`, unless either of the
-                *filename* or *parsed_filename* parameters is also
-                set.
-
-            filename: `str`, optional
-                Used to set the ``'endpoint_url'`` if it was not
-                set during object initialisation and
-                *create_endpoint_url* is True. Ignored if the
-                *parsed_filename* parameter has been set.
-
-            parsed_filename: `urllib.parse.ParseResult`, optional
-                Used to set the ``'endpoint_url'`` if it was not
-                set during object initialisation and
-                *create_endpoint_url* is True. Ignored if the
-                *filename* parameter has been set.
+        .. seeaslo:: `has_remote_storage_protocol`, `get_storage_options`
 
         :Returns:
 
-            `dict` or `None`
-                The `s3fs.S3FileSystem` options.
+            `None` or `str`
+                The file system protocol. If `None` the the file
+                system is the local file system.
 
         **Examples**
 
-        >>> f.get_filename()
-        's3://store/data/file.nc'
-        >>> f.get_storage_options(create_endpoint_url=False)
-        {}
+        >>> a.get_storage_protocol()
+        's3'
+        >>> a.get_storage_protocol()
+        'file'
+        >>> print(a.get_storage_protocol())
+        None
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "get_storage_protocol",
+            version="1.13.3.0",
+            removed_at="1.14.0.0",
+        )  # pragma: no cover
+
+    def get_filesystem(self):
+        """Return the file system which contains the dataset.
+
+        .. versionadded:: (cfdm) 1.13.3.0
+
+        :Returns:
+
+            filesystem or `None`
+                The file system object. If the file system is the local
+                file system, then `None` may be returned or a file
+                system object.
+
+        """
+        return self._get_component("filesystem", None)
+
+    def get_storage_options(self):
+        """Return the file system options.
+
+        .. versionadded:: (cfdm) 1.12.0.0
+
+        :Returns:
+
+            `dict`
+                The storage options.
+
+        **Examples**
+
         >>> f.get_storage_options()
-        {'endpoint_url': 'https://store'}
-        >>> f.get_storage_options(filename='s3://other-store/data/file.nc')
-        {'endpoint_url': 'https://other-store'}
-        >>> f.get_storage_options(create_endpoint_url=False,
-        ...                       filename='s3://other-store/data/file.nc')
         {}
 
         >>> f.get_storage_options()
@@ -403,46 +501,33 @@ class FileArray(Array):
          'client_kwargs': {'region_name': 'fr-par'}}
 
         """
-        storage_options = self._get_component("storage_options", None)
-        if not storage_options:
-            storage_options = {}
-        else:
-            storage_options = deepcopy(storage_options)
+        fs = self.get_filesystem()
+        if fs is None:
+            return {}
 
-        client_kwargs = storage_options.get("client_kwargs", {})
-        if (
-            create_endpoint_url
-            and "endpoint_url" not in storage_options
-            and "endpoint_url" not in client_kwargs
-        ):
-            if parsed_filename is None:
-                from urllib.parse import urlparse
+        return fs.storage_options.copy()
 
-                if filename is None:
+    def get_variable(self, default=AttributeError()):
+        """Get the open dataset variable object for the data.
 
-                    try:
-                        filename = self.get_filename(normalise=False)
-                    except AttributeError:
-                        pass
-                    else:
-                        parsed_filename = urlparse(filename)
-                else:
-                    parsed_filename = urlparse(filename)
+        .. versionadded:: (cfdm) 1.13.1.0
 
-            if parsed_filename is not None and parsed_filename.scheme == "s3":
-                # Derive endpoint_url from filename
-                storage_options["endpoint_url"] = (
-                    f"https://{parsed_filename.netloc}"
-                )
+        :Parameters:
 
-        return storage_options
+            default: optional
+                Return *default* if the variable has not been set.
 
-    def open(self, func, *args, **kwargs):
+                {{default Exception}}
+
+        :Returns:
+
+                The open dataset variable object.
+
+        """
+        return self._get_component("variable", default)
+
+    def open(self, func, options=None, create_filesystem=True):
         """Return a dataset file object and address.
-
-        When multiple files have been provided an attempt is made to
-        open each one, in the order stored, and a file object is
-        returned from the first file that exists.
 
         .. versionadded:: (cfdm) 1.10.1.0
 
@@ -451,41 +536,79 @@ class FileArray(Array):
             func: callable
                 Function that opens a file.
 
-            args, kwargs: optional
-                Optional arguments to *func*.
+            options: `dict`, optional
+                Arguments to *func*.
+
+            create_filesystem: `bool`, optional
+                If True (the default) then attempt to create a
+                file system if one has not been provided. Note that a
+                file system will not be created for a local dataset.
+
+                If there is no file system then the dataset as
+                returned by `get_filename` is passed directly to
+                *func*.
+
+                Ignored if `get_filename` does not return a string.
+
+                .. versionadded:: (cfdm) 1.13.3.0
 
         :Returns:
 
             2-`tuple`
-                The file object for the dataset, and the address of
-                the data within the file.
+                The object representing the whole dataset, and the
+                address of the data array within the dataset.
 
         """
-        from urllib.parse import urlparse
-
         filename = self.get_filename(normalise=True)
-        url = urlparse(filename)
-        if url.scheme == "file":
-            # Convert a file URI into an absolute local path
-            filename = abspath(filename, uri=False)
-        elif url.scheme == "s3":
-            # Create an openable S3 file object
-            from s3fs import S3FileSystem
+        if isinstance(filename, str):
+            filesystem = self.get_filesystem()
+            if filesystem is None and create_filesystem:
+                # No filesystem has been given, attempt to create one
+                # from the dataset name. Note that a filesystem will
+                # not be created for a local dataset.
+                from cfdm.read_write import IORead
 
-            storage_options = self.get_storage_options(
-                create_endpoint_url=True, parsed_filename=url
-            )
-            fs = S3FileSystem(**storage_options)
-            filename = fs.open(url.path[1:], "rb")
+                filename, filesystem = IORead.create_filesystem(filename)
 
-        try:
-            dataset = func(filename, *args, **kwargs)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"No such file: {filename}")
-        except RuntimeError as error:
-            raise RuntimeError(f"{error}: {filename}")
+            if filesystem is None:
+                # Local file system
+                try:
+                    filename = abspath(filename, uri=False)
+                except ValueError:
+                    filename = abspath(filename)
+            else:
+                # Create a file-like object for the dataset in the
+                # filesystem
+                from urllib.parse import urlparse
 
-        # Successfully opened a dataset, so return.
+                # For an s3 file we need to strip off the scheme and
+                # authority, if they're present.
+                url = urlparse(filename)
+                if url.scheme == "s3":
+                    filename = url.path[1:]
+
+                try:
+                    filename = filesystem.open(filename, "rb")
+                except AttributeError:
+                    raise AttributeError(
+                        f"Can't open {filename!r}. The file system object "
+                        f"{filesystem!r} does not have an 'open' method. "
+                        "Please provide a valid file system object, such "
+                        "as a fsspec.filesystem instance."
+                    )
+                except Exception as error:
+                    raise RuntimeError(
+                        "Failed to open "
+                        f"{self.get_filename(normalise=True)!r} using the "
+                        f"file system object {filesystem!r}: {error}"
+                    ) from error
+
+        # Open the dataset
+        if not options:
+            options = {}
+
+        dataset = func(filename, **options)
+
         return dataset, self.get_address()
 
     def replace_directory(self, old=None, new=None, normalise=False):
@@ -575,6 +698,10 @@ class FileArray(Array):
                 filename = join(new, filename)
 
         a._set_component("filename", filename, copy=False)
+
+        # Remove an obsolete variable
+        a._del_component("variable", None)
+
         return a
 
     def get_missing_values(self):
@@ -583,16 +710,12 @@ class FileArray(Array):
         Deprecated at version 1.12.0.0. Use `get_attributes` instead.
 
         """
-
-        class DeprecationError(Exception):
-            """Deprecation error."""
-
-            pass
-
-        raise DeprecationError(
-            f"{self.__class__.__name__}.get_missing_values was deprecated "
-            "at version 1.12.0.0 and is no longer available. "
-            f"Use {self.__class__.__name__}.get_attributes instead."
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "get_missing_values"
+            f"Use {self.__class__.__name__}.get_attributes instead.",
+            version="1.12.0.0",
+            removed_at="1.14.0.0",
         )  # pragma: no cover
 
     def to_memory(self):
@@ -608,28 +731,30 @@ class FileArray(Array):
         """
         return self.array
 
-    def _set_attributes(self, var):
-        """Set the netCDF variable attributes.
+    def _attributes(self, var):
+        """Get the variable attributes.
 
-        These are set from the netCDF variable attributes, but only if
-        they have not already been defined, either during {{class}}
-        instantiation or by a previous call to `_set_attributes`.
+        If the attributes have not been set, then they are retrieved
+        from the *var* and cached for fast future access.
 
         .. versionadded:: (cfdm) 1.12.0.0
 
+        .. seealso:: `get_attributes`
+
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The netCDF variable.
+            var: `p5netcdf.Variable`
+                The variable.
 
         :Returns:
 
             `dict`
-                The attributes.
+                The attributes. The returned attributes are not a copy
+                of the cached dictionary.
 
         """
         raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}._set_attributes"
+            f"Must implement {self.__class__.__name__}._attributes"
         )  # pragma: no cover
 
     def get_unpack(self):
@@ -644,6 +769,27 @@ class FileArray(Array):
 
         """
         return self._get_component("unpack")
+
+    def has_remote_storage_protocol(self):
+        """Whether or not there is a remote file system protocol.
+
+        .. versionadded:: (cfdm)  1.13.1.0
+
+        .. seeaslo:: `get_storage_protocol`, `get_storage_options`
+
+        :Returns:
+
+            `bool`
+                `True` if there is a remote file system protocol,
+                otherwise `False`.
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "has_remote_storage_protocol",
+            version="1.13.3.0",
+            removed_at="1.14.0.0",
+        )  # pragma: no cover
 
     def replace_filename(self, filename):
         """Replace the file location.
@@ -666,4 +812,8 @@ class FileArray(Array):
         """
         a = self.copy()
         a._set_component("filename", filename, copy=False)
+
+        # Remove an obsolete variable
+        a._del_component("variable", None)
+
         return a

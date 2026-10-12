@@ -40,6 +40,7 @@ class CellConnectivitySubarray(MeshSubarray):
             stop += 1
 
         data = self._select_data(check_mask=True)
+
         if np.ma.isMA(data):
             empty = np.ma.empty
         else:

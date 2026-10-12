@@ -71,11 +71,11 @@ class GeometryTest(unittest.TestCase):
 
     def test_node_count(self):
         """Test geometry coordinate node count variables."""
-        f = cfdm.read(self.geometry_1_file, verbose=False)
+        f = cfdm.read(self.geometry_1_file)
 
         self.assertEqual(len(f), 2)
         for g in f:
-            self.assertTrue(g.equals(g.copy(), verbose=1))
+            self.assertTrue(g.equals(g.copy()))
             self.assertEqual(len(g.auxiliary_coordinates()), 2)
 
         g = f[0]
@@ -85,12 +85,12 @@ class GeometryTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count())
             self.assertFalse(coord.has_interior_ring())
 
-        cfdm.write(f, tempfile, Conventions="CF-" + VN, verbose=False)
+        cfdm.write(f, tempfile, Conventions="CF-" + VN)
 
-        f2 = cfdm.read(tempfile, verbose=False)
+        f2 = cfdm.read(tempfile)
         self.assertEqual(len(f2), 2)
         for a, b in zip(f, f2):
-            self.assertTrue(a.equals(b, verbose=3))
+            self.assertTrue(a.equals(b))
 
         # Setting of node count properties
         coord = f[0].construct("axis=X")
@@ -110,18 +110,18 @@ class GeometryTest(unittest.TestCase):
         self.assertIsNone(c.del_node_count(None))
         c.set_node_count(n)
         self.assertTrue(c.has_node_count())
-        self.assertTrue(c.get_node_count(None).equals(n, verbose=3))
-        self.assertTrue(c.del_node_count(None).equals(n, verbose=3))
+        self.assertTrue(c.get_node_count(None).equals(n))
+        self.assertTrue(c.del_node_count(None).equals(n))
         self.assertFalse(c.has_node_count())
 
     def test_geometry_2(self):
         """Test nodes not tied to auxiliary coordinate variables."""
-        f = cfdm.read(self.geometry_2_file, verbose=False)
+        f = cfdm.read(self.geometry_2_file)
 
         self.assertEqual(len(f), 2)
 
         for g in f:
-            self.assertTrue(g.equals(g.copy(), verbose=3))
+            self.assertTrue(g.equals(g.copy()))
             self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         g = f[0]
@@ -131,32 +131,32 @@ class GeometryTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count())
             self.assertFalse(coord.has_interior_ring())
 
-        cfdm.write(f, tempfile, Conventions="CF-" + VN, verbose=False)
+        cfdm.write(f, tempfile, Conventions="CF-" + VN)
 
-        f2 = cfdm.read(tempfile, verbose=False)
+        f2 = cfdm.read(tempfile)
 
         self.assertEqual(len(f2), 2)
 
         for a, b in zip(f, f2):
-            self.assertTrue(a.equals(b, verbose=3))
+            self.assertTrue(a.equals(b))
 
         # Setting of node count properties
         coord = f[0].construct("axis=X")
         nc = coord.get_node_count()
         cfdm.write(f, tempfile)
         nc.set_property("long_name", "Node counts")
-        cfdm.write(f, tempfile, verbose=False)
+        cfdm.write(f, tempfile)
         nc.nc_set_variable("new_var_name")
-        cfdm.write(f, tempfile, verbose=False)
+        cfdm.write(f, tempfile)
 
     def test_geometry_3(self):
         """Test nodes in a file with no node count variable."""
-        f = cfdm.read(self.geometry_3_file, verbose=False)
+        f = cfdm.read(self.geometry_3_file)
 
         self.assertEqual(len(f), 2)
 
         for g in f:
-            self.assertTrue(g.equals(g.copy(), verbose=3))
+            self.assertTrue(g.equals(g.copy()))
             self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         g = f[0]
@@ -166,23 +166,23 @@ class GeometryTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count())
             self.assertFalse(coord.has_interior_ring())
 
-        cfdm.write(f, tempfile, Conventions="CF-" + VN, verbose=False)
+        cfdm.write(f, tempfile, Conventions="CF-" + VN)
 
-        f2 = cfdm.read(tempfile, verbose=False)
+        f2 = cfdm.read(tempfile)
 
         self.assertEqual(len(f2), 2)
 
         for a, b in zip(f, f2):
-            self.assertTrue(a.equals(b, verbose=3))
+            self.assertTrue(a.equals(b))
 
     def test_geometry_4(self):
         """Test nodes all not tied to auxiliary coordinate variables."""
-        f = cfdm.read(self.geometry_4_file, verbose=False)
+        f = cfdm.read(self.geometry_4_file)
 
         self.assertEqual(len(f), 2)
 
         for g in f:
-            self.assertTrue(g.equals(g.copy(), verbose=3))
+            self.assertTrue(g.equals(g.copy()))
             self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         for axis in ("X", "Y"):
@@ -191,23 +191,23 @@ class GeometryTest(unittest.TestCase):
             self.assertFalse(coord.has_part_node_count())
             self.assertFalse(coord.has_interior_ring())
 
-        cfdm.write(f, tempfile, Conventions="CF-" + VN, verbose=False)
+        cfdm.write(f, tempfile, Conventions="CF-" + VN)
 
-        f2 = cfdm.read(tempfile, verbose=False)
+        f2 = cfdm.read(tempfile)
 
         self.assertEqual(len(f2), 2)
 
         for a, b in zip(f, f2):
-            self.assertTrue(a.equals(b, verbose=3))
+            self.assertTrue(a.equals(b))
 
         # Setting of node count properties
         coord = f[0].construct("axis=X")
         nc = coord.get_node_count()
         cfdm.write(f, tempfile)
         nc.set_property("long_name", "Node counts")
-        cfdm.write(f, tempfile, verbose=False)
+        cfdm.write(f, tempfile)
         nc.nc_set_variable("new_var_name")
-        cfdm.write(f, tempfile, verbose=False)
+        cfdm.write(f, tempfile)
 
     def test_geometry_interior_ring(self):
         """Test the management of interior ring geometries."""
@@ -215,12 +215,12 @@ class GeometryTest(unittest.TestCase):
             self.geometry_interior_ring_file,
             self.geometry_interior_ring_file_2,
         ):
-            f = cfdm.read(geometry_file, verbose=False)
+            f = cfdm.read(geometry_file)
 
             self.assertEqual(len(f), 2)
 
             for g in f:
-                self.assertTrue(g.equals(g.copy(), verbose=3))
+                self.assertTrue(g.equals(g.copy()))
                 self.assertEqual(len(g.auxiliary_coordinates()), 4)
 
             g = f[0]
@@ -237,7 +237,7 @@ class GeometryTest(unittest.TestCase):
             self.assertEqual(len(f2), 2)
 
             for a, b in zip(f, f2):
-                self.assertTrue(a.equals(b, verbose=3))
+                self.assertTrue(a.equals(b))
 
             # Interior ring component
             c = g.construct("longitude")

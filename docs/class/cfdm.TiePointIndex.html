@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>cfdm.TiePointIndex &#8212; Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
+    <script src="../_static/documentation_options.js?v=2798502a"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=a56c686a"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.TiePointIndex.apply_masking" href="../method/cfdm.TiePointIndex.apply_masking.html" />
+    <link rel="prev" title="cfdm.InterpolationParameter.uncompress" href="../method/cfdm.InterpolationParameter.uncompress.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cfdm 1.13.3.0</a></h1>
+
+
+
+<p class="blurb">A Python reference implementation of the CF data model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cfdm&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
+      <li>Previous: <a href="../method/cfdm.InterpolationParameter.uncompress.html" title="previous chapter">cfdm.InterpolationParameter.uncompress</a></li>
+      <li>Next: <a href="../method/cfdm.TiePointIndex.apply_masking.html" title="next chapter">cfdm.TiePointIndex.apply_masking</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="cfdm-tiepointindex">
+<h1>cfdm.TiePointIndex<a class="headerlink" href="#cfdm-tiepointindex" title="Link to this heading">¶</a></h1>
+<hr class="docutils" />
+<dl class="py class">
+<dt class="sig sig-object py" id="cfdm.TiePointIndex">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">TiePointIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/tiepointindex.py#L4-L108"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.TiePointIndex" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFSubsampledDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFInterpolationSubareaDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Files</span></code>, <a class="reference internal" href="cfdm.core.PropertiesData.html#cfdm.core.PropertiesData" title="cfdm.core.abstract.propertiesdata.PropertiesData"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertiesData</span></code></a></p>
+<p>A tie point index variable with properties.</p>
+<p>Space may be saved by storing a subsample of the coordinates. The
+uncompressed coordinates can be reconstituted by interpolation
+from the subsampled coordinate values, also called either “tie
+points” or “bounds tie points”.</p>
+<p>For each interpolated dimension, the locations of the (bounds) tie
+points are defined by a corresponding tie point index variable,
+which also indicates the extent of each continuous area.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name may be accessed with the
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_variable.html#cfdm.TiePointIndex.nc_set_variable" title="cfdm.TiePointIndex.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_get_variable.html#cfdm.TiePointIndex.nc_get_variable" title="cfdm.TiePointIndex.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_del_variable.html#cfdm.TiePointIndex.nc_del_variable" title="cfdm.TiePointIndex.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a>, and
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_has_variable.html#cfdm.TiePointIndex.nc_has_variable" title="cfdm.TiePointIndex.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>The netCDF variable group structure may be accessed with the
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_variable.html#cfdm.TiePointIndex.nc_set_variable" title="cfdm.TiePointIndex.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_get_variable.html#cfdm.TiePointIndex.nc_get_variable" title="cfdm.TiePointIndex.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_variable_groups.html#cfdm.TiePointIndex.nc_variable_groups" title="cfdm.TiePointIndex.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_clear_variable_groups.html#cfdm.TiePointIndex.nc_clear_variable_groups" title="cfdm.TiePointIndex.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a>, and <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_variable_groups.html#cfdm.TiePointIndex.nc_set_variable_groups" title="cfdm.TiePointIndex.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
+methods.</p>
+<p>The dataset chunks may be accessed with the
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_dataset_chunksizes.html#cfdm.TiePointIndex.nc_dataset_chunksizes" title="cfdm.TiePointIndex.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a>, <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_dataset_chunksizes.html#cfdm.TiePointIndex.nc_set_dataset_chunksizes" title="cfdm.TiePointIndex.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a>, and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_datset_chunksizes</span></code> methods.</p>
+<p>The netCDF subsampled dimension name may be accessed with the
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_subsampled_dimension.html#cfdm.TiePointIndex.nc_set_subsampled_dimension" title="cfdm.TiePointIndex.nc_set_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_subsampled_dimension</span></code></a>, <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_get_subsampled_dimension.html#cfdm.TiePointIndex.nc_get_subsampled_dimension" title="cfdm.TiePointIndex.nc_get_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_subsampled_dimension</span></code></a>,
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_del_subsampled_dimension.html#cfdm.TiePointIndex.nc_del_subsampled_dimension" title="cfdm.TiePointIndex.nc_del_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_subsampled_dimension</span></code></a> and <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_has_subsampled_dimension.html#cfdm.TiePointIndex.nc_has_subsampled_dimension" title="cfdm.TiePointIndex.nc_has_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_subsampled_dimension</span></code></a>
+methods.</p>
+<p>The netCDF subsampled dimension group structure may be accessed
+with the <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_subsampled_dimension.html#cfdm.TiePointIndex.nc_set_subsampled_dimension" title="cfdm.TiePointIndex.nc_set_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_subsampled_dimension</span></code></a>,
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_get_subsampled_dimension.html#cfdm.TiePointIndex.nc_get_subsampled_dimension" title="cfdm.TiePointIndex.nc_get_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_subsampled_dimension</span></code></a>, <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_subsampled_dimension_groups.html#cfdm.TiePointIndex.nc_subsampled_dimension_groups" title="cfdm.TiePointIndex.nc_subsampled_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_subsampled_dimension_groups</span></code></a>,
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_clear_subsampled_dimension_groups.html#cfdm.TiePointIndex.nc_clear_subsampled_dimension_groups" title="cfdm.TiePointIndex.nc_clear_subsampled_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_subsampled_dimension_groups</span></code></a>, and
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_subsampled_dimension_groups.html#cfdm.TiePointIndex.nc_set_subsampled_dimension_groups" title="cfdm.TiePointIndex.nc_set_subsampled_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_subsampled_dimension_groups</span></code></a> methods.</p>
+<p>The netCDF interpolation subarea dimension name may be accessed
+with the <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension.html#cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension" title="cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_interpolation_subarea_dimension</span></code></a>,
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_get_interpolation_subarea_dimension.html#cfdm.TiePointIndex.nc_get_interpolation_subarea_dimension" title="cfdm.TiePointIndex.nc_get_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_interpolation_subarea_dimension</span></code></a>,
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_del_interpolation_subarea_dimension.html#cfdm.TiePointIndex.nc_del_interpolation_subarea_dimension" title="cfdm.TiePointIndex.nc_del_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_interpolation_subarea_dimension</span></code></a>, and
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_has_interpolation_subarea_dimension.html#cfdm.TiePointIndex.nc_has_interpolation_subarea_dimension" title="cfdm.TiePointIndex.nc_has_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_interpolation_subarea_dimension</span></code></a> methods.</p>
+<p>The netCDF interpolation subarea dimension group structure may be
+accessed with the <a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension.html#cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension" title="cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_interpolation_subarea_dimension</span></code></a>,
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_get_interpolation_subarea_dimension.html#cfdm.TiePointIndex.nc_get_interpolation_subarea_dimension" title="cfdm.TiePointIndex.nc_get_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_interpolation_subarea_dimension</span></code></a>,
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_interpolation_subarea_dimension_groups.html#cfdm.TiePointIndex.nc_interpolation_subarea_dimension_groups" title="cfdm.TiePointIndex.nc_interpolation_subarea_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_interpolation_subarea_dimension_groups</span></code></a>,
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_clear_interpolation_subarea_dimension_groups.html#cfdm.TiePointIndex.nc_clear_interpolation_subarea_dimension_groups" title="cfdm.TiePointIndex.nc_clear_interpolation_subarea_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_interpolation_subarea_dimension_groups</span></code></a> and
+<a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension_groups.html#cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension_groups" title="cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_interpolation_subarea_dimension_groups</span></code></a> methods.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.10.0.0</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cfdm.InterpolationParameter.html#cfdm.InterpolationParameter" title="cfdm.InterpolationParameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InterpolationParameter</span></code></a></p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+property names, with corresponding values.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.TiePointIndex.set_properties.html#cfdm.TiePointIndex.set_properties" title="cfdm.TiePointIndex.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.TiePointIndex.set_property.html#cfdm.TiePointIndex.set_property" title="cfdm.TiePointIndex.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'altitude'}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>data: data_like, optional</dt><dd><p>Set the data.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm instances that contain
+<a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
+<p>The data also may be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.TiePointIndex.set_data.html#cfdm.TiePointIndex.set_data" title="cfdm.TiePointIndex.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+</dd>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cfdm.TiePointIndex" title="cfdm.TiePointIndex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TiePointIndex</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cfdm.TiePointIndex" title="cfdm.TiePointIndex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TiePointIndex</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cfdm.TiePointIndex" title="cfdm.TiePointIndex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TiePointIndex</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cfdm.TiePointIndex(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+parameters prior to initialisation. By default the
+parameters are not deep copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.apply_masking.html#cfdm.TiePointIndex.apply_masking" title="cfdm.TiePointIndex.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.array.html#cfdm.TiePointIndex.array" title="cfdm.TiePointIndex.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
+<td><p>A numpy array deep copy of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.clear_properties.html#cfdm.TiePointIndex.clear_properties" title="cfdm.TiePointIndex.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<td><p>Remove all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.concatenate.html#cfdm.TiePointIndex.concatenate" title="cfdm.TiePointIndex.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
+<td><p>Join a together sequence of <a class="reference internal" href="#cfdm.TiePointIndex" title="cfdm.TiePointIndex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TiePointIndex</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.copy.html#cfdm.TiePointIndex.copy" title="cfdm.TiePointIndex.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.creation_commands.html#cfdm.TiePointIndex.creation_commands" title="cfdm.TiePointIndex.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.data.html#cfdm.TiePointIndex.data" title="cfdm.TiePointIndex.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<td><p>The data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.datetime_array.html#cfdm.TiePointIndex.datetime_array" title="cfdm.TiePointIndex.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
+<td><p>An independent numpy array of date-time objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.del_data.html#cfdm.TiePointIndex.del_data" title="cfdm.TiePointIndex.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<td><p>Remove the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.del_properties.html#cfdm.TiePointIndex.del_properties" title="cfdm.TiePointIndex.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></a></p></td>
+<td><p>Remove properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.del_property.html#cfdm.TiePointIndex.del_property" title="cfdm.TiePointIndex.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<td><p>Remove a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.dtype.html#cfdm.TiePointIndex.dtype" title="cfdm.TiePointIndex.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>Data-type of the data elements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.dump.html#cfdm.TiePointIndex.dump" title="cfdm.TiePointIndex.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description of the tie point index variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.equals.html#cfdm.TiePointIndex.equals" title="cfdm.TiePointIndex.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.file_directories.html#cfdm.TiePointIndex.file_directories" title="cfdm.TiePointIndex.file_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directories</span></code></a></p></td>
+<td><p>The directories of files containing parts of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.get_data.html#cfdm.TiePointIndex.get_data" title="cfdm.TiePointIndex.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<td><p>Return the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.get_filenames.html#cfdm.TiePointIndex.get_filenames" title="cfdm.TiePointIndex.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the name of the file or files containing the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.get_original_filenames.html#cfdm.TiePointIndex.get_original_filenames" title="cfdm.TiePointIndex.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
+<td><p>The names of files containing the original data and metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.get_property.html#cfdm.TiePointIndex.get_property" title="cfdm.TiePointIndex.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<td><p>Return a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.get_quantization.html#cfdm.TiePointIndex.get_quantization" title="cfdm.TiePointIndex.get_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantization</span></code></a></p></td>
+<td><p>Get quantization metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.get_quantize_on_write.html#cfdm.TiePointIndex.get_quantize_on_write" title="cfdm.TiePointIndex.get_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantize_on_write</span></code></a></p></td>
+<td><p>Get a quantize-on-write instruction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.has_bounds.html#cfdm.TiePointIndex.has_bounds" title="cfdm.TiePointIndex.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<td><p>Whether or not there are cell bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.has_data.html#cfdm.TiePointIndex.has_data" title="cfdm.TiePointIndex.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<td><p>Whether or not the construct has data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.has_property.html#cfdm.TiePointIndex.has_property" title="cfdm.TiePointIndex.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<td><p>Whether a property has been set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.identities.html#cfdm.TiePointIndex.identities" title="cfdm.TiePointIndex.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p></td>
+<td><p>Return all possible identities.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.identity.html#cfdm.TiePointIndex.identity" title="cfdm.TiePointIndex.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p></td>
+<td><p>Return the canonical identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.insert_dimension.html#cfdm.TiePointIndex.insert_dimension" title="cfdm.TiePointIndex.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
+<td><p>Expand the shape of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_clear_dataset_chunksizes.html#cfdm.TiePointIndex.nc_clear_dataset_chunksizes" title="cfdm.TiePointIndex.nc_clear_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dataset_chunksizes</span></code></a></p></td>
+<td><p>Clear the dataset chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_clear_hdf5_chunksizes.html#cfdm.TiePointIndex.nc_clear_hdf5_chunksizes" title="cfdm.TiePointIndex.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Clear the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_clear_interpolation_subarea_dimension_groups.html#cfdm.TiePointIndex.nc_clear_interpolation_subarea_dimension_groups" title="cfdm.TiePointIndex.nc_clear_interpolation_subarea_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_interpolation_subarea_dimension_groups</span></code></a></p></td>
+<td><p>Remove the interpolation subarea dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_clear_subsampled_dimension_groups.html#cfdm.TiePointIndex.nc_clear_subsampled_dimension_groups" title="cfdm.TiePointIndex.nc_clear_subsampled_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_subsampled_dimension_groups</span></code></a></p></td>
+<td><p>Remove the netCDF subsampled dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_clear_variable_groups.html#cfdm.TiePointIndex.nc_clear_variable_groups" title="cfdm.TiePointIndex.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_dataset_chunksizes.html#cfdm.TiePointIndex.nc_dataset_chunksizes" title="cfdm.TiePointIndex.nc_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dataset_chunksizes</span></code></a></p></td>
+<td><p>Get the dataset chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_del_interpolation_subarea_dimension.html#cfdm.TiePointIndex.nc_del_interpolation_subarea_dimension" title="cfdm.TiePointIndex.nc_del_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_interpolation_subarea_dimension</span></code></a></p></td>
+<td><p>Remove the netCDF interpolation subarea dimension name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_del_subsampled_dimension.html#cfdm.TiePointIndex.nc_del_subsampled_dimension" title="cfdm.TiePointIndex.nc_del_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_subsampled_dimension</span></code></a></p></td>
+<td><p>Remove the netCDF sample dimension name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_del_variable.html#cfdm.TiePointIndex.nc_del_variable" title="cfdm.TiePointIndex.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
+<td><p>Remove the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_get_interpolation_subarea_dimension.html#cfdm.TiePointIndex.nc_get_interpolation_subarea_dimension" title="cfdm.TiePointIndex.nc_get_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_interpolation_subarea_dimension</span></code></a></p></td>
+<td><p>Return the netCDF interpolation subarea dimension name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_get_subsampled_dimension.html#cfdm.TiePointIndex.nc_get_subsampled_dimension" title="cfdm.TiePointIndex.nc_get_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_subsampled_dimension</span></code></a></p></td>
+<td><p>Return the netCDF subsampled dimension name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_get_variable.html#cfdm.TiePointIndex.nc_get_variable" title="cfdm.TiePointIndex.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_has_interpolation_subarea_dimension.html#cfdm.TiePointIndex.nc_has_interpolation_subarea_dimension" title="cfdm.TiePointIndex.nc_has_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_interpolation_subarea_dimension</span></code></a></p></td>
+<td><p>Whether the netCDF interpolation subarea dimension is set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_has_subsampled_dimension.html#cfdm.TiePointIndex.nc_has_subsampled_dimension" title="cfdm.TiePointIndex.nc_has_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_subsampled_dimension</span></code></a></p></td>
+<td><p>Whether the netCDF subsampled dimension name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_has_variable.html#cfdm.TiePointIndex.nc_has_variable" title="cfdm.TiePointIndex.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
+<td><p>Whether the netCDF variable name has been set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_hdf5_chunksizes.html#cfdm.TiePointIndex.nc_hdf5_chunksizes" title="cfdm.TiePointIndex.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_interpolation_subarea_dimension_groups.html#cfdm.TiePointIndex.nc_interpolation_subarea_dimension_groups" title="cfdm.TiePointIndex.nc_interpolation_subarea_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_interpolation_subarea_dimension_groups</span></code></a></p></td>
+<td><p>Return the interpolation subarea dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_dataset_chunksizes.html#cfdm.TiePointIndex.nc_set_dataset_chunksizes" title="cfdm.TiePointIndex.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p></td>
+<td><p>Set the dataset chunking strategy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_hdf5_chunksizes.html#cfdm.TiePointIndex.nc_set_hdf5_chunksizes" title="cfdm.TiePointIndex.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension.html#cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension" title="cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_interpolation_subarea_dimension</span></code></a></p></td>
+<td><p>Set the netCDF interpolation subarea dimension name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension_groups.html#cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension_groups" title="cfdm.TiePointIndex.nc_set_interpolation_subarea_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_interpolation_subarea_dimension_groups</span></code></a></p></td>
+<td><p>Set the interpolation subarea dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_subsampled_dimension.html#cfdm.TiePointIndex.nc_set_subsampled_dimension" title="cfdm.TiePointIndex.nc_set_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_subsampled_dimension</span></code></a></p></td>
+<td><p>Set the netCDF subsampled dimension name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_subsampled_dimension_groups.html#cfdm.TiePointIndex.nc_set_subsampled_dimension_groups" title="cfdm.TiePointIndex.nc_set_subsampled_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_subsampled_dimension_groups</span></code></a></p></td>
+<td><p>Set the netCDF subsampled dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_variable.html#cfdm.TiePointIndex.nc_set_variable" title="cfdm.TiePointIndex.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_set_variable_groups.html#cfdm.TiePointIndex.nc_set_variable_groups" title="cfdm.TiePointIndex.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_subsampled_dimension_groups.html#cfdm.TiePointIndex.nc_subsampled_dimension_groups" title="cfdm.TiePointIndex.nc_subsampled_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_subsampled_dimension_groups</span></code></a></p></td>
+<td><p>Return the netCDF subsampled dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.nc_variable_groups.html#cfdm.TiePointIndex.nc_variable_groups" title="cfdm.TiePointIndex.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.ndim.html#cfdm.TiePointIndex.ndim" title="cfdm.TiePointIndex.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<td><p>The number of data dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.persist.html#cfdm.TiePointIndex.persist" title="cfdm.TiePointIndex.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
+<td><p>Persist data into memory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.properties.html#cfdm.TiePointIndex.properties" title="cfdm.TiePointIndex.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<td><p>Return all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.replace_directory.html#cfdm.TiePointIndex.replace_directory" title="cfdm.TiePointIndex.replace_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></a></p></td>
+<td><p>Replace a file directory in-place.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.set_data.html#cfdm.TiePointIndex.set_data" title="cfdm.TiePointIndex.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<td><p>Set the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.set_properties.html#cfdm.TiePointIndex.set_properties" title="cfdm.TiePointIndex.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<td><p>Set properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.set_property.html#cfdm.TiePointIndex.set_property" title="cfdm.TiePointIndex.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<td><p>Set a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.shape.html#cfdm.TiePointIndex.shape" title="cfdm.TiePointIndex.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>A tuple of the data array's dimension sizes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.size.html#cfdm.TiePointIndex.size" title="cfdm.TiePointIndex.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>The number elements in the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.squeeze.html#cfdm.TiePointIndex.squeeze" title="cfdm.TiePointIndex.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<td><p>Remove size one axes from the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.to_memory.html#cfdm.TiePointIndex.to_memory" title="cfdm.TiePointIndex.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<td><p>Bring data on disk into memory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.transpose.html#cfdm.TiePointIndex.transpose" title="cfdm.TiePointIndex.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
+<td><p>Permute the axes of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.TiePointIndex.uncompress.html#cfdm.TiePointIndex.uncompress" title="cfdm.TiePointIndex.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<td><p>Uncompress the construct.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &#169;2026, NCAS | Page built on 2026-08-26.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

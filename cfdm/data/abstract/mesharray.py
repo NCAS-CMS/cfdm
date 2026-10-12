@@ -171,7 +171,7 @@ class MeshArray(CompressedArray):
     def get_cell_dimension(self, default=ValueError()):
         """Return the position of the cell dimension.
 
-        In UGRID, this is provided by one of the the "edge_dimension",
+        In UGRID, this is provided by one of the "edge_dimension",
         "face_dimension" or "volume_dimension" variables.
 
         .. versionadded:: (cfdm) 1.11.0.0

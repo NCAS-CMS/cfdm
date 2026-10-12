@@ -191,10 +191,6 @@ class CellMethodTest(unittest.TestCase):
         cfdm.write(f, tmpfile)
         g = cfdm.read(tmpfile)[0]
 
-        print(g)
-        print(g.cell_methods())
-        print(g.dump())
-
         self.assertTrue(f.cell_methods().equals(g.cell_methods()))
 
         # Test removing the coordinate construct

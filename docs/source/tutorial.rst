@@ -160,6 +160,8 @@ datasets <Sample-datasets>`), which contains two field constructs:
   <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
   formats.
 
+* Datasets in `Kerchunk <https://fsspec.github.io/kerchunk>`_ format.
+
 Descriptive properties are always read into memory, but `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
 data arrays, which means that no data is read into memory until the
@@ -194,8 +196,7 @@ The `cfdm.read` function has optional parameters to
 * display information and issue warnings about the mapping of the
   netCDF file contents to CF data model constructs; and
 
-* choose either `netCDF4` or `h5netcdf` backends for accessing netCDF
-  files.
+* choose from a variety of backends for accessing netCDF files.
 
 .. _CF-compliance:
 
@@ -2865,19 +2866,18 @@ All the of above examples use arrays in memory to construct the data
 instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The
 `cfdm.read` function creates data in this manner. A pointer to an
-array in a netCDF file can be stored in a `~cfdm.NetCDF4Array` or
-`~cfdm.H5netcdfAarray` instance, which is used to initialise a
-`~cfdm.Data` instance.
+array in a dataset stored in a `~cfdm.XnetcdfArray` instance, which is
+used to initialise a `~cfdm.Data` instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package
-             and use it to create a NetCDF4Array instance with which to
-             initialise a Data instance.*
+             and use it to create a XnetcdfArray instance with which
+             to initialise a Data instance.*
 		
    >>> import netCDF4
    >>> nc = netCDF4.Dataset('file.nc', 'r')
    >>> v = nc.variables['ta']
-   >>> netcdf_array = cfdm.NetCDF4Array(filename='file.nc', address='ta',
+   >>> netcdf_array = cfdm.XnetcdfArray(filename='file.nc', address='ta',
    ...	                                dtype=v.dtype, shape=v.shape)
    >>> data_disk = cfdm.Data(netcdf_array)
 
@@ -3577,7 +3577,7 @@ in that file:
    >>> h = cfdm.example_field(0)
    >>> h
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> cfdm.write(h, 'append-example-file.nc', mode='a')
+   >>> cfdm.write(h, 'append-example-file.nc', mode='a', backend='netCDF4')
    >>> cfdm.read('append-example-file.nc')
    [<Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
     <Field: specific_humidity(latitude(5), longitude(8)) 1>]
@@ -4969,7 +4969,7 @@ method:
 
    >>> q, t = cfdm.read('file.nc')
    >>> t.set_quantize_on_write(algorithm='bitgroom', quantization_nsd=1)
-   >>> cfdm.write(t, 'quantized.nc')
+   >>> cfdm.write(t, 'quantized.nc', backend='netCDF4')
    >>> quantized = cfdm.read('quantized.nc')[0]
    >>> c = quantized.get_quantization()
    >>> c
@@ -4983,6 +4983,61 @@ method:
    array([[[262.8]]])
    >>> quantized[0, 0, 0].array
    array([[[256.]]])
+
+----
+
+.. _PP-and-UM-fields-files:
+
+**PP and UM fields files**
+--------------------------
+
+The `cfdm.read` function can read PP files and UM fields files (as
+output by some versions of the `Unified Model
+<https://en.wikipedia.org/wiki/Unified_Model>`_, for example), mapping
+their contents into CF field constructs. 32-bit and 64-bit PP and
+fields files of any endian-ness can be read. The UM version (if not
+inferrable from the PP or lookup header information) and the height of
+the upper bound of the top model level may also be set with the *um*
+keyword.
+
+Note that 2-d "slices" within a single file are always combined, where
+possible, into field constructs with 3-d, 4-d or 5-d data.
+
+.. code-block:: python
+   :caption: *Read a PP file into field constructs.*
+
+   >>> pp = cfdm.read('umfile.pp')
+   >>> pp
+   [<Field: surface_air_pressure(time(3), latitude(73), longitude(96)) Pa>]
+
+   >>> print(pp[0])
+   Field: surface_air_pressure (ncvar%UM_m01s00i001_vn405)
+   -------------------------------------------------------
+   Data            : surface_air_pressure(time(3), latitude(73), longitude(96)) Pa
+   Cell methods    : time(3): mean
+   Dimension coords: time(3) = [2160-06-01 00:00:00, 2161-06-01 00:00:00, 2162-06-01 00:00:00] 360_day
+                   : latitude(73) = [90.0, ..., -90.0] degrees_north
+                   : longitude(96) = [0.0, ..., 356.25] degrees_east
+
+Converting PP and UM fields files to netCDF files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+PP and UM fields files may read with `cfdm.read` and subsequently
+written to disk as netCDF files with `cfdm.write`.
+
+.. code-block:: python
+   :caption: *Write the field constructs from a PP file to a netCDF
+             dataset.*
+
+   >>> pp = cfdm.read('umfile.pp')
+   >>> cfdm.write(pp, 'umfile1.nc')
+
+.. code-block:: python
+   :caption: *Write the field constructs from a PP file to a
+             aggregation netCDF dataset.*
+
+   >>> pp = cfdm.read('umfile.pp', cfa_write='field')
+   >>> cfdm.write(pp, 'umfile2.nc', cfa='field')
 
 ----
 

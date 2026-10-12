@@ -114,42 +114,97 @@ _docstring_substitution_definitions = {
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
     # read datasets
-    "{{read datasets: (arbitrarily nested sequence of) `str`}}": """dataset: (arbitrarily nested sequence of) `str`
-            A string, or arbitrarily nested sequence of strings,
-            giving the dataset names, or directory names, from which
-            to read field or domain constructs.
+    "{{read datasets:}}": """datasets:
+            The dataset, or sequence of datasets, from which to read
+            field or domain constructs.
 
-            Local names may be relative paths and will have tilde and
-            shell environment variables expansions applied to them,
-            followed by the replacement of any UNIX wildcards (such as
-            ``*``, ``?``, ``[a-z]``, etc.) with the list of matching
-            names. Remote names (i.e. those with an http or s3
-            schema), however, are not transformed in any way.
+            Each dataset must be one of:
 
-            Directories will be walked through to find their contents
-            (recursively if *recursive* is True), unless the directory
-            defines a Zarr dataset (which is ascertained by presence
-            in the directory of appropriate Zarr metadata files).
+            * A string-like path name to the dataset (such as a `str`
+              or `pathlib.Path` instance).
 
-            Remote datasets (i.e. those with an http or s3 schema) are
-            assumed to be netCDF files, or else Zarr datasets if the
-            *dataset_type* parameter is set to ``'Zarr'``.
+              - Local names may be relative paths and will have tilde
+                and shell environment variable expansions applied to
+                them, followed by the replacement of any UNIX
+                wildcards (such as ``*``, ``?``, ``[a-z]``, etc.) with
+                the list of matching names. Remote names (i.e. those
+                with an http or s3 schema), however, are not
+                transformed in any way.
 
-            As a special case, if the *cdl_string* parameter is True,
-            then interpretation of *datasets* changes so that each
-            string is assumed to be an actual CDL representation of a
-            dataset, rather than a than a file or directory name.
+                *Example:*
+                  The local dataset ``file.nc`` in the user's home
+                  directory could be described by any of the
+                  following: ``'$HOME/file.nc'``,
+                  ``'${HOME}/file.nc'``, ``'~/file.nc'``,
+                  ``'~/tmp/../file.nc'``
 
-            *Example:*
-              The local dataset ``file.nc`` in the user's home
-              directory could be described by any of the following:
-              ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
-              ``'~/file.nc'``, ``'~/tmp/../file.nc'``
+                *Example:*
+                  The local datasets ``file1.nc`` and ``file2.nc``
+                  could be described by any of the following:
+                  ``['file1.nc', 'file2.nc']``, ``'file[12].nc'``
 
-            *Example:*
-              The local datasets ``file1.nc`` and ``file2.nc`` could
-              be described by any of the following: ``['file1.nc',
-              'file2.nc']``, ``'file[12].nc'``""",
+              - A path to a directory will be walked through to find
+                its contents (recursively if *recursive* is True),
+                unless the directory defines a Zarr dataset (which is
+                ascertained by presence in the directory of
+                appropriate Zarr metadata files).
+
+              - If a file system has been defined by the *filesystem*
+                or *storage_options* parameters, then the path is
+                assumed to be in that file system. If a file system
+                has not been defined, then a remote dataset is
+                treated, in general, as the file-like object
+                ``fsspec.filesystem(protocol).open(dataset, 'rb')``,
+                where ``protocol`` is inferred from the start of the
+                dataset name (e.g. ``s3`, ``http``, etc.).
+
+              - There is a special case for remote s3 datasets for
+                which a file system has not been provided with the
+                *filesystem* parameter. In this case, an
+                ``endpoint_url`` file system storage option is created
+                (unless it has already been provided), and the
+                leading scheme and authority are automatically removed
+                from the dataset name; for instance, the dataset
+                ``'s3://authority/bucket/file.nc'`` might be treated
+                as ``fsspec.filesystem('s3',
+                endpoint_url='s3://authority').open('bucket/file.nc',
+                'rb')``.
+
+              - There is a special case for remote http and https
+                datasets for which a file system has not been provided
+                with the *filesystem* parameter. In this case, an
+                attempt will be made to access the dataset via OPeNDAP
+                if other methods do not work.
+
+              - If the *cdl_string* parameter is True, then the
+                string-like dataset is interpreted as an actual CDL
+                representation of a dataset, rather than a path name.
+
+            * A file-like object that accesses the dataset (such as
+              `io.BufferedReader` or the result of an `fsspec` file
+              system open)
+
+            * A directory-like object that accesses the dataset (such
+              as `fsspec.mapping.FSMap`)
+
+            * Any of the following backend objects (see the *backend*
+              parameter) that accesses the dataset: `pyfive.File`,
+              `zarr.Group`, `umfive.File`, `netCDF4.Dataset`,
+              `scipy.io.netcdf_file`, `h5py.File`, `xarray.Dataset`,
+              and `xarray.DataTree`.
+
+            * An `xnetcdf.Dataset` object that accesses the dataset.
+
+            * Any object ``x`` that accesses the dataset and has the
+              same API as one of the backend objects, or as
+              `xnetcdf.Dataset`. In practice, this means any object
+              ``x`` for which ``isinstance(x, <backend-object>)`` is
+              `True` for any ``<backend-object>`` from the selection
+              of allowed backend objects. For instance, if you have
+              created a library called ``my_pyfive`` for which
+              ``my_pyfive.File`` is (registered as) a subclass of
+              `pyfive.File`, then ``my_pyfive.File`` instances can be
+              passed to `Dataset`.""",
     # read cdl_string
     "{{read cdl_string: `bool`, optional}}": """cdl_string: `bool`, optional
             If True and the format to read is CDL then each string
@@ -303,53 +358,191 @@ _docstring_substitution_definitions = {
                >>> f = {{package}}.read('file.nc')
                >>> ufd = {{package}}.unique_constructs(x.domain for x in f)""",
     # read netcdf_backend
-    "{{read netcdf_backend: `None` or (sequence of) `str`, optional}": """netcdf_backend: `None` or (sequence of) `str`, optional
-            Specify which library, or libraries, to use for opening
-            and reading netCDF files. By default, or if `None`, then
-            the first one of `h5netcdf` and `netCDF4` to successfully
-            open the netCDF file is used. The libraries will be used
-            in the order given, until a file is successfully
-            opened.""",
+    "{{read netcdf_backend: `None` or (sequence of) `str`, optional}}": """netcdf_backend: `None` or (sequence of) `str`, optional
+            Which library or libraries to use for reading a
+            dataset. Deprecated at version (cfdm) 1.13.3.0. Use the
+            *backend* parameter instead.""",
+    # read backend
+    "{{read backend: `None` or (sequence of) `str`, optional}}": """backend: `None` or (sequence of) `str`, optional
+            Which library to use for opening a string-like, file-like,
+            or directory-like dataset. An attempt to read the dataset
+            is made by the given backends in the order in which they
+            are provided, stopping after the first successful read.
+            By default *backend* is `None`, which is equivalent to
+            providing the ordered sequence of backends:
+
+            ``('pyfive', 'zarr', 'umfive', 'netCDF4', 'netcdf_file',
+            'h5py', 'xarray')``
+
+            If the dataset is given as a (subclass of a) backend
+            object, then that backend must be one of the backends
+            identified by the *backend* parameter.
+
+            Performance may be improved by specifying a backend
+            library, as this reduces or removes unsuccessful dataset
+            read attempts, which can be expensive, especially for
+            remote datasets.
+
+            The available backends, and the formats they can read,
+            are:
+
+            =================  ======================  ===================
+            Backend            Library                 Dataset formats
+            =================  ======================  ===================
+            ``'pyfive'``       `pyfive`                netCDF-4
+            ``'zarr'``         `zarr`                  Zarr, Kerchunk
+            ``'umfive'``       `umfive`                PP, fields file
+            ``'netCDF4'``      `netCDF4`               netCDF-4, netCDF-3
+            ``'netcdf_file'``  `scipy.io.netcdf_file`  netCDF-3
+            ``'h5py'``         `h5py`                  netCDF-4
+            ``'xarray'``       `xarray`                netCDF-4, netCDF-3,
+                                                       Zarr, Kerchunk,
+                                                       GRIB
+            =================  ======================  ===================
+
+            Note that the `xarray` library is itself an interface to
+            other backends.
+
+            *Example:*
+              To only attempt ``'netCDF4'``: ``'netCDF4'`` or
+              ``['netCDF4']``
+
+            *Example:*
+              To only attempt ``'netCDF4'`` or ``'pyfive'``, in that
+              order: ``('netCDF4', 'pyfive')``""",
+    # read backend_options
+    "{{read backend_options: `None` or `dict`, optional}}": """backend_options: `None` or `dict`, optional
+            The options to use with each backend when opening a
+            dataset.
+
+            Each backend's options may be defined with the following
+            dictionary keys, which take a value of a dictionary of
+            keyword arguments to the appropriate backend library
+            object. Each backend has default options, which are used
+            when the corresponding key has not been set.
+
+            * ``'pyfive_options'``
+
+                Keyword arguments that are passed to `pyfive.File`
+                when opening a dataset with the ``'pyfive'`` backend.
+                The keyword argument ``mode='r'`` is always
+                automatically applied, even when not provided, and
+                can't be set to a different value. The ``filename``
+                argument cannot be provided.
+
+            * ``'umfive_options'``
+
+                Keyword arguments that are passed to `umfive.File`
+                when opening a dataset with the ``'umfive'``
+                backend. The keyword argument ``mode='r'`` is always
+                automatically applied, even when not provided, and
+                can't be set to a different value. The ``filename``
+                argument cannot be provided.
+
+            * ``'netCDF4_options'``
+
+                Keyword arguments that are passed to `netCDF4.Dataset`
+                when opening a dataset with the ``'netCDF4'`` backend.
+                The keyword argument ``mode='r'`` is always
+                automatically applied, even when not provided, and
+                can't be set to a different value. The ``filename``
+                argument cannot be provided.
+
+            * ``'netcdf_file_options'``
+
+                Keyword arguments that are passed to
+                `scipy.io.netcdf_file` when opening a dataset with the
+                ``'netcdf_file'`` backend. The keyword arguments
+                ``mode='r'`` and ``mmap=True`` are always
+                automatically applied, even when not provided, and
+                can't be set to different values. The ``filename``
+                argument cannot be provided.
+
+            * ``'h5py_options'``
+
+                Keyword arguments that are passed to `h5py.File` when
+                opening a dataset with the ``'h5py'`` backend. The
+                keyword argument ``mode='r'`` is always automatically
+                applied, even when not provided, and can't be set to a
+                different value. The ``name`` argument can not be
+                provided. It is recommended to set ``rdcc_nbytes``,
+                ``rdcc_w0``, and ``rdcc_nslots`` keywords to reduce
+                the risk of poor HDF5 chunk-access performance with
+                the ``'h5py'`` backend (see the :ref:`h5py chunk cache
+                guide <h5py:chunk-cache>` for details).
+
+            * ``'xarray_options'``
+
+                Keyword arguments that are passed to
+                `xarray.open_datatree` when opening a dataset with the
+                ``'xarray'`` backend. The keyword arguments
+                ``mask_and_scale=False``, ``decode_cf=False``, and
+                ``chunks='auto'`` are always automatically applied,
+                even when not provided. The ``mask_and_scale`` and
+                ``decode_cf`` arguments can't be set to different
+                values, but ``chunks`` may be redefined. The
+                ``filename_or_obj`` argument can not be provided.
+
+            * ``'zarr_options'``: `dict` or `None`, optional
+
+                Keyword arguments that are passed to `zarr.open` when
+                opening a dataset with the ``'zarr'`` backend. The
+                keyword argument ``mode='r'`` is always automatically
+                applied, even when not provided, and can't be set to a
+                different value. The ``store`` argument can not be
+                provided.
+
+            *Example:*
+              ``{'pyfive_options': {'metadata_buffer_size': 2}}``
+
+            *Example:*
+              ``{'pyfive_options': {'metadata_buffer_size': 2},
+              'umfive_options': {'height_at_top_of_model': 85000,
+              'local_os_cache': False}}``""",
+    # read filesystem
+    "{{read filesystem: optional}}": """filesystem: optional
+            A pre-authenticated file system object (for example an
+            `fsspec.filesystem` instance) to use for opening the
+            dataset. When provided, *datasets* values are treated as
+            paths understood by *filesystem*, and local string
+            pre-processing (tilde/variable expansion, globbing and
+            directory walking) is bypassed. The file is opened by
+            calling ``filesystem.open(dataset, 'rb')``, which returns
+            a file-like object that is passed to the netCDF backend.
+
+            If `None` (the default) and *storage_options* is also
+            `None`, then a dataset is treated as described by the
+            *datasets* parameter.
+
+            When provided, a dataset is treated as the file-like
+            object ``filesystem.open(dataset, 'rb')`` which is passed
+            to the backends (see the *backend* parameter).
+
+            .. versionadded:: (cfdm) 1.13.1.0""",
     # read  storage_options
     "{{read storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
-            Pass parameters to the backend file system driver, such as
-            username, password, server, port, etc. How the storage
-            options are interpreted depends on the location of the
-            file:
+            Parameters for defining an `fsspec` filesystem for
+            accessing a dataset.
 
-            * **Local File System**: Storage options are ignored for
-              local files.
+            If `None` (the default) and *filesystem* is also `None`,
+            then a dataset is treated as described by the *datasets*
+            parameter.
 
-            * **HTTP(S)**: Storage options are ignored for files
-              available across the network via OPeNDAP.
+            If set to a dictionary of storage options then a dataset
+            is treated, in general, as the file-like object
+            ``fsspec.filesystem(protocol,
+            **storage_options).open(dataset, 'rb')``, where
+            ``protocol`` is inferred from the start of the dataset
+            name (e.g. ``s3``, ``http``, etc.). S3 is a special case
+            for which ``endpoint_url`` is added to the storage
+            options, and the leading scheme and authority is
+            automatically removed from the dataset name passed to the
+            filesystem ``open`` method; for instance, the dataset
+            ``'s3://authority/bucket/file.nc'`` is treated as
+            ``fsspec.filesystem('s3', endpoint_url='s3://authority',
+            **storage_options).open('bucket/file.nc')``.
 
-            * **S3-compatible services**: The backend used is `s3fs`,
-              and the storage options are used to initialise an
-              `s3fs.S3FileSystem` file system object. By default, or
-              if `None`, then *storage_options* is taken as ``{}``.
-
-              If the ``'endpoint_url'`` key is not in
-              *storage_options*, nor in a dictionary defined by the
-              ``'client_kwargs'`` key (both of which are the case when
-              *storage_options* is `None`), then one will be
-              automatically inserted for accessing an S3 file. For
-              instance, with a file name of
-              ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
-              with value ``'https://store'`` would be created. To
-              disable this, set the ``'endpoint_url'`` key to `None`.
-
-              *Parameter example:*
-                For a file name of ``'s3://store/data/file.nc'``, the
-                following are equivalent: ``None``, ``{}``,
-                ``{'endpoint_url': 'https://store'}``, and
-                ``{'client_kwargs': {'endpoint_url':
-                'https://store'}}``
-
-              *Parameter example:*
-                ``{'key': 'scaleway-api-key...', 'secret':
-                'scaleway-secretkey...', 'endpoint_url':
-                'https://s3.fr-par.scw.cloud', 'client_kwargs':
-                {'region_name': 'fr-par'}}``""",
+            .. versionadded:: (cfdm) 1.13.1.0""",
     # read cache
     "{{read cache: `bool`, optional}}": """cache: `bool`, optional
             If True, the default, then cache the first and last array
@@ -468,7 +661,7 @@ _docstring_substitution_definitions = {
                 A Dask chunksize of 2 MiB may be specified as
                 ``'2097152'`` or ``'2 MiB'``.
 
-            * `-1` or `None`
+            * ``-1`` or `None`
 
               There is no Dask chunking, i.e. every data array has one
               Dask chunk regardless of its size. In this case each
@@ -493,7 +686,7 @@ _docstring_substitution_definitions = {
               dimension is identified in one of three ways:
 
               1. the netCDF dimension name, preceded by ``ncdim%``
-                (e.g. ``'ncdim%lat'``);
+                 (e.g. ``'ncdim%lat'``);
 
               2. the value of the "standard name" attribute of a
                  CF-netCDF coordinate variable that spans the
@@ -585,7 +778,7 @@ _docstring_substitution_definitions = {
               to be applied to the directories of the fragment file
               locations. The dictionary comprises keyword arguments to
               the {{package}}.Data.replace_directory` method, which is
-              used to make the the changes. The aggregation file being
+              used to make the changes. The aggregation file being
               read is unaltered. An empty dictionary results in no
               modifications.
 
@@ -646,6 +839,61 @@ _docstring_substitution_definitions = {
               To register field and auxiliary coordinate constructs to
               be written as CF-netCDF aggregation variables:
               ``cfa_write=['field', 'auxiliary_coordinate']``.""",
+    # read cfa_backend
+    "{{read cfa_backend: `None` or (sequence of) `str`, optional}}": """cfa_backend: `None` or (sequence of) `str`, optional
+            Which library or libraries to use for reading the dataset
+            fragments indicated in a CF-netCDF aggregation file. When
+            the fragments are accessed (which does not occur during
+            `{{package}}.read`), an attempt to open each fragment
+            dataset is made by the given backends in order, stopping
+            after the first successful read. The available backends
+            are:
+
+            =================  ======================
+            Backend            Library
+            =================  ======================
+            ``'pyfive'``       `pyfive`
+            ``'zarr'``         `zarr`
+            ``'netCDF4'``      `netCDF4`
+            ``'netcdf_file'``  `scipy.io.netcdf_file`
+            ``'h5py'``         `h5py`
+            =================  ======================
+
+            By default *cfa_backend* is `None`, which is equivalent to
+            providing the ordered sequence of backends:
+
+            ``('pyfive', 'zarr', 'netCDF4', 'netcdf_file', 'h5py')``
+
+            *Example:*
+              To only attempt ``'netCDF4'``: ``'netCDF4'`` or
+              ``['netCDF4']``
+
+            *Example:*
+              To only attempt ``'netCDF4'`` or ``'pyfive'``, in that
+              order: ``('netCDF4', 'pyfive')``""",
+    # read cfa_backend_options
+    "{{read cfa_backend_options: `None` or `dict`, optional}}": """cfa_backend_options: `None` or `dict`, optional
+            The options to use with each backend when opening an
+            aggregated dataset.
+
+            Set as for the *backend_options* parameter.""",
+    # read cfa_filesystem
+    "{{read cfa_filesystem: `None` or filesystem, optional}}": """cfa_filesystem: `None` or filesystem, optional
+            A pre-authenticated filesystem object (for example an
+            `fsspec` filesystem instance) to use for opening the
+            fragment datasets indicated in a CF-netCDF aggregation
+            file.
+
+            If `None` (the default) then a fragment dataset path is
+            passed unchanged to the backends defined by the
+            *cfa_backend* parameter.
+
+            When provided, a fragment dataset path (``fragment``) is
+            treated as the file-like object ``filesystem.open(fragment,
+            'rb')`` which is passed to the backends (see the
+            *cfa_backend* parameter).
+
+            .. versionadded:: (cfdm) 1.13.3.0""",
     # read to_memory
     "{{read to_memory: (sequence of) `str`, optional}}": """to_memory: (sequence of) `str`, optional
             Read all data arrays of the named construct types into
@@ -760,7 +1008,7 @@ _docstring_substitution_definitions = {
             .. note:: For a netCDF dataset, for which it is always
                       well-defined in which group a dimension is
                       defined, *group_dimension_search* may only take
-                      the default value of ``'closest_ancestor'`,
+                      the default value of ``'closest_ancestor'``,
                       which applies the behaviour defined by the CF
                       conventions (section 2.7 Groups).
 
@@ -773,12 +1021,86 @@ _docstring_substitution_definitions = {
                       named in a manner that is inconsistent with CF
                       rules defined by the CF conventions (section 2.7
                       Groups).""",
+    # read um
+    "{{read um: `dict` or `None`, optional}}": """um: `dict` or `None`, optional
+            For Met Office (UK) PP files and Met Office (UK) fields
+            files only, provide extra decoding instructions. This
+            option is ignored for input files which are not PP or
+            fields files. In most cases, how to decode a file is
+            inferrable from the file's contents via the lookup
+            headers, but when that is not possible then any of the
+            following key/value pairs in the dictionary may be used to
+            guide the decoding:
+
+            * ``'um_version'``: `str`
+
+              The UM version to be used when decoding the
+              header. Valid versions are, for example, ``4.2``,
+              ``'6.6.3'`` and ``'8.2'``. In general, a given version
+              is ignored if it can be inferred from the header (which
+              is usually the case for files created by the UM at
+              versions 5.3 and later). The exception to this is when
+              the given version has a third element (such as the 3 in
+              6.6.3), in which case any version in the header is
+              ignored. The default version is ``4.5``.
+
+            * ``'height_at_top_of_model'``: number
+
+              The height in metres of the upper boundary of the top
+              model level of the atmosphere (TOA). By default the TOA
+              is taken from the top level's upper bound defined by
+              BRSVD1 in the lookup header. If the height can't be
+              determined from the header, or the given height is less
+              than or equal to 0, then a coordinate reference system
+              will still be created that contains the 'a' and 'b'
+              formula term values, but without an atmosphere hybrid
+              height dimension coordinate construct.
+
+              .. note:: A current limitation is that if pseudolevels
+                        and atmosphere hybrid height coordinates are
+                        defined by the same lookup headers then the
+                        height **can't be determined
+                        automatically**. In this case the height may
+                        be found after reading as the maximum value of
+                        the bounds of the domain ancillary construct
+                        containing the 'a' formula term. The file can
+                        then be re-read with this height as a *um*
+                        parameter.
+
+            *Example:*
+              To specify that the input files are from version 6.6.3 of
+              the UM: ``um_config={'um_version': '6.6.3'}``
+
+            *Example:*
+              To specify that the input files are from version 6.6.3 of
+              the UM, and the height at top of the model is 85000
+              metres: ``um_config={'height_at_top_of_model': 85000,
+              'um_version': '6.6.3'}``""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully
-        computed and in memory. This can avoid the expense of
+        computed and cached in memory. This can avoid the expense of
         re-reading the data from disk, or re-computing it, when the
         data is accessed on multiple occasions.""",
+    # cf_xarray
+    "{{cf_xarray description}}": """If the `cf_xarray` package (https://cf-xarray.readthedocs.io)
+        is installed then the `cf_xarray` accessors that allow some
+        interpretation of CF attributes will be present on
+        `xarray.DataArray` and `xarray.Dataset` objects.""",
+    # sharding
+    "{{sharding description}}": """
+        When writing to a Zarr dataset, sharding provides a mechanism
+        to store multiple dataset chunks in a single storage object or
+        file. Without sharding, each dataset chunk is written to its
+        own file. Traditional file systems and object storage systems
+        may have performance issues storing and accessing large number
+        of files, and small files can be inefficient to store if they
+        are smaller than the block size of the file system. Sharding
+        can improve performance by creating fewer, and larger, files
+        for storing the dataset chunks.
+
+        The sharding strategy is ignored when writing to a non-Zarr
+        dataset.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ------------------------1----------------------------------------
@@ -800,8 +1122,8 @@ _docstring_substitution_definitions = {
                 If False then the compression type and, if applicable,
                 the underlying compressed arrays must be the same, as
                 well as the arrays in their uncompressed forms. By
-                default only the the arrays in their uncompressed
-                forms are compared.""",
+                default only the arrays in their uncompressed forms
+                are compared.""",
     # ignore_data_type: `bool`, optional
     "{{ignore_data_type: `bool`, optional}}": """ignore_data_type: `bool`, optional
                 If True then ignore the data types in all numerical
@@ -1171,38 +1493,26 @@ _docstring_substitution_definitions = {
     "{{init attributes: `dict` or `None`, optional}}": """attributes: `dict` or `None`, optional
                 Provide netCDF attributes for the data as a dictionary
                 of key/value pairs.""",
-    # init storage_options
-    "{{init storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
-                Key/value pairs to be passed on to the creation of
-                `s3fs.S3FileSystem` file systems to control the
-                opening of files in S3 object stores. Ignored for
-                files not in an S3 object store, i.e. those whose
-                names do not start with ``s3:``.
+    "{{init filesystem: optional}}": """filesystem: optional
+                A pre-authenticated filesystem object (for example an
+                `fsspec` filesystem instance) to use for opening the
+                *filename*. When the dataset is given as a string, it
+                is treated as a path understood by *filesystem* and
+                the dataset will be opened by calling
+                ``filesystem.open(dataset, 'rb')``, the result of
+                which will be passed to the backend(s) (see the
+                *backend* parameter). S3 is a special case for which
+                the leading scheme and authority is automatically
+                removed from the dataset name passed to the filesystem
+                ``open`` method; for instance, the dataset
+                ``'s3://authority/bucket/file.nc'`` is treated as
+                ``filesystem.open('bucket/file.nc', 'rb')``.
 
-                By default, or if `None`, then *storage_options* is
-                taken as ``{}``.
+                If *filename* is not a string then *filesystem* is
+                ignored.
 
-                If the ``'endpoint_url'`` key is not in
-                *storage_options* or is not in a dictionary defined by
-                the ``'client_kwargs`` key (which is always the case
-                when *storage_options* is `None`), then one will be
-                automatically inserted for accessing an S3 file. For
-                example, for a file name of
-                ``'s3://store/data/file.nc'``, an ``'endpoint_url'``
-                key with value ``'https://store'`` would be created.
-
-                *Parameter example:*
-                  For a file name of ``'s3://store/data/file.nc'``,
-                  the following are equivalent: ``None``, ``{}``, and
-                  ``{'endpoint_url': 'https://store'}``,
-                  ``{'client_kwargs': {'endpoint_url':
-                  'https://store'}}``
-
-                *Parameter example:*
-                  ``{'key': 'scaleway-api-key...', 'secret':
-                  'scaleway-secretkey...', 'endpoint_url':
-                  'https://s3.fr-par.scw.cloud', 'client_kwargs':
-                  {'region_name': 'fr-par'}}``""",
+                If `None` (the default) then *filename*, regardless of
+                its type, is passed unchanged to the backends.""",
     # _force_mask_hardness
     "{{_force_mask_hardness: `bool`, optional}}": """_force_mask_hardness: `bool`, optional
                 If True (the default) then force the mask hardness of
@@ -1215,6 +1525,13 @@ _docstring_substitution_definitions = {
                 state of the Dask graph, or is to add to the returned
                 Dask graph further operations to which can correctly
                 manage the mask hardness.""",
+    # init backend
+    "{{init backend: `None` or (sequence of) `str`, optional}}": """backend: `None` or (sequence of) `str`, optional
+                Which library to use for opening a dataset.""",
+    # init backend_options
+    "{{init backend_options: `None` or `dict`, optional}}": """backend_options: `None` or `dict`, optional
+                The options to use with each backend when opening a
+                dataset.""",
     # _force_to_memory
     "{{_force_to_memory: `bool`, optional}}": """_force_to_memory: `bool`, optional
                 If True (the default) then force the data resulting
@@ -1401,20 +1718,16 @@ _docstring_substitution_definitions = {
 
                 Note that whenever data elements are displayed, they
                 are cached for fast future retrieval.""",
-    # sharding
-    "{{sharding description}}": """
-        When writing to a Zarr dataset, sharding provides a mechanism
-        to store multiple dataset chunks in a single storage object or
-        file. Without sharding, each dataset chunk is written to its
-        own file. Traditional file systems and object storage systems
-        may have performance issues storing and accessing large number
-        of files, and small files can be inefficient to store if they
-        are smaller than the block size of the file system. Sharding
-        can improve performance by creating fewer, and larger, files
-        for storing the dataset chunks.
+    # xarray
+    "{{Returns xarray}}": """`xarray.Dataset` or `xarray.DataTree`
+                The equivalent `xarray` dataset.
 
-        The sharding strategy is ignored when writing to a non-Zarr
-        dataset.""",
+                If there are no sub-groups of the root group, or if
+                *group* is False, then an `xarray.Dataset` is
+                returned.
+
+                If there are sub-groups of the root group and *group*
+                is True, then an `xarray.DataTree` is returned.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

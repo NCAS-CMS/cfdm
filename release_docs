@@ -54,6 +54,15 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] || [[ $1 = "dev-clean" ]] ; then
 fi
 mkdir -p $dir/_downloads
 
+# --------------------------------------------------------------------
+# Generate stub files
+# --------------------------------------------------------------------
+stub=$(python ../generate_stub_files.py source/class 2>&1)
+echo "$stub"
+
+# --------------------------------------------------------------------
+# Make the docs
+# --------------------------------------------------------------------
 make html $dir
 
 cp -pv source/sample_files/cfdm_tutorial_files.zip source/tutorial.py $dir/_downloads

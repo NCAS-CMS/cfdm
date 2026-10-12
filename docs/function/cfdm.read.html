@@ -7,16 +7,17 @@
 
     <title>cfdm.read &#8212; Documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/documentation_options.js?v=2798502a"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=a56c686a"></script>
-    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.write" href="cfdm.write.html" />
@@ -31,12 +32,12 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.3.0</a></h1>
 
 
 
@@ -123,13 +124,20 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.read<a class="headerlink" href="#cfdm-read" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="cfdm.read">
-<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dask_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storage-aligned'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsqueeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdl_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_read_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_dimension_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'closest_ancestor'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/read_write/read.py#L17-L611"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.read" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filesystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dask_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storage-aligned'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_dataset_shards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_filesystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfa_backend_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">squeeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsqueeze</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdl_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_read_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_dimension_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'closest_ancestor'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">um</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_noncompliance_report</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/read_write/read.py#L21-L743"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.read" title="Link to this definition">¶</a></dt>
 <dd><p>Read field or domain constructs from a dataset.</p>
-<p>The following dataset formats are supported: netCDF, CDL, and
-Zarr.</p>
-<p>NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
-server, or in an S3 object store.</p>
-<p>CDL files must be on local disk.</p>
+<p>The following dataset formats are supported:</p>
+<ul class="simple">
+<li><p>netCDF-4</p></li>
+<li><p>netCDF-3</p></li>
+<li><p>Zarr v3</p></li>
+<li><p>Zarr v2</p></li>
+<li><p>Kerchunk</p></li>
+<li><p>UK Met Office PP</p></li>
+<li><p>UK Met Office fields file</p></li>
+<li><p>GRIB</p></li>
+</ul>
+<p>Datasets may be on local disk or in remote storage.</p>
 <p>Any amount of files of any combination of file types may be read.</p>
 <p>The returned constructs are sorted by the netCDF variable names of
 their corresponding data or domain variables.</p>
@@ -178,9 +186,14 @@ external <code class="docutils literal notranslate"><span class="pre">ncgen</spa
 the end of the Python session, at which time it is automatically
 deleted. The CDL file may omit data array values (as would be the
 case, for example, if the file was created with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> or
-<code class="docutils literal notranslate"><span class="pre">-c</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>), in which case the the relevant
+<code class="docutils literal notranslate"><span class="pre">-c</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>), in which case the relevant
 constructs in memory will be created with data with all missing
 values.</p>
+<p><strong>PP and UM fields files</strong></p>
+<p>32-bit and 64-bit Met Office (UK) PP files and Met Office (UK)
+fields files of any endian-ness can be read. 2-d “slices” within a
+single file are combined, where possible, into field constructs
+with 3-d, 4-d or 5-d data.</p>
 <p><strong>Performance</strong></p>
 <p>Descriptive properties are always read into memory, but lazy
 loading is employed for all data arrays, unless the <em>to_memory</em>
@@ -196,37 +209,89 @@ parameter has been set.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>dataset: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>A string, or arbitrarily nested sequence of strings,
-giving the dataset names, or directory names, from which
-to read field or domain constructs.</p>
-<p>Local names may be relative paths and will have tilde and
-shell environment variables expansions applied to them,
-followed by the replacement of any UNIX wildcards (such as
-<code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">?</span></code>, <code class="docutils literal notranslate"><span class="pre">[a-z]</span></code>, etc.) with the list of matching
-names. Remote names (i.e. those with an http or s3
-schema), however, are not transformed in any way.</p>
-<p>Directories will be walked through to find their contents
-(recursively if <em>recursive</em> is True), unless the directory
-defines a Zarr dataset (which is ascertained by presence
-in the directory of appropriate Zarr metadata files).</p>
-<p>Remote datasets (i.e. those with an http or s3 schema) are
-assumed to be netCDF files, or else Zarr datasets if the
-<em>dataset_type</em> parameter is set to <code class="docutils literal notranslate"><span class="pre">'Zarr'</span></code>.</p>
-<p>As a special case, if the <em>cdl_string</em> parameter is True,
-then interpretation of <em>datasets</em> changes so that each
-string is assumed to be an actual CDL representation of a
-dataset, rather than a than a file or directory name.</p>
+<dt>datasets:</dt><dd><p>The dataset, or sequence of datasets, from which to read
+field or domain constructs.</p>
+<p>Each dataset must be one of:</p>
+<ul>
+<li><p>A string-like path name to the dataset (such as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>
+or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a> instance).</p>
+<ul>
+<li><p>Local names may be relative paths and will have tilde
+and shell environment variable expansions applied to
+them, followed by the replacement of any UNIX
+wildcards (such as <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">?</span></code>, <code class="docutils literal notranslate"><span class="pre">[a-z]</span></code>, etc.) with
+the list of matching names. Remote names (i.e. those
+with an http or s3 schema), however, are not
+transformed in any way.</p>
 <dl class="simple">
 <dt><em>Example:</em></dt><dd><p>The local dataset <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> in the user’s home
-directory could be described by any of the following:
-<code class="docutils literal notranslate"><span class="pre">'$HOME/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'${HOME}/file.nc'</span></code>,
-<code class="docutils literal notranslate"><span class="pre">'~/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code></p>
+directory could be described by any of the
+following: <code class="docutils literal notranslate"><span class="pre">'$HOME/file.nc'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'${HOME}/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'~/file.nc'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code></p>
 </dd>
-<dt><em>Example:</em></dt><dd><p>The local datasets <code class="docutils literal notranslate"><span class="pre">file1.nc</span></code> and <code class="docutils literal notranslate"><span class="pre">file2.nc</span></code> could
-be described by any of the following: <code class="docutils literal notranslate"><span class="pre">['file1.nc',</span>
-<span class="pre">'file2.nc']</span></code>, <code class="docutils literal notranslate"><span class="pre">'file[12].nc'</span></code></p>
+<dt><em>Example:</em></dt><dd><p>The local datasets <code class="docutils literal notranslate"><span class="pre">file1.nc</span></code> and <code class="docutils literal notranslate"><span class="pre">file2.nc</span></code>
+could be described by any of the following:
+<code class="docutils literal notranslate"><span class="pre">['file1.nc',</span> <span class="pre">'file2.nc']</span></code>, <code class="docutils literal notranslate"><span class="pre">'file[12].nc'</span></code></p>
 </dd>
 </dl>
+</li>
+<li><p>A path to a directory will be walked through to find
+its contents (recursively if <em>recursive</em> is True),
+unless the directory defines a Zarr dataset (which is
+ascertained by presence in the directory of
+appropriate Zarr metadata files).</p></li>
+<li><p>If a file system has been defined by the <em>filesystem</em>
+or <em>storage_options</em> parameters, then the path is
+assumed to be in that file system. If a file system
+has not been defined, then a remote dataset is
+treated, in general, as the file-like object
+<code class="docutils literal notranslate"><span class="pre">fsspec.filesystem(protocol).open(dataset,</span> <span class="pre">'rb')</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">protocol</span></code> is inferred from the start of the
+dataset name (e.g. <code class="docutils literal notranslate"><span class="pre">s3`,</span> <span class="pre">``http</span></code>, etc.).</p></li>
+<li><p>There is a special case for remote s3 datasets for
+which a file system has not been provided with the
+<em>filesystem</em> parameter. In this case, an
+<code class="docutils literal notranslate"><span class="pre">endpoint_url</span></code> file system storage option is created
+(unless it has already been provided), and the
+leading scheme and authority are automatically removed
+from the dataset name; for instance, the dataset
+<code class="docutils literal notranslate"><span class="pre">'s3://authority/bucket/file.nc'</span></code> might be treated
+as <code class="docutils literal notranslate"><span class="pre">fsspec.filesystem('s3',</span>
+<span class="pre">endpoint_url='s3://authority').open('bucket/file.nc',</span>
+<span class="pre">'rb')</span></code>.</p></li>
+<li><p>There is a special case for remote http and https
+datasets for which a file system has not been provided
+with the <em>filesystem</em> parameter. In this case, an
+attempt will be made to access the dataset via OPeNDAP
+if other methods do not work.</p></li>
+<li><p>If the <em>cdl_string</em> parameter is True, then the
+string-like dataset is interpreted as an actual CDL
+representation of a dataset, rather than a path name.</p></li>
+</ul>
+</li>
+<li><p>A file-like object that accesses the dataset (such as
+<a class="reference external" href="https://docs.python.org/3/library/io.html#io.BufferedReader" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">io.BufferedReader</span></code></a> or the result of an <code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec</span></code> file
+system open)</p></li>
+<li><p>A directory-like object that accesses the dataset (such
+as <code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec.mapping.FSMap</span></code>)</p></li>
+<li><p>Any of the following backend objects (see the <em>backend</em>
+parameter) that accesses the dataset: <code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfive.File</span></code>,
+<a class="reference external" href="https://zarr.readthedocs.io/en/stable/api/zarr/group/#zarr.Group" title="(in zarr-python v0.0.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr.Group</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">umfive.File</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.io.netcdf_file</span></code>, <a class="reference external" href="https://docs.h5py.org/en/stable/high/file.html#h5py.File" title="(in h5py v3.16)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h5py.File</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.Dataset</span></code>,
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.DataTree</span></code>.</p></li>
+<li><p>An <code class="xref py py-obj docutils literal notranslate"><span class="pre">xnetcdf.Dataset</span></code> object that accesses the dataset.</p></li>
+<li><p>Any object <code class="docutils literal notranslate"><span class="pre">x</span></code> that accesses the dataset and has the
+same API as one of the backend objects, or as
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">xnetcdf.Dataset</span></code>. In practice, this means any object
+<code class="docutils literal notranslate"><span class="pre">x</span></code> for which <code class="docutils literal notranslate"><span class="pre">isinstance(x,</span> <span class="pre">&lt;backend-object&gt;)</span></code> is
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> for any <code class="docutils literal notranslate"><span class="pre">&lt;backend-object&gt;</span></code> from the selection
+of allowed backend objects. For instance, if you have
+created a library called <code class="docutils literal notranslate"><span class="pre">my_pyfive</span></code> for which
+<code class="docutils literal notranslate"><span class="pre">my_pyfive.File</span></code> is (registered as) a subclass of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfive.File</span></code>, then <code class="docutils literal notranslate"><span class="pre">my_pyfive.File</span></code> instances can be
+passed to <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dataset</span></code>.</p></li>
+</ul>
 </dd>
 <dt>recursive: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then recursively read sub-directories of any
 directories specified with the <em>datasets</em> parameter.</p>
@@ -277,6 +342,15 @@ raised for any invalid dataset type.</p>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'Zarr'</span></code></p></td>
 <td><p>A Zarr v2 (xarray) or Zarr v3 dataset</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'Kerchunk'</span></code></p></td>
+<td><p>A Kerchunked dataset</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'UM'</span></code></p></td>
+<td><p>A UK Met Office PP or fields file dataset</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'GRIB'</span></code></p></td>
+<td><p>A GRIB dataset</p></td>
 </tr>
 </tbody>
 </table>
@@ -434,51 +508,218 @@ function. For example:</p>
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.9.0.0</p>
 </div>
 </dd>
-</dl>
-<p>{{read netcdf_backend: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional}}</p>
-<blockquote>
-<div><div class="versionadded">
-<p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
-</div>
-</div></blockquote>
-<dl>
-<dt>storage_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Pass parameters to the backend file system driver, such as
-username, password, server, port, etc. How the storage
-options are interpreted depends on the location of the
-file:</p>
-<ul>
-<li><p><strong>Local File System</strong>: Storage options are ignored for
-local files.</p></li>
-<li><p><strong>HTTP(S)</strong>: Storage options are ignored for files
-available across the network via OPeNDAP.</p></li>
-<li><p><strong>S3-compatible services</strong>: The backend used is <code class="xref py py-obj docutils literal notranslate"><span class="pre">s3fs</span></code>,
-and the storage options are used to initialise an
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">s3fs.S3FileSystem</span></code> file system object. By default, or
-if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, then <em>storage_options</em> is taken as <code class="docutils literal notranslate"><span class="pre">{}</span></code>.</p>
-<p>If the <code class="docutils literal notranslate"><span class="pre">'endpoint_url'</span></code> key is not in
-<em>storage_options</em>, nor in a dictionary defined by the
-<code class="docutils literal notranslate"><span class="pre">'client_kwargs'</span></code> key (both of which are the case when
-<em>storage_options</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>), then one will be
-automatically inserted for accessing an S3 file. For
-instance, with a file name of
-<code class="docutils literal notranslate"><span class="pre">'s3://store/data/file.nc'</span></code>, an <code class="docutils literal notranslate"><span class="pre">'endpoint_url'</span></code> key
-with value <code class="docutils literal notranslate"><span class="pre">'https://store'</span></code> would be created. To
-disable this, set the <code class="docutils literal notranslate"><span class="pre">'endpoint_url'</span></code> key to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>backend: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Which library to use for opening a string-like, file-like,
+or directory-like dataset. An attempt to read the dataset
+is made by the given backends in the order in which they
+are provided, stopping after the first successful read.
+By default <em>backend</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, which is equivalent to
+providing the ordered sequence of backends:</p>
+<p><code class="docutils literal notranslate"><span class="pre">('pyfive',</span> <span class="pre">'zarr',</span> <span class="pre">'umfive',</span> <span class="pre">'netCDF4',</span> <span class="pre">'netcdf_file',</span>
+<span class="pre">'h5py',</span> <span class="pre">'xarray')</span></code></p>
+<p>If the dataset is given as a (subclass of a) backend
+object, then that backend must be one of the backends
+identified by the <em>backend</em> parameter.</p>
+<p>Performance may be improved by specifying a backend
+library, as this reduces or removes unsuccessful dataset
+read attempts, which can be expensive, especially for
+remote datasets.</p>
+<p>The available backends, and the formats they can read,
+are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Backend</p></th>
+<th class="head"><p>Library</p></th>
+<th class="head"><p>Dataset formats</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'pyfive'</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfive</span></code></p></td>
+<td><p>netCDF-4</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'zarr'</span></code></p></td>
+<td><p><a class="reference external" href="https://zarr.readthedocs.io/en/stable/api/zarr/#zarr" title="(in zarr-python v0.0.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr</span></code></a></p></td>
+<td><p>Zarr, Kerchunk</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'umfive'</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">umfive</span></code></p></td>
+<td><p>PP, fields file</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4</span></code></p></td>
+<td><p>netCDF-4, netCDF-3</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'netcdf_file'</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.io.netcdf_file</span></code></p></td>
+<td><p>netCDF-3</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'h5py'</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">h5py</span></code></p></td>
+<td><p>netCDF-4</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'xarray'</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code></p></td>
+<td><p>netCDF-4, netCDF-3,
+Zarr, Kerchunk,
+GRIB</p></td>
+</tr>
+</tbody>
+</table>
+<p>Note that the <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> library is itself an interface to
+other backends.</p>
 <dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p>For a file name of <code class="docutils literal notranslate"><span class="pre">'s3://store/data/file.nc'</span></code>, the
-following are equivalent: <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">{}</span></code>,
-<code class="docutils literal notranslate"><span class="pre">{'endpoint_url':</span> <span class="pre">'https://store'}</span></code>, and
-<code class="docutils literal notranslate"><span class="pre">{'client_kwargs':</span> <span class="pre">{'endpoint_url':</span>
-<span class="pre">'https://store'}}</span></code></p>
+<dt><em>Example:</em></dt><dd><p>To only attempt <code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code>: <code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code> or
+<code class="docutils literal notranslate"><span class="pre">['netCDF4']</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'key':</span> <span class="pre">'scaleway-api-key...',</span> <span class="pre">'secret':</span>
-<span class="pre">'scaleway-secretkey...',</span> <span class="pre">'endpoint_url':</span>
-<span class="pre">'https://s3.fr-par.scw.cloud',</span> <span class="pre">'client_kwargs':</span>
-<span class="pre">{'region_name':</span> <span class="pre">'fr-par'}}</span></code></p>
+<dt><em>Example:</em></dt><dd><p>To only attempt <code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code> or <code class="docutils literal notranslate"><span class="pre">'pyfive'</span></code>, in that
+order: <code class="docutils literal notranslate"><span class="pre">('netCDF4',</span> <span class="pre">'pyfive')</span></code></p>
 </dd>
 </dl>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.3.0</p>
+</div>
+</dd>
+<dt>backend_options: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>The options to use with each backend when opening a
+dataset.</p>
+<p>Each backend’s options may be defined with the following
+dictionary keys, which take a value of a dictionary of
+keyword arguments to the appropriate backend library
+object. Each backend has default options, which are used
+when the corresponding key has not been set.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'pyfive_options'</span></code></p>
+<blockquote>
+<div><p>Keyword arguments that are passed to <code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfive.File</span></code>
+when opening a dataset with the <code class="docutils literal notranslate"><span class="pre">'pyfive'</span></code> backend.
+The keyword argument <code class="docutils literal notranslate"><span class="pre">mode='r'</span></code> is always
+automatically applied, even when not provided, and
+can’t be set to a different value. The <code class="docutils literal notranslate"><span class="pre">filename</span></code>
+argument cannot be provided.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'umfive_options'</span></code></p>
+<blockquote>
+<div><p>Keyword arguments that are passed to <code class="xref py py-obj docutils literal notranslate"><span class="pre">umfive.File</span></code>
+when opening a dataset with the <code class="docutils literal notranslate"><span class="pre">'umfive'</span></code>
+backend. The keyword argument <code class="docutils literal notranslate"><span class="pre">mode='r'</span></code> is always
+automatically applied, even when not provided, and
+can’t be set to a different value. The <code class="docutils literal notranslate"><span class="pre">filename</span></code>
+argument cannot be provided.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'netCDF4_options'</span></code></p>
+<blockquote>
+<div><p>Keyword arguments that are passed to <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code>
+when opening a dataset with the <code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code> backend.
+The keyword argument <code class="docutils literal notranslate"><span class="pre">mode='r'</span></code> is always
+automatically applied, even when not provided, and
+can’t be set to a different value. The <code class="docutils literal notranslate"><span class="pre">filename</span></code>
+argument cannot be provided.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'netcdf_file_options'</span></code></p>
+<blockquote>
+<div><p>Keyword arguments that are passed to
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.io.netcdf_file</span></code> when opening a dataset with the
+<code class="docutils literal notranslate"><span class="pre">'netcdf_file'</span></code> backend. The keyword arguments
+<code class="docutils literal notranslate"><span class="pre">mode='r'</span></code> and <code class="docutils literal notranslate"><span class="pre">mmap=True</span></code> are always
+automatically applied, even when not provided, and
+can’t be set to different values. The <code class="docutils literal notranslate"><span class="pre">filename</span></code>
+argument cannot be provided.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'h5py_options'</span></code></p>
+<blockquote>
+<div><p>Keyword arguments that are passed to <a class="reference external" href="https://docs.h5py.org/en/stable/high/file.html#h5py.File" title="(in h5py v3.16)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h5py.File</span></code></a> when
+opening a dataset with the <code class="docutils literal notranslate"><span class="pre">'h5py'</span></code> backend. The
+keyword argument <code class="docutils literal notranslate"><span class="pre">mode='r'</span></code> is always automatically
+applied, even when not provided, and can’t be set to a
+different value. The <code class="docutils literal notranslate"><span class="pre">name</span></code> argument can not be
+provided. It is recommended to set <code class="docutils literal notranslate"><span class="pre">rdcc_nbytes</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rdcc_w0</span></code>, and <code class="docutils literal notranslate"><span class="pre">rdcc_nslots</span></code> keywords to reduce
+the risk of poor HDF5 chunk-access performance with
+the <code class="docutils literal notranslate"><span class="pre">'h5py'</span></code> backend (see the <span class="xref std std-ref">h5py chunk cache
+guide</span> for details).</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'xarray_options'</span></code></p>
+<blockquote>
+<div><p>Keyword arguments that are passed to
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.open_datatree</span></code> when opening a dataset with the
+<code class="docutils literal notranslate"><span class="pre">'xarray'</span></code> backend. The keyword arguments
+<code class="docutils literal notranslate"><span class="pre">mask_and_scale=False</span></code>, <code class="docutils literal notranslate"><span class="pre">decode_cf=False</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">chunks='auto'</span></code> are always automatically applied,
+even when not provided. The <code class="docutils literal notranslate"><span class="pre">mask_and_scale</span></code> and
+<code class="docutils literal notranslate"><span class="pre">decode_cf</span></code> arguments can’t be set to different
+values, but <code class="docutils literal notranslate"><span class="pre">chunks</span></code> may be redefined. The
+<code class="docutils literal notranslate"><span class="pre">filename_or_obj</span></code> argument can not be provided.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'zarr_options'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</p>
+<blockquote>
+<div><p>Keyword arguments that are passed to <a class="reference external" href="https://zarr.readthedocs.io/en/stable/api/zarr/functions/open/#zarr.open" title="(in zarr-python v0.0.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr.open</span></code></a> when
+opening a dataset with the <code class="docutils literal notranslate"><span class="pre">'zarr'</span></code> backend. The
+keyword argument <code class="docutils literal notranslate"><span class="pre">mode='r'</span></code> is always automatically
+applied, even when not provided, and can’t be set to a
+different value. The <code class="docutils literal notranslate"><span class="pre">store</span></code> argument can not be
+provided.</p>
+</div></blockquote>
 </li>
 </ul>
+<dl class="simple">
+<dt><em>Example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'pyfive_options':</span> <span class="pre">{'metadata_buffer_size':</span> <span class="pre">2}}</span></code></p>
+</dd>
+<dt><em>Example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'pyfive_options':</span> <span class="pre">{'metadata_buffer_size':</span> <span class="pre">2},</span>
+<span class="pre">'umfive_options':</span> <span class="pre">{'height_at_top_of_model':</span> <span class="pre">85000,</span>
+<span class="pre">'local_os_cache':</span> <span class="pre">False}}</span></code></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.3.0</p>
+</div>
+</dd>
+<dt>filesystem: optional</dt><dd><p>A pre-authenticated file system object (for example an
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec.filesystem</span></code> instance) to use for opening the
+dataset. When provided, <em>datasets</em> values are treated as
+paths understood by <em>filesystem</em>, and local string
+pre-processing (tilde/variable expansion, globbing and
+directory walking) is bypassed. The file is opened by
+calling <code class="docutils literal notranslate"><span class="pre">filesystem.open(dataset,</span> <span class="pre">'rb')</span></code>, which returns
+a file-like object that is passed to the netCDF backend.</p>
+<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) and <em>storage_options</em> is also
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, then a dataset is treated as described by the
+<em>datasets</em> parameter.</p>
+<p>When provided, a dataset is treated as the file-like
+object <code class="docutils literal notranslate"><span class="pre">filesystem.open(dataset,</span> <span class="pre">'rb')</span></code> which is passed
+to the backends (see the <em>backend</em> parameter).</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.1.0</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.1.0</p>
+</div>
+</dd>
+<dt>storage_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Parameters for defining an <code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec</span></code> filesystem for
+accessing a dataset.</p>
+<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) and <em>filesystem</em> is also <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>,
+then a dataset is treated as described by the <em>datasets</em>
+parameter.</p>
+<p>If set to a dictionary of storage options then a dataset
+is treated, in general, as the file-like object
+<code class="docutils literal notranslate"><span class="pre">fsspec.filesystem(protocol,</span>
+<span class="pre">**storage_options).open(dataset,</span> <span class="pre">'rb')</span></code>, where
+<code class="docutils literal notranslate"><span class="pre">protocol</span></code> is inferred from the start of the dataset
+name (e.g. <code class="docutils literal notranslate"><span class="pre">s3</span></code>, <code class="docutils literal notranslate"><span class="pre">http</span></code>, etc.). S3 is a special case
+for which <code class="docutils literal notranslate"><span class="pre">endpoint_url</span></code> is added to the storage
+options, and the leading scheme and authority is
+automatically removed from the dataset name passed to the
+filesystem <code class="docutils literal notranslate"><span class="pre">open</span></code> method; for instance, the dataset
+<code class="docutils literal notranslate"><span class="pre">'s3://authority/bucket/file.nc'</span></code> is treated as
+<code class="docutils literal notranslate"><span class="pre">fsspec.filesystem('s3',</span> <span class="pre">endpoint_url='s3://authority',</span>
+<span class="pre">**storage_options).open('bucket/file.nc')</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.1.0</p>
+</div>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
@@ -500,7 +741,7 @@ following:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">'storage-aligned'</span></code></p>
 <p>This is the default. The Dask chunk size in bytes will
 be as close as possible the size given by
-<a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a>, favouring square-like chunk
+<a class="reference internal" href="../class/cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a>, favouring square-like chunk
 shapes, with the added guarantee that the entirety of
 each storage chunk lies within exactly one Dask
 chunk. This strategy is general the most performant, as
@@ -513,19 +754,19 @@ chunk shape of (100, 5, 60). This has an overall size of
 54.93 MiB, partitioned into 240 storage chunks each of
 size 100*5*60*8 bytes = 0.23 MiB. Then:</p>
 <ul class="simple">
-<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 134217728 (i.e. 128
+<li><p>If <a class="reference internal" href="../class/cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 134217728 (i.e. 128
 MiB), then the storage-aligned Dask chunks will have
 shape (400, 300, 60), giving 1 Dask chunk with size of
 54.93 MiB (compare with a Dask chunk shape of (400,
 300, 60) and size 54.93 MiB when <em>dask_chunks</em> is
 <code class="docutils literal notranslate"><span class="pre">'auto'</span></code>.)</p></li>
-<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 33554432 (i.e. 32
+<li><p>If <a class="reference internal" href="../class/cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 33554432 (i.e. 32
 MiB), then the storage-aligned Dask chunks will have
 shape (200, 260, 60), giving 4 Dask chunks with a
 maximum size of 23.80 MiB (compare with a Dask chunk
 shape of (264, 264, 60) and maximum size 31.90 MiB
 when <em>dask_chunks</em> is <code class="docutils literal notranslate"><span class="pre">'auto'</span></code>.)</p></li>
-<li><p>If <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 4194304 (i.e. 4
+<li><p>If <a class="reference internal" href="../class/cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a> returns 4194304 (i.e. 4
 MiB), then the storage-aligned Dask chunks will have
 shape (100, 85, 60), giving 16 Dask chunks with a
 maximum size of 3.89 MiB (compare with a Dask chunk
@@ -574,7 +815,7 @@ compressed array in the file.</p></li>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">auto</span></code></p>
 <p>The Dask chunk size in bytes will be as close as
-possible to the size given by <a class="reference internal" href="cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a>,
+possible to the size given by <a class="reference internal" href="../class/cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a>,
 favouring square-like chunk shapes. This may give
 similar Dask chunk shapes as the <code class="docutils literal notranslate"><span class="pre">'storage-aligned'</span></code>
 option, but without the guarantee that each storage
@@ -593,7 +834,7 @@ lies entirely within one Dask chunk.</p>
 </dd>
 </dl>
 </li>
-<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 <p>There is no Dask chunking, i.e. every data array has one
 Dask chunk regardless of its size. In this case each
 storage chunk is guaranteed to lie entirely within the
@@ -615,12 +856,8 @@ a value that defines the Dask chunking for that
 dimension whenever it is spanned by a data array. A file
 dimension is identified in one of three ways:</p>
 <ol class="arabic simple">
-<li><p>the netCDF dimension name, preceded by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code></p></li>
-</ol>
-<blockquote>
-<div><p>(e.g. <code class="docutils literal notranslate"><span class="pre">'ncdim%lat'</span></code>);</p>
-</div></blockquote>
-<ol class="arabic simple" start="2">
+<li><p>the netCDF dimension name, preceded by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code>
+(e.g. <code class="docutils literal notranslate"><span class="pre">'ncdim%lat'</span></code>);</p></li>
 <li><p>the value of the “standard name” attribute of a
 CF-netCDF coordinate variable that spans the
 dimension (e.g. <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>);</p></li>
@@ -711,7 +948,7 @@ information read from the file:</p>
 to be applied to the directories of the fragment file
 locations. The dictionary comprises keyword arguments to
 the cfdm.Data.replace_directory` method, which is
-used to make the the changes. The aggregation file being
+used to make the changes. The aggregation file being
 read is unaltered. An empty dictionary results in no
 modifications.</p>
 <dl class="simple">
@@ -801,6 +1038,78 @@ be written as CF-netCDF aggregation variables:
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.0.0</p>
 </div>
 </dd>
+<dt>cfa_filesystem: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or filesystem, optional</dt><dd><p>A pre-authenticated filesystem object (for example an
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">fsspec</span></code> filesystem instance) to use for opening the
+fragment datasets indicated in a CF-netCDF aggregation
+file.</p>
+<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then a fragment dataset path is
+passed unchanged to the backends defined by the
+<em>cfa_backend</em> parameter.</p>
+<p>When provided, a fragment dataset path (<code class="docutils literal notranslate"><span class="pre">fragment</span></code>) is
+treated as the file-like object <code class="docutils literal notranslate"><span class="pre">filesystem.open(fragment,</span>
+<span class="pre">'rb')</span></code> which is passed to the backends (see the
+<em>cfa_backend</em> parameter).</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.3.0</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.3.0</p>
+</div>
+</dd>
+<dt>cfa_backend: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Which library or libraries to use for reading the dataset
+fragments indicated in a CF-netCDF aggregation file. When
+the fragments are accessed (which does not occur during
+<a class="reference internal" href="#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a>), an attempt to open each fragment
+dataset is made by the given backends in order, stopping
+after the first successful read. The available backends
+are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Backend</p></th>
+<th class="head"><p>Library</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'pyfive'</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfive</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'zarr'</span></code></p></td>
+<td><p><a class="reference external" href="https://zarr.readthedocs.io/en/stable/api/zarr/#zarr" title="(in zarr-python v0.0.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'netcdf_file'</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.io.netcdf_file</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'h5py'</span></code></p></td>
+<td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">h5py</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>By default <em>cfa_backend</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, which is equivalent to
+providing the ordered sequence of backends:</p>
+<p><code class="docutils literal notranslate"><span class="pre">('pyfive',</span> <span class="pre">'zarr',</span> <span class="pre">'netCDF4',</span> <span class="pre">'netcdf_file',</span> <span class="pre">'h5py')</span></code></p>
+<dl class="simple">
+<dt><em>Example:</em></dt><dd><p>To only attempt <code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code>: <code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code> or
+<code class="docutils literal notranslate"><span class="pre">['netCDF4']</span></code></p>
+</dd>
+<dt><em>Example:</em></dt><dd><p>To only attempt <code class="docutils literal notranslate"><span class="pre">'netCDF4'</span></code> or <code class="docutils literal notranslate"><span class="pre">'pyfive'</span></code>, in that
+order: <code class="docutils literal notranslate"><span class="pre">('netCDF4',</span> <span class="pre">'pyfive')</span></code></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.3.0</p>
+</div>
+</dd>
+</dl>
+<p>{{cfa_backend_options: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional}}</p>
+<blockquote>
+<div><div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.3.0</p>
+</div>
+</div></blockquote>
+<dl>
 <dt>to_memory: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Read all data arrays of the named construct types into
 memory. By default, lazy loading is employed for all data
 arrays.</p>
@@ -914,7 +1223,7 @@ any with the same name and size in all ancestor groups.</p>
 <p>For a netCDF dataset, for which it is always
 well-defined in which group a dimension is
 defined, <em>group_dimension_search</em> may only take
-the default value of <a href="#id1"><span class="problematic" id="id2">``</span></a>’closest_ancestor’<a href="#id3"><span class="problematic" id="id4">`</span></a>,
+the default value of <code class="docutils literal notranslate"><span class="pre">'closest_ancestor'</span></code>,
 which applies the behaviour defined by the CF
 conventions (section 2.7 Groups).</p>
 <p>For a Zarr dataset, for which there is no means
@@ -931,7 +1240,97 @@ Groups).</p>
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.13.0.0</p>
 </div>
 </dd>
+<dt>um: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>For Met Office (UK) PP files and Met Office (UK) fields
+files only, provide extra decoding instructions. This
+option is ignored for input files which are not PP or
+fields files. In most cases, how to decode a file is
+inferrable from the file’s contents via the lookup
+headers, but when that is not possible then any of the
+following key/value pairs in the dictionary may be used to
+guide the decoding:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'um_version'</span></code>: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<p>The UM version to be used when decoding the
+header. Valid versions are, for example, <code class="docutils literal notranslate"><span class="pre">4.2</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'6.6.3'</span></code> and <code class="docutils literal notranslate"><span class="pre">'8.2'</span></code>. In general, a given version
+is ignored if it can be inferred from the header (which
+is usually the case for files created by the UM at
+versions 5.3 and later). The exception to this is when
+the given version has a third element (such as the 3 in
+6.6.3), in which case any version in the header is
+ignored. The default version is <code class="docutils literal notranslate"><span class="pre">4.5</span></code>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'height_at_top_of_model'</span></code>: number</p>
+<p>The height in metres of the upper boundary of the top
+model level of the atmosphere (TOA). By default the TOA
+is taken from the top level’s upper bound defined by
+BRSVD1 in the lookup header. If the height can’t be
+determined from the header, or the given height is less
+than or equal to 0, then a coordinate reference system
+will still be created that contains the ‘a’ and ‘b’
+formula term values, but without an atmosphere hybrid
+height dimension coordinate construct.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A current limitation is that if pseudolevels
+and atmosphere hybrid height coordinates are
+defined by the same lookup headers then the
+height <strong>can’t be determined
+automatically</strong>. In this case the height may
+be found after reading as the maximum value of
+the bounds of the domain ancillary construct
+containing the ‘a’ formula term. The file can
+then be re-read with this height as a <em>um</em>
+parameter.</p>
+</div>
+</li>
+</ul>
+<dl class="simple">
+<dt><em>Example:</em></dt><dd><p>To specify that the input files are from version 6.6.3 of
+the UM: <code class="docutils literal notranslate"><span class="pre">um_config={'um_version':</span> <span class="pre">'6.6.3'}</span></code></p>
+</dd>
+<dt><em>Example:</em></dt><dd><p>To specify that the input files are from version 6.6.3 of
+the UM, and the height at top of the model is 85000
+metres: <code class="docutils literal notranslate"><span class="pre">um_config={'height_at_top_of_model':</span> <span class="pre">85000,</span>
+<span class="pre">'um_version':</span> <span class="pre">'6.6.3'}</span></code></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.13.3.0.</span></p>
+</div>
+</dd>
+<dt>_noncompliance_report: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return a warning when any data read in are
+not fully compliant by the CF Conventions, with a dictionary
+which registers any detected issues in a structured way to
+indicate the issue against any netCDF objects (variables,
+dimensions and/or attributes) which they affect. Note this is
+in an (early) developmental stage, therefore the default is
+False to not produce this warning.</p>
+<p>The dictionaries printed in the warning are available
+post-read through the dataset_compliance() method
+available on a field or domain.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Compliance checking in cfdm is not yet mature
+and therefore only certain issues of
+non-compliance will be detected and reported in
+the warning dictionary, so this is not intended,
+at present, to be a comprehensive check for
+compliance according to the latest version of
+the CF Conventions. As-is it may be useful as
+a guide to possible issues.</p>
+<p>In future a human-friendly report will be made
+available from the warning dictionary output,
+but for now it is only available pretty-printed
+from the nested machine-parsable structure.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.13.2.0</p>
+</div>
+</dd>
 <dt>ignore_unknown_type: Deprecated at version 1.12.2.0</dt><dd><p>Use <em>dataset_type</em> instead.</p>
+</dd>
+<dt>netcdf_backend: Deprecated at version 1.13.3.0</dt><dd><p>Use <em>backend</em> instead.</p>
 </dd>
 </dl>
 </dd>
@@ -976,11 +1375,11 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-08-26.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
     </div>
 

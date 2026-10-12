@@ -80,7 +80,7 @@ Docstring substitutions
    :toctree: ../method/                                 
    :template: method.rst                                
                                                         
-   ~cfdm.core.ParametersDomainAncilliaries._docstring_special_substitutions
-   ~cfdm.core.ParametersDomainAncilliaries._docstring_substitutions        
-   ~cfdm.core.ParametersDomainAncilliaries._docstring_package_depth        
-   ~cfdm.core.ParametersDomainAncilliaries._docstring_method_exclusions    
+   ~cfdm.core.ParametersDomainAncillaries._docstring_special_substitutions
+   ~cfdm.core.ParametersDomainAncillaries._docstring_substitutions        
+   ~cfdm.core.ParametersDomainAncillaries._docstring_package_depth        
+   ~cfdm.core.ParametersDomainAncillaries._docstring_method_exclusions    

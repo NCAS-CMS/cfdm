@@ -26,7 +26,7 @@ packages = ["cfdm"]
 
 long_description = """The **cfdm** Python package is a complete reference implementation
 of the `CF data model
-<https://www.geosci-model-dev.net/10/4619/2017>`_ for CF-1.11, that
+<https://www.geosci-model-dev.net/10/4619/2017>`_ for CF-1.13, that
 identifies the fundamental elements of the `CF conventions
 <http://cfconventions.org/>`_ and shows how they relate to each other,
 independently of the `netCDF
@@ -55,25 +55,27 @@ inspecting it:
 
 The **cfdm** package can
 
-* read field and domain constructs from netCDF, CDL, and Zarr datasets with a choice of netCDF backends,
+* read field and domain constructs from netCDF, CDL, Zarr, Kerchunk, PP and UM datasets with a choice of backends and in local, http, and s3 locations,
 * be fully flexible with respect to dataset storage chunking,
 * create new field and domain constructs in memory,
-* write and append field and domain constructs to netCDF and Zarr v3 datasets on disk,
+* write and append field and domain constructs to netCDF and Zarr v3 datasets on disk, with control over HDF5 internal file metadata,
 * read, write, and manipulate UGRID mesh topologies,
+* read, write, and manipulate HEALPix grids,
 * read, write, and create coordinates defined by geometry cells,
 * read and write netCDF4 string data-type variables,
 * read, write, and create netCDF and CDL datasets containing hierarchical groups,
-* inspect field and domain constructs,
-* test whether two constructs are the same,
-* modify field and domain construct metadata and data,
-* create subspaces of field and domain constructs,
-* incorporate, and create, metadata stored in external files, and
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays, or coordinate arrays compressed
   by subsampling), whilst presenting a view of the data in its
   uncompressed form,
 * read and write that data that are quantized to eliminate false
   precision.
+* convert field and domain constructs to `xarray` datasets in memory,
+* inspect field and domain constructs,
+* test whether two constructs are the same,
+* modify field and domain construct metadata and data,
+* create subspaces of field and domain constructs,
+* incorporate, and create, metadata stored in external files.
 
 Documentation
 =============
@@ -138,6 +140,9 @@ extras_require = {
     ],
     "zarr": [
         "zarr>=3.1.3",
+    ],
+    "xarray": [
+        "xarray>=2026.2.0",
     ],
 }
 

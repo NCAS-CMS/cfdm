@@ -10,6 +10,8 @@
 
 Version |release| for version |version| of the CF conventions.
 
+.. note:: See also the :ref:`class_core`.
+
 
 Field construct class
 ---------------------
@@ -76,10 +78,24 @@ Data classes
    :toctree: class/
 
    cfdm.Data
-   cfdm.NetCDF4Array
-   cfdm.H5netcdfArray
-   cfdm.ZarrArray
+
+
+Array classes
+-------------
+
+Classes that support the creation and storage of arrays.
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
    cfdm.Array
+   cfdm.XnetcdfArray
+   cfdm.AggregatedArray
+   cfdm.FullArray
+   cfdm.NumpyArray
+   cfdm.SparseArray
+
 
 Data compression classes
 ------------------------
@@ -94,11 +110,63 @@ Classes that support the creation and storage of compressed arrays.
    cfdm.Index
    cfdm.List
    cfdm.GatheredArray
+   cfdm.RaggedArray
+   cfdm.RaggedSubarray
    cfdm.RaggedContiguousArray
    cfdm.RaggedIndexedArray
    cfdm.RaggedIndexedContiguousArray
    cfdm.CompressedArray
    cfdm.Quantization
+   cfdm.BiLinearSubarray
+   cfdm.BiQuadraticLatitudeLongitudeSubarray
+   cfdm.GatheredSubarray
+   cfdm.InterpolationSubarray
+   cfdm.LinearSubarray
+   cfdm.QuadraticLatitudeLongitudeSubarray
+   cfdm.QuadraticSubarray
+   cfdm.Subarray
+   cfdm.SubsampledArray
+   cfdm.SubsampledSubarray
+
+UGRID related classes
+---------------------
+
+Classes that support the creation and storage of UGRID related arrays.
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.BoundsFromNodesArray
+   cfdm.BoundsFromNodesSubarray
+   cfdm.CellConnectivityArray
+   cfdm.CellConnectivitySubarray
+   cfdm.PointTopologyArray
+
+Abstract base classes
+---------------------
+
+Abstract base classes that provide the basis for constructs and
+construct components.
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.NodeCountProperties
+   cfdm.PartNodeCountProperties
+   cfdm.Container
+
+Implementation classes
+----------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.Implementation
+   cfdm.CFDMImplementation
+
 
 Miscellaneous classes
 ---------------------
@@ -109,4 +177,6 @@ Miscellaneous classes
 
    cfdm.Constant
    cfdm.Configuration
-
+   cfdm.InterpolationParameter
+   cfdm.TiePointIndex
+   cfdm.Units

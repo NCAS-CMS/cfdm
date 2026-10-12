@@ -48,8 +48,7 @@ __version__ = core.__version__
 
 from .constants import masked
 
-# Internal ones passed on so they can be used in cf-python (see
-# comment below)
+# Internal ones passed on so they can be used in cf-python (see comment below)
 from .functions import (
     ATOL,
     CF,
@@ -57,6 +56,7 @@ from .functions import (
     RTOL,
     abspath,
     atol,
+    axis_dropping_index,
     chunksize,
     configuration,
     dirname,
@@ -65,6 +65,7 @@ from .functions import (
     integer_dtype,
     log_level,
     parse_indices,
+    persist_data,
     rtol,
     unique_constructs,
     _disable_logging,
@@ -100,9 +101,6 @@ from .data import (
     Data,
     FullArray,
     GatheredArray,
-    H5netcdfArray,
-    NetCDFArray,
-    NetCDF4Array,
     netcdf_indexer,
     NumpyArray,
     PointTopologyArray,
@@ -112,7 +110,7 @@ from .data import (
     RaggedIndexedContiguousArray,
     SparseArray,
     SubsampledArray,
-    ZarrArray,
+    XnetcdfArray,
 )
 
 from .data import (
@@ -163,7 +161,6 @@ from .abstract import Implementation
 from .cfdmimplementation import CFDMImplementation, implementation
 
 from .read_write import read, write
-from .read_write.netcdf.flatten import dataset_flatten
 
 from .examplefield import example_field, example_fields, example_domain
 

@@ -186,19 +186,20 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(q._equals(self.a, q.data.array))
 
         cfdm.write(f, tempfile)
+
         g = cfdm.read(tempfile)
 
         self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=3))
+            self.assertTrue(g[i].equals(f[i]))
 
         # ------------------------------------------------------------
         # Test creation
         # ------------------------------------------------------------
         # Define the ragged array values
-        ragged_array = np.array(
-            [280, 282.5, 281, 279, 278, 279.5], dtype="float32"
+        ragged_array = cfdm.Data(
+            np.array([280, 282.5, 281, 279, 278, 279.5], dtype="float32")
         )
 
         # Define the count array values
@@ -260,7 +261,7 @@ class DSGTest(unittest.TestCase):
         self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=3))
+            self.assertTrue(g[i].equals(f[i]))
 
     def test_DSG_indexed_contiguous(self):
         """Test the indexed contiguous ragged array representation."""
@@ -285,7 +286,7 @@ class DSGTest(unittest.TestCase):
         self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=3))
+            self.assertTrue(g[i].equals(f[i]))
 
         # Check original filenames
         self.assertEqual(

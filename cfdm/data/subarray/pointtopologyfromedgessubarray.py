@@ -13,43 +13,57 @@ class PointTopologyFromEdgesSubarray(PointTopology, MeshSubarray):
 
     """
 
-    def _connected_nodes(self, node, node_connectivity, masked):
-        """Return the nodes that are joined to *node* by edges.
+    def __getitem__(self, indices):
+        """Return a subspace of the uncompressed data."""
+        from math import isnan
 
-        The input *node* is included at the start of the returned
-        list.
+        # ------------------------------------------------------------
+        # E.g. Nine edges:
+        #
+        # node_connectivity = [[1 6]
+        #                      [3 6]
+        #                      [3 1]
+        #                      [0 1]
+        #                      [2 0]
+        #                      [2 3]
+        #                      [2 4]
+        #                      [5 4]
+        #                      [3 5]]
+        # ------------------------------------------------------------
+        node_connectivity = self._select_data(check_mask=True)
 
-        .. versionadded:: (cfdm) 1.11.0.0
+        # Construct bi-directional edge pairs (n1 -> n2 and n2 -> n1)
+        src_neighbours = node_connectivity.ravel()
+        dst_neighbours = node_connectivity[:, ::-1].ravel()
+        del node_connectivity
 
-        :Parameters:
+        # ------------------------------------------------------------
+        # src_neighbours = [1 6 3 6 3 1 0 1 2 0 2 3 2 4 5 4 3 5]
+        # dst_neighbours = [6 1 6 3 1 3 1 0 0 2 3 2 4 2 4 5 5 3]
+        # ------------------------------------------------------------
 
-            node: `int`
-                A node identifier.
+        # Create the full point_point_connectivity matrix (padded with -1)
+        u = self._point_point_connectivity(src_neighbours, dst_neighbours)
+        del src_neighbours, dst_neighbours
 
-            node_connectivity: `numpy.ndarray`
-                A UGRID "edge_node_connectivity" array.
+        if any(map(isnan, self.shape)):
+            # Store the shape, now that it is known.
+            self._set_component("shape", u.shape, copy=False)
 
-            masked: `bool`, optional
-                Whether or not *node_connectivity* has masked
-                elements.
+        # Subspace the full point connectivity matrix
+        if indices is not Ellipsis:
+            u = u[indices]
 
-        :Returns:
+        # Mask padding values in-place (-1)
+        u = np.ma.masked_equal(u, -1, copy=False)
 
-            `list`
-                All nodes that are joined to *node*, including *node*
-                itself at the start.
-
-        """
-        nodes = sorted(
-            set(
-                node_connectivity[np.where(node_connectivity == node)[0]]
-                .flatten()
-                .tolist()
-            )
-        )
-
-        # Move 'node' to the front of the list
-        nodes.remove(node)
-        nodes.insert(0, node)
-
-        return nodes
+        # ------------------------------------------------------------
+        # u = [[0 1 2 -- --]
+        #      [1 0 3 6 --]
+        #      [2 0 3 4 --]
+        #      [3 1 2 5 6]
+        #      [4 2 5 -- --]
+        #      [5 3 4 -- --]
+        #      [6 1 3 -- --]]
+        # ------------------------------------------------------------
+        return u

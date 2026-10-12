@@ -3,7 +3,7 @@ from .mixin import BiLinearInterpolation
 
 
 class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
-    """A subarray of an array compressed by subsamplng.
+    """A subarray of an array compressed by subsampling.
 
     A subarray describes a unique part of the uncompressed array.
 

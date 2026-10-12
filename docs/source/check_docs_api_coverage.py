@@ -1,4 +1,6 @@
-"""Check the method-coverage of all classes in docs/source/class.rst.
+"""Check the class-coverage and method-coverage of the API reference.
+
+All classes are extracted and checked for an entry in docs/source/class.rst
 
 All non-private methods of all such classes are checked for having an
 entry in their corresponding class's file in docs/source/class/
@@ -16,6 +18,7 @@ Call as:
 
 """
 
+import inspect
 import os
 import re
 import sys
@@ -34,8 +37,10 @@ else:
 if not source.endswith("source"):
     raise ValueError(f"Given directory {source} does not end with 'source'")
 
+n_undocumented_classes = 0
 n_undocumented_methods = 0
 n_missing_files = 0
+
 duplicate_method_entries = []
 
 for core in ("", "_core"):
@@ -50,12 +55,26 @@ for core in ("", "_core"):
         api_contents = f.read()
 
     class_names = [
-        i.split(".")[-1]
-        for i in api_contents.split("\n")
-        if package.__name__ + "." in i
+        name
+        for name, klass in inspect.getmembers(package, inspect.isclass)
+        if klass.__module__.startswith(package.__name__ + ".")
+        and not klass.__module__.startswith(package.__name__ + ".functions")
+        # This just counts top-level read-write i.e. cfdm.read and .write
+        and not klass.__module__.startswith(package.__name__ + ".read_write")
+        and name != "netcdf_indexer"  # lone function
     ]
 
     for class_name in class_names:
+        full_class_name = f"{package.__name__}.{class_name}"
+
+        if full_class_name not in api_contents:
+            print(
+                f"Class {full_class_name} not in docs/source/class{core}.rst"
+            )
+            n_missing_files += 1
+            n_undocumented_classes += 1
+            continue
+
         klass = getattr(package, class_name)
         methods = [
             method for method in dir(klass) if not method.startswith("_")
@@ -63,7 +82,7 @@ for core in ("", "_core"):
 
         class_name = ".".join([package.__name__, class_name])
 
-        rst_file = os.path.join(source, "class", class_name + ".rst")
+        rst_file = os.path.join(source, "class", full_class_name + ".rst")
 
         try:
             with open(rst_file) as f:
@@ -100,7 +119,7 @@ for core in ("", "_core"):
                         duplicate_method_entries.append(method)
         except FileNotFoundError:
             n_missing_files += 1
-            print(f"File {rst_file} does not exist")
+            print(f"File {rst_file} does not exist  for existing class")
 
 # Raise an exception to ensure a non-zero shell return code
 if n_undocumented_methods:
@@ -111,8 +130,9 @@ if n_missing_files:
 
 if n_undocumented_methods or n_missing_files:
     raise ValueError(
-        f"Found undocumented methods ({n_undocumented_methods}) "
-        f"or missing .rst files ({n_missing_files})"
+        f"Found {n_undocumented_classes} undocumented classes, "
+        f"{n_undocumented_methods} undocumented methods and "
+        f"{n_missing_files} missing .rst files"
     )
 
 if duplicate_method_entries:

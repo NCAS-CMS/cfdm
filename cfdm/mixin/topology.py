@@ -50,76 +50,93 @@ class Topology:
         """
         import numpy as np
 
-        masked = np.ma.is_masked(data)
-        if masked:
-            mask = data.mask
+        # Extract the IDs from column 0 (the unique cell IDs)
+        col0_ids = data[:, 0]
+        n_cells = col0_ids.size
+        id_min = col0_ids.min()
+        id_max = col0_ids.max()
 
-        # Get the original cell ids
-        ids = data[:, 0]
-        id0 = ids[0]
-        n_cells = ids.size
-        relabel = not (
-            (not id0 and (ids == np.arange(n_cells)).all())
-            or (id0 == 1 and (ids == np.arange(1, n_cells + 1)).all())
+        # Check for the simple case: The IDs in column 0 form a
+        # contiguous set of unique integers, and there are no dangling
+        # references in columns 1:N
+        is_contiguous_and_bounded = (
+            (id_max - id_min + 1 == n_cells)
+            and (data.min() >= id_min)
+            and (data.max() <= id_max)
+            and (len(np.unique(col0_ids)) == n_cells)
         )
 
-        if not relabel:
-            # The cell ids are already correct (barring a possible
-            # 'start_index' offset).
-            if start_index and not id0:
-                data += 1
-            elif not start_index and id0 == 1:
-                data -= 1
+        if is_contiguous_and_bounded:
+            # We have the simple case: Simply shift the IDs up or down
+            # to match the 'start_index'
+            del col0_ids
+            if id_min != start_index:
+                data -= id_min - start_index
 
-            smallest_id = data[0, 0]
-            largest_id = data[-1, 0]
+            if remove_empty_columns:
+                data = cls._remove_empty_columns(data)
+
+            return data
+
+        # Still here? Then we don't have the simple case ...
+        is_masked = np.ma.is_masked(data)
+        if is_masked:
+            unmasked_buf = data.data
         else:
-            # Remove negative values
-            #
-            # PERFORMANCE WARNING (TODO): A potentially slow loop
-            smallest_id = None
-            dmin = data.min()
-            if dmin < 0:
-                data -= dmin
-                ids = data[:, 0]
+            unmasked_buf = data
 
-            # Replace the non-negative cell ids (i) with negative
-            # numbers (j)
-            copyto = np.copyto
-            for i, j in zip(ids.tolist(), range(-n_cells, 0)):
-                copyto(data, j, where=data == i)
+        # Map by row order of column 0
+        sorter = np.argsort(col0_ids)
+        sorted_col0 = col0_ids[sorter]
+        del col0_ids
 
-            if masked:
-                # Re-mask the data, since np.copyto is not mask-aware.
-                data = np.ma.array(data, mask=mask)
+        # Row position in column 0 is the target index: row 0 ->
+        # start_index, row 1 -> start_index + 1, ...
+        #
+        # sorter[i] is the row index where sorted_col0[i] originated.
+        sorted_targets = sorter + start_index
+        del sorter
 
-            largest_id = -1
+        # Search against unmasked_buf
+        idx = np.searchsorted(sorted_col0, unmasked_buf)
+        idx_clamped = np.minimum(idx, n_cells - 1)
 
-        # Remove redundant cell ids. These may occur when a previous
-        # indexing operation removed cells.
-        move_missing_values = False
-        if data.max() > largest_id:
-            data = np.ma.where(data > largest_id, np.ma.masked, data)
-            move_missing_values = True
+        # Validate matches against original values
+        valid_matches = (idx < n_cells) & (
+            sorted_col0[idx_clamped] == unmasked_buf
+        )
+        del idx, sorted_col0
+        if is_masked:
+            valid_matches &= ~data.mask
 
-        if smallest_id is not None and data.min() < smallest_id:
-            data = np.ma.where(data < smallest_id, np.ma.masked, data)
-            move_missing_values = True
+        # Combine pre-existing masks with newly found dangling
+        # references
+        if is_masked:
+            full_mask = data.mask | ~valid_matches
+        else:
+            full_mask = ~valid_matches
 
-        if move_missing_values:
-            # Move missing values to the end of each row
-            data[:, 1:].sort(axis=1, endwith=True)
+        has_new_dangling = np.any(
+            ~valid_matches & (~data.mask if is_masked else True)
+        )
+
+        # Compute mapped output into a clean buffer
+        mapped_data = np.zeros_like(unmasked_buf)
+        del unmasked_buf
+        mapped_data[valid_matches] = sorted_targets[idx_clamped[valid_matches]]
+        del sorted_targets, idx_clamped, valid_matches
+
+        # Construct final masked array
+        data = np.ma.masked_array(mapped_data, mask=full_mask)
+        del mapped_data, full_mask
+
+        # Sort columns 1: to push any newly created masked elements to
+        # the right-hand end
+        if has_new_dangling:
+            data[:, 1:] = np.ma.sort(data[:, 1:], axis=1)
 
         if remove_empty_columns:
-            # Discard columns that are all missing data
             data = cls._remove_empty_columns(data)
-
-        if relabel:
-            # Convert the negative ids to non-negative numbers
-            if start_index:
-                data += n_cells + 1
-            else:
-                data += n_cells
 
         return data
 
@@ -149,9 +166,11 @@ class Topology:
 
         if np.ma.is_masked(data):
             count = data.count(axis=0)
-            if not count.min():
-                index = np.where(count)[0]
-                data = data[:, index[0] : index[-1] + 1]
+            # Only slice if the very last column is empty
+            if count[-1] == 0:
+                # Find the last non-empty column
+                last_valid = np.flatnonzero(count)[-1]
+                data = data[:, : last_valid + 1]
 
         return data
 

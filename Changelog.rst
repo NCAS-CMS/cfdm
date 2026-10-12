@@ -1,11 +1,144 @@
 Version NEXTVERSION
 ----------------
 
-**2026-??-??**
+**2026-10-??**
 
 * Handle the more general CF cell methods convention for statistics
   applying to portions of cells
   (https://github.com/NCAS-CMS/cfdm/issues/369)
+* Fix providing a sequence of strings to the ``cfa`` keyword of
+  `cfdm.write` (https://github.com/NCAS-CMS/cfdm/issues/435)
+
+----
+
+Version 1.13.3.0
+----------------
+
+**2026-08-26**
+
+* Improve `cfdm.read` performance for UGRID datasets
+  (https://github.com/NCAS-CMS/cfdm/issues/421)
+* Allow a dataset to be defined in `cfdm.read` by a `pathlib.Path`
+  instance (https://github.com/NCAS-CMS/cfdm/issues/425)
+* New keywords to `cfdm.read`: ``backend``, ``backend_options``,
+  ``cfa_filesystem``, ``cfa_backend``, ``cfa_backend_options``, ``um``
+  (https://github.com/NCAS-CMS/cfdm/issues/417)
+* Deprecated keyword to `cfdm.read`: ``netcdf_backend``
+  (https://github.com/NCAS-CMS/cfdm/issues/417)
+* Dataset reads are now entirely managed by `xnetcdf`
+  (https://github.com/NCAS-CMS/cfdm/issues/417)
+* Read with `cfdm.read` UK Met Office PP and UM fields files
+  (https://github.com/NCAS-CMS/cfdm/issues/417)
+* Read with `cfdm.read` anything that can be read by `xarray`
+  (https://github.com/NCAS-CMS/cfdm/issues/417)
+* Convert `xarray.Dataset` and `xarray.DataTree` to `cf.Field` via
+  `cfdm.read` (https://github.com/NCAS-CMS/cfdm/issues/417)
+* Convert `pyfive.File`, `zarr.Group`, `h5py.File`, `umfile.File`, and
+  `xnetcdf.Dataset` to `cf.Field` via `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/417)
+* Automatically create consolidated HDF5 metadata with
+  `cfdm.write`. New keywords to `cfdm.write`:
+  ``hdf5_consolidated_metadata`` and ``hdf5_expansion_factor``
+  (https://github.com/NCAS-CMS/cfdm/issues/413)
+* Introduce use of cache files stored as
+  `~/.cf/standard_names*.pickle` to improve performance of CF
+  compliance checking (https://github.com/NCAS-CMS/cfdm/pull/411)
+* In `cfdm.write`, set sensible dataset chunksizes by default for 1-d
+  data, controlled by the new ``one_d_chunks`` keyword
+  (https://github.com/NCAS-CMS/cfdm/issues/414)
+* Allow `cfdm.write` to write Unicode characters in attribute values
+  when using the ``h5netcdf-h5py`` backend
+  (https://github.com/NCAS-CMS/cfdm/issues/423)
+* Stop inaccessibility of standard names table resource from causing
+  `cfdm.read` to error (https://github.com/NCAS-CMS/cfdm/pull/411)
+* New dependency: ``xnetcdf>=0.1.0``
+* Changed optional dependency: ``xarray>=2026.7.0``
+* New optional dependency: ``umfive>=0.3.0``
+* Removed dependency (now incorporated into `xnetcdf`): ``pyfive>=1.1.1``
+
+----
+
+Version 1.13.2.1
+----------------
+
+**2026-07-06**
+
+* Fix bug that prevented some datasets being read due to `cfdm.read`
+  hitting a `TypeError`
+  (https://github.com/NCAS-CMS/cfdm/pull/410)
+
+----
+
+Version 1.13.2.0
+----------------
+
+**2026-06-29**
+
+* New methods to convert to `xarray`: `cfdm.Field.to_xarray` and
+  `cfdm.Domain.to_xarray`
+  (https://github.com/NCAS-CMS/cfdm/issues/394)
+* New output format for `cfdm.write` that creates an `xarray` dataset
+  in memory: ``'XARRAY'``
+  (https://github.com/NCAS-CMS/cfdm/issues/394)
+* Improved and restructured output of `cfdm.Field.dataset_compliance`
+  for (at present, preliminary) CF compliance checking, also available
+  through a new keyword parameter to `cfdm.read`:
+  ``_noncompliance_report``
+  (https://github.com/NCAS-CMS/cfdm/issues/365,
+  https://github.com/NCAS-CMS/cfdm/issues/366)
+* Fix bug in `cfdm.read` that prevented some OPeNDAP URLS being read
+  (https://github.com/NCAS-CMS/cfdm/issues/406)
+* Fix bug in `cfdm.write` when writing numpy scalars as Zarr
+  attributes (https://github.com/NCAS-CMS/cfdm/issues/408)
+* New optional dependency: ``xarray>=2026.2.0``
+
+----
+
+Version 1.13.1.0
+----------------
+
+**2026-04-09**
+
+* Read Kerchunk datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/385)
+* Read open file handle datasets with `cfdm.read`
+  (https://github.com/NCAS-CMS/cfdm/issues/401)
+* Write UGRID datasets with `cfdm.write`
+  (https://github.com/NCAS-CMS/cfdm/issues/271)
+* New keyword to `cfdm.read`: ``filesystem``
+  (https://github.com/NCAS-CMS/cfdm/issues/397)
+* New keyword parameter to `cfdm.Data.compute`: ``persist``
+  (https://github.com/NCAS-CMS/cfdm/issues/389)
+* New function to control the persistence of computed data:
+  `cfdm.persist_data` (https://github.com/NCAS-CMS/cfdm/issues/389)
+* Support for HEALPix grids
+  (https://github.com/NCAS-CMS/cfdm/issues/370)
+* New default backend for netCDF-4 in `cfdm.write`: ``h5netcdf-h5py``,
+  that allows control of the internal file metadata via the new
+  ``h5py_options`` parameter
+  (https://github.com/NCAS-CMS/cfdm/issues/386)
+* New default backend for netCDF-4 in `cfdm.read` that allows parallel
+  reading: ``h5netcdf-pyfive``
+  (https://github.com/NCAS-CMS/cfdm/issues/375)
+* New optional backend for netCDF-3 in `cfdm.read` that allows
+  parallel reading: ``netcdf_file``
+  (https://github.com/NCAS-CMS/cfdm/issues/375)
+* Fix bug in `cfdm.netcdf_indexer` that sometimes caused a failure
+  with a `np.newaxis` index
+  (https://github.com/NCAS-CMS/cfdm/issues/395)
+* Fix bug in `cfdm.read` that wouldn't read non-Zarr and Zarr datasets
+  from the same directory
+  (https://github.com/NCAS-CMS/cfdm/issues/391)
+* Fix bug in `cfdm.write` to correctly create unlimited aggregation
+  dimensions that correspond to unlimited normal dimensions
+  (https://github.com/NCAS-CMS/cfdm/pull/387)
+* Fix bug in `cfdm.write` when writing identical coordinates that have
+  different ``formula_terms``
+  (https://github.com/NCAS-CMS/cfdm/issues/380).
+* New dependency: ``pyfive>=1.1.1``
+* New dependency: ``fsspec>=2026.2.0``
+* Changed dependency: ``h5netcdf>=1.8.0``
+* Removed dependency: ``s3fs``
 
 ----
 
@@ -37,7 +170,7 @@ Version 1.13.0.0
 * Reduce the time taken to import `cfdm`
   (https://github.com/NCAS-CMS/cfdm/issues/361)
 * New optional dependency: ``zarr>=3.1.3``
-* Removed dependency (now optional): ``zarr>=3.0.8``
+* Removed dependency (now optional): ``zarr``
 
 ----
 

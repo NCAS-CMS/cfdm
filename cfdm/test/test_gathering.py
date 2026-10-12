@@ -255,7 +255,7 @@ class GatheredTest(unittest.TestCase):
 
     def test_GATHERING(self):
         """Test reading and writing of a field with a gathered array."""
-        f = cfdm.read(self.gathered, verbose=False)
+        f = cfdm.read(self.gathered)
 
         self.assertEqual(len(f), 3)
 
@@ -263,12 +263,12 @@ class GatheredTest(unittest.TestCase):
             if g.get_property("long_name") == "temp3":
                 break
 
-        cfdm.write(f, tempfile, verbose=False)
-        g = cfdm.read(tempfile, verbose=False)
+        cfdm.write(f, tempfile)
+        g = cfdm.read(tempfile)
         self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=3))
+            self.assertTrue(g[i].equals(f[i]))
 
         # Check original filenames
         self.assertEqual(

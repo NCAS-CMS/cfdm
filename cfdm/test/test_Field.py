@@ -188,7 +188,7 @@ class FieldTest(unittest.TestCase):
         d = f.data.copy()
         g = f.copy()
         self.assertIsNone(f.apply_masking(inplace=True))
-        self.assertTrue(f.equals(g, verbose=3))
+        self.assertTrue(f.equals(g))
 
         x = 0.11
         y = 0.1
@@ -199,31 +199,31 @@ class FieldTest(unittest.TestCase):
 
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x])
-        self.assertTrue(e.equals(g.data, verbose=3))
+        self.assertTrue(e.equals(g.data))
         self.assertEqual(g.data.array.count(), g.data.size - 1)
 
         f.set_property("valid_range", [y, z])
         d = f.data.copy()
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_range=[y, z])
-        self.assertTrue(e.equals(g.data, verbose=3))
+        self.assertTrue(e.equals(g.data))
 
         f.del_property("valid_range")
         f.set_property("valid_min", y)
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_min=y)
-        self.assertTrue(e.equals(g.data, verbose=3))
+        self.assertTrue(e.equals(g.data))
 
         f.del_property("valid_min")
         f.set_property("valid_max", z)
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_max=z)
-        self.assertTrue(e.equals(g.data, verbose=3))
+        self.assertTrue(e.equals(g.data))
 
         f.set_property("valid_min", y)
         g = f.apply_masking()
         e = d.apply_masking(fill_values=[x], valid_min=y, valid_max=z)
-        self.assertTrue(e.equals(g.data, verbose=3))
+        self.assertTrue(e.equals(g.data))
 
     def test_Field_PROPERTIES(self):
         """Test the property access methods of Field."""
@@ -447,15 +447,15 @@ class FieldTest(unittest.TestCase):
         """Test the equality-testing Field method."""
         f = self.f1
 
-        self.assertTrue(f.equals(f, verbose=3))
+        self.assertTrue(f.equals(f))
 
         g = f.copy()
-        self.assertTrue(f.equals(g, verbose=3))
-        self.assertTrue(g.equals(f, verbose=3))
+        self.assertTrue(f.equals(g))
+        self.assertTrue(g.equals(f))
 
         g = f[...]
-        self.assertTrue(f.equals(g, verbose=3))
-        self.assertTrue(g.equals(f, verbose=3))
+        self.assertTrue(f.equals(g))
+        self.assertTrue(g.equals(f))
 
         g = g.squeeze()
         self.assertFalse(f.equals(g))
@@ -588,7 +588,7 @@ class FieldTest(unittest.TestCase):
 
                 u = f.uncompress()
                 self.assertFalse(bool(u.data.get_compression_type()), message)
-                self.assertTrue(f.equals(u, verbose=3), message)
+                self.assertTrue(f.equals(u), message)
 
                 for method1 in methods:
                     message += ", method1=" + method1
@@ -604,16 +604,16 @@ class FieldTest(unittest.TestCase):
                         bool(c.data.get_compression_type()), message
                     )
 
-                    self.assertTrue(u.equals(c, verbose=3), message)
-                    self.assertTrue(f.equals(c, verbose=3), message)
+                    self.assertTrue(u.equals(c), message)
+                    self.assertTrue(f.equals(c), message)
 
                     c = f.compress(method1)
                     self.assertTrue(
                         bool(c.data.get_compression_type()), message
                     )
 
-                    self.assertTrue(u.equals(c, verbose=3), message)
-                    self.assertTrue(f.equals(c, verbose=3), message)
+                    self.assertTrue(u.equals(c), message)
+                    self.assertTrue(f.equals(c), message)
 
                     cfdm.write(c, tmpfile)
                     c = cfdm.read(tmpfile)[0]
@@ -621,7 +621,7 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(
                         bool(c.data.get_compression_type()), message
                     )
-                    self.assertTrue(f.equals(c, verbose=3), message)
+                    self.assertTrue(f.equals(c), message)
 
     def test_Field_creation_commands(self):
         """Test the Field.creation_commands."""

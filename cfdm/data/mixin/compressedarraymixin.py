@@ -5,49 +5,6 @@ class CompressedArrayMixin:
 
     """
 
-    def _lock_file_read(self, array):
-        """Try to return an array that doesn't support concurrent reads.
-
-        .. versionadded:: (cfdm) 1.11.2.0
-
-        :Parameters:
-
-            array: array_like
-                The array to process.
-
-        :Returns"
-
-            `dask.array.Array` or array_like
-                The new `dask` array, or the orginal array if it
-                couldn't be ascertained how to form the `dask` array.
-
-        """
-        try:
-            return array.to_dask_array()
-        except AttributeError:
-            pass
-
-        try:
-            chunks = array.chunks
-        except AttributeError:
-            chunks = "auto"
-
-        try:
-            array = array.source()
-        except (ValueError, AttributeError):
-            pass
-
-        try:
-            array.get_filename()
-        except AttributeError:
-            pass
-        else:
-            import dask.array as da
-
-            array = da.from_array(array, chunks=chunks, lock=True)
-
-        return array
-
     def to_dask_array(self, chunks="auto"):
         """Convert the data to a `dask` array.
 
@@ -87,18 +44,7 @@ class CompressedArrayMixin:
 
         context = partial(config.set, scheduler="synchronous")
 
-        # If possible, convert the compressed data to a dask array
-        # that doesn't support concurrent reads. This prevents
-        # "compute called by compute" failures problems at compute
-        # time.
-        #
-        # TODO: This won't be necessary if this is refactored so that
-        #       the compressed data is part of the same dask graph as
-        #       the compressed subarrays.
         conformed_data = self.conformed_data()
-        conformed_data = {
-            k: self._lock_file_read(v) for k, v in conformed_data.items()
-        }
         subarray_kwargs = {**conformed_data, **self.subarray_parameters()}
 
         # Get the (cfdm) subarray class

@@ -8,6 +8,7 @@ import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
+import numpy as np
 import zarr
 
 import cfdm
@@ -28,7 +29,7 @@ tmpfiles = [
 
 
 def _remove_tmpdirs():
-    """Remove temporary files created during tests."""
+    """Remove temporary files and directories created during tests."""
     for f in tmpfiles:
         try:
             os.remove(f)
@@ -256,13 +257,6 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(z.equals(n))
         self.assertTrue(z.equals(f))
 
-        # Check that grouped netCDF datasets can only be read with
-        # 'closest_ancestor'
-        cfdm.read(grouped_file, group_dimension_search="closest_ancestor")
-        for gsn in ("furthest_ancestor", "local", "BAD VALUE"):
-            with self.assertRaises(ValueError):
-                cfdm.read(grouped_file, group_dimension_search=gsn)
-
     def test_zarr_groups_DSG(self):
         """Test Zarr groups containing DSGs."""
         f = cfdm.example_field(4)
@@ -296,6 +290,9 @@ class read_writeTest(unittest.TestCase):
         z = z[0]
         self.assertTrue(z.equals(n))
         self.assertTrue(z.equals(f))
+
+        # Check 'closest_ancestor'
+        cfdm.read(grouped_file, group_dimension_search="closest_ancestor")
 
     def test_zarr_groups_geometry(self):
         """Test Zarr groups containing cell geometries."""
@@ -332,6 +329,30 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(f2), len(f3))
         self.assertEqual(len(f2), 1)
         self.assertTrue(f2[0].equals(f3[0]))
+
+    def test_zarr_write_numpy_attributes(self):
+        """Test writing numpy attributes to Zarr."""
+        f = self.f0.copy()
+
+        # Scalars
+        x = 9
+        scalars = (np.int32(x), np.int64(x), np.float32(x), np.float64(x))
+        for i, scalar in enumerate(scalars):
+            f.set_property(f"np_generic_{i}", scalar)
+
+        # ndarrays
+        y = [1, 2, 3]
+        f.set_property("np_ndarray", np.array(y))
+
+        cfdm.write(f, tmpdir1, fmt="ZARR3")
+        f = cfdm.read(tmpdir1)
+        self.assertEqual(len(f), 1)
+
+        f = f[0]
+        for i in range(len(scalars)):
+            self.assertEqual(f.get_property(f"np_generic_{i}"), x)
+
+        self.assertTrue(np.allclose(f.get_property("np_ndarray"), y))
 
 
 if __name__ == "__main__":

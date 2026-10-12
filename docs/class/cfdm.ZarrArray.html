@@ -7,20 +7,19 @@
 
     <title>cfdm.ZarrArray &#8212; Documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=a5d0ad34" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=b5e78ec1"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/documentation_options.js?v=2798502a"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=a56c686a"></script>
-    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Array" href="cfdm.Array.html" />
-    <link rel="prev" title="cfdm.H5netcdfArray" href="cfdm.H5netcdfArray.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -31,12 +30,12 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.3.0</a></h1>
 
 
 
@@ -65,13 +64,13 @@
     </div>
 </search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../extensions.html"><strong>Extensions</strong></a></li>
@@ -82,12 +81,6 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
-  <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="cfdm.H5netcdfArray.html" title="previous chapter">cfdm.H5netcdfArray</a></li>
-      <li>Next: <a href="cfdm.Array.html" title="next chapter">cfdm.Array</a></li>
-  </ul></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -122,135 +115,16 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="cfdm-zarrarray">
 <h1>cfdm.ZarrArray<a class="headerlink" href="#cfdm-zarrarray" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<dl class="py class">
-<dt class="sig sig-object py" id="cfdm.ZarrArray">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">ZarrArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unpack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.0.0/cfdm/data/zarrarray.py#L5-L127"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.ZarrArray" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IndexMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FileArray</span></code></p>
-<p>A Zarr array accessed with <a class="reference external" href="https://zarr.readthedocs.io/en/stable/api/zarr/#zarr" title="(in zarr-python v0.0.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zarr</span></code></a>.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">Added in version (cfdm): </span>1.12.2.0</p>
-</div>
-<p><strong>Initialisation</strong></p>
-<dl class="field-list">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl>
-<dt>filename: (sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>), optional</dt><dd><p>The locations of datasets containing the array.</p>
-</dd>
-<dt>address: (sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>), optional</dt><dd><p>How to find the array in the datasets.</p>
-</dd>
-<dt>dtype: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>, optional</dt><dd><p>The data type of the array. May be <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if is not
-known. This may differ from the data type of the
-array in the datasets.</p>
-</dd>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, optional</dt><dd><p>The shape of the dataset array.</p>
-</dd>
-<dt>mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then mask by convention when
-reading data from disk.</p>
-</dd>
-<dt>unpack: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then unpack by convention when
-reading data from disk.</p>
-</dd>
-<dt>attributes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Provide netCDF attributes for the data as a dictionary
-of key/value pairs.</p>
-<p>If <em>attributes</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the default, then the
-attributes will be set during the first <code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code>
-call.</p>
-</dd>
-<dt>storage_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Key/value pairs to be passed on to the creation of
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">s3fs.S3FileSystem</span></code> file systems to control the
-opening of files in S3 object stores. Ignored for
-files not in an S3 object store, i.e. those whose
-names do not start with <code class="docutils literal notranslate"><span class="pre">s3:</span></code>.</p>
-<p>By default, or if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, then <em>storage_options</em> is
-taken as <code class="docutils literal notranslate"><span class="pre">{}</span></code>.</p>
-<p>If the <code class="docutils literal notranslate"><span class="pre">'endpoint_url'</span></code> key is not in
-<em>storage_options</em> or is not in a dictionary defined by
-the <code class="docutils literal notranslate"><span class="pre">'client_kwargs</span></code> key (which is always the case
-when <em>storage_options</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>), then one will be
-automatically inserted for accessing an S3 file. For
-example, for a file name of
-<code class="docutils literal notranslate"><span class="pre">'s3://store/data/file.nc'</span></code>, an <code class="docutils literal notranslate"><span class="pre">'endpoint_url'</span></code>
-key with value <code class="docutils literal notranslate"><span class="pre">'https://store'</span></code> would be created.</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p>For a file name of <code class="docutils literal notranslate"><span class="pre">'s3://store/data/file.nc'</span></code>,
-the following are equivalent: <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">{}</span></code>, and
-<code class="docutils literal notranslate"><span class="pre">{'endpoint_url':</span> <span class="pre">'https://store'}</span></code>,
-<code class="docutils literal notranslate"><span class="pre">{'client_kwargs':</span> <span class="pre">{'endpoint_url':</span>
-<span class="pre">'https://store'}}</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'key':</span> <span class="pre">'scaleway-api-key...',</span> <span class="pre">'secret':</span>
-<span class="pre">'scaleway-secretkey...',</span> <span class="pre">'endpoint_url':</span>
-<span class="pre">'https://s3.fr-par.scw.cloud',</span> <span class="pre">'client_kwargs':</span>
-<span class="pre">{'region_name':</span> <span class="pre">'fr-par'}}</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
-a <a class="reference internal" href="#cfdm.ZarrArray" title="cfdm.ZarrArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZarrArray</span></code></a> instance.</p>
-<p>All other parameters, apart from <em>copy</em>, are ignored
-and their values are instead inferred from <em>source</em> by
-assuming that it has the <a class="reference internal" href="#cfdm.ZarrArray" title="cfdm.ZarrArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZarrArray</span></code></a> API. Any
-parameters that can not be retrieved from <em>source</em> in
-this way are assumed to have their default value.</p>
-<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cfdm.ZarrArray" title="cfdm.ZarrArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZarrArray</span></code></a> instance then
-<code class="docutils literal notranslate"><span class="pre">cfdm.ZarrArray(source=x)</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
-</dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
-parameters prior to initialisation. By default the
-parameters are not deep copied.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
 <section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Link to this heading">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></p></td>
-<td><p>Returns the array's compression type.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attributes</span></code></p></td>
-<td><p>The attributes of the array.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_missing_values</span></code></p></td>
-<td><p>The missing values of the data.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></p></td>
-<td><p>The index to be applied when converting to a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_subspace</span></code></p></td>
-<td><p>True if the index represents a subspace of the data.</p></td>
-</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></p></td>
-<td><p>Return an independent numpy array containing the data.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></p></td>
-<td><p>Data-type of the array.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></p></td>
-<td><p>Number of array dimensions.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></td>
-<td><p>Shape of the array.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></p></td>
-<td><p>Number of elements in the array.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">original_shape</span></code></p></td>
-<td><p>The shape of the data in the file.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_shape</span></code></p></td>
-<td><p>The shape of the data in the file with added dimensions.</p></td>
-</tr>
 </tbody>
 </table>
 </section>
@@ -259,20 +133,11 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></p></td>
-<td><p>The calendar of the array.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></p></td>
-<td><p>The units of the array.</p></td>
-</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></p></td>
-<td><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code> object containing the units of the array.</p></td>
-</tr>
 </tbody>
 </table>
 </section>
@@ -281,36 +146,6 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_directory</span></code></p></td>
-<td><p>The file directory.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_address</span></code></p></td>
-<td><p>The name of the file containing the array.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></p></td>
-<td><p>Close the dataset containing the data.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">open</span></code></p></td>
-<td><p>Return a dataset object and address.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></p></td>
-<td><p>The name of the file containing the array.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mask</span></code></p></td>
-<td><p>Whether or not to automatically mask the data.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_unpack</span></code></p></td>
-<td><p>Whether or not to automatically unpack the data.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storage_options</span></code></p></td>
-<td><p>Return <code class="xref py py-obj docutils literal notranslate"><span class="pre">s3fs.S3FileSystem</span></code> options for accessing S3 files.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_directory</span></code></p></td>
-<td><p>Replace the file directory.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_filename</span></code></p></td>
-<td><p>Replace the file location.</p></td>
-</tr>
 </tbody>
 </table>
 </section>
@@ -318,15 +153,6 @@ parameters are not deep copied.</p>
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></p></td>
-<td><p>Return a deep copy of the array.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></p></td>
-<td><p>Bring data on disk into memory.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">astype</span></code></p></td>
-<td><p>Cast the data to a specified type.</p></td>
-</tr>
 </tbody>
 </table>
 </section>
@@ -334,9 +160,6 @@ parameters are not deep copied.</p>
 <h2>Special<a class="headerlink" href="#special" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></p></td>
-<td><p>Returns a subspace of the data as a new <a class="reference internal" href="#cfdm.ZarrArray" title="cfdm.ZarrArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZarrArray</span></code></a>.</p></td>
-</tr>
 </tbody>
 </table>
 </section>
@@ -345,18 +168,6 @@ parameters are not deep copied.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></p></td>
-<td><p>Return the special docstring substitutions.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></p></td>
-<td><p>Returns the substitutions that apply to methods of the class.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></p></td>
-<td><p>Returns the class {{package}} substitutions package depth.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></p></td>
-<td><p>Returns method names excluded in the class substitutions.</p></td>
-</tr>
 </tbody>
 </table>
 </section>
@@ -371,11 +182,11 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-01-15.
+      &#169;2026, NCAS | Page built on 2026-08-26.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
     </div>
 

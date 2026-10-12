@@ -8,8 +8,10 @@ import platform
 import sys
 import tempfile
 import unittest
+from importlib.metadata import requires
 
 import numpy as np
+from packaging.requirements import Requirement
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -205,21 +207,41 @@ class FunctionsTest(unittest.TestCase):
         self.assertIsInstance(e, list)
         self.assertIsInstance(ep, list)
 
+        # Test some specific components including their paths
         components = ["Platform: ", "netCDF4: ", "numpy: ", "cftime: "]
         for component in components:
             self.assertTrue(any(s.startswith(component) for s in e))
             self.assertTrue(any(s.startswith(component) for s in ep))
+
         for component in [
             f"cfdm: {cfdm.__version__} {os.path.abspath(cfdm.__file__)}",
             f"Python: {platform.python_version()} {sys.executable}",
         ]:
             self.assertIn(component, e)
             self.assertNotIn(component, ep)  # paths shouldn't be present here
+
         for component in [
             f"cfdm: {cfdm.__version__}",
             f"Python: {platform.python_version()}",
         ]:
             self.assertIn(component, ep)
+
+        # Ensure all hard dependencies are reported on, to help keep
+        # the environment function output up to date
+        cfdm_hard_dependencies = {
+            req.name
+            for req in map(Requirement, requires("cfdm") or [])
+            if not req.marker or "extra" not in str(req.marker)
+        }  # get as a set for subset comparison later
+        for output in (e, ep):
+            dep_names = set()
+            for entry in output:
+                dep_names.add(entry.split(":")[0])
+
+            self.assertTrue(
+                cfdm_hard_dependencies.issubset(dep_names),
+                f"Missing dependencies: {cfdm_hard_dependencies - dep_names}",
+            )
 
     def test_example_field(self):
         """Test the `example_field` function."""
@@ -237,10 +259,10 @@ class FunctionsTest(unittest.TestCase):
             #            the exclusion of fields 8, 9 and 10.
             if n not in (8, 9, 10):
                 cfdm.write(f, temp_file)
-                g = cfdm.read(temp_file, verbose=1)
+                g = cfdm.read(temp_file)
 
                 self.assertEqual(len(g), 1)
-                self.assertTrue(f.equals(g[0], verbose=3))
+                self.assertTrue(f.equals(g[0]))
 
         with self.assertRaises(Exception):
             cfdm.example_field(top + 1)
@@ -314,7 +336,7 @@ class FunctionsTest(unittest.TestCase):
         # Test getting of all config. and store original values to test on:
         org = cfdm.configuration()
         self.assertIsInstance(org, dict)
-        self.assertEqual(len(org), 5)
+        self.assertEqual(len(org), 6)
         org_atol = org["atol"]
         self.assertIsInstance(org_atol, float)
         org_rtol = org["rtol"]
@@ -325,6 +347,8 @@ class FunctionsTest(unittest.TestCase):
         self.assertIsInstance(org_chunksize, int)
         org_display_data = org["display_data"]
         self.assertIsInstance(org_display_data, bool)
+        org_persist_data = org["persist_data"]
+        self.assertIsInstance(org_persist_data, bool)
 
         # Store some sensible values to reset items to for testing,
         # ensure these are kept to be different to the defaults:
@@ -346,6 +370,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(post_set["log_level"], org_ll)
         self.assertEqual(post_set["chunksize"], org_chunksize)
         self.assertEqual(post_set["display_data"], org_display_data)
+        self.assertEqual(post_set["persist_data"], org_persist_data)
         # don't reset to org this time to test change persisting...
 
         # Note setting of previous items persist, e.g. atol above
@@ -521,13 +546,20 @@ class FunctionsTest(unittest.TestCase):
         # Full configuration
         func = cfdm.configuration
 
-        org = func(rtol=10, atol=20, log_level="DETAIL", display_data=False)
+        org = func(
+            rtol=10,
+            atol=20,
+            log_level="DETAIL",
+            display_data=False,
+            persist_data=True,
+        )
         old = func()
         new = dict(old)
         new["rtol"] = 10 * 2
         new["atol"] = 20 * 2
         new["log_level"] = "DEBUG"
         new["display_data"] = True
+        new["persist_data"] = False
 
         with func(**new):
             self.assertEqual(func(), new)
@@ -540,12 +572,14 @@ class FunctionsTest(unittest.TestCase):
             atol=20,
             log_level="DETAIL",
             display_data=False,
+            persist_data=True,
         )
         old = func()
         new["rtol"] = cfdm.Constant(10 * 2)
         new["atol"] = 20 * 2
         new["log_level"] = "DEBUG"
         new["display_data"] = True
+        new["persist_data"] = False
 
         with func(**new):
             self.assertEqual(func(), new)
@@ -767,6 +801,14 @@ class FunctionsTest(unittest.TestCase):
             ),
             "/data",
         )
+
+    def test_axis_dropping_index(self):
+        """Test cfdm.axis_dropping_index."""
+        for i in (2, np.array(2), np.int64(2), np.int32(2)):
+            self.assertTrue(cfdm.axis_dropping_index(i))
+
+        for i in ([2], np.array([2]), slice(None), [True, False]):
+            self.assertFalse(cfdm.axis_dropping_index(i))
 
 
 if __name__ == "__main__":

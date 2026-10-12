@@ -40,6 +40,7 @@ class Field(
     mixin.NetCDFGroupAttributes,
     mixin.NetCDFComponents,
     mixin.NetCDFUnreferenced,
+    mixin.NetCDFMeshVariable,
     mixin.FieldDomain,
     mixin.PropertiesData,
     mixin.Files,
@@ -276,10 +277,6 @@ class Field(
         new = self.copy()
         if indices is Ellipsis:
             return new
-
-        # Remove a mesh id, on the assumption that the subspaced
-        # domain will be different to the original.
-        new.del_mesh_id(None)
 
         data = self.get_data(_fill_value=False)
 
@@ -1718,10 +1715,6 @@ class Field(
             data_name=data_name,
             header=header,
         )
-
-        mesh_id = self.get_mesh_id(None)
-        if mesh_id is not None:
-            out.append(f"{name}.set_mesh_id({mesh_id!r})")
 
         nc_global_attributes = self.nc_global_attributes()
         if nc_global_attributes:

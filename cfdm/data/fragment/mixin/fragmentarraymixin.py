@@ -25,9 +25,9 @@ class FragmentArrayMixin:
 
             {{index: `tuple` or `None`, optional}}
 
-               It is important that there is a distinct value for each
-               fragment dimension, which is guaranteed when the
-               default of the `index` attribute is being used.
+                It is important that there is a distinct element for
+                each fragment dimension, which is guaranteed when the
+                default of the `index` attribute is being used.
 
         :Returns:
 
@@ -135,7 +135,7 @@ class FragmentArrayMixin:
 
         return array
 
-    def _size_1_axis(self):  # , indices):
+    def _size_1_axis(self):
         """Find the position of a unique size 1 index.
 
         .. versionadded:: (cfdm) 1.12.0.0

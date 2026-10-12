@@ -5,7 +5,11 @@ from os import walk
 from os.path import expanduser, expandvars, isdir, join
 
 from cfdm.decorators import _manage_log_level_via_verbosity
-from cfdm.functions import abspath, is_log_level_info
+from cfdm.functions import (
+    _DEPRECATION_ERROR_FUNCTION_KWARGS,
+    abspath,
+    is_log_level_info,
+)
 
 from .abstract import ReadWrite
 from .exceptions import DatasetTypeError
@@ -17,13 +21,18 @@ logger = getLogger(__name__)
 class read(ReadWrite):
     """Read field or domain constructs from a dataset.
 
-    The following dataset formats are supported: netCDF, CDL, and
-    Zarr.
+    The following dataset formats are supported:
 
-    NetCDF and Zarr datasets may be on local disk, on an OPeNDAP
-    server, or in an S3 object store.
+    * netCDF-4
+    * netCDF-3
+    * Zarr v3
+    * Zarr v2
+    * Kerchunk
+    * UK Met Office PP
+    * UK Met Office fields file
+    * GRIB
 
-    CDL files must be on local disk.
+    Datasets may be on local disk or in remote storage.
 
     Any amount of files of any combination of file types may be read.
 
@@ -83,9 +92,16 @@ class read(ReadWrite):
     the end of the Python session, at which time it is automatically
     deleted. The CDL file may omit data array values (as would be the
     case, for example, if the file was created with the ``-h`` or
-    ``-c`` option to ``ncdump``), in which case the the relevant
+    ``-c`` option to ``ncdump``), in which case the relevant
     constructs in memory will be created with data with all missing
     values.
+
+    **PP and UM fields files**
+
+    32-bit and 64-bit Met Office (UK) PP files and Met Office (UK)
+    fields files of any endian-ness can be read. 2-d "slices" within a
+    single file are combined, where possible, into field constructs
+    with 3-d, 4-d or 5-d data.
 
     **Performance**
 
@@ -100,7 +116,7 @@ class read(ReadWrite):
 
     :Parameters:
 
-        {{read datasets: (arbitrarily nested sequence of) `str`}}
+        {{read datasets:}}
 
         {{read recursive: `bool`, optional}}
 
@@ -122,6 +138,9 @@ class read(ReadWrite):
             ``'netCDF'``    A netCDF-3 or netCDF-4 dataset
             ``'CDL'``       A text CDL file of a netCDF dataset
             ``'Zarr'``      A Zarr v2 (xarray) or Zarr v3 dataset
+            ``'Kerchunk'``  A Kerchunked dataset
+            ``'UM'``        A UK Met Office PP or fields file dataset
+            ``'GRIB'``      A GRIB dataset
             ==============  ==========================================
 
             .. versionadded:: (cfdm) 1.12.2.0
@@ -150,9 +169,17 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.9.0.0
 
-        {{read netcdf_backend: `None` or (sequence of) `str`, optional}}
+        {{read backend: `None` or (sequence of) `str`, optional}}
 
-            .. versionadded:: (cfdm) 1.11.2.0
+            .. versionadded:: (cfdm) 1.13.3.0
+
+        {{read backend_options: `None` or `dict`, optional}}
+
+            .. versionadded:: (cfdm) 1.13.3.0
+
+        {{read filesystem: optional}}
+
+            .. versionadded:: (cfdm) 1.13.1.0
 
         {{read storage_options: `dict` or `None`, optional}}
 
@@ -182,6 +209,18 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.12.0.0
 
+        {{read cfa_filesystem: `None` or filesystem, optional}}
+
+            .. versionadded:: (cfdm) 1.13.3.0
+
+        {{read cfa_backend: `None` or (sequence of) `str`, optional}}
+
+            .. versionadded:: (cfdm) 1.13.3.0
+
+        {{cfa_backend_options: `None` or `dict`, optional}}
+
+            .. versionadded:: (cfdm) 1.13.3.0
+
         {{read to_memory: (sequence of) `str`, optional}}
 
             .. versionadded:: (cfdm) 1.12.0.0
@@ -198,8 +237,44 @@ class read(ReadWrite):
 
             .. versionadded:: (cfdm) 1.13.0.0
 
+        {{read um: `dict` or `None`, optional}}
+
+            .. versionadded:: 1.13.3.0
+
+        _noncompliance_report: `bool`, optional
+            If True then return a warning when any data read in are
+            not fully compliant by the CF Conventions, with a dictionary
+            which registers any detected issues in a structured way to
+            indicate the issue against any netCDF objects (variables,
+            dimensions and/or attributes) which they affect. Note this is
+            in an (early) developmental stage, therefore the default is
+            False to not produce this warning.
+
+            The dictionaries printed in the warning are available
+            post-read through the dataset_compliance() method
+            available on a field or domain.
+
+            .. warning:: Compliance checking in cfdm is not yet mature
+                         and therefore only certain issues of
+                         non-compliance will be detected and reported in
+                         the warning dictionary, so this is not intended,
+                         at present, to be a comprehensive check for
+                         compliance according to the latest version of
+                         the CF Conventions. As-is it may be useful as
+                         a guide to possible issues.
+
+                         In future a human-friendly report will be made
+                         available from the warning dictionary output,
+                         but for now it is only available pretty-printed
+                         from the nested machine-parsable structure.
+
+            .. versionadded:: (cfdm) 1.13.2.0
+
         ignore_unknown_type: Deprecated at version 1.12.2.0
             Use *dataset_type* instead.
+
+        netcdf_backend: Deprecated at version 1.13.3.0
+            Use *backend* instead.
 
     :Returns:
 
@@ -241,14 +316,19 @@ class read(ReadWrite):
         mask=True,
         unpack=True,
         domain=False,
-        netcdf_backend=None,
+        backend=None,
+        backend_options=None,
         storage_options=None,
+        filesystem=None,
         cache=True,
         dask_chunks="storage-aligned",
         store_dataset_chunks=True,
         store_dataset_shards=True,
         cfa=None,
         cfa_write=None,
+        cfa_filesystem=None,
+        cfa_backend=None,
+        cfa_backend_options=None,
         to_memory=False,
         squeeze=False,
         unsqueeze=False,
@@ -258,6 +338,8 @@ class read(ReadWrite):
         cdl_string=False,
         extra_read_vars=None,
         group_dimension_search="closest_ancestor",
+        um=None,
+        _noncompliance_report=False,
         **kwargs,
     ):
         """Read field or domain constructs from datasets.
@@ -265,6 +347,15 @@ class read(ReadWrite):
         .. versionadded:: (cfdm) 1.12.2.0
 
         """
+        if kwargs.get("netcdf_backend") is not None:
+            _DEPRECATION_ERROR_FUNCTION_KWARGS(
+                "cfdm.read",
+                {"netcdf_backend": kwargs["netcdf_backend"]},
+                "Use keyword 'backend' instead",
+                version="1.13.3.0",
+                removed_at="1.15.0.0",
+            )  # pragma: no cover
+
         kwargs = locals()
         kwargs.update(kwargs.pop("kwargs"))
 
@@ -343,7 +434,24 @@ class read(ReadWrite):
         recursive = kwargs.get("recursive", False)
         followlinks = kwargs.get("followlinks", False)
 
-        datasets = self._flat(kwargs["datasets"])
+        datasets = kwargs["datasets"]
+
+        representation = NetCDFRead.dataset_representation(datasets)
+        if representation != "unknown":
+            datasets = (datasets,)
+
+        # If a file system object is provided, treat each dataset path
+        # as-is (no local glob/walk/expansion) and yield directly.
+        filesystem = kwargs.get("filesystem")
+        if filesystem is None:
+            d_glob = iglob
+            d_isdir = isdir
+            d_walk = walk
+        else:
+            d_glob = filesystem.glob
+            d_isdir = filesystem.isdir
+            d_walk = filesystem.walk
+
         if kwargs["cdl_string"]:
             # Return CDL strings as they are
             for dataset1 in datasets:
@@ -360,25 +468,32 @@ class read(ReadWrite):
                 f"recursive={True}. Got recursive={recursive!r}"
             )
 
-        is_zarr = NetCDFRead.is_zarr
-
+        is_zarr = partial(NetCDFRead.is_zarr, filesystem=filesystem)
         for datasets1 in datasets:
-            # Apply tilde and environment variable expansions
-            datasets1 = expanduser(expandvars(datasets1))
+            representation = NetCDFRead.dataset_representation(datasets1)
+            if representation == "path":
+                if filesystem is None:
+                    # Apply tilde and environment variable expansions
+                    datasets1 = expanduser(expandvars(datasets1))
 
-            u = urisplit(datasets1)
-            if u.scheme not in (None, "file"):
-                # Do not glob a remote URI, and assume that it defines
-                # a single dataset.
+                    u = urisplit(datasets1)
+                    if u.scheme not in (None, "file"):
+                        # Do not glob a remote URI, and assume that it defines
+                        # a single dataset.
+                        yield datasets1
+                        continue
+
+                    # Glob files/directories on disk
+                    datasets1 = abspath(datasets1, uri=False)
+            else:
+                # dataset is file_handle, kerchunk_mapper,
+                # general_mapper, unknown, etc.
                 yield datasets1
                 continue
 
-            # Glob files/directories on disk
-            datasets1 = abspath(datasets1, uri=False)
-
             n_datasets = 0
-            for x in iglob(datasets1):
-                if isdir(x):
+            for x in d_glob(datasets1):
+                if d_isdir(x):
                     if is_zarr(x):
                         # This directory is a Zarr dataset, so don't
                         # look in any subdirectories, which contain
@@ -390,16 +505,21 @@ class read(ReadWrite):
                         continue
 
                     # Walk through directories, possibly recursively
-                    for path, _, filenames in walk(x, followlinks=followlinks):
-                        if NetCDFRead.is_zarr(path):
-                            # This directory is a Zarr dataset, so
-                            # don't look in any subdirectories.
-                            n_datasets += 1
-                            yield path
-                            break
+                    for path, dirnames, filenames in d_walk(
+                        x, followlinks=followlinks
+                    ):
+                        for d in dirnames:
+                            d1 = join(path, d)
+                            if NetCDFRead.is_zarr(d1):
+                                # This directory is a Zarr dataset
+                                n_datasets += 1
+                                # Make sure we don't look at its
+                                # subdirectories or files
+                                dirnames.remove(d)
+                                yield d1
 
                         for f in filenames:
-                            # This file is a (non-Zarr) dataset
+                            # This file is a non-Zarr dataset
                             n_datasets += 1
                             yield join(path, f)
 
@@ -459,7 +579,9 @@ class read(ReadWrite):
         self.dataset_type = dataset_type
 
         # Recognised netCDF dataset formats
-        self.netCDF_dataset_types = set(("netCDF", "CDL", "Zarr"))
+        self.netCDF_dataset_types = set(
+            ("netCDF", "CDL", "Zarr", "Kerchunk", "PP/UM")
+        )
 
         # Allowed dataset formats
         self.allowed_dataset_types = self.netCDF_dataset_types.copy()
@@ -487,8 +609,9 @@ class read(ReadWrite):
 
         :Parameters:
 
-            dataset: `str`
-                The pathname of the dataset that has just been read.
+            dataset:
+                The dataset to be read. May be a string-valued path,
+                or a file-like or directory-like object.
 
         :Returns:
 
@@ -512,8 +635,9 @@ class read(ReadWrite):
 
         :Parameters:
 
-            dataset: `str`
-                The pathname of the dataset to be read.
+            dataset:
+                The dataset to be read. May be a string-valued path,
+                or a file-like or directory-like object.
 
         :Returns:
 
@@ -545,8 +669,9 @@ class read(ReadWrite):
 
         :Parameters:
 
-            dataset: `str`
-                The pathname of the dataset to be read.
+            dataset:
+                The dataset to be read. May be a string-valued path,
+                or a file-like or directory-like object.
 
         :Returns:
 
@@ -575,13 +700,18 @@ class read(ReadWrite):
                         "unpack",
                         "domain",
                         "storage_options",
-                        "netcdf_backend",
+                        "filesystem",
+                        "backend",
+                        "backend_options",
                         "cache",
                         "dask_chunks",
                         "store_dataset_chunks",
                         "store_dataset_shards",
                         "cfa",
                         "cfa_write",
+                        "cfa_filesystem",
+                        "cfa_backend",
+                        "cfa_backend_options",
                         "to_memory",
                         "squeeze",
                         "unsqueeze",
@@ -589,6 +719,8 @@ class read(ReadWrite):
                         "cdl_string",
                         "extra_read_vars",
                         "group_dimension_search",
+                        "um",
+                        "_noncompliance_report",
                     )
                 }
 

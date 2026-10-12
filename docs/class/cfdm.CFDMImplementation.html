@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>cfdm.CFDMImplementation &#8212; Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
+    <script src="../_static/documentation_options.js?v=2798502a"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=a56c686a"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.CFDMImplementation.bounds_insert_dimension" href="../method/cfdm.CFDMImplementation.bounds_insert_dimension.html" />
+    <link rel="prev" title="cfdm.Implementation.set_class" href="../method/cfdm.Implementation.set_class.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cfdm 1.13.3.0</a></h1>
+
+
+
+<p class="blurb">A Python reference implementation of the CF data model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cfdm&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
+      <li>Previous: <a href="../method/cfdm.Implementation.set_class.html" title="previous chapter">cfdm.Implementation.set_class</a></li>
+      <li>Next: <a href="../method/cfdm.CFDMImplementation.bounds_insert_dimension.html" title="next chapter">cfdm.CFDMImplementation.bounds_insert_dimension</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="cfdm-cfdmimplementation">
+<h1>cfdm.CFDMImplementation<a class="headerlink" href="#cfdm-cfdmimplementation" title="Link to this heading">¶</a></h1>
+<hr class="docutils" />
+<dl class="py class">
+<dt class="sig sig-object py" id="cfdm.CFDMImplementation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">CFDMImplementation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cf_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/cfdmimplementation.py#L44-L3986"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.CFDMImplementation" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="cfdm.Implementation.html#cfdm.Implementation" title="cfdm.abstract.implementation.Implementation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Implementation</span></code></a></p>
+<p>A container for the CF data model implementation.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>kwargs:</dt><dd><p>The concrete objects required to represent a Field.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.bounds_insert_dimension.html#cfdm.CFDMImplementation.bounds_insert_dimension" title="cfdm.CFDMImplementation.bounds_insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds_insert_dimension</span></code></a></p></td>
+<td><p>Insert a new dimension into bounds data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.classes.html#cfdm.CFDMImplementation.classes" title="cfdm.CFDMImplementation.classes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classes</span></code></a></p></td>
+<td><p>Return all the classes of the implementation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.climatological_time_axes.html#cfdm.CFDMImplementation.climatological_time_axes" title="cfdm.CFDMImplementation.climatological_time_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">climatological_time_axes</span></code></a></p></td>
+<td><p>Return all axes which are climatological time axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.conform_geometry_variables.html#cfdm.CFDMImplementation.conform_geometry_variables" title="cfdm.CFDMImplementation.conform_geometry_variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conform_geometry_variables</span></code></a></p></td>
+<td><p>Collate geometry variable properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.construct_insert_dimension.html#cfdm.CFDMImplementation.construct_insert_dimension" title="cfdm.CFDMImplementation.construct_insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_insert_dimension</span></code></a></p></td>
+<td><p>Insert a new dimension into metadata construct data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.convert.html#cfdm.CFDMImplementation.convert" title="cfdm.CFDMImplementation.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a></p></td>
+<td><p>Convert a metadata construct into a field construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.copy.html#cfdm.CFDMImplementation.copy" title="cfdm.CFDMImplementation.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Copy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.copy_construct.html#cfdm.CFDMImplementation.copy_construct" title="cfdm.CFDMImplementation.copy_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_construct</span></code></a></p></td>
+<td><p>Return a deep copy of a construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.data_insert_dimension.html#cfdm.CFDMImplementation.data_insert_dimension" title="cfdm.CFDMImplementation.data_insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_insert_dimension</span></code></a></p></td>
+<td><p>Insert a new dimension into a data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.del_parameter.html#cfdm.CFDMImplementation.del_parameter" title="cfdm.CFDMImplementation.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></p></td>
+<td><p>Delete a parameter from a component.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.del_properties.html#cfdm.CFDMImplementation.del_properties" title="cfdm.CFDMImplementation.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></a></p></td>
+<td><p>Remove a property from a construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.del_property.html#cfdm.CFDMImplementation.del_property" title="cfdm.CFDMImplementation.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<td><p>Remove a property from a construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.equal_components.html#cfdm.CFDMImplementation.equal_components" title="cfdm.CFDMImplementation.equal_components"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equal_components</span></code></a></p></td>
+<td><p>Whether or not two field construct components are equal.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.equal_constructs.html#cfdm.CFDMImplementation.equal_constructs" title="cfdm.CFDMImplementation.equal_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equal_constructs</span></code></a></p></td>
+<td><p>Whether or not two field construct components are equal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.equal_datums.html#cfdm.CFDMImplementation.equal_datums" title="cfdm.CFDMImplementation.equal_datums"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equal_datums</span></code></a></p></td>
+<td><p>Whether or not two coordinate reference datums are equal.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.equal_properties.html#cfdm.CFDMImplementation.equal_properties" title="cfdm.CFDMImplementation.equal_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equal_properties</span></code></a></p></td>
+<td><p>Whether or not two property values are equal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.field_insert_dimension.html#cfdm.CFDMImplementation.field_insert_dimension" title="cfdm.CFDMImplementation.field_insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">field_insert_dimension</span></code></a></p></td>
+<td><p>Insert a new dimension into field construct data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_array.html#cfdm.CFDMImplementation.get_array" title="cfdm.CFDMImplementation.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></p></td>
+<td><p>Return the data as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_auxiliary_coordinates.html#cfdm.CFDMImplementation.get_auxiliary_coordinates" title="cfdm.CFDMImplementation.get_auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_auxiliary_coordinates</span></code></a></p></td>
+<td><p>Returns auxiliary coordinates that span particular axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_bounds.html#cfdm.CFDMImplementation.get_bounds" title="cfdm.CFDMImplementation.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></p></td>
+<td><p>Return the bounds of a construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_bounds_ncvar.html#cfdm.CFDMImplementation.get_bounds_ncvar" title="cfdm.CFDMImplementation.get_bounds_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds_ncvar</span></code></a></p></td>
+<td><p>Return the netCDF variable name of the bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_cell_connectivities.html#cfdm.CFDMImplementation.get_cell_connectivities" title="cfdm.CFDMImplementation.get_cell_connectivities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cell_connectivities</span></code></a></p></td>
+<td><p>Return the cell connectivities from a parent.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_cell_measures.html#cfdm.CFDMImplementation.get_cell_measures" title="cfdm.CFDMImplementation.get_cell_measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cell_measures</span></code></a></p></td>
+<td><p>Return all of the cell measure constructs of a field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_cell_method_axes.html#cfdm.CFDMImplementation.get_cell_method_axes" title="cfdm.CFDMImplementation.get_cell_method_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cell_method_axes</span></code></a></p></td>
+<td><p>Return the axes of a cell method construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_cell_method_qualifiers.html#cfdm.CFDMImplementation.get_cell_method_qualifiers" title="cfdm.CFDMImplementation.get_cell_method_qualifiers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cell_method_qualifiers</span></code></a></p></td>
+<td><p>Return the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> representation of a cell method construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_cell_method_string.html#cfdm.CFDMImplementation.get_cell_method_string" title="cfdm.CFDMImplementation.get_cell_method_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cell_method_string</span></code></a></p></td>
+<td><p>Return the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> representation of a cell method construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_cell_methods.html#cfdm.CFDMImplementation.get_cell_methods" title="cfdm.CFDMImplementation.get_cell_methods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cell_methods</span></code></a></p></td>
+<td><p>Return all of the cell method constructs of a field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_cf_version.html#cfdm.CFDMImplementation.get_cf_version" title="cfdm.CFDMImplementation.get_cf_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cf_version</span></code></a></p></td>
+<td><p>Return the CF version of the implementation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_class.html#cfdm.CFDMImplementation.get_class" title="cfdm.CFDMImplementation.get_class"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_class</span></code></a></p></td>
+<td><p>Return a class of the implementation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_compressed_array.html#cfdm.CFDMImplementation.get_compressed_array" title="cfdm.CFDMImplementation.get_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code></a></p></td>
+<td><p>Return the data in its compressed form .</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_compressed_axes.html#cfdm.CFDMImplementation.get_compressed_axes" title="cfdm.CFDMImplementation.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></p></td>
+<td><p>Return the axes that have been compressed.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_compression_type.html#cfdm.CFDMImplementation.get_compression_type" title="cfdm.CFDMImplementation.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></p></td>
+<td><p>Returns the type of compression applied.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_construct_data_axes.html#cfdm.CFDMImplementation.get_construct_data_axes" title="cfdm.CFDMImplementation.get_construct_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct_data_axes</span></code></a></p></td>
+<td><p>Returns the construct keys of the spanned axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_construct_data_size.html#cfdm.CFDMImplementation.get_construct_data_size" title="cfdm.CFDMImplementation.get_construct_data_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct_data_size</span></code></a></p></td>
+<td><p>Return the size of a construct's data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_construct_type.html#cfdm.CFDMImplementation.get_construct_type" title="cfdm.CFDMImplementation.get_construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct_type</span></code></a></p></td>
+<td><p>Return the construct type of a variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_constructs.html#cfdm.CFDMImplementation.get_constructs" title="cfdm.CFDMImplementation.get_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_constructs</span></code></a></p></td>
+<td><p>Return constructs that span particular axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_coordinate_conversion_parameters.html#cfdm.CFDMImplementation.get_coordinate_conversion_parameters" title="cfdm.CFDMImplementation.get_coordinate_conversion_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_conversion_parameters</span></code></a></p></td>
+<td><p>Gets the coordinate reference conversion parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_coordinate_reference_coordinates.html#cfdm.CFDMImplementation.get_coordinate_reference_coordinates" title="cfdm.CFDMImplementation.get_coordinate_reference_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_reference_coordinates</span></code></a></p></td>
+<td><p>Return the coordinates of a coordinate reference construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_coordinate_references.html#cfdm.CFDMImplementation.get_coordinate_references" title="cfdm.CFDMImplementation.get_coordinate_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_references</span></code></a></p></td>
+<td><p>Return all of the coordinate reference constructs of a field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_coordinates.html#cfdm.CFDMImplementation.get_coordinates" title="cfdm.CFDMImplementation.get_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinates</span></code></a></p></td>
+<td><p>Return all of the coordinate constructs of a field or domain.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_count.html#cfdm.CFDMImplementation.get_count" title="cfdm.CFDMImplementation.get_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code></a></p></td>
+<td><p>Return the count variable of compressed data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data.html#cfdm.CFDMImplementation.get_data" title="cfdm.CFDMImplementation.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<td><p>Return the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_axes.html#cfdm.CFDMImplementation.get_data_axes" title="cfdm.CFDMImplementation.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></p></td>
+<td><p>Get domain axis identifiers.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_calendar.html#cfdm.CFDMImplementation.get_data_calendar" title="cfdm.CFDMImplementation.get_data_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_calendar</span></code></a></p></td>
+<td><p>Return the calendar of date-time data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_compressed_axes.html#cfdm.CFDMImplementation.get_data_compressed_axes" title="cfdm.CFDMImplementation.get_data_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_compressed_axes</span></code></a></p></td>
+<td><p>Return the indices of the axes that have been compressed.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_max.html#cfdm.CFDMImplementation.get_data_max" title="cfdm.CFDMImplementation.get_data_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_max</span></code></a></p></td>
+<td><p>Use <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_maximum</span></code> instead (since cfdm version 1.8.0).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_maximum.html#cfdm.CFDMImplementation.get_data_maximum" title="cfdm.CFDMImplementation.get_data_maximum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_maximum</span></code></a></p></td>
+<td><p>Return the maximum value of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_ndim.html#cfdm.CFDMImplementation.get_data_ndim" title="cfdm.CFDMImplementation.get_data_ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_ndim</span></code></a></p></td>
+<td><p>Return the number of dimensions spanned by the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_shape.html#cfdm.CFDMImplementation.get_data_shape" title="cfdm.CFDMImplementation.get_data_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_shape</span></code></a></p></td>
+<td><p>Return the shape of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_size.html#cfdm.CFDMImplementation.get_data_size" title="cfdm.CFDMImplementation.get_data_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_size</span></code></a></p></td>
+<td><p>Return the number of elements in the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_source.html#cfdm.CFDMImplementation.get_data_source" title="cfdm.CFDMImplementation.get_data_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_source</span></code></a></p></td>
+<td><p>Return the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_sum.html#cfdm.CFDMImplementation.get_data_sum" title="cfdm.CFDMImplementation.get_data_sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_sum</span></code></a></p></td>
+<td><p>Return the sum of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_data_units.html#cfdm.CFDMImplementation.get_data_units" title="cfdm.CFDMImplementation.get_data_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_units</span></code></a></p></td>
+<td><p>Return the units of data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_datum.html#cfdm.CFDMImplementation.get_datum" title="cfdm.CFDMImplementation.get_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_datum</span></code></a></p></td>
+<td><p>Return the datum of a coordinate reference construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_datum_parameters.html#cfdm.CFDMImplementation.get_datum_parameters" title="cfdm.CFDMImplementation.get_datum_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_datum_parameters</span></code></a></p></td>
+<td><p>Returns coordinate reference datum parameter-valued terms.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_dimension_coordinates.html#cfdm.CFDMImplementation.get_dimension_coordinates" title="cfdm.CFDMImplementation.get_dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dimension_coordinates</span></code></a></p></td>
+<td><p>Return all of the dimension coordinate constructs of a field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_domain_ancillaries.html#cfdm.CFDMImplementation.get_domain_ancillaries" title="cfdm.CFDMImplementation.get_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_ancillaries</span></code></a></p></td>
+<td><p>Return all of the domain ancillary constructs of a field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_domain_axes.html#cfdm.CFDMImplementation.get_domain_axes" title="cfdm.CFDMImplementation.get_domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_axes</span></code></a></p></td>
+<td><p>Return all of the domain axis constructs of a field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_domain_axis_size.html#cfdm.CFDMImplementation.get_domain_axis_size" title="cfdm.CFDMImplementation.get_domain_axis_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_axis_size</span></code></a></p></td>
+<td><p>Return the size a of domain axis construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_domain_topologies.html#cfdm.CFDMImplementation.get_domain_topologies" title="cfdm.CFDMImplementation.get_domain_topologies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_topologies</span></code></a></p></td>
+<td><p>Return the domain topologies from a parent.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_field_ancillaries.html#cfdm.CFDMImplementation.get_field_ancillaries" title="cfdm.CFDMImplementation.get_field_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_field_ancillaries</span></code></a></p></td>
+<td><p>Return the field ancillaries of a field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_field_data_axes.html#cfdm.CFDMImplementation.get_field_data_axes" title="cfdm.CFDMImplementation.get_field_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_field_data_axes</span></code></a></p></td>
+<td><p>Returns the construct keys of the field's data dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_filenames.html#cfdm.CFDMImplementation.get_filenames" title="cfdm.CFDMImplementation.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the name of the file or files containing the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_geometry.html#cfdm.CFDMImplementation.get_geometry" title="cfdm.CFDMImplementation.get_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geometry</span></code></a></p></td>
+<td><p>Return the geometry type of coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_index.html#cfdm.CFDMImplementation.get_index" title="cfdm.CFDMImplementation.get_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code></a></p></td>
+<td><p>Return the index variable of compressed data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_inherited_properties.html#cfdm.CFDMImplementation.get_inherited_properties" title="cfdm.CFDMImplementation.get_inherited_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_inherited_properties</span></code></a></p></td>
+<td><p>Return all inherited properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_interior_ring.html#cfdm.CFDMImplementation.get_interior_ring" title="cfdm.CFDMImplementation.get_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interior_ring</span></code></a></p></td>
+<td><p>Return the interior ring variable of geometry coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_interpolation_name.html#cfdm.CFDMImplementation.get_interpolation_name" title="cfdm.CFDMImplementation.get_interpolation_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interpolation_name</span></code></a></p></td>
+<td><p>Return the interior ring variable of geometry coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_list.html#cfdm.CFDMImplementation.get_list" title="cfdm.CFDMImplementation.get_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list</span></code></a></p></td>
+<td><p>Return the list variable of compressed data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_measure.html#cfdm.CFDMImplementation.get_measure" title="cfdm.CFDMImplementation.get_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_measure</span></code></a></p></td>
+<td><p>Return the measure property of a cell measure construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_node_count.html#cfdm.CFDMImplementation.get_node_count" title="cfdm.CFDMImplementation.get_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_node_count</span></code></a></p></td>
+<td><p>Return the node count variable of geometry coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_original_filenames.html#cfdm.CFDMImplementation.get_original_filenames" title="cfdm.CFDMImplementation.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
+<td><p>Get the original names of the files containing the construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_parameter.html#cfdm.CFDMImplementation.get_parameter" title="cfdm.CFDMImplementation.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></p></td>
+<td><p>Get a parameter value from a component.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_part_node_count.html#cfdm.CFDMImplementation.get_part_node_count" title="cfdm.CFDMImplementation.get_part_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_part_node_count</span></code></a></p></td>
+<td><p>Return the part node count variable of geometry coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_properties.html#cfdm.CFDMImplementation.get_properties" title="cfdm.CFDMImplementation.get_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_properties</span></code></a></p></td>
+<td><p>Return all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_property.html#cfdm.CFDMImplementation.get_property" title="cfdm.CFDMImplementation.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<td><p>Return a property of a construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_quantization.html#cfdm.CFDMImplementation.get_quantization" title="cfdm.CFDMImplementation.get_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantization</span></code></a></p></td>
+<td><p>Get quantization metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_quantize_on_write.html#cfdm.CFDMImplementation.get_quantize_on_write" title="cfdm.CFDMImplementation.get_quantize_on_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_quantize_on_write</span></code></a></p></td>
+<td><p>Get a quantize-on-write instruction form a construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_sample_dimension_position.html#cfdm.CFDMImplementation.get_sample_dimension_position" title="cfdm.CFDMImplementation.get_sample_dimension_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sample_dimension_position</span></code></a></p></td>
+<td><p>Returns the position of the compressed data sample dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.get_tie_points.html#cfdm.CFDMImplementation.get_tie_points" title="cfdm.CFDMImplementation.get_tie_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tie_points</span></code></a></p></td>
+<td><p>TODO.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.has_bounds.html#cfdm.CFDMImplementation.has_bounds" title="cfdm.CFDMImplementation.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<td><p>Whether or not a construct has bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.has_datum.html#cfdm.CFDMImplementation.has_datum" title="cfdm.CFDMImplementation.has_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_datum</span></code></a></p></td>
+<td><p>Return True if a coordinate reference has a datum.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.has_domain_topology.html#cfdm.CFDMImplementation.has_domain_topology" title="cfdm.CFDMImplementation.has_domain_topology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_domain_topology</span></code></a></p></td>
+<td><p>Whether or not a field or domain has a domain topology.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.has_property.html#cfdm.CFDMImplementation.has_property" title="cfdm.CFDMImplementation.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<td><p>Return True if a property exists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_AggregatedArray.html#cfdm.CFDMImplementation.initialise_AggregatedArray" title="cfdm.CFDMImplementation.initialise_AggregatedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_AggregatedArray</span></code></a></p></td>
+<td><p>Return a <a class="reference internal" href="cfdm.AggregatedArray.html#cfdm.AggregatedArray" title="cfdm.AggregatedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AggregatedArray</span></code></a> instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_AuxiliaryCoordinate.html#cfdm.CFDMImplementation.initialise_AuxiliaryCoordinate" title="cfdm.CFDMImplementation.initialise_AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_AuxiliaryCoordinate</span></code></a></p></td>
+<td><p>Return an auxiliary coordinate construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_Bounds.html#cfdm.CFDMImplementation.initialise_Bounds" title="cfdm.CFDMImplementation.initialise_Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_Bounds</span></code></a></p></td>
+<td><p>Return a bounds component.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_BoundsFromNodesArray.html#cfdm.CFDMImplementation.initialise_BoundsFromNodesArray" title="cfdm.CFDMImplementation.initialise_BoundsFromNodesArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_BoundsFromNodesArray</span></code></a></p></td>
+<td><p>Return a node bounds array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_CellConnectivity.html#cfdm.CFDMImplementation.initialise_CellConnectivity" title="cfdm.CFDMImplementation.initialise_CellConnectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_CellConnectivity</span></code></a></p></td>
+<td><p>Return a cell connectivity construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_CellConnectivityArray.html#cfdm.CFDMImplementation.initialise_CellConnectivityArray" title="cfdm.CFDMImplementation.initialise_CellConnectivityArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_CellConnectivityArray</span></code></a></p></td>
+<td><p>Return a cell connectivity array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_CellMeasure.html#cfdm.CFDMImplementation.initialise_CellMeasure" title="cfdm.CFDMImplementation.initialise_CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_CellMeasure</span></code></a></p></td>
+<td><p>Return a cell measure construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_CellMethod.html#cfdm.CFDMImplementation.initialise_CellMethod" title="cfdm.CFDMImplementation.initialise_CellMethod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_CellMethod</span></code></a></p></td>
+<td><p>Return a cell method construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_CoordinateConversion.html#cfdm.CFDMImplementation.initialise_CoordinateConversion" title="cfdm.CFDMImplementation.initialise_CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_CoordinateConversion</span></code></a></p></td>
+<td><p>Return a coordinate conversion component.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_CoordinateReference.html#cfdm.CFDMImplementation.initialise_CoordinateReference" title="cfdm.CFDMImplementation.initialise_CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_CoordinateReference</span></code></a></p></td>
+<td><p>Return a coordinate reference construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_Count.html#cfdm.CFDMImplementation.initialise_Count" title="cfdm.CFDMImplementation.initialise_Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_Count</span></code></a></p></td>
+<td><p>Return a count variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_Data.html#cfdm.CFDMImplementation.initialise_Data" title="cfdm.CFDMImplementation.initialise_Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_Data</span></code></a></p></td>
+<td><p>Return a data instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_Datum.html#cfdm.CFDMImplementation.initialise_Datum" title="cfdm.CFDMImplementation.initialise_Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_Datum</span></code></a></p></td>
+<td><p>Return a coordinate conversion component.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_DimensionCoordinate.html#cfdm.CFDMImplementation.initialise_DimensionCoordinate" title="cfdm.CFDMImplementation.initialise_DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_DimensionCoordinate</span></code></a></p></td>
+<td><p>Return a dimension coordinate construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_DimensionCoordinate_from_AuxiliaryCoordinate.html#cfdm.CFDMImplementation.initialise_DimensionCoordinate_from_AuxiliaryCoordinate" title="cfdm.CFDMImplementation.initialise_DimensionCoordinate_from_AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_DimensionCoordinate_from_AuxiliaryCoordinate</span></code></a></p></td>
+<td><p>Returns a dimension coordinate from an auxiliary coordinate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_Domain.html#cfdm.CFDMImplementation.initialise_Domain" title="cfdm.CFDMImplementation.initialise_Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_Domain</span></code></a></p></td>
+<td><p>Return a domain construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_DomainAncillary.html#cfdm.CFDMImplementation.initialise_DomainAncillary" title="cfdm.CFDMImplementation.initialise_DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_DomainAncillary</span></code></a></p></td>
+<td><p>Return a domain ancillary construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_DomainAxis.html#cfdm.CFDMImplementation.initialise_DomainAxis" title="cfdm.CFDMImplementation.initialise_DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_DomainAxis</span></code></a></p></td>
+<td><p>Return a domain ancillary construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_DomainTopology.html#cfdm.CFDMImplementation.initialise_DomainTopology" title="cfdm.CFDMImplementation.initialise_DomainTopology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_DomainTopology</span></code></a></p></td>
+<td><p>Return a domain topology construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_Field.html#cfdm.CFDMImplementation.initialise_Field" title="cfdm.CFDMImplementation.initialise_Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_Field</span></code></a></p></td>
+<td><p>Return a field construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_FieldAncillary.html#cfdm.CFDMImplementation.initialise_FieldAncillary" title="cfdm.CFDMImplementation.initialise_FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_FieldAncillary</span></code></a></p></td>
+<td><p>Return a field ancillary construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_GatheredArray.html#cfdm.CFDMImplementation.initialise_GatheredArray" title="cfdm.CFDMImplementation.initialise_GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_GatheredArray</span></code></a></p></td>
+<td><p>Return a gathered array instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_Index.html#cfdm.CFDMImplementation.initialise_Index" title="cfdm.CFDMImplementation.initialise_Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_Index</span></code></a></p></td>
+<td><p>Return an index variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_InteriorRing.html#cfdm.CFDMImplementation.initialise_InteriorRing" title="cfdm.CFDMImplementation.initialise_InteriorRing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_InteriorRing</span></code></a></p></td>
+<td><p>Return an interior ring variable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_InterpolationParameter.html#cfdm.CFDMImplementation.initialise_InterpolationParameter" title="cfdm.CFDMImplementation.initialise_InterpolationParameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_InterpolationParameter</span></code></a></p></td>
+<td><p>Return an interpolation parameter variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_List.html#cfdm.CFDMImplementation.initialise_List" title="cfdm.CFDMImplementation.initialise_List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_List</span></code></a></p></td>
+<td><p>Return a list variable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_NodeCountProperties.html#cfdm.CFDMImplementation.initialise_NodeCountProperties" title="cfdm.CFDMImplementation.initialise_NodeCountProperties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_NodeCountProperties</span></code></a></p></td>
+<td><p>Return a node count properties variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_PartNodeCount.html#cfdm.CFDMImplementation.initialise_PartNodeCount" title="cfdm.CFDMImplementation.initialise_PartNodeCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_PartNodeCount</span></code></a></p></td>
+<td><p>Return a part node count properties variable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_PointTopologyArray.html#cfdm.CFDMImplementation.initialise_PointTopologyArray" title="cfdm.CFDMImplementation.initialise_PointTopologyArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_PointTopologyArray</span></code></a></p></td>
+<td><p>Return a point topology array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_Quantization.html#cfdm.CFDMImplementation.initialise_Quantization" title="cfdm.CFDMImplementation.initialise_Quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_Quantization</span></code></a></p></td>
+<td><p>Return a quantization metadata class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_RaggedContiguousArray.html#cfdm.CFDMImplementation.initialise_RaggedContiguousArray" title="cfdm.CFDMImplementation.initialise_RaggedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_RaggedContiguousArray</span></code></a></p></td>
+<td><p>Return a ragged contiguous array instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_RaggedIndexedArray.html#cfdm.CFDMImplementation.initialise_RaggedIndexedArray" title="cfdm.CFDMImplementation.initialise_RaggedIndexedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_RaggedIndexedArray</span></code></a></p></td>
+<td><p>Return a ragged indexed array instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_RaggedIndexedContiguousArray.html#cfdm.CFDMImplementation.initialise_RaggedIndexedContiguousArray" title="cfdm.CFDMImplementation.initialise_RaggedIndexedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_RaggedIndexedContiguousArray</span></code></a></p></td>
+<td><p>Return a ragged indexed contiguous array instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_SubsampledArray.html#cfdm.CFDMImplementation.initialise_SubsampledArray" title="cfdm.CFDMImplementation.initialise_SubsampledArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_SubsampledArray</span></code></a></p></td>
+<td><p>Return a subsampled array instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_TiePointIndex.html#cfdm.CFDMImplementation.initialise_TiePointIndex" title="cfdm.CFDMImplementation.initialise_TiePointIndex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_TiePointIndex</span></code></a></p></td>
+<td><p>Return an index variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.initialise_XnetcdfArray.html#cfdm.CFDMImplementation.initialise_XnetcdfArray" title="cfdm.CFDMImplementation.initialise_XnetcdfArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialise_XnetcdfArray</span></code></a></p></td>
+<td><p>Return a <a class="reference internal" href="cfdm.XnetcdfArray.html#cfdm.XnetcdfArray" title="cfdm.XnetcdfArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XnetcdfArray</span></code></a> instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.is_climatology.html#cfdm.CFDMImplementation.is_climatology" title="cfdm.CFDMImplementation.is_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_climatology</span></code></a></p></td>
+<td><p>Whether or not the coordinate represent climatologies.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.is_domain.html#cfdm.CFDMImplementation.is_domain" title="cfdm.CFDMImplementation.is_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_domain</span></code></a></p></td>
+<td><p>Return True if the construct is a domain construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.is_field.html#cfdm.CFDMImplementation.is_field" title="cfdm.CFDMImplementation.is_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_field</span></code></a></p></td>
+<td><p>Return True if the construct is a field construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.is_geometry.html#cfdm.CFDMImplementation.is_geometry" title="cfdm.CFDMImplementation.is_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_geometry</span></code></a></p></td>
+<td><p>Return True if the coordinate bounds are geometries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.is_masked.html#cfdm.CFDMImplementation.is_masked" title="cfdm.CFDMImplementation.is_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_masked</span></code></a></p></td>
+<td><p>Whether or not the data has any masked values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_dataset_chunksizes.html#cfdm.CFDMImplementation.nc_get_dataset_chunksizes" title="cfdm.CFDMImplementation.nc_get_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dataset_chunksizes</span></code></a></p></td>
+<td><p>Get the dataset chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_dataset_shards.html#cfdm.CFDMImplementation.nc_get_dataset_shards" title="cfdm.CFDMImplementation.nc_get_dataset_shards"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dataset_shards</span></code></a></p></td>
+<td><p>Get the Zarr dataset sharding strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_datum_variable.html#cfdm.CFDMImplementation.nc_get_datum_variable" title="cfdm.CFDMImplementation.nc_get_datum_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_datum_variable</span></code></a></p></td>
+<td><p>Get the netCDF grid mapping variable name for a datum.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_dimension.html#cfdm.CFDMImplementation.nc_get_dimension" title="cfdm.CFDMImplementation.nc_get_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_external.html#cfdm.CFDMImplementation.nc_get_external" title="cfdm.CFDMImplementation.nc_get_external"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_external</span></code></a></p></td>
+<td><p>Return whether a construct is external.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_geometry_variable.html#cfdm.CFDMImplementation.nc_get_geometry_variable" title="cfdm.CFDMImplementation.nc_get_geometry_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_geometry_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name of the geometry container.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_global_attributes.html#cfdm.CFDMImplementation.nc_get_global_attributes" title="cfdm.CFDMImplementation.nc_get_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_global_attributes</span></code></a></p></td>
+<td><p>Return the netCDF global attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_group_attributes.html#cfdm.CFDMImplementation.nc_get_group_attributes" title="cfdm.CFDMImplementation.nc_get_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_group_attributes</span></code></a></p></td>
+<td><p>Returns the netCDF sub-group attributes for the field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_hdf5_chunksizes.html#cfdm.CFDMImplementation.nc_get_hdf5_chunksizes" title="cfdm.CFDMImplementation.nc_get_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Get the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_sample_dimension.html#cfdm.CFDMImplementation.nc_get_sample_dimension" title="cfdm.CFDMImplementation.nc_get_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_sample_dimension</span></code></a></p></td>
+<td><p>Return the name of the netCDF sample dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_variable.html#cfdm.CFDMImplementation.nc_get_variable" title="cfdm.CFDMImplementation.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_get_variable_groups.html#cfdm.CFDMImplementation.nc_get_variable_groups" title="cfdm.CFDMImplementation.nc_get_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF groups for the field construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_is_unlimited_axis.html#cfdm.CFDMImplementation.nc_is_unlimited_axis" title="cfdm.CFDMImplementation.nc_is_unlimited_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_is_unlimited_axis</span></code></a></p></td>
+<td><p>Whether a domain axis matches a netCDF unlimited dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_dataset_chunksizes.html#cfdm.CFDMImplementation.nc_set_dataset_chunksizes" title="cfdm.CFDMImplementation.nc_set_dataset_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_chunksizes</span></code></a></p></td>
+<td><p>Set the dataset chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_dataset_shards.html#cfdm.CFDMImplementation.nc_set_dataset_shards" title="cfdm.CFDMImplementation.nc_set_dataset_shards"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dataset_shards</span></code></a></p></td>
+<td><p>Set the Zarr dataset sharding strategy for the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_datum_variable.html#cfdm.CFDMImplementation.nc_set_datum_variable" title="cfdm.CFDMImplementation.nc_set_datum_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_datum_variable</span></code></a></p></td>
+<td><p>Set the netCDF grid mapping variable name for a datum.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_dimension.html#cfdm.CFDMImplementation.nc_set_dimension" title="cfdm.CFDMImplementation.nc_set_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></a></p></td>
+<td><p>Set the netCDF dimension name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_external.html#cfdm.CFDMImplementation.nc_set_external" title="cfdm.CFDMImplementation.nc_set_external"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_external</span></code></a></p></td>
+<td><p>Set the external status of a construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_geometry_variable.html#cfdm.CFDMImplementation.nc_set_geometry_variable" title="cfdm.CFDMImplementation.nc_set_geometry_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_geometry_variable</span></code></a></p></td>
+<td><p>Set the netCDF geometry container variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_global_attributes.html#cfdm.CFDMImplementation.nc_set_global_attributes" title="cfdm.CFDMImplementation.nc_set_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attributes</span></code></a></p></td>
+<td><p>Set netCDF global attributes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_group_attributes.html#cfdm.CFDMImplementation.nc_set_group_attributes" title="cfdm.CFDMImplementation.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></a></p></td>
+<td><p>Set netCDF group attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_hdf5_chunksizes.html#cfdm.CFDMImplementation.nc_set_hdf5_chunksizes" title="cfdm.CFDMImplementation.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
+<td><p>Set the HDF5 chunking strategy for the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_instance_dimension.html#cfdm.CFDMImplementation.nc_set_instance_dimension" title="cfdm.CFDMImplementation.nc_set_instance_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_instance_dimension</span></code></a></p></td>
+<td><p>Set the netCDF instance dimension name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_interpolation_subarea_dimension.html#cfdm.CFDMImplementation.nc_set_interpolation_subarea_dimension" title="cfdm.CFDMImplementation.nc_set_interpolation_subarea_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_interpolation_subarea_dimension</span></code></a></p></td>
+<td><p>Set the netCDF sample dimension name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_node_coordinate_variable.html#cfdm.CFDMImplementation.nc_set_node_coordinate_variable" title="cfdm.CFDMImplementation.nc_set_node_coordinate_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_node_coordinate_variable</span></code></a></p></td>
+<td><p>Set the netCDF node coordinate variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_sample_dimension.html#cfdm.CFDMImplementation.nc_set_sample_dimension" title="cfdm.CFDMImplementation.nc_set_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></a></p></td>
+<td><p>Set the netCDF sample dimension name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_subsampled_dimension.html#cfdm.CFDMImplementation.nc_set_subsampled_dimension" title="cfdm.CFDMImplementation.nc_set_subsampled_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_subsampled_dimension</span></code></a></p></td>
+<td><p>Set the netCDF subsampled dimension name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_unlimited_axis.html#cfdm.CFDMImplementation.nc_set_unlimited_axis" title="cfdm.CFDMImplementation.nc_set_unlimited_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited_axis</span></code></a></p></td>
+<td><p>Sets a domain axis to match a netCDF unlimited dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.nc_set_variable.html#cfdm.CFDMImplementation.nc_set_variable" title="cfdm.CFDMImplementation.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.parameters.html#cfdm.CFDMImplementation.parameters" title="cfdm.CFDMImplementation.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
+<td><p>Return all parameters from a component.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_auxiliary_coordinate.html#cfdm.CFDMImplementation.set_auxiliary_coordinate" title="cfdm.CFDMImplementation.set_auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_auxiliary_coordinate</span></code></a></p></td>
+<td><p>Insert a auxiliary coordinate object into a field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_bounds.html#cfdm.CFDMImplementation.set_bounds" title="cfdm.CFDMImplementation.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></p></td>
+<td><p>Set the bounds component of a construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_cell_connectivity.html#cfdm.CFDMImplementation.set_cell_connectivity" title="cfdm.CFDMImplementation.set_cell_connectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell_connectivity</span></code></a></p></td>
+<td><p>Insert a cell connectivity object into a field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_cell_measure.html#cfdm.CFDMImplementation.set_cell_measure" title="cfdm.CFDMImplementation.set_cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell_measure</span></code></a></p></td>
+<td><p>Insert a cell_measure object into a field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_cell_method.html#cfdm.CFDMImplementation.set_cell_method" title="cfdm.CFDMImplementation.set_cell_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell_method</span></code></a></p></td>
+<td><p>Insert a cell_method object into a field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_cell_method_axes.html#cfdm.CFDMImplementation.set_cell_method_axes" title="cfdm.CFDMImplementation.set_cell_method_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell_method_axes</span></code></a></p></td>
+<td><p>Set the axes of a cell method construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_cell_method_method.html#cfdm.CFDMImplementation.set_cell_method_method" title="cfdm.CFDMImplementation.set_cell_method_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell_method_method</span></code></a></p></td>
+<td><p>Set the method of a cell method construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_class.html#cfdm.CFDMImplementation.set_class" title="cfdm.CFDMImplementation.set_class"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_class</span></code></a></p></td>
+<td><p>Set a class of the implementation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_climatology.html#cfdm.CFDMImplementation.set_climatology" title="cfdm.CFDMImplementation.set_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_climatology</span></code></a></p></td>
+<td><p>Set the construct as a climatology.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_construct.html#cfdm.CFDMImplementation.set_construct" title="cfdm.CFDMImplementation.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a></p></td>
+<td><p>Insert a construct into a field or domain.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_coordinate_conversion.html#cfdm.CFDMImplementation.set_coordinate_conversion" title="cfdm.CFDMImplementation.set_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_conversion</span></code></a></p></td>
+<td><p>Set a coordinate conversion component.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_coordinate_reference.html#cfdm.CFDMImplementation.set_coordinate_reference" title="cfdm.CFDMImplementation.set_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference</span></code></a></p></td>
+<td><p>Insert a coordinate reference object into a field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_coordinate_reference_coordinate.html#cfdm.CFDMImplementation.set_coordinate_reference_coordinate" title="cfdm.CFDMImplementation.set_coordinate_reference_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference_coordinate</span></code></a></p></td>
+<td><p>Set a coordinate of a coordinate reference construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_coordinate_reference_coordinates.html#cfdm.CFDMImplementation.set_coordinate_reference_coordinates" title="cfdm.CFDMImplementation.set_coordinate_reference_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference_coordinates</span></code></a></p></td>
+<td><p>Set the coordinates of a coordinate reference construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_data.html#cfdm.CFDMImplementation.set_data" title="cfdm.CFDMImplementation.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<td><p>The the data instance of a construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_dataset_compliance.html#cfdm.CFDMImplementation.set_dataset_compliance" title="cfdm.CFDMImplementation.set_dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dataset_compliance</span></code></a></p></td>
+<td><p>Set the dataset compliance report on a field construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_datum.html#cfdm.CFDMImplementation.set_datum" title="cfdm.CFDMImplementation.set_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_datum</span></code></a></p></td>
+<td><p>Insert a datum object into a coordinate reference construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_dependent_tie_points.html#cfdm.CFDMImplementation.set_dependent_tie_points" title="cfdm.CFDMImplementation.set_dependent_tie_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dependent_tie_points</span></code></a></p></td>
+<td><p>Set dependent tie points and their dimensions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_dimension_coordinate.html#cfdm.CFDMImplementation.set_dimension_coordinate" title="cfdm.CFDMImplementation.set_dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dimension_coordinate</span></code></a></p></td>
+<td><p>Insert a dimension coordinate object into a field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_domain_ancillary.html#cfdm.CFDMImplementation.set_domain_ancillary" title="cfdm.CFDMImplementation.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a></p></td>
+<td><p>Insert a domain ancillary object into a field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_domain_axis.html#cfdm.CFDMImplementation.set_domain_axis" title="cfdm.CFDMImplementation.set_domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_axis</span></code></a></p></td>
+<td><p>Insert a domain_axis object into a field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_domain_topology.html#cfdm.CFDMImplementation.set_domain_topology" title="cfdm.CFDMImplementation.set_domain_topology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_topology</span></code></a></p></td>
+<td><p>Insert a domain topology object into a field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_field_ancillary.html#cfdm.CFDMImplementation.set_field_ancillary" title="cfdm.CFDMImplementation.set_field_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_field_ancillary</span></code></a></p></td>
+<td><p>Insert a field ancillary object into a field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_geometry.html#cfdm.CFDMImplementation.set_geometry" title="cfdm.CFDMImplementation.set_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code></a></p></td>
+<td><p>Set the geometry type of a coordinate construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_inherited_properties.html#cfdm.CFDMImplementation.set_inherited_properties" title="cfdm.CFDMImplementation.set_inherited_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_inherited_properties</span></code></a></p></td>
+<td><p>Set any inherited properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_interior_ring.html#cfdm.CFDMImplementation.set_interior_ring" title="cfdm.CFDMImplementation.set_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_interior_ring</span></code></a></p></td>
+<td><p>Insert an interior ring array into a coordinate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_interpolation.html#cfdm.CFDMImplementation.set_interpolation" title="cfdm.CFDMImplementation.set_interpolation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_interpolation</span></code></a></p></td>
+<td><p>Set an interpolation variable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_node_count_properties.html#cfdm.CFDMImplementation.set_node_count_properties" title="cfdm.CFDMImplementation.set_node_count_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_node_count_properties</span></code></a></p></td>
+<td><p>Set a node count properties variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_original_filenames.html#cfdm.CFDMImplementation.set_original_filenames" title="cfdm.CFDMImplementation.set_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_original_filenames</span></code></a></p></td>
+<td><p>Set the original files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_parameter.html#cfdm.CFDMImplementation.set_parameter" title="cfdm.CFDMImplementation.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></p></td>
+<td><p>Set a parameter on a component.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_part_node_count_properties.html#cfdm.CFDMImplementation.set_part_node_count_properties" title="cfdm.CFDMImplementation.set_part_node_count_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_part_node_count_properties</span></code></a></p></td>
+<td><p>Set a part node count properties variable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_properties.html#cfdm.CFDMImplementation.set_properties" title="cfdm.CFDMImplementation.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<td><p>Set construct properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.set_quantization.html#cfdm.CFDMImplementation.set_quantization" title="cfdm.CFDMImplementation.set_quantization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_quantization</span></code></a></p></td>
+<td><p>Set quantization metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.squeeze.html#cfdm.CFDMImplementation.squeeze" title="cfdm.CFDMImplementation.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<td><p>Remove size 1 axes from construct data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CFDMImplementation.unsqueeze.html#cfdm.CFDMImplementation.unsqueeze" title="cfdm.CFDMImplementation.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsqueeze</span></code></a></p></td>
+<td><p>Insert size 1 axes into the field data array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &#169;2026, NCAS | Page built on 2026-08-26.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

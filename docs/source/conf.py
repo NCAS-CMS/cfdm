@@ -137,6 +137,7 @@ intersphinx_mapping = {
     "cftime": ("https://unidata.github.io/cftime", None),
     "h5netcdf": ("https://h5netcdf.org", None),
     "zarr": ("https://zarr.readthedocs.io/en/stable/", None),
+    "h5py": ("https://docs.h5py.org/en/stable/", None),
 }
 
 # This extension is meant to help with the common pattern of having

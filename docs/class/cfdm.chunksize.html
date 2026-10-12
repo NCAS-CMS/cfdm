@@ -6,24 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cfdm.chunksize &#8212; Documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b3523f8e" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=541523b4" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=dae86f6c"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/documentation_options.js?v=2798502a"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../_static/copybutton.js?v=b578dfe4"></script>
-    <script src="../_static/toggleprompt.js?v=1b41717f"></script>
+    <script src="../_static/copybutton.js?v=a56c686a"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   <div class="document">
@@ -33,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.12.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.3.0</a></h1>
 
 
 
@@ -114,30 +116,30 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.chunksize<a class="headerlink" href="#cfdm-chunksize" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.chunksize">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">chunksize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.12.3.0/cfdm/__init__.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.chunksize" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">chunksize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/__init__.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.chunksize" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ConstantAccess</span></code></p>
-<p>Set the default chunksize used by <cite>dask</cite> arrays.</p>
+<p>Set the default chunksize used by <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> arrays.</p>
 <p>If called without any arguments then the existing chunksize is
 returned.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Setting the chunk size will also change the <cite>dask</cite>
+<p>Setting the chunk size will also change the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
 global configuration value <code class="docutils literal notranslate"><span class="pre">'array.chunk-size'</span></code>. If
-<cite>chunksize</cite> is used in context manager then the <cite>dask</cite>
+<a class="reference internal" href="#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a> is used in context manager then the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
 configuration value is only altered within that context.
-Setting the chunk size directly from the <cite>dask</cite>
+Setting the chunk size directly from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
 configuration API will affect subsequent data creation,
-but will <em>not</em> change the value of <cite>chunksize</cite>.</p>
+but will <em>not</em> change the value of <a class="reference internal" href="#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a>.</p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>arg: number or <cite>str</cite> or <cite>Constant</cite>, optional</dt><dd><p>The chunksize in bytes. Any size accepted by
-<cite>dask.utils.parse_bytes</cite> is accepted, for instance
+<dt>arg: number or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cfdm.Constant.html#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The chunksize in bytes. Any size accepted by
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.utils.parse_bytes</span></code> is accepted, for instance
 <code class="docutils literal notranslate"><span class="pre">100</span></code>, <code class="docutils literal notranslate"><span class="pre">'100'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1e6'</span></code>, <code class="docutils literal notranslate"><span class="pre">'100</span> <span class="pre">MB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'100M'</span></code>,
 <code class="docutils literal notranslate"><span class="pre">'5kB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'5.4</span> <span class="pre">kB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1kiB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1e6</span> <span class="pre">kB'</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">'MB'</span></code> are all valid sizes.</p>
-<p>Note that if <em>arg</em> is a <cite>float</cite>, or a string that implies
+<p>Note that if <em>arg</em> is a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, or a string that implies
 a non-integral amount of bytes, then the integer part
 (rounded down) will be used.</p>
 <dl class="simple">
@@ -153,7 +155,7 @@ equivalent to <code class="docutils literal notranslate"><span class="pre">2678<
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><cite>Constant</cite></dt><dd><p>The value prior to the change, or the current value if no
+<dt><a class="reference internal" href="cfdm.Constant.html#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a></dt><dd><p>The value prior to the change, or the current value if no
 new value was specified.</p>
 </dd>
 </dl>
@@ -175,7 +177,13 @@ new value was specified.</p>
 <span class="go">134217728</span>
 </pre></div>
 </div>
-<p>Return a <cite>Constant</cite> instance during class creation.</p>
+<p>Return a <a class="reference internal" href="cfdm.Constant.html#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a> instance during class creation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cfdm.chunksize.constants">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">constants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/functions.py#L1562-L1569"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.chunksize.constants" title="Link to this definition">¶</a></dt>
+<dd><p>See docstring to <code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstantAccess</span></code>.</p>
+</dd></dl>
+
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -197,11 +205,11 @@ new value was specified.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2025, NCAS | Page built on 2025-08-18.
+      &#169;2026, NCAS | Page built on 2026-08-26.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.4.7</a>
-      &amp; <a href="https://github.com/sphinx-doc/alabaster">Alabaster 0.7.14</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
     </div>
 
