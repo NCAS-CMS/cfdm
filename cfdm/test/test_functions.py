@@ -212,12 +212,14 @@ class FunctionsTest(unittest.TestCase):
         for component in components:
             self.assertTrue(any(s.startswith(component) for s in e))
             self.assertTrue(any(s.startswith(component) for s in ep))
+
         for component in [
             f"cfdm: {cfdm.__version__} {os.path.abspath(cfdm.__file__)}",
             f"Python: {platform.python_version()} {sys.executable}",
         ]:
             self.assertIn(component, e)
             self.assertNotIn(component, ep)  # paths shouldn't be present here
+
         for component in [
             f"cfdm: {cfdm.__version__}",
             f"Python: {platform.python_version()}",
@@ -235,6 +237,7 @@ class FunctionsTest(unittest.TestCase):
             dep_names = set()
             for entry in output:
                 dep_names.add(entry.split(":")[0])
+
             self.assertTrue(
                 cfdm_hard_dependencies.issubset(dep_names),
                 f"Missing dependencies: {cfdm_hard_dependencies - dep_names}",

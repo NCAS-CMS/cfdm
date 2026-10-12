@@ -100,58 +100,6 @@ class Domain(
         x.__str__() <==> str(x)
 
         """
-
-        def _print_item(self, cid, variable, axes):
-            """Private function called by __str__."""
-            x = [variable.identity(default=f"key%{cid}")]
-
-            if variable.has_data():
-                shape = [axis_names[axis] for axis in axes]
-                data = variable.get_data()
-                ndim = data.ndim
-                shape = shape[:ndim]
-                if len(shape) < ndim:
-                    shape.extend([str(n) for n in data.shape[len(shape) :]])
-                shape = str(tuple(shape)).replace("'", "")
-                shape = shape.replace(",)", ")")
-                x.append(shape)
-            elif (
-                variable.construct_type
-                in ("auxiliary_coordinate", "domain_ancillary")
-                and variable.has_bounds()
-                and variable.bounds.has_data()
-            ):
-                # Construct has no data but it does have bounds
-                shape = [axis_names[axis] for axis in axes]
-                shape.extend(
-                    [str(n) for n in variable.bounds.data.shape[len(axes) :]]
-                )
-                shape = str(tuple(shape)).replace("'", "")
-                shape = shape.replace(",)", ")")
-                x.append(shape)
-            elif (
-                hasattr(variable, "nc_get_external")
-                and variable.nc_get_external()
-            ):
-                ncvar = variable.nc_get_variable(None)
-                if ncvar is not None:
-                    x.append(f" (external variable: ncvar%{ncvar})")
-                else:
-                    x.append(" (external variable)")
-
-            if variable.has_data():
-                x.append(f" = {variable.data}")
-            elif (
-                variable.construct_type
-                in ("auxiliary_coordinate", "domain_ancillary")
-                and variable.has_bounds()
-                and variable.bounds.has_data()
-            ):
-                # Construct has no data but it does have bounds data
-                x.append(f" = {variable.bounds.data}")
-
-            return "".join(x)
-
         string = []
 
         axis_names = self._unique_domain_axis_identities()
@@ -160,13 +108,13 @@ class Domain(
 
         x = []
         dimension_coordinates = self.dimension_coordinates(todict=True)
-        for axis_cid, axis in sorted(self.domain_axes(todict=True).items()):
-            for cid, dim in dimension_coordinates.items():
-                if construct_data_axes[cid] == (axis_cid,):
-                    name = dim.identity(default=f"key%{0}")
+        for axis_key, axis in sorted(self.domain_axes(todict=True).items()):
+            for key, dim in dimension_coordinates.items():
+                if construct_data_axes[key] == (axis_key,):
+                    name = dim.identity(default=f"key%{key}")
                     y = f"{name}({axis.get_size()})"
-                    if y != axis_names[axis_cid]:
-                        y = f"{name}({axis_names[axis_cid]})"
+                    if y != axis_names[axis_key]:
+                        y = f"{name}({axis_names[axis_key]})"
 
                     if dim.has_data():
                         y += f" = {dim.get_data()}"
@@ -181,8 +129,8 @@ class Domain(
 
         # Auxiliary coordinates
         x = [
-            _print_item(self, cid, v, construct_data_axes[cid])
-            for cid, v in sorted(
+            self._print_construct(key, c, construct_data_axes[key], axis_names)
+            for key, c in sorted(
                 self.auxiliary_coordinates(todict=True).items()
             )
         ]
@@ -192,8 +140,8 @@ class Domain(
 
         # Cell measures
         x = [
-            _print_item(self, cid, v, construct_data_axes[cid])
-            for cid, v in sorted(self.cell_measures(todict=True).items())
+            self._print_construct(key, c, construct_data_axes[key], axis_names)
+            for key, c in sorted(self.cell_measures(todict=True).items())
         ]
         if x:
             x = "\n                : ".join(x)
@@ -214,10 +162,8 @@ class Domain(
 
         # Domain ancillary variables
         x = [
-            _print_item(self, cid, anc, construct_data_axes[cid])
-            for cid, anc in sorted(
-                self.domain_ancillaries(todict=True).items()
-            )
+            self._print_construct(key, c, construct_data_axes[key], axis_names)
+            for key, c in sorted(self.domain_ancillaries(todict=True).items())
         ]
         if x:
             x = "\n                : ".join(x)
@@ -225,8 +171,8 @@ class Domain(
 
         # Domain topologies
         x = [
-            _print_item(self, cid, v, construct_data_axes[cid])
-            for cid, v in sorted(self.domain_topologies(todict=True).items())
+            self._print_construct(key, c, construct_data_axes[key], axis_names)
+            for key, c in sorted(self.domain_topologies(todict=True).items())
         ]
         if x:
             x = "\n                : ".join(x)
@@ -234,8 +180,8 @@ class Domain(
 
         # Cell connectivities
         x = [
-            _print_item(self, cid, v, construct_data_axes[cid])
-            for cid, v in sorted(self.cell_connectivities(todict=True).items())
+            self._print_construct(key, c, construct_data_axes[key], axis_names)
+            for key, c in sorted(self.cell_connectivities(todict=True).items())
         ]
         if x:
             x = "\n                : ".join(x)

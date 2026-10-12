@@ -3448,7 +3448,7 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
 
         # Map netCDF variable names to internal identifiers
         #
-        # For example: {'dimensioncoordinate1': 'time'}
+        # For example: {'time': 'dimensioncoordinate1'}
         ncvar_to_key = {}
 
         data_axes = []
@@ -4480,6 +4480,7 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
             )
 
             for properties in cell_methods:
+                # Replace dimension names with domain axis keys
                 axes = properties.pop("axes")
                 for axis in axes:
                     # As per CF Conventions 7.3. Cell Methods, cell methods may
@@ -4500,8 +4501,22 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
                             no_var_case=["cell_methods", axis],
                         )
 
-                # Replace names with domain axis keys
                 axes = [name_to_axis.get(axis, axis) for axis in axes]
+
+                # Replace variable names with construct keys
+                for qualifier in ("where", "over"):
+                    d = properties.get(qualifier)
+                    if not isinstance(d, dict):
+                        continue
+
+                    # 'd' is a dictionary that contains a netCDF
+                    # coordinate variable name, which we have to
+                    # replace with a construct identifier (such as
+                    # 'auxiliarycoordinate1'). See
+                    # `_parse_cell_methods` for details.
+                    key = ncvar_to_key.get(d["ncvar"])
+                    if key is not None:
+                        properties[qualifier] = key
 
                 method = properties.pop("method", None)
 
@@ -6441,8 +6456,15 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
 
         **Examples**
 
-        >>> c = parse_cell_methods('t: minimum within years '
-        ...                        't: mean over ENSO years)')
+        >>> r._parse_cell_methods('area: mean')
+        [{'axes': ['area'], 'method': 'mean'}]
+
+        >>> r._parse_cell_methods('time: minimum')
+        [{'axes': ['time'], 'method': 'minimum'}]
+
+        >>> r.__parse_cell_methods('x: mean (interval: 1 day comment: ok) grid_latitude: maximum where sea')
+        [{'axes': ['x'], 'method': 'mean', 'comment': 'ok', 'interval': [<Data(): 1 day>]},
+         {'axes': ['grid_latitude'], 'method': 'maximum', 'where': 'sea'}]
 
         """
         import re
@@ -6460,6 +6482,8 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
         if not cell_methods_string:
             return out
 
+        g = self.read_vars
+
         # ------------------------------------------------------------
         # Split the cell_methods string into a list of strings ready
         # for parsing. For example:
@@ -6472,6 +6496,9 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
         # ------------------------------------------------------------
         cell_methods = re.sub(r"\((?=[^\s])", "( ", cell_methods_string)
         cell_methods = re.sub(r"(?<=[^\s])\)", " )", cell_methods).split()
+
+        # Whether or not a cell method is part of a climatology
+        climatology = False
 
         while cell_methods:
             cm = {}
@@ -6503,10 +6530,29 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
                 break
 
             # Climatological statistics, and statistics which apply to
-            # portions of cells
+            # portions of cells.
             while cell_methods[0] in ("within", "where", "over"):
-                attr = cell_methods.pop(0)
-                cm[attr] = cell_methods.pop(0)
+                qualifier = cell_methods.pop(0)
+                value = cell_methods.pop(0)
+
+                if qualifier == "within":
+                    climatology = True
+                elif qualifier == "where":
+                    climatology = False
+
+                if (
+                    not climatology
+                    and qualifier in ("where", "over")
+                    and value in g["coordinates"][field_ncvar]
+                ):
+                    # 'value' is a netCDF variable name, so store it
+                    # in a dictionary. Elsewhere, this dictionary will
+                    # get converted to a coordinate construct key (e.g.
+                    # {'ncvar':'area_types'} -> 'auxiliarycoordinate2').
+                    value = {"ncvar": value}
+
+                cm[qualifier] = value
+
                 if not cell_methods:
                     break
 

@@ -407,7 +407,7 @@ class read(ReadWrite):
     def _datasets(self):
         """Find all of the datasets.
 
-        The datset pathnames are defined by
+        The dataset pathnames are defined by
         ``self.kwargs['datasets']``.
 
         Each pathname has its tilde and environment variables

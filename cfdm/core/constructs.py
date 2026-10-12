@@ -528,6 +528,13 @@ class Constructs(abstract.Container):
 
                 ref.del_coordinate(key, None)
 
+            # Remove references to the removed construct in cell
+            # method constructs
+            for cm in self._construct_dict("cell_method").values():
+                for qualifier in ("where", "over"):
+                    if key == cm.get_qualifier(qualifier, None):
+                        cm.del_qualifier(qualifier, None)
+
         out = self._pop(key, None)
 
         if out is None:

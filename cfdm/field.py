@@ -169,9 +169,14 @@ class Field(
         # Cell methods
         cell_methods = self.cell_methods(todict=True)
         if cell_methods:
+            coordinates = None
+
             x = []
             for cm in cell_methods.values():
                 cm = cm.copy()
+
+                # Replace domain axis construct identifers with their
+                # identities
                 cm.set_axes(
                     tuple(
                         [
@@ -180,41 +185,41 @@ class Field(
                         ]
                     )
                 )
+
+                # Replace coordinate construct identifers with their
+                # identities
+                for qualifier in ("where", "over"):
+                    key = cm.get_qualifier(qualifier, None)
+                    if key is None:
+                        continue
+
+                    coordinates = self.coordinates(
+                        todict=True, cached=coordinates
+                    )
+                    if key in coordinates:
+                        value = self._print_construct(
+                            key,
+                            coordinates[key],
+                            self.constructs.data_axes()[key],
+                            axis_names,
+                            append_axes=False,
+                            append_data=False,
+                        )
+                        cm.set_qualifier(qualifier, value)
+
+                # Now add the cell method to the output list
                 x.append(str(cm))
 
             c = " ".join(x)
 
             string.append(f"Cell methods    : {c}")
 
-        def _print_item(self, key, variable, axes):
-            """Private function called by __str__."""
-            # Field ancillary
-            x = [variable.identity(default=key)]
-
-            if variable.has_data():
-                shape = [axis_names[axis] for axis in axes]
-                shape = str(tuple(shape)).replace("'", "")
-                shape = shape.replace(",)", ")")
-                x.append(shape)
-            elif (
-                hasattr(variable, "nc_get_external")
-                and variable.nc_get_external()
-            ):
-                ncvar = variable.nc_get_variable(None)
-                if ncvar is not None:
-                    x.append(f" (external variable: ncvar%{ncvar})")
-                else:
-                    x.append(" (external variable)")
-
-            if variable.has_data():
-                x.append(f" = {variable.get_data()}")
-
-            return "".join(x)
-
         # Field ancillary variables
         x = [
-            _print_item(self, key, anc, self.constructs.data_axes()[key])
-            for key, anc in sorted(self.field_ancillaries(todict=True).items())
+            self._print_construct(
+                key, c, self.constructs.data_axes()[key], axis_names
+            )
+            for key, c in sorted(self.field_ancillaries(todict=True).items())
         ]
         if x:
             field_ancils = "\n                : ".join(x)
@@ -1836,6 +1841,7 @@ class Field(
         axis_to_name = self._unique_domain_axis_identities()
 
         constructs_data_axes = self.constructs.data_axes()
+        construct_names = self._unique_construct_names()
 
         # Simple properties
         properties = self.properties()
@@ -1860,6 +1866,8 @@ class Field(
         # Cell methods
         cell_methods = self.cell_methods(todict=True)
         if cell_methods:
+            coordinates = None
+
             for cm in cell_methods.values():
                 cm = cm.copy()
                 cm.set_axes(
@@ -1870,6 +1878,23 @@ class Field(
                         ]
                     )
                 )
+                # Replace coordinate construct identifers
+                for qualifier in ("where", "over"):
+                    key = cm.get_qualifier(qualifier, None)
+                    if key is None:
+                        continue
+
+                    coordinates = self.coordinates(
+                        todict=True, cached=coordinates
+                    )
+                    if key in coordinates:
+                        construct_type = coordinates[key].construct_type
+                        construct_type = construct_type.replace(
+                            "_", " "
+                        ).capitalize()
+                        value = f"<{construct_type}: {construct_names[key]}>"
+                        cm.set_qualifier(qualifier, value)
+
                 string.append(cm.dump(display=False, _level=_level))
 
             string.append("")

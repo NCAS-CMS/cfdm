@@ -268,7 +268,7 @@ class CoordinateReference(
 
         if _title is None:
             string = [
-                f"{indent0}Coordinate Reference: {self.identity(default='')}"
+                f"{indent0}Coordinate reference: {self.identity(default='')}"
             ]
         else:
             string = [indent0 + _title]
@@ -284,10 +284,8 @@ class CoordinateReference(
                 coordinate_conversion.domain_ancillaries().items()
             ):
                 if key in _construct_names:
-                    construct_name = (
-                        "Domain Ancillary: "
-                        + _construct_names.get(key, f"key:{key}")
-                    )
+                    domain_ancillary = _construct_names.get(key, f"key:{key}")
+                    construct_name = f"<Domain ancillary: {domain_ancillary}>"
                 else:
                     construct_name = ""
 
@@ -313,9 +311,9 @@ class CoordinateReference(
                 coord_name = _construct_names.get(key, f"key:{key}")
                 coord = f"{coord_name}"
                 if key in _dimension_coordinates:
-                    coord = "Dimension Coordinate: " + coord
+                    coord = f"Coordinate: <Dimension coordinate: {coord}>"
                 elif key in _auxiliary_coordinates:
-                    coord = "Auxiliary Coordinate: " + coord
+                    coord = f"Coordinate: <Auxiliary coordinate: {coord}>"
 
                 string.append(f"{indent1}{coord}")
         else:

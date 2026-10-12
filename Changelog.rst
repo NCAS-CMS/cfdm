@@ -3,6 +3,9 @@ Version NEXTVERSION
 
 **2026-10-??**
 
+* Handle the more general CF cell methods convention for statistics
+  applying to portions of cells
+  (https://github.com/NCAS-CMS/cfdm/issues/369)
 * Fix providing a sequence of strings to the ``cfa`` keyword of
   `cfdm.write` (https://github.com/NCAS-CMS/cfdm/issues/435)
 

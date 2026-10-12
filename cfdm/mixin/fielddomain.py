@@ -429,6 +429,105 @@ class FieldDomain:
 
         return out
 
+    def _print_construct(
+        self,
+        key,
+        construct,
+        axes,
+        axis_names,
+        append_axes=True,
+        append_data=True,
+    ):
+        """Create one-line description of a construct.
+
+        Private function called by `__str__`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            key: `str`
+                The construct's identifier,
+                e.g. ``'cellmeasure1'``.
+
+            construct:
+                The construct.
+
+            axes: sequence of `str`
+                The construct's data axes, e.g. ``['domainaxis0']``
+
+            axes_names: `dict`
+                Names for all domain axis construct, as returned by
+                `_unique_domain_axis_identities`. E.g.
+                ``{'domainaxis0': 'latitude(5)','domainaxis1':
+                'longitude(8)'}``.
+
+            append_axes: `bool`, optional
+                If True (the default) then add the axes description to
+                the string (e.g. ``(8)``, ``(grid_latitude(10),
+                grid_longitude(9))``). If False then do not do this.
+
+            append_data: `bool`, optional
+                If True (the default) then add a data description to
+                the string (e.g. `` = [[0.76, ..., 0.32]] K``). If
+                False then do not do this.
+
+        :Returns:
+
+            `str
+
+        """
+        x = [construct.identity(default=f"key%{key}")]
+
+        if append_axes and construct.has_data():
+            shape = [axis_names[axis] for axis in axes]
+            data = construct.get_data()
+            ndim = data.ndim
+            shape = shape[:ndim]
+            if len(shape) < ndim:
+                shape.extend([str(n) for n in data.shape[len(shape) :]])
+            shape = str(tuple(shape)).replace("'", "")
+            shape = shape.replace(",)", ")")
+            x.append(shape)
+        elif (
+            append_axes
+            and construct.construct_type
+            in ("auxiliary_coordinate", "domain_ancillary")
+            and construct.has_bounds()
+            and construct.bounds.has_data()
+        ):
+            # Construct has no data but it does have bounds
+            shape = [axis_names[axis] for axis in axes]
+            shape.extend(
+                [str(n) for n in construct.bounds.data.shape[len(axes) :]]
+            )
+            shape = str(tuple(shape)).replace("'", "")
+            shape = shape.replace(",)", ")")
+            x.append(shape)
+        elif (
+            hasattr(construct, "nc_get_external")
+            and construct.nc_get_external()
+        ):
+            ncvar = construct.nc_get_variable(None)
+            if ncvar is not None:
+                x.append(f" (external variable: ncvar%{ncvar})")
+            else:
+                x.append(" (external variable)")
+
+        if append_data:
+            if construct.has_data():
+                x.append(f" = {construct.data}")
+            elif (
+                construct.construct_type
+                in ("auxiliary_coordinate", "domain_ancillary")
+                and construct.has_bounds()
+                and construct.bounds.has_data()
+            ):
+                # Construct has no data but it does have bounds data
+                x.append(f" = {construct.bounds.data}")
+
+        return "".join(x)
+
     def _unique_construct_names(self):
         """Return unique metadata construct names.
 

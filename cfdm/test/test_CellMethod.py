@@ -1,11 +1,33 @@
+import atexit
 import datetime
 import faulthandler
 import os
+import tempfile
 import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
+
+# Set up temporary files
+n_tmpfiles = 2
+tmpfiles = [
+    tempfile.mkstemp("_test_CellMethod.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+[tmpfile, tmpfile1] = tmpfiles
+
+
+def _remove_tmpfiles():
+    """Remove temporary files created during tests."""
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+
+atexit.register(_remove_tmpfiles)
 
 
 class CellMethodTest(unittest.TestCase):
@@ -128,6 +150,57 @@ class CellMethodTest(unittest.TestCase):
         self.assertEqual(f.del_qualifier("within"), "years")
         self.assertIsNone(f.del_qualifier("within", None))
         self.assertEqual(f.qualifiers(), {})
+
+    def test_CellMethod_coordinates(self):
+        """Test CellMethod with coordinate-valued keys."""
+        f = cfdm.example_field(0)
+
+        key_t, t = f.coordinate("time", item=True)
+        key_x, x = f.coordinate("longitude", item=True)
+        key_y, y = f.coordinate("latitude", item=True)
+
+        t.nc_set_variable("ncvar_t")
+        x.nc_set_variable("ncvar_x")
+        y.nc_set_variable("ncvar_y")
+
+        # Set up some test cell methods
+        c0 = f.cell_method()
+        c0.set_qualifier("where", key_x)
+        c0.set_qualifier("over", key_y)
+
+        # Climatological "within ... over ... over ... " should not
+        # get converted to construct keys, even when they have values
+        # that are netCDF coordinate variable names.
+        c1 = cfdm.CellMethod(
+            axes=("time",), method="mean", qualifiers={"within": "ncvar_t"}
+        )
+        c2 = cfdm.CellMethod(
+            axes=("time",), method="minimum", qualifiers={"over": "ncvar_x"}
+        )
+        c3 = cfdm.CellMethod(
+            axes=("time",), method="maximum", qualifiers={"over": "ncvar_y"}
+        )
+        c4 = c0
+
+        f.set_construct(c1)
+        f.set_construct(c2)
+        f.set_construct(c3)
+        f.set_construct(c4)
+
+        # Write them to disk and read them back in
+        cfdm.write(f, tmpfile)
+        g = cfdm.read(tmpfile)[0]
+
+        self.assertTrue(f.cell_methods().equals(g.cell_methods()))
+
+        # Test removing the coordinate construct
+        cms = g.cell_methods(todict=True)
+        cms = tuple(cms.items())
+        cm0 = cms[0][1]
+        cm4 = cms[4][1]
+        g.del_construct(key_y)
+        self.assertFalse(cm0.has_qualifier("over"))
+        self.assertFalse(cm4.has_qualifier("over"))
 
 
 if __name__ == "__main__":

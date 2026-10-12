@@ -48,21 +48,25 @@ class CellMethod(mixin.Container, core.CellMethod):
 
         Returns a CF-netCDF-like string of the cell method.
 
-        Note that if the intention is to use this string in a CF-netCDF
-        cell_methods attribute then, unless they are standard names, the
-        axes names will need to be modified to be netCDF dimension names.
+        .. note:: Domain axis and coordinate contructs referenced by
+                  the cell method are specified by their construct
+                  identifiers (e.g. domainaxis2,
+                  auxiliarycooridnate1). If the intention is to use
+                  this string as a CF-netCDF cell_methods attribute
+                  then these construct identifiers will need to be
+                  replaced with netCDF dimension or variable names.
 
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        string = [f"{axis}:" for axis in self.get_axes(())]
+        out = [f"{axis}:" for axis in self.get_axes(())]
 
-        string.append(self.get_method(""))
+        out.append(self.get_method(""))
 
-        for portion in ("within", "where", "over"):
-            q = self.get_qualifier(portion, None)
-            if q is not None:
-                string.extend((portion, q))
+        for qualifier in ("within", "where", "over"):
+            value = self.get_qualifier(qualifier, None)
+            if value is not None:
+                out.extend((qualifier, value))
 
         interval = self.get_qualifier("interval", ())
         comment = self.get_qualifier("comment", None)
@@ -78,12 +82,12 @@ class CellMethod(mixin.Container, core.CellMethod):
 
             x.append(")")
 
-            string.append("".join(x))
+            out.append("".join(x))
 
         elif comment is not None:
-            string.append(f"({comment})")
+            out.append(f"({comment})")
 
-        return " ".join(string)
+        return " ".join(out)
 
     def _identities_iter(self):
         """Return all possible identities.

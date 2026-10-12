@@ -4856,22 +4856,29 @@ class NetCDFWrite(NetCDFMetaBlockSize, NetCDFWriteUgrid, IOWrite):
 
             extra["ancillary_variables"] = ancillary_variables
 
-        # name can be a dimension of the variable, a scalar coordinate
-        # variable, a valid standard name, or the word 'area'
+        # ------------------------------------------------------------
+        # Cell methods
+        # ------------------------------------------------------------
         if field:
             cell_methods = self.implementation.get_cell_methods(f)
             if cell_methods:
+                coordinates = None
+
+                # Domain axis construct keys need converting to netCDF
+                # dimension names or netCDF scalar variable names.
                 axis_map = g["axis_to_ncdim"].copy()
                 axis_map.update(g["axis_to_ncscalar"])
 
                 cell_methods_strings = []
                 for cm in list(cell_methods.values()):
+                    org_cm = cm.copy()
+
                     if not self.cf_cell_method_qualifiers().issuperset(
                         self.implementation.get_cell_method_qualifiers(cm)
                     ):
                         raise ValueError(
                             f"Can't write {org_f!r}: Unknown cell method "
-                            f"property: {cm.properties()!r}"
+                            f"qualifier: {org_cm.qualifiers()!r}"
                         )
 
                     axes = [
@@ -4881,6 +4888,21 @@ class NetCDFWrite(NetCDFMetaBlockSize, NetCDFWriteUgrid, IOWrite):
                         )
                     ]
                     self.implementation.set_cell_method_axes(cm, axes)
+
+                    # Coordinate construct keys need converting to
+                    # netCDF variable names
+                    for qualifier in ("where", "over"):
+                        key = cm.get_qualifier(qualifier, None)
+                        if key is None:
+                            continue
+
+                        coordinates = f.coordinates(
+                            todict=True, cached=coordinates
+                        )
+                        if key in coordinates:
+                            value = g["key_to_ncvar"][key]
+                            cm.set_qualifier(qualifier, value)
+
                     cell_methods_strings.append(
                         self.implementation.get_cell_method_string(cm)
                     )

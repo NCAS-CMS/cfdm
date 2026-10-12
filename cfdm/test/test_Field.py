@@ -76,6 +76,10 @@ class FieldTest(unittest.TestCase):
             str(f)
             repr(f)
 
+        # Check that `str` does not fail for each example field
+        for f in cfdm.example_fields():
+            str(f)
+
     def test_Field__init__(self):
         """Test the Field constructor and source keyword."""
         cfdm.Field(source="qwerty")
