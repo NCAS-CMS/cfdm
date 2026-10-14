@@ -2958,7 +2958,7 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
 
                     if n_nodes >= n_nodes_in_this_cell:
                         instance_index += 1
-                        i += k + 1
+                        i = k + 1
                         break
 
             self._set_ragged_contiguous_parameters(

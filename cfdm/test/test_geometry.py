@@ -5,16 +5,19 @@ import os
 import tempfile
 import unittest
 
+import netCDF4
+import numpy as np
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
-n_tmpfiles = 1
+n_tmpfiles = 2
 tmpfiles = [
     tempfile.mkstemp("_test_geometry.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-(tempfile,) = tmpfiles
+(tempfile, tempfile2) = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -208,6 +211,65 @@ class GeometryTest(unittest.TestCase):
         cfdm.write(f, tempfile)
         nc.nc_set_variable("new_var_name")
         cfdm.write(f, tempfile)
+
+    def test_geometry_multipart_order(self):
+        """Test that multipart polygon nodes retain their geometry order."""
+        # Four polygons, each with two disjoint anticlockwise triangles.
+        x = np.array(
+            [a + 30 * i for i in range(4) for a in (20, 10, 0, 20, 10, 0)]
+        )
+        y = np.array([0, 15, 0, 20, 35, 20] * 4)
+
+        with netCDF4.Dataset(tempfile, "w") as nc:
+            nc.Conventions = "CF-" + VN
+            for name, size in (("node", 24), ("instance", 4), ("part", 8)):
+                nc.createDimension(name, size)
+
+            for name, nodes, standard_name, units, axis in (
+                ("x", x, "longitude", "degrees_east", "X"),
+                ("y", y, "latitude", "degrees_north", "Y"),
+            ):
+                v = nc.createVariable(name, "f8", ("node",))
+                v.setncatts(
+                    dict(standard_name=standard_name, units=units, axis=axis)
+                )
+                v[:] = nodes
+
+            v = nc.createVariable("node_count", "i4", ("instance",))
+            v[:] = [6] * 4
+            v = nc.createVariable("part_node_count", "i4", ("part",))
+            v[:] = [3] * 8
+            v = nc.createVariable("geometry_container", "i4", ())
+            v.setncatts(
+                dict(
+                    geometry_type="polygon",
+                    node_coordinates="x y",
+                    node_count="node_count",
+                    part_node_count="part_node_count",
+                )
+            )
+            v = nc.createVariable("value", "f8", ("instance",))
+            v.setncatts(dict(units="1", geometry="geometry_container"))
+            v[:] = [1, 2, 3, 4]
+
+        for backend in (None, "netCDF4", "h5py"):
+            with self.subTest(backend=backend):
+                (f,) = cfdm.read(tempfile, backend=backend)
+                for name, nodes in (("longitude", x), ("latitude", y)):
+                    np.testing.assert_array_equal(
+                        f.construct(name).bounds.array, nodes.reshape(4, 2, 3)
+                    )
+
+                cfdm.write(f, tempfile2)
+                with netCDF4.Dataset(tempfile2) as nc:
+                    geometry = nc.variables[nc.variables["value"].geometry]
+                    for axis, nodes in (("X", x), ("Y", y)):
+                        v = next(
+                            nc.variables[name]
+                            for name in geometry.node_coordinates.split()
+                            if nc.variables[name].axis == axis
+                        )
+                        np.testing.assert_array_equal(v[:], nodes)
 
     def test_geometry_interior_ring(self):
         """Test the management of interior ring geometries."""
