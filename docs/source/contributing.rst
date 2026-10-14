@@ -117,3 +117,4 @@ ideas, code, and documentation to the cfdm library:
 * Martin Juckes
 * Riley Brady  
 * Sadie Bartholomew  
+* Vera Rubin

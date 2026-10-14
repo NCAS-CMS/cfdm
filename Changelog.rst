@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2026-10-??**
 
+* Fix the ordering of multipart geometry nodes when reading and writing
+  datasets
 * Fix providing a sequence of strings to the ``cfa`` keyword of
   `cfdm.write` (https://github.com/NCAS-CMS/cfdm/issues/435)
 
