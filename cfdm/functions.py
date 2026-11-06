@@ -2671,6 +2671,8 @@ def parse_indices(shape, indices, keepdims=True, newaxis=False):
 def netcdf_flatten(*args, **kwargs):
     """Create a flattened version of a grouped CF dataset.
 
+    Deprecated at version 1.13.0.0.
+
     .. versionadded:: (cfdm) 1.11.2.0
 
     """
