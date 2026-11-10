@@ -20,7 +20,6 @@ Reading and writing
 
    cfdm.read 
    cfdm.write
-   cfdm.dataset_flatten
    cfdm.netcdf_indexer
 
 Mathematical operations
@@ -65,4 +64,5 @@ Miscellaneous
    cfdm.implementation
    cfdm.integer_dtype
    cfdm.log_level
+   cfdm.netcdf_flatten
    cfdm.unique_constructs
