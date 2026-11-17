@@ -166,6 +166,8 @@ from .examplefield import example_field, example_fields, example_domain
 
 from .abstract import Container
 
+from .xarray_utils import from_xarray, to_xarray
+
 # --------------------------------------------------------------------
 # Set up basic logging for the full project with a root logger
 # --------------------------------------------------------------------

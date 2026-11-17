@@ -1,8 +1,11 @@
 Version NEXTVERSION
 ----------------
 
-**2026-10-??**
+**2026-11-??**
 
+* New package-level functions to convert from and to `xarray`:
+  `cfdm.from_xarray` and `cfdm.to_xarray`
+  (https://github.com/NCAS-CMS/cfdm/issues/441)
 * Fix the ordering of multipart geometry nodes when reading and
   writing datasets (https://github.com/NCAS-CMS/cfdm/issues/439)
 * Fix providing a sequence of strings to the ``cfa`` keyword of
