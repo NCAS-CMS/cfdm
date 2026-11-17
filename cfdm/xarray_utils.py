@@ -1,11 +1,23 @@
 def from_xarray(ds, domain=False):
     """Convert an `xarray` dataset to CF field or domain constructs.
 
-    `cfdm.from_xarray` is entirely in-memory operation which does two
-    things: it maps the `xarray` dataset variables and attributes onto
-    CF constructs into as best it can; and it copies pointers to the
-    arrays describing the actual data, from the `xarray` dataset to
-    the fields or domains. No data is copied.
+    `cfdm.from_xarray` is an entirely in-memory operation which does
+    two things: it maps the `xarray` dataset variables and attributes
+    onto CF constructs; and it copies pointers to the arrays
+    describing the actual data, from the `xarray` dataset to the
+    fields or domains. No actual data is copied.
+
+    .. note:: **For best results, the xarray dataset will have been
+              created with none of xarray's own CF decoding applied to
+              it**, because xarray's partial CF decoding may interfere
+              adversely with the complete CF-compliant decoding that
+              is always applied by `cfdm.from_xarray`.
+
+              If an xarray dataset is created with a call to
+              `xarray.open_dataset` or `xarray.open_datatree` that
+              uses the ``decode_cf=False, mask_and_scale=False``
+              parameter settings, then `cfdm.from_xarray` will always
+              work as intended.
 
     .. versionadded:: NEXTVERSION
 
@@ -80,16 +92,16 @@ def from_xarray(ds, domain=False):
 def to_xarray(f, group=True):
     """Convert CF field or domain constructs to an `xarray` dataset.
 
+    `cfdm.to_xarray` is an entirely in-memory operation which does two
+    things: it maps the CF constructs onto `xarray` dataset variables
+    and attributes; and it copies pointers to the arrays describing
+    the actual data, from the fields or domains to the `xarray`
+    dataset. No actual data is copied.
+
     If the `cf_xarray` package (https://cf-xarray.readthedocs.io) is
     installed then the `cf_xarray` accessors that allow some
     interpretation of CF attributes will be present on the returned
     `xarray` objects.
-
-    `cfdm.to_xarray` is entirely in-memory operation which does two
-    things: it maps the CF constructs onto `xarray` dataset variables
-    and attributes as best it can; and it copies pointers to the
-    arrays describing the actual data, from the fields or domains to
-    the `xarray` dataset. No data is copied.
 
     .. versionadded:: NEXTVERSION
 
