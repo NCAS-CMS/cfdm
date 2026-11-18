@@ -124,7 +124,6 @@ class xarrayTest(unittest.TestCase):
 
         f = sorted(f, key=lambda x: x.get_property("standard_name"))
         g = sorted(g, key=lambda x: x.get_property("standard_name"))
-        [field1.equals(field0) for field0, field1 in zip(f, g)]
         self.assertEqual(
             [field1.equals(field0) for field0, field1 in zip(f, g)],
             [True] * len(f),

@@ -1,5 +1,6 @@
 """Utitlities for conversion to and from xarray."""
 
+
 def from_xarray(ds, domain=False):
     """Convert an `xarray` dataset to CF field or domain constructs.
 
@@ -14,16 +15,14 @@ def from_xarray(ds, domain=False):
     creates the same CF field or domain constructs that `cfdm.read`
     would if it were to read that netCDF dataset from disk.
 
-    .. note:: An xarray dataset is often created with a partial CF
-              decoding implemented by `xarray.decode_cf`
-              (e.g. ``coordinates`` attributes may be removed, or time
-              coordinates stored as numpy.datetime64 arrays), which
-              xarray applies by default when reading data from
-              disk. However, these decodings are automatically
-              reversed by `cfdm.from_xarray` so that it is able to
-              correctly apply the decoding algorithm defined by
-              `cfdm.read`.
-    
+    An `xarray` dataset is often created with a partial CF decoding
+    implemented by `xarray.decode_cf` (e.g. ``coordinates`` attributes
+    may be removed, or time coordinates stored as `numpy.datetime64`
+    arrays), which `xarray` applies by default when reading data from
+    disk. However, any such decodings are automatically reversed by
+    `cfdm.from_xarray` so that it is always able to correctly apply
+    the decoding algorithm defined by `cfdm.read`.
+
     .. versionadded:: NEXTVERSION
 
     .. seealso:: `cfdm.to_xarray`, `cfdm.read`
