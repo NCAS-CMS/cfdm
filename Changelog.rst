@@ -10,6 +10,7 @@ Version NEXTVERSION
   writing datasets (https://github.com/NCAS-CMS/cfdm/issues/439)
 * Fix providing a sequence of strings to the ``cfa`` keyword of
   `cfdm.write` (https://github.com/NCAS-CMS/cfdm/issues/435)
+* Changed dependency: ``xnetcdf>=0.3.0``
 
 ----
 

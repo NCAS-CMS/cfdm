@@ -1,3 +1,5 @@
+"""Utitlities for conversion to and from xarray."""
+
 def from_xarray(ds, domain=False):
     """Convert an `xarray` dataset to CF field or domain constructs.
 
@@ -7,26 +9,31 @@ def from_xarray(ds, domain=False):
     describing the actual data, from the `xarray` dataset to the
     fields or domains. No actual data is copied.
 
-    .. note:: **For best results, the xarray dataset will have been
-              created with none of xarray's own CF decoding applied to
-              it**, because xarray's partial CF decoding may interfere
-              adversely with the complete CF-compliant decoding that
-              is always applied by `cfdm.from_xarray`.
+    `cfdm.from_xarray` assumes that the `xarray` dataset is an
+    in-memory view of a (real or hypothetical) netCDF dataset, and
+    creates the same CF field or domain constructs that `cfdm.read`
+    would if it were to read that netCDF dataset from disk.
 
-              If an xarray dataset is created with a call to
-              `xarray.open_dataset` or `xarray.open_datatree` that
-              uses the ``decode_cf=False, mask_and_scale=False``
-              parameter settings, then `cfdm.from_xarray` will always
-              work as intended.
-
+    .. note:: An xarray dataset is often created with a partial CF
+              decoding implemented by `xarray.decode_cf`
+              (e.g. ``coordinates`` attributes may be removed, or time
+              coordinates stored as numpy.datetime64 arrays), which
+              xarray applies by default when reading data from
+              disk. However, these decodings are automatically
+              reversed by `cfdm.from_xarray` so that it is able to
+              correctly apply the decoding algorithm defined by
+              `cfdm.read`.
+    
     .. versionadded:: NEXTVERSION
 
-    .. seealso:: `cfdm.to_xarray`
+    .. seealso:: `cfdm.to_xarray`, `cfdm.read`
 
     :Parameters:
 
         ds: `xarray.Dataset` or `xarray.DataTree`
-            The `xarray` dataset to be converted.
+            The `xarray` dataset to be converted. The group structure
+            of an `xarray.DataTree` instance is preserved in the
+            returned field or domains.
 
         domain: `bool`, optional
             If False (the default) then return only field constructs
@@ -41,6 +48,10 @@ def from_xarray(ds, domain=False):
             The equivalent fields or domains.
 
     :Examples:
+
+    Create some field constructs, convert them to an `xarray` dataset,
+    convert the `xarray` dataset back to field constructs, and show
+    that (in this case) no information has been lost.
 
     >>> f = cfdm.example_fields(0, 7)
     >>> f
@@ -98,14 +109,36 @@ def to_xarray(f, group=True):
     the actual data, from the fields or domains to the `xarray`
     dataset. No actual data is copied.
 
-    If the `cf_xarray` package (https://cf-xarray.readthedocs.io) is
-    installed then the `cf_xarray` accessors that allow some
-    interpretation of CF attributes will be present on the returned
-    `xarray` objects.
+    In general, `cfdm.to_xarray` creates an `xarray` dataset that is
+    an in-memory view of the netCDF dataset that would have been
+    created by writing the CF field or domain constructs to disk with
+    `cfdm.write`.
+
+    .. tip:: **A very convenient way to access uncompressed CF data in
+             an xarray dataset**
+
+             CF field and domain constructs always provide
+             uncompressed representations, stored in lazy Dask arrays,
+             all of CF compression-by-convention features (discrete
+             sampling geometries, coordinate subsampling, gathering,
+             packing, etc.), and these are passed on unchanged to the
+             xarray dataset. Therefore, `cfdm.read` and
+             `cfdm.to_xarray` together provide a means to access
+             uncompressed data in an xarray dataset::
+
+             >>> f = cfdm.read(<datasets>)
+             >>> ds = cfdm.to_xarray(f)
+
+    .. tip:: **Integration with cf_xarray**
+
+             If the `cf_xarray` package
+             (https://cf-xarray.readthedocs.io) is installed then the
+             cf_xarray accessors that allow some interpretation of CF
+             attributes will be present on the xarray dataset.
 
     .. versionadded:: NEXTVERSION
 
-    .. seealso:: `cfdm.from_xarray`
+    .. seealso:: `cfdm.from_xarray`, `cfdm.write`
 
     :Parameters:
 
@@ -132,6 +165,10 @@ def to_xarray(f, group=True):
             True, then an `xarray.DataTree` is returned.
 
     :Examples:
+
+    Create some field constructs, convert them to an `xarray` dataset,
+    convert the `xarray` dataset back to field constructs, and show
+    that (in this case) no information has been lost.
 
     >>> f = cfdm.example_fields(0, 7)
     >>> f

@@ -10,4 +10,4 @@ distributed>=2025.5.1
 uritools>=4.0.3
 cfunits>=3.3.7
 scipy>=1.10.0
-xnetcdf>=0.1.0
+xnetcdf>=0.3.0

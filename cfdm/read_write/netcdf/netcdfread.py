@@ -1622,21 +1622,6 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
 
             return []
 
-        # Check for unsupported variable datatypes in xarray datasets
-        if nc.backend_api == "xarray":
-            for name, v in g["variables"].items():
-                if v.dtype == "datetime64":
-                    raise ValueError(
-                        "Can't read xarray."
-                        f"{nc.backend_accessor.__class__.__name__} object "
-                        f"that has variable {name} with datatype "
-                        "'datetime64'.\nRecreate the xarray dataset without "
-                        "time decoding (e.g. via xarray's decode_cf=False "
-                        "option when opening a dataset,\nwhich is in general "
-                        "highly recommended for the best results, alongside "
-                        "xarray's mask_and_scale=False)."
-                    )
-
         # ----------------------------------------------------------------
         # Put the file's global attributes into the global
         # 'global_attributes' dictionary
@@ -1705,6 +1690,20 @@ class NetCDFRead(IORead, FieldChecker, NetCDFCheckerMixin):
         # Now that all of the variables have been scanned, customise
         # the read parameters.
         self._customise_read_vars()
+
+        # Check for unsupported variable datatypes in xarray datasets
+        if nc.backend_api == "xarray":
+            for name, v in g["variables"].items():
+                if v.dtype == "datetime64":
+                    raise ValueError(
+                        "Can't read xarray."
+                        f"{nc.backend_accessor.__class__.__name__} object "
+                        f"that has variable {name} with datatype "
+                        "'datetime64'.\nRecreate the xarray dataset without "
+                        "time decoding (e.g. via xarray's decode_cf=False "
+                        "option when opening a dataset,\nwhich is in general "
+                        "highly recommended for the best results)."
+                    )
 
         # ------------------------------------------------------------
         # Aggregation variables (CF>=1.12)
