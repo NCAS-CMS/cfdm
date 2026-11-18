@@ -94,6 +94,14 @@ def from_xarray(ds, domain=False):
     [True, True]
 
     """
+    try:
+        import xarray  # noqa: F401
+    except ImportError as e:
+        raise ImportError(
+            f"{e}. Must install xarray "
+            "to allow the conversion to and from an xarray dataset"
+        )
+
     from . import read
 
     return read(ds, domain=domain)
@@ -211,6 +219,14 @@ def to_xarray(f, group=True):
     [True, True]
 
     """
+    try:
+        import xarray  # noqa: F401
+    except ImportError as e:
+        raise ImportError(
+            f"{e}. Must install xarray "
+            "to allow the conversion to and from an xarray dataset"
+        )
+
     from . import write
 
     return write(f, fmt="XARRAY", group=group)
