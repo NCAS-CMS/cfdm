@@ -39,6 +39,22 @@ def from_iris(ds):
 
     :Examples:
 
+    Create some field constructs, convert them to `iris` cubes, and
+    convert the `iris` cubes back to field constructs.
+
+    >>> f = cfdm.example_fields(0, 7)
+    >>> f
+    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>]
+    >>> c = cfdm.to_iris(f)
+    >>> c
+    [<iris 'Cube' of eastward_wind / (m s-1) (time: 3; air_pressure: 1; grid_latitude: 4; grid_longitude: 5)>,
+    <iris 'Cube' of specific_humidity / (1) (latitude: 5; longitude: 8)>]
+    >>> g = cfdm.from_iris(c)
+    >>> g
+    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>]
+
     """
     try:
         import ncdata  # noqa: F401
@@ -106,6 +122,22 @@ def to_iris(f):
             The equivalent `iris.cube.Cube` objects.
 
     :Examples:
+
+    Create some field constructs, convert them to `iris` cubes, and
+    convert the `iris` cubes back to field constructs.
+
+    >>> f = cfdm.example_fields(0, 7)
+    >>> f
+    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>]
+    >>> c = cfdm.to_iris(f)
+    >>> c
+    [<iris 'Cube' of eastward_wind / (m s-1) (time: 3; air_pressure: 1; grid_latitude: 4; grid_longitude: 5)>,
+    <iris 'Cube' of specific_humidity / (1) (latitude: 5; longitude: 8)>]
+    >>> g = cfdm.from_iris(c)
+    >>> g
+    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>]
 
     """
     try:
