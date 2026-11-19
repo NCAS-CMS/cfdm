@@ -1,4 +1,4 @@
-"""Utitlities for conversion to and from iris."""
+"""Utilities for conversion to and from iris."""
 
 
 def from_iris(ds):
@@ -12,10 +12,10 @@ def from_iris(ds):
 
     :Method:
 
-    The conversion is a three-step process: `iris` cubes to an
-    `ncdata.NcData` dataset-level container, to an `xarray` dataset,
-    to CF fields. ``f = cfdm.from_iris(c)`` is exactly equivalent
-    to::
+    The conversion is a three-step process: `iris` cubes are mapped to
+    an `ncdata.NcData` dataset-level container, which is mapped to an
+    `xarray` dataset, which is mapped to CF fields. ``f =
+    cfdm.from_iris(c)`` is exactly equivalent to::
 
     >>> from ncdata.iris import from_iris
     >>> from ncdata.xarray import to_xarray
@@ -97,9 +97,10 @@ def to_iris(f):
 
     :Method:
 
-    The conversion is a three-step process: CF fields to an `xarray`
-    dataset, to an `ncdata.NcData` dataset-level container, to `iris`
-    cubes. ``c = cfdm.to_iris(f)`` is exactly equivalent to::
+    The conversion is a three-step process: CF fields are mapped to an
+    `xarray` dataset, which is mapped to an `ncdata.NcData`
+    dataset-level container, which is mapped to `iris` cubes. ``c =
+    cfdm.to_iris(f)`` is exactly equivalent to::
 
     >>> from ncdata.xarray import from_xarray
     >>> from ncdata.iris import to_iris

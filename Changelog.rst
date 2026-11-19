@@ -5,7 +5,7 @@ Version NEXTVERSION
 
 * New package-level functions to convert from and to `iris`:
   `cfdm.from_iris` and `cfdm.to_iris`
-  (https://github.com/NCAS-CMS/cfdm/issues/???)
+  (https://github.com/NCAS-CMS/cfdm/issues/443)
 * New package-level functions to convert from and to `xarray`:
   `cfdm.from_xarray` and `cfdm.to_xarray`
   (https://github.com/NCAS-CMS/cfdm/issues/441)
