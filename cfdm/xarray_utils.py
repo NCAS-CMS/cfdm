@@ -1,4 +1,4 @@
-"""Utitlities for conversion to and from xarray."""
+"""Utilities for conversion to and from xarray."""
 
 
 def from_xarray(ds, domain=False):
@@ -10,18 +10,10 @@ def from_xarray(ds, domain=False):
     describing the actual data, from the `xarray` dataset to the
     fields or domains. No actual data is copied.
 
-    `cfdm.from_xarray` assumes that the `xarray` dataset is an
-    in-memory view of a (real or hypothetical) netCDF dataset, and
+    `cfdm.from_xarray` treats the `xarray` dataset is if it were an
+    in-memory view of a netCDF dataset (which it could well be), and
     creates the same CF field or domain constructs that `cfdm.read`
-    would if it were to read that netCDF dataset from disk.
-
-    An `xarray` dataset is often created with a partial CF decoding
-    implemented by `xarray.decode_cf` (e.g. ``coordinates`` attributes
-    may be removed, or time coordinates stored as `numpy.datetime64`
-    arrays), which `xarray` applies by default when reading data from
-    disk. However, any such decodings are automatically reversed by
-    `cfdm.from_xarray` so that it is always able to correctly apply
-    the decoding algorithm defined by `cfdm.read`.
+    would if it were to read that netCDF dataset.
 
     .. versionadded:: NEXTVERSION
 
@@ -124,14 +116,14 @@ def to_xarray(f, group=True):
     .. tip:: **A very convenient way to access uncompressed CF data in
              an xarray dataset**
 
-             CF field and domain constructs always provide
-             uncompressed representations, stored in lazy Dask arrays,
-             all of CF compression-by-convention features (discrete
+             When `cfdm.read` reads fields and domains from datasets
+             with CF compression-by-convention features (discrete
              sampling geometries, coordinate subsampling, gathering,
-             packing, etc.), and these are passed on unchanged to the
-             xarray dataset. Therefore, `cfdm.read` and
-             `cfdm.to_xarray` together provide a means to access
-             uncompressed data in an xarray dataset::
+             etc.), these are represented as uncompressed views of the
+             data stored in lazy Dask arrays. Because these Dask
+             arrays are passed on unchanged to an xarray dataset,
+             `cfdm.read` and `cfdm.to_xarray` together provide a means
+             to easily access uncompressed CF data in xarray::
 
              >>> f = cfdm.read(<datasets>)
              >>> ds = cfdm.to_xarray(f)
@@ -140,8 +132,8 @@ def to_xarray(f, group=True):
 
              If the `cf_xarray` package
              (https://cf-xarray.readthedocs.io) is installed then the
-             cf_xarray accessors that allow some interpretation of CF
-             attributes will be present on the xarray dataset.
+             `cf_xarray` accessors that allow some interpretation of
+             CF attributes will be present on the xarray dataset.
 
     .. versionadded:: NEXTVERSION
 
