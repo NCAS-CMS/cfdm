@@ -1,7 +1,7 @@
 """Utilities for conversion to and from iris."""
 
 
-def from_iris(ds):
+def from_iris(c):
     """Convert `iris` cubes to CF field constructs.
 
     `cfdm.from_iris` is an in-memory operation which does two things:
@@ -13,13 +13,13 @@ def from_iris(ds):
 
     The conversion is a three-step process: `iris` cubes are mapped to
     an `ncdata.NcData` dataset-level container, which is mapped to an
-    `xarray` dataset, which is mapped to CF fields. ``f =
+    `xarray` dataset, which is mapped to CF fields. I.e. ``f =
     cfdm.from_iris(c)`` is exactly equivalent to::
 
-    >>> from ncdata.iris import from_iris
-    >>> from ncdata.xarray import to_xarray
-    >>> n = from_iris(c)
-    >>> ds = to_xarray(n)
+    >>> from ncdata.iris import from_iris as ncdata_from_iris
+    >>> from ncdata.xarray import to_xarray as ncdata_to_xarray
+    >>> n = ncdata_from_iris(c)
+    >>> ds = ncdata_to_xarray(n)
     >>> f = cfdm.from_xarray(ds)
 
     .. versionadded:: NEXTVERSION
@@ -28,7 +28,7 @@ def from_iris(ds):
 
     :Parameters:
 
-        ds: (sequence of) `iris.cube.Cube`
+        c: (sequence of) `iris.cube.Cube`
             The `iris.cube.Cube` objects to be converted.
 
     :Returns:
@@ -81,7 +81,7 @@ def from_iris(ds):
 
     from cfdm import from_xarray
 
-    n = from_iris(ds)
+    n = from_iris(c)
     ds = to_xarray(n)
     return from_xarray(ds)
 
@@ -98,14 +98,14 @@ def to_iris(f):
 
     The conversion is a three-step process: CF fields are mapped to an
     `xarray` dataset, which is mapped to an `ncdata.NcData`
-    dataset-level container, which is mapped to `iris` cubes. ``c =
-    cfdm.to_iris(f)`` is exactly equivalent to::
+    dataset-level container, which is mapped to `iris` cubes. I.e. ``c
+    = cfdm.to_iris(f)`` is exactly equivalent to::
 
-    >>> from ncdata.xarray import from_xarray
-    >>> from ncdata.iris import to_iris
+    >>> from ncdata.xarray import from_xarray as ncdata_from_xarray
+    >>> from ncdata.iris import to_iris as ncdata_to_iris
     >>> ds = cfdm.to_xarray(f)
-    >>> n = from_xarray(ds)
-    >>> c = to_iris(n)
+    >>> n = ncdata_from_xarray(ds)
+    >>> c = ncdata_to_iris(n)
 
     .. versionadded:: NEXTVERSION
 
