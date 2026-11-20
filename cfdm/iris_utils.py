@@ -4,11 +4,10 @@
 def from_iris(ds):
     """Convert `iris` cubes to CF field constructs.
 
-    `cfdm.from_iris` is an entirely in-memory operation which does two
-    things: it maps the `iris` cubes onto CF constructs; and it copies
-    pointers to the arrays describing the actual data, from the
-    `iris` dataset to the fields or domains. No actual data is
-    copied.
+    `cfdm.from_iris` is an in-memory operation which does two things:
+    it maps the `iris` cubes onto CF constructs; and it copies
+    pointers to the arrays describing the actual data, from the `iris`
+    dataset to the fields or domains. No actual data is copied.
 
     :Method:
 
@@ -90,10 +89,10 @@ def from_iris(ds):
 def to_iris(f):
     """Convert CF field constructs to `iris` cubes.
 
-    `cfdm.to_iris` is an entirely in-memory operation which does two
-    things: it maps the CF constructs onto `iris` cubes; and it copies
-    pointers to the arrays describing the actual data, from the fields
-    to the `iris` cubes. No actual data is copied.
+    `cfdm.to_iris` is an in-memory operation which does two things: it
+    maps the CF constructs onto `iris` cubes; and it copies pointers
+    to the arrays describing the actual data, from the fields to the
+    `iris` cubes. No actual data is copied.
 
     :Method:
 

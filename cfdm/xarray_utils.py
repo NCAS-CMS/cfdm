@@ -4,9 +4,9 @@
 def from_xarray(ds, domain=False):
     """Convert an `xarray` dataset to CF field or domain constructs.
 
-    In general (see the note below) `cfdm.from_xarray` is an entirely
-    in-memory operation which does two things: it maps the `xarray`
-    dataset variables and attributes onto CF constructs; and it copies
+    In general (see the note below) `cfdm.from_xarray` is an in-memory
+    operation which does two things: it maps the `xarray` dataset
+    variables and attributes onto CF constructs; and it copies
     pointers to the arrays describing the actual data, from the
     `xarray` dataset to the fields or domains. No actual data is
     copied.
@@ -119,10 +119,10 @@ def from_xarray(ds, domain=False):
 def to_xarray(f, group=True):
     """Convert CF field or domain constructs to an `xarray` dataset.
 
-    `cfdm.to_xarray` is an entirely in-memory operation which does two
-    things: it maps the CF constructs onto `xarray` dataset variables
-    and attributes; and it copies pointers to the arrays describing
-    the actual data, from the fields or domains to the `xarray`
+    `cfdm.to_xarray` is an in-memory operation which does two things:
+    it maps the CF constructs onto `xarray` dataset variables and
+    attributes; and it copies pointers to the arrays describing the
+    actual data, from the fields or domains to the `xarray`
     dataset. No actual data is copied.
 
     In general, `cfdm.to_xarray` creates an `xarray` dataset that is
