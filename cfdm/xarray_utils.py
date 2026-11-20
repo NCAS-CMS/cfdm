@@ -4,16 +4,33 @@
 def from_xarray(ds, domain=False):
     """Convert an `xarray` dataset to CF field or domain constructs.
 
-    `cfdm.from_xarray` is an entirely in-memory operation which does
-    two things: it maps the `xarray` dataset variables and attributes
-    onto CF constructs; and it copies pointers to the arrays
-    describing the actual data, from the `xarray` dataset to the
-    fields or domains. No actual data is copied.
+    In general (see the note below) `cfdm.from_xarray` is an entirely
+    in-memory operation which does two things: it maps the `xarray`
+    dataset variables and attributes onto CF constructs; and it copies
+    pointers to the arrays describing the actual data, from the
+    `xarray` dataset to the fields or domains. No actual data is
+    copied.
 
     `cfdm.from_xarray` treats the `xarray` dataset is if it were an
-    in-memory view of a netCDF dataset (which it could well be), and
-    creates the same CF field or domain constructs that `cfdm.read`
-    would if it were to read that netCDF dataset.
+    in-memory view of a netCDF dataset (even if it wasn't created as
+    such), and creates the same CF field or domain constructs that
+    `cfdm.read` would if it were to read that netCDF dataset.
+
+    .. note:: When the `xarray` dataset was opened from disk, for
+              optimal performance and minimal memory usage it should
+              have been opened with ``decode_cf=False``, which is
+              **not** the default in `xarray.open_dataset` or
+              `xarray.open_datatree`. If the `xarray` dataset was
+              opened from disk using the default of ``decode_cf=True``
+              then the automatic reversal of xarray's CF decoding on
+              selected variables (i.e. those with explicit
+              ``_FillValue`` or ``missing_value`` attributes; or those
+              decoded into non-numeric time or timedelta objects) will
+              eagerly load those data arrays into memory. When the
+              `xarray` dataset was created with `cfdm.to_xarray` this
+              is never a problem,
+              i.e. ``cfdm.from_xarray(cfdm.to_xarray(f))`` will never
+              load those data arrays into memory.
 
     .. versionadded:: NEXTVERSION
 
