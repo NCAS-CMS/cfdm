@@ -2628,39 +2628,14 @@ class FieldDomain:
     def to_xarray(self, group=True):
         """Convert the {{class}} to an `xarray` dataset.
 
-        {{cf_xarray description}}
-
-        Note that ``ds = f.to_xarray()`` is identical to ``ds =
-        {{package}}.write(f, fmt='XARRAY')``; and multiple
-        {{class_lower}}s may be written to the same `xarray` dataset
-        with `{{package}}.write` (e.g. ``ds = {{package}}.write([f,
-        g], fmt='XARRAY')``). Also, `{{package}}.write` allows a
-        mixture of fields and domains to be written to the
-        same `xarray` dataset.
-
-        An `xarray` dataset can be converted to one or more fields
-        with ``f = {{package}}.read(ds)``, or domains with ``f =
-        {{package}}.read(ds, domain=True)``.
-
-        .. versionadded:: (cfdm) 1.13.2.0
-
-        .. seealso:: `cfdm.write`, `cfdm.read`
-
-        :Parameter:
-
-            group: `bool`, optional
-                If False then create a "flat" dataset, i.e. one with
-                only the root group, regardless of any group structure
-                specified by the netCDF interfaces of the
-                {{class_lower}} and its components. If True (the
-                default) then any sub-groups will be created and
-                populated.
-
-        :Returns:
-
-            {{Returns xarray}}
+        Deprecated at version NEXTVERSION and is no longer
+        available. Use `cfdm.to_xarray` instead.
 
         """
-        from cfdm.read_write import write
-
-        return write(self, fmt="XARRAY", group=group)
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "to_xarray",
+            version="NEXTVERSION",
+            removed_at="1.15.0.0",
+            message="Use the 'cfdm.to_xarray' function instead.",
+        )  # pragma: no cover

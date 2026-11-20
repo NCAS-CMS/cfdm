@@ -22,6 +22,19 @@ Reading and writing
    cfdm.write
    cfdm.netcdf_indexer
 
+Conversion from and to xarray and iris
+--------------------------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: function/
+   :template: function.rst
+
+   cfdm.from_xarray
+   cfdm.to_xarray
+   cfdm.from_iris
+   cfdm.to_iris
+
 Mathematical operations
 -----------------------
 
