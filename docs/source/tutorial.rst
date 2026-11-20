@@ -170,11 +170,11 @@ datasets <Sample-datasets>`), which contains two field constructs:
   <https://artefacts.ceda.ac.uk/badc_datadocs/um/umdp_F3-UMDPF3.pdf>`_
   and `fields file
   <https://artefacts.ceda.ac.uk/badc_datadocs/um/umdp_F3-UMDPF3.pdf>`_
-  datasets.
+  datasets, whose contents are mapped into field constructs.
 
 ..
 
-* In memory `xarray` datasets (see `cfdm.from_xarray`).
+* In memory `xarray` datasets (see also `cfdm.from_xarray`).
 
 ..
 

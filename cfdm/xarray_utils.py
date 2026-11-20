@@ -28,9 +28,9 @@ def from_xarray(ds, domain=False):
               decoded into non-numeric time or timedelta objects) will
               eagerly load those data arrays into memory. When the
               `xarray` dataset was created with `cfdm.to_xarray` this
-              is never a problem,
-              i.e. ``cfdm.from_xarray(cfdm.to_xarray(f))`` will never
-              load those data arrays into memory.
+              is never a problem, i.e.
+              ``cfdm.from_xarray(cfdm.to_xarray(f))`` will never load
+              those data arrays into memory.
 
     .. versionadded:: NEXTVERSION
 

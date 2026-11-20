@@ -2636,6 +2636,6 @@ class FieldDomain:
             self,
             "to_xarray",
             version="NEXTVERSION",
-            removed_at="4.0.0",
+            removed_at="1.15.0.0",
             message="Use the 'cfdm.to_xarray' function instead.",
         )  # pragma: no cover
