@@ -15,7 +15,6 @@ Version NEXTVERSION
   `cfdm.write` (https://github.com/NCAS-CMS/cfdm/issues/435)
 * Changed dependency: ``xnetcdf>=0.3.0``
 * New optional dependency: ``ncdata>=0.4.0``
-* New optional dependency: ``iris>=3.16.2``
 
 ----
 
