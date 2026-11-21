@@ -200,7 +200,7 @@ The cfdm package requires:
 
 * `h5py <https://pypi.org/project/h5py>`_, version 3.12.1 or newer.
 
-* `xnetcdf <https://pypi.org/project/xnetcdf>`_, version 0.1.0 or newer.
+* `xnetcdf <https://pypi.org/project/xnetcdf>`_, version 0.3.0 or newer.
 
 * `fsspec <https://pypi.org/project/fsspec>`_, version 2026.2.0 or
   newer.
