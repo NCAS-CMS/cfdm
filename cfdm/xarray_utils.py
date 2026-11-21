@@ -135,12 +135,13 @@ def to_xarray(f, group=True):
 
              When `cfdm.read` reads fields and domains from datasets
              with CF compression-by-convention features (discrete
-             sampling geometries, coordinate subsampling, gathering,
-             etc.), these are represented as uncompressed views of the
-             data stored in lazy Dask arrays. Because these Dask
-             arrays are passed on unchanged to an xarray dataset,
-             `cfdm.read` and `cfdm.to_xarray` together provide a means
-             to easily access uncompressed CF data in xarray::
+             sampling geometries, cell geometries, coordinate
+             subsampling, gathering, etc.), these are represented as
+             uncompressed views of the data stored in lazy Dask
+             arrays. Because these Dask arrays are passed on unchanged
+             to an xarray dataset, `cfdm.read` and `cfdm.to_xarray`
+             together provide a means to easily access uncompressed CF
+             data in xarray::
 
              >>> f = cfdm.read(<datasets>)
              >>> ds = cfdm.to_xarray(f)
