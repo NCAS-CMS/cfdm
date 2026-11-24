@@ -28,7 +28,7 @@ def from_xarray(ds, domain=False):
                  applies to variables with explicit ``_FillValue`` or
                  ``missing_value`` attributes, and to variables
                  decoded into non-numeric time or timedelta objects.
-                 
+
                  This is never an issue for datasets created with
                  `cfdm.to_xarray`:
                  ``cfdm.from_xarray(cfdm.to_xarray(f))`` will never
