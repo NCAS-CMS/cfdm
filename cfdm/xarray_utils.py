@@ -11,26 +11,27 @@ def from_xarray(ds, domain=False):
     `xarray` dataset to the fields or domains. No actual data is
     copied.
 
-    `cfdm.from_xarray` treats the `xarray` dataset is if it were an
+    `cfdm.from_xarray` treats the `xarray` dataset as if it were an
     in-memory view of a netCDF dataset (even if it wasn't created as
     such), and creates the same CF field or domain constructs that
     `cfdm.read` would if it were to read that netCDF dataset.
 
-    .. note:: When the `xarray` dataset was opened from disk, for
-              optimal performance and minimal memory usage it should
-              have been opened with ``decode_cf=False``, which is
-              **not** the default in `xarray.open_dataset` or
-              `xarray.open_datatree`. If the `xarray` dataset was
-              opened from disk using the default of ``decode_cf=True``
-              then the automatic reversal of xarray's CF decoding on
-              selected variables (i.e. those with explicit
-              ``_FillValue`` or ``missing_value`` attributes; or those
-              decoded into non-numeric time or timedelta objects) will
-              eagerly load those data arrays into memory. When the
-              `xarray` dataset was created with `cfdm.to_xarray` this
-              is never a problem,
-              i.e. ``cfdm.from_xarray(cfdm.to_xarray(f))`` will never
-              load those data arrays into memory.
+    .. warning:: For optimal performance and minimal memory usage,
+       open `xarray` datasets from disk with ``decode_cf=False``.
+       This is **not** the default for `xarray.open_dataset` or
+       `xarray.open_datatree`.
+
+       If the dataset is opened with the default ``decode_cf=True``,
+       the automatic reversal of xarray's CF decoding for selected
+       variables will eagerly load their data arrays into memory.
+       This applies to variables with explicit ``_FillValue`` or
+       ``missing_value`` attributes, and to variables decoded into
+       non-numeric time or timedelta objects.
+
+       This is never an issue for datasets created with
+       `cfdm.to_xarray`: ``cfdm.from_xarray(cfdm.to_xarray(f))``
+       will never load those data arrays into memory.
+
 
     .. versionadded:: NEXTVERSION
 
@@ -140,7 +141,7 @@ def to_xarray(f, group=True):
              uncompressed views of the data stored in lazy Dask
              arrays. Because these Dask arrays are passed on unchanged
              to an xarray dataset, `cfdm.read` and `cfdm.to_xarray`
-             together provide a means to easily access uncompressed CF
+             together provide a means to directly access uncompressed CF
              data in xarray::
 
              >>> f = cfdm.read(<datasets>)
