@@ -67,7 +67,8 @@ def from_iris(c):
         from ncdata.iris import from_iris
     except ImportError as e:
         raise ImportError(
-            f"{e}. Must install iris "
+            f"{e}. Must install scitools-iris "
+            "(https://pypi.org/project/scitools-iris/) "
             "to allow conversions to and from iris cubes"
         )
 
@@ -152,7 +153,8 @@ def to_iris(f):
         from ncdata.iris import to_iris
     except ImportError as e:
         raise ImportError(
-            f"{e}. Must install iris "
+            f"{e}. Must install scitools-iris "
+            "(https://pypi.org/project/scitools-iris/) "
             "to allow conversions to and from iris cubes"
         )
 

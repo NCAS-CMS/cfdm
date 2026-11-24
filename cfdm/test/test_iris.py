@@ -15,7 +15,7 @@ except ImportError:
 import cfdm
 
 
-class xarrayTest(unittest.TestCase):
+class irisTest(unittest.TestCase):
     """Unit test for converting to and from iris."""
 
     def setUp(self):
