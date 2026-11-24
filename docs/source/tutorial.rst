@@ -160,7 +160,22 @@ datasets <Sample-datasets>`), which contains two field constructs:
   <https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html>`_
   formats.
 
+..
+
 * Datasets in `Kerchunk <https://fsspec.github.io/kerchunk>`_ format.
+
+..
+
+.. _metoffice-pp-fields: https://artefacts.ceda.ac.uk/badc_datadocs/um/umdp_F3-UMDPF3.pdf
+
+* UK Met Office `PP <metoffice-pp-fields>`_ and
+  `fields file <metoffice-pp-fields>`_ datasets.
+
+..
+
+* In-memory `xarray` datasets (see `cfdm.from_xarray`).
+
+..
 
 Descriptive properties are always read into memory, but `lazy loading
 <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed for all
