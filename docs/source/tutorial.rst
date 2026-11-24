@@ -166,15 +166,14 @@ datasets <Sample-datasets>`), which contains two field constructs:
 
 ..
 
-* UK Met Office `PP
-  <https://artefacts.ceda.ac.uk/badc_datadocs/um/umdp_F3-UMDPF3.pdf>`_
-  and `fields file
-  <https://artefacts.ceda.ac.uk/badc_datadocs/um/umdp_F3-UMDPF3.pdf>`_
-  datasets, whose contents are mapped into field constructs.
+.. _metoffice-pp-fields: https://artefacts.ceda.ac.uk/badc_datadocs/um/umdp_F3-UMDPF3.pdf
+
+* UK Met Office `PP <metoffice-pp-fields>`_ and
+  `fields file <metoffice-pp-fields>`_ datasets.
 
 ..
 
-* In memory `xarray` datasets (see also `cfdm.from_xarray`).
+* In-memory `xarray` datasets (see `cfdm.from_xarray`).
 
 ..
 

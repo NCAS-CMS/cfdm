@@ -43,6 +43,9 @@ class xarrayTest(unittest.TestCase):
 
     def test_Field_to_xarray_from_disk(self):
         """Test Field.to_xarray on datasets read from disk."""
+        # Note: Can't test subsampled_1.nc because this file can't
+        #       (yet) be written to disk, and so can't be written to
+        #       an in-memory xarray object.
         for dataset in (
             "example_field_0.nc",
             "example_field_0.zarr2",
