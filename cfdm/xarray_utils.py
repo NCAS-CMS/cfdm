@@ -17,21 +17,22 @@ def from_xarray(ds, domain=False):
     `cfdm.read` would if it were to read that netCDF dataset.
 
     .. warning:: For optimal performance and minimal memory usage,
-       open `xarray` datasets from disk with ``decode_cf=False``.
-       This is **not** the default for `xarray.open_dataset` or
-       `xarray.open_datatree`.
+                 open `xarray` datasets from disk with
+                 ``decode_cf=False``. This is **not** the default for
+                 `xarray.open_dataset` or `xarray.open_datatree`.
 
-       If the dataset is opened with the default ``decode_cf=True``,
-       the automatic reversal of xarray's CF decoding for selected
-       variables will eagerly load their data arrays into memory.
-       This applies to variables with explicit ``_FillValue`` or
-       ``missing_value`` attributes, and to variables decoded into
-       non-numeric time or timedelta objects.
-
-       This is never an issue for datasets created with
-       `cfdm.to_xarray`: ``cfdm.from_xarray(cfdm.to_xarray(f))``
-       will never load those data arrays into memory.
-
+                 If the dataset is opened with the default
+                 ``decode_cf=True``, the automatic reversal of
+                 xarray's CF decoding for selected variables will
+                 eagerly load their data arrays into memory.  This
+                 applies to variables with explicit ``_FillValue`` or
+                 ``missing_value`` attributes, and to variables
+                 decoded into non-numeric time or timedelta objects.
+                 
+                 This is never an issue for datasets created with
+                 `cfdm.to_xarray`:
+                 ``cfdm.from_xarray(cfdm.to_xarray(f))`` will never
+                 load those data arrays into memory.
 
     .. versionadded:: NEXTVERSION
 
