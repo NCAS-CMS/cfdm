@@ -34,7 +34,7 @@ def from_xarray(ds, domain=False):
                  ``cfdm.from_xarray(cfdm.to_xarray(f))`` will never
                  load those data arrays into memory.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.13.4.0
 
     .. seealso:: `cfdm.to_xarray`, `cfdm.read`
 
@@ -155,7 +155,7 @@ def to_xarray(f, group=True):
              `cf_xarray` accessors that allow some interpretation of
              CF attributes will be present on the xarray dataset.
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.13.4.0
 
     .. seealso:: `cfdm.from_xarray`, `cfdm.write`
 

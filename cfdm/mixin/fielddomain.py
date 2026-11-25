@@ -2628,14 +2628,14 @@ class FieldDomain:
     def to_xarray(self, group=True):
         """Convert the {{class}} to an `xarray` dataset.
 
-        Deprecated at version NEXTVERSION and is no longer
+        Deprecated at version 1.13.4.0 and is no longer
         available. Use `cfdm.to_xarray` instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
             self,
             "to_xarray",
-            version="NEXTVERSION",
+            version="1.13.4.0",
             removed_at="1.15.0.0",
             message="Use the 'cfdm.to_xarray' function instead.",
         )  # pragma: no cover

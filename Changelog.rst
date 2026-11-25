@@ -1,7 +1,7 @@
-Version NEXTVERSION
+Version 1.13.4.0
 ----------------
 
-**2026-11-??**
+**2026-11-25**
 
 * Python 3.10 support removed
   (https://github.com/NCAS-CMS/cfdm/issues/427)

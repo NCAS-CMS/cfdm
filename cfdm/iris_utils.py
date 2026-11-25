@@ -22,7 +22,7 @@ def from_iris(c):
     >>> ds = ncdata_to_xarray(n)
     >>> f = cfdm.from_xarray(ds)
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.13.4.0
 
     .. seealso:: `cfdm.to_iris`, `cfdm.to_xarray`, `cfdm.from_xarray`
 
@@ -108,7 +108,7 @@ def to_iris(f):
     >>> n = ncdata_from_xarray(ds)
     >>> c = ncdata_to_iris(n)
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: 1.13.4.0
 
     .. seealso:: `cfdm.from_iris`, `cfdm.to_xarray`, `cfdm.from_xarray`
 
