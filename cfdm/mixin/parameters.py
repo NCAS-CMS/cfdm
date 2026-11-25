@@ -166,7 +166,7 @@ class Parameters(Container):
         ignore_fill_value=False,
         ignore_type=False,
     ):
-        """Whether two instances are the same.
+        """Whether two instances are equal.
 
         Equality is strict by default. This means that:
 

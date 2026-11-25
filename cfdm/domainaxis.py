@@ -136,7 +136,7 @@ class DomainAxis(
 
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, ignore_type=False):
-        """Whether two domain axis constructs are the same.
+        """Whether two domain axis constructs are equal.
 
         Equality is strict by default. This means that:
 

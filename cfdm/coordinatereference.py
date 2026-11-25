@@ -328,7 +328,7 @@ class CoordinateReference(
     def equals(
         self, other, rtol=None, atol=None, verbose=None, ignore_type=False
     ):
-        """Whether two coordinate reference constructs are the same.
+        """Whether two coordinate reference constructs are equal.
 
         Equality is strict by default. This means that:
 

@@ -244,7 +244,7 @@ class Properties(Container):
         ignore_type=False,
         ignore_compression=True,
     ):
-        """Whether two instances are the same.
+        """Whether two instances are equal.
 
         Equality is strict by default. This means that:
 

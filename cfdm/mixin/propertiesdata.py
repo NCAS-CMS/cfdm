@@ -617,7 +617,7 @@ class PropertiesData(Properties):
         ignore_compression=True,
         ignore_type=False,
     ):
-        """Whether two instances are the same.
+        """Whether two instances are equal.
 
         Equality is strict by default. This means that:
 

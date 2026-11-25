@@ -2147,7 +2147,7 @@ class FieldDomain:
         ignore_compression=True,
         ignore_type=False,
     ):
-        """Whether two constructs are the same.
+        """Whether two constructs are equal.
 
         Equality is strict by default. This means that for two
         constructs to be considered equal they must have corresponding

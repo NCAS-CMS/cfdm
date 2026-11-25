@@ -227,7 +227,7 @@ class CellMethod(mixin.Container, core.CellMethod):
         ignore_qualifiers=(),
         ignore_type=False,
     ):
-        """Whether two cell method constructs are the same.
+        """Whether two cell method constructs are equal.
 
         Equality is strict by default. This means that:
 

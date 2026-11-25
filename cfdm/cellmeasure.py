@@ -189,7 +189,7 @@ class CellMeasure(
         ignore_compression=True,
         ignore_type=False,
     ):
-        """Whether two cell measure constructs are the same.
+        """Whether two cell measure constructs are equal.
 
         Equality is strict by default. This means that:
 
