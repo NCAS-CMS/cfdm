@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=2798502a"></script>
+    <script src="../_static/documentation_options.js?v=a9c3a1e4"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.4.0</a></h1>
 
 
 
@@ -124,7 +124,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data<a class="headerlink" href="#cfdm-data" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.Data">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/data/data.py#L56-L7701"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Data" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/data/data.py#L56-L7701"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.Data" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFAggregation</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFChunks</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFShards</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Files</span></code>, <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.data.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a></p>
 <p>An N-dimensional data array with units and masked values.</p>
 <ul class="simple">
@@ -189,8 +189,8 @@ interface.</p>
 <dt>array: optional</dt><dd><p>The array of values. May be a scalar or array-like
 object, including another <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, anything
 with a <code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code> method, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array, <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
-array, <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> array, <a class="reference internal" href="cfdm.Array.html#cfdm.Array" title="cfdm.Array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Array</span></code></a> subclass, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, scalar.</p>
+array, <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> array, <a class="reference internal" href="cfdm.Array.html#cfdm.Array" title="cfdm.Array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Array</span></code></a> subclass, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
+<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, scalar.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">array=34.6</span></code></p>
 </dd>
@@ -200,7 +200,7 @@ array, <code class="xref py py-obj docutils literal notranslate"><span class="pr
 </dd>
 </dl>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cfdm.Units.html#cfdm.Units" title="cfdm.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The physical units of the data. if a <a class="reference internal" href="cfdm.Units.html#cfdm.Units" title="cfdm.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object is
+<dt>units: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cfdm.Units.html#cfdm.Units" title="cfdm.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The physical units of the data. if a <a class="reference internal" href="cfdm.Units.html#cfdm.Units" title="cfdm.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object is
 provided then this an also set the calendar.</p>
 <p>The units (without the calendar) may also be set after
 initialisation with the <a class="reference internal" href="../method/cfdm.Data.set_units.html#cfdm.Data.set_units" title="cfdm.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a> method.</p>
@@ -211,7 +211,7 @@ initialisation with the <a class="reference internal" href="../method/cfdm.Data.
 </dd>
 </dl>
 </dd>
-<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units.</p>
+<dt>calendar: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units.</p>
 <p>The calendar may also be set after initialisation with the
 <a class="reference internal" href="../method/cfdm.Data.set_calendar.html#cfdm.Data.set_calendar" title="cfdm.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a> method.</p>
 <dl class="simple">
@@ -220,7 +220,7 @@ initialisation with the <a class="reference internal" href="../method/cfdm.Data.
 </dl>
 </dd>
 <dt>fill_value: optional</dt><dd><p>The fill value of the data. By default, or if set to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
+<a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
 data-type will be used (see
 <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>).</p>
 <p>The fill value may also be set after initialisation with
@@ -248,12 +248,12 @@ the <a class="reference internal" href="../attribute/cfdm.Data.dtype.html#cfdm.D
 </div>
 </dd>
 <dt>mask: optional</dt><dd><p>Apply this mask to the data given by the <em>array</em>
-parameter. By default, or if <em>mask</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, no mask
+parameter. By default, or if <em>mask</em> is <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, no mask
 is applied. May be any scalar or array-like object
-(such as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance)
+(such as a <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance)
 that is broadcastable to the shape of <em>array</em>. Masking
 will be carried out where the mask elements evaluate
-to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <p>This mask will applied in addition to any mask already
 defined by the <em>array</em> parameter.</p>
 </dd>
@@ -263,10 +263,10 @@ numerically tolerant floating point equality.</p>
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.11.0.0</p>
 </div>
 </dd>
-<dt>hardmask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then the mask is hard. If False
+<dt>hardmask: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then the mask is hard. If False
 then the mask is soft.</p>
 </dd>
-<dt>dt: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then strings (such as <code class="docutils literal notranslate"><span class="pre">'1990-12-01</span> <span class="pre">12:00'</span></code>)
+<dt>dt: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then strings (such as <code class="docutils literal notranslate"><span class="pre">'1990-12-01</span> <span class="pre">12:00'</span></code>)
 given by the <em>array</em> parameter are re-interpreted as
 date-time objects. By default they are not.</p>
 </dd>
@@ -281,11 +281,11 @@ this way are assumed to have their default value.</p>
 <code class="docutils literal notranslate"><span class="pre">cfdm.Data(source=x)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
 parameters prior to initialisation. By default the
 parameters are not deep copied.</p>
 </dd>
-<dt>chunks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the chunking of the underlying dask array.</p>
+<dt>chunks: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the chunking of the underlying dask array.</p>
 <p>Any value accepted by the <em>chunks</em> parameter of the
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.array.from_array</span></code> function is allowed.</p>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> is used to specify the array
@@ -304,7 +304,7 @@ like <code class="docutils literal notranslate"><span class="pre">((1000,</span>
 a uniform block-like shape, preferring square-like
 chunk shapes.</p>
 </dd>
-<dt><em>Parameter example:</em></dt><dd><p>A blocksize of <code class="docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> in a tuple or
+<dt><em>Parameter example:</em></dt><dd><p>A blocksize of <code class="docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> in a tuple or
 dictionary indicates the size of the corresponding
 dimension.</p>
 </dd>
@@ -317,7 +317,7 @@ dimension positions, like <code class="docutils literal notranslate"><span class
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
 </dd>
-<dt>to_memory: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ensure that the original data are in
+<dt>to_memory: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ensure that the original data are in
 memory, rather than on disk.</p>
 <p>If the original data are on disk, then reading data
 into memory during initialisation will slow down the
@@ -336,7 +336,7 @@ then <em>to_memory</em> is ignored.</p>
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.11.2.0</p>
 </div>
 </dd>
-<dt>init_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Provide optional keyword arguments to methods and
+<dt>init_options: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Provide optional keyword arguments to methods and
 functions called during the initialisation process. A
 dictionary key identifies a method or function. The
 corresponding value is another dictionary whose
@@ -884,7 +884,7 @@ performance.</p></li>
 <td><p>Remove the netCDF aggregated_data terms.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_del_aggregation_write_status.html#cfdm.Data.nc_del_aggregation_write_status" title="cfdm.Data.nc_del_aggregation_write_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_aggregation_write_status</span></code></a></p></td>
-<td><p>Set the netCDF aggregation write status to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
+<td><p>Set the netCDF aggregation write status to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#False" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.nc_get_aggregated_data.html#cfdm.Data.nc_get_aggregated_data" title="cfdm.Data.nc_get_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_aggregated_data</span></code></a></p></td>
 <td><p>Return the netCDF aggregated data terms.</p></td>
@@ -915,25 +915,25 @@ performance.</p></li>
 <td><p>The numpy array interface.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.__deepcopy__.html#cfdm.Data.__deepcopy__" title="cfdm.Data.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.__getitem__.html#cfdm.Data.__getitem__" title="cfdm.Data.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the data defined by indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.__int__.html#cfdm.Data.__int__" title="cfdm.Data.__int__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__int__</span></code></a></p></td>
-<td><p>Called to implement the built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Called to implement the built-in function <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.__iter__.html#cfdm.Data.__iter__" title="cfdm.Data.__iter__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iter__</span></code></a></p></td>
 <td><p>Called when an iterator is required.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.__repr__.html#cfdm.Data.__repr__" title="cfdm.Data.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#repr" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.__setitem__.html#cfdm.Data.__setitem__" title="cfdm.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
 <td><p>Implement indexed assignment.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.__str__.html#cfdm.Data.__str__" title="cfdm.Data.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -986,7 +986,7 @@ performance.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-26.
+      &#169;2026, NCAS | Page built on 2026-11-25.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

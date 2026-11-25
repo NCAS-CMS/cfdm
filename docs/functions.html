@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css?v=056948bf" />
-    <script src="_static/documentation_options.js?v=2798502a"></script>
+    <script src="_static/documentation_options.js?v=a9c3a1e4"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.13.3.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.13.4.0</a></h1>
 
 
 
@@ -121,7 +121,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="cfdm-functions">
 <span id="function"></span><h1><strong>cfdm functions</strong><a class="headerlink" href="#cfdm-functions" title="Link to this heading">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.13.3.0 for version 1.13 of the CF conventions.</p>
+<p>Version 1.13.4.0 for version 1.13 of the CF conventions.</p>
 <section id="reading-and-writing">
 <h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
@@ -132,8 +132,27 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a></p></td>
 <td><p>Write field and domain constructs to a dataset.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.netcdf_indexer</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.netcdf_indexer.html#cfdm.netcdf_indexer" title="cfdm.netcdf_indexer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.netcdf_indexer</span></code></a></p></td>
 <td><p>A data indexer that also applies netCDF masking and unpacking.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="conversion-from-and-to-xarray-and-iris">
+<h2>Conversion from and to xarray and iris<a class="headerlink" href="#conversion-from-and-to-xarray-and-iris" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.from_xarray.html#cfdm.from_xarray" title="cfdm.from_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.from_xarray</span></code></a></p></td>
+<td><p>Convert an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset to CF field or domain constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.to_xarray.html#cfdm.to_xarray" title="cfdm.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.to_xarray</span></code></a></p></td>
+<td><p>Convert CF field or domain constructs to an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.from_iris.html#cfdm.from_iris" title="cfdm.from_iris"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.from_iris</span></code></a></p></td>
+<td><p>Convert <code class="xref py py-obj docutils literal notranslate"><span class="pre">iris</span></code> cubes to CF field constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.to_iris.html#cfdm.to_iris" title="cfdm.to_iris"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.to_iris</span></code></a></p></td>
+<td><p>Convert CF field constructs to <code class="xref py py-obj docutils literal notranslate"><span class="pre">iris</span></code> cubes.</p></td>
 </tr>
 </tbody>
 </table>
@@ -142,10 +161,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a></p></td>
 <td><p>The numerical equality tolerance on absolute differences.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a></p></td>
 <td><p>The numerical equality tolerance on relative differences.</p></td>
 </tr>
 </tbody>
@@ -155,16 +174,16 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h2>Resource management<a class="headerlink" href="#resource-management" title="Link to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.configuration</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.configuration.html#cfdm.configuration" title="cfdm.configuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.configuration</span></code></a></p></td>
 <td><p>Views and sets constants in the project-wide configuration.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="class/cfdm.chunksize.html#cfdm.chunksize" title="cfdm.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.chunksize</span></code></a></p></td>
 <td><p>Set the default chunksize used by <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> arrays.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.display_data</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.display_data.html#cfdm.display_data" title="cfdm.display_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.display_data</span></code></a></p></td>
 <td><p>Control the display of data elements.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.persist_data</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.persist_data.html#cfdm.persist_data" title="cfdm.persist_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.persist_data</span></code></a></p></td>
 <td><p>Control the persistence of computed data.</p></td>
 </tr>
 </tbody>
@@ -204,7 +223,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a></p></td>
 <td><p>The minimal level of seriousness of log messages which are shown.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.netcdf_flatten.html#cfdm.netcdf_flatten" title="cfdm.netcdf_flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.netcdf_flatten</span></code></a></p></td>
+<td><p>Create a flattened version of a grouped CF dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a></p></td>
 <td><p>Return the unique constructs from a sequence.</p></td>
 </tr>
 </tbody>
@@ -221,7 +243,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-26.
+      &#169;2026, NCAS | Page built on 2026-11-25.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>cfdm.to_iris &#8212; Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5ff91166" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
+    <script src="../_static/documentation_options.js?v=a9c3a1e4"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=a56c686a"></script>
+    <script src="../_static/toggleprompt.js?v=99cb1901"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.atol" href="cfdm.atol.html" />
+    <link rel="prev" title="cfdm.from_iris" href="cfdm.from_iris.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cfdm 1.13.4.0</a></h1>
+
+
+
+<p class="blurb">A Python reference implementation of the CF data model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cfdm&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../functions.html"><strong>cfdm functions</strong></a><ul>
+      <li>Previous: <a href="cfdm.from_iris.html" title="previous chapter">cfdm.from_iris</a></li>
+      <li>Next: <a href="cfdm.atol.html" title="next chapter">cfdm.atol</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="cfdm-to-iris">
+<h1>cfdm.to_iris<a class="headerlink" href="#cfdm-to-iris" title="Link to this heading">¶</a></h1>
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="cfdm.to_iris">
+<span class="sig-prename descclassname"><span class="pre">cfdm.</span></span><span class="sig-name descname"><span class="pre">to_iris</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/iris_utils.py#L90-L173"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.to_iris" title="Link to this definition">¶</a></dt>
+<dd><p>Convert CF field constructs to <code class="xref py py-obj docutils literal notranslate"><span class="pre">iris</span></code> cubes.</p>
+<p><a class="reference internal" href="#cfdm.to_iris" title="cfdm.to_iris"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.to_iris</span></code></a> is an in-memory operation which does two things: it
+maps the CF constructs onto <code class="xref py py-obj docutils literal notranslate"><span class="pre">iris</span></code> cubes; and it copies pointers
+to the arrays describing the actual data, from the fields to the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">iris</span></code> cubes. No actual data is copied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Method<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<p>The conversion is a three-step process: CF fields are mapped to an
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> dataset, which is mapped to an <code class="xref py py-obj docutils literal notranslate"><span class="pre">ncdata.NcData</span></code>
+dataset-level container, which is mapped to <code class="xref py py-obj docutils literal notranslate"><span class="pre">iris</span></code> cubes. I.e. <code class="docutils literal notranslate"><span class="pre">c</span>
+<span class="pre">=</span> <span class="pre">cfdm.to_iris(f)</span></code> is exactly equivalent to:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ncdata.xarray</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_xarray</span> <span class="k">as</span> <span class="n">ncdata_from_xarray</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ncdata.iris</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_iris</span> <span class="k">as</span> <span class="n">ncdata_to_iris</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">to_xarray</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">ncdata_from_xarray</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ncdata_to_iris</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.13.4.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cfdm.from_iris.html#cfdm.from_iris" title="cfdm.from_iris"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.from_iris</span></code></a>, <a class="reference internal" href="cfdm.to_xarray.html#cfdm.to_xarray" title="cfdm.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.to_xarray</span></code></a>, <a class="reference internal" href="cfdm.from_xarray.html#cfdm.from_xarray" title="cfdm.from_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.from_xarray</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>f: (sequence of) <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>The CF fields to be converted.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.CubeList</span></code></dt><dd><p>The equivalent <code class="xref py py-obj docutils literal notranslate"><span class="pre">iris.cube.Cube</span></code> objects.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Examples<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<p>Create some field constructs, convert them to <code class="xref py py-obj docutils literal notranslate"><span class="pre">iris</span></code> cubes, and
+convert the <code class="xref py py-obj docutils literal notranslate"><span class="pre">iris</span></code> cubes back to field constructs.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_fields</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">[&lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
+<span class="go"> &lt;Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">to_iris</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">[&lt;iris &#39;Cube&#39; of eastward_wind / (m s-1) (time: 3; air_pressure: 1; grid_latitude: 4; grid_longitude: 5)&gt;,</span>
+<span class="go">&lt;iris &#39;Cube&#39; of specific_humidity / (1) (latitude: 5; longitude: 8)&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">from_iris</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">[&lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
+<span class="go"> &lt;Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &#169;2026, NCAS | Page built on 2026-11-25.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

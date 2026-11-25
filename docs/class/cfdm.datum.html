@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css?v=056948bf" />
-    <script src="../_static/documentation_options.js?v=2798502a"></script>
+    <script src="../_static/documentation_options.js?v=a9c3a1e4"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -35,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.13.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.13.4.0</a></h1>
 
 
 
@@ -124,7 +124,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="cfdm.datum.Datum">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cfdm.datum.</span></span><span class="sig-name descname"><span class="pre">Datum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/datum.py#L4-L27"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cfdm.datum.</span></span><span class="sig-name descname"><span class="pre">Datum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/datum.py#L4-L27"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Files</span></code>, <a class="reference internal" href="cfdm.core.datum.html#cfdm.core.datum.Datum" title="cfdm.core.datum.Datum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datum</span></code></a></p>
 <p>A datum component of a CF data model coordinate reference.</p>
 <p>A datum is a complete or partial definition of the zeroes of the
@@ -153,7 +153,7 @@ methods.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set parameters. The dictionary keys are parameter
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set parameters. The dictionary keys are parameter
 names, with corresponding values.</p>
 <p>Parameters may also be set after initialisation with
 the <a class="reference internal" href="#cfdm.datum.Datum.set_parameters" title="cfdm.datum.Datum.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a> and <a class="reference internal" href="#cfdm.datum.Datum.set_parameter" title="cfdm.datum.Datum.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
@@ -173,7 +173,7 @@ this way are assumed to have their default value.</p>
 <code class="docutils literal notranslate"><span class="pre">cfdm.Datum(source=x)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
 parameters prior to initialisation. By default the
 parameters are not deep copied.</p>
 </dd>
@@ -182,7 +182,7 @@ parameters are not deep copied.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.clear_parameters">
-<span class="sig-name descname"><span class="pre">clear_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/core/abstract/parameters.py#L49-L85"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.clear_parameters" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">clear_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/core/abstract/parameters.py#L49-L85"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.clear_parameters" title="Link to this definition">¶</a></dt>
 <dd><p>Remove all parameters.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -194,7 +194,7 @@ parameters are not deep copied.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The parameters that have been removed.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The parameters that have been removed.</p>
 </dd>
 </dl>
 </dd>
@@ -225,7 +225,7 @@ parameters are not deep copied.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/core/abstract/container.py#L388-L406"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.copy" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/core/abstract/container.py#L388-L406"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.copy" title="Link to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
 <div class="versionadded">
@@ -248,7 +248,7 @@ parameters are not deep copied.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.creation_commands">
-<span class="sig-name descname"><span class="pre">creation_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'p'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/mixin/parameters.py#L38-L104"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.creation_commands" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">creation_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'p'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/mixin/parameters.py#L38-L104"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.creation_commands" title="Link to this definition">¶</a></dt>
 <dd><p>Return the commands that would create the component.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.2.0</p>
@@ -260,10 +260,10 @@ parameters are not deep copied.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>namespace: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name space containing classes of the cfdm
+<dt>namespace: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name space containing classes of the cfdm
 package. This is prefixed to the class name in
 commands that instantiate instances of cfdm
-objects. By default, or if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the name space is
+objects. By default, or if <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the name space is
 assumed to be consistent with cfdm being
 imported as <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">cfdm</span></code>.</p>
 <dl class="simple">
@@ -275,29 +275,29 @@ imported as <code class="docutils literal notranslate"><span class="pre">import<
 </dd>
 </dl>
 </dd>
-<dt>indent: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Indent each line by this many spaces. By default no
+<dt>indent: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Indent each line by this many spaces. By default no
 indentation is applied. Ignored if <em>string</em> is
 False.</p>
 </dd>
-<dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return each command as an element of a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the commands are concatenated into
+<dt>string: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return each command as an element of a
+<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the commands are concatenated into
 a string, with a new line inserted between each
 command.</p>
 </dd>
-<dt>name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the <a class="reference internal" href="#cfdm.datum.Datum" title="cfdm.datum.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum</span></code></a> instance created by the
+<dt>name: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The name of the <a class="reference internal" href="#cfdm.datum.Datum" title="cfdm.datum.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum</span></code></a> instance created by the
 returned commands.</p>
 </dd>
-<dt>header: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) output a comment describing the
+<dt>header: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) output a comment describing the
 components. If False no such comment is returned.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>The commands in a string, with a new line inserted
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>The commands in a string, with a new line inserted
 between each command. If <em>string</em> is False then the
 separate commands are returned as each element of a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>.</p>
+<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -315,7 +315,7 @@ separate commands are returned as each element of a
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.del_parameter">
-<span class="sig-name descname"><span class="pre">del_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/core/abstract/parameters.py#L87-L137"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.del_parameter" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">del_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/core/abstract/parameters.py#L87-L137"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.del_parameter" title="Link to this definition">¶</a></dt>
 <dd><p>Delete a parameter.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -328,11 +328,11 @@ separate commands are returned as each element of a
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>parameter: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the parameter to be deleted.</p>
+<dt>parameter: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the parameter to be deleted.</p>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the
 parameter has not been set.</p>
-<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
+<p>If set to an <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
 raised instead.</p>
 </dd>
 </dl>
@@ -362,7 +362,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.dump">
-<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/decorators.py#L241-L251"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.dump" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/decorators.py#L241-L251"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.dump" title="Link to this definition">¶</a></dt>
 <dd><p>A full description.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.12.2.0</p>
@@ -370,15 +370,15 @@ raised instead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt>display: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return the description as a string. By
+<dt>display: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return the description as a string. By
 default the description is printed.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The description. If <em>display</em> is True then the
-description is printed and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The description. If <em>display</em> is True then the
+description is printed and <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is
 returned. Otherwise the description is returned as a
 string.</p>
 </dd>
@@ -389,8 +389,8 @@ string.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.equals">
-<span class="sig-name descname"><span class="pre">equals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/decorators.py#L117-L190"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.equals" title="Link to this definition">¶</a></dt>
-<dd><p>Whether two instances are the same.</p>
+<span class="sig-name descname"><span class="pre">equals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/decorators.py#L117-L190"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.equals" title="Link to this definition">¶</a></dt>
+<dd><p>Whether two instances are equal.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
 <li><p>the named parameters must be the same, with the same values
@@ -413,25 +413,25 @@ subclass of one. See the <em>ignore_type</em> parameter.</p>
 </dd>
 <dt>atol: number, optional</dt><dd><p>The tolerance on absolute differences between real
 numbers. The default value is set by the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code> function.</p>
+<a class="reference internal" href="../function/cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a> function.</p>
 </dd>
 <dt>rtol: number, optional</dt><dd><p>The tolerance on relative differences between real
 numbers. The default value is set by the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code> function.</p>
+<a class="reference internal" href="../function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a> function.</p>
 </dd>
-<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore the data types in all numerical
+<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore the data types in all numerical
 comparisons. By default different numerical data types
 imply inequality, regardless of whether the elements
 are within the tolerance for equality.</p>
 </dd>
-<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Any type of object may be tested but, in general,
+<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Any type of object may be tested but, in general,
 equality is only possible with another <a class="reference internal" href="#cfdm.datum.Datum" title="cfdm.datum.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum</span></code></a>
 instance, or a subclass of one. If <em>ignore_type</em> is
 True then <code class="docutils literal notranslate"><span class="pre">cfdm.Datum(source=other)</span></code> is
 tested, rather than the <code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the
 <em>other</em> parameter.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
 string equal ignoring case to one of:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
@@ -447,7 +447,7 @@ globally-configured <a class="reference internal" href="../function/cfdm.log_lev
 increasing numerical value corresponds to increasing
 verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special
 case of maximal and extreme verbosity.</p>
-<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output
 messages will be shown according to the value of the
 <a class="reference internal" href="../function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a> setting.</p>
 <p>Overall, the higher a non-negative integer or
@@ -460,7 +460,7 @@ about the operation.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether the two instances are equal.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether the two instances are equal.</p>
 </dd>
 </dl>
 </dd>
@@ -478,7 +478,7 @@ about the operation.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.get_original_filenames">
-<span class="sig-name descname"><span class="pre">get_original_filenames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/mixin/files.py#L151-L164"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.get_original_filenames" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_original_filenames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/mixin/files.py#L151-L164"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.get_original_filenames" title="Link to this definition">¶</a></dt>
 <dd><p>The names of files containing the original data and metadata.</p>
 <p>The original files are those that contain some or all of the
 data and metadata when it was first instantiated, and are
@@ -499,9 +499,9 @@ collection of original files from all contributing sources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a></dt><dd><p>The original file names in normalised absolute
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#set" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a></dt><dd><p>The original file names in normalised absolute
 form. If there are no original files then an empty
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a> will be returned.</p>
+<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#set" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a> will be returned.</p>
 </dd>
 </dl>
 </dd>
@@ -510,7 +510,7 @@ form. If there are no original files then an empty
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.get_parameter">
-<span class="sig-name descname"><span class="pre">get_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/core/abstract/parameters.py#L139-L186"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.get_parameter" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/core/abstract/parameters.py#L139-L186"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.get_parameter" title="Link to this definition">¶</a></dt>
 <dd><p>Get a parameter value.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -518,11 +518,11 @@ form. If there are no original files then an empty
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>parameter: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the parameter.</p>
+<dt>parameter: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the parameter.</p>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the
 parameter has not been set.</p>
-<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
+<p>If set to an <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
 raised instead.</p>
 </dd>
 </dl>
@@ -552,7 +552,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.has_parameter">
-<span class="sig-name descname"><span class="pre">has_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/core/abstract/parameters.py#L188-L227"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.has_parameter" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">has_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/core/abstract/parameters.py#L188-L227"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.has_parameter" title="Link to this definition">¶</a></dt>
 <dd><p>Whether a parameter has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -565,7 +565,7 @@ raised instead.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>parameter: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the parameter.</p>
+<dt>parameter: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The name of the parameter.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">parameter='geoid_name'</span></code></p>
 </dd>
@@ -575,7 +575,7 @@ raised instead.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>True if the parameter has been set, otherwise False.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>True if the parameter has been set, otherwise False.</p>
 </dd>
 </dl>
 </dd>
@@ -601,7 +601,7 @@ raised instead.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.nc_clear_variable_groups">
-<span class="sig-name descname"><span class="pre">nc_clear_variable_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/mixin/netcdf.py#L1049-L1100"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_clear_variable_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_clear_variable_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/mixin/netcdf.py#L1049-L1100"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_clear_variable_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Remove the netCDF variable group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -622,7 +622,7 @@ no <code class="docutils literal notranslate"><span class="pre">/</span></code> 
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The removed group structure.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The removed group structure.</p>
 </dd>
 </dl>
 </dd>
@@ -655,7 +655,7 @@ no <code class="docutils literal notranslate"><span class="pre">/</span></code> 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.nc_del_variable">
-<span class="sig-name descname"><span class="pre">nc_del_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/mixin/netcdf.py#L790-L827"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_del_variable" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_del_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/mixin/netcdf.py#L790-L827"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_del_variable" title="Link to this definition">¶</a></dt>
 <dd><p>Remove the netCDF variable name.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -670,13 +670,13 @@ no <code class="docutils literal notranslate"><span class="pre">/</span></code> 
 <dd class="field-odd"><dl class="simple">
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the
 netCDF variable name has not been set. If set to an
-<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be raised instead.</p>
+<a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be raised instead.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The removed netCDF variable name.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The removed netCDF variable name.</p>
 </dd>
 </dl>
 </dd>
@@ -701,7 +701,7 @@ netCDF variable name has not been set. If set to an
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.nc_get_variable">
-<span class="sig-name descname"><span class="pre">nc_get_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/mixin/netcdf.py#L829-L867"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_get_variable" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_get_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ValueError()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/mixin/netcdf.py#L829-L867"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_get_variable" title="Link to this definition">¶</a></dt>
 <dd><p>Return the netCDF variable name.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -716,13 +716,13 @@ netCDF variable name has not been set. If set to an
 <dd class="field-odd"><dl class="simple">
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the
 netCDF variable name has not been set. If set to an
-<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be raised instead.</p>
+<a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be raised instead.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The netCDF variable name. If unset then <em>default</em> is
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The netCDF variable name. If unset then <em>default</em> is
 returned, if provided.</p>
 </dd>
 </dl>
@@ -748,7 +748,7 @@ returned, if provided.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.nc_has_variable">
-<span class="sig-name descname"><span class="pre">nc_has_variable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/mixin/netcdf.py#L869-L900"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_has_variable" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_has_variable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/mixin/netcdf.py#L869-L900"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_has_variable" title="Link to this definition">¶</a></dt>
 <dd><p>Whether the netCDF variable name has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -761,8 +761,8 @@ returned, if provided.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the netCDF variable name has been set, otherwise
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#True" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the netCDF variable name has been set, otherwise
+<a class="reference external" href="https://docs.python.org/3/builtins/constants.html#False" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -787,7 +787,7 @@ returned, if provided.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.nc_set_variable">
-<span class="sig-name descname"><span class="pre">nc_set_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/mixin/netcdf.py#L902-L942"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_set_variable" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_set_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/mixin/netcdf.py#L902-L942"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_set_variable" title="Link to this definition">¶</a></dt>
 <dd><p>Set the netCDF variable name.</p>
 <p>If there are any <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name
 then these act as delimiters for a group hierarchy. By
@@ -805,12 +805,12 @@ group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt>value: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The value for the netCDF variable name.</p>
+<dt>value: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The value for the netCDF variable name.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
@@ -833,7 +833,7 @@ group.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.nc_set_variable_groups">
-<span class="sig-name descname"><span class="pre">nc_set_variable_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/mixin/netcdf.py#L990-L1047"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_set_variable_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_set_variable_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/mixin/netcdf.py#L990-L1047"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_set_variable_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Set the netCDF variable group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -854,13 +854,13 @@ group structure delimited by <code class="docutils literal notranslate"><span cl
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt>groups: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The new group structure.</p>
+<dt>groups: sequence of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The new group structure.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The group structure prior to being reset.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The group structure prior to being reset.</p>
 </dd>
 </dl>
 </dd>
@@ -893,7 +893,7 @@ group structure delimited by <code class="docutils literal notranslate"><span cl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.nc_variable_groups">
-<span class="sig-name descname"><span class="pre">nc_variable_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/mixin/netcdf.py#L944-L988"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_variable_groups" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nc_variable_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/mixin/netcdf.py#L944-L988"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.nc_variable_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Return the netCDF variable group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
@@ -912,7 +912,7 @@ root group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The group structure.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The group structure.</p>
 </dd>
 </dl>
 </dd>
@@ -945,7 +945,7 @@ root group.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.parameters">
-<span class="sig-name descname"><span class="pre">parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/core/abstract/parameters.py#L229-L264"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.parameters" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/core/abstract/parameters.py#L229-L264"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.parameters" title="Link to this definition">¶</a></dt>
 <dd><p>Return all parameters.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -958,7 +958,7 @@ root group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The parameters.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>The parameters.</p>
 </dd>
 </dl>
 </dd>
@@ -989,7 +989,7 @@ root group.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.set_parameter">
-<span class="sig-name descname"><span class="pre">set_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/core/abstract/parameters.py#L317-L349"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.set_parameter" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/core/abstract/parameters.py#L317-L349"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.set_parameter" title="Link to this definition">¶</a></dt>
 <dd><p>Set a parameter-valued term.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1000,7 +1000,7 @@ root group.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
@@ -1024,7 +1024,7 @@ root group.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cfdm.datum.Datum.set_parameters">
-<span class="sig-name descname"><span class="pre">set_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.3.0/cfdm/core/abstract/parameters.py#L266-L315"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.set_parameters" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.13.4.0/cfdm/core/abstract/parameters.py#L266-L315"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfdm.datum.Datum.set_parameters" title="Link to this definition">¶</a></dt>
 <dd><p>Set parameters.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version (cfdm): </span>1.7.0</p>
@@ -1036,20 +1036,20 @@ root group.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Store the parameters from the dictionary supplied.</p>
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Store the parameters from the dictionary supplied.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007}</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then any parameter values provided by the
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then any parameter values provided by the
 <em>parameters</em> parameter are not copied before insertion. By
 default they are deep copied.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
@@ -1089,7 +1089,7 @@ default they are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2026, NCAS | Page built on 2026-08-26.
+      &#169;2026, NCAS | Page built on 2026-11-25.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
