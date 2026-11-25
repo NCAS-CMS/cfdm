@@ -132,6 +132,21 @@ class xarrayTest(unittest.TestCase):
             [True] * len(f),
         )
 
+    def test_to_xarray_domain(self):
+        """Test cfdm.to_xarray with domain."""
+        domains = [f.domain for f in cfdm.example_fields()]
+
+        # Write each domain to a different xarray dataset
+        for d in domains:
+            ds = cfdm.to_xarray(d)
+            self.assertIsInstance(ds, xr.Dataset)
+            str(ds)
+
+        # Write all domains to one xarray dataset
+        ds = cfdm.to_xarray(domains)
+        self.assertIsInstance(ds, xr.Dataset)
+        str(ds)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

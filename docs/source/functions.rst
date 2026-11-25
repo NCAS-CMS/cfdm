@@ -22,8 +22,8 @@ Reading and writing
    cfdm.write
    cfdm.netcdf_indexer
 
-Conversion from and to xarray
------------------------------
+Conversion from and to xarray and iris
+--------------------------------------
 
 .. autosummary::
    :nosignatures:
@@ -32,6 +32,8 @@ Conversion from and to xarray
 
    cfdm.from_xarray
    cfdm.to_xarray
+   cfdm.from_iris
+   cfdm.to_iris
 
 Mathematical operations
 -----------------------

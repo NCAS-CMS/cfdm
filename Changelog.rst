@@ -3,6 +3,9 @@ Version NEXTVERSION
 
 **2026-11-??**
 
+* New package-level functions to convert from and to `iris`:
+  `cfdm.from_iris` and `cfdm.to_iris`
+  (https://github.com/NCAS-CMS/cfdm/issues/443)
 * New package-level functions to convert from and to `xarray`:
   `cfdm.from_xarray` and `cfdm.to_xarray`
   (https://github.com/NCAS-CMS/cfdm/issues/441)
@@ -11,6 +14,7 @@ Version NEXTVERSION
 * Fix providing a sequence of strings to the ``cfa`` keyword of
   `cfdm.write` (https://github.com/NCAS-CMS/cfdm/issues/435)
 * Changed dependency: ``xnetcdf>=0.3.0``
+* New optional dependency: ``ncdata>=0.4.0``
 
 ----
 
