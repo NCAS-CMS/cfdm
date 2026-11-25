@@ -21,7 +21,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, ubuntu-18.04, macos-latest, macos-10.15]
         # Note: keep versions quoted as strings else 3.10 taken as 3.1, etc.
-        python-version: ["3.11", "3.11", "3.12", "3.13", "3.14", "3.15"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
     # Run on new and old(er) versions of the distros we support (Linux, Mac OS)
     runs-on: ${{ matrix.os }}
