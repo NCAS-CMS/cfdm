@@ -252,6 +252,7 @@ subspacing
 superceded
 th
 TiePointIndex
+timedelta
 timeseries
 timeSeries
 timeSeriesProfile
