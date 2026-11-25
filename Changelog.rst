@@ -3,6 +3,8 @@ Version NEXTVERSION
 
 **2026-11-??**
 
+* Python 3.10 support removed
+  (https://github.com/NCAS-CMS/cfdm/issues/427)
 * New package-level functions to convert from and to `iris`:
   `cfdm.from_iris` and `cfdm.to_iris`
   (https://github.com/NCAS-CMS/cfdm/issues/443)
